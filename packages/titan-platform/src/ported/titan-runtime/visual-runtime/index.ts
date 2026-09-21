@@ -271,7 +271,10 @@ export async function verifyVisualResourceIntegrity(resource: Readonly<{ sha256?
   if (expected && !/^[a-f0-9]{64}$/.test(expected)) throw new Error("Invalid visual resource SHA-256.");
   if (!expected || bytes == null) return Object.freeze({verified:false,reason:!expected?"no-integrity-metadata":"bytes-unavailable",algorithm:"sha256"});
   if (!globalThis.crypto?.subtle) return Object.freeze({verified:false,reason:"sha256-unavailable",algorithm:"sha256"});
-  const data=typeof bytes === "string" ? new TextEncoder().encode(bytes) : bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes;
+  const source=typeof bytes === "string" ? new TextEncoder().encode(bytes) : bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes;
+  // WebCrypto requires an ArrayBuffer-backed BufferSource; copy Uint8Array inputs so
+  // SharedArrayBuffer-compatible views cannot leak into subtle.digest typing/runtime.
+  const data=source instanceof Uint8Array ? Uint8Array.from(source).buffer : source;
   const digest=await globalThis.crypto.subtle.digest("SHA-256", data); const actual=[...new Uint8Array(digest)].map((b)=>b.toString(16).padStart(2,"0")).join("");
   return Object.freeze({verified:actual===expected,reason:actual===expected?"match":"mismatch",algorithm:"sha256",actual});
 }
