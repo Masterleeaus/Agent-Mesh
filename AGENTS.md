@@ -4,7 +4,7 @@ This repository is the live Titan Zero Agent Mesh code and work system.
 
 ## Authority order
 
-1. GitHub `main` is canonical code.
+1. GitHub `main` is canonical code. The legacy `titan-zero/main` branch is retired historical material and must not be used as a parallel authority.
 2. Git commit SHA identifies the exact canonical code version.
 3. `roadmap/INDEX.json` + `roadmap/goals/*.json` define roadmap intent and remaining work.
 4. GitHub Issues are the claimable execution surface for subgoals.
