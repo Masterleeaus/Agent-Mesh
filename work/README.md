@@ -94,3 +94,26 @@ This avoids concurrent workers racing to edit a central JSON file.
 - GitHub Actions = automated verification.
 - Roadmap = remaining work and outcome intent.
 - Architecture = product/system rules.
+
+
+## Automated selector
+
+Use:
+
+```bash
+AGENT_MESH_ACTOR=<worker-id> python3 .github/scripts/claim-next-subgoal.py --order asc
+```
+
+Selection behavior:
+
+- `--order asc` = smallest goal/subgoal first.
+- `--order desc` = largest goal/subgoal first.
+- `--goal TZ-ROADMAP-XX` = restrict to one goal.
+- `--dry-run` = show the next eligible queue without creating a claim.
+- only roadmap status `TODO` is claimable automatically;
+- issue must still be open;
+- existing `agent/<subgoal-id>` branch means claimed;
+- an open PR that already names/owns the subgoal means claimed;
+- atomic branch creation resolves concurrent-worker races.
+
+The selector posts the actor, branch and base `main` SHA back to the issue after a successful claim.
