@@ -6,8 +6,8 @@ This repository is the GitHub-based **Titan Zero Agent Mesh V3**: canonical Tita
 
 - Canonical extracted Titan Zero Merge84 source is on `main`.
 - The roadmap index contains **55 goals**.
-- Goal JSON files are present for `TZ-G00` and `TZ-ROADMAP-01` through `TZ-ROADMAP-52`.
-- GitHub Issues represent **568 current subgoals**, including Goals 53–54.
+- Canonical goal JSON files are present for **all 55 goals**: `TZ-G00` and `TZ-ROADMAP-01` through `TZ-ROADMAP-54`.
+- GitHub Issues represent **568 current subgoals**.
 - `roadmap/SUBGOAL-ISSUE-MANIFEST.json` keeps roadmap subgoal IDs synchronized to GitHub Issues.
 - `.github/workflows/agent-mesh-ci.yml` validates implementation PRs.
 - `.github/workflows/sync-roadmap-issues.yml` recreates missing roadmap issues idempotently.
