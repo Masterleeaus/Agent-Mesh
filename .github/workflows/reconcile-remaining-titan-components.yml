@@ -1,0 +1,40 @@
+name: Reconcile Remaining Titan Components
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reconcile-remaining-titan-components.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resolve remaining component conflicts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # DocumentClientLocationCard is equivalent at the inspected implementation
+          # boundary; retain the canonical root copy.
+          git rm -f titan/apps/web/components/documents/DocumentClientLocationCard.tsx
+
+          # QuickBookModal remains a functional conflict and is deliberately preserved.
+
+          # AppShell was promoted from Titan in the prior pass, so its matching Titan
+          # navigation/design-system tests are the correct contract for that shell.
+          cp titan/apps/web/components/ui/__tests__/design-system.unit.test.ts apps/web/components/ui/__tests__/design-system.unit.test.ts
+          git add apps/web/components/ui/__tests__/design-system.unit.test.ts
+          git rm -f titan/apps/web/components/ui/__tests__/design-system.unit.test.ts
+
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Reconcile remaining verified Titan component conflicts"
+          git push
