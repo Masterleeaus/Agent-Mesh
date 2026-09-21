@@ -155,3 +155,30 @@ States:
 - **BLOCKED** — claim/issue mismatch, missing evidence, merge conflicts, or a required workflow failed.
 
 Manager remains the integration authority even when status is READY.
+
+
+## PR handoff helper
+
+After a builder has committed and pushed at least one subgoal-specific change on its canonical claim branch, hand off with:
+
+```bash
+python3 .github/scripts/open-agent-pr.py \
+  --verification "targeted test/check — pass" \
+  --completion "Describe what this pass completed"
+```
+
+New PRs are **draft by default**. This keeps an incomplete multi-pass subgoal out of the Manager-ready queue while still running CI and preserving evidence.
+
+When the subgoal is genuinely ready for Manager review:
+
+```bash
+python3 .github/scripts/open-agent-pr.py --ready
+```
+
+The helper refuses:
+
+- non-canonical claim branch names;
+- closed/missing roadmap issues;
+- empty branches with no commits ahead of `main`.
+
+It resolves the matching issue, fills the canonical PR metadata/evidence structure, links `Closes #<issue>`, records changed files and current merge-base, and reuses the one existing PR for the claim branch rather than opening duplicates.
