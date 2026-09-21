@@ -19,4 +19,4 @@ assert(/linear-gradient\([^)]*var\(--accent-blue\)[\s\S]*var\(--accent-pink\)/i.
 assert(manifest.icons && manifest.icons['128'], 'manifest must expose Codee extension icon');
 assert(manifest.action && manifest.action.default_icon, 'toolbar action must expose Codee icon');
 
-console.log('sidebar neon branding and logo wiring OK');
+console.log('sidebar black/slate/deep-blue branding and logo wiring OK');
