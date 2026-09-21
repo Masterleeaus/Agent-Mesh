@@ -12,8 +12,9 @@ import { processCaptures } from "./process-captures.js";
 import { logger } from "./logger.js";
 
 const pollMs = Number(process.env.WORKER_POLL_MS ?? "30000");
-const databaseUrl = process.env.DATABASE_URL;
-if (!databaseUrl) throw new Error("DATABASE_URL is required");
+const configuredDatabaseUrl = process.env.DATABASE_URL;
+if (!configuredDatabaseUrl) throw new Error("DATABASE_URL is required");
+const databaseUrl: string = configuredDatabaseUrl;
 
 async function runPollIteration(client: WorkerDatabaseClient): Promise<void> {
   try {
