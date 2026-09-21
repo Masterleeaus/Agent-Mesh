@@ -1,32 +1,96 @@
 # Agent Mesh V3 Work Coordination
 
-GitHub is the work and code authority.
+GitHub is the live work/code coordination layer. The roadmap defines remaining work; Git refs provide collision-safe claims.
 
-## Builder loop
-1. Read current `main`, `AGENTS.md`, the relevant roadmap goal/subgoal, and linked issue.
-2. Confirm the issue describes **remaining work**. Do not repeat completed implementation.
-3. Claim one subgoal only.
-4. Create a dedicated branch: `agent/<goal>-<sg>-<short-name>`.
-5. Implement one complete pass, including verification.
-6. Push commits and open a PR linked to the issue.
-7. Leave evidence in the PR: files changed, tests/checks, architecture decisions, and remaining work.
-8. Do not merge your own implementation PR.
+## Atomic claim protocol
+
+A subgoal is claimed by creating exactly one branch:
+
+```text
+agent/<subgoal-id>
+```
+
+Example:
+
+```text
+agent/TZ-ROADMAP-31-SG-01
+```
+
+The branch name itself is the lock.
+
+### Claim sequence
+
+1. Read current `main`, `AGENTS.md`, the relevant `roadmap/goals/<goal-id>.json`, and the matching open issue.
+2. Re-check current code/evidence so already-completed work is not repeated.
+3. Confirm the roadmap status is still claimable.
+4. Confirm there is no existing `agent/<subgoal-id>` branch and no active PR for that subgoal.
+5. Atomically create `agent/<subgoal-id>` **from current `main`**.
+6. If branch creation fails because the ref already exists, treat the subgoal as claimed and immediately choose another eligible issue.
+7. Add a comment to the issue recording:
+   - actor/worker identity,
+   - claim branch,
+   - base `main` SHA,
+   - intended first pass.
+8. Implement one complete development pass including verification.
+9. Push to the same canonical claim branch.
+10. Open/update one PR to `main` with `Closes #<issue-number>`.
+11. Continue additional verified passes on the same branch/PR while that subgoal remains active.
+12. Do not merge your own implementation PR.
+
+Never bypass a claim by creating `agent/<subgoal-id>-2`, adding a worker name, timestamp, or using another branch prefix.
+
+## Collision and stale-claim rules
+
+- One subgoal ID = one canonical claim branch = one active implementation PR.
+- Existing branch means another worker owns the claim unless Manager explicitly releases it.
+- A worker that becomes blocked should document the blocker and select another eligible unclaimed issue rather than waiting idle.
+- Manager may release an abandoned claim only after verifying there is no useful unmerged work that would be lost.
+- Completed/merged subgoals are not re-claimed unless the roadmap explicitly reopens remaining work.
+
+## PR claim gate
+
+`.github/workflows/agent-claim-gate.yml` validates every agent PR:
+
+- base branch is `main`;
+- head branch is exactly `agent/<subgoal-id>`;
+- subgoal exists in `roadmap/SUBGOAL-ISSUE-MANIFEST.json`;
+- matching goal JSON exists and contains that subgoal;
+- roadmap status is not complete/superseded;
+- PR names the subgoal ID;
+- PR contains `Closes #<issue-number>`;
+- linked issue is open and owns the same subgoal ID;
+- no other open PR claims the same subgoal.
+
+On roadmap/control-plane changes, the same gate runs a self-test verifying all **55 goals** and all **568 manifest subgoals** resolve correctly.
 
 ## Manager loop
+
 1. Review PR against current `main`, roadmap intent, architecture contracts and existing evidence.
-2. Reject duplicate implementation or authority drift.
+2. Reject duplicate implementation, stale-base work, authority drift or attempts to bypass the canonical claim branch.
 3. Require CI/evidence appropriate to the change.
 4. Merge accepted PR to `main`.
-5. Update/close the issue and compact roadmap state so later agents see only remaining work.
+5. Update/close the linked issue and compact roadmap state so later agents see only remaining work.
+6. Release/remove stale claim branches only after preserving useful work/evidence.
 
-## Collision rule
-One claimable subgoal = one active implementation branch/PR. If another agent already owns it, select another eligible issue.
+## `work/claims.json`
+
+`work/claims.json` is **coordination metadata only**, not the lock authority.
+
+Live claim authority is the Git branch ref:
+
+```text
+agent/<subgoal-id>
+```
+
+This avoids concurrent workers racing to edit a central JSON file.
 
 ## Authority
+
 - `main` = canonical Titan Zero code.
 - Git commit SHA = exact version identity.
-- GitHub Issues = claimable work.
+- `agent/<subgoal-id>` branch = atomic claim lock.
+- GitHub Issues = claimable work records.
 - Pull Requests = integration boundary.
 - GitHub Actions = automated verification.
-- Roadmap = remaining work.
+- Roadmap = remaining work and outcome intent.
 - Architecture = product/system rules.
