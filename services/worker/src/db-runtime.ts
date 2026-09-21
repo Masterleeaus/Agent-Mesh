@@ -28,8 +28,11 @@ class PgWorkerClient implements WorkerDatabaseClient {
   readonly dialect: DatabaseDialect = "postgres";
   constructor(private readonly client: PgClient) {}
   async query<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<DatabaseQueryResult<T>> {
-    const result = await this.client.query<T>(text, params);
-    return { rows: result.rows, rowCount: result.rowCount };
+    // The shared database port intentionally permits arbitrary projected row shapes.
+    // pg requires its own QueryResultRow constraint, so keep that driver detail behind
+    // this adapter and cast only at the boundary after the query completes.
+    const result = await this.client.query(text, params);
+    return { rows: result.rows as T[], rowCount: result.rowCount };
   }
   async close(): Promise<void> { await this.client.end(); }
 }
@@ -39,7 +42,7 @@ class MysqlWorkerClient implements WorkerDatabaseClient {
   constructor(private readonly connection: PoolConnection) {}
   async query<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<DatabaseQueryResult<T>> {
     const { sql, params: rewritten } = rewriteMysqlSql(text, params);
-    const [result] = await this.connection.execute(sql, rewritten);
+    const [result] = await this.connection.execute(sql, rewritten as Parameters<PoolConnection["execute"]>[1]);
     if (Array.isArray(result)) return { rows: result as T[], rowCount: result.length };
     const packet = result as { affectedRows?: number };
     return { rows: [], rowCount: packet.affectedRows ?? 0 };
