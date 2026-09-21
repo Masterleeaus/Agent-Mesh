@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { Route } from "next";
-import type { Role } from "@ai-fsm/domain";
+import type { Role } from "@titan-zero/domain";
 import { ToastProvider } from "./ui/Toast";
 import { QuickLeadModal } from "./QuickLeadModal";
 import { FloatingActionButton } from "./FloatingActionButton";
