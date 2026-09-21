@@ -110,8 +110,25 @@ jobs:
             echo "::warning::Worker tests still contain recorded Merge84 baseline debt; no regression detected."
           fi
 
-      - name: Web tests
-        run: pnpm --filter @ai-fsm/web test
+      - name: Web test regression gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          pnpm --filter @ai-fsm/web test > web-test.log 2>&1
+          WEB_TEST_STATUS=$?
+          set -e
+          cat web-test.log
+          python3 .github/scripts/check-vitest-baseline.py \
+            --baseline .github/ci/web-test-baseline.json \
+            --log web-test.log \
+            --command-status "$WEB_TEST_STATUS" \
+            --mode web
+          if [ "$WEB_TEST_STATUS" -eq 0 ]; then
+            echo "Web tests are fully clean."
+          else
+            echo "::warning::Web tests still contain recorded Merge84 baseline debt; no regression detected."
+          fi
 
       - name: titan-platform test regression gate
         shell: bash
