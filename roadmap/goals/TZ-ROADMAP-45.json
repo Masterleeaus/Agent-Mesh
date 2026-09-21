@@ -1,0 +1,1694 @@
+{
+  "goal_id": "TZ-ROADMAP-45",
+  "priority": "P0",
+  "title": "Chrome Extension Superset & Generated Funnel Surface Roadmap",
+  "objective": "Make Chrome a first-class canonical Titan Zero surface: one maximal MV3 superset source containing all eligible modes/capabilities, with smaller marketplace funnel extensions generated as mode/vertical/release projections rather than feature forks.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "subgoal_order": 1,
+      "title": "Deep-audit all existing Titan Zero/Titan Code Chrome extension roadmaps, manifests, source trees and donor capabilities; merge every still-valid Chrome requirement into this canonical surface goal and record superseded extension plans",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Code",
+        "Titan Forge",
+        "Titan MCP",
+        "OpenBrowser Bridge",
+        "LLM Prompt Queue"
+      ],
+      "subgoal_id": "TZ-ROADMAP-45-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS_AND_WORKFORCE_PACKS",
+          "plan_path": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical Developer Platform workforce owns Chrome implementation/certification concerns.",
+          "Integration workforce participates where host/capability/security/version boundaries cross systems.",
+          "Generated funnel extensions select canonical business workforce packs from the multi-pass plan; a funnel never becomes a new agent identity.",
+          "Surface/extension engineering agents removed as owning workforce identities for this surface goal. Developer/integration capabilities remain implementation dependencies, not business agents created/owned by the Chrome surface."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_CANONICAL_WORKSPACE_SCAFFOLD_DONOR_CONVERGENCE_MAPPED",
+        "last_scanned_at_utc": "2026-09-19T06:32:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Code",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe"
+          },
+          {
+            "source_ref": "Titan Forge",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f"
+          },
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "OpenBrowser Bridge",
+            "verification": "HISTORICALLY_VERIFIED_UNIQUE_DONOR; SHA_PROVEN; RECORDED_MASTER_AND_WORKSPACE_PATHS_CURRENTLY_UNRESOLVED",
+            "sha256": "cb43212adfc432ba89ab1397bf12088f73946a6d3fbd50aaaf24cc8ec77e9f5c"
+          },
+          {
+            "source_ref": "LLM Prompt Queue",
+            "verification": "STATUS_MANAGED_VERIFIED_IN_MASTER_REGISTRIES; CURRENT_PAYLOAD_PATH_AND_SHA_UNRESOLVED; REVALIDATE_AT_USE"
+          },
+          {
+            "source_ref": "Chrome Superset WORKSPACE-STATE",
+            "verification": "LIVE_GOVERNED_WORKSPACE_STATE; SOURCE_STATE_SCAFFOLD_AWAITING_SG01_CONVERGENCE"
+          },
+          {
+            "source_ref": "Chrome Superset README",
+            "verification": "LIVE_ONE_SOURCE_AND_NO_FEATURE_FORK_RULES"
+          },
+          {
+            "source_ref": "Chrome DONOR-REGISTRY",
+            "verification": "OPENBROWSER_HASH_AND_UNIQUE_CAPABILITY_PROVENANCE; PAYLOAD_PATH_STALE"
+          },
+          {
+            "source_ref": "Reference Library SOURCE-REGISTRY",
+            "verification": "LIVE_V9; OPENBROWSER_AND_LLM_QUEUE_STATUS_MANAGED_BUT_RECORDED_MASTER_PATHS_STALE"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Chrome Superset WORKSPACE-STATE",
+            "file_id": "file_0000000052b481faa7d3829a28b682d6",
+            "library_path": "/Titan Zero/Chrome Extension Workspace/Titan Zero Chrome/WORKSPACE-STATE.json",
+            "verification": "LIVE_GOVERNED_WORKSPACE_STATE; SOURCE_STATE_SCAFFOLD_AWAITING_SG01_CONVERGENCE"
+          },
+          {
+            "source_ref": "Chrome Superset README",
+            "file_id": "file_0000000056ec81faa2f12fc0ca003645",
+            "library_path": "/Titan Zero/Chrome Extension Workspace/Titan Zero Chrome/README.md",
+            "verification": "LIVE_ONE_SOURCE_AND_NO_FEATURE_FORK_RULES"
+          },
+          {
+            "source_ref": "Chrome DONOR-REGISTRY",
+            "file_id": "file_00000000d4c481fa9ae0c8f71667af25",
+            "library_path": "DONOR-REGISTRY.json",
+            "verification": "OPENBROWSER_HASH_AND_UNIQUE_CAPABILITY_PROVENANCE; PAYLOAD_PATH_STALE"
+          },
+          {
+            "source_ref": "Reference Library SOURCE-REGISTRY",
+            "file_id": "file_000000004dd881fa8b7ffe2d7aed1f95",
+            "library_path": "/Titan Zero/Agent Mesh Manager/Reference Library/SOURCE-REGISTRY/SOURCE-REGISTRY.json",
+            "verification": "LIVE_V9; OPENBROWSER_AND_LLM_QUEUE_STATUS_MANAGED_BUT_RECORDED_MASTER_PATHS_STALE"
+          },
+          {
+            "source_ref": "Titan Zero Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-capabilities/capability-registry.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Code",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "manifest.json",
+              "source-manifest.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json"
+            ]
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json"
+            ]
+          }
+        ],
+        "scan_notes": "The governed Chrome workspace is intentionally a scaffold; Superset Source and REGISTRY are empty and do not authorize a rewrite. Valid Chrome requirements must converge from Merge80, Titan Code, Forge/MCP and recoverable historical donors. OpenBrowser Bridge is SHA/provenance verified but its recorded store/workspace path is stale; LLM Prompt Queue is registry-verified but its payload/hash are unresolved. Record old Chrome plans as superseded only after requirement coverage is proven.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 2,
+      "subgoal_order": 2,
+      "title": "Converge one maximal Titan Zero Chrome MV3 superset source with one extension identity, manifest strategy, service-worker authority, shell, storage/migrations, messaging, permissions and canonical Surface SDK integration",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Code",
+        "Titan Forge",
+        "Titan MCP",
+        "OpenBrowser Bridge",
+        "LLM Prompt Queue"
+      ],
+      "subgoal_id": "TZ-ROADMAP-45-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS_AND_WORKFORCE_PACKS",
+          "plan_path": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical Developer Platform workforce owns Chrome implementation/certification concerns.",
+          "Integration workforce participates where host/capability/security/version boundaries cross systems.",
+          "Generated funnel extensions select canonical business workforce packs from the multi-pass plan; a funnel never becomes a new agent identity.",
+          "Surface/extension engineering agents removed as owning workforce identities for this surface goal. Developer/integration capabilities remain implementation dependencies, not business agents created/owned by the Chrome surface."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSE_READY_MV3_SUPERSET_CONVERGENCE_REQUIRED",
+        "last_scanned_at_utc": "2026-09-19T06:32:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Code",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe"
+          },
+          {
+            "source_ref": "Titan Forge",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f"
+          },
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "OpenBrowser Bridge",
+            "verification": "HISTORICALLY_VERIFIED_UNIQUE_DONOR; SHA_PROVEN; RECORDED_MASTER_AND_WORKSPACE_PATHS_CURRENTLY_UNRESOLVED",
+            "sha256": "cb43212adfc432ba89ab1397bf12088f73946a6d3fbd50aaaf24cc8ec77e9f5c"
+          },
+          {
+            "source_ref": "LLM Prompt Queue",
+            "verification": "STATUS_MANAGED_VERIFIED_IN_MASTER_REGISTRIES; CURRENT_PAYLOAD_PATH_AND_SHA_UNRESOLVED; REVALIDATE_AT_USE"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Code",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "manifest.json",
+              "src/lib/service-worker.js",
+              "src/repository/migration-guard.js",
+              "src/browser/browser-capability-contract.js",
+              "src/browser/browser-policy-store.js",
+              "src/browser/browser-policy.js",
+              "src/lib/capability-registry.js",
+              "src/lib/browser-host-integration.js"
+            ]
+          },
+          {
+            "source_ref": "Titan Zero Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-capabilities/capability-registry.ts",
+              "packages/titan-platform/src/ported/titan-runtime/browser/capability-pack.ts",
+              "packages/titan-platform/src/ported/titan-runtime/authority/company-boundary.ts",
+              "packages/titan-platform/src/ported/titan-runtime/authority/authority-evaluator.ts",
+              "packages/titan-platform/src/ported/titan-runtime/authority/execution-boundary.ts",
+              "packages/titan-platform/src/ported/titan-runtime/capability-policy/capability-ownership-policy.ts",
+              "packages/titan-platform/src/ported/titan-runtime/capability-policy/sensitive-capability-policy.ts",
+              "packages/titan-platform/src/ported/titan-offline/authority-continuity.ts",
+              "packages/titan-platform/src/offline/authorization-contraction.ts",
+              "packages/titan-platform/src/ported/titan-workforce-surface-split.ts",
+              "packages/titan-platform/src/ported/titan-workforce-agent-profile.ts",
+              "packages/titan-platform/src/retriever/surface-bridge.ts",
+              "packages/titan-platform/src/ported/titan-runtime/performance/lazy-surface-loader.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/CapabilityAvailability.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Http/Middleware/AuthorizeTitanMcp.php",
+              "tests/standalone/verify_company_id_manifest_convergence.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php",
+              "tests/Feature/TitanMcpExpandedPermissionsContractTest.php",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "extension.manifest.json"
+            ]
+          }
+        ],
+        "scan_notes": "Titan Code already contains the strongest MV3/browser shell, service worker, migration guard, browser policy and capability registry foundations; Merge80 contains the canonical company/authority/capability/offline/surface contracts. Build one Titan Zero Chrome superset by converging these, not by creating a parallel business runtime. OpenBrowser prompt/SSE/session capabilities must be recovered or deliberately rejected before donor retirement.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 3,
+      "subgoal_order": 3,
+      "title": "Absorb Titan Code Chrome capabilities into Studio, Developer and System Development modes without retaining a separate Titan Code product runtime or duplicate source tree",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Code",
+        "Titan Forge",
+        "Titan MCP",
+        "OpenBrowser Bridge",
+        "LLM Prompt Queue"
+      ],
+      "subgoal_id": "TZ-ROADMAP-45-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS_AND_WORKFORCE_PACKS",
+          "plan_path": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical Developer Platform workforce owns Chrome implementation/certification concerns.",
+          "Integration workforce participates where host/capability/security/version boundaries cross systems.",
+          "Generated funnel extensions select canonical business workforce packs from the multi-pass plan; a funnel never becomes a new agent identity.",
+          "Surface/extension engineering agents removed as owning workforce identities for this surface goal. Developer/integration capabilities remain implementation dependencies, not business agents created/owned by the Chrome surface."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSE_READY_TITAN_CODE_MODE_ABSORPTION_REQUIRED",
+        "last_scanned_at_utc": "2026-09-19T06:32:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Code",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe"
+          },
+          {
+            "source_ref": "Titan Forge",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f"
+          },
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "OpenBrowser Bridge",
+            "verification": "HISTORICALLY_VERIFIED_UNIQUE_DONOR; SHA_PROVEN; RECORDED_MASTER_AND_WORKSPACE_PATHS_CURRENTLY_UNRESOLVED",
+            "sha256": "cb43212adfc432ba89ab1397bf12088f73946a6d3fbd50aaaf24cc8ec77e9f5c"
+          },
+          {
+            "source_ref": "LLM Prompt Queue",
+            "verification": "STATUS_MANAGED_VERIFIED_IN_MASTER_REGISTRIES; CURRENT_PAYLOAD_PATH_AND_SHA_UNRESOLVED; REVALIDATE_AT_USE"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Code",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "src/titan-zero/titan-zero-development-profiles.js",
+              "src/titan-zero/titan-zero-developer-pack.js",
+              "src/titan-zero/titan-zero-core-profile.js",
+              "src/titan-zero/titan-zero-development-skills.js",
+              "src/titan-zero/titan-zero-development-prompts.js",
+              "source-manifest.json",
+              "src/lib/service-worker.js",
+              "src/lib/capability-registry.js"
+            ]
+          },
+          {
+            "source_ref": "Titan Zero Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-workforce-surface-split.ts",
+              "packages/titan-platform/src/ported/titan-workforce-agent-profile.ts",
+              "packages/titan-platform/src/retriever/surface-bridge.ts",
+              "packages/titan-platform/src/ported/titan-runtime/performance/lazy-surface-loader.ts",
+              "packages/titan-platform/src/ported/titan-capabilities/capability-registry.ts"
+            ]
+          }
+        ],
+        "scan_notes": "Titan Code already exposes explicit development/developer/core profile modules. Absorb these capabilities into Titan Zero Studio/Developer/System Development mode projections while retaining one Chrome identity/source tree; do not preserve Titan Code as a separate product runtime.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 4,
+      "subgoal_order": 4,
+      "title": "Implement capability-, mode-, vertical- and release-profile projection from the Chrome superset so every funnel extension is generated from canonical registries rather than independently developed",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Code",
+        "Titan Forge",
+        "Titan MCP",
+        "OpenBrowser Bridge",
+        "LLM Prompt Queue"
+      ],
+      "subgoal_id": "TZ-ROADMAP-45-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS_AND_WORKFORCE_PACKS",
+          "plan_path": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical Developer Platform workforce owns Chrome implementation/certification concerns.",
+          "Integration workforce participates where host/capability/security/version boundaries cross systems.",
+          "Generated funnel extensions select canonical business workforce packs from the multi-pass plan; a funnel never becomes a new agent identity.",
+          "Surface/extension engineering agents removed as owning workforce identities for this surface goal. Developer/integration capabilities remain implementation dependencies, not business agents created/owned by the Chrome surface."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSE_READY_PROJECTION_COMPILER_NOT_YET_IMPLEMENTED",
+        "last_scanned_at_utc": "2026-09-19T06:32:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Code",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe"
+          },
+          {
+            "source_ref": "Titan Forge",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f"
+          },
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "OpenBrowser Bridge",
+            "verification": "HISTORICALLY_VERIFIED_UNIQUE_DONOR; SHA_PROVEN; RECORDED_MASTER_AND_WORKSPACE_PATHS_CURRENTLY_UNRESOLVED",
+            "sha256": "cb43212adfc432ba89ab1397bf12088f73946a6d3fbd50aaaf24cc8ec77e9f5c"
+          },
+          {
+            "source_ref": "LLM Prompt Queue",
+            "verification": "STATUS_MANAGED_VERIFIED_IN_MASTER_REGISTRIES; CURRENT_PAYLOAD_PATH_AND_SHA_UNRESOLVED; REVALIDATE_AT_USE"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-capabilities/capability-registry.ts",
+              "packages/titan-platform/src/ported/titan-workforce-surface-split.ts",
+              "packages/titan-platform/src/ported/titan-workforce-agent-profile.ts",
+              "packages/titan-platform/src/retriever/surface-bridge.ts",
+              "packages/titan-platform/src/ported/titan-runtime/performance/lazy-surface-loader.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Governance/ReleaseGovernanceService.php",
+              "System/Domain/ReleaseCandidate.php",
+              "System/Models/ForgeRelease.php",
+              "System/Models/ForgeReleaseCandidate.php",
+              "extension.manifest.json",
+              "bin/release_security.py",
+              "bin/verify-release-zip.py"
+            ]
+          },
+          {
+            "source_ref": "Titan Code",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "src/titan-zero/titan-zero-development-profiles.js",
+              "src/titan-zero/titan-zero-core-profile.js",
+              "source-manifest.json"
+            ]
+          }
+        ],
+        "scan_notes": "Canonical capability/surface/profile inputs and Forge release/manifest generation primitives exist, but no complete deterministic Chrome compiler was found that consumes capability + agent + mode + vertical + surface-role + release profiles and emits generated funnel extensions. Implement that compiler as projection only; generated outputs are non-canonical and must carry provenance.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 5,
+      "subgoal_order": 5,
+      "title": "Implement Chrome role/surface authentication, company isolation, capability allowlists, authority contraction, trust/autonomy projection and fail-closed governed execution through the canonical command path",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Code",
+        "Titan Forge",
+        "Titan MCP",
+        "OpenBrowser Bridge",
+        "LLM Prompt Queue"
+      ],
+      "subgoal_id": "TZ-ROADMAP-45-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS_AND_WORKFORCE_PACKS",
+          "plan_path": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical Developer Platform workforce owns Chrome implementation/certification concerns.",
+          "Integration workforce participates where host/capability/security/version boundaries cross systems.",
+          "Generated funnel extensions select canonical business workforce packs from the multi-pass plan; a funnel never becomes a new agent identity.",
+          "Surface/extension engineering agents removed as owning workforce identities for this surface goal. Developer/integration capabilities remain implementation dependencies, not business agents created/owned by the Chrome surface."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSE_READY_CANONICAL_AUTHORITY_PROJECTION_REQUIRED",
+        "last_scanned_at_utc": "2026-09-19T06:32:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Code",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe"
+          },
+          {
+            "source_ref": "Titan Forge",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f"
+          },
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "OpenBrowser Bridge",
+            "verification": "HISTORICALLY_VERIFIED_UNIQUE_DONOR; SHA_PROVEN; RECORDED_MASTER_AND_WORKSPACE_PATHS_CURRENTLY_UNRESOLVED",
+            "sha256": "cb43212adfc432ba89ab1397bf12088f73946a6d3fbd50aaaf24cc8ec77e9f5c"
+          },
+          {
+            "source_ref": "LLM Prompt Queue",
+            "verification": "STATUS_MANAGED_VERIFIED_IN_MASTER_REGISTRIES; CURRENT_PAYLOAD_PATH_AND_SHA_UNRESOLVED; REVALIDATE_AT_USE"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-capabilities/capability-registry.ts",
+              "packages/titan-platform/src/ported/titan-runtime/browser/capability-pack.ts",
+              "packages/titan-platform/src/ported/titan-runtime/authority/company-boundary.ts",
+              "packages/titan-platform/src/ported/titan-runtime/authority/authority-evaluator.ts",
+              "packages/titan-platform/src/ported/titan-runtime/authority/execution-boundary.ts",
+              "packages/titan-platform/src/ported/titan-runtime/capability-policy/capability-ownership-policy.ts",
+              "packages/titan-platform/src/ported/titan-runtime/capability-policy/sensitive-capability-policy.ts",
+              "packages/titan-platform/src/ported/titan-offline/authority-continuity.ts",
+              "packages/titan-platform/src/offline/authorization-contraction.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Code",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "src/browser/browser-capability-contract.js",
+              "src/browser/browser-policy-store.js",
+              "src/browser/browser-policy.js",
+              "src/lib/capability-registry.js",
+              "src/lib/service-worker.js"
+            ]
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/CapabilityAvailability.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Http/Middleware/AuthorizeTitanMcp.php",
+              "tests/standalone/verify_company_id_manifest_convergence.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php",
+              "tests/Feature/TitanMcpExpandedPermissionsContractTest.php",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "extension.manifest.json"
+            ]
+          }
+        ],
+        "scan_notes": "Company isolation, capability allowlists, authority evaluation/contraction, sensitive-capability policy and MCP permission gates already exist. Chrome must project these canonical decisions and route effects through the canonical command/execution boundary; it must not invent private authority, tenant, trust or domain state.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 6,
+      "subgoal_order": 6,
+      "title": "Implement browser-context capture, page-aware actions, side-panel/chat/generative-UI surfaces, notifications and contextual workflows using shared contracts with no private domain business logic",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Code",
+        "Titan Forge",
+        "Titan MCP",
+        "OpenBrowser Bridge",
+        "LLM Prompt Queue"
+      ],
+      "subgoal_id": "TZ-ROADMAP-45-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_SURFACE_BINDING",
+        "workforce_impact": "SURFACE_BINDING_EXISTING_AGENTS",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS_AND_WORKFORCE_PACKS",
+          "plan_path": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical Developer Platform workforce owns Chrome implementation/certification concerns.",
+          "Integration workforce participates where host/capability/security/version boundaries cross systems.",
+          "Generated funnel extensions select canonical business workforce packs from the multi-pass plan; a funnel never becomes a new agent identity.",
+          "Surface/extension engineering agents removed as owning workforce identities for this surface goal. Developer/integration capabilities remain implementation dependencies, not business agents created/owned by the Chrome surface.",
+          "Bind only canonical domain/workforce agents relevant to the user outcome; never create a host/surface-specific agent identity."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Code",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED_STUDIO_DONOR",
+            "internal_paths": [
+              "src/browser/browser-capability-contract.js",
+              "src/browser/browser-policy.js",
+              "src/browser/browser-policy-store.js",
+              "src/lib/browser-host-integration.js",
+              "src/sidebar/sidebar.js",
+              "src/sidebar/sidebar.html",
+              "src/titan-zero/titan-zero-context-selector.js",
+              "tests/test-content-context.js",
+              "tests/test-side-panel-wiring.js",
+              "tests/test-browser-pass1-least-privilege.js"
+            ],
+            "finding": "Browser context capture, page-aware policy, side panel, contextual capability routing and least-privilege tests already exist in Titan Code. Project canonical Titan capabilities into these browser surfaces; contextual actions must prepare governed intents and no extension-private domain logic."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/CapabilityGate.php",
+              "schemas/capabilities/tool-call.input.json",
+              "schemas/capabilities/tool-call.output.json"
+            ],
+            "finding": "Browser context capture, page-aware policy, side panel, contextual capability routing and least-privilege tests already exist in Titan Code. Project canonical Titan capabilities into these browser surfaces; contextual actions must prepare governed intents and no extension-private domain logic."
+          },
+          {
+            "source_ref": "OpenBrowser Bridge historical donor",
+            "file_id": null,
+            "library_path": "/MASTER Software/Masters/Desktop/Chrome Extensions/Verified Chrome Masters/03-OpenBrowser-Bridge-MASTER-Chrome-2026-09-02.zip",
+            "sha256": null,
+            "verification": "REGISTRY_VERIFIED_HISTORICAL_PAYLOAD_LOCATION_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Browser context capture, page-aware policy, side panel, contextual capability routing and least-privilege tests already exist in Titan Code. Project canonical Titan capabilities into these browser surfaces; contextual actions must prepare governed intents and no extension-private domain logic."
+          },
+          {
+            "source_ref": "LLM Prompt Queue historical donor",
+            "file_id": null,
+            "library_path": "/MASTER Software/Masters/Desktop/Chrome Extensions/Verified Chrome Masters/04-LLM-Prompt-Queue-MASTER-Chrome-2026-09-02.zip",
+            "sha256": null,
+            "verification": "STATUS_MANAGED_HISTORICAL_PAYLOAD_LOCATION_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Browser context capture, page-aware policy, side panel, contextual capability routing and least-privilege tests already exist in Titan Code. Project canonical Titan capabilities into these browser surfaces; contextual actions must prepare governed intents and no extension-private domain logic."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Code",
+          "Titan MCP",
+          "OpenBrowser Bridge historical donor",
+          "LLM Prompt Queue historical donor"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:07:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Browser context capture, page-aware policy, side panel, contextual capability routing and least-privilege tests already exist in Titan Code. Project canonical Titan capabilities into these browser surfaces; contextual actions must prepare governed intents and no extension-private domain logic."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 7,
+      "subgoal_order": 7,
+      "title": "Implement extension lifecycle, migrations, permissions evolution, update channels, rollback, telemetry, recovery and compatibility negotiation across full and generated funnel releases",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Code",
+        "Titan Forge",
+        "Titan MCP",
+        "OpenBrowser Bridge",
+        "LLM Prompt Queue"
+      ],
+      "subgoal_id": "TZ-ROADMAP-45-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS_AND_WORKFORCE_PACKS",
+          "plan_path": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical Developer Platform workforce owns Chrome implementation/certification concerns.",
+          "Integration workforce participates where host/capability/security/version boundaries cross systems.",
+          "Generated funnel extensions select canonical business workforce packs from the multi-pass plan; a funnel never becomes a new agent identity.",
+          "Surface/extension engineering agents removed as owning workforce identities for this surface goal. Developer/integration capabilities remain implementation dependencies, not business agents created/owned by the Chrome surface."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Code",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED_STUDIO_DONOR",
+            "internal_paths": [
+              "manifest.json",
+              "src/lib/service-worker.js",
+              "src/repository/migration-guard.js",
+              "src/repository/rollback-planner.js",
+              "tests/test-manifest-least-privilege.js",
+              "tests/test-service-worker-persistence.js",
+              "tests/test-recovery-scan-order.js",
+              "tests/test-signature-reload-reconciliation.js",
+              "tests/test-pass4-release-version.js"
+            ],
+            "finding": "Manifest/service-worker lifecycle, migrations, rollback, compatibility and release gates exist across Titan Code/MCP/Forge. Converge one extension lifecycle state machine and compatibility manifest across full/generated releases rather than separate per-extension upgrade logic."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Feature/TitanMcpClientCompatibilityContractTest.php",
+              "tests/Feature/TitanMcpExpandedPermissionsContractTest.php",
+              "System/Mcp/Tools/RecoveryTools.php"
+            ],
+            "finding": "Manifest/service-worker lifecycle, migrations, rollback, compatibility and release gates exist across Titan Code/MCP/Forge. Converge one extension lifecycle state machine and compatibility manifest across full/generated releases rather than separate per-extension upgrade logic."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Governance/ReleaseGovernanceService.php",
+              "System/Domain/ReleaseGateResult.php",
+              "bin/verify-release-zip.py",
+              "bin/release_security.py"
+            ],
+            "finding": "Manifest/service-worker lifecycle, migrations, rollback, compatibility and release gates exist across Titan Code/MCP/Forge. Converge one extension lifecycle state machine and compatibility manifest across full/generated releases rather than separate per-extension upgrade logic."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Code",
+          "Titan MCP",
+          "Titan Forge"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:07:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Manifest/service-worker lifecycle, migrations, rollback, compatibility and release gates exist across Titan Code/MCP/Forge. Converge one extension lifecycle state machine and compatibility manifest across full/generated releases rather than separate per-extension upgrade logic."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 8,
+      "subgoal_order": 8,
+      "title": "Build Chrome release generator, manifests, store metadata, signing/package seams and generated-release provenance linking every output back to source capability/mode/vertical/release profiles",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Code",
+        "Titan Forge",
+        "Titan MCP",
+        "OpenBrowser Bridge",
+        "LLM Prompt Queue"
+      ],
+      "subgoal_id": "TZ-ROADMAP-45-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS_AND_WORKFORCE_PACKS",
+          "plan_path": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical Developer Platform workforce owns Chrome implementation/certification concerns.",
+          "Integration workforce participates where host/capability/security/version boundaries cross systems.",
+          "Generated funnel extensions select canonical business workforce packs from the multi-pass plan; a funnel never becomes a new agent identity.",
+          "Surface/extension engineering agents removed as owning workforce identities for this surface goal. Developer/integration capabilities remain implementation dependencies, not business agents created/owned by the Chrome surface."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Domain/ReleaseCandidate.php",
+              "schemas/events/forge.release.candidate_created.schema.json",
+              "tests/standalone/verify_ai_generation_manifest_validation.php",
+              "tests/standalone/test_release_verifier.py"
+            ],
+            "finding": "Forge and Titan Code already provide release-candidate/manifests/source-profile primitives, but no complete Chrome release generator was found that compiles canonical capability+mode+vertical+release profiles into manifest/store metadata/signing/package outputs with provenance. Build that generator; do not hand-maintain funnel extension forks."
+          },
+          {
+            "source_ref": "Titan Code",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED_STUDIO_DONOR",
+            "internal_paths": [
+              "source-manifest.json",
+              "tools/generate-source-manifest.mjs",
+              "src/titan-zero/titan-zero-development-profiles.js",
+              "src/catalog/repository-profiles.js",
+              "src/catalog/workforce-profiles.js",
+              "manifest.json"
+            ],
+            "finding": "Forge and Titan Code already provide release-candidate/manifests/source-profile primitives, but no complete Chrome release generator was found that compiles canonical capability+mode+vertical+release profiles into manifest/store metadata/signing/package outputs with provenance. Build that generator; do not hand-maintain funnel extension forks."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "schemas/capabilities/tool-call.input.json",
+              "System/Workforce/CapabilityResolver.php"
+            ],
+            "finding": "Forge and Titan Code already provide release-candidate/manifests/source-profile primitives, but no complete Chrome release generator was found that compiles canonical capability+mode+vertical+release profiles into manifest/store metadata/signing/package outputs with provenance. Build that generator; do not hand-maintain funnel extension forks."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan Code",
+          "Titan MCP"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:07:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Forge and Titan Code already provide release-candidate/manifests/source-profile primitives, but no complete Chrome release generator was found that compiles canonical capability+mode+vertical+release profiles into manifest/store metadata/signing/package outputs with provenance. Build that generator; do not hand-maintain funnel extension forks."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 9,
+      "subgoal_order": 9,
+      "title": "Run MV3 security, CSP, permission-minimisation, performance, browser lifecycle, offline/reconnect, cross-surface parity and generated-funnel no-fork certification",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Code",
+        "Titan Forge",
+        "Titan MCP",
+        "OpenBrowser Bridge",
+        "LLM Prompt Queue"
+      ],
+      "subgoal_id": "TZ-ROADMAP-45-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS_AND_WORKFORCE_PACKS",
+          "plan_path": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical Developer Platform workforce owns Chrome implementation/certification concerns.",
+          "Integration workforce participates where host/capability/security/version boundaries cross systems.",
+          "Generated funnel extensions select canonical business workforce packs from the multi-pass plan; a funnel never becomes a new agent identity.",
+          "Surface/extension engineering agents removed as owning workforce identities for this surface goal. Developer/integration capabilities remain implementation dependencies, not business agents created/owned by the Chrome surface."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_TEST_DONORS_AVAILABLE_FINAL_CERTIFICATION_PENDING",
+        "last_scanned_at_utc": "2026-09-19T06:32:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Code",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe"
+          },
+          {
+            "source_ref": "Titan Forge",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f"
+          },
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "OpenBrowser Bridge",
+            "verification": "HISTORICALLY_VERIFIED_UNIQUE_DONOR; SHA_PROVEN; RECORDED_MASTER_AND_WORKSPACE_PATHS_CURRENTLY_UNRESOLVED",
+            "sha256": "cb43212adfc432ba89ab1397bf12088f73946a6d3fbd50aaaf24cc8ec77e9f5c"
+          },
+          {
+            "source_ref": "LLM Prompt Queue",
+            "verification": "STATUS_MANAGED_VERIFIED_IN_MASTER_REGISTRIES; CURRENT_PAYLOAD_PATH_AND_SHA_UNRESOLVED; REVALIDATE_AT_USE"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Code",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/test-manifest-least-privilege.js",
+              "tests/test-service-worker-persistence.js",
+              "tests/test-browser-pass1-least-privilege.js",
+              "tests/test-browser-intelligence-offline-regression-matrix.js",
+              "tests/test-message-shape-hardening.js",
+              "tests/test-browser-worker-real-runtime-pass1.js",
+              "tests/test-repository-redactor-browser-storage-secrets.js",
+              "manifest.json",
+              "src/lib/service-worker.js"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "bin/release_security.py",
+              "bin/verify-release-zip.py",
+              "tests/standalone/verify_security_gates.py",
+              "tests/standalone/test_release_verifier.py"
+            ]
+          },
+          {
+            "source_ref": "Titan Zero Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "internal_paths": [
+              "tests/e2e/certification/identity-authority-isolation.spec.ts",
+              "tests/e2e/certification/authority-contract.spec.ts",
+              "packages/titan-platform/src/offline/authorization-contraction.ts"
+            ]
+          }
+        ],
+        "scan_notes": "Titan Code provides strong MV3 least-privilege, service-worker persistence, message hardening, offline and browser-runtime regression tests; Forge provides release security/ZIP verification. Final SG09 certification still requires the actual converged superset and generated funnel outputs, so this is reuse-ready test infrastructure, not a certification claim.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 10,
+      "subgoal_order": 10,
+      "title": "Certify the Chrome superset and generated funnel-extension architecture end-to-end, migrate remaining valid extension roadmap items, register artifacts/deltas and retire superseded Chrome planning authorities",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Code",
+        "Titan Forge",
+        "Titan MCP",
+        "OpenBrowser Bridge",
+        "LLM Prompt Queue"
+      ],
+      "subgoal_id": "TZ-ROADMAP-45-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS_AND_WORKFORCE_PACKS",
+          "plan_path": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical Developer Platform workforce owns Chrome implementation/certification concerns.",
+          "Integration workforce participates where host/capability/security/version boundaries cross systems.",
+          "Generated funnel extensions select canonical business workforce packs from the multi-pass plan; a funnel never becomes a new agent identity.",
+          "Surface/extension engineering agents removed as owning workforce identities for this surface goal. Developer/integration capabilities remain implementation dependencies, not business agents created/owned by the Chrome surface."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_ARCHITECTURE_MAPPED_IMPLEMENTATION_AND_CERTIFICATION_PENDING",
+        "last_scanned_at_utc": "2026-09-19T06:32:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Code",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe"
+          },
+          {
+            "source_ref": "Titan Forge",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f"
+          },
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "OpenBrowser Bridge",
+            "verification": "HISTORICALLY_VERIFIED_UNIQUE_DONOR; SHA_PROVEN; RECORDED_MASTER_AND_WORKSPACE_PATHS_CURRENTLY_UNRESOLVED",
+            "sha256": "cb43212adfc432ba89ab1397bf12088f73946a6d3fbd50aaaf24cc8ec77e9f5c"
+          },
+          {
+            "source_ref": "LLM Prompt Queue",
+            "verification": "STATUS_MANAGED_VERIFIED_IN_MASTER_REGISTRIES; CURRENT_PAYLOAD_PATH_AND_SHA_UNRESOLVED; REVALIDATE_AT_USE"
+          },
+          {
+            "source_ref": "Chrome Superset WORKSPACE-STATE",
+            "verification": "LIVE_GOVERNED_WORKSPACE_STATE; SOURCE_STATE_SCAFFOLD_AWAITING_SG01_CONVERGENCE"
+          },
+          {
+            "source_ref": "Chrome Superset README",
+            "verification": "LIVE_ONE_SOURCE_AND_NO_FEATURE_FORK_RULES"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Chrome Superset WORKSPACE-STATE",
+            "file_id": "file_0000000052b481faa7d3829a28b682d6",
+            "library_path": "/Titan Zero/Chrome Extension Workspace/Titan Zero Chrome/WORKSPACE-STATE.json",
+            "verification": "LIVE_GOVERNED_WORKSPACE_STATE; SOURCE_STATE_SCAFFOLD_AWAITING_SG01_CONVERGENCE"
+          },
+          {
+            "source_ref": "Chrome Superset README",
+            "file_id": "file_0000000056ec81faa2f12fc0ca003645",
+            "library_path": "/Titan Zero/Chrome Extension Workspace/Titan Zero Chrome/README.md",
+            "verification": "LIVE_ONE_SOURCE_AND_NO_FEATURE_FORK_RULES"
+          },
+          {
+            "source_ref": "Titan Zero Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CANONICAL_PROMOTION_MANIFEST_CONFIRMED; PHYSICALLY_RETRIEVED_SHA_VERIFIED; TYPECHECK_AND_FOCUSED_TESTS_PASS",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-capabilities/capability-registry.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Code",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "manifest.json",
+              "source-manifest.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Governance/ReleaseGovernanceService.php",
+              "System/Domain/ReleaseCandidate.php",
+              "System/Models/ForgeRelease.php",
+              "System/Models/ForgeReleaseCandidate.php",
+              "extension.manifest.json",
+              "bin/release_security.py",
+              "bin/verify-release-zip.py"
+            ]
+          },
+          {
+            "source_ref": "Reference Library SOURCE-REGISTRY",
+            "file_id": "file_000000004dd881fa8b7ffe2d7aed1f95",
+            "library_path": "/Titan Zero/Agent Mesh Manager/Reference Library/SOURCE-REGISTRY/SOURCE-REGISTRY.json",
+            "verification": "LIVE_V9; OPENBROWSER_AND_LLM_QUEUE_STATUS_MANAGED_BUT_RECORDED_MASTER_PATHS_STALE"
+          }
+        ],
+        "scan_notes": "The end-to-end target architecture is mapped, but Superset Source/Generators/Build remain unimplemented scaffolds and OpenBrowser/LLM Prompt Queue require physical recovery or explicit rejection. Do not certify or retire old Chrome planning authorities until SG02–SG05 and SG09 evidence proves parity/no-fork behavior and generated releases carry source/profile provenance.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    }
+  ],
+  "affinity_tags": [
+    "chrome",
+    "extensions",
+    "mv3",
+    "funnels",
+    "modes",
+    "vertical-profiles",
+    "studio"
+  ],
+  "preferred_predecessors": [
+    "TZ-G00"
+  ],
+  "preferred_successors": [
+    "TZ-ROADMAP-20",
+    "TZ-ROADMAP-35",
+    "TZ-ROADMAP-36"
+  ],
+  "agent_tier_contract_required": true,
+  "unified_architecture_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: Builders claim one contained sub-goal.",
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 7,
+  "library_reuse_refs": [
+    "Titan Zero",
+    "Titan Code",
+    "Titan Forge",
+    "Titan MCP",
+    "OpenBrowser Bridge",
+    "LLM Prompt Queue"
+  ],
+  "reuse_first": true,
+  "agent_goal_classification": "SURFACE_ONLY_NO_SURFACE_SPECIFIC_AGENTS",
+  "agent_goal_rule": "This goal delivers an authorised surface/host projection. It MUST NOT create agents because of the surface. Reuse canonical domain agents where user journeys require them; otherwise classify technical subgoals NO_AGENT_INFRASTRUCTURE_ONLY.",
+  "workforce_goal_classification": "SURFACE_ONLY_NO_SURFACE_SPECIFIC_AGENT_IDENTITY",
+  "workforce_goal_rule": "Never create PWA, Chrome, ChatGPT, Claude, Gemini, MCP, iOS, Android, Flutter or other host-specific workforce identities. Bind existing canonical domain agents only where the surface exposes their capabilities."
+}
