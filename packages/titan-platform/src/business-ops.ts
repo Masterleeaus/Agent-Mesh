@@ -103,13 +103,13 @@ export function routeTitanBusinessOpsAgent(commandId: TitanBusinessOpsAgentComma
   return routeOperationalRole(command.description, command.domain);
 }
 
-const TITAN_BUSINESS_OPS_AGENT_PROFILES: Readonly<Record<TitanBusinessOpsAgentKey, readonly TitanBusinessOpsAgentCommandId[]>> = Object.freeze({
-  dispatch: Object.freeze(["work_orders.list", "work_orders.create"]),
-  invoicing: Object.freeze(["invoices.list", "invoices.get", "invoices.create", "invoices.transition", "invoices.send"]),
-  rebooking: Object.freeze(["booking_requests.create"]),
-  quote: Object.freeze(["estimates.list", "estimates.get", "estimates.create", "estimates.transition", "estimates.create_project"]),
-  crm: Object.freeze(["clients.list", "clients.create"]),
-});
+const TITAN_BUSINESS_OPS_AGENT_PROFILES = Object.freeze({
+  dispatch: Object.freeze(["work_orders.list", "work_orders.create"] satisfies readonly TitanBusinessOpsAgentCommandId[]),
+  invoicing: Object.freeze(["invoices.list", "invoices.get", "invoices.create", "invoices.transition", "invoices.send"] satisfies readonly TitanBusinessOpsAgentCommandId[]),
+  rebooking: Object.freeze(["booking_requests.create"] satisfies readonly TitanBusinessOpsAgentCommandId[]),
+  quote: Object.freeze(["estimates.list", "estimates.get", "estimates.create", "estimates.transition", "estimates.create_project"] satisfies readonly TitanBusinessOpsAgentCommandId[]),
+  crm: Object.freeze(["clients.list", "clients.create"] satisfies readonly TitanBusinessOpsAgentCommandId[]),
+}) satisfies Readonly<Record<TitanBusinessOpsAgentKey, readonly TitanBusinessOpsAgentCommandId[]>>;
 
 export function assertTitanBusinessOpsAgentCommandAllowed(agentKey: TitanBusinessOpsAgentKey, commandId: TitanBusinessOpsAgentCommandId): TitanBusinessOpsAgentCommand {
   const allowed = TITAN_BUSINESS_OPS_AGENT_PROFILES[agentKey];
