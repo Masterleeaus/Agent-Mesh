@@ -1,4 +1,4 @@
-package com.example.home_hub
+package io.titanzero.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 
