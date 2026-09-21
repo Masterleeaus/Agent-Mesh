@@ -1,8 +1,8 @@
 {
-  "name": "ai-fsm",
+  "name": "titan-zero",
   "private": true,
   "version": "0.1.0",
-  "description": "AI-first Field Service Management MVP",
+  "description": "Titan Zero — AI-native field service business operating system",
   "packageManager": "pnpm@9.12.0",
   "scripts": {
     "dev": "pnpm -r --parallel --filter @ai-fsm/web --filter @ai-fsm/worker dev",
