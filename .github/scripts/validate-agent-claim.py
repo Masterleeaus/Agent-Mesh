@@ -115,6 +115,27 @@ def run_json(args):
         fail(f"expected JSON from {' '.join(args)}: {exc}")
 
 
+def missing_agent_pr_structure(body: str):
+    required_sections = [
+        "## Agent Mesh PR",
+        "### Objective",
+        "### Files changed",
+        "### Verification",
+        "### Architecture / authority check",
+        "### Completion / remaining work",
+        "### Evidence / risk / rollback",
+    ]
+    required_metadata = [
+        "**Linked issue:**",
+        "**Subgoal ID:**",
+        "**Goal ID:**",
+        "**Claim branch:**",
+    ]
+    missing = [section for section in required_sections if section not in body]
+    missing += [field for field in required_metadata if field not in body]
+    return missing
+
+
 def validate_pull_request():
     manifest_by_id = validate_roadmap_integrity()
 
@@ -158,33 +179,11 @@ def validate_pull_request():
     if sid not in title and sid not in body:
         fail(f"PR must name its claimed subgoal ID {sid}")
 
-    required_sections = [
-        "## Agent Mesh PR",
-        "### Objective",
-        "### Files changed",
-        "### Verification",
-        "### Architecture / authority check",
-        "### Completion / remaining work",
-        "### Evidence / risk / rollback",
-    ]
-    missing_sections = [section for section in required_sections if section not in body]
-    if missing_sections:
+    missing_structure = missing_agent_pr_structure(body)
+    if missing_structure:
         fail(
-            "agent PR body is missing required Agent Mesh evidence section(s): "
-            + ", ".join(missing_sections)
-        )
-
-    required_metadata = [
-        "**Linked issue:**",
-        "**Subgoal ID:**",
-        "**Goal ID:**",
-        "**Claim branch:**",
-    ]
-    missing_metadata = [field for field in required_metadata if field not in body]
-    if missing_metadata:
-        fail(
-            "agent PR body is missing required Agent Mesh metadata: "
-            + ", ".join(missing_metadata)
+            "agent PR body is missing required Agent Mesh evidence structure: "
+            + ", ".join(missing_structure)
         )
 
     issue_match = re.search(
@@ -244,6 +243,29 @@ def main():
 
     if args.self_test:
         validate_roadmap_integrity()
+        valid_body = """## Agent Mesh PR
+**Linked issue:** Closes #1
+**Subgoal ID:** TZ-ROADMAP-01-SG-01
+**Goal ID:** TZ-ROADMAP-01
+**Claim branch:** agent/TZ-ROADMAP-01-SG-01
+### Objective
+x
+### Files changed
+x
+### Verification
+x
+### Architecture / authority check
+x
+### Completion / remaining work
+x
+### Evidence / risk / rollback
+x
+"""
+        assert missing_agent_pr_structure(valid_body) == []
+        assert "### Verification" in missing_agent_pr_structure(
+            valid_body.replace("### Verification", "### Checks")
+        )
+        print("Agent PR evidence-structure self-test OK")
         return
     validate_pull_request()
 
