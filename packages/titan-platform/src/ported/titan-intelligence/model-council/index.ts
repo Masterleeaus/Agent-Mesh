@@ -12,7 +12,7 @@ export function buildModelCouncilRecommendation(input:{company_id:string;votes:r
  const groups=new Map<string,{count:number;confidence:number}>();
  for(const v of votes){const g=groups.get(v.recommendation)??{count:0,confidence:0};g.count++;g.confidence+=v.confidence;groups.set(v.recommendation,g);}
  const consensus=[...groups.entries()].sort((a,b)=>b[1].count-a[1].count||b[1].confidence-a[1].confidence||a[0].localeCompare(b[0]))[0]?.[0]??null;
- return Object.freeze({company_id,votes:Object.freeze(votes),consensus,authority_neutral:true as const,execution_authority:false as const,recommendation_is_authority:false as const});
+ return Object.freeze({company_id,votes:Object.freeze(votes),consensus,authority_neutral:true as const,execution_authority:false as const,recommendation_is_authority:false as const,consensus_is_authority:false as const,authority_conferred_by_activation:false as const});
 }
 
 export const MODEL_COUNCIL_POLICY=Object.freeze({tenant_boundary:"company_id" as const,deterministic:true as const,consensus_is_authority:false as const,execution_authority:false as const});
