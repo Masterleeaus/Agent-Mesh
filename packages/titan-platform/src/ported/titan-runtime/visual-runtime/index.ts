@@ -81,7 +81,7 @@ function assertCompanyBoundary(request: VisualRequest, environment: VisualEnviro
 
 export function createVisualRuntimeEnvelope(input: Record<string, unknown>) {
   const envelope = freezeEnvelope(input);
-  return Object.freeze({ ...envelope, runtime_id: RUNTIME_ID, runtime_kind: RUNTIME_KIND, authority_conferred_by_activation: false });
+  return Object.freeze({ ...envelope, runtime_id: RUNTIME_ID, runtime_kind: RUNTIME_KIND, authority_neutral: true, execution_authority: false, authority_conferred_by_activation: false });
 }
 
 export function negotiateVisualCapabilities(
