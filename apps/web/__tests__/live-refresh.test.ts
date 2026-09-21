@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { isEditing, IDLE_MS } from "@/components/LiveRefresh";
+import {
+  IDLE_MS,
+  OPS_REFRESH_CHANNEL,
+  OPS_REFRESH_EVENT,
+  OPS_REFRESH_STORAGE_KEY,
+  REFRESH_COALESCE_MS,
+  isEditing,
+  isOperationalRefreshSignal,
+} from "@/components/LiveRefresh";
 
 // Minimal Element stand-in — isEditing only reads tagName, isContentEditable, getAttribute.
 function el(
@@ -38,5 +46,23 @@ describe("isEditing", () => {
     expect(isEditing(null, RECENT)).toBe(false);
     expect(isEditing(el("BUTTON"), RECENT)).toBe(false);
     expect(isEditing(el("DIV"), RECENT)).toBe(false);
+  });
+});
+
+describe("operational refresh contract", () => {
+  it("accepts only the bounded cross-tab invalidation envelope", () => {
+    expect(isOperationalRefreshSignal({ type: "operational-refresh", source: "tab:a", at: 1 })).toBe(true);
+    expect(isOperationalRefreshSignal({ type: "operational-refresh", source: "", at: 1 })).toBe(false);
+    expect(isOperationalRefreshSignal({ type: "execute", source: "tab:a", at: 1 })).toBe(false);
+    expect(isOperationalRefreshSignal({ type: "operational-refresh", source: "tab:a", at: "1" })).toBe(false);
+    expect(isOperationalRefreshSignal(null)).toBe(false);
+  });
+
+  it("uses stable names and a bounded coalesce window", () => {
+    expect(OPS_REFRESH_EVENT).toBe("ops:refresh");
+    expect(OPS_REFRESH_CHANNEL).toContain("operational-refresh");
+    expect(OPS_REFRESH_STORAGE_KEY).toContain("operational-refresh");
+    expect(REFRESH_COALESCE_MS).toBeGreaterThan(0);
+    expect(REFRESH_COALESCE_MS).toBeLessThan(IDLE_MS);
   });
 });
