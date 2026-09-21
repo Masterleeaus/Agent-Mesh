@@ -1,0 +1,25 @@
+{
+  "schema": "titan-mobile-sg08-checkpoint/v1",
+  "subgoal_id": "TZ-ROADMAP-47-SG-08",
+  "pass": 4,
+  "status": "STATIC_CONTRACT_COMPLETE",
+  "parent": "Titan-Mobile-MVP-SG08-Pass03.zip",
+  "verified": [
+    "company actor device isolation",
+    "canonical workforce/capability provenance",
+    "evidence and Signal provenance",
+    "idempotency uniqueness",
+    "deterministic replay ordering",
+    "revision/conflict fail-closed behavior",
+    "offline authority contraction",
+    "stale approval/authority rejection",
+    "authenticated reconnect gating",
+    "server authority revalidation",
+    "background consequential execution denied"
+  ],
+  "runtime_certification": {
+    "complete": false,
+    "reason": "Flutter/device/backend runtime unavailable"
+  },
+  "subgoal_next": "claim next eligible Goal 47 subgoal"
+}

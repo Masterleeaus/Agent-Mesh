@@ -1,0 +1,8 @@
+{
+  "pass":58,
+  "status":"IMPLEMENTED_STATIC_VALIDATION",
+  "scope":"canonical workforce + Builder + Interface Runtime + Visual Runtime generated UI convergence",
+  "invariants":["company_id only","surfaces zero/go/hub only","generated UI is authority neutral","business mutation requires Command Bus","home generated workforce cards capped at three","canonical agent_id preserved when workforce provenance is present"],
+  "runtime_execution":{"flutter_test":false,"reason":"Flutter SDK unavailable in execution environment"},
+  "next_pass":59
+}

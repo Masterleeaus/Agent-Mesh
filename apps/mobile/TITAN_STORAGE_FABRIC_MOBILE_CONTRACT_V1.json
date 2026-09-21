@@ -1,0 +1,68 @@
+{
+  "schema": "titan-mobile-storage-fabric/v1",
+  "pass": 56,
+  "tenant_boundary": "company_id",
+  "data_class_kinds": [
+    "transactional",
+    "object",
+    "document",
+    "projection"
+  ],
+  "roles": [
+    "canonical",
+    "replica",
+    "authorisedProjection",
+    "cache",
+    "evidence",
+    "backup",
+    "archive"
+  ],
+  "mobile_direct_roles": [
+    "authorisedProjection",
+    "cache",
+    "evidence",
+    "backup",
+    "archive"
+  ],
+  "mobile_forbidden_direct_roles": [
+    "canonical",
+    "replica"
+  ],
+  "providers": {
+    "device_direct": [
+      "deviceEncrypted",
+      "localFilesystem"
+    ],
+    "delegated_https": [
+      "nas",
+      "s3",
+      "s3Compatible",
+      "minio",
+      "googleDrive",
+      "dropbox",
+      "oneDrive",
+      "sharePoint",
+      "customerVps"
+    ],
+    "status_only_database": [
+      "postgres",
+      "mysql",
+      "sqlite",
+      "awsRds"
+    ]
+  },
+  "transfer_security": {
+    "raw_provider_credentials_on_mobile": false,
+    "core_ticket_required": true,
+    "endpoint_host_allowlist": true,
+    "https_required": true,
+    "sha256_receipts": true,
+    "authority_effect": "none"
+  },
+  "recovery": {
+    "mobile_canonical_promotion": false,
+    "encrypted_stage": true,
+    "core_governed_apply": true
+  },
+  "cloud_fallback": "none"
+}

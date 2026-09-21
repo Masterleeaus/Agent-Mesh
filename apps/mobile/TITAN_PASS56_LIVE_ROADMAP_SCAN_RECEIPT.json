@@ -1,0 +1,19 @@
+{
+  "schema": "titan-mobile-pass56-storage-roadmap-scan/v1",
+  "pass": 56,
+  "scanned_at_context": "2026-09-20",
+  "scope": [
+    "Goal50 Storage Fabric topology/provider/residency/recovery work",
+    "Goal50 device projection/storage integration",
+    "Goal51 device intelligence remains separate"
+  ],
+  "implementation_rule": "MOBILE_EXECUTION_AND_PROJECTION_ONLY; TYPESCRIPT_CORE_OWNS_CANONICAL_TOPOLOGY_AND_AUTHORITY",
+  "hard_rules": [
+    "company_id is the only tenant boundary",
+    "exactly one canonical endpoint per routed data class",
+    "mobile never directly executes canonical/replica database operations",
+    "Drive/Dropbox/OneDrive/SharePoint are not transactional CRM databases",
+    "restore is staged and encrypted, never auto-promoted",
+    "no silent Titan-managed storage fallback"
+  ]
+}

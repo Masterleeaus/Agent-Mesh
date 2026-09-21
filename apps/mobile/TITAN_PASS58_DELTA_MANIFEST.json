@@ -1,0 +1,26 @@
+{
+  "pass": 58,
+  "parent": "Titan-Mobile-MVP-Pass57.zip",
+  "added": [
+    "TITAN_PASS58_GENERATED_UI_CONVERGENCE.json",
+    "lib/titan/core_bridge/generated_ui_runtime_bridge.dart",
+    "lib/titan/models/generated_ui_envelope.dart",
+    "lib/titan/validation/generated_ui_convergence_contract.dart",
+    "test/generated_ui_convergence_test.dart"
+  ],
+  "modified": [
+    "TITAN_MOBILE_CORE_EDGE_MULTI_PASS_PLAN_P51_P60.md"
+  ],
+  "removed": [],
+  "counts": {
+    "added": 5,
+    "modified": 1,
+    "removed": 0,
+    "total_changed": 6
+  },
+  "validation": {
+    "zip_integrity": "PASS",
+    "flutter_runtime_available": false,
+    "note": "static validation only; Flutter SDK unavailable"
+  }
+}

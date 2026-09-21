@@ -1,0 +1,21 @@
+{
+  "schema": "titan-mobile-sg08-pass-manifest/v1",
+  "subgoal_id": "TZ-ROADMAP-47-SG-08",
+  "pass": 3,
+  "status": "IMPLEMENTED_STATIC_VALIDATION",
+  "parent": "Titan-Mobile-MVP-SG08-Pass02.zip",
+  "scope": "Lifecycle/background reconnect convergence",
+  "invariants": [
+    "company_id actor_id device_id scoped",
+    "authenticated reachability required before mutation replay",
+    "server authority revalidation retained",
+    "background refresh cannot execute consequential mutations",
+    "unauthenticated reconnect defers replay",
+    "Signals reconcile only after authenticated reachability"
+  ],
+  "runtime_execution": {
+    "flutter_test": false,
+    "reason": "Flutter SDK unavailable"
+  },
+  "next_pass": 4
+}

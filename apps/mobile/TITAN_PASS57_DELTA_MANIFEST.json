@@ -1,0 +1,9 @@
+{
+  "pass": 57,
+  "title": "Canonical Intelligence Router privacy/egress/cost-sovereignty convergence",
+  "parent": "Titan-Mobile-MVP-Pass56.zip",
+  "roadmap_links": ["TZ-ROADMAP-47", "TZ-ROADMAP-51"],
+  "invariants": ["company_id_only", "no_silent_cloud_fallback", "explicit_titan_metered_approval", "provider_identity_not_authority", "offline_does_not_elevate_authority"],
+  "next_pass": 58,
+  "next_title": "workforce + Builder + Interface Runtime + Visual Runtime generated UI convergence"
+}
