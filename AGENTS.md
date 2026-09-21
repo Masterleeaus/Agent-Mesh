@@ -64,3 +64,51 @@ If multiple options exist, choose the one with:
 3. Commands executed
 4. Gate results
 5. Risks and follow-up tasks
+
+
+## Mandatory GitHub Issue Claim Protocol
+
+All agents MUST claim an issue before doing implementation work. This is a hard execution gate, not an optional coordination convention.
+
+### Before starting any issue
+
+1. Fetch the issue and its latest comments immediately before claiming it.
+2. Look for an active claim marker in the issue comments using this exact machine-readable form:
+   `<!-- TITAN_AGENT_CLAIM agent="<agent-id>" issue="<number>" status="active" -->`
+3. If another agent has an active claim, STOP. Do not inspect/modify implementation files for that issue. Select another eligible unclaimed issue.
+4. If no active claim exists, post a claim comment containing:
+   - the exact marker above,
+   - agent/workspace identifier,
+   - intended scope,
+   - `CLAIMED` in visible text.
+5. Immediately re-fetch the issue comments after posting the claim.
+6. The earliest still-active claim wins. If another active claim was posted before yours, post a release marker for your claim and select another issue.
+7. Only after the post-claim re-check confirms ownership may implementation begin.
+
+### While working
+
+- One agent may hold only one implementation issue claim at a time unless an explicit manager issue says otherwise.
+- Never work an issue merely because it is unassigned. GitHub assignees are supplemental; the claim marker is the Agent Mesh lock because multiple agents can share one GitHub identity.
+- Agents must not edit, replace, or delete another agent's active claim.
+- If work is intentionally handed off, the current claimant releases it before the next agent claims it.
+- Parent/meta issues must not be claimed when claimable child implementation issues exist.
+
+### Release / completion
+
+Before moving to another issue, post one of:
+
+`<!-- TITAN_AGENT_CLAIM agent="<agent-id>" issue="<number>" status="completed" -->`
+
+or
+
+`<!-- TITAN_AGENT_CLAIM agent="<agent-id>" issue="<number>" status="released" -->`
+
+Include the PR/commit/evidence when completed. A completed or released marker by the same claimant ends that claimant's active lock.
+
+### Stale claims
+
+Do not silently steal a claim. If a claim appears abandoned, an agent must record why it is considered stale and explicitly release/take over the claim in the issue before changing implementation. Prefer manager/supervisor resolution when available.
+
+### Archive donor issues
+
+Archive donor work must use the dedicated donor issues (for example #720-#724) rather than claiming parent #66. Each donor issue is independently claimable.
