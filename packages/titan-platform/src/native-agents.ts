@@ -346,11 +346,11 @@ export type TitanBusinessOpsAgentProfile = Readonly<{
 }>;
 
 const TITAN_BUSINESS_OPS_AGENT_PROFILES: Readonly<Record<TitanBusinessOpsAgentKey, TitanBusinessOpsAgentProfile>> = Object.freeze({
-  dispatch: Object.freeze({ agentKey: "dispatch", commandIds: Object.freeze(["work_orders.list", "work_orders.create"]), executionPermitted: false, grantsAuthority: false }),
-  invoicing: Object.freeze({ agentKey: "invoicing", commandIds: Object.freeze(["invoices.list", "invoices.get", "invoices.create", "invoices.transition", "invoices.send"]), executionPermitted: false, grantsAuthority: false }),
-  rebooking: Object.freeze({ agentKey: "rebooking", commandIds: Object.freeze(["booking_requests.create"]), executionPermitted: false, grantsAuthority: false }),
-  quote: Object.freeze({ agentKey: "quote", commandIds: Object.freeze(["estimates.list", "estimates.get", "estimates.create", "estimates.transition", "estimates.create_project"]), executionPermitted: false, grantsAuthority: false }),
-  crm: Object.freeze({ agentKey: "crm", commandIds: Object.freeze(["clients.list", "clients.create"]), executionPermitted: false, grantsAuthority: false }),
+  dispatch: Object.freeze({ agentKey: "dispatch", commandIds: Object.freeze(["work_orders.list", "work_orders.create"] satisfies readonly TitanBusinessOpsAgentCommandId[]), executionPermitted: false, grantsAuthority: false }),
+  invoicing: Object.freeze({ agentKey: "invoicing", commandIds: Object.freeze(["invoices.list", "invoices.get", "invoices.create", "invoices.transition", "invoices.send"] satisfies readonly TitanBusinessOpsAgentCommandId[]), executionPermitted: false, grantsAuthority: false }),
+  rebooking: Object.freeze({ agentKey: "rebooking", commandIds: Object.freeze(["booking_requests.create"] satisfies readonly TitanBusinessOpsAgentCommandId[]), executionPermitted: false, grantsAuthority: false }),
+  quote: Object.freeze({ agentKey: "quote", commandIds: Object.freeze(["estimates.list", "estimates.get", "estimates.create", "estimates.transition", "estimates.create_project"] satisfies readonly TitanBusinessOpsAgentCommandId[]), executionPermitted: false, grantsAuthority: false }),
+  crm: Object.freeze({ agentKey: "crm", commandIds: Object.freeze(["clients.list", "clients.create"] satisfies readonly TitanBusinessOpsAgentCommandId[]), executionPermitted: false, grantsAuthority: false }),
 });
 
 export function getTitanBusinessOpsAgentProfile(agentKey: TitanBusinessOpsAgentKey): TitanBusinessOpsAgentProfile {
