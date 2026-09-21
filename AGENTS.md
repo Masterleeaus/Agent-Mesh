@@ -126,3 +126,29 @@ The helper:
 - writes the required `Closes #<issue>`, subgoal ID and claim metadata into the PR body.
 
 Builders must still provide truthful targeted verification and completion evidence. The helper standardizes the handoff; it does not invent proof.
+
+
+## Automated PR handoff
+
+Once a claim branch contains verified commits, create or update its canonical PR with:
+
+```bash
+python3 .github/scripts/open-agent-pr.py \
+  --objective "Describe the completed pass" \
+  --verification "pnpm <targeted-check> — pass" \
+  --completion "State completion basis or remaining work" \
+  --risk "State rollback / compatibility / privacy / cost impact"
+```
+
+The helper:
+
+- only accepts the exact branch `agent/<subgoal-id>`;
+- resolves the matching open roadmap issue automatically;
+- refuses an empty branch with zero commits ahead of `main`;
+- calculates the current merge base and changed files;
+- preserves the original claim base SHA when present in the issue claim comment;
+- creates or updates the one canonical PR for the claim branch;
+- inserts `Closes #<issue>` and all Agent Mesh evidence fields;
+- posts the created PR back to the roadmap issue.
+
+Do not hand-author a second competing PR for the same claim branch.
