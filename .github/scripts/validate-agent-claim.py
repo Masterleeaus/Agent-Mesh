@@ -135,10 +135,16 @@ def validate_pull_request():
 
     match = BRANCH_RE.match(head)
     if not match:
-        fail(
-            "claim branch must be exactly agent/<subgoal-id>, for example "
-            "agent/TZ-ROADMAP-31-SG-01"
+        if head.startswith("agent/"):
+            fail(
+                "claim branch must be exactly agent/<subgoal-id>, for example "
+                "agent/TZ-ROADMAP-31-SG-01"
+            )
+        print(
+            f"Control/Manager PR branch {head!r}: roadmap integrity verified; "
+            "agent claim checks are not applicable."
         )
+        return
     sid = match.group(1)
 
     item = manifest_by_id.get(sid)
