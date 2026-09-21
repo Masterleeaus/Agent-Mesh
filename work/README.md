@@ -298,3 +298,29 @@ Within each state, P0 work is shown before P1/P2/P3, then lower goal/subgoal IDs
 The workflow runs after readiness/audit updates, on relevant PR changes, hourly, and on demand. Its GitHub Actions summary is the Manager's live queue view.
 
 A READY result is not permission to auto-merge. Manager remains the integration authority.
+
+
+## Guarded Manager merge execution
+
+The review queue and readiness status are advisory inputs to a **manual Manager decision**. Integration is performed through:
+
+```text
+.github/scripts/manager-merge.py
+.github/workflows/manager-merge.yml
+```
+
+Merge prerequisites are re-checked immediately before GitHub receives the merge request:
+
+- PR is open and not draft;
+- base is canonical `main`;
+- head is exactly `agent/<subgoal-id>`;
+- PR and linked open issue own the same subgoal;
+- no merge conflict is present;
+- `Agent Mesh / Manager Review Readiness` is success on the exact head;
+- latest exact-head Titan Zero CI is success;
+- latest exact-head Agent Claim Gate is success;
+- supplied `--expected-head-sha` equals the current PR head.
+
+Normal Manager operation should pin the reviewed SHA. The helper's `--allow-current-head` escape hatch exists only for deliberate interactive use and must not be used by the GitHub workflow.
+
+Default merge method is **squash**. Successful merge then hands control to the existing post-merge finalizer and safe claim cleanup. There is no automatic merge path.
