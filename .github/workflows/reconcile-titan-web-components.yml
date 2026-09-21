@@ -1,0 +1,35 @@
+name: Reconcile Titan Web Components
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reconcile-titan-web-components.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resolve verified component conflicts
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Keep Dovetails ScheduleFields: it has newer explicit business timezone handling.
+          git rm -f titan/apps/web/components/ui/ScheduleFields.tsx
+
+          # Promote Titan AppShell: it contains later Titan ConnectionStatus and GlobalSearch integration.
+          cp titan/apps/web/components/AppShell.tsx apps/web/components/AppShell.tsx
+          git add apps/web/components/AppShell.tsx
+          git rm -f titan/apps/web/components/AppShell.tsx
+
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Reconcile Titan web shell and scheduling component"
+          git push
