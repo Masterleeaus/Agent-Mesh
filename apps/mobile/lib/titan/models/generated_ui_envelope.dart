@@ -31,7 +31,18 @@ class TitanGeneratedUiEnvelope {
     builderArtifactId:(json['builder_artifact_id']??'').toString(),
     interfaceRuntimeId:(json['interface_runtime_id']??'').toString(),
     visualRuntimeId:(json['visual_runtime_id']??'').toString(),
-    items:((json['items'] as List?)??const []).whereType<Map>().map((v)=>TitanGenerativeItem.fromJson(Map<String,dynamic>.from(v))).toList(growable:false),
+    items:_parseItems(json['items']),
     governanceEvidence:Map<String,dynamic>.from((json['governance_evidence'] as Map?)??const {}),
   );
+  static List<TitanGenerativeItem> _parseItems(dynamic rawItems) {
+    if (rawItems is! List) {
+      throw FormatException('generated UI items list required');
+    }
+    return rawItems.map((item) {
+      if (item is! Map) {
+        throw FormatException('generated UI item object required');
+      }
+      return TitanGenerativeItem.fromJson(Map<String,dynamic>.from(item));
+    }).toList(growable:false);
+  }
 }
