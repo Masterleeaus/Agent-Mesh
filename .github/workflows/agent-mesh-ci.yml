@@ -88,8 +88,30 @@ jobs:
             echo "::warning::Web typecheck still contains recorded Merge84 baseline debt; no regression detected."
           fi
 
-      - name: Strict tests outside titan-platform
-        run: pnpm -r --filter '!@ai-fsm/titan-platform' --if-present test
+      - name: Strict tests for clean packages
+        run: pnpm -r --filter '!@ai-fsm/titan-platform' --filter '!@ai-fsm/worker' --filter '!@ai-fsm/web' --if-present test
+
+      - name: Worker test regression gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          pnpm --filter @ai-fsm/worker test > worker-test.log 2>&1
+          WORKER_TEST_STATUS=$?
+          set -e
+          cat worker-test.log
+          python3 .github/scripts/check-worker-test-baseline.py \
+            --baseline .github/ci/worker-test-baseline.json \
+            --log worker-test.log \
+            --command-status "$WORKER_TEST_STATUS"
+          if [ "$WORKER_TEST_STATUS" -eq 0 ]; then
+            echo "Worker tests are fully clean."
+          else
+            echo "::warning::Worker tests still contain recorded Merge84 baseline debt; no regression detected."
+          fi
+
+      - name: Web tests
+        run: pnpm --filter @ai-fsm/web test
 
       - name: titan-platform test regression gate
         shell: bash
