@@ -323,9 +323,9 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
           <div style={{ position: "relative" }}>
             <Link href={homeHref as Route} className="p7-sidebar-brand">
               <div className="p7-brand-logo" aria-hidden="true">
-                <span className="p7-brand-logo-text">DV</span>
+                <span className="p7-brand-logo-text">T0</span>
               </div>
-              <span className="p7-brand-name">Dovetails</span>
+              <span className="p7-brand-name">Titan Zero</span>
             </Link>
             {isAdminOrOwner && !collapsed && (
               <div style={{ position: "absolute", top: 10, right: 40, zIndex: 2 }}>

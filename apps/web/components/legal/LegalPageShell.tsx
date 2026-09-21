@@ -35,7 +35,7 @@ export function LegalPageShell({
       >
         <div style={{ marginBottom: 28 }}>
           <Link
-            href="/booking"
+            href="/"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -49,7 +49,7 @@ export function LegalPageShell({
                 width: 36,
                 height: 36,
                 borderRadius: 9,
-                background: "linear-gradient(135deg, #c1540f 0%, #9a3f0a 100%)",
+                background: "#f97316",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -58,13 +58,13 @@ export function LegalPageShell({
                 fontSize: 14,
               }}
             >
-              DV
+              T0
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: 16, color: "#111827", lineHeight: 1.1 }}>
-                Dovetails
+                Titan Zero
               </div>
-              <div style={{ fontSize: 11, color: "#6b7280" }}>Services LLC</div>
+              <div style={{ fontSize: 11, color: "#6b7280" }}>Advanced Intelligence</div>
             </div>
           </Link>
           <h1
@@ -124,9 +124,6 @@ export function LegalPageShell({
             </Link>
             <Link href={"/terms" as Route} style={{ color: "#2563eb" }}>
               Terms of Service
-            </Link>
-            <Link href="/booking" style={{ color: "#2563eb" }}>
-              Request service
             </Link>
           </p>
         </footer>

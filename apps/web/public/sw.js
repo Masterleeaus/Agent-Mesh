@@ -1,4 +1,4 @@
-// Minimal service worker for Dovetails FSM.
+// Minimal service worker for Titan Zero.
 //
 // Scope: installability only. Chromium gates the install prompt on the presence
 // of a service worker with a fetch handler; this provides exactly that and
@@ -30,9 +30,9 @@ self.addEventListener("push", (event) => {
   try {
     msg = event.data ? event.data.json() : {};
   } catch {
-    msg = { title: "Dovetails", body: event.data ? event.data.text() : "" };
+    msg = { title: "Titan Zero", body: event.data ? event.data.text() : "" };
   }
-  const title = msg.title || "Dovetails";
+  const title = msg.title || "Titan Zero";
   event.waitUntil(
     self.registration.showNotification(title, {
       body: msg.body || "",
