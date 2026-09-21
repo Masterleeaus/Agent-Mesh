@@ -147,10 +147,12 @@ function buildIndex(entries){
 }
 
 export function buildCapabilityRegistry(records,{company_id=null,services=[],certifiedWorkflows=[],nativeWorkers=[],nativeEntries=[]}={}){
+  const canonicalCompanyId=company_id==null||company_id===''?null:String(company_id).trim();
+  if(company_id!=null && company_id!=='' && !canonicalCompanyId) throw new TypeError('company_id-required');
   const entries=[];
   const modules=[];
   for(const record of records||[]){
-    if(!record?.manifest||!record.enabled||ACTIVE_EXCLUSIONS.has(record.status)||!companyMatches(record.manifest,company_id)) continue;
+    if(!record?.manifest||!record.enabled||ACTIVE_EXCLUSIONS.has(record.status)||!companyMatches(record.manifest,canonicalCompanyId)) continue;
     const manifest=record.manifest;
     modules.push({
       module_id:manifest.id,module_name:manifest.name,module_version:manifest.version,company_id:manifest.scope?.company_id||null,
@@ -167,7 +169,7 @@ export function buildCapabilityRegistry(records,{company_id=null,services=[],cer
   entries.sort((a,b)=>a.registry_id.localeCompare(b.registry_id));
   return {
     version:REGISTRY_VERSION,
-    company_id:company_id==null||company_id===''?null:String(company_id),
+    company_id:canonicalCompanyId,
     authority:{activation_confers_authority:false,rule:'identity_or_registration_never_grants_execution_authority'},
     modules:modules.sort((a,b)=>a.module_id.localeCompare(b.module_id)),
     entries,index:buildIndex(entries),
