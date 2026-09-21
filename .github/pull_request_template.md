@@ -3,6 +3,10 @@
 **Linked issue:** Closes #
 **Subgoal ID:** `TZ-...`
 **Goal ID:** `TZ-...`
+**Claim branch:** `agent/TZ-...`
+**Base main SHA:** `...`
+
+> The claim branch must be exactly `agent/<subgoal-id>`. Do not add worker names, suffixes or timestamps.
 
 ### Objective
 
@@ -22,6 +26,7 @@ Commands/checks run:
 
 Results:
 
+- [ ] Agent Claim Gate passes
 - [ ] Targeted tests pass
 - [ ] Relevant type/build/lint checks pass or gaps are explicitly documented
 - [ ] No unexplained regression introduced
