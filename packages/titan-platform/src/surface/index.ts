@@ -1,5 +1,15 @@
 export const TITAN_SURFACE_SCHEMA_VERSION = "1.0" as const;
-export const TITAN_SURFACES = Object.freeze(["go", "hub", "command"] as const);
+export const TITAN_SURFACES = Object.freeze(["zero", "go", "hub"] as const);
+export const TITAN_SURFACE_ALIASES = Object.freeze({
+  command: "zero",
+  owner: "zero",
+  manager: "zero",
+  business: "zero",
+  bos: "zero",
+  field: "go",
+  worker: "go",
+  customer: "hub",
+} as const);
 
 export type TitanSurface = (typeof TITAN_SURFACES)[number];
 export type SurfaceReceiptStatus = "accepted" | "rejected" | "completed" | "failed";
@@ -144,10 +154,15 @@ function iso(value: unknown, label: string): string {
   return candidate;
 }
 
+export function normalizeTitanSurface(value: unknown): TitanSurface {
+  const candidate = text(value, "surface");
+  const canonical = (TITAN_SURFACE_ALIASES as Readonly<Record<string, TitanSurface>>)[candidate] ?? candidate;
+  if (!TITAN_SURFACES.includes(canonical as TitanSurface)) throw new TypeError("canonical-surface-required");
+  return canonical as TitanSurface;
+}
+
 function surface(value: unknown): TitanSurface {
-  const candidate = text(value, "surface") as TitanSurface;
-  if (!TITAN_SURFACES.includes(candidate)) throw new TypeError("canonical-surface-required");
-  return candidate;
+  return normalizeTitanSurface(value);
 }
 
 function deepFreezeRecord(value: Readonly<Record<string, unknown>> | undefined): Readonly<Record<string, unknown>> {
