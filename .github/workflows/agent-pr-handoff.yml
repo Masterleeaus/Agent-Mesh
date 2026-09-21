@@ -34,13 +34,14 @@ jobs:
             echo "Claim branch has no commits ahead of main; no PR handoff needed yet."
           fi
 
-      - name: Create or refresh canonical agent PR
+      - name: Create canonical draft agent PR
         if: steps.work.outputs.ahead != '0'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 .github/scripts/open-agent-pr.py \
             --branch "$GITHUB_REF_NAME" \
+            --draft \
             --verification "Automatic Agent PR handoff created from committed branch state." \
             --completion "Manager must review current evidence and either merge verified completion or keep only explicit remaining work." \
             --risk "Rollback is available by reverting the merged PR; no automatic merge is performed by this workflow."
