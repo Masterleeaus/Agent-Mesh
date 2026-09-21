@@ -108,7 +108,7 @@ export function buildBookingJobCommercialOriginEvidence(input: Readonly<Record<s
   return Object.freeze({
     schema: REVENUE_BOOKING_JOB_ORIGIN_EVIDENCE_SCHEMA,
     company_id: companyId,
-    revenue_journey_id: lifecycle.revenue_journey_id,
+    revenue_journey_id: String(lifecycle.revenue_journey_id),
     correlation_id: clean(lifecycle.correlation?.correlation_id),
     commercial_origin: Object.freeze({ ...origin, source_of_truth: true as const }),
     booking: Object.freeze({
