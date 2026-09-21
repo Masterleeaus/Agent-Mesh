@@ -36,8 +36,8 @@ def self_test():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--branch", required=True)
-    parser.add_argument("--reason", required=True)
+    parser.add_argument("--branch")
+    parser.add_argument("--reason")
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
 
