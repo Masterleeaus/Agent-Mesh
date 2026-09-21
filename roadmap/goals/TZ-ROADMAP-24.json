@@ -1,0 +1,1735 @@
+{
+  "goal_id": "TZ-ROADMAP-24",
+  "priority": "P1",
+  "title": "Customer Care, Retention & Rebooking Agents",
+  "objective": "Build proactive customer care, service recovery, rebooking and retention across all tiers.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define the canonical Customer Care, Retention & Rebooking workforce, pain boundaries and cross-domain collaboration without duplicating Customer Access, Operations, Finance or Marketing agents",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-24-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK",
+          "TZAG-OPS-EXCEPTION-RESOLUTION"
+        ],
+        "created_agent_ids": [
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH"
+        ],
+        "modified_agent_ids": [
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-OPS-EXCEPTION-RESOLUTION"
+        ],
+        "canonical_agent_names": [
+          "Customer Lifecycle Experience Orchestrator",
+          "Service Experience Manager",
+          "Callback Prevention Specialist",
+          "Customer Expectation Management Specialist",
+          "Rebooking & Churn Prevention Specialist",
+          "Complaint & Service Recovery Specialist",
+          "Callback Recovery Worker",
+          "Customer Expectation Update Worker",
+          "Rebooking Execution Worker",
+          "Retention Action Worker",
+          "Complaint Intake & Evidence Worker",
+          "Service Recovery Execution Worker",
+          "Exception Resolution Specialist"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+            "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+            "TZAG-CX-CALLBACK-PREVENTION",
+            "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+            "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+            "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+            "TZAG-CX-CALLBACK-RECOVERY-WRK",
+            "TZAG-CX-EXPECTATION-UPDATE-WRK",
+            "TZAG-CX-REBOOKING-EXECUTION-WRK",
+            "TZAG-CX-RETENTION-ACTION-WRK",
+            "TZAG-CX-COMPLAINT-INTAKE-WRK",
+            "TZAG-CX-SERVICE-RECOVERY-WRK",
+            "TZAG-OPS-EXCEPTION-RESOLUTION"
+          ],
+          "definition_home": "TZ-ROADMAP-24-SG-01"
+        },
+        "verification_evidence": [
+          "canonical identity uniqueness validation",
+          "Worker→Specialist→Manager→Orchestrator hierarchy validation"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 24 uses immutable canonical agent IDs; customer-facing complaint recovery remains distinct from operational exception mechanics.",
+          "No Pro identity is created; predictive behaviour is earned within the existing hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "apps/web/lib/titan/workforce-native/customer-care.ts",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-contract.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-inventory.mjs",
+              "tests/client_workforce_customer_care_contract.test.mjs",
+              "tests/client_workforce_customer_care_inventory.test.mjs"
+            ],
+            "finding": "Roster/non-duplication is already defined by the Goal 24 report; Merge80 provides a native customer-care runtime and inventory/contract. Reuse the defined canonical IDs; do not create channel/case/sentiment pseudo-agents."
+          },
+          {
+            "source_ref": "Goal24 Customer Care Workforce Report",
+            "file_id": "file_00000000683481f581fb87738179ed0b",
+            "library_path": "/Titan Zero/Agent Mesh Manager/Reference Library/PROVENANCE/GOAL24-CUSTOMER-CARE-RETENTION-REBOOKING-WORKFORCE-REPORT-2026-09-16.json",
+            "verification": "LIBRARY_REPORT_READ_VALIDATED_ROSTER_NON_DUPLICATION_EVIDENCE",
+            "finding": "Canonical Goal 24 roster, hierarchy, boundaries and non-duplication are already defined and validated."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Goal24 Customer Care Workforce Report"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:47:00+10:00",
+        "scan_notes": "Roster/non-duplication is already defined by the Goal 24 report; Merge80 provides a native customer-care runtime and inventory/contract. Reuse the defined canonical IDs; do not create channel/case/sentiment pseudo-agents.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 2,
+      "title": "Complete shared customer-care, complaint, recovery, retention and rebooking capabilities used by the canonical care roster",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-24-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK"
+        ],
+        "canonical_agent_names": [
+          "Customer Lifecycle Experience Orchestrator",
+          "Service Experience Manager",
+          "Callback Prevention Specialist",
+          "Customer Expectation Management Specialist",
+          "Rebooking & Churn Prevention Specialist",
+          "Complaint & Service Recovery Specialist",
+          "Callback Recovery Worker",
+          "Customer Expectation Update Worker",
+          "Rebooking Execution Worker",
+          "Retention Action Worker",
+          "Complaint Intake & Evidence Worker",
+          "Service Recovery Execution Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+            "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+            "TZAG-CX-CALLBACK-PREVENTION",
+            "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+            "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+            "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+            "TZAG-CX-CALLBACK-RECOVERY-WRK",
+            "TZAG-CX-EXPECTATION-UPDATE-WRK",
+            "TZAG-CX-REBOOKING-EXECUTION-WRK",
+            "TZAG-CX-RETENTION-ACTION-WRK",
+            "TZAG-CX-COMPLAINT-INTAKE-WRK",
+            "TZAG-CX-SERVICE-RECOVERY-WRK"
+          ],
+          "definition_home": "TZ-ROADMAP-24-SG-01"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 24 uses immutable canonical agent IDs; customer-facing complaint recovery remains distinct from operational exception mechanics.",
+          "No Pro identity is created; predictive behaviour is earned within the existing hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/complaint-intake.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-triage.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/grounded-response.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/resolved-service-handoff.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/post-job-satisfaction-trigger.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/review-request-eligibility.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-settings.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-contract.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-opportunity-detector.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-recommendation-scoring.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-governed-outreach.mjs"
+            ],
+            "finding": "Canonical already contains complaint intake, triage, grounded response, resolved-service handoff, post-job trigger, review eligibility and full rebooking pipeline primitives. Converge them into shared customer-care capabilities rather than duplicate services."
+          },
+          {
+            "source_ref": "Titan CRM",
+            "file_id": "file_00000000f7ec81fa9100e3081d9124fb",
+            "library_path": "/MASTER Software/Masters/Operations/Titan CRM/Titan CRM Master Step 41.zip",
+            "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "CRM remains customer/contact/revenue-journey authority supporting customer-care evidence and lifecycle state."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Connect remains communication/contact/handoff execution authority; customer-care agents request governed capabilities rather than own channels."
+          },
+          {
+            "source_ref": "Titan Bookings Quotes",
+            "file_id": "file_000000004d5881faa2df3db959a70bc5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Bookings Quotes/Titan Bookings Quotes Master v1.1.1.zip",
+            "sha256": "ba3251684967132c1eb11e9ce1bffab4baa9440f16b148d1cf1f9c6b2ab43588",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Bookings/Quotes remains booking and rebooking lifecycle authority; Goal 24 uses governed handoffs rather than duplicate booking state."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Financial Engine remains pricing/refund/credit financial authority for approved retention or recovery effects."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Interaction Engine supplies governed journey/presentation/workforce handoff primitives for lifecycle coordination."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan CRM",
+          "Titan Connect",
+          "Titan Bookings Quotes",
+          "Titan Financial Engine",
+          "Titan Interaction Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:47:00+10:00",
+        "scan_notes": "Canonical already contains complaint intake, triage, grounded response, resolved-service handoff, post-job trigger, review eligibility and full rebooking pipeline primitives. Converge them into shared customer-care capabilities rather than duplicate services.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Implement bounded Workers for callback recovery, expectation updates, complaint intake, service recovery, rebooking and approved retention actions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-24-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK"
+        ],
+        "canonical_agent_names": [
+          "Callback Recovery Worker",
+          "Customer Expectation Update Worker",
+          "Rebooking Execution Worker",
+          "Retention Action Worker",
+          "Complaint Intake & Evidence Worker",
+          "Service Recovery Execution Worker"
+        ],
+        "workforce_positions": [
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-CX-CALLBACK-RECOVERY-WRK",
+            "TZAG-CX-EXPECTATION-UPDATE-WRK",
+            "TZAG-CX-REBOOKING-EXECUTION-WRK",
+            "TZAG-CX-RETENTION-ACTION-WRK",
+            "TZAG-CX-COMPLAINT-INTAKE-WRK",
+            "TZAG-CX-SERVICE-RECOVERY-WRK"
+          ],
+          "definition_home": "TZ-ROADMAP-24-SG-01"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 24 uses immutable canonical agent IDs; customer-facing complaint recovery remains distinct from operational exception mechanics.",
+          "No Pro identity is created; predictive behaviour is earned within the existing hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/complaint-intake.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-triage.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-human-review.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/resolved-service-handoff.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/post-job-satisfaction-trigger.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-response-handoff.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-governed-outreach.mjs"
+            ],
+            "finding": "Bounded worker actions already have deterministic company-scoped intake/triage/handoff/outreach paths and human-review gates. Bind these operations to Goal 24 worker agent_ids instead of inventing new worker implementations."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Connect remains communication/contact/handoff execution authority; customer-care agents request governed capabilities rather than own channels."
+          },
+          {
+            "source_ref": "Titan Bookings Quotes",
+            "file_id": "file_000000004d5881faa2df3db959a70bc5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Bookings Quotes/Titan Bookings Quotes Master v1.1.1.zip",
+            "sha256": "ba3251684967132c1eb11e9ce1bffab4baa9440f16b148d1cf1f9c6b2ab43588",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Bookings/Quotes remains booking and rebooking lifecycle authority; Goal 24 uses governed handoffs rather than duplicate booking state."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Financial Engine remains pricing/refund/credit financial authority for approved retention or recovery effects."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Connect",
+          "Titan Bookings Quotes",
+          "Titan Financial Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:47:00+10:00",
+        "scan_notes": "Bounded worker actions already have deterministic company-scoped intake/triage/handoff/outreach paths and human-review gates. Bind these operations to Goal 24 worker agent_ids instead of inventing new worker implementations.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Implement Specialist layer for callback prevention, expectation management, complaint/service recovery and rebooking/churn prevention with operational-exception collaboration",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-24-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-OPS-EXCEPTION-RESOLUTION"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-OPS-EXCEPTION-RESOLUTION"
+        ],
+        "canonical_agent_names": [
+          "Callback Prevention Specialist",
+          "Customer Expectation Management Specialist",
+          "Rebooking & Churn Prevention Specialist",
+          "Complaint & Service Recovery Specialist",
+          "Exception Resolution Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-CX-CALLBACK-PREVENTION",
+            "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+            "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+            "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+            "TZAG-OPS-EXCEPTION-RESOLUTION"
+          ],
+          "definition_home": "TZ-ROADMAP-24-SG-01"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 24 uses immutable canonical agent IDs; customer-facing complaint recovery remains distinct from operational exception mechanics.",
+          "No Pro identity is created; predictive behaviour is earned within the existing hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-triage.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/grounded-response.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-opportunity-detector.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-recommendation-scoring.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-retention-analytics.mjs",
+              "tests/client_workforce_customer_care_adversarial.test.mjs",
+              "tests/starter_rebooking_pass11_adversarial.test.mjs"
+            ],
+            "finding": "Specialist outcomes can reuse triage/grounded-response plus rebooking detection/scoring/analytics and adversarial coverage. Missing piece is explicit binding of the four canonical Specialist IDs to these shared primitives."
+          },
+          {
+            "source_ref": "Titan CRM",
+            "file_id": "file_00000000f7ec81fa9100e3081d9124fb",
+            "library_path": "/MASTER Software/Masters/Operations/Titan CRM/Titan CRM Master Step 41.zip",
+            "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "CRM remains customer/contact/revenue-journey authority supporting customer-care evidence and lifecycle state."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Interaction Engine supplies governed journey/presentation/workforce handoff primitives for lifecycle coordination."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan CRM",
+          "Titan Interaction Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:47:00+10:00",
+        "scan_notes": "Specialist outcomes can reuse triage/grounded-response plus rebooking detection/scoring/analytics and adversarial coverage. Missing piece is explicit binding of the four canonical Specialist IDs to these shared primitives.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Implement Service Experience Manager outcome ownership across complaint recovery, customer expectations, repeat-contact prevention, retention and rebooking",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-24-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR"
+        ],
+        "canonical_agent_names": [
+          "Service Experience Manager"
+        ],
+        "workforce_positions": [
+          "Manager"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-CX-SERVICE-EXPERIENCE-MGR"
+          ],
+          "definition_home": "TZ-ROADMAP-24-SG-01"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 24 uses immutable canonical agent IDs; customer-facing complaint recovery remains distinct from operational exception mechanics.",
+          "No Pro identity is created; predictive behaviour is earned within the existing hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-contract.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-inventory.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-human-review.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/resolved-service-handoff.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-retention-analytics.mjs",
+              "tests/client_workforce_customer_care_certification.test.mjs"
+            ],
+            "finding": "Service Experience Manager should own outcome queue/metrics/delegation over existing case/rebooking primitives; do not become a second CRM or communications authority."
+          },
+          {
+            "source_ref": "Titan CRM",
+            "file_id": "file_00000000f7ec81fa9100e3081d9124fb",
+            "library_path": "/MASTER Software/Masters/Operations/Titan CRM/Titan CRM Master Step 41.zip",
+            "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "CRM remains customer/contact/revenue-journey authority supporting customer-care evidence and lifecycle state."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Connect remains communication/contact/handoff execution authority; customer-care agents request governed capabilities rather than own channels."
+          },
+          {
+            "source_ref": "Titan Bookings Quotes",
+            "file_id": "file_000000004d5881faa2df3db959a70bc5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Bookings Quotes/Titan Bookings Quotes Master v1.1.1.zip",
+            "sha256": "ba3251684967132c1eb11e9ce1bffab4baa9440f16b148d1cf1f9c6b2ab43588",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Bookings/Quotes remains booking and rebooking lifecycle authority; Goal 24 uses governed handoffs rather than duplicate booking state."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan CRM",
+          "Titan Connect",
+          "Titan Bookings Quotes"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:47:00+10:00",
+        "scan_notes": "Service Experience Manager should own outcome queue/metrics/delegation over existing case/rebooking primitives; do not become a second CRM or communications authority.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 6,
+      "title": "Implement Customer Lifecycle Experience Orchestrator coordination across access, sales, fulfilment, field, finance, customer care and marketing",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-24-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR"
+        ],
+        "canonical_agent_names": [
+          "Customer Lifecycle Experience Orchestrator",
+          "Service Experience Manager"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+            "TZAG-CX-SERVICE-EXPERIENCE-MGR"
+          ],
+          "definition_home": "TZ-ROADMAP-24-SG-01"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 24 uses immutable canonical agent IDs; customer-facing complaint recovery remains distinct from operational exception mechanics.",
+          "No Pro identity is created; predictive behaviour is earned within the existing hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "apps/web/lib/titan/workforce-native/customer-care.ts",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/resolved-service-handoff.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/post-job-satisfaction-trigger.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-response-handoff.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-recurring-lifecycle.mjs"
+            ],
+            "finding": "Cross-domain lifecycle orchestration can use resolved-service, post-job and rebooking response/lifecycle handoffs while CRM/Bookings/Finance/Connect retain domain authority. Orchestrator identity needs explicit runtime binding."
+          },
+          {
+            "source_ref": "Titan CRM",
+            "file_id": "file_00000000f7ec81fa9100e3081d9124fb",
+            "library_path": "/MASTER Software/Masters/Operations/Titan CRM/Titan CRM Master Step 41.zip",
+            "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "CRM remains customer/contact/revenue-journey authority supporting customer-care evidence and lifecycle state."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Connect remains communication/contact/handoff execution authority; customer-care agents request governed capabilities rather than own channels."
+          },
+          {
+            "source_ref": "Titan Bookings Quotes",
+            "file_id": "file_000000004d5881faa2df3db959a70bc5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Bookings Quotes/Titan Bookings Quotes Master v1.1.1.zip",
+            "sha256": "ba3251684967132c1eb11e9ce1bffab4baa9440f16b148d1cf1f9c6b2ab43588",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Bookings/Quotes remains booking and rebooking lifecycle authority; Goal 24 uses governed handoffs rather than duplicate booking state."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Financial Engine remains pricing/refund/credit financial authority for approved retention or recovery effects."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Interaction Engine supplies governed journey/presentation/workforce handoff primitives for lifecycle coordination."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan CRM",
+          "Titan Connect",
+          "Titan Bookings Quotes",
+          "Titan Financial Engine",
+          "Titan Interaction Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:47:00+10:00",
+        "scan_notes": "Cross-domain lifecycle orchestration can use resolved-service, post-job and rebooking response/lifecycle handoffs while CRM/Bookings/Finance/Connect retain domain authority. Orchestrator identity needs explicit runtime binding.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Implement earned proactive, autonomous and predictive customer-lifecycle behaviours across the existing hierarchy; no fifth Pro agent identity",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-24-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC"
+        ],
+        "canonical_agent_names": [
+          "Customer Lifecycle Experience Orchestrator",
+          "Service Experience Manager",
+          "Callback Prevention Specialist",
+          "Customer Expectation Management Specialist",
+          "Rebooking & Churn Prevention Specialist",
+          "Complaint & Service Recovery Specialist"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+            "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+            "TZAG-CX-CALLBACK-PREVENTION",
+            "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+            "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+            "TZAG-CX-COMPLAINT-RECOVERY-SPC"
+          ],
+          "definition_home": "TZ-ROADMAP-24-SG-01"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 24 uses immutable canonical agent IDs; customer-facing complaint recovery remains distinct from operational exception mechanics.",
+          "No Pro identity is created; predictive behaviour is earned within the existing hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-recommendation-scoring.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-governed-outreach.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-recurring-lifecycle.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-human-review.mjs",
+              "tests/starter_rebooking_pass11_adversarial.test.mjs",
+              "tests/starter_rebooking_pass12_end_to_end_certification.test.mjs"
+            ],
+            "finding": "Recommendation scoring, governed outreach, recurring lifecycle and protected-effect human review provide the mechanics for earned behavior. They still need Goal 42 trust/autonomy plan-gate integration rather than a Customer Care-local autonomy ladder."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Interaction Engine supplies governed journey/presentation/workforce handoff primitives for lifecycle coordination."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Interaction Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:47:00+10:00",
+        "scan_notes": "Recommendation scoring, governed outreach, recurring lifecycle and protected-effect human review provide the mechanics for earned behavior. They still need Goal 42 trust/autonomy plan-gate integration rather than a Customer Care-local autonomy ladder.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 8,
+      "title": "Implement customer-care authority, surface, approval, escalation and recovery matrices across Command/Go/Hub/plugins/extensions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-24-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK"
+        ],
+        "canonical_agent_names": [
+          "Customer Lifecycle Experience Orchestrator",
+          "Service Experience Manager",
+          "Callback Prevention Specialist",
+          "Customer Expectation Management Specialist",
+          "Rebooking & Churn Prevention Specialist",
+          "Complaint & Service Recovery Specialist",
+          "Callback Recovery Worker",
+          "Customer Expectation Update Worker",
+          "Rebooking Execution Worker",
+          "Retention Action Worker",
+          "Complaint Intake & Evidence Worker",
+          "Service Recovery Execution Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+            "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+            "TZAG-CX-CALLBACK-PREVENTION",
+            "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+            "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+            "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+            "TZAG-CX-CALLBACK-RECOVERY-WRK",
+            "TZAG-CX-EXPECTATION-UPDATE-WRK",
+            "TZAG-CX-REBOOKING-EXECUTION-WRK",
+            "TZAG-CX-RETENTION-ACTION-WRK",
+            "TZAG-CX-COMPLAINT-INTAKE-WRK",
+            "TZAG-CX-SERVICE-RECOVERY-WRK"
+          ],
+          "definition_home": "TZ-ROADMAP-24-SG-01"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 24 uses immutable canonical agent IDs; customer-facing complaint recovery remains distinct from operational exception mechanics.",
+          "No Pro identity is created; predictive behaviour is earned within the existing hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-human-review.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/customer-care-settings.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-governed-outreach.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-settings-policy.mjs",
+              "apps/web/app/api/v1/titan/workforce/native/customer-care/route.ts",
+              "tests/client_workforce_customer_care_human_review.test.mjs"
+            ],
+            "finding": "Human-review and settings policies already gate protected effects/outreach; native API projection exists. Complete one cross-surface authority/escalation/recovery matrix; surface presence never grants authority."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Connect remains communication/contact/handoff execution authority; customer-care agents request governed capabilities rather than own channels."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Financial Engine remains pricing/refund/credit financial authority for approved retention or recovery effects."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Interaction Engine supplies governed journey/presentation/workforce handoff primitives for lifecycle coordination."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Connect",
+          "Titan Financial Engine",
+          "Titan Interaction Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:47:00+10:00",
+        "scan_notes": "Human-review and settings policies already gate protected effects/outreach; native API projection exists. Complete one cross-surface authority/escalation/recovery matrix; surface presence never grants authority.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Measure complaint resolution, repeat-contact prevention, retention, rebooking, customer effort and verified protected value by canonical agent_id",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-24-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK"
+        ],
+        "canonical_agent_names": [
+          "Customer Lifecycle Experience Orchestrator",
+          "Service Experience Manager",
+          "Callback Prevention Specialist",
+          "Customer Expectation Management Specialist",
+          "Rebooking & Churn Prevention Specialist",
+          "Complaint & Service Recovery Specialist",
+          "Callback Recovery Worker",
+          "Customer Expectation Update Worker",
+          "Rebooking Execution Worker",
+          "Retention Action Worker",
+          "Complaint Intake & Evidence Worker",
+          "Service Recovery Execution Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+            "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+            "TZAG-CX-CALLBACK-PREVENTION",
+            "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+            "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+            "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+            "TZAG-CX-CALLBACK-RECOVERY-WRK",
+            "TZAG-CX-EXPECTATION-UPDATE-WRK",
+            "TZAG-CX-REBOOKING-EXECUTION-WRK",
+            "TZAG-CX-RETENTION-ACTION-WRK",
+            "TZAG-CX-COMPLAINT-INTAKE-WRK",
+            "TZAG-CX-SERVICE-RECOVERY-WRK"
+          ],
+          "definition_home": "TZ-ROADMAP-24-SG-01"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 24 uses immutable canonical agent IDs; customer-facing complaint recovery remains distinct from operational exception mechanics.",
+          "No Pro identity is created; predictive behaviour is earned within the existing hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/rebooking/rebooking-retention-analytics.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/customer-care/post-job-satisfaction-trigger.mjs",
+              "tests/starter_rebooking_pass09_retention_analytics.test.mjs",
+              "tests/client_workforce_customer_care_post_job_trigger.test.mjs"
+            ],
+            "finding": "Rebooking retention analytics and post-job evidence already calculate customer lifecycle signals. Bind verified value to canonical agent_id using Goal 40 attribution so shared outcomes are not double-counted."
+          },
+          {
+            "source_ref": "Titan CRM",
+            "file_id": "file_00000000f7ec81fa9100e3081d9124fb",
+            "library_path": "/MASTER Software/Masters/Operations/Titan CRM/Titan CRM Master Step 41.zip",
+            "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "CRM remains customer/contact/revenue-journey authority supporting customer-care evidence and lifecycle state."
+          },
+          {
+            "source_ref": "Titan Bookings Quotes",
+            "file_id": "file_000000004d5881faa2df3db959a70bc5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Bookings Quotes/Titan Bookings Quotes Master v1.1.1.zip",
+            "sha256": "ba3251684967132c1eb11e9ce1bffab4baa9440f16b148d1cf1f9c6b2ab43588",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Bookings/Quotes remains booking and rebooking lifecycle authority; Goal 24 uses governed handoffs rather than duplicate booking state."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Financial Engine remains pricing/refund/credit financial authority for approved retention or recovery effects."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan CRM",
+          "Titan Bookings Quotes",
+          "Titan Financial Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:47:00+10:00",
+        "scan_notes": "Rebooking retention analytics and post-job evidence already calculate customer lifecycle signals. Bind verified value to canonical agent_id using Goal 40 attribution so shared outcomes are not double-counted.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Run Worker→Specialist→Manager→Orchestrator customer-care acceptance and certify trust progression, failure/recovery and non-duplication",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-24-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK",
+          "TZAG-OPS-EXCEPTION-RESOLUTION"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-CX-CALLBACK-RECOVERY-WRK",
+          "TZAG-CX-EXPECTATION-UPDATE-WRK",
+          "TZAG-CX-REBOOKING-EXECUTION-WRK",
+          "TZAG-CX-RETENTION-ACTION-WRK",
+          "TZAG-CX-COMPLAINT-INTAKE-WRK",
+          "TZAG-CX-SERVICE-RECOVERY-WRK",
+          "TZAG-OPS-EXCEPTION-RESOLUTION"
+        ],
+        "canonical_agent_names": [
+          "Customer Lifecycle Experience Orchestrator",
+          "Service Experience Manager",
+          "Callback Prevention Specialist",
+          "Customer Expectation Management Specialist",
+          "Rebooking & Churn Prevention Specialist",
+          "Complaint & Service Recovery Specialist",
+          "Callback Recovery Worker",
+          "Customer Expectation Update Worker",
+          "Rebooking Execution Worker",
+          "Retention Action Worker",
+          "Complaint Intake & Evidence Worker",
+          "Service Recovery Execution Worker",
+          "Exception Resolution Specialist"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH",
+            "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+            "TZAG-CX-CALLBACK-PREVENTION",
+            "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+            "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+            "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+            "TZAG-CX-CALLBACK-RECOVERY-WRK",
+            "TZAG-CX-EXPECTATION-UPDATE-WRK",
+            "TZAG-CX-REBOOKING-EXECUTION-WRK",
+            "TZAG-CX-RETENTION-ACTION-WRK",
+            "TZAG-CX-COMPLAINT-INTAKE-WRK",
+            "TZAG-CX-SERVICE-RECOVERY-WRK",
+            "TZAG-OPS-EXCEPTION-RESOLUTION"
+          ],
+          "definition_home": "TZ-ROADMAP-24-SG-01"
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 24 uses immutable canonical agent IDs; customer-facing complaint recovery remains distinct from operational exception mechanics.",
+          "No Pro identity is created; predictive behaviour is earned within the existing hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/client_workforce_customer_care_certification.test.mjs",
+              "tests/client_workforce_customer_care_adversarial.test.mjs",
+              "tests/starter_rebooking_pass11_adversarial.test.mjs",
+              "tests/starter_rebooking_pass12_end_to_end_certification.test.mjs",
+              "titan-agent/starter-workforce/rebooking/pass12/FINAL-CERTIFICATION.json"
+            ],
+            "finding": "Customer-care and rebooking suites already include adversarial and end-to-end certification artifacts. Remaining certification is hierarchy/trust progression/non-duplication across the Goal 24 canonical roster."
+          },
+          {
+            "source_ref": "Goal24 Customer Care Workforce Report",
+            "file_id": "file_00000000683481f581fb87738179ed0b",
+            "library_path": "/Titan Zero/Agent Mesh Manager/Reference Library/PROVENANCE/GOAL24-CUSTOMER-CARE-RETENTION-REBOOKING-WORKFORCE-REPORT-2026-09-16.json",
+            "verification": "LIBRARY_REPORT_READ_VALIDATED_ROSTER_NON_DUPLICATION_EVIDENCE",
+            "finding": "Canonical Goal 24 roster, hierarchy, boundaries and non-duplication are already defined and validated."
+          },
+          {
+            "source_ref": "Titan CRM",
+            "file_id": "file_00000000f7ec81fa9100e3081d9124fb",
+            "library_path": "/MASTER Software/Masters/Operations/Titan CRM/Titan CRM Master Step 41.zip",
+            "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "CRM remains customer/contact/revenue-journey authority supporting customer-care evidence and lifecycle state."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Connect remains communication/contact/handoff execution authority; customer-care agents request governed capabilities rather than own channels."
+          },
+          {
+            "source_ref": "Titan Bookings Quotes",
+            "file_id": "file_000000004d5881faa2df3db959a70bc5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Bookings Quotes/Titan Bookings Quotes Master v1.1.1.zip",
+            "sha256": "ba3251684967132c1eb11e9ce1bffab4baa9440f16b148d1cf1f9c6b2ab43588",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Bookings/Quotes remains booking and rebooking lifecycle authority; Goal 24 uses governed handoffs rather than duplicate booking state."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Financial Engine remains pricing/refund/credit financial authority for approved retention or recovery effects."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "finding": "Interaction Engine supplies governed journey/presentation/workforce handoff primitives for lifecycle coordination."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Goal24 Customer Care Workforce Report",
+          "Titan CRM",
+          "Titan Connect",
+          "Titan Bookings Quotes",
+          "Titan Financial Engine",
+          "Titan Interaction Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:47:00+10:00",
+        "scan_notes": "Customer-care and rebooking suites already include adversarial and end-to-end certification artifacts. Remaining certification is hierarchy/trust progression/non-duplication across the Goal 24 canonical roster.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "agent",
+    "agents",
+    "business-operations",
+    "customer"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [],
+  "reuse_first": true,
+  "canonical_workforce_roster": {
+    "status": "DEFINED_PLANNED_IMPLEMENTATION",
+    "canonical_definition_home": "TZ-ROADMAP-24-SG-01",
+    "orchestrator_ids": [
+      "TZAG-CX-CUSTOMER-LIFECYCLE-ORCH"
+    ],
+    "manager_ids": [
+      "TZAG-CX-SERVICE-EXPERIENCE-MGR"
+    ],
+    "specialist_ids": [
+      "TZAG-CX-CALLBACK-PREVENTION",
+      "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+      "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+      "TZAG-CX-COMPLAINT-RECOVERY-SPC"
+    ],
+    "worker_ids": [
+      "TZAG-CX-CALLBACK-RECOVERY-WRK",
+      "TZAG-CX-EXPECTATION-UPDATE-WRK",
+      "TZAG-CX-REBOOKING-EXECUTION-WRK",
+      "TZAG-CX-RETENTION-ACTION-WRK",
+      "TZAG-CX-COMPLAINT-INTAKE-WRK",
+      "TZAG-CX-SERVICE-RECOVERY-WRK"
+    ],
+    "reused_innovation_agent_ids": [
+      "TZAG-CX-CALLBACK-PREVENTION",
+      "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+      "TZAG-CX-REBOOKING-CHURN-PREVENTION"
+    ],
+    "reused_canonical_manager_ids": [
+      "TZAG-CX-SERVICE-EXPERIENCE-MGR"
+    ],
+    "cross_domain_collaborator_ids": [
+      "TZAG-OPS-EXCEPTION-RESOLUTION"
+    ],
+    "new_agent_count": 8,
+    "core_domain_roster_count": 12,
+    "participating_roster_count": 13,
+    "boundary_rules": [
+      "Customer Care owns customer-facing complaint recovery, expectation continuity, repeat-contact prevention, retention and rebooking after a customer relationship/service interaction exists.",
+      "Operational Exception Resolution owns operational exception mechanics; Customer Care may request/verify remediation but does not redefine or re-parent that Specialist.",
+      "Customer Access owns customer-entry/access outcomes; Sales owns commercial opportunity progression; Scheduling/Dispatch owns fulfilment; Field owns field quality; Finance owns cash controls; Marketing owns review/referral growth.",
+      "Channels, case queues, sentiment models, review platforms and CRM records are tools/state, not separate agent identities.",
+      "Customer Lifecycle Experience Orchestrator owns cross-domain lifecycle/retention coherence; it does not replace Customer Journey Access, Revenue Growth or Service Delivery Flow Orchestrators."
+    ]
+  },
+  "agent_goal_classification": "DOMAIN_WORKFORCE_ELIGIBLE",
+  "agent_goal_rule": "This goal owns durable business/domain outcomes and may reuse, extend or create canonical workforce identities subject to non-duplication and outcome-owner tests.",
+  "workforce_goal_classification": "DOMAIN_OUTCOME_AGENT_ELIGIBLE",
+  "workforce_goal_rule": "Agents are permitted only for durable business/operational outcomes with a distinct ownership boundary. Reuse or extend canonical identities before creating new ones."
+}
