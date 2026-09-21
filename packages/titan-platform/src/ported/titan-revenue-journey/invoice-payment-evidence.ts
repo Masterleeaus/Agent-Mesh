@@ -141,7 +141,7 @@ export function buildInvoicePaymentJourneyEvidence(input: Readonly<Record<string
   return Object.freeze({
     schema: REVENUE_INVOICE_PAYMENT_EVIDENCE_SCHEMA,
     company_id: companyId,
-    revenue_journey_id: lifecycle.revenue_journey_id,
+    revenue_journey_id: String(lifecycle.revenue_journey_id),
     correlation_id: clean(lifecycle.correlation?.correlation_id),
     upstream_origin: upstreamOrigin,
     invoice: Object.freeze({
