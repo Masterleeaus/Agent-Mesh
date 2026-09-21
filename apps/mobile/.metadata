@@ -1,0 +1,15 @@
+version:
+  revision: "titan-zero-canonical"
+  channel: "stable"
+project_type: app
+migration:
+  platforms:
+    - platform: root
+      create_revision: titan-zero-canonical
+      base_revision: titan-zero-canonical
+    - platform: android
+      create_revision: titan-zero-canonical
+      base_revision: titan-zero-canonical
+    - platform: ios
+      create_revision: titan-zero-canonical
+      base_revision: titan-zero-canonical
