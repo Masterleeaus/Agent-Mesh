@@ -346,3 +346,54 @@ When it occurs:
 - an authenticated Agent/Manager context can create the canonical draft PR from the existing claim branch.
 
 Any different failure in `open-agent-pr.py` still fails the workflow and requires investigation.
+
+
+## Automatic PR handoff
+
+Claim branches now hand themselves off to GitHub review.
+
+Workflow:
+
+```text
+.github/workflows/agent-pr-handoff.yml
+```
+
+When an agent pushes commits to:
+
+```text
+agent/<subgoal-id>
+```
+
+the workflow runs `.github/scripts/open-agent-pr.py`.
+
+Behavior:
+
+- validates the exact canonical claim branch format;
+- resolves the matching open roadmap issue;
+- refuses empty PRs when the branch is not ahead of `main`;
+- creates one canonical PR targeting `main`;
+- creates new PRs as **draft by default**;
+- includes the subgoal ID, goal ID, issue link, claim base SHA, merge-base SHA and changed-file list;
+- posts the PR handoff back to the issue;
+- if the PR already exists, preserves the builder's evidence/body rather than overwriting it;
+- never creates a second PR for the same claim branch.
+
+When the builder has completed the subgoal/pass and recorded verification evidence, the existing PR can be marked ready for Manager review. CI and the Agent Claim Gate remain authoritative integration checks.
+
+This means the normal builder path is now:
+
+```text
+claim issue
+  ↓
+agent/<subgoal-id>
+  ↓
+commit + push
+  ↓
+automatic draft PR
+  ↓
+continue verified passes on same branch/PR
+  ↓
+mark ready
+  ↓
+Manager review + merge
+```
