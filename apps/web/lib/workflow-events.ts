@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 
 export type WorkflowEventType =
   | "visit.scheduled"
@@ -14,7 +14,7 @@ export type WorkflowEventType =
   | "membership.cancelled";
 
 export async function writeWorkflowEvent(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     eventType: WorkflowEventType;
