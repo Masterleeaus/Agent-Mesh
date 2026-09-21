@@ -1,33 +1,33 @@
 {
   "schema": "titan-zero-roadmap-index/v1",
   "status": "AUTHORITATIVE",
-  "authority_rule": "ROADMAP-INDEX.json is the sole roadmap authority entry point. Resolve subgoals through priority_shards; the retired monolith is provenance only.",
+  "authority_rule": "roadmap/INDEX.json is the roadmap authority entry point. Resolve subgoals through the priority shard paths recorded here; per-goal JSON files on GitHub main remain the current executable roadmap records until generated priority shards are committed.",
   "source_monolith_version": "105",
   "split_strategy": "SUBGOAL_PRIORITY_WITH_REPEATABLE_GOAL_SHELLS",
   "priority_shards": {
     "P0": {
-      "file": "P0.json",
+      "file": "roadmap/P0.json",
       "sha256": "27dfdb3ffd7bdd445e914ef5d919e3cdde550275e4ba9b99edff53b5dafda1ab",
       "bytes": 1244525,
       "goal_shells": 25,
       "subgoals": 164
     },
     "P1": {
-      "file": "P1.json",
+      "file": "roadmap/P1.json",
       "sha256": "33de5ca4a405c875f6d2797eef0a2b283e46ddc4bc90e116fe31bec05b9e2755",
       "bytes": 2928764,
       "goal_shells": 38,
       "subgoals": 294
     },
     "P2": {
-      "file": "P2.json",
+      "file": "roadmap/P2.json",
       "sha256": "b9c6c361e5c45a4e90baaf6cecdd60dfb235c4f28f623fd630c1f46223a19339",
       "bytes": 410327,
       "goal_shells": 10,
       "subgoals": 100
     },
     "P3": {
-      "file": "P3.json",
+      "file": "roadmap/P3.json",
       "sha256": "64c9e63e42afe3221d02928437080f593e8794542a762073586fa3407cdc9d25",
       "bytes": 680,
       "goal_shells": 0,
