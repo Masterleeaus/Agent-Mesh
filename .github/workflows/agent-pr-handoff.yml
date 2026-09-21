@@ -5,75 +5,60 @@ on:
     branches:
       - "agent/**"
   workflow_dispatch:
+    inputs:
+      branch:
+        description: "Canonical claim branch, e.g. agent/TZ-ROADMAP-31-SG-01"
+        required: true
+        type: string
+      ready:
+        description: "Mark PR ready for Manager review instead of draft"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
   issues: write
   pull-requests: write
 
+concurrency:
+  group: agent-pr-handoff-${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   handoff:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CLAIM_BRANCH: ${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.ref_name }}
     steps:
-      - name: Checkout claim branch
+      - name: Checkout canonical control plane
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
-      - name: Fetch canonical main
-        run: git fetch origin main --depth=1
-
-      - name: Skip empty claim branch
-        id: work
+      - name: Validate claim branch shape
         shell: bash
         run: |
           set -euo pipefail
-          AHEAD="$(git rev-list --count origin/main..HEAD)"
-          echo "ahead=$AHEAD" >> "$GITHUB_OUTPUT"
-          if [ "$AHEAD" -eq 0 ]; then
-            echo "Claim branch has no commits ahead of main; no PR handoff needed yet."
+          case "$CLAIM_BRANCH" in
+            agent/TZ-G00-SG-*|agent/TZ-ROADMAP-*-SG-*) ;;
+            *)
+              echo "Invalid Agent Mesh claim branch: $CLAIM_BRANCH"
+              exit 1
+              ;;
+          esac
+
+      - name: Create or preserve canonical agent PR
+        shell: bash
+        run: |
+          set -euo pipefail
+          READY_ARG=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.ready }}" = "true" ]; then
+            READY_ARG="--ready"
           fi
-
-      - name: Create canonical draft agent PR
-        if: steps.work.outputs.ahead != '0'
-        id: pr_handoff
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          set +e
           python3 .github/scripts/open-agent-pr.py \
-            --branch "$GITHUB_REF_NAME" \
-            --draft \
-            --verification "Automatic Agent PR handoff created from committed branch state." \
-            --completion "Manager must review current evidence and either merge verified completion or keep only explicit remaining work." \
-            --risk "Rollback is available by reverting the merged PR; no automatic merge is performed by this workflow." \
-            > pr-handoff.log 2>&1
-          STATUS=$?
-          set -e
-          cat pr-handoff.log
-          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
-
-          if [ "$STATUS" -eq 0 ]; then
-            echo "actions_pr_denied=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if grep -Fq "GitHub Actions is not permitted to create or approve pull requests" pr-handoff.log; then
-            echo "actions_pr_denied=true" >> "$GITHUB_OUTPUT"
-            echo "::warning::GitHub Actions cannot create PRs for this repository; recording a durable pending handoff instead."
-            exit 0
-          fi
-
-          echo "actions_pr_denied=false" >> "$GITHUB_OUTPUT"
-          exit "$STATUS"
-
-      - name: Record pending PR handoff
-        if: steps.work.outputs.ahead != '0' && steps.pr_handoff.outputs.actions_pr_denied == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          python3 .github/scripts/record-pr-handoff-pending.py \
-            --branch "$GITHUB_REF_NAME" \
-            --reason "Repository Actions policy currently blocks GITHUB_TOKEN from creating pull requests."
+            --branch "$CLAIM_BRANCH" \
+            $READY_ARG \
+            --json
