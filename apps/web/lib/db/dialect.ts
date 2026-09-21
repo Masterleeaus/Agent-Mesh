@@ -14,5 +14,5 @@ export function inferDatabaseDialect(databaseUrl: string): DatabaseDialect {
 
 export function getDatabaseDialect(): DatabaseDialect {
   const env = getEnv();
-  return env.DB_DIALECT ?? inferDatabaseDialect(env.DATABASE_URL);
+  return env.DATABASE_DIALECT === "mariadb" ? "mysql" : env.DATABASE_DIALECT ?? inferDatabaseDialect(env.DATABASE_URL);
 }
