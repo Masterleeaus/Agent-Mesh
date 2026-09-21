@@ -1,0 +1,50 @@
+name: Rebase repository on Dovetails
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/rebase-dovetails.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Move existing Titan system and extract Dovetails
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s dotglob nullglob
+          mkdir -p titan
+          for item in *; do
+            case "$item" in
+              .git|.github|titan|AI-FSM-Dovetails.zip) continue ;;
+            esac
+            git mv "$item" titan/
+          done
+
+          tmp="$(mktemp -d)"
+          unzip -q AI-FSM-Dovetails.zip -d "$tmp"
+
+          entries=("$tmp"/*)
+          if [ "${#entries[@]}" -eq 1 ] && [ -d "${entries[0]}" ]; then
+            src="${entries[0]}"
+          else
+            src="$tmp"
+          fi
+
+          cp -a "$src"/. ./
+          rm -rf "$tmp"
+
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Make Dovetails the base app; archive previous Titan system under titan/" || exit 0
+          git push
