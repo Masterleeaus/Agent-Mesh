@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
     const fullName = `${firstName} ${lastName}`
 
-    // Notify Adeel
+    // Internal waitlist notification
     await resend.emails.send({
       from: 'Titan Zero Waitlist <waitlist@titanzero.io>',
       to: 'info@gatedenterprise.com',

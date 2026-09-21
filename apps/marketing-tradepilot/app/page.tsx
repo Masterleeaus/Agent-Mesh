@@ -229,7 +229,7 @@ export default function Home() {
                 You built this city.<br />Now run it smarter.
               </h1>
               <p style={{ fontSize: 18, color: '#AAAAAA', maxWidth: 520, lineHeight: 1.65, marginBottom: 32 }}>
-                Titan Zero is the only AI-native platform built exclusively for tradespeople. Voice-first. No laptop. No paperwork. Just your phone and your skills.
+                Titan Zero implements and manages an Advanced Intelligence workforce around the systems your business already uses. Chat, voice and camera become practical ways to get work done without adding another admin-heavy system.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 mb-12">
                 <a href="#waitlist" style={{
@@ -279,7 +279,7 @@ export default function Home() {
               THE PROBLEM
             </div>
             <h2 className="font-black" style={{ fontSize: 'clamp(32px, 5vw, 48px)', color: '#0A0A0A', lineHeight: 1.1 }}>
-              Jobber was built for an office.<br />You work in the field.
+              Your existing systems run the business.<br />Titan Zero adds the workforce.
             </h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8 items-start">
