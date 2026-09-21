@@ -119,11 +119,10 @@ jobs:
           WEB_TEST_STATUS=$?
           set -e
           cat web-test.log
-          python3 .github/scripts/check-vitest-baseline.py \
+          python3 .github/scripts/check-web-test-baseline.py \
             --baseline .github/ci/web-test-baseline.json \
             --log web-test.log \
-            --command-status "$WEB_TEST_STATUS" \
-            --mode web
+            --command-status "$WEB_TEST_STATUS"
           if [ "$WEB_TEST_STATUS" -eq 0 ]; then
             echo "Web tests are fully clean."
           else
