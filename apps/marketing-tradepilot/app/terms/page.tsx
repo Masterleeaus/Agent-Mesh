@@ -59,7 +59,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>2. Description of Service</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              FLDWRK is an AI-native field service management platform designed for tradespeople including plumbers, HVAC technicians, electricians, and general contractors. The Service includes voice-based job logging, AI-powered quoting, business intelligence, inventory management, and related features available via web and mobile applications.
+              Titan Zero provides managed Advanced Intelligence workforce capabilities that can integrate with existing business systems, with additional software supplied where needed.
             </p>
           </section>
 
@@ -113,7 +113,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>6. Subscription & Payment</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              FLDWRK operates on a monthly subscription model. Founding members who join the waitlist before launch will receive their locked-in founding pricing. Subscriptions automatically renew unless cancelled before the renewal date. We reserve the right to change pricing with 30 days&apos; written notice to existing subscribers.
+              Commercial terms, pricing, renewal conditions, and included services are defined in the applicable Titan Zero proposal or service agreement.
             </p>
           </section>
 
@@ -149,7 +149,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>11. Limitation of Liability</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              To the maximum extent permitted by law, FLDWRK, Inc. shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the Service. Our total liability for any claim related to the Service shall not exceed the amount you paid to us in the 12 months preceding the claim.
+              Liability terms are governed by the applicable Titan Zero service agreement and applicable law.
             </p>
           </section>
 
