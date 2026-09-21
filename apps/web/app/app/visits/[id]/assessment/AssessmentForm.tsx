@@ -72,6 +72,54 @@ function newRoom(): Room {
   return { id: crypto.randomUUID(), name: "", length_ft: null, width_ft: null, height_ft: null, notes: "" };
 }
 
+const COMPRESSIBLE_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+async function prepareAssessmentPhoto(file: File, maxPx = 1400, quality = 0.82): Promise<File> {
+  if (!COMPRESSIBLE_IMAGE_TYPES.has(file.type)) return file;
+
+  const url = URL.createObjectURL(file);
+  try {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new window.Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = url;
+    });
+
+    let width = image.naturalWidth || image.width;
+    let height = image.naturalHeight || image.height;
+    if (!width || !height) return file;
+
+    if (width > maxPx || height > maxPx) {
+      const scale = maxPx / Math.max(width, height);
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d");
+    if (!context) return file;
+    context.drawImage(image, 0, 0, width, height);
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", quality),
+    );
+    if (!blob || blob.size >= file.size) return file;
+
+    const baseName = file.name.replace(/\.[^.]+$/, "") || "assessment-photo";
+    return new File([blob], `${baseName}.jpg`, {
+      type: "image/jpeg",
+      lastModified: file.lastModified,
+    });
+  } catch {
+    return file;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
 export function AssessmentForm({ visitId, jobId, jobTitle, clientId, propertyId, initialAssessment, initialPhotos, canEdit }: Props) {
   const router = useRouter();
   const toast = useToast();
@@ -201,8 +249,12 @@ export function AssessmentForm({ visitId, jobId, jobTitle, clientId, propertyId,
         setUploadProgress(files.length > 1 ? `${i + 1} of ${files.length}` : null);
         const file = files[i];
         try {
+          // Adapted from the field-services-os donor: resize large browser-decodable
+          // assessment photos before using Titan's existing multipart media path.
+          // Unsupported formats (for example HEIC/HEIF/GIF) safely retain the original.
+          const uploadFile = await prepareAssessmentPhoto(file);
           const formData = new FormData();
-          formData.append("file", file);
+          formData.append("file", uploadFile);
           formData.append("category", "assessment");
           const res = await fetch(`/api/v1/visits/${visitId}/media`, { method: "POST", body: formData });
           const data = await res.json();
