@@ -1497,7 +1497,11 @@
         "static/global/src/static/screenshotGuideVideo.mp4",
         "titan-zero-chat-content.compat.js"
       ],
-      "current_source_verification": "required"
+      "current_source_verification": "verified-current",
+      "current_sources": [
+        "apps/browser/imports/browser-ai-subsystems-2026-09-21/subsystems/auto-browser/src/perception/screenshot.js",
+        "apps/browser/imports/browser-ai-subsystems-2026-09-21/subsystems/auto-browser/src/perception/attach-screenshot.js"
+      ]
     },
     {
       "tool_id": "attachments",
@@ -1551,7 +1555,12 @@
         "titan-zero-chat-content.compat.js",
         "titan-capabilities/donors/ai-extensions/catalog.json"
       ],
-      "current_source_verification": "required"
+      "current_source_verification": "verified-current",
+      "current_sources": [
+        "apps/web/app/api/v1/captures/files.ts",
+        "apps/web/app/api/v1/captures/route.ts",
+        "apps/browser/tests/test-titan-zero-context-attachment.js"
+      ]
     },
     {
       "tool_id": "model_selection",
@@ -1939,7 +1948,12 @@
       "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "current_source_verification": "required"
+      "current_source_verification": "verified-current",
+      "current_sources": [
+        "packages/tools/titan-document-workspace-bridge.js",
+        "apps/web/app/api/v1/documents/route.ts",
+        "apps/web/components/documents/DocumentPanel.tsx"
+      ]
     },
     {
       "tool_id": "custom_tools",
