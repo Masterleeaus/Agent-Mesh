@@ -152,3 +152,23 @@ The helper:
 - posts the created PR back to the roadmap issue.
 
 Do not hand-author a second competing PR for the same claim branch.
+
+
+## Automatic PR handoff
+
+After a builder commits and pushes work to its canonical claim branch, GitHub automatically creates or refreshes the one PR for that subgoal through:
+
+`.github/workflows/agent-pr-handoff.yml`
+
+The workflow:
+
+1. ignores an empty claim branch with zero commits ahead of `main`;
+2. resolves the matching roadmap issue from the subgoal ID;
+3. refuses a closed/missing roadmap issue;
+4. refuses non-canonical claim branch names;
+5. refuses an empty PR;
+6. records the changed files, claim base, merge base and issue linkage;
+7. creates or updates the one PR targeting `main`;
+8. never auto-merges.
+
+Builders may run `.github/scripts/open-agent-pr.py` manually when they need to add richer targeted verification/completion/risk text, but manual PR assembly is no longer required.
