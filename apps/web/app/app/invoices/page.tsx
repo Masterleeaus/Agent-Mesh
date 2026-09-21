@@ -22,6 +22,7 @@ import { formatInvoiceViewLabel, isInvoiceUnread } from "@/lib/invoices/client-v
 import { amountDueCents } from "@/lib/invoices/payments";
 import { MONEY_HUB_LINKS } from "@/lib/navigation/hubs";
 import { invoiceAttentionPredicate } from "@/lib/attention/counts";
+import { bindNativeSurface } from "@/lib/navigation/native-service-bindings";
 
 export const dynamic = "force-dynamic";
 
@@ -110,6 +111,7 @@ export default async function InvoicesPage({ searchParams }: PageProps) {
   const session = await getSession();
   if (!session) redirect("/login");
   if (session.role === "tech") redirect("/app/my-work"); // EPIC-006: techs have no invoice access
+  bindNativeSurface("invoices", session.accountId);
   const canCreate = canCreateInvoices(session.role);
 
   const { attention } = await searchParams;
@@ -200,7 +202,7 @@ export default async function InvoicesPage({ searchParams }: PageProps) {
   return (
     <PageContainer>
       <PageHeader
-        title="Bills"
+        title="Invoices"
         subtitle={`${invoices.length} total`}
         actions={
           canCreate ? (

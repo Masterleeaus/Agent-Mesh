@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import type { SessionPayload } from "@/lib/auth/session";
-import { withDbSession } from "@/lib/db";
+import { withTenantTransaction } from "@/lib/db/portable";
 import { loadAttentionSummary, listAttentionEvents } from "@/lib/attention";
 import { Card, SectionHeader } from "@/components/ui";
 
@@ -19,9 +19,9 @@ function relativeTime(iso: string | Date): string {
 export async function AttentionCard({ session }: { session: SessionPayload }) {
   if (session.role !== "owner" && session.role !== "admin") return null;
 
-  const { summary, events } = await withDbSession(session, async (client) => {
-    const summary = await loadAttentionSummary(client, session.accountId);
-    const events = await listAttentionEvents(client, session.accountId, 5);
+  const { summary, events } = await withTenantTransaction(session, async (client, accountId) => {
+    const summary = await loadAttentionSummary(client, accountId);
+    const events = await listAttentionEvents(client, accountId, 5);
     return { summary, events };
   });
 

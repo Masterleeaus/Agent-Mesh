@@ -4,11 +4,14 @@ import { query, queryOne } from "@/lib/db";
 import { withDbSession } from "@/lib/db";
 import { loadSquareSettings } from "@/lib/integrations/square-payments";
 import { isEncryptionConfigured } from "@/lib/crypto";
-import { PageContainer, PageHeader } from "@/components/ui";
+import { PageContainer, PageHeader, SurfaceState } from "@/components/ui";
 import { SettingsTabsClient } from "./SettingsTabsClient";
 import type { TeamMember } from "./TeamPanel";
 import type { SquareStatus } from "./SquarePanel";
 import type { LocationDayValues } from "./LocationDaySettings";
+import { bindNativeSurface } from "@/lib/navigation/native-service-bindings";
+import { loadWorkforceLifecycleInspection } from "./workforce-lifecycle-data";
+import { loadWorkforceHierarchyInspection } from "./workforce-hierarchy-data";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +51,10 @@ export default async function SettingsPage() {
   // admin-only sections below (Company, Team, Tools, System Health) stay gated
   // by `isAdmin`, so a tech sees only "Your profile".
 
+  bindNativeSurface("settings", session.accountId);
+  bindNativeSurface("workforce", session.accountId);
+  bindNativeSurface("marketplace", session.accountId);
+
   const isAdmin = session.role === "owner" || session.role === "admin";
 
   const [account, users, me] = await Promise.all([
@@ -75,6 +82,23 @@ export default async function SettingsPage() {
   ]);
 
   if (!me) redirect("/login");
+
+  if (isAdmin && !account) {
+    return (
+      <PageContainer>
+        <PageHeader title="Settings" subtitle="Business and account configuration" />
+        <SurfaceState
+          kind="empty"
+          title="Company settings are not available yet"
+          description="Your profile is intact. Company configuration will appear here when the account record is available."
+          testId="settings-company-empty-state"
+        />
+      </PageContainer>
+    );
+  }
+
+  const workforceLifecycle = isAdmin ? loadWorkforceLifecycleInspection(session.accountId) : [];
+  const workforceHierarchy = isAdmin ? loadWorkforceHierarchyInspection(session.accountId) : null;
 
   const isOwner = session.role === "owner";
   const locationDay: LocationDayValues | undefined = isOwner && account
@@ -130,6 +154,8 @@ export default async function SettingsPage() {
         users={users as TeamMember[]}
         square={square}
         locationDay={locationDay}
+        workforceLifecycle={workforceLifecycle}
+        workforceHierarchy={workforceHierarchy}
       />
     </PageContainer>
   );

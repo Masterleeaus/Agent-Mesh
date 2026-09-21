@@ -19,6 +19,7 @@ import {
 } from "@/components/ui";
 import type { DataTableColumn, FilterDef } from "@/components/ui";
 import { PEOPLE_HUB_LINKS } from "@/lib/navigation/hubs";
+import { bindNativeSurface } from "@/lib/navigation/native-service-bindings";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +48,7 @@ function formatClientHistoryMeta(row: ClientRow): string {
   const spend = Number(row.lifetime_spend_cents) || 0;
   const parts = [
     `${props} propert${props === 1 ? "y" : "ies"}`,
-    `${jobs} job${jobs === 1 ? "" : "s"}`,
+    `${jobs} project${jobs === 1 ? "" : "s"}`,
   ];
   if (sq > 0) parts.push(`${sq} Square txn${sq === 1 ? "" : "s"}`);
   if (spend > 0) parts.push(formatCents(spend));
@@ -66,6 +67,8 @@ export default async function ClientsPage({ searchParams }: PageProps) {
   const session = await getSession();
   if (!session) redirect("/login");
   if (!canManageClients(session.role)) redirect("/app");
+
+  bindNativeSurface("customers", session.accountId);
 
   const { q } = await searchParams;
   const search = (q ?? "").trim().toLowerCase();
@@ -117,14 +120,14 @@ export default async function ClientsPage({ searchParams }: PageProps) {
     },
     {
       key: "properties",
-      label: "Houses",
+      label: "Properties",
       align: "right",
       render: (row) => Number(row.property_count),
       width: "120px",
     },
     {
       key: "jobs",
-      label: "Jobs",
+      label: "Projects",
       align: "right",
       // Includes draft through invoiced — every FSM job row for this client.
       render: (row) => Number(row.job_count),
@@ -186,7 +189,7 @@ export default async function ClientsPage({ searchParams }: PageProps) {
     <PageContainer>
       <PageHeader
         title="Clients"
-        subtitle={`${clients.length} client${clients.length === 1 ? "" : "s"} · Jobs = work in this app (includes invoiced). Square = historical payments from Square export.`}
+        subtitle={`${clients.length} client${clients.length === 1 ? "" : "s"} · Projects = work in this app (includes invoiced). Square = historical payments from Square export.`}
         actions={
           <div style={{ display: "flex", gap: "var(--space-2)" }}>
             <LinkButton href="/app/clients/import" variant="secondary">
