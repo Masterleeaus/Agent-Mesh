@@ -78,7 +78,10 @@ jobs:
           TYPECHECK_STATUS=$?
           set -e
           cat web-typecheck.log
-          python3 .github/scripts/check-web-typecheck-baseline.py             --baseline .github/ci/web-typecheck-baseline.json             --log web-typecheck.log
+          python3 .github/scripts/check-web-typecheck-baseline.py \
+            --baseline .github/ci/web-typecheck-baseline.json \
+            --log web-typecheck.log \
+            --command-status "$TYPECHECK_STATUS"
           if [ "$TYPECHECK_STATUS" -eq 0 ]; then
             echo "Web TypeScript baseline is fully clean."
           else
