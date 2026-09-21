@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
-import { getPool } from "@/lib/db";
+import { getPool, getDatabaseDialect } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { getEnv } from "@/lib/env";
 import { writeWorkflowEvent } from "@/lib/workflow-events";
@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
  *
  * Body (form-encoded or JSON): { action: "approve"|"decline", token: "<jwt>" }
  *
- * Uses an atomic UPDATE ... WHERE status IN ('draft','sent') RETURNING id
+ * Uses an atomic UPDATE ... WHERE status IN ('draft','sent') database-specific returned rows id
  * to enforce first-writer-wins with no TOCTOU race.
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -70,17 +70,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const newStatus = action === "approve" ? "approved" : "declined";
 
-    // Atomic first-writer-wins: only transitions from draft/sent.
-    // If status is already approved/declined/expired, RETURNING returns nothing
-    // and we treat it as idempotent success.
-    const { rows } = await client.query<{ id: string; account_id: string }>(
-      `UPDATE estimates
-       SET status = $1, updated_at = now()
-       WHERE id = $2 AND status IN ('draft', 'sent')
-       RETURNING id, account_id`,
-      [newStatus, id]
+    // Lock the estimate row before transition. This preserves first-writer-wins
+    // semantics without PostgreSQL database-specific returned rows and works on MySQL/MariaDB.
+    const current = await client.query<{ id: string; account_id: string; status: string }>(
+      `SELECT id, account_id, status FROM estimates WHERE id = $1 FOR UPDATE`,
+      [id]
     );
-
+    const transitionable = current.rows[0] && ["draft", "sent"].includes(current.rows[0].status);
+    const rows = transitionable ? [current.rows[0]] : [];
+    if (transitionable) {
+      await client.query(
+        `UPDATE estimates SET status = $1, updated_at = now() WHERE id = $2`,
+        [newStatus, id]
+      );
+    }
     if (rows.length > 0) {
       const { account_id } = rows[0];
       const eventType = action === "approve" ? "estimate.approved" : "estimate.declined";
@@ -124,12 +127,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const ownerId = await getAccountOwnerUserId(client, account_id);
         if (ownerId) {
           // Set RLS session context so INSERT policies on jobs/invoices pass.
-          await client.query(
-            `SELECT set_config('app.current_user_id', $1, true),
-                    set_config('app.current_account_id', $2, true),
-                    set_config('app.current_role', 'owner', true)`,
-            [ownerId, account_id]
-          );
+          if (getDatabaseDialect() === "postgres") {
+            await client.query(
+              `SELECT set_config('app.current_user_id', $1, true),
+                      set_config('app.current_account_id', $2, true),
+                      set_config('app.current_role', 'owner', true)`,
+              [ownerId, account_id]
+            );
+          }
 
           // Auto-create or link job (non-fatal). CLIENT_RECENT_WORK skips spawn.
           await client.query("SAVEPOINT before_auto_job");
