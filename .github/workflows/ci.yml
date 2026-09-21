@@ -1,0 +1,72 @@
+name: Titan Zero PR CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Repository guardrails
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f AGENTS.md
+          test -f roadmap/INDEX.json
+          test -f work/claims.json
+          if git grep -nE '^(<<<<<<<|=======|>>>>>>>)' -- . ':!*.zip'; then
+            echo "Merge conflict marker detected"
+            exit 1
+          fi
+
+      - name: Detect application source
+        id: app
+        shell: bash
+        run: |
+          if [ -f package.json ] && [ -f pnpm-lock.yaml ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Titan Zero application source is not yet extracted on this branch."
+          fi
+
+      - uses: pnpm/action-setup@v4
+        if: steps.app.outputs.present == 'true'
+        with:
+          version: 9.12.0
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        if: steps.app.outputs.present == 'true'
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        if: steps.app.outputs.present == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        if: steps.app.outputs.present == 'true'
+        run: pnpm -r typecheck
+
+      - name: Test
+        if: steps.app.outputs.present == 'true'
+        run: pnpm -r test
+
+      - name: Build
+        if: steps.app.outputs.present == 'true'
+        run: pnpm -r build
