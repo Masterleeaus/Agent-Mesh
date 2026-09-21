@@ -146,7 +146,7 @@ export function buildInvoicePaymentJourneyEvidence(input: Readonly<Record<string
     upstream_origin: upstreamOrigin,
     invoice: Object.freeze({
       invoice_id: lifecycle.invoice_id,
-      state: lifecycle.invoice_state,
+      state: String(lifecycle.invoice_state),
       source_domain: invoiceSourceDomain,
       source_ref: invoiceSourceRef,
       canonical_owner: invoiceOwner.canonicalOwner,
