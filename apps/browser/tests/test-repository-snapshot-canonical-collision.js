@@ -1,0 +1,3 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');const c={};c.globalThis=c;vm.createContext(c);for(const f of ['src/repository/repository-policy.js','src/lib/repository-host-integration.js']){if(f.includes('host-integration')){c.CodeeCapabilityRegistry={};c.CodeeRepositoryReceiverAdapter={register:()=>({})};}vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});}
+assert.throws(()=>c.CodeeRepositoryHostIntegration.sanitizeSnapshot({files:{'app/A.php':'one','app/./A.php':'two'}}),/duplicate|canonical/i,'canonical path collisions must fail closed instead of silently overwriting');
+console.log('Repository snapshot rejects canonical path collisions');

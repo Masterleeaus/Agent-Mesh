@@ -1,0 +1,15 @@
+const assert = require('assert');
+const fs = require('fs');
+const nav = fs.readFileSync('src/lib/navigation-registry.js','utf8');
+const html = fs.readFileSync('src/sidebar/sidebar.html','utf8');
+const js = fs.readFileSync('src/sidebar/sidebar.js','utf8');
+const worker = fs.readFileSync('src/lib/service-worker.js','utf8');
+assert(nav.includes("id: 'infrastructure.mcp'") && nav.includes("page: 'mcp'") && nav.includes("readiness: 'AVAILABLE'"), 'MCP navigation must be AVAILABLE');
+assert(html.includes('data-page="mcp"'), 'MCP inspector page must exist');
+for (const id of ['mcp-inspector-summary','mcp-inspector-servers','mcp-inspector-tools','mcp-inspector-prompts','mcp-inspector-resources','mcp-inspector-approvals','mcp-inspector-receipts','mcp-inspector-refresh-btn','mcp-inspector-configure-btn']) assert(html.includes(`id="${id}"`), `missing ${id}`);
+assert(js.includes("action: 'GET_MCP_INSPECTOR'"), 'MCP page must load canonical inspector projection');
+assert(js.includes('loadMcpInspector'), 'MCP inspector UI loader must exist');
+assert(worker.includes("message.action === 'GET_MCP_INSPECTOR'"), 'worker must expose MCP inspector projection');
+assert(worker.includes("'mcp-inspector.js'"), 'worker must load the MCP inspector module');
+assert(!html.includes('id="mcp-inspector-token"'), 'MCP inspector must not render credential fields');
+console.log('MCP navigation/page is wired to the canonical read-only inspector projection');

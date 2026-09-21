@@ -1,0 +1,125 @@
+{
+  "schema": "codee.donor.integration.ledger.v1",
+  "baseline": "2.11.9",
+  "entries": [
+    {
+      "pass": 5,
+      "capability": "offscreen-inference-runtime",
+      "status": "ADAPTED",
+      "canonicalTargets": [
+        "src/intelligence/offscreen-runtime.js",
+        "src/intelligence/offscreen-document.js",
+        "src/intelligence/offscreen.html"
+      ],
+      "donors": [
+        {
+          "source": "Auto Browser v1.4.2/src/offscreen-manager.js",
+          "sha256": "65a33153794afa34744721657b3959546ada679c51eb52edc054a3443d4456a3",
+          "use": "ref-counted create/close lifecycle, race handling, no-keepalive policy"
+        },
+        {
+          "source": "Auto Browser v1.4.2/offscreen.js",
+          "sha256": "e45a68f8df130da76db3cf309fffc61f9d8b08f19801b33e07c9de6b4aa1d8bf",
+          "use": "offscreen message-listener and finally-scoped lifecycle pattern"
+        }
+      ],
+      "reused": [
+        "ref-counted retain/release lifecycle",
+        "serialized create/close",
+        "idempotent Chrome offscreen race handling",
+        "no keepalive timer"
+      ],
+      "adapted": [
+        "Codee request/session message schema",
+        "Codee IIFE/importScripts runtime form",
+        "inference-adapter dispatch rather than donor perception rendering"
+      ],
+      "new": [
+        "Codee offscreen message schema",
+        "Codee Chrome transport wrapper",
+        "inference adapter authority boundary"
+      ],
+      "deleted": []
+    },
+    {
+      "pass": 6,
+      "capability": "inference-rpc-request-transport",
+      "status": "ADAPTED",
+      "canonicalTargets": [
+        "src/intelligence/intelligence-rpc.js",
+        "src/lib/service-worker.js"
+      ],
+      "donors": [
+        {
+          "source": "20-complete-clean-source-donors/auto_browser_1.4.2/src/orchestration/rpc-transport.js",
+          "sha256": "a191c8c060b5897ab01f0b9bb46f3ea3d6a2bdfdc2ffc0a8ad09057f13e2c0e5",
+          "use": "single-funnel request transport and message correlation pattern"
+        }
+      ],
+      "reused": [
+        "single RPC funnel",
+        "request/response correlation",
+        "service-worker message routing pattern"
+      ],
+      "adapted": [
+        "Codee intelligence context and request/session identity",
+        "Codee shared IntelligenceHost runtime registration",
+        "Codee OffscreenRuntime effect boundary",
+        "cross-session cancellation ownership"
+      ],
+      "new": [
+        "codee.intelligence.rpc.v1 envelope",
+        "Chrome client/service adapters",
+        "requestId mismatch rejection"
+      ],
+      "deleted": []
+    },
+    {
+      "pass": 7,
+      "planPass": 1,
+      "capability": "streaming-inference-convergence",
+      "status": "ADAPTED",
+      "canonicalTargets": [
+        "src/intelligence/streaming.js",
+        "src/intelligence/offscreen-document.js",
+        "src/intelligence/offscreen.html",
+        "src/intelligence/intelligence-rpc.js"
+      ],
+      "donors": [
+        {
+          "source": "Auto Browser v1.4.2/src/llm/sse-stream.js",
+          "sha256": "1673ecf66dc57110c3e1de4aa10cb91537068a8462bdc73f3408ebfaf267174b",
+          "use": "bounded stream lifecycle, fail-closed framing and termination principles"
+        },
+        {
+          "source": "Auto Browser v1.4.2/src/llm/sse.js",
+          "sha256": "f4756637176346beb77754c7af06e1fe0f256c4019d0ef81c0d3c9532398a9d2",
+          "use": "incremental SSE event boundary and incomplete-tail handling"
+        },
+        {
+          "source": "Auto Browser v1.4.2/src/orchestration/rpc-transport.js",
+          "sha256": "a191c8c060b5897ab01f0b9bb46f3ea3d6a2bdfdc2ffc0a8ad09057f13e2c0e5",
+          "use": "single-funnel request correlation retained while adding chunk side-channel"
+        }
+      ],
+      "reused": [
+        "bounded SSE/event-stream principles",
+        "single final RPC response",
+        "request correlation",
+        "offscreen transport boundary"
+      ],
+      "adapted": [
+        "Codee IIFE runtime",
+        "async iterable and ReadableStream normalization",
+        "requestId/sessionId fenced chunk events",
+        "bounded stream byte/chunk budgets"
+      ],
+      "new": [
+        "codee.intelligence.streaming.v1",
+        "INTELLIGENCE_STREAM_EVENT side channel",
+        "Chrome stream client listener lifecycle"
+      ],
+      "deleted": []
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+   "action": {
+      "default_icon": {
+         "128": "icons/icon128.png",
+         "16": "icons/icon16.png",
+         "32": "icons/icon32.png",
+         "64": "icons/icon64.png"
+      },
+      "default_title": "Browser Agent"
+   },
+   "background": {
+      "service_worker": "background.js",
+      "type": "module"
+   },
+   "commands": {
+      "_execute_action": {
+         "suggested_key": {
+            "default": "Ctrl+Shift+Y",
+            "mac": "Command+Shift+Y"
+         }
+      },
+      "toggle-side-panel": {
+         "description": "Toggle the side panel",
+         "suggested_key": {
+            "default": "Ctrl+Shift+Y",
+            "mac": "Command+Shift+Y"
+         }
+      }
+   },
+   "content_scripts": [ {
+      "css": [ "content-script.css" ],
+      "js": [ "content-script.js" ],
+      "matches": [ "https://app.browseragent.dev/dashboard/chrome-extension*", "http://localhost:3000/dashboard/chrome-extension*", "https://dev.browserai.dev/dashboard/chrome-extension*", "https://api.browseragent.dev/*" ]
+   } ],
+   "content_security_policy": {
+      "extension_pages": "style-src-elem 'self' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; script-src 'self' 'wasm-unsafe-eval'; default-src 'self' data:; connect-src 'self' data: https://huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://raw.githubusercontent.com https://cdn-lfs-us-1.hf.co https://api.browseragent.dev"
+   },
+   "description": "Run private, cost-free AI agents directly in your browser. Automate tasks, enhance browsing, and control your data with local AI.",
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl/Cfma0reJScqOkJUqBp2YRyp/PFkmzONLHKREqPcxt6aK3q7Tcw0BY6Gcx+C6h3ioaSXv6tO1hAz+R/tgXtQ1Qro0YRy6cZqlViBY37wwGKwan3MYPRoHbZXNmNljTZ5zCbgKD6//W5KTL3DzXaaDO273xXneoYWXy/c4kxRXQJSLMpbcDcka/x2qbmv7g2a73CJZ5Vn+0pkpoxY2cYb4b3sy0FqadVkfmsz2zNhuIAAeJllDZXZXaJSJUvhX0JAHHcdupuqMoDjZ7jivRlDwv17fCljii8NXBygir6hh7mL3M8jywUXpGZooljWp8yNqcLbpKGQuJvwAJea6IbxQIDAQAB",
+   "manifest_version": 3,
+   "name": "BrowserAgent - AI Agents in Browser",
+   "optional_host_permissions": [ "https://*/*", "http://*/*" ],
+   "permissions": [ "sidePanel", "activeTab", "scripting", "storage", "tabs" ],
+   "side_panel": {
+      "default_path": "index.html",
+      "default_width": 400,
+      "openPanelOnly": true
+   },
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.0.10",
+   "web_accessible_resources": [ {
+      "matches": [ "\u003Call_urls>" ],
+      "resources": [ "ba_extension_loader.gif", "src/core/browser-actions.js" ]
+   } ]
+}

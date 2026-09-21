@@ -1,0 +1,15 @@
+const assert=require('assert');
+const {load}=require('./_workforce-test-loader'); const g=load();
+const r=g.CodeeWorkforceHostIntegration.register({enabled:true,maxManagersPerTask:3});
+const snap=g.CodeeCapabilityRegistry.snapshot();
+assert.strictEqual(r.createdTopLevelTabs,0);
+assert.strictEqual(snap.managers.filter(x=>x.id.endsWith('-manager')).length,14);
+assert.strictEqual(snap.capabilities.filter(x=>x.pack==='codee-managers-ai-workforce').length,17);
+assert.strictEqual(snap.prompts.filter(x=>x.category==='Managers & AI Workforce').length,30);
+assert.strictEqual(snap.skills.filter(x=>x.category==='Managers & AI Workforce').length,34);
+assert.strictEqual(snap.profiles.filter(x=>String(x.id).startsWith('profile-')&&x.managerId).length,14);
+const status=g.CodeeWorkforceHostIntegration.statusPayload({});
+assert.strictEqual(status.authority.planAdvance,false);
+assert.strictEqual(status.authority.directMutation,false);
+assert.strictEqual(status.authority.implementsMcpRuntime,false);
+console.log('Workforce registration/authority OK');

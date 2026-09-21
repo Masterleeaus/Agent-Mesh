@@ -1,0 +1,10 @@
+const fs=require('fs'),assert=require('assert');
+const html=fs.readFileSync('src/sidebar/sidebar.html','utf8');
+const js=fs.readFileSync('src/sidebar/sidebar.js','utf8');
+for(const id of ['workforce-runner-section','workforce-preflight-btn','workforce-draft-btn','setting-workforce-enabled','setting-workforce-max-managers','setting-workforce-plan-advance','setting-workforce-direct-mutation','diagnostics-workforce']) assert(html.includes(`id="${id}"`),`missing ${id}`);
+assert(js.includes('PREPARE_WORKFORCE_PREFLIGHT'));
+assert(js.includes('CREATE_WORKFORCE_PLAN_DRAFT'));
+assert(js.includes('UPDATE_WORKFORCE_SETTINGS'));
+assert(js.includes('GET_WORKFORCE_STATUS'));
+assert(js.includes('## Managers & AI Workforce'));
+console.log('Workforce sidebar/settings/diagnostics wiring OK');

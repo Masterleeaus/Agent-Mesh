@@ -1,0 +1,6 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+let lastOptions=null;
+const chrome={permissions:{contains:async()=>true,request:async()=>true}};
+const fetch=async(_url,options)=>{lastOptions=options;return {ok:true,status:200,headers:{get:k=>String(k).toLowerCase()==='content-type'?'text/event-stream':null},text:async()=>`event: message\ndata: {"jsonrpc":"2.0","id":"abc","result":{"ok":true}}\n\n`};};
+const c={chrome,fetch,URL,console};c.globalThis=c;vm.createContext(c);vm.runInContext(fs.readFileSync('src/lib/approved-network-transport.js','utf8'),c,{filename:'transport'});
+(async()=>{const r=await c.CodeeApprovedNetworkTransport.postJson('https://titan.example/mcp/titan',{jsonrpc:'2.0',id:'abc',method:'tools/list',params:{}},{headers:{Accept:'application/json, text/event-stream'}});assert.strictEqual(r.json.result.ok,true);assert.ok(String(lastOptions.headers.Accept||lastOptions.headers.accept).includes('text/event-stream'));const big='x'.repeat(1024*1024);await c.CodeeApprovedNetworkTransport.postJson('https://titan.example/mcp/titan',{jsonrpc:'2.0',id:'abc',method:'tools/call',params:{arguments:{content:big}}},{headers:{Accept:'application/json, text/event-stream'}});console.log('MCP streamable HTTP v2.3.4 OK');})().catch(e=>{console.error(e);process.exit(1)});

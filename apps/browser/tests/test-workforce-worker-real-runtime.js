@@ -1,0 +1,20 @@
+const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert');
+const source=fs.readFileSync('src/lib/service-worker.js','utf8'); const memory={};
+const local={async get(keys){const out={};for(const k of Array.isArray(keys)?keys:[keys]) if(Object.prototype.hasOwnProperty.call(memory,k)) out[k]=memory[k]; return out;},async set(obj){Object.assign(memory,JSON.parse(JSON.stringify(obj)));}};
+const chrome={sidePanel:{setPanelBehavior:async()=>{}},runtime:{onMessage:{addListener(){}},sendMessage:async()=>({ok:true}),onStartup:{addListener(){}},onInstalled:{addListener(){}}},alarms:{create:async()=>{},get:async()=>({name:'ZIP_POLL',periodInMinutes:1}),onAlarm:{addListener(){}}},tabs:{query(_q,cb){cb([])},get:async()=>({id:11,url:'https://chatgpt.com/c/test',title:'Test'}),sendMessage:async(_id,msg)=>msg.action==='GET_PAGE_SNAPSHOT'?{ok:true,artifacts:[],versions:[],hasSubmittedStepToken:false}:{ok:true}},storage:{local}};
+const c={chrome,console:{log(){},warn(){},error(){}},setTimeout(fn){return 1},clearTimeout(){},setInterval(){return 1},clearInterval(){},Map,Set,WeakMap,WeakSet,Promise,Date,Math,JSON,Object,Array,String,Number,Boolean,RegExp,Uint32Array,crypto:{randomUUID:()=> 'uuid'}}; c.globalThis=c; vm.createContext(c);
+c.importScripts=(...urls)=>{for(const u of urls){const f=path.resolve('src/lib',u);vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});}};
+vm.runInContext(source,c,{filename:'service-worker.js'});
+(async()=>{
+  const payload=await c.getCapabilityRegistryPayload();
+  assert.strictEqual(payload.registry.managers.filter(m=>String(m.id).endsWith('-manager')).length,14);
+  assert.strictEqual(payload.registry.capabilities.filter(x=>x.pack==='codee-managers-ai-workforce').length,17);
+  const pre=await c.prepareWorkforcePreflight({text:'Laravel 500 runtime exception'});
+  const ids=[pre.preflight.primary,...pre.preflight.supporting].map(m=>m.id);
+  assert(ids.includes('laravel-manager')); assert(ids.includes('runtime-manager'));
+  const plan={stateVersion:2,protocolMode:'signature_v2',planId:'p1',runId:'r1',plan:[{number:1,text:'Fix Laravel 500 runtime exception'},{number:2,text:'Run tests'}],stepIndex:0,versions:[],knownVersions:[],knownArtifactHashes:[],consumedArtifactHashes:[],consumedArtifactKeys:[],artifactHistory:[],dispatchStatus:'pending_send',target:{url:'https://chatgpt.com/c/test',conversationIdentity:'chatgpt:test',title:'Test',provider:'ChatGPT'}};
+  const saved=await c.prepareAndSavePlanState(11,plan); assert(saved.ok); assert(saved.planState.workforcePreflight.primary); assert(saved.planState.workforceContext.includes('MANAGERS & AI WORKFORCE'));
+  const prompt=c.buildPrompt(saved.planState); assert(prompt.includes('MANAGERS & AI WORKFORCE')); assert(prompt.indexOf('MANAGERS & AI WORKFORCE')<prompt.indexOf('CODEE COMPLETION CONTRACT'));
+  const status=await c.getWorkforceStatus(); assert.strictEqual(status.counts.managers,14); assert.strictEqual(status.authority.planAdvance,false);
+  console.log('Workforce real service-worker runtime integration OK');
+})().catch(e=>{console.error(e);process.exit(1)});

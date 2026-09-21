@@ -1,0 +1,61 @@
+{
+  "manifest_version": 3,
+  "name": "Titan Code - AI Plan Runner",
+  "version": "2.11.9",
+  "description": "Titan Code plans, verifies and coordinates governed AI-assisted coding work across providers, repositories and local runtimes.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "alarms",
+    "sidePanel",
+    "clipboardWrite",
+    "offscreen",
+    "debugger"
+  ],
+  "host_permissions": [
+    "*://chatgpt.com/*",
+    "*://claude.ai/*"
+  ],
+  "side_panel": {
+    "default_path": "src/sidebar/sidebar.html"
+  },
+  "action": {
+    "default_title": "Titan Code - Open Sidebar",
+    "default_icon": {
+      "16": "public/icons/icon-16.png",
+      "32": "public/icons/icon-32.png",
+      "48": "public/icons/icon-48.png",
+      "128": "public/icons/icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "src/lib/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://chatgpt.com/*",
+        "*://claude.ai/*"
+      ],
+      "js": [
+        "src/providers/provider-registry.js",
+        "src/content-script.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "minimum_chrome_version": "114",
+  "icons": {
+    "16": "public/icons/icon-16.png",
+    "32": "public/icons/icon-32.png",
+    "48": "public/icons/icon-48.png",
+    "128": "public/icons/icon-128.png"
+  },
+  "optional_host_permissions": [
+    "https://generativelanguage.googleapis.com/*",
+    "http://localhost:43127/*",
+    "http://127.0.0.1:43127/*",
+    "https://*/*",
+    "http://*/*"
+  ]
+}

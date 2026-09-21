@@ -1,0 +1,10 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');
+const source=fs.readFileSync('src/sidebar/sidebar.js','utf8');
+const context={console:{log(){},warn(){},error(){}},document:{addEventListener(){},getElementById(){return null;}},chrome:{runtime:{onMessage:{addListener(){}}}},Map,Promise,URL};vm.runInNewContext(source,context);
+assert.strictEqual(typeof context.generateDebuggingPlanText,'function','generator function must exist');
+const text=context.generateDebuggingPlanText();
+const plan=context.parsePlanText(text);
+assert.strictEqual(plan.length,10,'generated debugging plan must have exactly ten passes');
+assert(/Pass 1/i.test(text)&&/Pass 10/i.test(text));
+assert(plan.every(step=>/deep scan/i.test(step.text)||/verification|certification/i.test(step.text)),'every generated pass must drive debugging/verification work');
+console.log('ten-pass debugging plan generator OK');

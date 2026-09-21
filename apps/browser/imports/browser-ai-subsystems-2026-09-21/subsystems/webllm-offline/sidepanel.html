@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline GPT Chat</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Offline GPT Chat</h1>
+      <button id="clearChat" class="context-btn" title="Clear conversation history">
+        🗑️ Clear Chat
+      </button>
+    </div>
+    
+    <!-- Model Selection -->
+    <div id="modelSection" class="model-section">
+      <label for="modelSelect">Select Model:</label>
+      <select id="modelSelect">
+        <option value="Phi-3-mini-4k-instruct-q4f16_1-MLC">Phi-3-mini (2.3GB) - Fast</option>
+        <option value="Llama-3.1-8B-Instruct-q4f16_1-MLC">Llama-3.1-8B (4.9GB) - Better</option>
+        <option value="Qwen2.5-7B-Instruct-q4f16_1-MLC">Qwen2.5-7B (4.3GB) - Best</option>
+      </select>
+      <button id="loadModel" class="load-btn">Load Model</button>
+      <button id="unloadModel" class="unload-btn" style="display: none;">Unload Model</button>
+    </div>
+    
+    <!-- Status/Progress -->
+    <div id="status" class="status"></div>
+    <div id="progressBar" class="progress-bar" style="display: none;">
+      <div id="progressFill" class="progress-fill"></div>
+      <div id="progressText" class="progress-text">0%</div>
+    </div>
+    
+    <!-- Chat Container -->
+    <div id="chatContainer" class="chat-container">
+      <div id="messages" class="messages">
+        <div class="message system">
+          Welcome! Select a model and click "Load Model" to start.
+          <br><br>
+          <strong>Model Info:</strong>
+          <br>• Phi-3-mini: Smallest, fastest download (~2.3GB)
+          <br>• Llama-3.1-8B: Better quality (~4.9GB)
+          <br>• Qwen2.5-7B: Best quality (~4.3GB)
+          <br><br>
+          Models are downloaded once and cached locally.
+        </div>
+      </div>
+    </div>
+    
+    <!-- Input Area -->
+    <div class="input-area">
+      <textarea id="userInput" placeholder="Load a model first..." rows="2" disabled></textarea>
+      <button id="sendBtn" class="send-btn" disabled>Send</button>
+    </div>
+  </div>
+  <script src="sidepanel-bundle.js" type="module"></script>
+</body>
+</html>

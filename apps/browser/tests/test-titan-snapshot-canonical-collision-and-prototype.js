@@ -1,0 +1,5 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');const c={};c.globalThis=c;c.CodeeCapabilityRegistry={};c.CodeeTitanZeroReceiverAdapter={register:()=>({})};vm.createContext(c);
+for(const f of ['src/titan-zero/titan-zero-snapshot-policy.js','src/lib/titan-zero-host-integration.js'])vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});
+assert.throws(()=>c.CodeeTitanZeroHostIntegration.sanitizeSnapshot({files:{'app/Models/A.php':'one','app/Models/./A.php':'two'}}),/duplicate|canonical/i,'Titan snapshot must reject canonical aliases');
+const files=Object.create(null);files['__proto__']='<?php class Weird {}';files['app/Models/A.php']='<?php class A {}';const out=c.CodeeTitanZeroHostIntegration.sanitizeSnapshot({files});assert.strictEqual(Object.getPrototypeOf(out.files),null,'Titan sanitized file map should be prototype-less');assert.strictEqual(out.files['app/Models/A.php'].includes('class A'),true);
+console.log('Titan snapshot rejects aliases and uses prototype-safe maps');

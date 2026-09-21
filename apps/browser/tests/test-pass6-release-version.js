@@ -1,0 +1,13 @@
+const assert = require('assert');
+const fs = require('fs');
+const manifest = JSON.parse(fs.readFileSync('manifest.json','utf8'));
+const pkg = JSON.parse(fs.readFileSync('package.json','utf8'));
+const readme = fs.readFileSync('README.md','utf8');
+const runtime = fs.readFileSync('src/integration/titan-mcp-runtime.js','utf8');
+const parts = manifest.version.split('.').map(Number);
+assert(parts[0] > 2 || (parts[0] === 2 && parts[1] >= 7), 'current release must remain at or above the Pass 6 v2.7.0 floor');
+assert.strictEqual(pkg.version, manifest.version);
+assert(readme.includes('## v2.7.0 Production Platform Completion — Master Pass 6/32'), 'README must retain Pass 6 release history');
+assert(runtime.includes(`clientInfo:{name:'Codee Chrome Extension',version:'${manifest.version}'}`), 'MCP clientInfo must match current release version');
+assert(manifest.description.length <= 132, 'Chrome manifest description must remain within 132 characters');
+console.log('Pass 6 release history remains compatible with current release metadata');

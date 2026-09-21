@@ -1,0 +1,12 @@
+const fs=require('fs'); const vm=require('vm'); const assert=require('assert');
+const source=fs.readFileSync('src/lib/service-worker.js','utf8');
+const chrome={sidePanel:{setPanelBehavior:async()=>{}},runtime:{onMessage:{addListener(){}},sendMessage:async()=>({ok:true}),onStartup:{addListener(){}},onInstalled:{addListener(){}}},alarms:{create:async()=>{},get:async()=>({name:'ZIP_POLL',periodInMinutes:1}),onAlarm:{addListener(){}}},tabs:{query(_q,cb){cb([])},get:async()=>({id:1,url:'https://chatgpt.com/c/a'}),sendMessage:async()=>({ok:true,versions:[],artifacts:[],hasSubmittedStepToken:false})},storage:{local:{get:async()=>({}),set:async()=>{}}}};
+const context={chrome,console:{log(){},warn(){},error(){}},setTimeout(fn){fn();},Map,Set,Promise,Date,Math,importScripts(){}};
+vm.runInNewContext(source,context);
+assert.strictEqual(typeof context.attachTitanZeroContext,'function','worker must expose separate Titan context attachment helper');
+const base='Please implement Step 1: Exact approved text';
+const out=context.attachTitanZeroContext(base,'# Titan Zero Developer Intelligence\n- evidence');
+assert(out.startsWith(base),'approved step text must stay byte-for-byte at the front');
+assert(out.includes('TITAN ZERO HOST CONTEXT — READ-ONLY EVIDENCE'));
+assert.strictEqual(context.attachTitanZeroContext(base,''),base,'no context must leave prompt unchanged');
+console.log('Titan Zero context attaches separately from approved step text');

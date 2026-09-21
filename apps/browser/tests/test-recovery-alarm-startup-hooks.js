@@ -1,0 +1,4 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');const source=fs.readFileSync('src/lib/service-worker.js','utf8');let startup,installed;
+const chrome={sidePanel:{setPanelBehavior:async()=>{}},runtime:{onMessage:{addListener(){}},sendMessage:async()=>{},onStartup:{addListener(fn){startup=fn}},onInstalled:{addListener(fn){installed=fn}}},alarms:{get:async()=>undefined,create:async()=>{},onAlarm:{addListener(){}}},tabs:{query(_q,cb){cb([])}},storage:{local:{get:async()=>({codeeState:{}}),set:async()=>{}}}};
+const c={chrome,console:{log(){},warn(){},error(){}},Map,Set,Promise,Date,Math,URL};vm.runInNewContext(source,c);
+assert.strictEqual(typeof startup,'function','browser startup must re-ensure the recovery alarm');assert.strictEqual(typeof installed,'function','extension install/update must re-ensure the recovery alarm');console.log('recovery alarm startup/install hooks OK');

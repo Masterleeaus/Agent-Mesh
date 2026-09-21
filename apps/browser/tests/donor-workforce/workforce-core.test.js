@@ -1,0 +1,18 @@
+const assert=require('assert');
+require('./load-pack');
+const W=globalThis.CodeeManagerWorkforcePack;
+assert(W,'pack missing');
+const d=W.registrationDescriptor();
+assert.strictEqual(d.authority.mayAdvancePlan,false);
+assert.strictEqual(d.authority.directMutation,false);
+assert(d.managers.length>=12);
+const cls=globalThis.CodeeWorkforceTaskClassifier.classify({text:'Laravel 500 error in invoice route'});
+assert(cls.tags.includes('laravel'));
+assert(cls.tags.includes('runtime'));
+const route=globalThis.CodeeManagerRouter.route({text:'review database migration tenant_company_id'});
+assert(route.primary);
+assert(route.candidates.length>0);
+const wo=globalThis.CodeeWorkOrder.create({task:'Inspect failure',managerId:route.primary.id,runId:'r1'});
+assert.strictEqual(wo.status,'proposed');
+assert.strictEqual(wo.authority.mayAdvancePlan,false);
+console.log('workforce-core PASS');

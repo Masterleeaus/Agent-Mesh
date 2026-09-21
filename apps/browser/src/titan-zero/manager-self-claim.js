@@ -1,0 +1,11 @@
+(function(g){'use strict';
+const SCHEMA='titan-zero.manager.self-claim.v1';
+function freeze(v){if(!v||typeof v!=='object'||Object.isFrozen(v))return v;Object.freeze(v);for(const k of Object.keys(v))freeze(v[k]);return v;}
+const rank={P0:0,P1:1,P2:2,P3:3};
+function arr(v){return Array.isArray(v)?v:[];}
+function compatible(agent={},packet={}){const allowed=arr(packet.allowed_lanes);if(allowed.length&& !allowed.includes(agent.lane))return false;const required=arr(packet.required_capabilities);const caps=new Set(arr(agent.capabilities));if(required.some(x=>!caps.has(x)))return false;return true;}
+function score(agent={},packet={}){let s=(rank[packet.priority]??99)*1000;const preferred=String(packet.owner_lane||packet.lane||'');if(preferred&&preferred!==String(agent.lane||''))s+=100;s+=Number(packet.roadmap_pass||999);return s;}
+function select(agent={},packets=[],ctx={}){const claimed=new Set(arr(ctx.claims).filter(c=>c&&['CLAIMED','ACTIVE','VERIFYING','READY','CONVERGENCE_PENDING'].includes(c.state||c.status)).map(c=>String(c.packet||c.packet_id)));const dep=ctx.dependencyState&&ctx.dependencyState.byPacket||{};const candidates=arr(packets).filter(p=>p&&p.status==='AVAILABLE'&&!claimed.has(String(p.packet_id))&&compatible(agent,p)&&(!dep[p.packet_id]||dep[p.packet_id].eligible!==false)).sort((a,b)=>score(agent,a)-score(agent,b)||String(a.packet_id).localeCompare(String(b.packet_id)));return freeze({schema:SCHEMA,selected:candidates[0]||null,candidates:candidates.map(p=>p.packet_id),rule:'Agents do not wait for a packet addressed to them. Any free agent atomically claims the highest-priority eligible compatible unclaimed packet. owner_lane is preference only unless allowed_lanes/required_capabilities restrict it.'});}
+function claim(agentName,agent,packet,ledgerRevision,generation){if(!packet)throw new Error('no eligible packet');return freeze({agent:String(agentName),packet:String(packet.packet_id),lane:String(agent&&agent.lane||''),state:'CLAIMED',claim_basis:'SELF_CLAIM_HIGHEST_PRIORITY_ELIGIBLE',claimed_revision:Number(ledgerRevision),working_generation:Number(generation),claimed_at:new Date().toISOString()});}
+g.TitanZeroManagerSelfClaim=freeze({SCHEMA,compatible,select,claim});
+})(typeof globalThis!=='undefined'?globalThis:this);

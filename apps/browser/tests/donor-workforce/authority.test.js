@@ -1,0 +1,10 @@
+const assert=require('assert');
+require('./load-pack');
+const p=globalThis.CodeeDelegationPolicy;
+assert.throws(()=>p.authorize({action:'plan.advance'}),/forbidden/i);
+assert.throws(()=>p.authorize({action:'repository.write'}),/host-owned/i);
+assert.strictEqual(p.authorize({action:'repository.search'}).allowed,true);
+const start=globalThis.CodeePlanStarter.prepare({goal:'Add invoice dashboard',evidence:[{kind:'route',value:'billing'}]});
+assert.strictEqual(start.authority.createOnly,true);
+assert.strictEqual(start.authority.advance,false);
+console.log('authority PASS');

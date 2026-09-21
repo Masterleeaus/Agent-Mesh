@@ -1,0 +1,10 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');
+const source=fs.readFileSync('src/sidebar/sidebar.js','utf8');
+const context={console:{log(){},warn(){},error(){}},document:{addEventListener(){},getElementById(){return null;}},chrome:{runtime:{onMessage:{addListener(){}}}},Map,Promise,URL};
+vm.runInNewContext(source,context);
+const plan=context.parsePlanText(`1. First top-level step\n   1. nested detail\n   2. another nested detail\n2. Second top-level step`);
+assert.strictEqual(plan.length,2,'nested ordered-list details must not become independent Codee steps');
+assert(plan[0].text.startsWith('First top-level step'));
+assert(plan[0].text.includes('nested detail'), 'nested details should stay attached to their parent step');
+assert.strictEqual(plan[1].text,'Second top-level step');
+console.log('plan parser ignores nested numbered details OK');

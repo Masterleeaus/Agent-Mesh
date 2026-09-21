@@ -1,0 +1,15 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm'),path=require('path');
+const root=path.resolve(__dirname,'..'),s={console};s.globalThis=s;vm.createContext(s);
+for(const f of ['manager-workspace-ledger','manager-self-claim','manager-auto-rollover'])vm.runInContext(fs.readFileSync(path.join(root,'src/titan-zero',f+'.js'),'utf8'),s,{filename:f});
+const L=s.TitanZeroManagerWorkspaceLedger,R=s.TitanZeroManagerAutoRollover;
+let ledger=L.normalize({revision:8,generation:3,canonical:{artifact:'Titan-Code-CANONICAL.zip',sha256:'abc'},agents:{'Agent 6':{lane:'manager_core',working_generation:3,state:'ACTIVE',current_work_packet:'DONE',execution_active:true}},claims:[{agent:'Agent 6',packet:'DONE',state:'ACTIVE'}],packets:[{packet_id:'DONE',status:'ACTIVE',priority:'P0',owner_lane:'manager_core'},{packet_id:'NEXT',status:'AVAILABLE',priority:'P0',owner_lane:'bridge_only',roadmap_pass:2},{packet_id:'LATER',status:'AVAILABLE',priority:'P1',owner_lane:'manager_core',roadmap_pass:3}],history:{reset_event:{event:'ORIGINAL'},manager_events:[]}});
+ledger=R.rollover(ledger,8,'Agent 6','DONE',{updated_at:'2026-09-13T04:00:00Z',dependencyState:{byPacket:{NEXT:{eligible:true},LATER:{eligible:true}}}});
+assert.strictEqual(ledger.revision,9);
+assert.strictEqual(ledger.packets.find(p=>p.packet_id==='DONE').status,'CONVERGENCE_PENDING');
+assert.strictEqual(ledger.packets.find(p=>p.packet_id==='DONE').handoff.builder_wait_required,false);
+assert.strictEqual(ledger.agents['Agent 6'].current_work_packet,'NEXT');
+assert.strictEqual(ledger.agents['Agent 6'].state,'ACTIVE');
+assert.strictEqual(ledger.claims.find(c=>c.agent==='Agent 6'&&c.packet==='NEXT').state,'ACTIVE');
+assert.strictEqual(ledger.history.reset_event.event,'ORIGINAL');assert.ok(ledger.history.manager_events.some(x=>x.event==='PACKET_COMPLETE_AUTO_ROLLOVER'&&x.builder_waited_for_manager===false));
+assert.throws(()=>R.rollover(ledger,8,'Agent 6','NEXT',{}),/REVISION_CONFLICT/);
+console.log('PASS test-titan-zero-manager-auto-rollover');

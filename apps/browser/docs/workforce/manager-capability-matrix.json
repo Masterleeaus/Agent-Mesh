@@ -1,0 +1,16 @@
+{
+  "architecture-manager": ["repository.dependencies","repository.impact","mcp.context.gather"],
+  "laravel-manager": ["repository.laravel.trace","repository.search","mcp.context.gather"],
+  "database-manager": ["repository.migrations.review","repository.impact","mcp.context.gather"],
+  "extension-manager": ["repository.inventory","repository.search","repository.dependencies","mcp.context.gather"],
+  "frontend-manager": ["repository.search","repository.dependencies","repository.tests.select"],
+  "runtime-manager": ["repository.logs.analyze","repository.error.classify","mcp.context.gather"],
+  "security-manager": ["repository.impact","mcp.context.gather"],
+  "testing-manager": ["repository.tests.select","repository.verification.plan"],
+  "release-manager": ["repository.git.analyze","repository.verification.plan"],
+  "integration-manager": ["mcp.connections.list","mcp.discover","mcp.context.gather"],
+  "repository-manager": ["repository.search","repository.symbols","repository.diff","repository.impact"],
+  "planning-manager": ["repository.inventory","repository.impact","mcp.context.gather"],
+  "documentation-manager": ["repository.search","mcp.context.gather"],
+  "governance-manager": ["repository.impact","repository.verification.plan"]
+}

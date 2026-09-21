@@ -1,0 +1,45 @@
+{
+   "action": {
+      "default_icon": {
+         "16": "icons/favicon-16x16.png",
+         "32": "icons/favicon-32x32.png"
+      }
+   },
+   "background": {
+      "service_worker": "src/background.js",
+      "type": "module"
+   },
+   "content_scripts": [ {
+      "js": [ "src/lib/turndown.js", "src/content.js" ],
+      "matches": [ "\u003Call_urls>" ],
+      "run_at": "document_idle"
+   }, {
+      "all_frames": true,
+      "js": [ "src/page-helper.js" ],
+      "matches": [ "\u003Call_urls>" ],
+      "run_at": "document_start",
+      "world": "MAIN"
+   } ],
+   "description": "AI agent that actually uses your browser. WebMCP-native, privacy-first, works with any AI providers.",
+   "host_permissions": [ "\u003Call_urls>" ],
+   "icons": {
+      "128": "icons/android-chrome-192x192.png",
+      "16": "icons/favicon-16x16.png",
+      "192": "icons/android-chrome-192x192.png",
+      "32": "icons/favicon-32x32.png",
+      "512": "icons/android-chrome-512x512.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArCGzHoV8SzAs2fP487daxVaANT/c16cf3THo8fxGG+61dXSWULIbRYBLYru8tHh8VQKOFmCc1ko2rVnVHC/mzG+uBJLI7e2dY3sgVzga27vOpvqx6jwqUWj/+DChMiYn6pPb8yCEMIFDXvMYUVp13QFLEhrESBfbGEXZmCF7hPfflHO+exnejoHD63RlrjAFF/Jwiop1XhOF5hTViX48fSUVj7z2UuXKfLgO7sUqehHYvaaBz0yJtK02TI4Dz4zxiBrdKcuHIA34qpIbztD5X8OxD23flgTKFM5FCR85DGIJP/getm1qkPWcPVb3U0gUZF+d3mKyQ7cSBfwP+I4eCwIDAQAB",
+   "manifest_version": 3,
+   "name": "Auto Browser",
+   "permissions": [ "storage", "unlimitedStorage", "tabs", "tabGroups", "sidePanel", "scripting", "debugger", "offscreen" ],
+   "side_panel": {
+      "default_path": "sidebar/sidebar.html"
+   },
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.4.2",
+   "web_accessible_resources": [ {
+      "matches": [ "\u003Call_urls>" ],
+      "resources": [ "src/page-helper.js", "src/llm/provider.js", "src/llm/openrouter-provider.js", "src/llm/builtin-ai-provider.js", "src/llm/gemini-provider.js", "src/llm/local-openai-provider.js", "src/llm/parse-content.js", "src/llm/http-failure.js", "src/llm/sse.js", "src/llm/sse-stream.js", "src/llm/messages.js", "src/llm/react-schema.js", "src/llm/availability-state.js", "src/llm/tool-prefs.js", "src/llm/working-memory.js", "src/llm/thinking-mode.js", "src/llm/tool-use.js", "src/llm/submit-shape.js", "src/llm/validator.js", "src/llm/state-fingerprint.js", "src/llm/read-only-tools.js", "src/perception/snapshot.js", "src/perception/refmap.js", "src/perception/find.js", "src/perception/attach-screenshot.js", "src/perception/overlay.js", "src/perception/coords.js", "src/perception/occlusion.js", "src/safety/blocklist.js", "src/safety/url-drift.js", "src/safety/policy-store.js", "src/safety/permission-manager.js", "src/safety/script-risk.js", "src/actions/dispatcher.js", "src/actions/resolve-uid.js", "src/actions/recover-stale-ref.js", "src/orchestration/react-loop.js", "src/orchestration/failure-messages.js", "src/orchestration/cs-host.js", "src/orchestration/recovery.js", "src/orchestration/history-compaction.js" ]
+   } ]
+}

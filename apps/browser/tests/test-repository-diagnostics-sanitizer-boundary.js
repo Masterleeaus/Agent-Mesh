@@ -1,0 +1,18 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const context={console:{log(){},warn(){},error(){}},Map,Set,Object,Array,String,Number,Boolean,RegExp,JSON,Math,Date};context.globalThis=context;vm.createContext(context);
+const load=f=>vm.runInContext(fs.readFileSync(f,'utf8'),context,{filename:f});
+load('src/lib/capability-registry.js');
+for(const f of ['repository-policy.js','repository-inventory.js','repository-search.js','symbol-index.js','dependency-graph.js','laravel-tracer.js','migration-guard.js','diff-engine.js','impact-engine.js','change-set.js','rollback-planner.js','mutation-envelope.js','command-policy.js','test-selector.js','verification-planner.js','dependency-analyzer.js','git-intelligence.js','log-analyzer.js','error-classifier.js'])load(`src/repository/${f}`);
+for(const f of ['host-capabilities.js','repository-host-adapter.js','mcp-adapter.js','remote-context-broker.js'])load(`src/integration/${f}`);
+for(const f of ['repository-prompts.js','repository-skills.js','repository-profiles.js'])load(`src/catalog/${f}`);
+load('src/repository/repository-coding-pack.js');load('src/integration/receiver-adapter.js');load('src/lib/repository-host-integration.js');
+context.CodeeRepositoryHostIntegration.register();
+assert.strictEqual(typeof context.CodeeCapabilityRegistry.getDiagnosticsSection,'function','registry must expose canonical diagnostics lookup');
+const section=context.CodeeCapabilityRegistry.getDiagnosticsSection('repository-coding-intelligence');
+assert(section&&typeof section.build==='function');
+const result=section.build({files:{'app/Safe.php':'<?php class Safe {}','../.env':'API_KEY=LEAKME'}},{changedFiles:['../.env','app/Safe.php']});
+const text=JSON.stringify(result);
+assert(!text.includes('LEAKME'),'diagnostics must not retain secret snapshot content');
+assert(!text.includes('../.env'),'diagnostics must not retain out-of-scope changed paths');
+assert.strictEqual(result.authority?.mayAdvancePlan,false);
+console.log('Repository diagnostics sanitizer boundary OK');

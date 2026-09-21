@@ -1,0 +1,45 @@
+{
+   "action": {
+      "default_icon": {
+         "128": "icons/icon128.png",
+         "16": "icons/icon16.png",
+         "32": "icons/icon32.png",
+         "48": "icons/icon48.png"
+      },
+      "default_title": "Open PRIVANE AI Panel"
+   },
+   "background": {
+      "service_worker": "background.js",
+      "type": "module"
+   },
+   "content_scripts": [ {
+      "js": [ "contentScript.js" ],
+      "matches": [ "\u003Call_urls>" ],
+      "run_at": "document_idle"
+   } ],
+   "content_security_policy": {
+      "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+   },
+   "description": "100% private, on-device AI browser assistant. Summarize, research, and chat using WebGPU — no data ever leaves your device.",
+   "host_permissions": [ "\u003Call_urls>" ],
+   "icons": {
+      "128": "icons/icon128.png",
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAntxTHUdtIlwhDqTEdPXqszV2l4xpHMkeVnE2+lkSmJMAz/sfq8Dov+cMYt16LjDmj5XAG446Eq7gw6mkQ+6rLuGsC8In1vmRPdvKh4SYWYCjghU/NrDwM0rdGkR160hzKRin7pgD2xPgx/t4nl5Fl/ck0MAw/PfkPqfiO05jvDHyrLjc4YyC9fBwzswXA1iZLNGe+da+foBnx/kTpMpG4CkzxfTibx38D2m/K8pq2XaQUukUTKxXGq/bzDiLlPP2zz1pgsp9evKB6ms7RiwiJkZyWDIO8gAbvn5or2fJ3DOFiHRY0AXgkRwP/NpWTrEXa9CxMarTJZ4vS9UyuEw08wIDAQAB",
+   "manifest_version": 3,
+   "name": "Privane Browser Intelligence",
+   "permissions": [ "sidePanel", "storage", "offscreen", "tabs", "scripting", "bookmarks", "activeTab", "history" ],
+   "short_name": "Privane",
+   "side_panel": {
+      "default_path": "index.html"
+   },
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.1.0",
+   "web_accessible_resources": [ {
+      "matches": [ "\u003Call_urls>" ],
+      "resources": [ "wasm/*" ]
+   } ]
+}

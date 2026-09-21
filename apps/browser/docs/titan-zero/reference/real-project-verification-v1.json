@@ -1,0 +1,290 @@
+{
+  "generatedAt": "2026-08-15T14:58:08.316Z",
+  "scope": "Historical pre-Mega-Pack-2 host-only reference; app/Extensions were excluded when this reference was generated. Current Codee runtime includes app/Extensions/** as first-class repository evidence.",
+  "filesLoaded": 2044,
+  "project": {
+    "recognized": true,
+    "confidence": 1,
+    "score": 100,
+    "evidence": [
+      "Laravel artisan entrypoint",
+      "Root Composer manifest",
+      "Large panel route surface",
+      "Laravel theme configuration",
+      "Titan domain namespace",
+      "Titan workspace controller",
+      "MagicAI updater configuration",
+      "Laravel ^10.0",
+      "Livewire ^3.5",
+      "React ^19.2.5"
+    ],
+    "stack": {
+      "php": "^8.2",
+      "laravel": "^10.0",
+      "livewire": "^3.5",
+      "react": "^19.2.5",
+      "reactDom": "^19.2.5",
+      "vite": "^7.1.3",
+      "tailwind": "^3.4.15",
+      "alpine": "^3.15.8"
+    },
+    "scannedFileCount": 2044,
+    "ignoredFileCount": 0,
+    "ignoredPaths": [
+      "app/Extensions/",
+      "integration-sources/",
+      "donor-extracted/"
+    ]
+  },
+  "versions": {
+    "php": "^8.2",
+    "laravel": "^10.0",
+    "livewire": "^3.5",
+    "react": "^19.2.5",
+    "alpine": "^3.15.8",
+    "vite": "^7.1.3",
+    "tailwind": "^3.4.15",
+    "phpTestFramework": "pest",
+    "buildScripts": [
+      "lint",
+      "dev",
+      "build",
+      "clean",
+      "watch"
+    ],
+    "composerPackages": 94,
+    "npmPackages": 51
+  },
+  "schemaStats": {
+    "analyzedTables": 129,
+    "ignoredTables": 253,
+    "columns": 1639,
+    "indexes": 271,
+    "foreignKeys": 53,
+    "jsonColumns": 0
+  },
+  "migrationSummary": {
+    "filesAnalyzed": 0,
+    "highestSeverity": "none",
+    "riskCounts": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    }
+  },
+  "tenancy": {
+    "mixedBoundary": false,
+    "boundaries": {
+      "tenant_company": {
+        "column": "tenant_company_id",
+        "count": 0,
+        "tables": []
+      },
+      "company": {
+        "column": "company_id",
+        "count": 9,
+        "tables": [
+          "candidate_matches",
+          "candidate_promotions",
+          "external_place_contacts",
+          "external_places",
+          "field_observations",
+          "map_locations",
+          "products",
+          "territory_analyses",
+          "users"
+        ]
+      },
+      "user": {
+        "column": "user_id",
+        "count": 42,
+        "tables": [
+          "account_deletion_reqs",
+          "activity",
+          "ai_persona_avatars",
+          "article_wizard",
+          "bad_words",
+          "blogs",
+          "chat_category",
+          "chatbot",
+          "chatbot_history",
+          "companies",
+          "coupon_users",
+          "elevenlab_voices",
+          "exported_videos",
+          "extension_audit_logs",
+          "favourite_list",
+          "openai",
+          "openai_chat_category",
+          "openai_filters",
+          "payment_proofs",
+          "paystack_payment_infos",
+          "pebblely",
+          "photo_studios",
+          "products",
+          "prompt_library",
+          "recent_search_keys",
+          "shared_credit_transactions",
+          "subscriptions",
+          "subscriptions_yokassa",
+          "team_members",
+          "teams",
+          "user_affiliates",
+          "user_credits",
+          "user_docs_favorite",
+          "user_favorites",
+          "user_heygen",
+          "user_integrations",
+          "user_openai",
+          "user_openai_chat",
+          "user_openai_chat_messages",
+          "user_orders",
+          "user_support",
+          "user_usage_credits"
+        ]
+      }
+    }
+  },
+  "architectureStats": {
+    "controller": 131,
+    "model": 104,
+    "service": 90,
+    "service_provider": 11,
+    "middleware": 27,
+    "job": 11,
+    "livewire": 11,
+    "policy": 1
+  },
+  "containerBindings": 4,
+  "routeStats": {
+    "totalRouteCalls": 645,
+    "namedRoutes": 472,
+    "duplicateNames": 104,
+    "controllerRoutes": 461
+  },
+  "frontend": {
+    "bladeFiles": 796,
+    "livewireComponents": 11,
+    "reactFiles": 0,
+    "alpineFiles": 215,
+    "themeFamilies": [
+      {
+        "name": "default",
+        "viewFiles": 578
+      },
+      {
+        "name": "titan-field-classic",
+        "viewFiles": 54
+      },
+      {
+        "name": "modern",
+        "viewFiles": 34
+      },
+      {
+        "name": "marketing-bot",
+        "viewFiles": 27
+      },
+      {
+        "name": "marketing-bot-dashboard",
+        "viewFiles": 25
+      },
+      {
+        "name": "social-media-agent-dashboard",
+        "viewFiles": 25
+      },
+      {
+        "name": "bolt",
+        "viewFiles": 23
+      },
+      {
+        "name": "classic",
+        "viewFiles": 7
+      }
+    ]
+  },
+  "modelSchema": {
+    "models": 104,
+    "findings": 58,
+    "missingTables": 16
+  },
+  "config": {
+    "files": 47,
+    "envKeyCount": 235,
+    "sensitiveEnvKeyCount": 26
+  },
+  "graph": {
+    "nodes": 2098,
+    "edges": 2278,
+    "types": {
+      "table": 129,
+      "php": 716,
+      "console": 21,
+      "controller": 131,
+      "middleware": 27,
+      "job": 11,
+      "livewire": 11,
+      "model": 104,
+      "policy": 1,
+      "service_provider": 11,
+      "service": 90,
+      "route": 505,
+      "blade": 324,
+      "test": 17
+    }
+  },
+  "risks": [
+    {
+      "code": "UNCONSTRAINED_TENANCY_SIGNAL",
+      "severity": "medium",
+      "message": "Code contains ownership-column signals without an obvious local query constraint; inspect manually."
+    },
+    {
+      "code": "MODEL_SCHEMA_DRIFT",
+      "severity": "high",
+      "message": "Eloquent model/schema drift findings are present."
+    },
+    {
+      "code": "ROUTE_NAME_COLLISION",
+      "severity": "high",
+      "message": "Duplicate named routes were detected."
+    },
+    {
+      "code": "SENSITIVE_CONFIG_SURFACE",
+      "severity": "medium",
+      "message": "Sensitive environment-variable names are referenced; ensure values never enter AI context or artifacts."
+    },
+    {
+      "code": "MISSING_MODEL_TABLE",
+      "severity": "high",
+      "message": "One or more core models map to tables absent from the supplied schema snapshot."
+    }
+  ],
+  "descriptor": {
+    "prompts": 35,
+    "skills": 38,
+    "profiles": 14,
+    "analyzers": [
+      "project",
+      "schemaGraph",
+      "migrationSafety",
+      "tenancy",
+      "phpArchitecture",
+      "routes",
+      "routeConsumers",
+      "navigation",
+      "frontend",
+      "themes",
+      "modelSchema",
+      "versions",
+      "config",
+      "projectGraph",
+      "riskRules",
+      "impact",
+      "contextSelector",
+      "testMatrix",
+      "errorClassifier",
+      "commandCatalog"
+    ]
+  }
+}

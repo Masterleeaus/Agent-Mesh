@@ -1,0 +1,12 @@
+const assert=require('assert');const fs=require('fs');const path=require('path');const vm=require('vm');
+const root=path.resolve(__dirname,'..');
+const modules=['titan-zero-core-profile.js','titan-zero-snapshot-policy.js','titan-zero-project-detector.js','titan-zero-sql-analyzer.js','titan-zero-route-analyzer.js','titan-zero-theme-analyzer.js','titan-zero-context.js','titan-zero-diagnostics.js','titan-zero-prompts.js','titan-zero-skills.js','titan-zero-pack.js','titan-zero-schema-graph.js','titan-zero-migration-analyzer.js','titan-zero-tenancy-analyzer.js','titan-zero-php-architecture.js','titan-zero-frontend-analyzer.js','titan-zero-navigation-analyzer.js','titan-zero-impact-engine.js','titan-zero-test-matrix.js','titan-zero-runtime-diagnostics.js','titan-zero-model-schema-analyzer.js','titan-zero-route-consumer-index.js','titan-zero-version-analyzer.js','titan-zero-config-analyzer.js','titan-zero-project-graph.js','titan-zero-context-selector.js','titan-zero-command-catalog.js','titan-zero-risk-rules.js','titan-zero-error-classifier.js','titan-zero-knowledge.js','titan-zero-development-prompts.js','titan-zero-development-skills.js','titan-zero-development-profiles.js','titan-zero-developer-pack.js','titan-zero-receiver-adapter.js'];
+const sandbox={console};sandbox.globalThis=sandbox;vm.createContext(sandbox);for(const f of modules)vm.runInContext(fs.readFileSync(path.join(root,'src/titan-zero',f),'utf8'),sandbox,{filename:f});
+const calls=[];const host={
+ registerContextProvider:x=>calls.push(['context',x]), registerPrompts:x=>calls.push(['prompts',x]), registerSkills:x=>calls.push(['skills',x]), registerProfiles:x=>calls.push(['profiles',x]), registerDiagnosticsSection:x=>calls.push(['diagnostics',x]), registerSettingsSection:x=>calls.push(['settings',x])
+};
+const result=sandbox.CodeeTitanZeroReceiverAdapter.register(host);
+assert.equal(result.registered,true);assert.equal(result.createdTopLevelTabs,0);assert.equal(result.authority.planAdvance,false);assert.equal(result.authority.repositoryMutation,false);
+assert.equal(calls.filter(c=>c[0]==='context').length,2);assert.equal(calls.some(c=>c[0]==='prompts'&&c[1].length>=24),true);assert.equal(calls.some(c=>c[0]==='skills'&&c[1].length>=24),true);assert.equal(calls.some(c=>c[0]==='profiles'&&c[1].length>=12),true);assert.equal(calls.some(c=>c[0]==='diagnostics'),true);assert.equal(calls.some(c=>c[0]==='settings'),true);
+assert.throws(()=>sandbox.CodeeTitanZeroReceiverAdapter.register({}),/registration APIs/i);
+console.log('Titan Zero receiver adapter tests: PASS');

@@ -1,0 +1,16 @@
+const fs=require('fs'),assert=require('assert');
+const worker=fs.readFileSync('src/lib/service-worker.js','utf8');
+const sidebar=fs.readFileSync('src/sidebar/sidebar.js','utf8');
+const html=fs.readFileSync('src/sidebar/sidebar.html','utf8');
+const manifest=JSON.parse(fs.readFileSync('manifest.json','utf8'));
+for(const action of ['GET_SYSTEM_INTEGRATION_STATUS','UPDATE_SYSTEM_INTEGRATION_SETTINGS','CALL_TITAN_BRIDGE','RUN_WORKFORCE_ADVISORY','GET_ARTIFACT_DETAIL']) assert(worker.includes(action),`missing ${action}`);
+assert(worker.includes('../integration/titan-bridge-client.js'),'bridge client must load');
+assert(worker.includes('../ai/adapters/gemini-adapter.js'),'Gemini adapter must load');
+assert(sidebar.includes('runWorkforceWorkspaceAdvisory'),'workforce must be actionable');
+assert(sidebar.includes('callRepositoryBridgeAction'),'repository must be actionable');
+assert(sidebar.includes('showArtifactDetail'),'artifacts must be clickable');
+assert(html.includes('workforce-workspace-task'),'workforce task input missing');
+assert(html.includes('repository-bridge-query'),'repository query input missing');
+assert(html.includes('system-integration-panel'),'system integration panel missing');
+assert((manifest.optional_host_permissions||[]).some(x=>x.includes('127.0.0.1')),'localhost optional permission missing');
+console.log('PASS system integration workspace contract');

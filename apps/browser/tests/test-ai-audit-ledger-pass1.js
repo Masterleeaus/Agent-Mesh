@@ -1,0 +1,12 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const context=vm.createContext({console,globalThis:{}});context.globalThis=context;
+for(const f of ['src/ai/ai-sanitizer.js','src/ai/ai-audit-ledger.js'])vm.runInContext(fs.readFileSync(f,'utf8'),context,{filename:f});
+const ledger=context.CodeeAIAuditLedger;
+ledger.record({requestId:'r1',managerId:'architecture-manager',purpose:'review',provider:'local',model:'qwen',privacyLevel:'CONFIDENTIAL',costUsd:0,freeStatus:'LOCAL',latencyMs:12,outcome:'SUCCESS',task:'DO NOT STORE THIS PROMPT',apiKey:'SECRET123',evidence:[{text:'token=SECRET123'}]});
+const rows=ledger.list();assert.strictEqual(rows.length,1);const row=rows[0];
+assert.strictEqual(row.requestId,'r1');assert.strictEqual(row.provider,'local');assert.strictEqual(row.outcome,'SUCCESS');
+assert(!JSON.stringify(row).includes('DO NOT STORE THIS PROMPT'),'audit ledger must not store full task text');
+assert(!JSON.stringify(row).includes('SECRET123'),'audit ledger must not store credentials/evidence secrets');
+for(let i=0;i<400;i++)ledger.record({requestId:`r${i+2}`,outcome:'SUCCESS'});
+assert(ledger.list().length<=250,'audit ledger must be bounded');assert.strictEqual(ledger.status().bounded,true);
+console.log('AI audit ledger pass');

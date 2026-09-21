@@ -1,0 +1,12 @@
+{
+  "schema": "titan-code-install-baseline/v1",
+  "artifact": "Titan-Code-CANONICAL.zip",
+  "library_path": "/Titan Code/Titan-Code-CANONICAL.zip",
+  "file_id": "file_00000000397881fa8df4d2563f432d0e",
+  "version_id": "1",
+  "generation": 2,
+  "version": "2.11.9",
+  "sha256": "64bf43a24d63387ffaa3e72103bc8d8a258293a8cc88ef1a4ef324ab8f0d6587",
+  "delta_queue_empty_at_packaging": true,
+  "observed_at_utc": "2026-09-14T00:15:47Z"
+}

@@ -1,0 +1,11 @@
+const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert');
+const source=fs.readFileSync('src/lib/service-worker.js','utf8');
+const localMemory={},sessionMemory={};
+function area(memory){return {async get(keys){const out={};for(const k of Array.isArray(keys)?keys:[keys])if(Object.prototype.hasOwnProperty.call(memory,k))out[k]=JSON.parse(JSON.stringify(memory[k]));return out;},async set(obj){Object.assign(memory,JSON.parse(JSON.stringify(obj)));},async remove(keys){for(const k of Array.isArray(keys)?keys:[keys])delete memory[k];},async getBytesInUse(){return 0;}};}
+let listener=null;
+const chrome={sidePanel:{setPanelBehavior:async()=>{}},runtime:{onMessage:{addListener(fn){listener=fn;}},sendMessage:async()=>({ok:true}),onStartup:{addListener(){}},onInstalled:{addListener(){}}},alarms:{create:async()=>{},get:async()=>({name:'ZIP_POLL',periodInMinutes:1}),onAlarm:{addListener(){}}},tabs:{query(_q,cb){cb([])},get:async()=>null,sendMessage:async()=>({ok:true})},storage:{local:area(localMemory),session:area(sessionMemory)}};
+const c={chrome,console:{log(){},warn(){},error(){}},setTimeout(){return 1},clearTimeout(){},setInterval(){return 1},clearInterval(){},Map,Set,WeakMap,WeakSet,Promise,Date,Math,JSON,Object,Array,String,Number,Boolean,RegExp,Uint32Array,URL,crypto:{randomUUID:()=> 'uuid'}};c.globalThis=c;vm.createContext(c);
+c.importScripts=(...urls)=>{for(const u of urls){const f=path.resolve('src/lib',u);vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});}};
+vm.runInContext(source,c,{filename:'service-worker.js'});
+function send(message){return new Promise((resolve,reject)=>{const keep=listener(message,{},resolve);assert.strictEqual(keep,true,`${message.action} must be async`);setTimeout(()=>reject(new Error(`${message.action} timed out`)),1000);});}
+(async()=>{const out=await send({action:'GET_AI_GATEWAY_STATUS'});assert.strictEqual(out.ok,true);assert.strictEqual(out.gatewayInstalled,true);assert.strictEqual(out.providers,0);assert.strictEqual(out.models,0);assert.strictEqual(out.inferenceReady,false);assert.strictEqual(out.authority.mayAdvancePlan,false);assert.strictEqual(out.audit.bounded,true);console.log('Onboard AI gateway is wired through the real service worker and degrades cleanly with zero providers');})().catch(e=>{console.error(e);process.exit(1)});

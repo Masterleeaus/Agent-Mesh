@@ -1,0 +1,14 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');
+const source=fs.readFileSync('src/lib/service-worker.js','utf8');
+const chrome={sidePanel:{setPanelBehavior:async()=>{}},runtime:{onMessage:{addListener(){}},sendMessage:async()=>({ok:true}),onStartup:{addListener(){}},onInstalled:{addListener(){}}},alarms:{create:async()=>{},get:async()=>({name:'ZIP_POLL',periodInMinutes:1}),onAlarm:{addListener(){}}},tabs:{query:(q,cb)=>{cb&&cb([]);return Promise.resolve([])}},storage:{local:{get:async()=>({codeeState:{},codeeDiagnostics:[]}),set:async()=>{}}}};
+const context={chrome,console:{log(){},warn(){},error(){}},setTimeout,clearTimeout,Map,Set,Promise,Date,Math,URL,crypto:{randomUUID:()=> 'id'}};vm.runInNewContext(source,context);
+const plan={stateVersion:2,protocolMode:'signature_v2',planId:'p',runId:'r',plan:[{number:1,text:'Repair installer runtime'}],stepIndex:0,currentStepId:'step-01',currentStepToken:'token-1',debuggingPlanEnabled:true};
+const prompt=context.buildPrompt(plan);
+assert(prompt.includes('DEBUGGING PLAN MODE'), 'debugging plans must label the debugging contract');
+assert(/deep scan/i.test(prompt), 'every debugging pass must tell the AI to deep scan');
+assert(/errors, bugs, regressions/i.test(prompt), 'debugging pass must explicitly scan for errors, bugs, and regressions');
+assert(/fix/i.test(prompt) && /as (?:you|they) (?:find|are found)/i.test(prompt), 'debugging pass must tell AI to fix findings as they are found');
+assert(/fresh/i.test(prompt) && /verif/i.test(prompt) && /ZIP/i.test(prompt), 'debugging pass must require fresh verification and a ZIP');
+const normal=context.buildPrompt({...plan,debuggingPlanEnabled:false});
+assert(!normal.includes('DEBUGGING PLAN MODE'), 'normal plans must not silently become debugging plans');
+console.log('debugging plan prompt contract OK');

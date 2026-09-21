@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "None",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "rootDir": "src/interaction-engine",
+    "outDir": "src/interaction-engine/generated",
+    "strict": true,
+    "noEmitOnError": true,
+    "skipLibCheck": true,
+    "useDefineForClassFields": true,
+    "newLine": "lf"
+  },
+  "include": [
+    "src/interaction-engine/**/*.ts"
+  ],
+  "exclude": [
+    "src/interaction-engine/generated/**"
+  ]
+}

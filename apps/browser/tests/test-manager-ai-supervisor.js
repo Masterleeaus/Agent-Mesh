@@ -1,0 +1,14 @@
+const fs=require('fs');
+const path=require('path');
+const vm=require('vm');
+const files=['src/titan-zero/manager-ai-supervisor.js'];
+const sandbox={console,globalThis:{}}; sandbox.global=sandbox.globalThis;
+vm.createContext(sandbox);
+for(const f of files) vm.runInContext(fs.readFileSync(f,'utf8'),sandbox,{filename:f});
+const S=sandbox.globalThis.TitanCodeManagerAISupervisor;
+if(!S) throw new Error('Manager AI supervisor missing');
+const inspection=S.inspect({agents:{a:{state:'ACTIVE',heartbeat_stale:true,last_error:'boom'},b:{state:'ACTIVE',errors:[{x:1}]}},packets:[{packet_id:'P1',status:'BLOCKED',priority:'P0'}],deltas:[{status:'READY'}],findings:[{status:'OPEN'}]});
+if(inspection.summary.stale!==1||inspection.summary.erroring!==2||inspection.summary.blockedPackets!==1) throw new Error('inspection summary mismatch');
+const plan=S.deterministicPlan(inspection); if(plan.steps.length<3) throw new Error('recovery plan too small');
+if(S.status().authority.promote!==false) throw new Error('AI supervisor promotion authority violation');
+console.log('Manager AI supervisor tests OK');

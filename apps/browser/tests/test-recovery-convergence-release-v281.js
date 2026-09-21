@@ -1,0 +1,14 @@
+const assert = require('assert');
+const fs = require('fs');
+const manifest = JSON.parse(fs.readFileSync('manifest.json','utf8'));
+const pkg = JSON.parse(fs.readFileSync('package.json','utf8'));
+const readme = fs.readFileSync('README.md','utf8');
+const runtime = fs.readFileSync('src/integration/titan-mcp-runtime.js','utf8');
+const parts = manifest.version.split('.').map(Number);
+assert(parts[0] > 2 || (parts[0] === 2 && (parts[1] > 8 || (parts[1] === 8 && parts[2] >= 1))), 'current release must remain at or above the v2.8.1 recovery convergence floor');
+assert.strictEqual(pkg.version, manifest.version);
+assert(readme.includes('## v2.8.1 Plan Runner Recovery Convergence'), 'README must retain v2.8.1 recovery convergence history');
+assert(readme.includes('## v2.8.1 Plan Runner Recovery Convergence'), 'recovery history must remain documented after later master passes');
+assert(runtime.includes(`clientInfo:{name:'Codee Chrome Extension',version:'${manifest.version}'}`), 'MCP clientInfo must match current release version');
+assert(manifest.description.length <= 132, 'Chrome manifest description must remain within 132 characters');
+console.log('v2.8.1 Plan Runner recovery convergence history remains compatible with current release metadata');

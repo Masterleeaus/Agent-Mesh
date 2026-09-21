@@ -1,0 +1,10 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');
+const source=fs.readFileSync('src/content-script.js','utf8');
+const context={console:{log(){},warn(){},error(){}},document:{addEventListener(){},querySelectorAll(){return[]},querySelector(){return null},documentElement:{}},chrome:{runtime:{id:'x',onMessage:{addListener(){}},sendMessage:async()=>({ok:true})}},window:{location:{hostname:'chatgpt.com'}},MutationObserver:class{observe(){} disconnect(){}},setInterval(){return 1},clearInterval(){},setTimeout(){return 1},clearTimeout(){},Set,Array,String,Number,RegExp};
+vm.runInNewContext(source,context);
+const text=`CODEE_ARTIFACT\nPROTOCOL_VERSION: 2junk\nPLAN_ID: p\nRUN_ID: r\nSTEP_ID: step-01\nSTEP_TOKEN: t\nSTEP_COMPLETED: 1x\nSTEP_TOTAL: 3x\nSTATUS: completed\nARTIFACT_ID: a\nZIP: a.zip\nPARENT_SHA256: N/A\nSHA256: ${'a'.repeat(64)}\nVERIFICATION: PASS\nNEXT_ACTION: advance\nCODEE_ARTIFACT_READY`;
+const artifact=context.parseCodeeArtifactBlocks(text)[0];
+assert.strictEqual(artifact.protocolVersion,null,'protocol number must reject trailing garbage');
+assert.strictEqual(artifact.stepCompleted,null,'step number must reject trailing garbage');
+assert.strictEqual(artifact.stepTotal,null,'step total must reject trailing garbage');
+console.log('artifact numeric fields are strict OK');

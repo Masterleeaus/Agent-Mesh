@@ -1,0 +1,24 @@
+'use strict';
+const fs=require('fs'), path=require('path');
+const root=path.resolve(__dirname,'..');
+const sw=fs.readFileSync(path.join(root,'src/lib/service-worker.js'),'utf8');
+const manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'),'utf8'));
+function ok(v,m){if(!v){console.error('FAIL',m);process.exit(1)}}
+ok(!(manifest.permissions||[]).includes('scripting'),'content recovery must preserve existing least-privilege manifest');
+ok(sw.includes('async function recoverMissingContentReceiver(tabId)'), 'bounded missing receiver recovery helper missing');
+const helperStart=sw.indexOf('async function recoverMissingContentReceiver(tabId)');
+const helperEnd=sw.indexOf('async function sendContentMessageWithWatchdog',helperStart);
+const helper=sw.slice(helperStart,helperEnd);
+ok(helper.includes('chrome.tabs.reload(tabId)'), 'missing receiver recovery must use the existing tab reload path');
+ok(helper.includes('waitForContentScriptReady'), 'recovery must verify the receiver after reload');
+ok(helper.includes('canWatchdogReload(tabId)'), 'recovery must keep the existing reload cooldown guard');
+const sendStart=sw.indexOf('async function sendContentMessageWithWatchdog');
+const sendEnd=sw.indexOf('async function ensureComposerReady',sendStart);
+const sendFn=sw.slice(sendStart,sendEnd);
+ok(sendFn.includes('options.recoverMissingReceiver === true'), 'receiver recovery must be explicit opt-in');
+ok(sendFn.includes('recoverMissingContentReceiver(tabId)'), 'watchdog must invoke bounded recovery only when opted in');
+const standaloneStart=sw.indexOf('async function sendStandaloneNext(tabId)');
+const standaloneEnd=sw.indexOf('async function scheduleNextRunnerAlarm',standaloneStart);
+const standalone=sw.slice(standaloneStart,standaloneEnd);
+ok(standalone.includes('recoverMissingReceiver:true'), 'standalone Next Runner must opt into missing receiver recovery');
+console.log('PASS next runner bounded content receiver recovery contract');

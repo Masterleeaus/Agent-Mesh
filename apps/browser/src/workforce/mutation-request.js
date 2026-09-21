@@ -1,0 +1,3 @@
+(function(g){'use strict';let seq=0;
+function create({managerId,action,target,change,runId=null,planId=null,stepId=null,reason=''}={}){seq++;return Object.freeze({schema:'codee.governed-mutation-request.v1',id:`gmr-${Date.now()}-${seq}`,managerId,action,target,change,reason,runId,planId,stepId,requirements:{authenticate:true,authorize:true,captureBackup:true,verifyBackup:true,performWrite:true,verifyWrite:true,audit:true,preserveRollback:true},authority:{execute:false,advancePlan:false,hostOwned:true},requestedAt:new Date().toISOString()});}
+g.CodeeGovernedMutationRequest=Object.freeze({create});})(globalThis);

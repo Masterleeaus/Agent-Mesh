@@ -1,0 +1,18 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const root=path.resolve(__dirname,'..'); const rel=['src/interaction-engine/generated/contracts.js','src/interaction-engine/generated/journey-runtime.js'];
+const load=(box)=>{box.structuredClone=structuredClone;box.globalThis=box;vm.createContext(box);for(const r of rel)vm.runInContext(fs.readFileSync(path.join(root,r),'utf8'),box);return box};
+const b=load({}); const rt=b.TitanInteractionJourneyRuntime;
+const def={schema:'titan-interaction/journey-definition/v1',journey_id:'onboard',version:'3',company_id:'c1',initial_step_id:'welcome',steps:[{step_id:'welcome',wizard_id:'w1',offline_policy:'allowed',next_step_id:'profile'},{step_id:'profile',wizard_id:'w2',offline_policy:'allowed',next_step_id:'finish'},{step_id:'finish',capability_id:'done',offline_policy:'deferred',next_step_id:null}]};
+const ctx={schema:'titan-interaction/context/v1',interaction_id:'i1',company_id:'c1',actor_id:'a1',device_id:'d1',session_id:'s1',correlation_id:'corr1',surface:'go'};
+assert.equal(rt.schema,'titan-code-journey-runtime/v1'); assert.equal(rt.network_required,false); assert.equal(rt.authority.capability_execute,false); assert.equal(rt.authority.plan_advance,false);
+const s0=rt.createState(def,ctx); assert.equal(s0.current_step_id,'welcome'); assert.equal(s0.revision,0);
+const s1=rt.advance(def,s0,ctx); assert.equal(s1.current_step_id,'profile'); assert.deepEqual(Array.from(s1.completed_step_ids),['welcome']);
+const paused=rt.pause(def,s1,ctx); assert.equal(paused.status,'paused'); assert.throws(()=>rt.advance(def,paused,ctx),/ERR_JOURNEY_STATE_TRANSITION/);
+const resumed=rt.resume(def,paused,ctx); const s2=rt.advance(def,resumed,ctx); assert.equal(s2.current_step_id,'finish');
+const persisted=rt.serialize(s2,def); const fresh=load({}); const restored=fresh.TitanInteractionJourneyRuntime.restore(persisted,def,ctx); assert.equal(JSON.stringify(restored),JSON.stringify(s2));
+const done=fresh.TitanInteractionJourneyRuntime.advance(def,restored,ctx); assert.equal(done.status,'completed'); assert.deepEqual(Array.from(done.completed_step_ids),['welcome','profile','finish']);
+assert.throws(()=>rt.restore(persisted,def,{...ctx,company_id:'c2'}),/ERR_JOURNEY_CONTEXT_SCOPE_MISMATCH|ERR_INTERACTION/);
+assert.throws(()=>rt.restore(persisted,def,{...ctx,actor_id:'a2'}),/ERR_JOURNEY_CONTEXT_SCOPE_MISMATCH/);
+assert.throws(()=>rt.restore(persisted,{...def,version:'4'},ctx),/ERR_JOURNEY_DEFINITION_MISMATCH/);
+assert.equal('fetch' in b,false); assert.equal('chrome' in b,false); load(b); assert.equal(b.TitanInteractionJourneyRuntime.schema,'titan-code-journey-runtime/v1');
+console.log('INTERACTION_ENGINE_JOURNEY_RUNTIME: PASS');

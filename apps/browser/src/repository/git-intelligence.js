@@ -1,0 +1,7 @@
+(function attachGitIntelligence(global){
+'use strict';
+const MAX_STATUS_ENTRIES=5000;
+function parseStatus(text){const entries=[];let truncated=false;for(const line of String(text||'').split(/\r?\n/)){if(!line.trim())continue;if(entries.length>=MAX_STATUS_ENTRIES){truncated=true;break;}const status=line.slice(0,2);let path=line.slice(3).trim();let from=null;if(path.includes(' -> ')){[from,path]=path.split(' -> ');}const normalized=global.CodeeRepositoryPolicy.normalize(path);if(!global.CodeeRepositoryPolicy.isInScope(normalized))continue;entries.push({status,path:normalized,from:from&&global.CodeeRepositoryPolicy.isInScope(from)?global.CodeeRepositoryPolicy.normalize(from):null,staged:status[0]!==' '&&status[0]!=='?',workingTree:status[1]!==' ',untracked:status==='??'});}return {entries,truncated};}
+function summarize(input){const parsed=parseStatus(input?.status||'');const entries=parsed.entries;const diff=String(input?.diff||'');const branch=String(input?.branch||'').trim().slice(0,240)||null;const conflicted=entries.filter(e=>/U|AA|DD/.test(e.status));const changed=entries.map(e=>e.path);return {branch,entries,changed,conflicted,clean:entries.length===0,diffBytes:diff.length,hasConflictMarkers:/^(?:<<<<<<<|=======|>>>>>>>)/m.test(diff),truncated:parsed.truncated,mayAdvancePlan:false};}
+global.CodeeGitIntelligence=Object.freeze({parseStatus,summarize,MAX_STATUS_ENTRIES});
+})(typeof globalThis!=='undefined'?globalThis:this);

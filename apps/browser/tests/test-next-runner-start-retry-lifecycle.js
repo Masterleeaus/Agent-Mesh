@@ -1,0 +1,20 @@
+'use strict';
+const fs = require('fs');
+const path = require('path');
+const root = path.resolve(__dirname, '..');
+const sw = fs.readFileSync(path.join(root, 'src/lib/service-worker.js'), 'utf8');
+const ui = fs.readFileSync(path.join(root, 'src/sidebar/sidebar.js'), 'utf8');
+function ok(v,m){ if(!v){ console.error('FAIL',m); process.exit(1); } }
+const start = sw.indexOf('async function startNextRunner(tabId, intervalMinutes)');
+const end = sw.indexOf('async function updateNextRunnerInterval', start);
+ok(start >= 0 && end > start, 'startNextRunner() missing');
+const fn = sw.slice(start, end);
+ok(!fn.includes('enabled:false, nextDueAt:null'), 'initial send failure must not disable the timer');
+ok(!fn.includes('chrome.alarms.clear(nextRunnerAlarmName(tabId))'), 'initial send failure must not clear the timer alarm');
+ok(fn.includes('scheduleNextRunnerAlarm(tabId, minutes)'), 'timer alarm must be armed even when the immediate send is deferred');
+ok(fn.includes('enabled:true'), 'runner must remain enabled after a retryable initial send failure');
+ok(fn.includes('initialPending'), 'start response should explicitly report a deferred initial send');
+ok(sw.includes('return getNextRunnerStatus(tabId);'), 'interval/stop operations should return full persisted Next status');
+ok(ui.includes('response?.enabled'), 'sidebar start handling must adopt an enabled timer even when the immediate send was deferred');
+ok(ui.includes('retrying') || ui.includes('retry'), 'sidebar should explain that a deferred initial send will retry');
+console.log('PASS next runner start retry lifecycle');

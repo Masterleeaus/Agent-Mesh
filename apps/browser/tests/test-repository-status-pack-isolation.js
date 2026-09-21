@@ -1,0 +1,11 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const c={};c.globalThis=c;vm.createContext(c);
+for(const f of ['src/lib/capability-registry.js','src/catalog/repository-prompts.js','src/catalog/repository-skills.js','src/catalog/repository-profiles.js','src/repository/repository-coding-pack.js','src/lib/repository-host-integration.js']) vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});
+c.CodeeCapabilityRegistry.registerPrompts([{id:'titan-zero-foreign-prompt',title:'foreign'}]);
+c.CodeeCapabilityRegistry.registerSkills([{id:'titan-zero-foreign-skill',name:'foreign'}]);
+c.CodeeCapabilityRegistry.registerProfiles([{id:'titan-zero-foreign-profile',name:'foreign'}]);
+const p=c.CodeeRepositoryHostIntegration.registryPayload();
+assert(!p.prompts.some(x=>x.id==='titan-zero-foreign-prompt'),'repository status must not count foreign prompts');
+assert(!p.skills.some(x=>x.id==='titan-zero-foreign-skill'),'repository status must not count foreign skills');
+assert(!p.profiles.some(x=>x.id==='titan-zero-foreign-profile'),'repository status must not count foreign profiles');
+console.log('Repository status is isolated to its own capability pack');

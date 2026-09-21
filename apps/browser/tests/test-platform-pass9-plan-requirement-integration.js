@@ -1,0 +1,12 @@
+const fs=require('fs'),assert=require('assert');
+const sw=fs.readFileSync('src/lib/service-worker.js','utf8');
+const js=fs.readFileSync('src/sidebar/sidebar.js','utf8');
+const html=fs.readFileSync('src/sidebar/sidebar.html','utf8');
+assert(sw.includes("'plan-requirement-analyzer.js'"),'worker must import plan requirement analyzer');
+assert(sw.includes("message.action === 'ANALYZE_PLAN_REQUIREMENTS'"),'worker must expose read-only requirement analysis');
+assert(sw.includes('attachPlanRequirements'),'saved plans must receive requirement snapshot before dispatch');
+assert(sw.includes('planState.planRequirements'),'plan state must persist requirements');
+for(const id of ['plan-requirements-btn','plan-requirements-badge','plan-requirements-details']) assert(html.includes(`id="${id}"`),`missing ${id}`);
+assert(js.includes("ANALYZE_PLAN_REQUIREMENTS"),'Runner must request requirement analysis');
+assert(js.includes('renderPlanRequirements'),'Runner must render requirement snapshot');
+console.log('PASS platform pass9 plan requirement integration');

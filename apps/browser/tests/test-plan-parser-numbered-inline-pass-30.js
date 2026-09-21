@@ -1,0 +1,13 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');
+const source=fs.readFileSync('src/sidebar/sidebar.js','utf8');
+const context={console:{log(){},warn(){},error(){}},document:{addEventListener(){},getElementById(){return null;}},chrome:{runtime:{onMessage:{addListener(){}}}},Map,Promise,URL};
+vm.runInNewContext(source,context);
+const lines=['# Titan Mobile PWA Core — New Production Upgrade Plan','**Plan size:** **30 passes**','**Rule:** **Every numbered bullet below is exactly one pass.**'];
+for(let i=1;i<=30;i++) lines.push(`${i}. **Pass ${i} — Capability ${i}:** This is the complete description for pass ${i}; nested details remain inside the same pass.`);
+lines.push('### Target state','At the end of these **30 passes**, the platform is production ready.','**Passes remaining: 30 / 30.**');
+const plan=context.parsePlanText(lines.join('\n'));
+assert.strictEqual(plan.length,30,'numbered inline Pass N bullets must produce exactly 30 Codee steps');
+assert(plan[0].text.includes('**Pass 1 — Capability 1:**'));
+assert(plan[29].text.includes('**Pass 30 — Capability 30:**'));
+assert(!plan.some(step=>/Target state/.test(step.text)),'post-plan target prose must not become an extra step');
+console.log('30 numbered inline Pass bullets stay exactly 30 Codee passes OK');

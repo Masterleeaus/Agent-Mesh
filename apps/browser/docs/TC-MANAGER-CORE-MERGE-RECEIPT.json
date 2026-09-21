@@ -1,0 +1,39 @@
+{
+  "schema": "titan-code-manager-merge-receipt/v1",
+  "merged_at": "2026-09-13",
+  "base_sha256": "f844be733cd0024307ea48a8f063e54142389ff83d2dcb3d8f2722baba7d98ee",
+  "merged_deltas": [
+    {
+      "name": "TC-UPGRADE-003-Agent-1-CUMULATIVE-LANE-DELTA.zip",
+      "sha256": "ddce2588e1be6eb2febceec89408f158450a742c0e6fd28340f8fc744eb9d905"
+    },
+    {
+      "name": "TC-MANAGER-CORE-002-Agent-1-CUMULATIVE-LANE-DELTA.zip",
+      "sha256": "ce179a85cd6ba91c3bbe02cad49bc35328a66aa5bc9df927eccf9aa4256f76a7"
+    },
+    {
+      "name": "TC-MANAGER-CORE-003-Agent-1-CUMULATIVE-LANE-DELTA.zip",
+      "sha256": "ca11e1ccebf2a8ab17e45631c42ae6e88bb5d02acbb1eb690a054dda3efa8223"
+    }
+  ],
+  "merge_mode": "SEQUENTIAL_FORWARD_PORT_WITH_SERVICE_WORKER_IMPORT_PRESERVATION",
+  "service_worker_added_imports": [
+    "../titan-zero/agent-mesh-role-topology.js",
+    "../titan-zero/manager-control-plane.js",
+    "../titan-zero/manager-baseline-state.js",
+    "../titan-zero/manager-packet-state.js",
+    "../titan-zero/manager-eligibility.js",
+    "../titan-zero/manager-live-state.js",
+    "../titan-zero/manager-delta-convergence.js",
+    "../titan-zero/manager-promotion-gate.js",
+    "../titan-zero/manager-control-room.js",
+    "../titan-zero/manager-dependency-engine.js",
+    "../titan-zero/manager-queue-state.js",
+    "../titan-zero/manager-state-derivation.js",
+    "../titan-zero/manager-restart-reconstruction.js",
+    "../titan-zero/manager-delta-intake.js",
+    "../titan-zero/manager-convergence-plan.js",
+    "../titan-zero/manager-baseline-advance.js"
+  ],
+  "metadata_stripped": true
+}

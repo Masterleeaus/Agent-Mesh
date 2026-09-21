@@ -1,0 +1,3 @@
+(function(g){'use strict';
+function prepare(input={},availableCapabilities=[]){const routed=g.CodeeManagerRouter.route(input);const selected=routed.candidates.slice(0,3);const workOrders=selected.map(m=>g.CodeeWorkOrder.create({task:input.text||input.task||input.goal,managerId:m.id,runId:input.runId,planId:input.planId,stepId:input.stepId,context:{tools:g.CodeeContextStrategy.select(routed.classification.tags)}}));const readiness=selected.map(m=>g.CodeeCapabilityResolver.resolve(m,availableCapabilities));return {routed,selected,workOrders,readiness,authority:{advancePlan:false,directMutation:false}};}
+g.CodeeManagerOrchestrator=Object.freeze({prepare});})(globalThis);

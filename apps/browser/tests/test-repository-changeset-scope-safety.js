@@ -1,0 +1,11 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const c={}; c.globalThis=c; vm.createContext(c);
+for(const f of ['src/repository/repository-policy.js','src/repository/change-set.js','src/repository/test-selector.js']) vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});
+assert.throws(()=>c.CodeeChangeSet.create({changes:[{path:'../.env',operation:'modify'}]}),/outside|sensitive|unsafe|scope/i,'changeset must reject traversal/sensitive paths');
+assert.throws(()=>c.CodeeChangeSet.create({changes:[{path:'app/Extensions/Foo/../../.env',operation:'modify'}]}),/outside|sensitive|unsafe|scope/i,'changeset must reject nested traversal paths');
+const cs=c.CodeeChangeSet.create({changes:[{path:'app/Extensions/Foo/src/Thing.php',operation:'modify',backupReceiptId:'b1',verified:true}]});
+assert.strictEqual(cs.changes[0].path,'app/Extensions/Foo/src/Thing.php');
+const sel=c.CodeeTestSelector.select(['../.env','app/Extensions/Foo/routes/web.php'],{includeGit:true});
+assert.deepStrictEqual(Array.from(sel.files),['app/Extensions/Foo/routes/web.php'],'test selector must discard out-of-scope paths');
+assert(sel.commands.includes('php artisan route:list'));
+console.log('Repository changeset/test selection scope safety OK');

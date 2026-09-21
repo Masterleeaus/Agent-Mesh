@@ -1,0 +1,17 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const c={};c.globalThis=c;vm.createContext(c);
+for(const f of ['src/titan-zero/titan-zero-snapshot-policy.js','src/titan-zero/titan-zero-model-schema-analyzer.js','src/titan-zero/titan-zero-config-analyzer.js']) vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});
+const fields=Array.from({length:5000},(_,i)=>`'f${i}'`).join(',');
+const casts=Array.from({length:5000},(_,i)=>`'c${i}' => 'array'`).join(',');
+const model=`class Huge { protected $fillable=[${fields}]; protected $casts=[${casts}]; }`;
+const mr=c.CodeeTitanZeroModelSchemaAnalyzer.analyze({'app/Models/Huge.php':model},{tableMap:{huges:{columns:[]}}});
+assert(mr.models[0].fillable.length<=1000,'fillable evidence must be bounded');
+assert(Object.keys(mr.models[0].casts).length<=1000,'casts evidence must be bounded');
+assert(mr.findings.length<=20000,'model drift findings must be bounded');
+assert.strictEqual(mr.truncated,true);
+const envs=Array.from({length:5000},(_,i)=>`env('KEY_${i}')`).join(';');
+const cr=c.CodeeTitanZeroConfigAnalyzer.analyze({'config/huge.php':`<?php ${envs};`});
+assert(cr.files[0].envKeys.length<=1000,'per-file config keys must be bounded');
+assert(cr.envKeys.length<=10000,'global config key evidence must be bounded');
+assert.strictEqual(cr.truncated,true);
+console.log('Titan model/schema and config evidence are bounded');

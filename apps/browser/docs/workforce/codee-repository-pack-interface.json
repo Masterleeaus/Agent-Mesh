@@ -1,0 +1,67 @@
+{
+  "id": "codee-repository-coding-intelligence",
+  "name": "Codee Repository & Coding Intelligence Mega Pack",
+  "version": "1.0.0",
+  "type": "codee_capability_pack",
+  "runtime": "Chrome MV3 compatible plain JavaScript; no third-party runtime dependencies",
+  "scope": {
+    "repository": true,
+    "extensionsIncluded": true,
+    "generatedDependenciesSkippedByDefault": true,
+    "secretValuesBlocked": true
+  },
+  "entry": "src/repository/repository-coding-pack.js",
+  "receiver_adapter": "src/integration/receiver-adapter.js",
+  "mcp_adapter": "src/integration/mcp-adapter.js",
+  "privileged_repository_adapter": "src/integration/repository-host-adapter.js",
+  "load_order": [
+    "src/repository/repository-policy.js",
+    "src/repository/repository-inventory.js",
+    "src/repository/repository-search.js",
+    "src/repository/symbol-index.js",
+    "src/repository/dependency-graph.js",
+    "src/repository/laravel-tracer.js",
+    "src/repository/migration-guard.js",
+    "src/repository/diff-engine.js",
+    "src/repository/impact-engine.js",
+    "src/repository/change-set.js",
+    "src/repository/rollback-planner.js",
+    "src/repository/mutation-envelope.js",
+    "src/repository/command-policy.js",
+    "src/repository/test-selector.js",
+    "src/repository/verification-planner.js",
+    "src/repository/dependency-analyzer.js",
+    "src/repository/git-intelligence.js",
+    "src/repository/log-analyzer.js",
+    "src/repository/error-classifier.js",
+    "src/integration/host-capabilities.js",
+    "src/integration/repository-host-adapter.js",
+    "src/integration/mcp-adapter.js",
+    "src/integration/remote-context-broker.js",
+    "src/catalog/repository-prompts.js",
+    "src/catalog/repository-skills.js",
+    "src/catalog/repository-profiles.js",
+    "src/repository/repository-coding-pack.js",
+    "src/integration/receiver-adapter.js"
+  ],
+  "surfaces": ["runner", "multi_step_plans", "prompts", "skills", "settings", "diagnostics"],
+  "content": {
+    "capabilities": 28,
+    "prompts": 24,
+    "skills": 28,
+    "profiles": 10,
+    "regressionTests": 20
+  },
+  "authority": {
+    "planAdvance": false,
+    "directRepositoryMutation": false,
+    "privilegedMutationViaHostAdapter": true,
+    "backupBeforeMutation": true,
+    "implementsMcpRuntime": false,
+    "mcpTransport": false
+  },
+  "references": [
+    "reference/titan-zero-repository-inventory.json",
+    "reference/integration-baseline.json"
+  ]
+}

@@ -1,0 +1,17 @@
+const assert=require('assert');
+const fs=require('fs');
+const vm=require('vm');
+const context=vm.createContext({console,globalThis:{},crypto:require('crypto').webcrypto}); context.globalThis=context;
+vm.runInContext(fs.readFileSync('src/intelligence/intelligence-contract.js','utf8'),context,{filename:'src/intelligence/intelligence-contract.js'});
+const C=context.CodeeIntelligenceContract;
+assert(C);
+const runtime={id:'browser-primary',request(){},stream(){},cancel(){},embed(){},listModels(){},getCapabilities(){},health(){},warmup(){}};
+const valid=C.validateRuntime(runtime); assert.strictEqual(valid.ok,true); assert(valid.optional.includes('warmup'));
+const desc=C.descriptor(runtime); assert.strictEqual(desc.schema,'codee.intelligence.contract.v1'); assert.strictEqual(desc.authority.mayExecuteMutation,false); assert(Object.isFrozen(desc.authority));
+const ctx=C.createContext({planId:'p1',runId:'r1',stepId:'s1',tabId:44,conversationIdentity:'https://chatgpt.com/c/abc',runtime:'browser',skillIds:['debug','debug'],memoryScopes:['working','project']});
+assert.strictEqual(ctx.schema,'codee.intelligence.context.v1'); assert.deepStrictEqual(Array.from(ctx.skillIds),['debug']); assert.strictEqual(ctx.tabId,44); assert.strictEqual(ctx.authority.mayAdvancePlan,false); assert(Object.isFrozen(ctx));
+assert.throws(()=>C.createContext({runtime:'unknown'}),/Invalid intelligence runtime/);
+assert.strictEqual(C.validateRuntime({id:'bad',request(){}}).ok,false);
+assert.strictEqual(C.assertAdvisory({authority:{...C.AUTHORITY}}),true);
+assert.strictEqual(C.assertAdvisory({authority:{...C.AUTHORITY,mayWriteRepository:true}}),false);
+console.log('Browser intelligence architecture contract pass 2');

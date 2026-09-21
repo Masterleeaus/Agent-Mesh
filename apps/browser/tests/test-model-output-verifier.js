@@ -1,0 +1,21 @@
+'use strict';
+const assert = require('assert');
+const { ModelOutputVerifier } = require('../src/intelligence/model-output-verifier');
+(() => {
+  const verifier = new ModelOutputVerifier({ now: () => 123 });
+  const out = verifier.verify({ request_id:'r1', text:'answer', model:'m', confidence:1.7, runtime:'wasm' }, { requestId:'r1' });
+  assert.equal(out.structural_valid, true);
+  assert.equal(out.confidence, 1);
+  assert.equal(out.advisory_only, true);
+  assert.equal(out.authority, false);
+  assert.equal(out.verification_authority, false);
+  assert.equal(out.execution_authority, false);
+  assert.equal(out.canonical_authority, false);
+  assert.throws(() => verifier.verify({request_id:'r1',text:'x',approved:true},{requestId:'r1'}), e => e.code === 'ERR_MODEL_OUTPUT_AUTHORITY');
+  assert.throws(() => verifier.verify({request_id:'r1',text:'x',status:'CANONICAL'},{requestId:'r1'}), e => e.code === 'ERR_MODEL_OUTPUT_AUTHORITY');
+  assert.throws(() => verifier.verify({request_id:'r1',text:'x',promotion_authority:true},{requestId:'r1'}), e => e.code === 'ERR_MODEL_OUTPUT_AUTHORITY');
+  assert.throws(() => verifier.verify({request_id:'r1',text:'x',status:'PROMOTED'},{requestId:'r1'}), e => e.code === 'ERR_MODEL_OUTPUT_AUTHORITY');
+  assert.throws(() => verifier.verify({request_id:'wrong',text:'x'},{requestId:'r1'}), e => e.code === 'ERR_MODEL_OUTPUT_CORRELATION');
+  assert.throws(() => verifier.verify({request_id:'r1'},{requestId:'r1'}), e => e.code === 'ERR_MODEL_OUTPUT_TEXT');
+  console.log('PASS model output verifier');
+})();

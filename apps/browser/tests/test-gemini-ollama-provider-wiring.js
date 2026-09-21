@@ -1,0 +1,14 @@
+const fs=require('fs'),assert=require('assert');
+const bridge=fs.readFileSync('src/integration/titan-bridge-client.js','utf8');
+const gemini=fs.readFileSync('src/ai/adapters/gemini-adapter.js','utf8');
+const transport=fs.readFileSync('src/lib/approved-network-transport.js','utf8');
+assert(bridge.includes("local_ai.models"));
+assert(bridge.includes("local_ai.chat"));
+assert(bridge.includes("system.capabilities"));
+assert(gemini.includes('generativelanguage.googleapis.com'));
+assert(gemini.includes('discoverModels'));
+assert(gemini.includes('generateContent'));
+assert(!gemini.includes('gemini-2.0-flash'));
+assert(transport.includes('getJson'),'approved transport must support GET discovery');
+assert(transport.toLowerCase().includes('x-goog-api-key'),'Gemini key header must be permitted');
+console.log('PASS Gemini/Ollama wiring contract');

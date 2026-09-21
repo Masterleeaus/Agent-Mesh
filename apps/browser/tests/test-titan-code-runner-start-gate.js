@@ -1,0 +1,25 @@
+'use strict';
+const fs=require('fs'), path=require('path');
+const root=path.resolve(__dirname,'..');
+const sw=fs.readFileSync(path.join(root,'src/lib/service-worker.js'),'utf8');
+const manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.json'),'utf8'));
+const html=fs.readFileSync(path.join(root,'src/sidebar/sidebar.html'),'utf8');
+function ok(v,m){if(!v){console.error('FAIL',m);process.exit(1)}}
+ok(manifest.name.startsWith('Titan Code'), 'extension must be user-facing branded Titan Code');
+ok(/Titan Code/.test(html), 'sidebar must show Titan Code branding');
+ok(sw.includes('async function ensureNextRunnerReceiverReady(tabId)'), 'Next Runner must have an explicit receiver readiness gate');
+const standaloneStart=sw.indexOf('async function sendStandaloneNext(tabId)');
+const standaloneEnd=sw.indexOf('async function scheduleNextRunnerAlarm', standaloneStart);
+const standalone=sw.slice(standaloneStart, standaloneEnd);
+ok(standalone.includes('ensureNextRunnerReceiverReady(resolvedTabId)'), 'standalone initial/periodic Next must require a live receiver on the resolved exact target before send');
+ok(standalone.includes('resolveNextRunnerTarget(tabId, bound.target)'), 'standalone runner must resolve exact bound conversation before receiver/send');
+const nudgeStart=sw.indexOf('async function attemptNextNudge(tabId');
+const nudgeEnd=sw.indexOf('async function ensureRecoveryAlarm', nudgeStart);
+const nudge=sw.slice(nudgeStart,nudgeEnd);
+ok(nudge.includes('recoverMissingReceiver:true'), 'authoritative plan Next nudger must recover a missing receiver too');
+const start=sw.indexOf('async function startNextRunner(tabId, intervalMinutes)');
+const end=sw.indexOf('async function updateNextRunnerInterval', start);
+const startFn=sw.slice(start,end);
+ok(startFn.includes('initialDeliveryVerified'), 'Start response must explicitly distinguish verified initial delivery');
+ok(startFn.includes("healthState:'degraded'") || startFn.includes('healthState: immediate?.sent ?'), 'failed initial delivery must be reported degraded, not running');
+console.log('PASS Titan Code runner initial-delivery gate contract');
