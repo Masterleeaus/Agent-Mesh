@@ -2,6 +2,10 @@ name: Flatten usable-code donor roots
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/flatten-usable-code.yml'
+      - 'archive/Titan-Zero-Usable-Code-Donor-Pack/**'
 
 permissions:
   contents: write
@@ -14,59 +18,69 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Flatten codebases into usable-code root
+      - name: Flatten donor codebases into usable-code root
         shell: bash
         run: |
           set -euo pipefail
           ROOT="archive/Titan-Zero-Usable-Code-Donor-Pack/Titan-Zero-Usable-Code-Donor-Pack"
           cd "$ROOT"
 
-          move_tree () {
+          merge_tree () {
             src="$1"; dest="$2"
             [ -d "$src" ] || return 0
-            if [ -e "$dest" ]; then
-              echo "Destination already exists, keeping existing: $dest"
-              return 0
-            fi
-            mv "$src" "$dest"
+            mkdir -p "$dest"
+            # Preserve the existing root donor when a path conflicts; bring across
+            # only files that are not already represented at the canonical root.
+            rsync -a --ignore-existing "$src/" "$dest/"
           }
 
-          # Original extraction
-          move_tree "Titan-Zero-Usable-Code-Extraction/Titan-Zero-Usable-Code-Extraction/field-mobile" "fieldcraft-mobile"
-          move_tree "Titan-Zero-Usable-Code-Extraction/Titan-Zero-Usable-Code-Extraction/knowledge-rag" "cube-knowledge-rag"
-          move_tree "Titan-Zero-Usable-Code-Extraction/Titan-Zero-Usable-Code-Extraction/workflow-builder" "workflowauto"
+          # Round 2 nested donors -> canonical root.
+          merge_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/field-mobile/FieldCraft-React-Native-application--main" "fieldcraft-mobile"
+          merge_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/marketing-sites/marketing-sites-extracted/fieldops-marketing-site" "fieldops-marketing"
+          merge_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/marketing-sites/marketing-sites-extracted/fieldcrew-marketing-site" "fieldcrew-marketing"
+          merge_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/prior-donor-pack/Titan-Zero-Usable-Code-Donor-Pack/field-services-os" "field-services-os"
+          merge_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/prior-donor-pack/Titan-Zero-Usable-Code-Donor-Pack/fieldops-ai" "fieldops-ai"
 
-          # Round 2
-          move_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/connectors-n8n/n8n-nodes-vh3ai-main" "n8n-vh3ai"
-          move_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/glint-web/glint-main" "glint"
-          move_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/marketing-tradepilot/tradepilot-waitlist-main" "tradepilot-marketing"
-          move_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/marketing-sites/marketing-sites-extracted/fieldops-marketing-site" "fieldops-marketing"
-          move_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/marketing-sites/marketing-sites-extracted/fieldcrew-marketing-site" "fieldcrew-marketing"
+          # Remove extraction wrapper trees after their contents have been
+          # reconciled into the canonical root. Do not remove the canonical roots.
+          rm -rf "Titan-Zero-Usable-Code-Extraction" "Titan-Zero-Usable-Code-Round2" "Titan-Zero-Usable-Code-Round4" "Titan-Zero-Field-Services-OS-Usable-Code"
 
-          # Round 4: whole source repositories at root, not their internal monorepo packages.
-          move_tree "Titan-Zero-Usable-Code-Round4/Titan-Zero-Usable-Code-Round4/ai-fsm-main(3)/ai-fsm-main" "ai-fsm"
-          move_tree "Titan-Zero-Usable-Code-Round4/Titan-Zero-Usable-Code-Round4/ResQAI-main(2)/ResQAI-main" "resqai"
-          move_tree "Titan-Zero-Usable-Code-Round4/Titan-Zero-Usable-Code-Round4/fieldflow-ai-main(3)/fieldflow-ai-main" "fieldflow-ai"
-          move_tree "Titan-Zero-Usable-Code-Round4/Titan-Zero-Usable-Code-Round4/fieldops-ai-main(3)/fieldops-ai-main" "fieldops-ai-round4"
-          move_tree "Titan-Zero-Usable-Code-Round4/Titan-Zero-Usable-Code-Round4/fieldcrewai-main(2)/fieldcrewai-main" "fieldcrewai"
-          move_tree "Titan-Zero-Usable-Code-Round4/Titan-Zero-Usable-Code-Round4/FieldServicePro-master(3)/FieldServicePro-master" "fieldservicepro"
-
-          # Field Services curated extraction. Keep existing field-services-os if already present.
-          if [ ! -d "field-services-os" ]; then
-            move_tree "Titan-Zero-Field-Services-OS-Usable-Code/Titan-Zero-Field-Services-OS-Usable-Code/field-services-os" "field-services-os"
-          fi
-
-          # Remove empty extraction-wrapper directories only.
-          find "Titan-Zero-Usable-Code-Extraction" "Titan-Zero-Usable-Code-Round2" "Titan-Zero-Usable-Code-Round4" "Titan-Zero-Field-Services-OS-Usable-Code"             -depth -type d -empty -delete 2>/dev/null || true
+          # No ZIP packages remain inside the usable-code root. Any ZIP donors
+          # elsewhere under archive are handled by the archive extraction workflow.
+          find . -maxdepth 1 -type f -name '*.zip' -delete
 
           cat > CODEBASES.md <<'EOF'
-          # Usable Code — Root Codebases
+          # Usable Code — Canonical Root
 
-          Donor codebases are kept directly under this folder. Internal folders inside a codebase are preserved because they are part of that application's architecture.
+          Every donor codebase is directly under this folder. Internal folders inside each donor are preserved as part of that codebase's architecture.
 
-          Root codebases include AI-FSM, ResQAI, FieldFlow AI, FieldOps AI, FieldServicePro, Field Services OS, FieldCraft Mobile, Cube Knowledge/RAG, WorkflowAuto, n8n VH3AI, Glint, TradePilot marketing, FieldOps marketing, and FieldCrew marketing.
+          Canonical donors:
+          - ai-fsm
+          - cube-knowledge-rag
+          - field-services-os
+          - fieldcraft-mobile
+          - fieldcrew-marketing
+          - fieldcrewai
+          - fieldflow-ai
+          - fieldops-ai
+          - fieldops-ai-round4
+          - fieldops-marketing
+          - fieldservicepro
+          - glint
+          - n8n-vh3ai
+          - resqai
+          - tradepilot-marketing
+          - workflowauto
 
-          Integration rules: normalize tenancy to company_id; preserve Titan Zero canonical surfaces; do not introduce Titan Code as a production dependency; and port donor capabilities into existing Titan architecture rather than creating parallel runtime stacks.
+          Integration rules:
+          - Titan Zero remains the runtime destination; donors are source material, not parallel production apps.
+          - Normalize tenancy to canonical company_id.
+          - Preserve canonical Zero / Go / Hub surfaces and existing TypeScript architecture.
+          - Map donor AgentOps/governance into Workforce, Governance, Assurance and Rewind.
+          - Map optimization/decision outputs into Decision Engine / DecisionPacket.
+          - Map forecasting/signals into Signal and predictive autonomy.
+          - Keep external providers optional and provider-agnostic.
+          - Do not introduce Titan Code as a Titan Zero production runtime dependency.
           EOF
 
       - name: Commit flattened donor layout
@@ -78,6 +92,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No layout changes"
           else
-            git commit -m "archive: flatten usable-code codebases"
+            git commit -m "archive: consolidate usable-code donors at canonical root"
             git push
           fi
