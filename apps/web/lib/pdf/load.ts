@@ -6,7 +6,7 @@
  * Each loader takes an already-scoped pg client (RLS context set by the
  * caller via withInvoiceContext / withEstimateContext).
  */
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import { buildClientDocumentFilename } from "@ai-fsm/domain";
 import { requestedDepositCents, type InvoiceDepositType } from "@/lib/invoices/deposit";
 import {
@@ -71,7 +71,7 @@ function brandingFromAccount(
 
 /** Filename status bucket — mirrors the invoice/estimate detail pages. */
 async function loadJobPhotoRecap(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   jobId: string | null,
 ): Promise<{ bytes: Uint8Array; mimeType: string }[]> {
@@ -120,7 +120,7 @@ function invoiceFileStatus(status: string): string {
 }
 
 export async function loadInvoicePdf(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   id: string,
 ): Promise<LoadedPdf | null> {
@@ -223,7 +223,7 @@ export async function loadInvoicePdf(
 }
 
 export async function loadEstimatePdf(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   id: string,
 ): Promise<LoadedPdf | null> {
