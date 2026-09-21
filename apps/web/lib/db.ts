@@ -76,4 +76,5 @@ export async function queryOneForSession<
   const rows = await queryForSession<T>(session, text, params);
   return rows[0] ?? null;
 }
-\nexport { getDatabaseDialect } from "./db/dialect";\n
+
+export { getDatabaseDialect } from "./db/dialect";
