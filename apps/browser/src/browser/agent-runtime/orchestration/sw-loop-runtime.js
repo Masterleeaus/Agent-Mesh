@@ -146,13 +146,21 @@ export function createSwLoopRuntime(deps = {}) {
     });
   }
   async function clearTurnActive(sessionId) {
+    // Clear only the turn marker here. Pending journal entries may represent
+    // mutations whose outcomes are UNKNOWN because the worker died after
+    // dispatch but before complete(). They must survive worker reconstruction
+    // until a resumed loop re-perceives; clearing them here would erase the
+    // evidence that prevents a blind replay.
     await deps.sessionStore.update(sessionId, (rec) => { delete rec.activeTurn; }).catch(() => {});
-    // Two-layer staleness guard: build-sw-host's per-dispatch journal.complete()
-    // can itself fail and be swallowed (never blocks the action) — clearing every
-    // pending intent for the session HERE, at the end of every turn (successful,
-    // errored, or stopped), is what actually bounds how long an orphaned intent
-    // can survive. A turn that just ended has nothing left to resume regardless.
-    await deps.journal.clearSession(sessionId).catch(() => {});
+  }
+
+  async function resolveUnknownIntents(sessionId, intents = []) {
+    // Retire exactly the evidence the resume planner handed to this turn. Newer
+    // intents created by the resumed loop are never swept accidentally.
+    for (const intent of intents) {
+      if (intent?.sessionId !== sessionId || !intent?.key) continue;
+      await deps.journal.abandon(intent.key).catch(() => {});
+    }
   }
 
   // What handleResume acts on. `overrides` (explicit user consent — the
@@ -209,6 +217,7 @@ export function createSwLoopRuntime(deps = {}) {
     onTaskComplete: deps.tabController ? (sessionId) => deps.tabController.teardownSession(sessionId) : undefined,
     markTurnActive,
     clearTurnActive,
+    resolveUnknownIntents,
     onResumeStart: deps.onResumeStart,
     // Surface a turn that fails OUTSIDE the loop's own status reporting — a
     // durable-hydration (sessionStore.read) or runLoop throw the orchestrator
