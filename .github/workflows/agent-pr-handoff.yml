@@ -51,6 +51,7 @@ jobs:
           esac
 
       - name: Create or preserve canonical agent PR
+        id: pr_handoff
         shell: bash
         run: |
           set -euo pipefail
@@ -58,7 +59,35 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.ready }}" = "true" ]; then
             READY_ARG="--ready"
           fi
+
+          set +e
           python3 .github/scripts/open-agent-pr.py \
             --branch "$CLAIM_BRANCH" \
             $READY_ARG \
-            --json
+            --json \
+            > pr-handoff.log 2>&1
+          STATUS=$?
+          set -e
+          cat pr-handoff.log
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+
+          if [ "$STATUS" -eq 0 ]; then
+            echo "actions_pr_denied=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if grep -Fq "GitHub Actions is not permitted to create or approve pull requests" pr-handoff.log; then
+            echo "actions_pr_denied=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::Repository Actions policy blocks GITHUB_TOKEN PR creation; recording pending handoff."
+            exit 0
+          fi
+
+          echo "actions_pr_denied=false" >> "$GITHUB_OUTPUT"
+          exit "$STATUS"
+
+      - name: Record pending PR handoff
+        if: steps.pr_handoff.outputs.actions_pr_denied == 'true'
+        run: |
+          python3 .github/scripts/record-pr-handoff-pending.py \
+            --branch "$CLAIM_BRANCH" \
+            --reason "Repository Actions policy currently blocks GITHUB_TOKEN from creating pull requests."
