@@ -112,7 +112,7 @@ const TITAN_BUSINESS_OPS_AGENT_PROFILES = Object.freeze({
 }) satisfies Readonly<Record<TitanBusinessOpsAgentKey, readonly TitanBusinessOpsAgentCommandId[]>>;
 
 export function assertTitanBusinessOpsAgentCommandAllowed(agentKey: TitanBusinessOpsAgentKey, commandId: TitanBusinessOpsAgentCommandId): TitanBusinessOpsAgentCommand {
-  const allowed = TITAN_BUSINESS_OPS_AGENT_PROFILES[agentKey];
+  const allowed: readonly TitanBusinessOpsAgentCommandId[] = TITAN_BUSINESS_OPS_AGENT_PROFILES[agentKey];
   if (!allowed.includes(commandId)) throw new Error(`business-ops-command-not-allowed:${agentKey}:${commandId}`);
   const command = getTitanBusinessOpsAgentCommand(commandId);
   if (!command) throw new Error(`business-ops-command-not-registered:${commandId}`);
