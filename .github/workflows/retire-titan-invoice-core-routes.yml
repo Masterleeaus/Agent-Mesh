@@ -1,0 +1,26 @@
+name: Retire Superseded Titan Invoice Core Routes
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-titan-invoice-core-routes.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          # Root invoice create preserves newer invoice_kind/manual-kind semantics.
+          # Root invoice detail preserves numeric quantity casting and current delete policy.
+          # Root Square link uses canonical DB-generated IDs via RETURNING.
+          git rm -f             'titan/apps/web/app/api/v1/invoices/route.ts'             'titan/apps/web/app/api/v1/invoices/[id]/route.ts'             'titan/apps/web/app/api/v1/invoices/[id]/square-link/route.ts'
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Retire superseded Titan invoice core routes"
+          git push
