@@ -7,7 +7,7 @@
   "subgoals": [
     {
       "title": "Map current agent runtime, tool contracts and authority boundaries",
-      "status": "BUILDER_COMPLETE",
+      "status": "COMPLETE",
       "subgoal_order": 1,
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -17,7 +17,7 @@
         "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
       },
       "completion_basis": "acceptance gates and complete outcome, not planned pass count",
-      "claimable": true,
+      "claimable": false,
       "priority": "P1",
       "mvp_required": false,
       "reuse_first": true,
@@ -32,7 +32,7 @@
       ],
       "subgoal_id": "TZ-ROADMAP-01-SG-01",
       "execution": {
-        "state": "UNCLAIMED",
+        "state": "COMPLETE",
         "claimed_by": null,
         "claimed_at": null,
         "last_heartbeat_at": null,
@@ -42,7 +42,11 @@
         "final_cumulative_delta": null,
         "checkpoint_counter": 0,
         "checkpoint_history": [],
-        "next_checkpoint_due_after_pass": 4
+        "next_checkpoint_due_after_pass": 4,
+        "completed_at": "2026-09-21T22:04:28Z",
+        "merged_pr_number": 604,
+        "merge_sha": "9ba36c217ac201a6d3637324d62849e540b21561",
+        "claim_branch": "agent/TZ-ROADMAP-01-SG-01"
       },
       "agent_model": {
         "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
@@ -152,7 +156,15 @@
         "docs/contracts/TITAN-AGENT-RUNTIME-AUTHORITY-MAP.json",
         "docs/contracts/TITAN-AGENT-RUNTIME-AUTHORITY-MAP.md"
       ],
-      "completion_summary": "Mapped current production agent runtime, tool/capability contracts, delegation flow and authority/mutation boundaries from canonical TypeScript code. No parallel runtime added. Remaining convergence was isolated to SG02 (invocation envelope), SG03 (registry authority) and SG05 (governed mutation handoff)."
+      "completion_summary": "Mapped current production agent runtime, tool/capability contracts, delegation flow and authority/mutation boundaries from canonical TypeScript code. No parallel runtime added. Remaining convergence was isolated to SG02 (invocation envelope), SG03 (registry authority) and SG05 (governed mutation handoff).",
+      "completion_receipt": {
+        "source": "GITHUB_MANAGER_MERGE",
+        "pr_number": 604,
+        "issue_number": 11,
+        "merge_sha": "9ba36c217ac201a6d3637324d62849e540b21561",
+        "head_branch": "agent/TZ-ROADMAP-01-SG-01",
+        "merged_at_utc": "2026-09-21T22:04:28Z"
+      }
     },
     {
       "title": "Unify agent invocation envelope, context and correlation",
@@ -1591,7 +1603,7 @@
   "preferred_successors": [],
   "agent_tier_contract_required": true,
   "last_canonical_revalidation": null,
-  "progress_percent": 0,
+  "progress_percent": 10,
   "goal_is_planning_container": true,
   "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
   "unified_architecture_contract_required": true,
