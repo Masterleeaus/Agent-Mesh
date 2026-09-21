@@ -29,24 +29,16 @@ jobs:
             src="$1"; dest="$2"
             [ -d "$src" ] || return 0
             mkdir -p "$dest"
-            # Preserve the existing root donor when a path conflicts; bring across
-            # only files that are not already represented at the canonical root.
             rsync -a --ignore-existing "$src/" "$dest/"
           }
 
-          # Round 2 nested donors -> canonical root.
           merge_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/field-mobile/FieldCraft-React-Native-application--main" "fieldcraft-mobile"
           merge_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/marketing-sites/marketing-sites-extracted/fieldops-marketing-site" "fieldops-marketing"
           merge_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/marketing-sites/marketing-sites-extracted/fieldcrew-marketing-site" "fieldcrew-marketing"
           merge_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/prior-donor-pack/Titan-Zero-Usable-Code-Donor-Pack/field-services-os" "field-services-os"
           merge_tree "Titan-Zero-Usable-Code-Round2/Titan-Zero-Usable-Code-Round2/prior-donor-pack/Titan-Zero-Usable-Code-Donor-Pack/fieldops-ai" "fieldops-ai"
 
-          # Remove extraction wrapper trees after their contents have been
-          # reconciled into the canonical root. Do not remove the canonical roots.
           rm -rf "Titan-Zero-Usable-Code-Extraction" "Titan-Zero-Usable-Code-Round2" "Titan-Zero-Usable-Code-Round4" "Titan-Zero-Field-Services-OS-Usable-Code"
-
-          # No ZIP packages remain inside the usable-code root. Any ZIP donors
-          # elsewhere under archive are handled by the archive extraction workflow.
           find . -maxdepth 1 -type f -name '*.zip' -delete
 
           cat > CODEBASES.md <<'EOF'
@@ -83,15 +75,20 @@ jobs:
           - Do not introduce Titan Code as a Titan Zero production runtime dependency.
           EOF
 
-      - name: Commit flattened donor layout
+      - name: Commit flattened donor layout safely
         shell: bash
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Other Agent Mesh agents may update main while this job runs.
+          # Rebase our workspace onto the latest main before committing.
+          git fetch origin main
+          git rebase origin/main
           git add -A archive/Titan-Zero-Usable-Code-Donor-Pack
           if git diff --cached --quiet; then
             echo "No layout changes"
-          else
-            git commit -m "archive: consolidate usable-code donors at canonical root"
-            git push
+            exit 0
           fi
+          git commit -m "archive: consolidate usable-code donors at canonical root"
+          git push origin HEAD:main
