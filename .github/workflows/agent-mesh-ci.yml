@@ -41,6 +41,7 @@ jobs:
           python3 .github/scripts/claim-next-subgoal.py --self-test
           python3 .github/scripts/audit-agent-claims.py --self-test
           python3 .github/scripts/release-safe-agent-claims.py --self-test
+          python3 .github/scripts/manager-merge.py --self-test
           python3 .github/scripts/verify-main-integration.py --self-test
           python3 .github/scripts/open-agent-pr.py --self-test
           python3 .github/scripts/manager-review-readiness.py --self-test
