@@ -4875,7 +4875,7 @@
       "schema": "titan-zero-target-dependency-contract/v1",
       "status": "ACTIVE",
       "hard_rules": [
-        "Goal52 owns Merge83 cleanup/canonical-base readiness and remains Manager-only.",
+        "Goal52 owns GitHub main base-app cleanup/canonical readiness and remains Manager-only; Merge83 is historical donor/provenance only.",
         "New provider implementations must consume Goal53 Capability Network contracts once those contracts exist.",
         "Goal54 lifecycle may design against Goal53 contracts before all providers are implemented, but commissioning requires provider/authority/evidence gates.",
         "Workforce Goal41 owns canonical workforce definitions; other goals reference agent_id rather than redefine workers.",
@@ -4894,7 +4894,7 @@
         {
           "order": 1,
           "goal_id": "TZ-ROADMAP-52",
-          "role": "Clean and verify Merge83 TypeScript convergence baseline; Manager-only."
+          "role": "Clean and verify the GitHub main TypeScript convergence baseline; Manager-only. Merge83 is historical donor/provenance only."
         },
         {
           "order": 2,
