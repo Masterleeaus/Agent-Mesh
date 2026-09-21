@@ -36,12 +36,44 @@ jobs:
 
       - name: Create canonical draft agent PR
         if: steps.work.outputs.ahead != '0'
+        id: pr_handoff
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
+          set -euo pipefail
+          set +e
           python3 .github/scripts/open-agent-pr.py \
             --branch "$GITHUB_REF_NAME" \
             --draft \
             --verification "Automatic Agent PR handoff created from committed branch state." \
             --completion "Manager must review current evidence and either merge verified completion or keep only explicit remaining work." \
-            --risk "Rollback is available by reverting the merged PR; no automatic merge is performed by this workflow."
+            --risk "Rollback is available by reverting the merged PR; no automatic merge is performed by this workflow." \
+            > pr-handoff.log 2>&1
+          STATUS=$?
+          set -e
+          cat pr-handoff.log
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+
+          if [ "$STATUS" -eq 0 ]; then
+            echo "actions_pr_denied=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if grep -Fq "GitHub Actions is not permitted to create or approve pull requests" pr-handoff.log; then
+            echo "actions_pr_denied=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::GitHub Actions cannot create PRs for this repository; recording a durable pending handoff instead."
+            exit 0
+          fi
+
+          echo "actions_pr_denied=false" >> "$GITHUB_OUTPUT"
+          exit "$STATUS"
+
+      - name: Record pending PR handoff
+        if: steps.work.outputs.ahead != '0' && steps.pr_handoff.outputs.actions_pr_denied == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 .github/scripts/record-pr-handoff-pending.py \
+            --branch "$GITHUB_REF_NAME" \
+            --reason "Repository Actions policy currently blocks GITHUB_TOKEN from creating pull requests."
