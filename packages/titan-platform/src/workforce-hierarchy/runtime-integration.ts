@@ -4,13 +4,13 @@ import {createResponsibilityContract,type ResponsibilityKind} from "./responsibi
 import {validateRoleBoundary} from "./role-leakage.js";
 import {prepareUpwardEvidence} from "./propagation.js";
 import {bindHumanParticipant,attachHumanToWork,type HumanParticipant} from "./human-participant.js";
-import {getWorkforceAgent} from "../workforce-registry/registry.js";
+import {getRuntimeAgent} from "../workforce-registry/registry.js";
 
 const req=(v:string,n:string)=>{const x=String(v??"").trim();if(!x)throw new Error(`${n}-required`);return x};
 const kindByPosition={Worker:"bounded_execution",Specialist:"complex_judgement",Manager:"outcome_family",Orchestrator:"cross_domain_coordination"} as const;
 
 export function resolveGovernedWorkforceIdentity(company_id:string,agent_id:string){
- const company=req(company_id,"company_id"),agent=getWorkforceAgent(req(agent_id,"agent_id")),node=getHierarchyNode(agent.agent_id);
+ const company=req(company_id,"company_id"),agent=getRuntimeAgent(req(agent_id,"agent_id")),node=getHierarchyNode(agent.agent_id);
  if(agent.position!==node.position)throw new Error("registry-hierarchy-position-drift");
  return Object.freeze({schema:"titan.workforce.governed-identity.v1",company_id:company,agent_id:agent.agent_id,
   position:node.position,parent_agent_id:node.parent_agent_id,child_agent_ids:Object.freeze([...node.child_agent_ids]),
