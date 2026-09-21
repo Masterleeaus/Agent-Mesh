@@ -11,7 +11,8 @@
     "surface",
     "kind",
     "payload",
-    "authority_neutral"
+    "authority_neutral",
+    "execution_authority"
   ],
   "properties": {
     "schema_version": {
@@ -50,6 +51,9 @@
     },
     "authority_neutral": {
       "const": true
+    },
+    "execution_authority": {
+      "const": false
     }
   }
 }
