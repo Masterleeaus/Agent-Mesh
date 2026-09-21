@@ -1,0 +1,1497 @@
+{
+  "goal_id": "TZ-ROADMAP-44",
+  "priority": "P0",
+  "title": "Canonical Engine Reuse & MVP Convergence",
+  "objective": "Converge the existing Library engine codebases into the Titan Zero prototype instead of rebuilding them, proving one governed end-to-end execution spine across Interaction, authority, risk, evidence, command, signal, workforce and business state.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "title": "Build and maintain the canonical Library donor manifest for every Titan system; verify artifact existence, lineage, hashes/status and ownership before any new implementation work",
+      "status": "TODO",
+      "subgoal_order": 1,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "reuse_first": true,
+      "reuse_instruction": "Use the referenced Library codebase as donor/canonical implementation. Compare contents and lineage first; converge/port/adapt. Do not create a replacement implementation unless incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "CRM Autonomy Deownership Handoff Bundle"
+      ],
+      "subgoal_id": "TZ-ROADMAP-44-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_CANONICAL_DONOR_DISCOVERY_CONTROL_PLANE_EXISTS",
+        "last_scanned_at_utc": "2026-09-19T06:28:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Reference Library SOURCE-REGISTRY",
+            "verification": "LIVE_V9_CANONICAL_DISCOVERY_LAYER"
+          },
+          {
+            "source_ref": "MASTER-PRODUCT-REGISTRY",
+            "verification": "AUTHORITATIVE_MASTER_PRODUCT_IDENTITY_REGISTRY"
+          },
+          {
+            "source_ref": "MASTER-LOCATION-INDEX",
+            "verification": "AUTHORITATIVE_MASTER_LOCATION_DISCOVERY_MAP"
+          },
+          {
+            "source_ref": "Reference Library SUBGOAL-CODE-MAP",
+            "verification": "EXACT_SUBGOAL_REUSE_LOOKUP_LAYER"
+          },
+          {
+            "source_ref": "CRM Autonomy Deownership Handoff Bundle",
+            "verification": "PROVENANCE_INDEX_WITH_HASHED_ENGINE_HANDOFFS"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Reference Library SOURCE-REGISTRY",
+            "file_id": "file_000000004dd881fa8b7ffe2d7aed1f95",
+            "library_path": "/Titan Zero/Agent Mesh Manager/Reference Library/SOURCE-REGISTRY/SOURCE-REGISTRY.json",
+            "verification": "LIVE_V9"
+          },
+          {
+            "source_ref": "MASTER-PRODUCT-REGISTRY",
+            "file_id": "file_00000000dd7481fa8dd43320fa7cbf29",
+            "library_path": "/MASTER Software/Masters/MASTER-PRODUCT-REGISTRY.json",
+            "verification": "REGISTRY_RULES_ZERO_LOSS_NO_NEWEST_FILE_WINS"
+          },
+          {
+            "source_ref": "MASTER-LOCATION-INDEX",
+            "file_id": "file_0000000078608211a3e80d40da2cbf40",
+            "library_path": "/MASTER Software/Masters/MASTER-LOCATION-INDEX.json",
+            "verification": "LOOKUP_PRECEDENCE_CANONICAL_LOCATION_FIRST"
+          },
+          {
+            "source_ref": "Reference Library SUBGOAL-CODE-MAP",
+            "file_id": "file_00000000eb8081f88ca8c72c5f8a4c5c",
+            "library_path": "/Titan Zero/Agent Mesh Manager/Reference Library/SUBGOAL-CODE-MAP/SUBGOAL-CODE-MAP.json",
+            "verification": "LIVE_V8"
+          },
+          {
+            "source_ref": "CRM Autonomy Deownership Handoff Bundle",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "verification": "HASHED_DONOR_INDEX; SOME_PAYLOADS_UNRESOLVED"
+          }
+        ],
+        "scan_notes": "The donor-discovery control plane already exists across MASTER registries and the Reference Library. SG01 should converge these into one canonical donor-manifest contract instead of adding another registry. The manifest must distinguish physical payload verified, provenance-only, unmanaged-live-folder, status-managed canonical, and recovery-required states.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Converge Titan Interaction Engine into the prototype as the governed intent/journey/wizard/capability interaction runtime; preserve existing verified behavior rather than reimplementing it",
+      "status": "TODO",
+      "subgoal_order": 2,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "reuse_first": true,
+      "reuse_instruction": "Use the referenced Library codebase as donor/canonical implementation. Compare contents and lineage first; converge/port/adapt. Do not create a replacement implementation unless incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan Interface Runtime"
+      ],
+      "subgoal_id": "TZ-ROADMAP-44-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSE_READY_VERIFIED_ZERO_LOSS",
+        "last_scanned_at_utc": "2026-09-19T06:28:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PHYSICAL_SHA_MATCH"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Presentation/PresentationIntent.php",
+              "System/Presentation/GeneratedUiPresenter.php",
+              "System/Wizard/UniversalWizardEngine.php",
+              "System/Engines/HumanInteraction/Implementations/TrustEngine.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Components/ComponentCatalog.php",
+              "System/Rendering/Renderer.php"
+            ]
+          }
+        ],
+        "scan_notes": "Interaction Engine and Interface Runtime already provide governed presentation intent, generated UI, journey/wizard runtime, component catalogue and rendering. Port/converge into Titan Zero; do not recreate the interaction runtime.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Converge Titan Autonomy and Titan Trust into one earned-authority path implementing desired/earned/effective authority, trust cycles, recursive handshake, revocation and plan-gated unlocks",
+      "status": "TODO",
+      "subgoal_order": 3,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "reuse_first": true,
+      "reuse_instruction": "Use the referenced Library codebase as donor/canonical implementation. Compare contents and lineage first; converge/port/adapt. Do not create a replacement implementation unless incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Autonomy",
+        "Titan Trust"
+      ],
+      "subgoal_id": "TZ-ROADMAP-44-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSE_READY_RECURSIVE_WORKFORCE_GAPS_REMAIN",
+        "last_scanned_at_utc": "2026-09-19T06:28:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Autonomy",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Trust",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_TRUST_COMPATIBILITY_REVIEW_REQUIRED"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Autonomy",
+            "file_id": "file_0000000028f881faa94c136cee53317a",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Autonomy/Titan Autonomy Master v1.8.3.zip",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Services/TrustedAutoHandshakeService.php",
+              "System/Services/TrustedAutoReviewService.php",
+              "System/Services/GateEvaluator.php",
+              "System/Services/ExecutionFeedbackService.php",
+              "System/Services/ExecutionReconciliationService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Trust",
+            "file_id": "file_0000000071788230b0a9df377eb77ccf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Trust/Titan Trust Master v2.1.0.zip",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_TRUST_COMPATIBILITY_REVIEW_REQUIRED",
+            "internal_paths": [
+              "System/Audit/JobTimeline.php",
+              "System/Audit/RequestContext.php",
+              "System/Audit/JobEventWriter.php",
+              "System/Assurance/EvidenceRefFactory.php"
+            ]
+          }
+        ],
+        "scan_notes": "Autonomy and Trust contain handshake, gate, evidence and audit primitives. Reuse them as the authority spine. Apply Goal 42 gaps explicitly: workforce-class ceilings, participant acceptance, six-gate predictive unlock, plan-lock state and downstream chain health still require convergence.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Converge Titan Risk Engine and Titan AI Assurance Engine as mandatory pre-execution gates with evidence references and fail-closed high-consequence behavior",
+      "status": "TODO",
+      "subgoal_order": 4,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "reuse_first": true,
+      "reuse_instruction": "Use the referenced Library codebase as donor/canonical implementation. Compare contents and lineage first; converge/port/adapt. Do not create a replacement implementation unless incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Risk Engine",
+        "Titan AI Assurance Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-44-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSE_READY_FAIL_CLOSED_GATES_EXIST",
+        "last_scanned_at_utc": "2026-09-19T06:28:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Risk Engine",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Risk Engine",
+            "file_id": "file_00000000412881faaf8a0e89fe3fc1dc",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Risk Engine/Titan Risk Engine Master v1.0.0-rc.4.zip",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Services/FailClosedRiskGate.php",
+              "System/Services/DatabaseRiskAssessmentLedger.php",
+              "System/Services/DatabaseRiskEnforcementReceiptStore.php",
+              "System/Services/RiskEnforcementReceiptVerifier.php"
+            ]
+          },
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "file_id": "file_0000000058248209a538c309708e9de4",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Assurance Engine/Titan AI Assurance Engine Master v2.3.3.zip",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Services/Assurance/PermissionGateService.php",
+              "System/Services/Assurance/RiskClassificationService.php",
+              "System/Services/Assurance/AssuranceAuditService.php",
+              "System/Services/Assurance/EvidencePacketService.php"
+            ]
+          }
+        ],
+        "scan_notes": "Risk and Assurance already expose fail-closed risk/permission classification, evidence packets, durable ledgers and enforcement receipts. Main work is one mandatory pre-execution composition contract, not a replacement risk/assurance engine.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Converge Titan Command Bus and Titan Signal Engine so consequential writes route through governed commands, produce authoritative receipts and emit correlated operational signals",
+      "status": "TODO",
+      "subgoal_order": 5,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "reuse_first": true,
+      "reuse_instruction": "Use the referenced Library codebase as donor/canonical implementation. Compare contents and lineage first; converge/port/adapt. Do not create a replacement implementation unless incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Command Bus",
+        "Titan Signal Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-44-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSE_READY_COMMAND_SIGNAL_CONVERGENCE_REQUIRED",
+        "last_scanned_at_utc": "2026-09-19T06:28:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Command Bus",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Services/FailClosedAuthorizationGate.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/Services/FailClosedRiskGate.php",
+              "System/Services/FailClosedGovernanceGate.php",
+              "System/Contracts/CommandAuthorizationGateContract.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "schemas/signal-event.schema.json",
+              "System/Observability/TraceContext.php",
+              "System/Data/SignalEnvelope.php",
+              "System/Persistence/SignalEventStore.php",
+              "System/Services/SignalEmitter.php",
+              "System/Services/SignalContextValidator.php"
+            ]
+          }
+        ],
+        "scan_notes": "Command Bus already has fail-closed authorization/approval/risk/governance gates; Signal already has correlated envelopes, persistence and trace analysis. Converge command receipt identity and signal correlation/causation into the canonical execution spine.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Converge Titan AI Core, Decision Engine, Model Council and AI Workforce adapters for planning, delegation, hierarchy and bounded model/governance decisions without duplicating domain ownership",
+      "status": "TODO",
+      "subgoal_order": 6,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "reuse_first": true,
+      "reuse_instruction": "Use the referenced Library codebase as donor/canonical implementation. Compare contents and lineage first; converge/port/adapt. Do not create a replacement implementation unless incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Core",
+        "Titan Decision Engine",
+        "Titan Model Council",
+        "Titan AI Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-44-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSE_READY_PLANNING_DELEGATION_COUNCIL_AVAILABLE",
+        "last_scanned_at_utc": "2026-09-19T06:28:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan AI Core",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Decision Engine",
+            "sha256": "3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PHYSICAL_SHA_CONTENT_SCAN"
+          },
+          {
+            "source_ref": "Titan Model Council",
+            "sha256": "cfb9480cfbbe57fdc9eded5203ef78f4ef3e6d1e8f79fab48ac6863ec385b093",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan AI Workforce",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "schemas/plan-envelope.v1.schema.json",
+              "System/DTO/AuthorityContext.php",
+              "System/Services/PlanValidator.php",
+              "System/Services/GovernancePreflightCoordinator.php",
+              "System/Services/Orchestrator.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Decision Engine",
+            "file_id": "file_000000007b9881fa8029f640a3818749",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Decision Engine/Titan Decision Engine Master Step 25.zip",
+            "sha256": "3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PHYSICAL_SHA_CONTENT_SCAN",
+            "internal_paths": [
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/21-best-action-engine/runtime/bestActionEngine.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/22-explanation-engine/runtime/explanationEngine.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/23-confidence-engine/runtime/confidenceEngine.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/24-decision-history/runtime/decisionHistory.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/25-learning-loop/runtime/learningLoop.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Model Council",
+            "file_id": "file_00000000c824820e8e230ba127b115a6",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Model Council/Titan Model Council Master v1.0.0-rc.2.zip",
+            "sha256": "cfb9480cfbbe57fdc9eded5203ef78f4ef3e6d1e8f79fab48ac6863ec385b093",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Governed/GovernedCouncilRuntime.php",
+              "System/Policies/AdaptiveQuorumPolicy.php",
+              "System/Receipts/CouncilDecisionReceiptService.php",
+              "System/Assurance/CouncilAssuranceBridge.php",
+              "System/Shield/ShieldAwareCouncilGate.php"
+            ]
+          },
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Enums/WorkforceTier.php",
+              "System/Services/ChainOfCommandService.php",
+              "System/Services/WorkforceDelegationService.php",
+              "System/Services/WorkforceAuthorityGraphValidator.php",
+              "System/Services/WorkforceFinalAuthorityGateService.php"
+            ]
+          }
+        ],
+        "scan_notes": "AI Core supplies typed plan envelopes, validation, governance preflight and orchestration; Decision Engine supplies best-action/explanation/confidence/history/learning; Model Council supplies governed advisory deliberation with risk/Shield/Assurance and hash-addressed receipts; AI Workforce supplies hierarchy/delegation/authority gates. Preserve domain ownership and keep Council advisory_only.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Converge Rewind, Wisdom, Governance, Shield and Knowledge Authority for reconstructable evidence, verified outcomes, governance health and reusable knowledge; implement only the MVP slices needed by the demonstration",
+      "status": "TODO",
+      "subgoal_order": 7,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "reuse_first": true,
+      "reuse_instruction": "Use the referenced Library codebase as donor/canonical implementation. Compare contents and lineage first; converge/port/adapt. Do not create a replacement implementation unless incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Rewind",
+        "Titan Wisdom Engine",
+        "Titan Governance",
+        "Titan Shield",
+        "Knowledge Authority"
+      ],
+      "subgoal_id": "TZ-ROADMAP-44-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSE_READY_EVIDENCE_OUTCOME_KNOWLEDGE_SLICES_AVAILABLE",
+        "last_scanned_at_utc": "2026-09-19T06:28:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Rewind",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Governance",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Shield",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Knowledge Authority",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Models/RewindGovernanceReceipt.php",
+              "System/Recovery/RewindRecoveryPlanner.php",
+              "System/Services/RewindEvidencePackageService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Outcomes/OutcomeRecord.php",
+              "System/Services/WisdomOutcomeRecorder.php",
+              "System/Services/WisdomOutcomeResolver.php",
+              "System/Services/WisdomOutcomeReviser.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Governance",
+            "file_id": "file_00000000b6c081f8bf9843bca163f464",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Governance/Titan Governance Master v1.0.0-rc.4.zip",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "contracts/control-plane/authority-constraint.v1.json",
+              "contracts/control-plane/policy.v1.json",
+              "System/Services/GovernanceAuthorityConstraintFactory.php",
+              "System/DecisionIntelligence/GovernanceDecisionEvidenceRegistry.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Shield",
+            "file_id": "file_000000008a048208bb0cc524a49549b7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Shield/Titan Shield Master v1.0.0-rc.3.zip",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Domain/Evidence/EvidenceManifest.php",
+              "System/Services/EvidenceCaptureService.php",
+              "System/Workforce/PersistentReceiptRegistry.php",
+              "tests/Standalone/EvidenceIntegrityTest.php"
+            ]
+          },
+          {
+            "source_ref": "Knowledge Authority",
+            "file_id": "file_00000000172c81fab7f3a239d09ab2e1",
+            "library_path": "/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Services/KnowledgeAuthority.php",
+              "System/Services/OfficialKnowledgeRefreshService.php",
+              "System/Domain/Services/SourceVersionLineagePolicy.php",
+              "System/Services/FailClosedKnowledgeAccessContextResolver.php",
+              "System/Services/KnowledgeContradictionService.php",
+              "docs/OBSERVATION-KNOWLEDGE-OUTCOME-LOOP.md"
+            ]
+          }
+        ],
+        "scan_notes": "Rewind, Wisdom, Governance, Shield and Knowledge Authority already cover recovery/evidence, verified outcomes/learning, authority policy/evidence, durable evidence integrity and immutable/company-scoped knowledge. MVP should take bounded slices only. Repair Knowledge Authority observation-loop documentation contradiction that calls company_id both canonical and legacy.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Converge the Foresight predictive donor into a bounded predictive demonstration that can prepare/recommend but cannot bypass Risk, Assurance, Trust, Autonomy or Command Bus authority",
+      "status": "TODO",
+      "subgoal_order": 8,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "reuse_first": true,
+      "reuse_instruction": "Use the referenced Library codebase as donor/canonical implementation. Compare contents and lineage first; converge/port/adapt. Do not create a replacement implementation unless incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Foresight Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-44-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_PROVENANCE_VERIFIED_PAYLOAD_UNRESOLVED_RECOVERY_REQUIRED",
+        "last_scanned_at_utc": "2026-09-19T06:28:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Foresight Engine CRM handoff",
+            "sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc",
+            "verification": "HANDOFF_INDEX_PROVENANCE_VERIFIED_PAYLOAD_NOT_PHYSICALLY_RESOLVED"
+          },
+          {
+            "source_ref": "Titan Extension Blueprint Foresight convergence SHA artifact",
+            "verification": "HASH_EVIDENCE_ONLY_NOT_RUNTIME_PAYLOAD"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "CRM Autonomy Deownership Handoff Index",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "verification": "Lists Titan-Foresight-CRM-Proactive-to-Predictive-Handoff-v1.0.0.zip; donor_files=4; table_excerpts=1",
+            "expected_payload_sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc"
+          },
+          {
+            "source_ref": "Foresight convergence SHA evidence",
+            "file_id": "file_00000000e63481fabf25ebeaaf967bdd",
+            "library_path": "Titan-Extension-Blueprint-v4.0-Step12-Foresight-Intelligence-Convergence-Cumulative.zip.sha256",
+            "verification": "PROVENANCE_ONLY"
+          }
+        ],
+        "scan_notes": "Do not rebuild Foresight from memory. Recover/materialize the exact handoff or another lineage-proven successor first. The bounded predictive demonstration must remain prepare/recommend only and pass through Risk, Assurance, Trust, Autonomy and Command Bus before any mutation.",
+        "exhaustion_evidence": "Expected canonical Foresight master folder absent; exact handoff filename/hash searched and payload did not resolve."
+      }
+    },
+    {
+      "title": "Converge Vertical, Onboarding and remaining operational/product donors only after the MVP spine works; reuse existing donor implementations and preserve ownership boundaries",
+      "status": "TODO",
+      "subgoal_order": 9,
+      "priority": "P1",
+      "mvp_required": false,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "reuse_first": true,
+      "reuse_instruction": "Use the referenced Library codebase as donor/canonical implementation. Compare contents and lineage first; converge/port/adapt. Do not create a replacement implementation unless incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Vertical Engine (donor lineage)",
+        "OnboardingPro",
+        "Titan CRM",
+        "Titan Field",
+        "Titan Financial Engine",
+        "Titan Connect"
+      ],
+      "subgoal_id": "TZ-ROADMAP-44-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED_WITH_VERTICAL_SCAFFOLD_WARNING",
+        "relevant_file_refs": [
+          {
+            "source_ref": "OnboardingPro",
+            "file_id": "file_00000000c7b881fa8981a4b822265833",
+            "library_path": "/MASTER Software/Masters/Operations/OnboardingPro/OnboardingPro Master v6.0.0-rc.4.zip",
+            "sha256": "a2330f9826e6da15612e8a782d3f71203dccab0636c7da26302d7a19ee6b7f42",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Discovery/CanonicalVerticalResolver.php",
+              "System/Discovery/BusinessSetupService.php",
+              "System/Adaptive/AdaptiveOnboardingRuntimeService.php",
+              "System/Services/JourneyProgressService.php",
+              "System/Services/HandoffService.php",
+              "System/Templates/VerticalPackRegistry.php",
+              "System/Readiness/OnboardingProductionGateService.php",
+              "System/Integrations/InteractionEngine/OnboardingJourneyRuntime.php",
+              "System/Tenancy/OnboardingCompanyResolver.php",
+              "System/Offline/OnboardingConflictResolver.php",
+              "tests/standalone/test_pass7_company_id_only_boundary.php",
+              "tests/standalone/test_v6_pass12_final_convergence_production_hardening.php"
+            ],
+            "finding": "Current OnboardingPro v6 contains real company-scoped discovery, canonical vertical resolution, adaptive journeys, readiness gates, offline recovery and Interaction Engine integration; reuse these modules selectively without making Onboarding an independent business-logic authority."
+          },
+          {
+            "source_ref": "Titan Vertical Engine donor lineage",
+            "file_id": "file_00000000552881fa830e3d9c9d47bc61",
+            "library_path": "Titan-Vertical-Engine-v0.1.0-Deep-Scan.md",
+            "sha256": "efd420e7525d68776890b56d2f3182dadc58a344619ea4548675353bbd37637c",
+            "verification": "PROVENANCE_DEEP_SCAN_PAYLOAD_NOT_RESOLVED",
+            "internal_paths": [],
+            "finding": "Historical Vertical Engine donor was an honest scaffold with missing definition/composition/tenant/governance runtime; use its architecture/provenance only and do not treat advertised manifest capabilities as implemented code."
+          },
+          {
+            "source_ref": "Titan CRM",
+            "file_id": "file_00000000f7ec81fa9100e3081d9124fb",
+            "library_path": "/MASTER Software/Masters/Operations/Titan CRM/Titan CRM Master Step 41.zip",
+            "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Reuse customer/commercial domain authority; do not merge its ownership into onboarding/vertical layers."
+          },
+          {
+            "source_ref": "Titan Field",
+            "file_id": "file_00000000e2e481faa8bf9aa44d7c99f3",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Field/Titan Field Master v1.0.12.zip",
+            "sha256": "64ad7c55e5a6de854058c341b6dc0cbeceb97f87937dcbf6b81f6bce6455e1f2",
+            "verification": "PRIOR_PHYSICAL_SHA_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [],
+            "finding": "Reuse field execution capabilities behind stable domain contracts; do not absorb into vertical/onboarding ownership."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PRIOR_PHYSICAL_SHA_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [],
+            "finding": "Reuse governed financial/pricing capabilities through existing authority boundaries."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Reuse provider/channel connectivity; onboarding/vertical code must not duplicate provider authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "OnboardingPro",
+          "Titan Vertical Engine donor lineage",
+          "Titan CRM",
+          "Titan Field",
+          "Titan Financial Engine",
+          "Titan Connect"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:04:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Converge current OnboardingPro modules and existing domain engines only after the MVP spine; preserve CRM/Field/Financial/Connect ownership. Historical Vertical Engine remains architecture/provenance only until a real canonical vertical-definition compiler exists."
+      }
+    },
+    {
+      "title": "Certify the no-rebuild MVP: trace one business intent from chat through Interaction, hierarchy, trust/autonomy, Risk/Assurance, Command Bus, CRM mutation, Signal, receipt/Rewind and visible outcome/value evidence; fail certification if duplicate replacement engines were created unnecessarily",
+      "status": "TODO",
+      "subgoal_order": 10,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "reuse_first": true,
+      "reuse_instruction": "Use the referenced Library codebase as donor/canonical implementation. Compare contents and lineage first; converge/port/adapt. Do not create a replacement implementation unless incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan AI Workforce",
+        "Titan Trust",
+        "Titan Autonomy",
+        "Titan Risk Engine",
+        "Titan AI Assurance Engine",
+        "Titan Command Bus",
+        "Titan CRM",
+        "Titan Signal Engine",
+        "Titan Rewind",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-44-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSABLE_END_TO_END_SPINE_AVAILABLE_CERTIFICATION_NOT_YET_PROVEN",
+        "last_scanned_at_utc": "2026-09-19T06:28:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan AI Workforce",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Trust",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_TRUST_COMPATIBILITY_REVIEW_REQUIRED"
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan CRM",
+            "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PHYSICAL_SHA_CONTENT_SCAN"
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Presentation/PresentationIntent.php",
+              "System/Presentation/GeneratedUiPresenter.php",
+              "System/Wizard/UniversalWizardEngine.php",
+              "System/Engines/HumanInteraction/Implementations/TrustEngine.php"
+            ]
+          },
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Enums/WorkforceTier.php",
+              "System/Services/ChainOfCommandService.php",
+              "System/Services/WorkforceDelegationService.php",
+              "System/Services/WorkforceAuthorityGraphValidator.php",
+              "System/Services/WorkforceFinalAuthorityGateService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Trust",
+            "file_id": "file_0000000071788230b0a9df377eb77ccf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Trust/Titan Trust Master v2.1.0.zip",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_TRUST_COMPATIBILITY_REVIEW_REQUIRED",
+            "internal_paths": [
+              "System/Audit/JobTimeline.php",
+              "System/Audit/RequestContext.php",
+              "System/Audit/JobEventWriter.php",
+              "System/Assurance/EvidenceRefFactory.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "file_id": "file_0000000028f881faa94c136cee53317a",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Autonomy/Titan Autonomy Master v1.8.3.zip",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Services/TrustedAutoHandshakeService.php",
+              "System/Services/TrustedAutoReviewService.php",
+              "System/Services/GateEvaluator.php",
+              "System/Services/ExecutionFeedbackService.php",
+              "System/Services/ExecutionReconciliationService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "file_id": "file_00000000412881faaf8a0e89fe3fc1dc",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Risk Engine/Titan Risk Engine Master v1.0.0-rc.4.zip",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Services/FailClosedRiskGate.php",
+              "System/Services/DatabaseRiskAssessmentLedger.php",
+              "System/Services/DatabaseRiskEnforcementReceiptStore.php",
+              "System/Services/RiskEnforcementReceiptVerifier.php"
+            ]
+          },
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "file_id": "file_0000000058248209a538c309708e9de4",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Assurance Engine/Titan AI Assurance Engine Master v2.3.3.zip",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Services/Assurance/PermissionGateService.php",
+              "System/Services/Assurance/RiskClassificationService.php",
+              "System/Services/Assurance/AssuranceAuditService.php",
+              "System/Services/Assurance/EvidencePacketService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Services/FailClosedAuthorizationGate.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/Services/FailClosedRiskGate.php",
+              "System/Services/FailClosedGovernanceGate.php",
+              "System/Contracts/CommandAuthorizationGateContract.php"
+            ]
+          },
+          {
+            "source_ref": "Titan CRM",
+            "file_id": "file_00000000f7ec81fa9100e3081d9124fb",
+            "library_path": "/MASTER Software/Masters/Operations/Titan CRM/Titan CRM Master Step 41.zip",
+            "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PHYSICAL_SHA_CONTENT_SCAN",
+            "internal_paths": [
+              "Titan-CRM-Master-Step41/runtime/CompanyContext.php",
+              "Titan-CRM-Master-Step41/runtime/CrmAuthorityGuard.php",
+              "Titan-CRM-Master-Step41/runtime/RevenueJourney.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "schemas/signal-event.schema.json",
+              "System/Observability/TraceContext.php",
+              "System/Data/SignalEnvelope.php",
+              "System/Persistence/SignalEventStore.php",
+              "System/Services/SignalEmitter.php",
+              "System/Services/SignalContextValidator.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Models/RewindGovernanceReceipt.php",
+              "System/Recovery/RewindRecoveryPlanner.php",
+              "System/Services/RewindEvidencePackageService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Outcomes/OutcomeRecord.php",
+              "System/Services/WisdomOutcomeRecorder.php",
+              "System/Services/WisdomOutcomeResolver.php",
+              "System/Services/WisdomOutcomeReviser.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php"
+            ]
+          }
+        ],
+        "scan_notes": "All major components needed for the no-rebuild MVP trace are physically resolved and code-scanned. Certification itself remains outstanding: one real intent must be traced through interaction -> hierarchy -> trust/autonomy -> Risk/Assurance -> Command Bus -> CRM mutation -> Signal -> receipt/Rewind -> visible outcome/value evidence, while proving no unnecessary duplicate engine was introduced.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "reuse",
+    "convergence",
+    "mvp",
+    "engines"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [
+    "TZ-ROADMAP-43"
+  ],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "reuse_first": true,
+  "mvp_p0_subgoal_count": 9,
+  "library_reuse_refs": [
+    "CRM Autonomy Deownership Handoff Bundle",
+    "Knowledge Authority",
+    "OnboardingPro",
+    "Titan AI Assurance Engine",
+    "Titan AI Core",
+    "Titan AI Workforce",
+    "Titan Autonomy",
+    "Titan CRM",
+    "Titan Command Bus",
+    "Titan Connect",
+    "Titan Decision Engine",
+    "Titan Field",
+    "Titan Financial Engine",
+    "Titan Foresight Engine",
+    "Titan Governance",
+    "Titan Interaction Engine",
+    "Titan Interface Runtime",
+    "Titan Model Council",
+    "Titan Rewind",
+    "Titan Risk Engine",
+    "Titan Shield",
+    "Titan Signal Engine",
+    "Titan Trust",
+    "Titan Vertical Engine (donor lineage)",
+    "Titan Wisdom Engine"
+  ],
+  "agent_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENTS",
+  "agent_goal_rule": "This goal is platform/runtime/interface/infrastructure work. Do not create a workforce identity for the technology itself. Existing canonical agents may consume its capabilities.",
+  "workforce_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENT_IDENTITY",
+  "workforce_goal_rule": "Shared platform/runtime infrastructure may be consumed by agents but must not create an agent merely to mirror a technology, runtime, engine, SDK, protocol, deployment target or UI."
+}
