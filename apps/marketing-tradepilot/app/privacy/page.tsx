@@ -106,16 +106,16 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>5. AI-Powered Features & OpenAI</h2>
+            <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>5. Advanced Intelligence Processing</h2>
             <p className="leading-relaxed text-sm mb-4" style={{ color: '#888' }}>
               Titan Zero can use configured Advanced Intelligence providers to process enabled features. Provider, retention, and processing details depend on the customer deployment and selected integrations.
             </p>
             <ul className="space-y-3">
               {[
-                { title: 'API-only processing', desc: 'Your data is processed via OpenAI\'s API, not through consumer products like ChatGPT.' },
-                { title: 'No model training', desc: 'Per OpenAI\'s standard API data usage policy, data submitted via the API is not used to train or improve OpenAI\'s models. You can review OpenAI\'s policy at openai.com/policies/privacy-policy.' },
+                { title: 'Deployment-aware processing', desc: 'Processing depends on the providers and local or hosted services configured for your deployment.' },
+                { title: 'Provider controls', desc: 'Provider-specific data controls and policies apply only when that provider is enabled for your deployment.' },
                 { title: 'Data minimization', desc: 'We transmit only the minimum data necessary to perform each AI feature (e.g., a voice transcript, not your full account profile).' },
-                { title: 'Retention', desc: 'OpenAI does not retain API inputs and outputs beyond what is needed for content moderation and safety, per their API data retention policy.' },
+                { title: 'Retention', desc: 'Retention depends on the configured Titan Zero deployment, enabled providers, and applicable service agreement.' },
               ].map(item => (
                 <li key={item.title} className="flex gap-3 rounded-2xl px-5 py-4" style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <span className="text-xs font-bold mt-0.5 shrink-0" style={{ color: '#E8352A' }}>→</span>
@@ -132,13 +132,13 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>5a. Subscription Services &amp; Refund Processing</h2>
             <p className="leading-relaxed text-sm mb-4" style={{ color: '#888' }}>
               Payment and entitlement providers depend on the configured Titan Zero deployment.
-              RevenueCat processes subscription transaction data on our behalf as a service provider.
+              Where a third-party payment or entitlement provider is enabled, it processes applicable transaction data under its own service terms.
             </p>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
               When an applicable subscription is active and a refund is requested through Apple&apos;s App Store,
               Apple may send the service provider a request for subscription usage information to help evaluate that refund request.
               In that event, subscription usage data — such as your account creation date, subscription tenure, purchase
-              history, and delivery status — may be shared with Apple via RevenueCat to assist in their refund determination.
+              history and delivery status may be shared with the applicable platform provider where required to process a refund.
               By purchasing a subscription, you consent to this data sharing for the purpose of refund processing.
               This data is used solely to respond to Apple&apos;s refund review process and is not used for any other purpose.
               For more information, see{' '}
