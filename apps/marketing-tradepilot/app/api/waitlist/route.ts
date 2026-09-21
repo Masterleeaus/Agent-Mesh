@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
           <h1 style="font-size: 32px; font-weight: 900; margin: 0 0 12px; color: #1A1A1A;">You're in, ${firstName}. 🎉</h1>
 
           <p style="color: #6B7280; line-height: 1.7; margin: 0 0 16px; font-size: 15px;">
-            You're officially on the <strong style="color: #0A0A0A; letter-spacing: -0.5px;">FLDWRK founding member waitlist</strong>.
+            You're officially on the <strong style="color: #0A0A0A; letter-spacing: -0.5px;">Titan Zero founding member waitlist</strong>.
             That means early access, 40% off your subscription forever, and a direct line to the product team.
           </p>
 
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
           <a href="https://fldwrk.ai" style="display: inline-block; background: #E8352A; color: #fff; font-weight: 900; font-size: 15px; padding: 14px 28px; border-radius: 12px; text-decoration: none;">See the App Preview →</a>
 
           <p style="margin-top: 40px; color: #9CA3AF; font-size: 13px; border-top: 1px solid #E8E5E0; padding-top: 20px;">
-            — The FLDWRK team<br />
+            — The Titan Zero team<br />
             <a href="https://fldwrk.ai" style="color: #E8352A;">fldwrk.ai</a> &nbsp;·&nbsp; Launching June 2026
           </p>
         </div>

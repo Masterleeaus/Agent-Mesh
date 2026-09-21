@@ -19,7 +19,7 @@ export default function TermsPage() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/fldwrk-logo-dark.png"
+              src="/app_icon.png"
               alt="FLDWRK"
               width={112}
               height={28}
@@ -191,7 +191,7 @@ export default function TermsPage() {
       <footer className="py-8 px-6" style={{ background: '#0A0A0A', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <Image
-            src="/FLDWRK_2.png"
+            src="/app_icon.png"
             alt="FLDWRK"
             width={80}
             height={22}
