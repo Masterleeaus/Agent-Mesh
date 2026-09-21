@@ -28,6 +28,11 @@ const assert = require('assert');
   await journal.complete(key);
   assert.strictEqual((await journal.pendingFor('s1')).length, 0, 'completed action must clear its intent');
 
+  const unknownKey = await journal.begin({ sessionId: 's1', tabId: 7, action: { tool: 'submit', args: {} } });
+  assert.strictEqual((await journal.pendingFor('s1')).length, 1, 'unknown mutation evidence must survive until recovery resolves it');
+  await journal.abandon(unknownKey);
+  assert.strictEqual((await journal.pendingFor('s1')).length, 0, 'safe recovery may explicitly retire unknown mutation evidence');
+
   const sessions = new Map();
   let created = 0;
   const sessionStore = {
