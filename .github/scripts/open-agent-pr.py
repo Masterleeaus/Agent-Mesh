@@ -30,6 +30,18 @@ def parse_branch(branch):
     return match.group(1) if match else None
 
 
+def select_canonical_issue(matching):
+    if not matching:
+        return None
+    open_issues = [
+        item for item in matching
+        if str(item.get("state") or "").upper() == "OPEN"
+    ]
+    pool = open_issues or matching
+    pool.sort(key=lambda item: int(item["number"]))
+    return pool[0]
+
+
 def render_body(*, sid, gid, issue_number, branch, claim_base, merge_base,
                 objective, changed_files, verification, completion, risk):
     files = "\n".join(f"- {name}" for name in changed_files) or "- No changed files detected"
@@ -87,6 +99,12 @@ def self_test():
     assert parse_branch("agent/TZ-ROADMAP-31-SG-01") == "TZ-ROADMAP-31-SG-01"
     assert parse_branch("agent/TZ-G00-SG-01") == "TZ-G00-SG-01"
     assert parse_branch("agent/TZ-ROADMAP-31-SG-01-worker") is None
+    chosen = select_canonical_issue([
+        {"number": 70, "state": "CLOSED"},
+        {"number": 71, "state": "OPEN"},
+        {"number": 72, "state": "OPEN"},
+    ])
+    assert chosen["number"] == 71
     body = render_body(
         sid="TZ-ROADMAP-31-SG-01",
         gid="TZ-ROADMAP-31",
@@ -114,6 +132,11 @@ def main():
     parser.add_argument("--completion", default="")
     parser.add_argument("--risk", default="")
     parser.add_argument("--draft", action="store_true")
+    parser.add_argument(
+        "--update-existing",
+        action="store_true",
+        help="Refresh an existing PR body/title instead of preserving builder evidence",
+    )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--self-test", action="store_true")
@@ -156,8 +179,7 @@ def main():
     if not matching:
         raise SystemExit(f"No roadmap issue found for {sid}")
 
-    matching.sort(key=lambda item: int(item["number"]))
-    issue = matching[0]
+    issue = select_canonical_issue(matching)
     if str(issue.get("state") or "").upper() != "OPEN":
         raise SystemExit(f"Roadmap issue #{issue['number']} for {sid} is not open")
 
@@ -259,15 +281,18 @@ def main():
 
     if existing_prs:
         pr = existing_prs[0]
-        run([
-            "gh", "pr", "edit", str(pr["number"]),
-            "--repo", repo,
-            "--title", title,
-            "--body", body,
-        ])
-        action = "updated"
         number = pr["number"]
         url = pr["url"]
+        if args.update_existing:
+            run([
+                "gh", "pr", "edit", str(number),
+                "--repo", repo,
+                "--title", title,
+                "--body", body,
+            ])
+            action = "updated"
+        else:
+            action = "existing-preserved"
     else:
         cmd = [
             "gh", "pr", "create",
