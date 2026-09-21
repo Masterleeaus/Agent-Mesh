@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import { emitAttentionEvent } from "./emit";
 
 /**
@@ -6,7 +6,7 @@ import { emitAttentionEvent } from "./emit";
  * Used by manual Record Payment and Square webhook.
  */
 export async function emitInvoicePaymentAttention(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     invoiceId: string;
