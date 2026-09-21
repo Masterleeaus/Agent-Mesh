@@ -1,0 +1,453 @@
+{
+  "schema": "titan-agent-mesh-roadmap-index/v3",
+  "status": "MIGRATED_FROM_V2",
+  "source": {
+    "legacy_path": "/Titan Zero/Agent Mesh Manager/.titan/roadmap/INDEX.json",
+    "legacy_goal_count": 53,
+    "legacy_projection_version": "104",
+    "legacy_projection_sha256": "f603e80ba6e0d55fd62287226989de856c6b0a8b19d5a8d642ddc4d23ab17a54"
+  },
+  "goal_count": 53,
+  "migration_note": "Goal files are migrated separately. This index establishes GitHub as the new roadmap location; legacy Library roadmap is read-only migration source.",
+  "authority": "GitHub repository roadmap/ after migration; do not use Library V2 control plane as code authority.",
+  "reference_rule": {
+    "allowed": [
+      "architecture_refs",
+      "source_refs",
+      "artifact_refs",
+      "capability_refs",
+      "agent_ids"
+    ],
+    "forbidden": [
+      "full_architecture_body",
+      "mutable_latest_pointer_as_authority",
+      "duplicated workforce specification bodies"
+    ]
+  },
+  "goals": [
+    {
+      "position": 0,
+      "goal_id": "TZ-G00",
+      "title": "Unified Titan Zero Product, Surface & Workspace Foundation",
+      "status": "PLANNED",
+      "file": "goals/TZ-G00.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 1,
+      "goal_id": "TZ-ROADMAP-01",
+      "title": "Agent Operating Kernel",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-01.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 2,
+      "goal_id": "TZ-ROADMAP-02",
+      "title": "Autonomy & Exception Engine",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-02.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 3,
+      "goal_id": "TZ-ROADMAP-03",
+      "title": "Business Memory & Knowledge",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-03.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 4,
+      "goal_id": "TZ-ROADMAP-04",
+      "title": "Planning & Goal Management",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-04.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 5,
+      "goal_id": "TZ-ROADMAP-05",
+      "title": "Generative Chat UI",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-05.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 6,
+      "goal_id": "TZ-ROADMAP-06",
+      "title": "CRM Execution Core",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-06.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 7,
+      "goal_id": "TZ-ROADMAP-07",
+      "title": "Workforce Agent Suite",
+      "status": "SUPERSEDED",
+      "file": "goals/TZ-ROADMAP-07.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 8,
+      "goal_id": "TZ-ROADMAP-08",
+      "title": "Supervisor Agent Layer",
+      "status": "SUPERSEDED",
+      "file": "goals/TZ-ROADMAP-08.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 9,
+      "goal_id": "TZ-ROADMAP-09",
+      "title": "Manager Agent Layer",
+      "status": "SUPERSEDED",
+      "file": "goals/TZ-ROADMAP-09.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 10,
+      "goal_id": "TZ-ROADMAP-10",
+      "title": "Orchestrator & Titan Zero Pro",
+      "status": "SUPERSEDED",
+      "file": "goals/TZ-ROADMAP-10.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 11,
+      "goal_id": "TZ-ROADMAP-11",
+      "title": "Communications & Channels",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-11.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 12,
+      "goal_id": "TZ-ROADMAP-12",
+      "title": "Mobile & Offline Runtime",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-12.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 13,
+      "goal_id": "TZ-ROADMAP-13",
+      "title": "Local AI & Model Routing",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-13.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 14,
+      "goal_id": "TZ-ROADMAP-14",
+      "title": "Finance, Invoicing & Payments",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-14.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 15,
+      "goal_id": "TZ-ROADMAP-15",
+      "title": "Commerce & Revenue Expansion",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-15.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 16,
+      "goal_id": "TZ-ROADMAP-16",
+      "title": "Vertical Builder & Templates",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-16.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 17,
+      "goal_id": "TZ-ROADMAP-17",
+      "title": "Reliability, Recovery & Self-Healing",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-17.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 18,
+      "goal_id": "TZ-ROADMAP-18",
+      "title": "Security, Privacy & Authority",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-18.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 19,
+      "goal_id": "TZ-ROADMAP-19",
+      "title": "Observability, Performance & Scale",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-19.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 20,
+      "goal_id": "TZ-ROADMAP-20",
+      "title": "Deployment, Distribution & Ecosystem",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-20.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 21,
+      "goal_id": "TZ-ROADMAP-21",
+      "title": "Reception & Customer Access",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-21.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 22,
+      "goal_id": "TZ-ROADMAP-22",
+      "title": "Sales & Revenue Growth Agents",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-22.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 23,
+      "goal_id": "TZ-ROADMAP-23",
+      "title": "Scheduling, Dispatch & Capacity Agents",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-23.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 24,
+      "goal_id": "TZ-ROADMAP-24",
+      "title": "Customer Care, Retention & Rebooking Agents",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-24.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 25,
+      "goal_id": "TZ-ROADMAP-25",
+      "title": "Marketing, Reputation & Demand Agents",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-25.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 26,
+      "goal_id": "TZ-ROADMAP-26",
+      "title": "Inventory, Procurement, Supply & Asset Continuity Agents",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-26.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 27,
+      "goal_id": "TZ-ROADMAP-27",
+      "title": "Analytics, Decision Intelligence & Business Briefing",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-27.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 28,
+      "goal_id": "TZ-ROADMAP-28",
+      "title": "Integration, Plugin & Connector Ecosystem",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-28.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 29,
+      "goal_id": "TZ-ROADMAP-29",
+      "title": "Developer Platform, Skills & Extensibility",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-29.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 30,
+      "goal_id": "TZ-ROADMAP-30",
+      "title": "Compliance, Audit & Governance",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-30.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 31,
+      "goal_id": "TZ-ROADMAP-31",
+      "title": "Canonical Capability Registry & Schema Generation",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-31.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 32,
+      "goal_id": "TZ-ROADMAP-32",
+      "title": "Titan MCP Universal AI Protocol Runtime",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-32.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 33,
+      "goal_id": "TZ-ROADMAP-33",
+      "title": "Multi-Model Host Adapter Architecture",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-33.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 34,
+      "goal_id": "TZ-ROADMAP-34",
+      "title": "Unified Identity, Agent State & Cross-Surface Continuity",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-34.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 35,
+      "goal_id": "TZ-ROADMAP-35",
+      "title": "Unified Surface SDK & Base-to-Surface Propagation",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-35.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 36,
+      "goal_id": "TZ-ROADMAP-36",
+      "title": "Titan Sprout Multi-Surface Distribution Compiler",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-36.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 37,
+      "goal_id": "TZ-ROADMAP-37",
+      "title": "Plugin Auto-Sync, Versioning & Compatibility Pipeline",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-37.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 38,
+      "goal_id": "TZ-ROADMAP-38",
+      "title": "Cross-Host Contract & CI Certification Matrix",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-38.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 39,
+      "goal_id": "TZ-ROADMAP-39",
+      "title": "Innovative Workforce Registry & Outcome Certification",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-39.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 40,
+      "goal_id": "TZ-ROADMAP-40",
+      "title": "Business Value Attribution & ROI Engine",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-40.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 41,
+      "goal_id": "TZ-ROADMAP-41",
+      "title": "Embedded Workforce Architecture, Identity & Coverage Closure",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-41.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 42,
+      "goal_id": "TZ-ROADMAP-42",
+      "title": "Earned Trust, Recursive Handshake & Plan-Gated Autonomy",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-42.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 43,
+      "goal_id": "TZ-ROADMAP-43",
+      "title": "Chat-First Go, Hub & Command PWA Surface Delivery",
+      "status": "IN_PROGRESS",
+      "file": "goals/TZ-ROADMAP-43.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 44,
+      "goal_id": "TZ-ROADMAP-44",
+      "title": "Canonical Engine Reuse & MVP Convergence",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-44.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 45,
+      "goal_id": "TZ-ROADMAP-45",
+      "title": "Chrome Extension Superset & Generated Funnel Surface Roadmap",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-45.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 46,
+      "goal_id": "TZ-ROADMAP-46",
+      "title": "LLM Plugin, MCP & Model-Host Surface Roadmap",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-46.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 47,
+      "goal_id": "TZ-ROADMAP-47",
+      "title": "Flutter iOS & Android Mobile App Surface Roadmap",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-47.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 48,
+      "goal_id": "TZ-ROADMAP-48",
+      "title": "Sovereign Distributed Architecture Foundation & Contract Convergence",
+      "status": "IN_PROGRESS",
+      "file": "goals/TZ-ROADMAP-48.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 49,
+      "goal_id": "TZ-ROADMAP-49",
+      "title": "Titan Edge Fabric",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-49.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 50,
+      "goal_id": "TZ-ROADMAP-50",
+      "title": "Titan Storage Fabric",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-50.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 51,
+      "goal_id": "TZ-ROADMAP-51",
+      "title": "Device & Distributed Intelligence Runtime",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-51.json",
+      "subgoal_count": 10
+    },
+    {
+      "position": 52,
+      "goal_id": "TZ-ROADMAP-52",
+      "title": "TypeScript Base App Completion, Cleanup & Canonical Convergence",
+      "status": "PLANNED",
+      "file": "goals/TZ-ROADMAP-52.json",
+      "subgoal_count": 28
+    }
+  ]
+}
