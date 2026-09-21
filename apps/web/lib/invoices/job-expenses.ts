@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import type { InvoiceLineItemRow } from "./line-items";
 import {
   fetchExpenseLineItems,
@@ -51,7 +51,7 @@ function lineTotalCents(quantity: number, unitCents: number): number {
 }
 
 async function buildMaterialLineDraftsForExpense(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   expense: JobMaterialExpenseRow,
 ): Promise<MaterialLineDraft[]> {
@@ -80,7 +80,7 @@ async function buildMaterialLineDraftsForExpense(
 }
 
 async function insertMaterialLine(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   draft: MaterialLineDraft,
   sortOrder: number,
@@ -109,7 +109,7 @@ async function insertMaterialLine(
 
 /** Remove auto-managed material handling fee lines. */
 export async function removeAutoMaterialHandlingLine(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
 ): Promise<void> {
   await client.query(
@@ -123,7 +123,7 @@ export async function removeAutoMaterialHandlingLine(
 
 /** Recompute material handling from all material lines when enabled on the invoice. */
 export async function upsertMaterialHandlingFeeLine(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   accountId: string,
 ): Promise<InvoiceLineItemRow | null> {
@@ -202,7 +202,7 @@ export async function upsertMaterialHandlingFeeLine(
 }
 
 async function appendExpenseMaterialLines(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   accountId: string,
   expense: JobMaterialExpenseRow,
@@ -236,7 +236,7 @@ async function appendExpenseMaterialLines(
 
 /** Job material expenses not yet billed on any invoice (excludes lift/equipment). */
 export async function fetchUninvoicedJobMaterialExpenses(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   jobId: string,
 ): Promise<JobMaterialExpenseRow[]> {
@@ -263,7 +263,7 @@ export async function fetchUninvoicedJobMaterialExpenses(
  * non-materials receipts that match the ledger lift/equipment heuristic.
  */
 export async function fetchUninvoicedJobEquipmentExpenses(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   jobId: string,
 ): Promise<JobEquipmentExpenseRow[]> {
@@ -306,7 +306,7 @@ function toLineItemPreview(line: ExpenseLineItemRow): ExpenseLineItemPreview {
 
 /** Material expenses billable on this invoice: on the job or unlinked but matching client. */
 export async function fetchLinkableMaterialExpenses(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   jobId: string,
   jobClientId: string,
@@ -367,7 +367,7 @@ export type JobMaterialExpenseWithLines = {
 
 /** All materials-category expenses linked to a job, itemized, with billed status. */
 export async function fetchJobMaterialExpenses(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   jobId: string,
 ): Promise<JobMaterialExpenseWithLines[]> {
@@ -412,7 +412,7 @@ export type JobLinkContext = {
 };
 
 export async function loadJobLinkContext(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   jobId: string,
 ): Promise<JobLinkContext> {
@@ -427,7 +427,7 @@ export async function loadJobLinkContext(
 }
 
 export async function linkMaterialExpensesToJob(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   job: JobLinkContext,
   expenseIds: string[],
@@ -495,7 +495,7 @@ export async function linkMaterialExpensesToJob(
 }
 
 export async function linkAndAppendMaterialsToInvoice(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   accountId: string,
   jobId: string,
@@ -536,7 +536,7 @@ export async function linkAndAppendMaterialsToInvoice(
 }
 
 export async function appendMaterialsFromJobExpenses(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   accountId: string,
   jobId: string,
@@ -568,7 +568,7 @@ export async function appendMaterialsFromJobExpenses(
  * never re-charge the client.
  */
 export async function materialLineItemsFromJobExpenses(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   jobId: string,
   sortStart: number,
@@ -639,7 +639,7 @@ export async function materialLineItemsFromJobExpenses(
  * Used for T&M final-invoice totals before insert.
  */
 export async function equipmentLineItemsFromJobExpenses(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   jobId: string,
   sortStart: number,
@@ -679,7 +679,7 @@ export async function equipmentLineItemsFromJobExpenses(
 
 /** Append uninvoiced lift/equipment expenses onto a draft invoice. */
 export async function appendEquipmentFromJobExpenses(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   accountId: string,
   jobId: string,
