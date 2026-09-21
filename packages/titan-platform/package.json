@@ -1,5 +1,5 @@
 {
-  "name": "@ai-fsm/titan-platform",
+  "name": "@titan-zero/titan-platform",
   "version": "0.2.0",
   "private": true,
   "type": "module",
