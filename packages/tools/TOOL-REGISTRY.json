@@ -1,7 +1,5 @@
 {
   "schema": "titan-zero-tool-registry/v1",
-  "programme_id": "TZ-CLEANING-TOOLS-30PASS-001",
-  "pass": 1,
   "status": "CANONICAL_REGISTRY_ESTABLISHED",
   "source_census": "packages/tools/TOOL-CENSUS.json",
   "tool_count": 39,
@@ -2127,6 +2125,8 @@
   "provenance": {
     "canonical_owner": "packages/tools",
     "authority": "canonical-registry",
-    "historical_programme_metadata_is_authority": false
+    "historical_programme_metadata_is_authority": false,
+    "versioning": "repository-source-and-schema",
+    "historical_cleaning_programme_metadata_removed": true
   }
 }
