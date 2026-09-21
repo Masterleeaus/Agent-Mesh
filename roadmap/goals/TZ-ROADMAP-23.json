@@ -1,0 +1,2307 @@
+{
+  "goal_id": "TZ-ROADMAP-23",
+  "priority": "P1",
+  "title": "Scheduling, Dispatch & Capacity Agents",
+  "objective": "Turn scheduling/dispatch/capacity into a complete governed agent capability across all operating levels.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define the canonical Scheduling, Dispatch & Capacity workforce, fulfilment pain boundaries and cross-domain collaboration without duplicating Customer Access, Field, Supply or Customer Care agents",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Field",
+        "Titan Bookings Quotes",
+        "Titan AI Workforce",
+        "Titan CRM",
+        "Titan Maps Intelligence",
+        "Titan Signal Engine",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-23-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+        ],
+        "created_agent_ids": [
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH"
+        ],
+        "modified_agent_ids": [
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR"
+        ],
+        "canonical_agent_names": [
+          "Service Delivery Flow Orchestrator",
+          "Capacity & Fulfilment Manager",
+          "Schedule Integrity Specialist",
+          "Dispatch Reliability & Lateness Recovery Specialist",
+          "Cancellation Gap Filling Specialist",
+          "Access Failure Prevention Specialist",
+          "Scope & Variation Guardian Specialist",
+          "Route Compression Specialist",
+          "Workforce Load Balancing Specialist",
+          "Exception Resolution Specialist",
+          "Weather Disruption Management Specialist",
+          "Schedule Mutation Worker",
+          "Dispatch Assignment Worker",
+          "Cancellation Gap Fill Execution Worker",
+          "Site Access Confirmation Worker",
+          "Variation Schedule Adjustment Worker",
+          "Route Adjustment Worker",
+          "Capacity Reassignment Worker",
+          "Operations Exception Recovery Worker",
+          "Weather Schedule Adjustment Worker"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-DELIVERY-CROSSDOMAIN-CONFLICT",
+          "PAIN-DELIVERY-ACCEPTED-WORK-NOT-FULFILLED",
+          "PAIN-DELIVERY-CAPACITY-CUSTOMER-RESOURCE-MISALIGNMENT",
+          "PAIN-SCHEDULE-CONFLICT",
+          "PAIN-SCHEDULE-INVALID-COMMITMENT",
+          "PAIN-SCHEDULE-STATE-DRIFT",
+          "PAIN-DISPATCH-LATE-START-RISK",
+          "PAIN-DISPATCH-INVALID-ASSIGNMENT",
+          "PAIN-SLA-LATENESS-NOT-RECOVERED",
+          "PAIN-CAPACITY-CANCELLATION-GAP",
+          "PAIN-FIELD-NO-ACCESS",
+          "PAIN-SCOPE-DRIFT",
+          "PAIN-UNPRICED-VARIATION",
+          "PAIN-EXCESS-TRAVEL",
+          "PAIN-ROUTE-FRAGMENTATION",
+          "PAIN-WORKLOAD-IMBALANCE",
+          "PAIN-OVERLOAD-UNDERUTILISATION",
+          "PAIN-UNRESOLVED-EXCEPTION",
+          "PAIN-EXCEPTION-BOUNCE",
+          "PAIN-WEATHER-DISRUPTION",
+          "PAIN-SCHEDULE-APPROVED-CHANGE-NOT-COMMITTED",
+          "PAIN-SCHEDULE-DUPLICATE-MUTATION",
+          "PAIN-DISPATCH-ASSIGNMENT-NOT-COMMITTED",
+          "PAIN-CAPACITY-GAP-FILL-ACTION-NOT-EXECUTED",
+          "PAIN-ACCESS-CONFIRMATION-NOT-EXECUTED",
+          "PAIN-VARIATION-APPROVED-SCHEDULE-CHANGE-NOT-APPLIED",
+          "PAIN-ROUTE-OPTIMISATION-NOT-APPLIED",
+          "PAIN-CAPACITY-REBALANCE-NOT-EXECUTED",
+          "PAIN-OPS-APPROVED-RECOVERY-NOT-EXECUTED",
+          "PAIN-WEATHER-APPROVED-ADJUSTMENT-NOT-APPLIED"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "CREATE_AND_BIND_CANONICAL_SCHEDULING_WORKFORCE",
+          "created_agent_ids": [
+            "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+            "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+            "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+            "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+            "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+            "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+            "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+            "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+            "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK",
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH"
+          ],
+          "created_definition_home": "TZ-ROADMAP-23-SG-01",
+          "reused_agent_ids": [
+            "TZAG-OPS-CANCELLATION-GAP-FILLING",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+            "TZAG-OPS-ROUTE-COMPRESSION",
+            "TZAG-WF-LOAD-BALANCING",
+            "TZAG-OPS-EXCEPTION-RESOLUTION",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-OPS-CANCELLATION-GAP-FILLING": "TZ-ROADMAP-39-SG-01",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-ROUTE-COMPRESSION": "TZ-ROADMAP-39-SG-04",
+            "TZAG-WF-LOAD-BALANCING": "TZ-ROADMAP-39-SG-04",
+            "TZAG-OPS-EXCEPTION-RESOLUTION": "TZ-ROADMAP-39-SG-06",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT": "TZ-ROADMAP-39-SG-08",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR": "ROADMAP.canonical_domain_manager_definitions"
+          }
+        },
+        "verification_evidence": [
+          "global canonical agent_id uniqueness check",
+          "parent/child existence and reciprocity check",
+          "Goal 23 reference completeness check",
+          "no Supervisor/Pro identity check",
+          "cross-domain boundary review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical definition home for the 12 new Goal 23 agents is TZ-ROADMAP-23-SG-01.",
+          "Capacity & Fulfilment Manager already has one canonical definition in ROADMAP.canonical_domain_manager_definitions and is referenced/extended here, never duplicated.",
+          "Seven existing innovation Specialists remain defined in Goal 39; Goal 23 wires their execution Workers and fulfilment hierarchy without redefining them.",
+          "Site Access Confirmation Worker is created here because dispatch exposes the pain, but it reports to the existing Access Failure Prevention Specialist under Customer Access."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-workforce/starter-agents/scheduling/scheduling-agent.ts",
+              "packages/titan-platform/src/ported/titan-workforce/starter-agents/dispatch/dispatch-agent.ts",
+              "packages/titan-platform/src/ported/titan-workforce/scheduling/manager-supervisor-team-assignment-hierarchy.ts"
+            ],
+            "finding": "Canonical TypeScript scheduling/dispatch worker and hierarchy implementations already exist."
+          },
+          {
+            "source_ref": "Titan Field",
+            "file_id": "file_00000000e2e481faa8bf9aa44d7c99f3",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Field/Titan Field Master v1.0.12.zip",
+            "sha256": "64ad7c55e5a6de854058c341b6dc0cbeceb97f87937dcbf6b81f6bce6455e1f2",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/FieldServices/Scheduling/AppointmentService.php",
+              "System/Domains/FieldServices/Dispatch/DispatchService.php",
+              "System/Domains/FieldServices/Forecasting/CapacityForecastService.php"
+            ],
+            "finding": "Field remains operational fulfilment authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Field"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:15:00+10:00",
+        "scan_notes": "Define canonical workforce over existing scheduling/dispatch runtime and domain authorities; do not create parallel dispatch or field ownership.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 2,
+      "title": "Complete shared scheduling, dispatch, routing, capacity, constraint and receipt capabilities used by the canonical fulfilment roster",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Field",
+        "Titan Bookings Quotes",
+        "Titan AI Workforce",
+        "Titan CRM",
+        "Titan Maps Intelligence",
+        "Titan Signal Engine",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-23-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+        ],
+        "canonical_agent_names": [
+          "Service Delivery Flow Orchestrator",
+          "Capacity & Fulfilment Manager",
+          "Schedule Integrity Specialist",
+          "Dispatch Reliability & Lateness Recovery Specialist",
+          "Cancellation Gap Filling Specialist",
+          "Access Failure Prevention Specialist",
+          "Scope & Variation Guardian Specialist",
+          "Route Compression Specialist",
+          "Workforce Load Balancing Specialist",
+          "Exception Resolution Specialist",
+          "Weather Disruption Management Specialist",
+          "Schedule Mutation Worker",
+          "Dispatch Assignment Worker",
+          "Cancellation Gap Fill Execution Worker",
+          "Site Access Confirmation Worker",
+          "Variation Schedule Adjustment Worker",
+          "Route Adjustment Worker",
+          "Capacity Reassignment Worker",
+          "Operations Exception Recovery Worker",
+          "Weather Schedule Adjustment Worker"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-DELIVERY-CROSSDOMAIN-CONFLICT",
+          "PAIN-DELIVERY-ACCEPTED-WORK-NOT-FULFILLED",
+          "PAIN-DELIVERY-CAPACITY-CUSTOMER-RESOURCE-MISALIGNMENT",
+          "PAIN-SCHEDULE-CONFLICT",
+          "PAIN-SCHEDULE-INVALID-COMMITMENT",
+          "PAIN-SCHEDULE-STATE-DRIFT",
+          "PAIN-DISPATCH-LATE-START-RISK",
+          "PAIN-DISPATCH-INVALID-ASSIGNMENT",
+          "PAIN-SLA-LATENESS-NOT-RECOVERED",
+          "PAIN-CAPACITY-CANCELLATION-GAP",
+          "PAIN-FIELD-NO-ACCESS",
+          "PAIN-SCOPE-DRIFT",
+          "PAIN-UNPRICED-VARIATION",
+          "PAIN-EXCESS-TRAVEL",
+          "PAIN-ROUTE-FRAGMENTATION",
+          "PAIN-WORKLOAD-IMBALANCE",
+          "PAIN-OVERLOAD-UNDERUTILISATION",
+          "PAIN-UNRESOLVED-EXCEPTION",
+          "PAIN-EXCEPTION-BOUNCE",
+          "PAIN-WEATHER-DISRUPTION",
+          "PAIN-SCHEDULE-APPROVED-CHANGE-NOT-COMMITTED",
+          "PAIN-SCHEDULE-DUPLICATE-MUTATION",
+          "PAIN-DISPATCH-ASSIGNMENT-NOT-COMMITTED",
+          "PAIN-CAPACITY-GAP-FILL-ACTION-NOT-EXECUTED",
+          "PAIN-ACCESS-CONFIRMATION-NOT-EXECUTED",
+          "PAIN-VARIATION-APPROVED-SCHEDULE-CHANGE-NOT-APPLIED",
+          "PAIN-ROUTE-OPTIMISATION-NOT-APPLIED",
+          "PAIN-CAPACITY-REBALANCE-NOT-EXECUTED",
+          "PAIN-OPS-APPROVED-RECOVERY-NOT-EXECUTED",
+          "PAIN-WEATHER-APPROVED-ADJUSTMENT-NOT-APPLIED"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+            "TZAG-OPS-ROUTE-COMPRESSION",
+            "TZAG-WF-LOAD-BALANCING",
+            "TZAG-OPS-EXCEPTION-RESOLUTION",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+            "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+            "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+            "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+            "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+            "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+            "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+            "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+            "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+            "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR": "ROADMAP.canonical_domain_manager_definitions",
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING": "TZ-ROADMAP-39-SG-01",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-ROUTE-COMPRESSION": "TZ-ROADMAP-39-SG-04",
+            "TZAG-WF-LOAD-BALANCING": "TZ-ROADMAP-39-SG-04",
+            "TZAG-OPS-EXCEPTION-RESOLUTION": "TZ-ROADMAP-39-SG-06",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT": "TZ-ROADMAP-39-SG-08",
+            "TZAG-OPS-SCHEDULE-MUTATION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-GAP-FILL-EXECUTION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-ACCESS-CONFIRMATION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-ROUTE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-WF-CAPACITY-REASSIGNMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-EXCEPTION-RECOVERY-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Shared scheduling/dispatch capabilities must serve this one roster; optimisation algorithms, channels and surfaces are tools/capabilities, not parallel agent identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-workforce/scheduling/workforce-scheduling-conflict-evaluator.ts",
+              "packages/titan-platform/src/ported/titan-workforce/scheduling/worker-availability-capacity-state.ts",
+              "packages/titan-platform/src/workforce-capacity/index.ts"
+            ],
+            "finding": "Canonical platform already has conflict, availability/capacity and workforce-capacity primitives."
+          },
+          {
+            "source_ref": "Titan Field",
+            "file_id": "file_00000000e2e481faa8bf9aa44d7c99f3",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Field/Titan Field Master v1.0.12.zip",
+            "sha256": "64ad7c55e5a6de854058c341b6dc0cbeceb97f87937dcbf6b81f6bce6455e1f2",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/FieldServices/Scheduling/CalendarDispatchControlService.php",
+              "System/Domains/FieldServices/Routing/RouteOptimizationProposalService.php",
+              "System/Domains/FieldServices/Exceptions/OperationalExceptionService.php"
+            ],
+            "finding": "Field supplies schedule, route proposal and exception execution."
+          },
+          {
+            "source_ref": "Titan Maps Intelligence",
+            "file_id": "file_00000000759c820b81897a51cdb0916e",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Maps Intelligence/Titan Maps Intelligence Master v2.0.9.zip",
+            "sha256": "2f9ecdc86e1c6aee335c452da8ecaffdf38b6ce5d147e02c699a268e7bfebe6d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Services/RoutePlanService.php",
+              "Services/RoutePlanOptimiser.php",
+              "Services/TravelMatrixService.php",
+              "Services/DispatchScoreService.php"
+            ],
+            "finding": "Maps provides route, travel-matrix and dispatch-scoring capabilities."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Field",
+          "Titan Maps Intelligence"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:15:00+10:00",
+        "scan_notes": "Compose shared capabilities from canonical platform plus Field/Maps; preserve receipts and company scope.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Implement bounded Workers for schedule mutation, dispatch assignment, gap fill, access confirmation, variation adjustment, route adjustment, capacity reassignment, exception recovery and weather adjustment",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Field",
+        "Titan Bookings Quotes",
+        "Titan AI Workforce",
+        "Titan CRM",
+        "Titan Maps Intelligence",
+        "Titan Signal Engine",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-23-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+        ],
+        "canonical_agent_names": [
+          "Schedule Mutation Worker",
+          "Dispatch Assignment Worker",
+          "Cancellation Gap Fill Execution Worker",
+          "Site Access Confirmation Worker",
+          "Variation Schedule Adjustment Worker",
+          "Route Adjustment Worker",
+          "Capacity Reassignment Worker",
+          "Operations Exception Recovery Worker",
+          "Weather Schedule Adjustment Worker"
+        ],
+        "workforce_positions": [
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-SCHEDULE-APPROVED-CHANGE-NOT-COMMITTED",
+          "PAIN-SCHEDULE-DUPLICATE-MUTATION",
+          "PAIN-DISPATCH-ASSIGNMENT-NOT-COMMITTED",
+          "PAIN-DISPATCH-INVALID-ASSIGNMENT",
+          "PAIN-CAPACITY-GAP-FILL-ACTION-NOT-EXECUTED",
+          "PAIN-ACCESS-CONFIRMATION-NOT-EXECUTED",
+          "PAIN-VARIATION-APPROVED-SCHEDULE-CHANGE-NOT-APPLIED",
+          "PAIN-ROUTE-OPTIMISATION-NOT-APPLIED",
+          "PAIN-CAPACITY-REBALANCE-NOT-EXECUTED",
+          "PAIN-OPS-APPROVED-RECOVERY-NOT-EXECUTED",
+          "PAIN-WEATHER-APPROVED-ADJUSTMENT-NOT-APPLIED"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+            "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+            "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+            "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+            "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+            "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+            "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+            "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+            "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-OPS-SCHEDULE-MUTATION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-GAP-FILL-EXECUTION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-ACCESS-CONFIRMATION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-ROUTE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-WF-CAPACITY-REASSIGNMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-EXCEPTION-RECOVERY-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Implement the nine canonical bounded Workers; each acts only from valid user/upstream delegation, revalidates authoritative state and emits receipts; Workers never delegate."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "titan-workforce/starter-agents/scheduling/scheduling-state-machine.mjs",
+              "titan-workforce/starter-agents/scheduling/scheduling-conflict-detector.mjs",
+              "titan-workforce/starter-agents/scheduling/scheduling-approval-escalation.mjs",
+              "titan-workforce/starter-agents/dispatch/dispatch-agent.mjs"
+            ],
+            "finding": "Native bounded scheduling/dispatch worker machinery already exists."
+          },
+          {
+            "source_ref": "Titan Bookings Quotes",
+            "file_id": "file_000000004d5881faa2df3db959a70bc5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Bookings Quotes/Titan Bookings Quotes Master v1.1.1.zip",
+            "sha256": "ba3251684967132c1eb11e9ce1bffab4baa9440f16b148d1cf1f9c6b2ab43588",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Runtime/BookingAutoAssignmentService.php",
+              "System/Runtime/BulkBookingAssignmentService.php",
+              "System/Runtime/BookingTransferService.php",
+              "System/Domain/Bookings/AvailabilityEngine.php"
+            ],
+            "finding": "Bookings/Quotes supplies assignment, transfer and availability runtime."
+          },
+          {
+            "source_ref": "Titan Maps Intelligence",
+            "file_id": "file_00000000759c820b81897a51cdb0916e",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Maps Intelligence/Titan Maps Intelligence Master v2.0.9.zip",
+            "sha256": "2f9ecdc86e1c6aee335c452da8ecaffdf38b6ce5d147e02c699a268e7bfebe6d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Services/FieldRouteOptimizationProposalService.php",
+              "Services/OfflineWorkerLocationSyncService.php",
+              "Services/TravelZoneRuleEvaluator.php"
+            ],
+            "finding": "Maps contributes route adjustment, offline location and travel-zone policy."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Bookings Quotes",
+          "Titan Maps Intelligence"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:15:00+10:00",
+        "scan_notes": "Workers should prepare/execute bounded schedule and dispatch actions through canonical authority gates; access/weather adjustments remain evidence-based capabilities.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Implement Specialist layer for schedule integrity, dispatch reliability, cancellation gaps, access failure, variations, route compression, load balancing, exception resolution and weather disruption",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Field",
+        "Titan Bookings Quotes",
+        "Titan AI Workforce",
+        "Titan CRM",
+        "Titan Maps Intelligence",
+        "Titan Signal Engine",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-23-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT"
+        ],
+        "canonical_agent_names": [
+          "Schedule Integrity Specialist",
+          "Dispatch Reliability & Lateness Recovery Specialist",
+          "Cancellation Gap Filling Specialist",
+          "Access Failure Prevention Specialist",
+          "Scope & Variation Guardian Specialist",
+          "Route Compression Specialist",
+          "Workforce Load Balancing Specialist",
+          "Exception Resolution Specialist",
+          "Weather Disruption Management Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-SCHEDULE-CONFLICT",
+          "PAIN-SCHEDULE-INVALID-COMMITMENT",
+          "PAIN-SCHEDULE-STATE-DRIFT",
+          "PAIN-DISPATCH-LATE-START-RISK",
+          "PAIN-DISPATCH-INVALID-ASSIGNMENT",
+          "PAIN-SLA-LATENESS-NOT-RECOVERED",
+          "PAIN-CAPACITY-CANCELLATION-GAP",
+          "PAIN-FIELD-NO-ACCESS",
+          "PAIN-SCOPE-DRIFT",
+          "PAIN-UNPRICED-VARIATION",
+          "PAIN-EXCESS-TRAVEL",
+          "PAIN-ROUTE-FRAGMENTATION",
+          "PAIN-WORKLOAD-IMBALANCE",
+          "PAIN-OVERLOAD-UNDERUTILISATION",
+          "PAIN-UNRESOLVED-EXCEPTION",
+          "PAIN-EXCEPTION-BOUNCE",
+          "PAIN-WEATHER-DISRUPTION"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+            "TZAG-OPS-ROUTE-COMPRESSION",
+            "TZAG-WF-LOAD-BALANCING",
+            "TZAG-OPS-EXCEPTION-RESOLUTION",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING": "TZ-ROADMAP-39-SG-01",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-ROUTE-COMPRESSION": "TZ-ROADMAP-39-SG-04",
+            "TZAG-WF-LOAD-BALANCING": "TZ-ROADMAP-39-SG-04",
+            "TZAG-OPS-EXCEPTION-RESOLUTION": "TZ-ROADMAP-39-SG-06",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT": "TZ-ROADMAP-39-SG-08"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Implement/extend the nine canonical Specialists. Existing Goal 39 innovation identities remain canonical; this subgoal adds scheduling-specific behaviour and Worker delegation without redefining them."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-workforce/scheduling/workforce-scheduling-conflict-evaluator.ts",
+              "packages/titan-platform/src/workforce-capacity/balancing.ts",
+              "packages/titan-platform/src/workforce-capacity/backpressure.ts"
+            ],
+            "finding": "Canonical code covers schedule conflicts, load balancing and capacity backpressure."
+          },
+          {
+            "source_ref": "Titan Field",
+            "file_id": "file_00000000e2e481faa8bf9aa44d7c99f3",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Field/Titan Field Master v1.0.12.zip",
+            "sha256": "64ad7c55e5a6de854058c341b6dc0cbeceb97f87937dcbf6b81f6bce6455e1f2",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/FieldServices/Exceptions/OperationalExceptionService.php",
+              "System/Domains/FieldServices/Routing/RouteOptimizationProposalService.php"
+            ],
+            "finding": "Field supplies exception resolution and route proposals."
+          },
+          {
+            "source_ref": "Titan Maps Intelligence",
+            "file_id": "file_00000000759c820b81897a51cdb0916e",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Maps Intelligence/Titan Maps Intelligence Master v2.0.9.zip",
+            "sha256": "2f9ecdc86e1c6aee335c452da8ecaffdf38b6ce5d147e02c699a268e7bfebe6d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Services/DispatchIntelligenceService.php",
+              "Services/FieldRouteOptimizationProposalService.php",
+              "scripts/test_joint_pass13_capacity_pressure_evidence.php"
+            ],
+            "finding": "Maps has dispatch intelligence, route optimisation and capacity-pressure evidence."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Field",
+          "Titan Maps Intelligence"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:15:00+10:00",
+        "scan_notes": "Specialists should own distinct fulfilment pains while sharing canonical scheduling/maps engines and avoiding duplicate worker identities.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Implement Capacity & Fulfilment Manager outcome ownership across schedule health, dispatch reliability, capacity, exceptions and service-level recovery",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Field",
+        "Titan Bookings Quotes",
+        "Titan AI Workforce",
+        "Titan CRM",
+        "Titan Maps Intelligence",
+        "Titan Signal Engine",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-23-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR"
+        ],
+        "canonical_agent_names": [
+          "Capacity & Fulfilment Manager"
+        ],
+        "workforce_positions": [
+          "Manager"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR": "ROADMAP.canonical_domain_manager_definitions"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Use the existing canonical Capacity & Fulfilment Manager definition from ROADMAP.canonical_domain_manager_definitions; Goal 23 resolves its orchestrator parent, Specialist children, metrics and operational bindings."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Models/WorkforceSchedule.php",
+              "System/Models/WorkforceWorkloadSnapshot.php",
+              "System/Services/WorkloadSharingService.php"
+            ],
+            "finding": "AI Workforce provides schedule/workload state and load sharing."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/SignalOperationalHealthService.php",
+              "System/Data/OperationalHealthClassifier.php"
+            ],
+            "finding": "Signal provides health/attention inputs for fulfilment management."
+          },
+          {
+            "source_ref": "Titan Field",
+            "file_id": "file_00000000e2e481faa8bf9aa44d7c99f3",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Field/Titan Field Master v1.0.12.zip",
+            "sha256": "64ad7c55e5a6de854058c341b6dc0cbeceb97f87937dcbf6b81f6bce6455e1f2",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/FieldServices/Forecasting/CapacityForecastService.php"
+            ],
+            "finding": "Field provides capacity forecasting."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Signal Engine",
+          "Titan Field"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:15:00+10:00",
+        "scan_notes": "Manager should own fulfilment outcomes/SLAs using shared capacity, health and field state—not direct low-level route execution.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 6,
+      "title": "Implement Service Delivery Flow Orchestrator coordination across customer access, sales, scheduling, field readiness, supply and customer-care Managers",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Field",
+        "Titan Bookings Quotes",
+        "Titan AI Workforce",
+        "Titan CRM",
+        "Titan Maps Intelligence",
+        "Titan Signal Engine",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-23-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR"
+        ],
+        "canonical_agent_names": [
+          "Service Delivery Flow Orchestrator",
+          "Capacity & Fulfilment Manager"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-DELIVERY-CROSSDOMAIN-CONFLICT",
+          "PAIN-DELIVERY-ACCEPTED-WORK-NOT-FULFILLED",
+          "PAIN-DELIVERY-CAPACITY-CUSTOMER-RESOURCE-MISALIGNMENT"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR": "ROADMAP.canonical_domain_manager_definitions"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Service Delivery Flow Orchestrator coordinates through Managers only. It is distinct from Customer Journey Access Orchestrator (customer-entry coherence) and Revenue Growth Orchestrator (commercial growth)."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-workforce/scheduling/manager-supervisor-team-assignment-hierarchy.ts",
+              "packages/titan-platform/src/ported/titan-workforce/scheduling/scheduling-approval-escalation-runtime.ts"
+            ],
+            "finding": "Canonical hierarchy/escalation runtime supports cross-manager flow."
+          },
+          {
+            "source_ref": "Titan Bookings Quotes",
+            "file_id": "file_000000004d5881faa2df3db959a70bc5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Bookings Quotes/Titan Bookings Quotes Master v1.1.1.zip",
+            "sha256": "ba3251684967132c1eb11e9ce1bffab4baa9440f16b148d1cf1f9c6b2ab43588",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Runtime/BookingCommercialHandoff.php",
+              "System/Runtime/BookingLifecycleCoordinator.php"
+            ],
+            "finding": "Bookings supplies commercial/lifecycle handoff seams."
+          },
+          {
+            "source_ref": "Titan Maps Intelligence",
+            "file_id": "file_00000000759c820b81897a51cdb0916e",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Maps Intelligence/Titan Maps Intelligence Master v2.0.9.zip",
+            "sha256": "2f9ecdc86e1c6aee335c452da8ecaffdf38b6ce5d147e02c699a268e7bfebe6d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Contracts/DispatchEvidenceGateway.php",
+              "Contracts/DispatchAssignmentGateway.php"
+            ],
+            "finding": "Maps exposes dispatch evidence/assignment gateways rather than owning upstream domains."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Bookings Quotes",
+          "Titan Maps Intelligence"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:15:00+10:00",
+        "scan_notes": "Orchestrator coordinates customer-access, sales, field, supply and care Managers through canonical handoffs without absorbing their authority.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Implement earned proactive, autonomous and predictive fulfilment behaviours across the existing hierarchy; no fifth Pro agent identity",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Field",
+        "Titan Bookings Quotes",
+        "Titan AI Workforce",
+        "Titan CRM",
+        "Titan Maps Intelligence",
+        "Titan Signal Engine",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-23-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Schedule Integrity Specialist",
+          "Dispatch Reliability & Lateness Recovery Specialist",
+          "Cancellation Gap Filling Specialist",
+          "Access Failure Prevention Specialist",
+          "Scope & Variation Guardian Specialist",
+          "Route Compression Specialist",
+          "Workforce Load Balancing Specialist",
+          "Exception Resolution Specialist",
+          "Weather Disruption Management Specialist",
+          "Capacity & Fulfilment Manager",
+          "Service Delivery Flow Orchestrator"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-SCHEDULE-CONFLICT",
+          "PAIN-SCHEDULE-INVALID-COMMITMENT",
+          "PAIN-SCHEDULE-STATE-DRIFT",
+          "PAIN-DISPATCH-LATE-START-RISK",
+          "PAIN-DISPATCH-INVALID-ASSIGNMENT",
+          "PAIN-SLA-LATENESS-NOT-RECOVERED",
+          "PAIN-CAPACITY-CANCELLATION-GAP",
+          "PAIN-FIELD-NO-ACCESS",
+          "PAIN-SCOPE-DRIFT",
+          "PAIN-UNPRICED-VARIATION",
+          "PAIN-EXCESS-TRAVEL",
+          "PAIN-ROUTE-FRAGMENTATION",
+          "PAIN-WORKLOAD-IMBALANCE",
+          "PAIN-OVERLOAD-UNDERUTILISATION",
+          "PAIN-UNRESOLVED-EXCEPTION",
+          "PAIN-EXCEPTION-BOUNCE",
+          "PAIN-WEATHER-DISRUPTION",
+          "PAIN-DELIVERY-CROSSDOMAIN-CONFLICT",
+          "PAIN-DELIVERY-ACCEPTED-WORK-NOT-FULFILLED",
+          "PAIN-DELIVERY-CAPACITY-CUSTOMER-RESOURCE-MISALIGNMENT"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+            "TZAG-OPS-ROUTE-COMPRESSION",
+            "TZAG-WF-LOAD-BALANCING",
+            "TZAG-OPS-EXCEPTION-RESOLUTION",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING": "TZ-ROADMAP-39-SG-01",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-ROUTE-COMPRESSION": "TZ-ROADMAP-39-SG-04",
+            "TZAG-WF-LOAD-BALANCING": "TZ-ROADMAP-39-SG-04",
+            "TZAG-OPS-EXCEPTION-RESOLUTION": "TZ-ROADMAP-39-SG-06",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT": "TZ-ROADMAP-39-SG-08",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR": "ROADMAP.canonical_domain_manager_definitions",
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH": "TZ-ROADMAP-23-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "No Pro identity is created. Proactive Specialist, autonomous Manager and predictive Orchestrator behaviours are earned states constrained by plan, trust, recursive acceptance, governance, assurance, risk and context."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/WisdomPredictionEngine.php",
+              "System/Services/WisdomRecommendationEngine.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php"
+            ],
+            "finding": "Wisdom already supplies prediction, recommendation and outcome learning."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/TraceAnalyzer.php",
+              "System/Services/SignalOperationalHealthService.php"
+            ],
+            "finding": "Signal supplies live operational evidence."
+          },
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "titan-workforce/starter-agents/scheduling/scheduling-observability.mjs",
+              "titan-workforce/starter-agents/scheduling/scheduling-certification.mjs"
+            ],
+            "finding": "Native scheduling observability/certification supports earned-mode gating."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Signal Engine",
+          "Titan Zero"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:15:00+10:00",
+        "scan_notes": "Predictive fulfilment should reuse Wisdom/Signal and existing trust/autonomy gates; no fifth Pro agent identity.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 8,
+      "title": "Implement scheduling/dispatch authority, surface, approval, escalation and recovery matrices across Command/Go/Hub/plugins/extensions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Field",
+        "Titan Bookings Quotes",
+        "Titan AI Workforce",
+        "Titan CRM",
+        "Titan Maps Intelligence",
+        "Titan Signal Engine",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-23-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+        ],
+        "canonical_agent_names": [
+          "Service Delivery Flow Orchestrator",
+          "Capacity & Fulfilment Manager",
+          "Schedule Integrity Specialist",
+          "Dispatch Reliability & Lateness Recovery Specialist",
+          "Cancellation Gap Filling Specialist",
+          "Access Failure Prevention Specialist",
+          "Scope & Variation Guardian Specialist",
+          "Route Compression Specialist",
+          "Workforce Load Balancing Specialist",
+          "Exception Resolution Specialist",
+          "Weather Disruption Management Specialist",
+          "Schedule Mutation Worker",
+          "Dispatch Assignment Worker",
+          "Cancellation Gap Fill Execution Worker",
+          "Site Access Confirmation Worker",
+          "Variation Schedule Adjustment Worker",
+          "Route Adjustment Worker",
+          "Capacity Reassignment Worker",
+          "Operations Exception Recovery Worker",
+          "Weather Schedule Adjustment Worker"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-DELIVERY-CROSSDOMAIN-CONFLICT",
+          "PAIN-DELIVERY-ACCEPTED-WORK-NOT-FULFILLED",
+          "PAIN-DELIVERY-CAPACITY-CUSTOMER-RESOURCE-MISALIGNMENT",
+          "PAIN-SCHEDULE-CONFLICT",
+          "PAIN-SCHEDULE-INVALID-COMMITMENT",
+          "PAIN-SCHEDULE-STATE-DRIFT",
+          "PAIN-DISPATCH-LATE-START-RISK",
+          "PAIN-DISPATCH-INVALID-ASSIGNMENT",
+          "PAIN-SLA-LATENESS-NOT-RECOVERED",
+          "PAIN-CAPACITY-CANCELLATION-GAP",
+          "PAIN-FIELD-NO-ACCESS",
+          "PAIN-SCOPE-DRIFT",
+          "PAIN-UNPRICED-VARIATION",
+          "PAIN-EXCESS-TRAVEL",
+          "PAIN-ROUTE-FRAGMENTATION",
+          "PAIN-WORKLOAD-IMBALANCE",
+          "PAIN-OVERLOAD-UNDERUTILISATION",
+          "PAIN-UNRESOLVED-EXCEPTION",
+          "PAIN-EXCEPTION-BOUNCE",
+          "PAIN-WEATHER-DISRUPTION",
+          "PAIN-SCHEDULE-APPROVED-CHANGE-NOT-COMMITTED",
+          "PAIN-SCHEDULE-DUPLICATE-MUTATION",
+          "PAIN-DISPATCH-ASSIGNMENT-NOT-COMMITTED",
+          "PAIN-CAPACITY-GAP-FILL-ACTION-NOT-EXECUTED",
+          "PAIN-ACCESS-CONFIRMATION-NOT-EXECUTED",
+          "PAIN-VARIATION-APPROVED-SCHEDULE-CHANGE-NOT-APPLIED",
+          "PAIN-ROUTE-OPTIMISATION-NOT-APPLIED",
+          "PAIN-CAPACITY-REBALANCE-NOT-EXECUTED",
+          "PAIN-OPS-APPROVED-RECOVERY-NOT-EXECUTED",
+          "PAIN-WEATHER-APPROVED-ADJUSTMENT-NOT-APPLIED"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+            "TZAG-OPS-ROUTE-COMPRESSION",
+            "TZAG-WF-LOAD-BALANCING",
+            "TZAG-OPS-EXCEPTION-RESOLUTION",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+            "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+            "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+            "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+            "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+            "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+            "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+            "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+            "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+            "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR": "ROADMAP.canonical_domain_manager_definitions",
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING": "TZ-ROADMAP-39-SG-01",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-ROUTE-COMPRESSION": "TZ-ROADMAP-39-SG-04",
+            "TZAG-WF-LOAD-BALANCING": "TZ-ROADMAP-39-SG-04",
+            "TZAG-OPS-EXCEPTION-RESOLUTION": "TZ-ROADMAP-39-SG-06",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT": "TZ-ROADMAP-39-SG-08",
+            "TZAG-OPS-SCHEDULE-MUTATION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-GAP-FILL-EXECUTION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-ACCESS-CONFIRMATION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-ROUTE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-WF-CAPACITY-REASSIGNMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-EXCEPTION-RECOVERY-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Authority/surface matrices project the same immutable agent identities across Command/Go/Hub/plugins/extensions; surfaces never fork workforce identity."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "titan-workforce/starter-agents/scheduling/contracts/SchedulingApprovalEscalation.schema.json",
+              "titan-workforce/starter-agents/scheduling/contracts/SchedulingOfflineReplay.schema.json",
+              "packages/titan-platform/src/ported/titan-workforce/scheduling/scheduling-approval-escalation-runtime.ts"
+            ],
+            "finding": "Canonical schemas/runtime already model approvals, escalation and offline replay."
+          },
+          {
+            "source_ref": "Titan Maps Intelligence",
+            "file_id": "file_00000000759c820b81897a51cdb0916e",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Maps Intelligence/Titan Maps Intelligence Master v2.0.9.zip",
+            "sha256": "2f9ecdc86e1c6aee335c452da8ecaffdf38b6ce5d147e02c699a268e7bfebe6d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Http/Middleware/ResolveMapsCompanyContext.php",
+              "Http/Middleware/RequireMapsPermission.php",
+              "Services/WorkerLocationVisibilityPolicy.php"
+            ],
+            "finding": "Maps enforces company/permission/privacy boundaries."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Maps Intelligence"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:15:00+10:00",
+        "scan_notes": "Compile one scheduling/dispatch authority and surface matrix over existing approval/offline/company/privacy controls.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Measure utilisation, recovered capacity, travel, lateness, failed visits, coordination time and verified business value by canonical agent_id",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Field",
+        "Titan Bookings Quotes",
+        "Titan AI Workforce",
+        "Titan CRM",
+        "Titan Maps Intelligence",
+        "Titan Signal Engine",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-23-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+        ],
+        "canonical_agent_names": [
+          "Service Delivery Flow Orchestrator",
+          "Capacity & Fulfilment Manager",
+          "Schedule Integrity Specialist",
+          "Dispatch Reliability & Lateness Recovery Specialist",
+          "Cancellation Gap Filling Specialist",
+          "Access Failure Prevention Specialist",
+          "Scope & Variation Guardian Specialist",
+          "Route Compression Specialist",
+          "Workforce Load Balancing Specialist",
+          "Exception Resolution Specialist",
+          "Weather Disruption Management Specialist",
+          "Schedule Mutation Worker",
+          "Dispatch Assignment Worker",
+          "Cancellation Gap Fill Execution Worker",
+          "Site Access Confirmation Worker",
+          "Variation Schedule Adjustment Worker",
+          "Route Adjustment Worker",
+          "Capacity Reassignment Worker",
+          "Operations Exception Recovery Worker",
+          "Weather Schedule Adjustment Worker"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-DELIVERY-CROSSDOMAIN-CONFLICT",
+          "PAIN-DELIVERY-ACCEPTED-WORK-NOT-FULFILLED",
+          "PAIN-DELIVERY-CAPACITY-CUSTOMER-RESOURCE-MISALIGNMENT",
+          "PAIN-SCHEDULE-CONFLICT",
+          "PAIN-SCHEDULE-INVALID-COMMITMENT",
+          "PAIN-SCHEDULE-STATE-DRIFT",
+          "PAIN-DISPATCH-LATE-START-RISK",
+          "PAIN-DISPATCH-INVALID-ASSIGNMENT",
+          "PAIN-SLA-LATENESS-NOT-RECOVERED",
+          "PAIN-CAPACITY-CANCELLATION-GAP",
+          "PAIN-FIELD-NO-ACCESS",
+          "PAIN-SCOPE-DRIFT",
+          "PAIN-UNPRICED-VARIATION",
+          "PAIN-EXCESS-TRAVEL",
+          "PAIN-ROUTE-FRAGMENTATION",
+          "PAIN-WORKLOAD-IMBALANCE",
+          "PAIN-OVERLOAD-UNDERUTILISATION",
+          "PAIN-UNRESOLVED-EXCEPTION",
+          "PAIN-EXCEPTION-BOUNCE",
+          "PAIN-WEATHER-DISRUPTION",
+          "PAIN-SCHEDULE-APPROVED-CHANGE-NOT-COMMITTED",
+          "PAIN-SCHEDULE-DUPLICATE-MUTATION",
+          "PAIN-DISPATCH-ASSIGNMENT-NOT-COMMITTED",
+          "PAIN-CAPACITY-GAP-FILL-ACTION-NOT-EXECUTED",
+          "PAIN-ACCESS-CONFIRMATION-NOT-EXECUTED",
+          "PAIN-VARIATION-APPROVED-SCHEDULE-CHANGE-NOT-APPLIED",
+          "PAIN-ROUTE-OPTIMISATION-NOT-APPLIED",
+          "PAIN-CAPACITY-REBALANCE-NOT-EXECUTED",
+          "PAIN-OPS-APPROVED-RECOVERY-NOT-EXECUTED",
+          "PAIN-WEATHER-APPROVED-ADJUSTMENT-NOT-APPLIED"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+            "TZAG-OPS-ROUTE-COMPRESSION",
+            "TZAG-WF-LOAD-BALANCING",
+            "TZAG-OPS-EXCEPTION-RESOLUTION",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+            "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+            "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+            "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+            "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+            "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+            "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+            "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+            "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+            "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR": "ROADMAP.canonical_domain_manager_definitions",
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING": "TZ-ROADMAP-39-SG-01",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-ROUTE-COMPRESSION": "TZ-ROADMAP-39-SG-04",
+            "TZAG-WF-LOAD-BALANCING": "TZ-ROADMAP-39-SG-04",
+            "TZAG-OPS-EXCEPTION-RESOLUTION": "TZ-ROADMAP-39-SG-06",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT": "TZ-ROADMAP-39-SG-08",
+            "TZAG-OPS-SCHEDULE-MUTATION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-GAP-FILL-EXECUTION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-ACCESS-CONFIRMATION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-ROUTE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-WF-CAPACITY-REASSIGNMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-EXCEPTION-RECOVERY-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Attribute utilisation, capacity, travel, lateness, failed-visit and coordination outcomes to canonical agent_id using verified receipts; do not claim value from recommendations without outcome evidence."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Maps Intelligence",
+            "file_id": "file_00000000759c820b81897a51cdb0916e",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Maps Intelligence/Titan Maps Intelligence Master v2.0.9.zip",
+            "sha256": "2f9ecdc86e1c6aee335c452da8ecaffdf38b6ce5d147e02c699a268e7bfebe6d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Models/TravelMatrixSnapshot.php",
+              "Models/EtaSnapshot.php",
+              "Models/FieldRouteOptimizationProposal.php",
+              "Models/DispatchDecision.php"
+            ],
+            "finding": "Maps records travel, ETA, route proposals and dispatch decisions."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Models/SignalPulseTraceMetric.php",
+              "System/Data/PulsePercentiles.php"
+            ],
+            "finding": "Signal provides operational metric/percentile evidence."
+          },
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "schemas/wisdom-outcome-record.schema.json",
+              "System/Services/WisdomOutcomeRecorder.php"
+            ],
+            "finding": "Wisdom records verified outcomes for learning/value measurement."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Maps Intelligence",
+          "Titan Signal Engine",
+          "Titan Wisdom Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:15:00+10:00",
+        "scan_notes": "Measure utilization, capacity recovery, travel, lateness, failed visits and coordination effort by canonical agent_id and hand off verified value to ROI.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Run Worker→Specialist→Manager→Orchestrator scheduling/dispatch acceptance and certify trust progression, failure/recovery and non-duplication",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Field",
+        "Titan Bookings Quotes",
+        "Titan AI Workforce",
+        "Titan CRM",
+        "Titan Maps Intelligence",
+        "Titan Signal Engine",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-23-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+          "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+          "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+          "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+          "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+          "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+          "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+          "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+          "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+          "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+          "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+          "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+        ],
+        "canonical_agent_names": [
+          "Service Delivery Flow Orchestrator",
+          "Capacity & Fulfilment Manager",
+          "Schedule Integrity Specialist",
+          "Dispatch Reliability & Lateness Recovery Specialist",
+          "Cancellation Gap Filling Specialist",
+          "Access Failure Prevention Specialist",
+          "Scope & Variation Guardian Specialist",
+          "Route Compression Specialist",
+          "Workforce Load Balancing Specialist",
+          "Exception Resolution Specialist",
+          "Weather Disruption Management Specialist",
+          "Schedule Mutation Worker",
+          "Dispatch Assignment Worker",
+          "Cancellation Gap Fill Execution Worker",
+          "Site Access Confirmation Worker",
+          "Variation Schedule Adjustment Worker",
+          "Route Adjustment Worker",
+          "Capacity Reassignment Worker",
+          "Operations Exception Recovery Worker",
+          "Weather Schedule Adjustment Worker"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-DELIVERY-CROSSDOMAIN-CONFLICT",
+          "PAIN-DELIVERY-ACCEPTED-WORK-NOT-FULFILLED",
+          "PAIN-DELIVERY-CAPACITY-CUSTOMER-RESOURCE-MISALIGNMENT",
+          "PAIN-SCHEDULE-CONFLICT",
+          "PAIN-SCHEDULE-INVALID-COMMITMENT",
+          "PAIN-SCHEDULE-STATE-DRIFT",
+          "PAIN-DISPATCH-LATE-START-RISK",
+          "PAIN-DISPATCH-INVALID-ASSIGNMENT",
+          "PAIN-SLA-LATENESS-NOT-RECOVERED",
+          "PAIN-CAPACITY-CANCELLATION-GAP",
+          "PAIN-FIELD-NO-ACCESS",
+          "PAIN-SCOPE-DRIFT",
+          "PAIN-UNPRICED-VARIATION",
+          "PAIN-EXCESS-TRAVEL",
+          "PAIN-ROUTE-FRAGMENTATION",
+          "PAIN-WORKLOAD-IMBALANCE",
+          "PAIN-OVERLOAD-UNDERUTILISATION",
+          "PAIN-UNRESOLVED-EXCEPTION",
+          "PAIN-EXCEPTION-BOUNCE",
+          "PAIN-WEATHER-DISRUPTION",
+          "PAIN-SCHEDULE-APPROVED-CHANGE-NOT-COMMITTED",
+          "PAIN-SCHEDULE-DUPLICATE-MUTATION",
+          "PAIN-DISPATCH-ASSIGNMENT-NOT-COMMITTED",
+          "PAIN-CAPACITY-GAP-FILL-ACTION-NOT-EXECUTED",
+          "PAIN-ACCESS-CONFIRMATION-NOT-EXECUTED",
+          "PAIN-VARIATION-APPROVED-SCHEDULE-CHANGE-NOT-APPLIED",
+          "PAIN-ROUTE-OPTIMISATION-NOT-APPLIED",
+          "PAIN-CAPACITY-REBALANCE-NOT-EXECUTED",
+          "PAIN-OPS-APPROVED-RECOVERY-NOT-EXECUTED",
+          "PAIN-WEATHER-APPROVED-ADJUSTMENT-NOT-APPLIED"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR",
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+            "TZAG-OPS-ROUTE-COMPRESSION",
+            "TZAG-WF-LOAD-BALANCING",
+            "TZAG-OPS-EXCEPTION-RESOLUTION",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+            "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+            "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+            "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+            "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+            "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+            "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+            "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+            "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+            "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-OPS-SERVICE-DELIVERY-ORCH": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-CAPACITY-FULFILMENT-MGR": "ROADMAP.canonical_domain_manager_definitions",
+            "TZAG-OPS-SCHEDULE-INTEGRITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-DISPATCH-RELIABILITY-SPC": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING": "TZ-ROADMAP-39-SG-01",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN": "TZ-ROADMAP-39-SG-02",
+            "TZAG-OPS-ROUTE-COMPRESSION": "TZ-ROADMAP-39-SG-04",
+            "TZAG-WF-LOAD-BALANCING": "TZ-ROADMAP-39-SG-04",
+            "TZAG-OPS-EXCEPTION-RESOLUTION": "TZ-ROADMAP-39-SG-06",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT": "TZ-ROADMAP-39-SG-08",
+            "TZAG-OPS-SCHEDULE-MUTATION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-GAP-FILL-EXECUTION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-ACCESS-CONFIRMATION-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-ROUTE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-WF-CAPACITY-REASSIGNMENT-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-EXCEPTION-RECOVERY-WRK": "TZ-ROADMAP-23-SG-01",
+            "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK": "TZ-ROADMAP-23-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Acceptance must prove Worker→Specialist→Manager→Orchestrator delegation, earned trust progression, cross-domain collaboration, offline/failure/recovery behaviour and absence of duplicate identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "titan-workforce/starter-agents/scheduling/scheduling-adversarial-batch.mjs",
+              "titan-workforce/starter-agents/scheduling/scheduling-certification.mjs",
+              "titan-workforce/starter-agents/scheduling/contracts/SchedulingCertification.schema.json"
+            ],
+            "finding": "Native scheduling adversarial/certification machinery already exists."
+          },
+          {
+            "source_ref": "Titan Field",
+            "file_id": "file_00000000e2e481faa8bf9aa44d7c99f3",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Field/Titan Field Master v1.0.12.zip",
+            "sha256": "64ad7c55e5a6de854058c341b6dc0cbeceb97f87937dcbf6b81f6bce6455e1f2",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/TitanFieldPass13CapacityForecastingTest.php",
+              "tests/TitanFieldPass9OperationalExceptionsTest.php",
+              "tests/TitanFieldPass6RecurrenceAvailabilityPoliciesTest.php"
+            ],
+            "finding": "Field has capacity, exception and recurrence/availability tests."
+          },
+          {
+            "source_ref": "Titan Maps Intelligence",
+            "file_id": "file_00000000759c820b81897a51cdb0916e",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Maps Intelligence/Titan Maps Intelligence Master v2.0.9.zip",
+            "sha256": "2f9ecdc86e1c6aee335c452da8ecaffdf38b6ce5d147e02c699a268e7bfebe6d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "scripts/verify_beta1_release_contract.php",
+              "tests/Unit/Conformance/TitanMapsIntelligenceConformanceTest.php",
+              "tests/Architecture/DispatchIntelligenceContractTest.php"
+            ],
+            "finding": "Maps has release/conformance/dispatch certification evidence."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Field",
+          "Titan Maps Intelligence"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:15:00+10:00",
+        "scan_notes": "Run hierarchy acceptance across canonical scheduling runtime plus Field/Maps donors, with trust progression, recovery and non-duplication checks.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "agent",
+    "agents",
+    "business-operations",
+    "scheduling"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan Field",
+    "Titan Bookings Quotes",
+    "Titan AI Workforce",
+    "Titan CRM",
+    "Titan Maps Intelligence",
+    "Titan Signal Engine",
+    "Titan Wisdom Engine"
+  ],
+  "reuse_first": true,
+  "canonical_workforce_roster": {
+    "status": "DEFINED_PLANNED_IMPLEMENTATION",
+    "canonical_definition_home": "TZ-ROADMAP-23-SG-01",
+    "orchestrator_ids": [
+      "TZAG-OPS-SERVICE-DELIVERY-ORCH"
+    ],
+    "manager_ids": [
+      "TZAG-OPS-CAPACITY-FULFILMENT-MGR"
+    ],
+    "specialist_ids": [
+      "TZAG-OPS-SCHEDULE-INTEGRITY-SPC",
+      "TZAG-OPS-DISPATCH-RELIABILITY-SPC",
+      "TZAG-OPS-CANCELLATION-GAP-FILLING",
+      "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+      "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+      "TZAG-OPS-ROUTE-COMPRESSION",
+      "TZAG-WF-LOAD-BALANCING",
+      "TZAG-OPS-EXCEPTION-RESOLUTION",
+      "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT"
+    ],
+    "worker_ids": [
+      "TZAG-OPS-SCHEDULE-MUTATION-WRK",
+      "TZAG-OPS-DISPATCH-ASSIGNMENT-WRK",
+      "TZAG-OPS-GAP-FILL-EXECUTION-WRK",
+      "TZAG-OPS-ACCESS-CONFIRMATION-WRK",
+      "TZAG-OPS-VARIATION-SCHEDULE-ADJUSTMENT-WRK",
+      "TZAG-OPS-ROUTE-ADJUSTMENT-WRK",
+      "TZAG-WF-CAPACITY-REASSIGNMENT-WRK",
+      "TZAG-OPS-EXCEPTION-RECOVERY-WRK",
+      "TZAG-OPS-WEATHER-SCHEDULE-ADJUSTMENT-WRK"
+    ],
+    "reused_innovation_agent_ids": [
+      "TZAG-OPS-CANCELLATION-GAP-FILLING",
+      "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+      "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+      "TZAG-OPS-ROUTE-COMPRESSION",
+      "TZAG-WF-LOAD-BALANCING",
+      "TZAG-OPS-EXCEPTION-RESOLUTION",
+      "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT"
+    ],
+    "reused_canonical_manager_ids": [
+      "TZAG-OPS-CAPACITY-FULFILMENT-MGR"
+    ],
+    "new_agent_count": 12,
+    "total_domain_roster_count": 20,
+    "boundary_rules": [
+      "Scheduling/Dispatch owns feasible fulfilment commitments, assignment, capacity, routing execution and operational recovery after work enters fulfilment.",
+      "Customer Access retains ownership of general access/customer-entry outcomes; Access Failure Prevention collaborates into dispatch without being redefined or re-parented.",
+      "Field Quality/Readiness owns first-time-fix preparation and field execution quality; Supply owns inventory/equipment continuity; Customer Care owns service recovery/retention communications.",
+      "Route algorithms, maps, calendars, channels and predictive models are tools/capabilities, not separate workforce identities.",
+      "Service Delivery Flow Orchestrator owns accepted-work fulfilment coherence; Customer Journey Access Orchestrator owns customer-entry coherence; Revenue Growth Orchestrator owns commercial growth."
+    ]
+  },
+  "agent_goal_classification": "DOMAIN_WORKFORCE_ELIGIBLE",
+  "agent_goal_rule": "This goal owns durable business/domain outcomes and may reuse, extend or create canonical workforce identities subject to non-duplication and outcome-owner tests.",
+  "workforce_goal_classification": "DOMAIN_OUTCOME_AGENT_ELIGIBLE",
+  "workforce_goal_rule": "Agents are permitted only for durable business/operational outcomes with a distinct ownership boundary. Reuse or extend canonical identities before creating new ones."
+}
