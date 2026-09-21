@@ -1,0 +1,1364 @@
+{
+  "goal_id": "TZ-ROADMAP-33",
+  "priority": "P1",
+  "title": "Multi-Model Host Adapter Architecture",
+  "objective": "Expose the same Titan workforce through OpenAI, Anthropic/Claude, Microsoft Copilot, generic MCP and future/non-MCP hosts.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define zero-business-logic host adapter contract and validation rule",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI",
+        "Titan AI Core",
+        "Titan Model Council"
+      ],
+      "subgoal_id": "TZ-ROADMAP-33-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI",
+          "Titan AI Core",
+          "Titan Zero LLM Plugin Workspace / ChatGPT App"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI",
+            "file_id": "file_0000000085a0820b991d516a4b74fa34",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI/Titan AI Master v1.5.4.zip",
+            "sha256": "97c973dd26bb6e41765f7dd3157fe72677294e1afaa016ad01187b4f4504aa02",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED__REGISTRY_STATUS_UNMANAGED_CANDIDATE",
+            "internal_paths": [
+              "System/TitanAI/Integration/HostPermissionResolver.php",
+              "System/TitanAI/Integration/TrustedToolContributionRegistry.php",
+              "System/TitanAI/Capabilities/SharedCapabilityRegistry.php",
+              "System/Governance/Tools/GovernedToolDefinition.php",
+              "System/Governance/Tools/ToolPermissionService.php"
+            ],
+            "finding": "The LLM Plugin HOST-REGISTRY and ACCEPTANCE-MATRIX already codify the central rule: host adapters carry protocol/presentation only, never business logic or authority. Titan AI/Core add host permission, capability and trusted-principal primitives. Converge these into one canonical HostAdapter contract."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/ModelCapabilityProfile.php",
+              "System/DTO/TenantModelAccessPolicy.php",
+              "System/Security/CapabilityAuthorizer.php",
+              "System/Security/ModelAccessGuard.php",
+              "System/Security/TenantRuntimeGuard.php",
+              "System/Security/HostTrustedPrincipalResolver.php"
+            ],
+            "finding": "The LLM Plugin HOST-REGISTRY and ACCEPTANCE-MATRIX already codify the central rule: host adapters carry protocol/presentation only, never business logic or authority. Titan AI/Core add host permission, capability and trusted-principal primitives. Converge these into one canonical HostAdapter contract."
+          },
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/REGISTRY/HOST-REGISTRY.json",
+              "/Titan Zero/LLM Plugin Workspace/REGISTRY/ACCEPTANCE-MATRIX.json",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/contracts.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts"
+            ],
+            "file_ids": [
+              "file_000000009fc881fabe6c78559cabd195",
+              "file_00000000954481fa900940a2be6be816",
+              "file_000000005e2481fa9d740d08a3f5f072",
+              "file_00000000f7cc81fa870c0322a2189df4"
+            ],
+            "finding": "The LLM Plugin HOST-REGISTRY and ACCEPTANCE-MATRIX already codify the central rule: host adapters carry protocol/presentation only, never business logic or authority. Titan AI/Core add host permission, capability and trusted-principal primitives. Converge these into one canonical HostAdapter contract."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:23:30Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "The LLM Plugin HOST-REGISTRY and ACCEPTANCE-MATRIX already codify the central rule: host adapters carry protocol/presentation only, never business logic or authority. Titan AI/Core add host permission, capability and trusted-principal primitives. Converge these into one canonical HostAdapter contract."
+      }
+    },
+    {
+      "subgoal": 2,
+      "title": "Implement OpenAI adapter using Titan MCP plus optional host-specific UI enhancements",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI",
+        "Titan AI Core",
+        "Titan Model Council"
+      ],
+      "subgoal_id": "TZ-ROADMAP-33-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Zero LLM Plugin Workspace / ChatGPT App",
+          "Titan MCP",
+          "Titan AI"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/mcp-client.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/app/mcp/route.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/authority.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/app/hooks/use-openai-global.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/app/hooks/use-call-tool.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/app/hooks/use-is-chatgpt-app.ts"
+            ],
+            "file_ids": [
+              "file_00000000078881f89047b62d3ac1a906",
+              "file_000000002ca881f58e139307d6f10fb1",
+              "file_00000000f7cc81fa870c0322a2189df4",
+              "file_0000000035b881f5ab50349b699b0805",
+              "file_00000000dbb4820b90c0cb6639d7a6ac",
+              "file_00000000373c8230b10e11422cf10760",
+              "file_0000000030b081fabcea0b0fdda40538",
+              "file_00000000311882308dee100d49868f32"
+            ],
+            "finding": "A working ChatGPT/OpenAI adapter already exists: MCP initialize/list/call, authenticated server-side actor/company context, canonical capability catalogue, governed gateway and optional OpenAI widget metadata. Reuse it as the OpenAI reference adapter; do not fork business logic into the host."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/McpCatalogue.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/capabilities/tool-call.input.json",
+              "schemas/capabilities/tool-call.output.json",
+              "tests/Feature/TitanMcpClientCompatibilityContractTest.php",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php"
+            ],
+            "finding": "A working ChatGPT/OpenAI adapter already exists: MCP initialize/list/call, authenticated server-side actor/company context, canonical capability catalogue, governed gateway and optional OpenAI widget metadata. Reuse it as the OpenAI reference adapter; do not fork business logic into the host."
+          },
+          {
+            "source_ref": "Titan AI",
+            "file_id": "file_0000000085a0820b991d516a4b74fa34",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI/Titan AI Master v1.5.4.zip",
+            "sha256": "97c973dd26bb6e41765f7dd3157fe72677294e1afaa016ad01187b4f4504aa02",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED__REGISTRY_STATUS_UNMANAGED_CANDIDATE",
+            "internal_paths": [
+              "System/Providers/OpenAICompatibleProviderGateway.php",
+              "System/Providers/ProviderExecutionRegistry.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Providers/ProviderProfile.php"
+            ],
+            "finding": "A working ChatGPT/OpenAI adapter already exists: MCP initialize/list/call, authenticated server-side actor/company context, canonical capability catalogue, governed gateway and optional OpenAI widget metadata. Reuse it as the OpenAI reference adapter; do not fork business logic into the host."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:23:30Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "A working ChatGPT/OpenAI adapter already exists: MCP initialize/list/call, authenticated server-side actor/company context, canonical capability catalogue, governed gateway and optional OpenAI widget metadata. Reuse it as the OpenAI reference adapter; do not fork business logic into the host."
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Implement Claude remote-MCP connector adapter and compatibility validation",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI",
+        "Titan AI Core",
+        "Titan Model Council"
+      ],
+      "subgoal_id": "TZ-ROADMAP-33-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Zero LLM Plugin Workspace / ChatGPT App",
+          "Titan MCP"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/REGISTRY/HOST-REGISTRY.json",
+              "/Titan Zero/LLM Plugin Workspace/Claude/README.md",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/mcp-client.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts"
+            ],
+            "file_ids": [
+              "file_000000009fc881fabe6c78559cabd195",
+              "file_00000000acc481faa1219629dbfe8b43",
+              "file_00000000078881f89047b62d3ac1a906",
+              "file_00000000f7cc81fa870c0322a2189df4",
+              "file_00000000dbb4820b90c0cb6639d7a6ac"
+            ],
+            "finding": "Claude is currently a governed workspace scaffold whose registry declares remote MCP, but no first-class Claude adapter implementation was found. Reuse the live MCP client/context/gateway contracts and implement only the remote-MCP host packaging/compatibility seam."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/McpCatalogue.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/capabilities/tool-call.input.json",
+              "schemas/capabilities/tool-call.output.json",
+              "tests/Feature/TitanMcpClientCompatibilityContractTest.php",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php"
+            ],
+            "finding": "Claude is currently a governed workspace scaffold whose registry declares remote MCP, but no first-class Claude adapter implementation was found. Reuse the live MCP client/context/gateway contracts and implement only the remote-MCP host packaging/compatibility seam."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:23:30Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Claude is currently a governed workspace scaffold whose registry declares remote MCP, but no first-class Claude adapter implementation was found. Reuse the live MCP client/context/gateway contracts and implement only the remote-MCP host packaging/compatibility seam."
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Implement Microsoft Copilot MCP/plugin adapter and UI compatibility layer",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI",
+        "Titan AI Core",
+        "Titan Model Council"
+      ],
+      "subgoal_id": "TZ-ROADMAP-33-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Zero LLM Plugin Workspace / ChatGPT App",
+          "Titan MCP",
+          "Titan AI Core"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/REGISTRY/HOST-REGISTRY.json",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/mcp-client.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts"
+            ],
+            "file_ids": [
+              "file_000000009fc881fabe6c78559cabd195",
+              "file_00000000078881f89047b62d3ac1a906",
+              "file_00000000f7cc81fa870c0322a2189df4",
+              "file_00000000dbb4820b90c0cb6639d7a6ac"
+            ],
+            "finding": "No Microsoft Copilot host entry or implementation was found in the live host registry/workspace. Reuse the same canonical MCP/context/gateway contracts and implement only Copilot protocol/UI adaptation; no separate Titan logic."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/McpCatalogue.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/capabilities/tool-call.input.json",
+              "schemas/capabilities/tool-call.output.json",
+              "tests/Feature/TitanMcpClientCompatibilityContractTest.php",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php"
+            ],
+            "finding": "No Microsoft Copilot host entry or implementation was found in the live host registry/workspace. Reuse the same canonical MCP/context/gateway contracts and implement only Copilot protocol/UI adaptation; no separate Titan logic."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/ModelCapabilityProfile.php",
+              "System/DTO/TenantModelAccessPolicy.php",
+              "System/Security/CapabilityAuthorizer.php",
+              "System/Security/ModelAccessGuard.php",
+              "System/Security/TenantRuntimeGuard.php",
+              "System/Security/HostTrustedPrincipalResolver.php"
+            ],
+            "finding": "No Microsoft Copilot host entry or implementation was found in the live host registry/workspace. Reuse the same canonical MCP/context/gateway contracts and implement only Copilot protocol/UI adaptation; no separate Titan logic."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:23:30Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "No Microsoft Copilot host entry or implementation was found in the live host registry/workspace. Reuse the same canonical MCP/context/gateway contracts and implement only Copilot protocol/UI adaptation; no separate Titan logic."
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Implement first-class generic MCP host adapter/profile",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI",
+        "Titan AI Core",
+        "Titan Model Council"
+      ],
+      "subgoal_id": "TZ-ROADMAP-33-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Zero LLM Plugin Workspace / ChatGPT App",
+          "Titan MCP"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/Generic MCP/README.md",
+              "/Titan Zero/LLM Plugin Workspace/REGISTRY/HOST-REGISTRY.json",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/mcp-client.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts"
+            ],
+            "file_ids": [
+              "file_00000000cb1081fa8dd192a0e150dbce",
+              "file_000000009fc881fabe6c78559cabd195",
+              "file_00000000078881f89047b62d3ac1a906",
+              "file_00000000f7cc81fa870c0322a2189df4",
+              "file_00000000dbb4820b90c0cb6639d7a6ac"
+            ],
+            "finding": "Generic MCP already has a governed no-business-logic surface rule and the ChatGPT implementation contains a reusable standards-based MCP client. The generic host still needs a first-class profile/packaging implementation and compatibility evidence."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/McpCatalogue.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/capabilities/tool-call.input.json",
+              "schemas/capabilities/tool-call.output.json",
+              "tests/Feature/TitanMcpClientCompatibilityContractTest.php",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php"
+            ],
+            "finding": "Generic MCP already has a governed no-business-logic surface rule and the ChatGPT implementation contains a reusable standards-based MCP client. The generic host still needs a first-class profile/packaging implementation and compatibility evidence."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:23:30Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Generic MCP already has a governed no-business-logic surface rule and the ChatGPT implementation contains a reusable standards-based MCP client. The generic host still needs a first-class profile/packaging implementation and compatibility evidence."
+      }
+    },
+    {
+      "subgoal": 6,
+      "title": "Implement non-MCP function/tool-calling fallback adapter framework",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI",
+        "Titan AI Core",
+        "Titan Model Council"
+      ],
+      "subgoal_id": "TZ-ROADMAP-33-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI",
+          "Titan AI Core",
+          "Titan Zero LLM Plugin Workspace / ChatGPT App"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI",
+            "file_id": "file_0000000085a0820b991d516a4b74fa34",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI/Titan AI Master v1.5.4.zip",
+            "sha256": "97c973dd26bb6e41765f7dd3157fe72677294e1afaa016ad01187b4f4504aa02",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED__REGISTRY_STATUS_UNMANAGED_CANDIDATE",
+            "internal_paths": [
+              "System/Providers/OpenAICompatibleProviderGateway.php",
+              "System/Providers/MagicAIHostProviderGateway.php",
+              "System/Providers/ProviderExecutionGatewayContract.php",
+              "System/Providers/ProviderExecutionRegistry.php",
+              "System/Providers/ProviderProfile.php",
+              "System/TitanAI/Runtime/ConfidenceFallbackPolicy.php"
+            ],
+            "finding": "Titan AI already provides OpenAI-compatible and MagicAI provider gateways, provider profiles/registry and a confidence fallback policy. Reuse these for non-MCP function/tool fallback while keeping Titan capability/authority server-side."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/ModelCapabilityProfile.php",
+              "System/DTO/TenantModelAccessPolicy.php",
+              "System/Security/CapabilityAuthorizer.php",
+              "System/Security/ModelAccessGuard.php",
+              "System/Security/TenantRuntimeGuard.php",
+              "System/Security/HostTrustedPrincipalResolver.php"
+            ],
+            "finding": "Titan AI already provides OpenAI-compatible and MagicAI provider gateways, provider profiles/registry and a confidence fallback policy. Reuse these for non-MCP function/tool fallback while keeping Titan capability/authority server-side."
+          },
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/contracts.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts"
+            ],
+            "file_ids": [
+              "file_000000005e2481fa9d740d08a3f5f072",
+              "file_00000000f7cc81fa870c0322a2189df4",
+              "file_00000000dbb4820b90c0cb6639d7a6ac"
+            ],
+            "finding": "Titan AI already provides OpenAI-compatible and MagicAI provider gateways, provider profiles/registry and a confidence fallback policy. Reuse these for non-MCP function/tool fallback while keeping Titan capability/authority server-side."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:23:30Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Titan AI already provides OpenAI-compatible and MagicAI provider gateways, provider profiles/registry and a confidence fallback policy. Reuse these for non-MCP function/tool fallback while keeping Titan capability/authority server-side."
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Implement host feature negotiation and graceful degradation rules",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI",
+        "Titan AI Core",
+        "Titan Model Council"
+      ],
+      "subgoal_id": "TZ-ROADMAP-33-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Zero LLM Plugin Workspace / ChatGPT App",
+          "Titan AI",
+          "Titan AI Core",
+          "Titan Model Council"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/REGISTRY/HOST-REGISTRY.json",
+              "/Titan Zero/LLM Plugin Workspace/REGISTRY/ACCEPTANCE-MATRIX.json"
+            ],
+            "file_ids": [
+              "file_000000009fc881fabe6c78559cabd195",
+              "file_00000000954481fa900940a2be6be816"
+            ],
+            "finding": "HOST-REGISTRY already declares capability-negotiated rich UI and structured fallback; AI Core/Titan AI expose model/provider capability profiles. Converge these into one host feature-negotiation/degradation matrix rather than per-host conditionals."
+          },
+          {
+            "source_ref": "Titan AI",
+            "file_id": "file_0000000085a0820b991d516a4b74fa34",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI/Titan AI Master v1.5.4.zip",
+            "sha256": "97c973dd26bb6e41765f7dd3157fe72677294e1afaa016ad01187b4f4504aa02",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED__REGISTRY_STATUS_UNMANAGED_CANDIDATE",
+            "internal_paths": [
+              "System/Providers/ProviderProfile.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/TitanAI/Capabilities/SharedCapabilityRegistry.php",
+              "System/TitanAI/Integration/HostPermissionResolver.php"
+            ],
+            "finding": "HOST-REGISTRY already declares capability-negotiated rich UI and structured fallback; AI Core/Titan AI expose model/provider capability profiles. Converge these into one host feature-negotiation/degradation matrix rather than per-host conditionals."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/ModelCapabilityProfile.php",
+              "System/Services/HostLayoutResolver.php",
+              "System/Navigation/HostNavigationRegistrar.php"
+            ],
+            "finding": "HOST-REGISTRY already declares capability-negotiated rich UI and structured fallback; AI Core/Titan AI expose model/provider capability profiles. Converge these into one host feature-negotiation/degradation matrix rather than per-host conditionals."
+          },
+          {
+            "source_ref": "Titan Model Council",
+            "file_id": "file_00000000c824820e8e230ba127b115a6",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Model Council/Titan Model Council Master v1.0.0-rc.2.zip",
+            "sha256": "cfb9480cfbbe57fdc9eded5203ef78f4ef3e6d1e8f79fab48ac6863ec385b093",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Governed/GovernedProviderRuntimeContract.php",
+              "System/Governed/ProviderModelRuntime.php",
+              "System/Resilience/ProviderCircuitBreaker.php",
+              "System/Services/ModelCouncilExecutionService.php",
+              "System/Services/CouncilChatAdapter.php",
+              "System/Security/AcceptedResponseScope.php"
+            ],
+            "finding": "HOST-REGISTRY already declares capability-negotiated rich UI and structured fallback; AI Core/Titan AI expose model/provider capability profiles. Converge these into one host feature-negotiation/degradation matrix rather than per-host conditionals."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:23:30Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "HOST-REGISTRY already declares capability-negotiated rich UI and structured fallback; AI Core/Titan AI expose model/provider capability profiles. Converge these into one host feature-negotiation/degradation matrix rather than per-host conditionals."
+      }
+    },
+    {
+      "subgoal": 8,
+      "title": "Prove identical capability/authority outcomes across supported hosts",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI",
+        "Titan AI Core",
+        "Titan Model Council"
+      ],
+      "subgoal_id": "TZ-ROADMAP-33-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Zero LLM Plugin Workspace / ChatGPT App",
+          "Titan AI Core",
+          "Titan Model Council"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/REGISTRY/ACCEPTANCE-MATRIX.json",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/authority.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts"
+            ],
+            "file_ids": [
+              "file_00000000954481fa900940a2be6be816",
+              "file_00000000f7cc81fa870c0322a2189df4",
+              "file_0000000035b881f5ab50349b699b0805",
+              "file_00000000dbb4820b90c0cb6639d7a6ac"
+            ],
+            "finding": "ACCEPTANCE-MATRIX already defines identical capability IDs, authenticated company context, fail-closed tenancy, authority separation, governed mutation chain and receipt propagation across hosts. The missing work is executable cross-host parity certification."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/ModelCapabilityProfile.php",
+              "System/DTO/TenantModelAccessPolicy.php",
+              "System/Security/CapabilityAuthorizer.php",
+              "System/Security/ModelAccessGuard.php",
+              "System/Security/TenantRuntimeGuard.php",
+              "System/Security/HostTrustedPrincipalResolver.php",
+              "tests/Standalone/Pass4CertificationContractTest.php",
+              "tests/Standalone/Pass4RuntimeWiringContractTest.php",
+              "tests/Standalone/RuntimeAvailabilityCompatibilityTest.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "ACCEPTANCE-MATRIX already defines identical capability IDs, authenticated company context, fail-closed tenancy, authority separation, governed mutation chain and receipt propagation across hosts. The missing work is executable cross-host parity certification."
+          },
+          {
+            "source_ref": "Titan Model Council",
+            "file_id": "file_00000000c824820e8e230ba127b115a6",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Model Council/Titan Model Council Master v1.0.0-rc.2.zip",
+            "sha256": "cfb9480cfbbe57fdc9eded5203ef78f4ef3e6d1e8f79fab48ac6863ec385b093",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Standalone/RuntimeAvailabilityCompatibilityTest.php",
+              "tests/runtime_source_runner.php",
+              "tests/model_council_identity_isolation_runner.php",
+              "System/Commands/CertifyExtensionCommand.php",
+              "System/Health/TitanModelCouncilHealthCheck.php"
+            ],
+            "finding": "ACCEPTANCE-MATRIX already defines identical capability IDs, authenticated company context, fail-closed tenancy, authority separation, governed mutation chain and receipt propagation across hosts. The missing work is executable cross-host parity certification."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:23:30Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "ACCEPTANCE-MATRIX already defines identical capability IDs, authenticated company context, fail-closed tenancy, authority separation, governed mutation chain and receipt propagation across hosts. The missing work is executable cross-host parity certification."
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Add adapter isolation, security, compatibility and deprecation tests",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI",
+        "Titan AI Core",
+        "Titan Model Council"
+      ],
+      "subgoal_id": "TZ-ROADMAP-33-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI",
+          "Titan AI Core",
+          "Titan Model Council",
+          "Titan Zero LLM Plugin Workspace / ChatGPT App"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI",
+            "file_id": "file_0000000085a0820b991d516a4b74fa34",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI/Titan AI Master v1.5.4.zip",
+            "sha256": "97c973dd26bb6e41765f7dd3157fe72677294e1afaa016ad01187b4f4504aa02",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED__REGISTRY_STATUS_UNMANAGED_CANDIDATE",
+            "internal_paths": [
+              "tests/Standalone/RuntimeAvailabilityCompatibilityTest.php",
+              "tests/Architecture/TitanAIRuntime153CompatibilityTest.php",
+              "tests/Architecture/TitanAIRuntimeContractRegistryTest.php",
+              "resources/runtime-compatibility.json",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Titan AI/Core/Model Council already carry runtime availability, identity isolation, certification and circuit-breaker tests. Extend them with adapter isolation, prompt/tool injection containment, host compatibility and deprecation cases using the shared adapter contract."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Standalone/Pass4CertificationContractTest.php",
+              "tests/Standalone/Pass4RuntimeWiringContractTest.php",
+              "tests/Standalone/RuntimeAvailabilityCompatibilityTest.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Titan AI/Core/Model Council already carry runtime availability, identity isolation, certification and circuit-breaker tests. Extend them with adapter isolation, prompt/tool injection containment, host compatibility and deprecation cases using the shared adapter contract."
+          },
+          {
+            "source_ref": "Titan Model Council",
+            "file_id": "file_00000000c824820e8e230ba127b115a6",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Model Council/Titan Model Council Master v1.0.0-rc.2.zip",
+            "sha256": "cfb9480cfbbe57fdc9eded5203ef78f4ef3e6d1e8f79fab48ac6863ec385b093",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Standalone/RuntimeAvailabilityCompatibilityTest.php",
+              "tests/runtime_source_runner.php",
+              "tests/model_council_identity_isolation_runner.php",
+              "System/Commands/CertifyExtensionCommand.php",
+              "System/Health/TitanModelCouncilHealthCheck.php",
+              "System/Resilience/ProviderCircuitBreaker.php"
+            ],
+            "finding": "Titan AI/Core/Model Council already carry runtime availability, identity isolation, certification and circuit-breaker tests. Extend them with adapter isolation, prompt/tool injection containment, host compatibility and deprecation cases using the shared adapter contract."
+          },
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/REGISTRY/ACCEPTANCE-MATRIX.json",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/app/mcp/route.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts"
+            ],
+            "file_ids": [
+              "file_00000000954481fa900940a2be6be816",
+              "file_000000002ca881f58e139307d6f10fb1",
+              "file_00000000f7cc81fa870c0322a2189df4"
+            ],
+            "finding": "Titan AI/Core/Model Council already carry runtime availability, identity isolation, certification and circuit-breaker tests. Extend them with adapter isolation, prompt/tool injection containment, host compatibility and deprecation cases using the shared adapter contract."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:23:30Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Titan AI/Core/Model Council already carry runtime availability, identity isolation, certification and circuit-breaker tests. Extend them with adapter isolation, prompt/tool injection containment, host compatibility and deprecation cases using the shared adapter contract."
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Certify host adapters as replaceable windows into canonical Titan functionality",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI",
+        "Titan AI Core",
+        "Titan Model Council"
+      ],
+      "subgoal_id": "TZ-ROADMAP-33-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Zero LLM Plugin Workspace / ChatGPT App",
+          "Titan AI",
+          "Titan AI Core",
+          "Titan Model Council"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/REGISTRY/HOST-REGISTRY.json",
+              "/Titan Zero/LLM Plugin Workspace/REGISTRY/ACCEPTANCE-MATRIX.json"
+            ],
+            "file_ids": [
+              "file_000000009fc881fabe6c78559cabd195",
+              "file_00000000954481fa900940a2be6be816"
+            ],
+            "finding": "The host registry explicitly defines hosts as replaceable protocol/presentation windows and the acceptance matrix makes host-private business logic a release blocker. Certification should prove adapters can be swapped without changing capability/authority outcomes."
+          },
+          {
+            "source_ref": "Titan AI",
+            "file_id": "file_0000000085a0820b991d516a4b74fa34",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI/Titan AI Master v1.5.4.zip",
+            "sha256": "97c973dd26bb6e41765f7dd3157fe72677294e1afaa016ad01187b4f4504aa02",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED__REGISTRY_STATUS_UNMANAGED_CANDIDATE",
+            "internal_paths": [
+              "tests/Standalone/RuntimeAvailabilityCompatibilityTest.php",
+              "tests/Architecture/TitanAIRuntime153CompatibilityTest.php",
+              "tests/Architecture/TitanAIRuntimeContractRegistryTest.php",
+              "resources/runtime-compatibility.json",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "The host registry explicitly defines hosts as replaceable protocol/presentation windows and the acceptance matrix makes host-private business logic a release blocker. Certification should prove adapters can be swapped without changing capability/authority outcomes."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Standalone/Pass4CertificationContractTest.php",
+              "tests/Standalone/Pass4RuntimeWiringContractTest.php",
+              "tests/Standalone/RuntimeAvailabilityCompatibilityTest.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "The host registry explicitly defines hosts as replaceable protocol/presentation windows and the acceptance matrix makes host-private business logic a release blocker. Certification should prove adapters can be swapped without changing capability/authority outcomes."
+          },
+          {
+            "source_ref": "Titan Model Council",
+            "file_id": "file_00000000c824820e8e230ba127b115a6",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Model Council/Titan Model Council Master v1.0.0-rc.2.zip",
+            "sha256": "cfb9480cfbbe57fdc9eded5203ef78f4ef3e6d1e8f79fab48ac6863ec385b093",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Standalone/RuntimeAvailabilityCompatibilityTest.php",
+              "tests/runtime_source_runner.php",
+              "tests/model_council_identity_isolation_runner.php",
+              "System/Commands/CertifyExtensionCommand.php",
+              "System/Health/TitanModelCouncilHealthCheck.php"
+            ],
+            "finding": "The host registry explicitly defines hosts as replaceable protocol/presentation windows and the acceptance matrix makes host-private business logic a release blocker. Certification should prove adapters can be swapped without changing capability/authority outcomes."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:23:30Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "The host registry explicitly defines hosts as replaceable protocol/presentation windows and the acceptance matrix makes host-private business logic a release blocker. Certification should prove adapters can be swapped without changing capability/authority outcomes."
+      }
+    }
+  ],
+  "affinity_tags": [
+    "integration",
+    "multi-model",
+    "adapters",
+    "distribution"
+  ],
+  "preferred_predecessors": [
+    "TZ-ROADMAP-31",
+    "TZ-ROADMAP-32"
+  ],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "unified_architecture_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan AI",
+    "Titan AI Core",
+    "Titan Model Council"
+  ],
+  "reuse_first": true,
+  "agent_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENTS",
+  "agent_goal_rule": "This goal is platform/runtime/interface/infrastructure work. Do not create a workforce identity for the technology itself. Existing canonical agents may consume its capabilities.",
+  "workforce_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENT_IDENTITY",
+  "workforce_goal_rule": "Shared platform/runtime infrastructure may be consumed by agents but must not create an agent merely to mirror a technology, runtime, engine, SDK, protocol, deployment target or UI."
+}
