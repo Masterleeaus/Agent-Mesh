@@ -305,3 +305,22 @@ Therefore `.github/workflows/agent-pr-handoff.yml` behaves as follows:
 All other handoff errors still fail the workflow.
 
 If repository Actions settings are later changed to allow GitHub Actions to create pull requests, the same workflow resumes direct PR creation without changing the Agent Mesh branch/issue contract.
+
+
+## Automatic PR handoff
+
+After a builder pushes the first real commit to its canonical claim branch, GitHub automatically opens a **draft PR** through:
+
+`.github/workflows/agent-pr-handoff.yml`
+
+The PR handoff helper:
+
+`.github/scripts/open-agent-pr.py`
+
+automatically resolves the matching open roadmap issue, records the subgoal/goal IDs, claim branch, claim base SHA, current merge-base, changed files and commit summary, and includes `Closes #<issue>`.
+
+It refuses to create an empty PR when the claim branch is not ahead of `main`.
+
+Existing PR bodies are preserved by default so later automatic pushes do not erase builder evidence. A builder/Manager may explicitly refresh the generated metadata with `--update-existing`.
+
+New agent PRs are draft by default. Use `--ready` (or the workflow's `ready` input) only when the work is actually ready for Manager review.
