@@ -1,0 +1,97 @@
+name: Titan Zero CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: titan-zero-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Repository guardrails
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f AGENTS.md
+          test -f roadmap/INDEX.json
+          test -f roadmap/SUBGOAL-ISSUE-MANIFEST.json
+          test -f package.json
+          test -f pnpm-lock.yaml
+          grep -q 'Titan Zero Agent Mesh V3' AGENTS.md
+          if git grep -nE '^(<<<<<<<|=======|>>>>>>>)' -- . ':!*.zip'; then
+            echo "Merge conflict marker detected"
+            exit 1
+          fi
+          python3 .github/scripts/validate-agent-claim.py --self-test
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Report lockfile convergence debt
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- pnpm-lock.yaml; then
+            echo "pnpm-lock.yaml is converged."
+          else
+            echo "::warning::Merge84 package manifests and pnpm-lock.yaml are not yet converged."
+            git diff --stat -- pnpm-lock.yaml
+            echo "Strict frozen-lockfile enforcement remains part of the dependency-closure roadmap work."
+          fi
+
+      - name: Strict non-web typecheck
+        run: pnpm -r --filter '!@ai-fsm/web' --if-present typecheck
+
+      - name: Web typecheck regression gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          pnpm --filter @ai-fsm/web typecheck > web-typecheck.log 2>&1
+          TYPECHECK_STATUS=$?
+          set -e
+          cat web-typecheck.log
+          python3 .github/scripts/check-web-typecheck-baseline.py             --baseline .github/ci/web-typecheck-baseline.json             --log web-typecheck.log
+          if [ "$TYPECHECK_STATUS" -eq 0 ]; then
+            echo "Web TypeScript baseline is fully clean."
+          else
+            echo "::warning::Web typecheck still contains recorded Merge84 baseline debt; no regression detected."
+          fi
+
+      - name: Unit tests
+        run: pnpm -r --if-present test
+
+      - name: Strict non-web build
+        run: pnpm -r --filter '!@ai-fsm/web' --if-present build
+
+      - name: Web build status
+        shell: bash
+        run: |
+          echo "::notice::Full Next.js web build becomes a strict gate when the recorded web TypeScript baseline reaches zero."
