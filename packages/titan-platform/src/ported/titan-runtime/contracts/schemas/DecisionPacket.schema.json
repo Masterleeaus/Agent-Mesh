@@ -15,7 +15,10 @@
     "urgency",
     "source_provider",
     "source_revision",
-    "generated_at"
+    "generated_at",
+    "authority_neutral",
+    "execution_authority",
+    "recommendation_is_authority"
   ],
   "properties": {
     "packet_id": {
@@ -61,6 +64,15 @@
         "string",
         "null"
       ]
+    },
+    "authority_neutral": {
+      "const": true
+    },
+    "execution_authority": {
+      "const": false
+    },
+    "recommendation_is_authority": {
+      "const": false
     }
   }
 }
