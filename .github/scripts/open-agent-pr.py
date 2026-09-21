@@ -30,6 +30,10 @@ def parse_branch(branch):
     return match.group(1) if match else None
 
 
+def should_create_draft(ready):
+    return not bool(ready)
+
+
 def select_canonical_issue(matching):
     if not matching:
         return None
@@ -121,9 +125,8 @@ def self_test():
     assert "Closes #42" in body
     assert "agent/TZ-ROADMAP-31-SG-01" in body
     assert "a.ts" in body and "pnpm test — pass" in body
-    # Safety contract: new handoffs are drafts unless --ready is explicit.
-    parser_default_ready = False
-    assert parser_default_ready is False
+    assert should_create_draft(False) is True
+    assert should_create_draft(True) is False
     print("open-agent-pr self-test OK")
 
 
@@ -322,7 +325,7 @@ def main():
             "--title", title,
             "--body", body,
         ]
-        if not args.ready:
+        if should_create_draft(args.ready):
             cmd.append("--draft")
         proc = run(cmd)
         url = proc.stdout.strip()
