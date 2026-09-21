@@ -1,8 +1,8 @@
 {
-  "name": "ai-fsm",
+  "name": "titan-zero",
   "private": true,
   "version": "0.1.0",
-  "description": "AI-first Field Service Management MVP",
+  "description": "Titan Zero — full field service management system with integrated Advanced Intelligence workforce and runtime",
   "packageManager": "pnpm@9.12.0",
   "scripts": {
     "dev": "pnpm -r --parallel --filter @ai-fsm/web --filter @ai-fsm/worker dev",
