@@ -324,3 +324,25 @@ Merge prerequisites are re-checked immediately before GitHub receives the merge 
 Normal Manager operation should pin the reviewed SHA. The helper's `--allow-current-head` escape hatch exists only for deliberate interactive use and must not be used by the GitHub workflow.
 
 Default merge method is **squash**. Successful merge then hands control to the existing post-merge finalizer and safe claim cleanup. There is no automatic merge path.
+
+
+## PR handoff permission fallback
+
+GitHub currently reports:
+
+```text
+GitHub Actions is not permitted to create or approve pull requests
+```
+
+The Agent PR Handoff workflow treats only this exact repository-policy denial as a recoverable condition.
+
+When it occurs:
+
+- the workflow remains successful after recording the problem;
+- `.github/scripts/record-pr-handoff-pending.py` creates or updates one marker comment on the roadmap issue;
+- the comment records subgoal, claim branch, head SHA, merge base, ahead/behind counts and changed files;
+- the claim remains active;
+- no alternate branch is created;
+- an authenticated Agent/Manager context can create the canonical draft PR from the existing claim branch.
+
+Any different failure in `open-agent-pr.py` still fails the workflow and requires investigation.
