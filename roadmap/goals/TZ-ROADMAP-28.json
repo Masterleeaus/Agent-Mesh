@@ -1,0 +1,2753 @@
+{
+  "goal_id": "TZ-ROADMAP-28",
+  "priority": "P1",
+  "title": "Integration, Plugin & Connector Ecosystem",
+  "objective": "Make Titan Zero extensible through one governed, provider-neutral connector/plugin ecosystem with explicit permission, compatibility, reliability, developer-certification and cross-system workflow ownership.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define the canonical Integration, Plugin & Connector Ecosystem workforce, permission/compatibility/reliability boundaries and non-duplication map across connected business domains",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Connect",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-28-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "created_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "Connector Authorization & Credential Binding Worker",
+          "Connector Capability Binding Worker",
+          "Connector Invocation & Sync Worker",
+          "Connector Recovery & Retry Worker",
+          "Connector Version Migration Worker",
+          "Cross-System Workflow Step Worker",
+          "Connector Conformance Test Worker",
+          "Connector Package Publication Worker",
+          "Connector Security & Permission Integrity Specialist",
+          "Connector Capability & Compatibility Specialist",
+          "Connector Reliability & Recovery Specialist",
+          "Cross-System Workflow Integration Specialist",
+          "Connector Ecosystem Certification & Developer Contract Specialist",
+          "Integration & Ecosystem Manager",
+          "Cross-System Integration Orchestrator"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK,TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK,TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK,TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-CROSS-SYSTEM-ORCH -> TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC,TZAG-INT-CAPABILITY-COMPATIBILITY-SPC,TZAG-INT-RELIABILITY-RECOVERY-SPC,TZAG-INT-WORKFLOW-INTEGRATION-SPC,TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "pain_point_ids": [
+          "PAIN-INT-AUTH-BINDING-INCOMPLETE",
+          "PAIN-INT-CAPABILITY-NOT-BOUND",
+          "PAIN-INT-INVOCATION-SYNC-FAILURE",
+          "PAIN-INT-RECOVERY-NOT-EXECUTED",
+          "PAIN-INT-VERSION-MIGRATION-NOT-APPLIED",
+          "PAIN-INT-CROSS-SYSTEM-STEP-NOT-EXECUTED",
+          "PAIN-INT-CONNECTOR-CONFORMANCE-UNVERIFIED",
+          "PAIN-INT-UNCERTIFIED-PACKAGE-PUBLICATION",
+          "PAIN-INT-PERMISSION-DRIFT",
+          "PAIN-INT-SECRET-BOUNDARY-RISK",
+          "PAIN-INT-CAPABILITY-MISMATCH",
+          "PAIN-INT-PROVIDER-VERSION-DRIFT",
+          "PAIN-INT-CONNECTOR-DEGRADED",
+          "PAIN-INT-EXTERNAL-SIDE-EFFECT-UNCERTAIN",
+          "PAIN-INT-WORKFLOW-FRAGMENTATION",
+          "PAIN-INT-CROSS-SYSTEM-CONSISTENCY",
+          "PAIN-INT-THIRD-PARTY-CONNECTOR-QUALITY",
+          "PAIN-INT-DEVELOPER-CONTRACT-DRIFT",
+          "PAIN-INT-FRAGMENTED-CONNECTOR-OWNERSHIP",
+          "PAIN-INT-ECOSYSTEM-NO-ACCOUNTABILITY",
+          "PAIN-INT-CROSS-DOMAIN-INTEGRATION-CONFLICT"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "OUTCOME-TZAG-INT-CAPABILITY-BINDING-WRK",
+          "OUTCOME-TZAG-INT-INVOCATION-SYNC-WRK",
+          "OUTCOME-TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "OUTCOME-TZAG-INT-VERSION-MIGRATION-WRK",
+          "OUTCOME-TZAG-INT-WORKFLOW-STEP-WRK",
+          "OUTCOME-TZAG-INT-CONFORMANCE-TEST-WRK",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "OUTCOME-TZAG-INT-SECURITY-PERMISSION-SPC",
+          "OUTCOME-TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "OUTCOME-TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "OUTCOME-TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "OUTCOME-TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the smallest connector scope and credential lifecycle change that restores the required capability without widening authority.",
+          "Recommend a compatible mapping, pinned version, migration or graceful capability disablement supported by current connector/provider evidence.",
+          "Recommend the least risky retry, pause, fallback, reconciliation or escalation based on idempotency and current external-state evidence.",
+          "Recommend a workflow decomposition that keeps each business outcome with its canonical domain owner while using connectors only for external transport/actions.",
+          "Recommend certify, reject, remediate, supersede or withdraw based on reproducible contract/security/compatibility evidence.",
+          "Recommend integration priorities, remediation and certification decisions using business criticality, security, compatibility, reliability and developer evidence.",
+          "Recommend cross-domain integration options and degradation/fallback paths while preserving domain Manager authority and clearly exposing trade-offs."
+        ],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+            "TZAG-INT-CAPABILITY-BINDING-WRK",
+            "TZAG-INT-INVOCATION-SYNC-WRK",
+            "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+            "TZAG-INT-VERSION-MIGRATION-WRK",
+            "TZAG-INT-WORKFLOW-STEP-WRK",
+            "TZAG-INT-CONFORMANCE-TEST-WRK",
+            "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+            "TZAG-INT-SECURITY-PERMISSION-SPC",
+            "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+            "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+            "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+            "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+            "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+            "TZAG-INT-CROSS-SYSTEM-ORCH"
+          ],
+          "definition_home": "TZ-ROADMAP-28-SG-01"
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "provider-neutral connector boundary review",
+          "no raw secret in prompt/log/client-cache contract",
+          "external side-effect idempotency/receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical definitions appear exactly once here. Providers/channels/APIs/SDKs/adapters are tools and integration resources, not workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Connect",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Workforce/PackageWorkforceProviderAdapter.php",
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/ProviderHealthRefreshService.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php"
+            ],
+            "finding": "MCP, Connect and Command Bus already divide discovery/gating, external provider runtime, and governed side-effect execution. Canonical integration workforce should coordinate these without absorbing domain authority or spawning provider-specific agent identities."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Host/TitanConnectHostManifest.php",
+              "System/Host/TitanConnectPermissionCatalogue.php",
+              "System/Onboarding/ProviderCredentialStore.php",
+              "System/Security/EncryptedCredentialVault.php",
+              "System/Services/ChannelHealthService.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Console/SyncTitanConnectHostCommand.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "System/Http/Middleware/EnforceCompanyRateLimit.php",
+              "tools/verify-package.php"
+            ],
+            "finding": "MCP, Connect and Command Bus already divide discovery/gating, external provider runtime, and governed side-effect execution. Canonical integration workforce should coordinate these without absorbing domain authority or spawning provider-specific agent identities."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Services/CommandAdapterRegistry.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/DTO/CommandReceipt.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php",
+              "schemas/command-execution-receipt.v1.schema.json",
+              "schemas/events/command.requested.schema.json",
+              "schemas/events/command.completed.schema.json",
+              "tests/Standalone/ApprovalIntegrationTest.php",
+              "tests/Contract/wave4a_recovery_lifecycle.php"
+            ],
+            "finding": "MCP, Connect and Command Bus already divide discovery/gating, external provider runtime, and governed side-effect execution. Canonical integration workforce should coordinate these without absorbing domain authority or spawning provider-specific agent identities."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:12:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "MCP, Connect and Command Bus already divide discovery/gating, external provider runtime, and governed side-effect execution. Canonical integration workforce should coordinate these without absorbing domain authority or spawning provider-specific agent identities."
+      }
+    },
+    {
+      "subgoal": 2,
+      "title": "Complete shared connector manifest, capability, permission, health, receipt, system-of-record and compatibility contracts used by the canonical integration roster",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Connect",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-28-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Connector Authorization & Credential Binding Worker",
+          "Connector Capability Binding Worker",
+          "Connector Invocation & Sync Worker",
+          "Connector Recovery & Retry Worker",
+          "Connector Version Migration Worker",
+          "Cross-System Workflow Step Worker",
+          "Connector Conformance Test Worker",
+          "Connector Package Publication Worker",
+          "Connector Security & Permission Integrity Specialist",
+          "Connector Capability & Compatibility Specialist",
+          "Connector Reliability & Recovery Specialist",
+          "Cross-System Workflow Integration Specialist",
+          "Connector Ecosystem Certification & Developer Contract Specialist",
+          "Integration & Ecosystem Manager",
+          "Cross-System Integration Orchestrator"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK,TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK,TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK,TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-CROSS-SYSTEM-ORCH -> TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC,TZAG-INT-CAPABILITY-COMPATIBILITY-SPC,TZAG-INT-RELIABILITY-RECOVERY-SPC,TZAG-INT-WORKFLOW-INTEGRATION-SPC,TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "pain_point_ids": [
+          "PAIN-INT-AUTH-BINDING-INCOMPLETE",
+          "PAIN-INT-CAPABILITY-NOT-BOUND",
+          "PAIN-INT-INVOCATION-SYNC-FAILURE",
+          "PAIN-INT-RECOVERY-NOT-EXECUTED",
+          "PAIN-INT-VERSION-MIGRATION-NOT-APPLIED",
+          "PAIN-INT-CROSS-SYSTEM-STEP-NOT-EXECUTED",
+          "PAIN-INT-CONNECTOR-CONFORMANCE-UNVERIFIED",
+          "PAIN-INT-UNCERTIFIED-PACKAGE-PUBLICATION",
+          "PAIN-INT-PERMISSION-DRIFT",
+          "PAIN-INT-SECRET-BOUNDARY-RISK",
+          "PAIN-INT-CAPABILITY-MISMATCH",
+          "PAIN-INT-PROVIDER-VERSION-DRIFT",
+          "PAIN-INT-CONNECTOR-DEGRADED",
+          "PAIN-INT-EXTERNAL-SIDE-EFFECT-UNCERTAIN",
+          "PAIN-INT-WORKFLOW-FRAGMENTATION",
+          "PAIN-INT-CROSS-SYSTEM-CONSISTENCY",
+          "PAIN-INT-THIRD-PARTY-CONNECTOR-QUALITY",
+          "PAIN-INT-DEVELOPER-CONTRACT-DRIFT",
+          "PAIN-INT-FRAGMENTED-CONNECTOR-OWNERSHIP",
+          "PAIN-INT-ECOSYSTEM-NO-ACCOUNTABILITY",
+          "PAIN-INT-CROSS-DOMAIN-INTEGRATION-CONFLICT"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "OUTCOME-TZAG-INT-CAPABILITY-BINDING-WRK",
+          "OUTCOME-TZAG-INT-INVOCATION-SYNC-WRK",
+          "OUTCOME-TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "OUTCOME-TZAG-INT-VERSION-MIGRATION-WRK",
+          "OUTCOME-TZAG-INT-WORKFLOW-STEP-WRK",
+          "OUTCOME-TZAG-INT-CONFORMANCE-TEST-WRK",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "OUTCOME-TZAG-INT-SECURITY-PERMISSION-SPC",
+          "OUTCOME-TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "OUTCOME-TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "OUTCOME-TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "OUTCOME-TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the smallest connector scope and credential lifecycle change that restores the required capability without widening authority.",
+          "Recommend a compatible mapping, pinned version, migration or graceful capability disablement supported by current connector/provider evidence.",
+          "Recommend the least risky retry, pause, fallback, reconciliation or escalation based on idempotency and current external-state evidence.",
+          "Recommend a workflow decomposition that keeps each business outcome with its canonical domain owner while using connectors only for external transport/actions.",
+          "Recommend certify, reject, remediate, supersede or withdraw based on reproducible contract/security/compatibility evidence.",
+          "Recommend integration priorities, remediation and certification decisions using business criticality, security, compatibility, reliability and developer evidence.",
+          "Recommend cross-domain integration options and degradation/fallback paths while preserving domain Manager authority and clearly exposing trade-offs."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+            "TZAG-INT-CAPABILITY-BINDING-WRK",
+            "TZAG-INT-INVOCATION-SYNC-WRK",
+            "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+            "TZAG-INT-VERSION-MIGRATION-WRK",
+            "TZAG-INT-WORKFLOW-STEP-WRK",
+            "TZAG-INT-CONFORMANCE-TEST-WRK",
+            "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+            "TZAG-INT-SECURITY-PERMISSION-SPC",
+            "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+            "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+            "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+            "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+            "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+            "TZAG-INT-CROSS-SYSTEM-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-28-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "provider-neutral connector boundary review",
+          "no raw secret in prompt/log/client-cache contract",
+          "external side-effect idempotency/receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Shared manifests, capability contracts, permissions, health, system-of-record rules, receipts and compatibility metadata are infrastructure used by the same canonical integration identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Connect",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Workforce/PackageWorkforceProviderAdapter.php",
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/ProviderHealthRefreshService.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php"
+            ],
+            "finding": "Manifest, capability, permission, health and receipt primitives exist across the three donors; system-of-record and compatibility metadata should be unified into one connector contract rather than duplicated."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Host/TitanConnectHostManifest.php",
+              "System/Host/TitanConnectPermissionCatalogue.php",
+              "System/Onboarding/ProviderCredentialStore.php",
+              "System/Security/EncryptedCredentialVault.php",
+              "System/Services/ChannelHealthService.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Console/SyncTitanConnectHostCommand.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "System/Http/Middleware/EnforceCompanyRateLimit.php",
+              "tools/verify-package.php"
+            ],
+            "finding": "Manifest, capability, permission, health and receipt primitives exist across the three donors; system-of-record and compatibility metadata should be unified into one connector contract rather than duplicated."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Services/CommandAdapterRegistry.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/DTO/CommandReceipt.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php",
+              "schemas/command-execution-receipt.v1.schema.json",
+              "schemas/events/command.requested.schema.json",
+              "schemas/events/command.completed.schema.json",
+              "tests/Standalone/ApprovalIntegrationTest.php",
+              "tests/Contract/wave4a_recovery_lifecycle.php"
+            ],
+            "finding": "Manifest, capability, permission, health and receipt primitives exist across the three donors; system-of-record and compatibility metadata should be unified into one connector contract rather than duplicated."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:12:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Manifest, capability, permission, health and receipt primitives exist across the three donors; system-of-record and compatibility metadata should be unified into one connector contract rather than duplicated."
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Implement the reusable connector SDK, credential/consent boundary, developer contract and provider-neutral adapter seams without provider-specific workforce identities",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Connect",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-28-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR"
+        ],
+        "canonical_agent_names": [
+          "Connector Authorization & Credential Binding Worker",
+          "Connector Capability Binding Worker",
+          "Connector Version Migration Worker",
+          "Connector Conformance Test Worker",
+          "Connector Package Publication Worker",
+          "Connector Security & Permission Integrity Specialist",
+          "Connector Capability & Compatibility Specialist",
+          "Connector Ecosystem Certification & Developer Contract Specialist",
+          "Integration & Ecosystem Manager"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager"
+        ],
+        "parent_agent_ids": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK,TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK,TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-CROSS-SYSTEM-ORCH -> TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC,TZAG-INT-CAPABILITY-COMPATIBILITY-SPC,TZAG-INT-RELIABILITY-RECOVERY-SPC,TZAG-INT-WORKFLOW-INTEGRATION-SPC,TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "pain_point_ids": [
+          "PAIN-INT-AUTH-BINDING-INCOMPLETE",
+          "PAIN-INT-CAPABILITY-NOT-BOUND",
+          "PAIN-INT-VERSION-MIGRATION-NOT-APPLIED",
+          "PAIN-INT-CONNECTOR-CONFORMANCE-UNVERIFIED",
+          "PAIN-INT-UNCERTIFIED-PACKAGE-PUBLICATION",
+          "PAIN-INT-PERMISSION-DRIFT",
+          "PAIN-INT-SECRET-BOUNDARY-RISK",
+          "PAIN-INT-CAPABILITY-MISMATCH",
+          "PAIN-INT-PROVIDER-VERSION-DRIFT",
+          "PAIN-INT-THIRD-PARTY-CONNECTOR-QUALITY",
+          "PAIN-INT-DEVELOPER-CONTRACT-DRIFT",
+          "PAIN-INT-FRAGMENTED-CONNECTOR-OWNERSHIP",
+          "PAIN-INT-ECOSYSTEM-NO-ACCOUNTABILITY"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "OUTCOME-TZAG-INT-CAPABILITY-BINDING-WRK",
+          "OUTCOME-TZAG-INT-VERSION-MIGRATION-WRK",
+          "OUTCOME-TZAG-INT-CONFORMANCE-TEST-WRK",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "OUTCOME-TZAG-INT-SECURITY-PERMISSION-SPC",
+          "OUTCOME-TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "OUTCOME-TZAG-INT-INTEGRATION-ECOSYSTEM-MGR"
+        ],
+        "recommendations": [
+          "Recommend the smallest connector scope and credential lifecycle change that restores the required capability without widening authority.",
+          "Recommend a compatible mapping, pinned version, migration or graceful capability disablement supported by current connector/provider evidence.",
+          "Recommend certify, reject, remediate, supersede or withdraw based on reproducible contract/security/compatibility evidence.",
+          "Recommend integration priorities, remediation and certification decisions using business criticality, security, compatibility, reliability and developer evidence."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+            "TZAG-INT-CAPABILITY-BINDING-WRK",
+            "TZAG-INT-VERSION-MIGRATION-WRK",
+            "TZAG-INT-CONFORMANCE-TEST-WRK",
+            "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+            "TZAG-INT-SECURITY-PERMISSION-SPC",
+            "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+            "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+            "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-28-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "provider-neutral connector boundary review",
+          "no raw secret in prompt/log/client-cache contract",
+          "external side-effect idempotency/receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "SDK/credential/developer-contract work remains provider-neutral; raw secrets stay behind Titan Locker and connectors receive only governed references/tokens/capabilities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Connect",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Workforce/PackageWorkforceProviderAdapter.php",
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/ProviderHealthRefreshService.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php"
+            ],
+            "finding": "Provider-neutral adapters, encrypted credential storage, secret redaction and capability gates exist. A reusable connector SDK/consent/developer contract can converge these primitives without core forks."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Host/TitanConnectHostManifest.php",
+              "System/Host/TitanConnectPermissionCatalogue.php",
+              "System/Onboarding/ProviderCredentialStore.php",
+              "System/Security/EncryptedCredentialVault.php",
+              "System/Services/ChannelHealthService.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Console/SyncTitanConnectHostCommand.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "System/Http/Middleware/EnforceCompanyRateLimit.php",
+              "tools/verify-package.php"
+            ],
+            "finding": "Provider-neutral adapters, encrypted credential storage, secret redaction and capability gates exist. A reusable connector SDK/consent/developer contract can converge these primitives without core forks."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Services/CommandAdapterRegistry.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/DTO/CommandReceipt.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php",
+              "schemas/command-execution-receipt.v1.schema.json",
+              "schemas/events/command.requested.schema.json",
+              "schemas/events/command.completed.schema.json",
+              "tests/Standalone/ApprovalIntegrationTest.php",
+              "tests/Contract/wave4a_recovery_lifecycle.php"
+            ],
+            "finding": "Provider-neutral adapters, encrypted credential storage, secret redaction and capability gates exist. A reusable connector SDK/consent/developer contract can converge these primitives without core forks."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:12:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Provider-neutral adapters, encrypted credential storage, secret redaction and capability gates exist. A reusable connector SDK/consent/developer contract can converge these primitives without core forks."
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Implement bounded Workers for connector authorization, capability binding, invocation/sync, recovery, version migration, cross-system workflow steps, conformance testing and package publication",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Connect",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-28-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "canonical_agent_names": [
+          "Connector Authorization & Credential Binding Worker",
+          "Connector Capability Binding Worker",
+          "Connector Invocation & Sync Worker",
+          "Connector Recovery & Retry Worker",
+          "Connector Version Migration Worker",
+          "Cross-System Workflow Step Worker",
+          "Connector Conformance Test Worker",
+          "Connector Package Publication Worker",
+          "Connector Security & Permission Integrity Specialist",
+          "Connector Capability & Compatibility Specialist",
+          "Connector Reliability & Recovery Specialist",
+          "Cross-System Workflow Integration Specialist",
+          "Connector Ecosystem Certification & Developer Contract Specialist"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist"
+        ],
+        "parent_agent_ids": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR"
+        ],
+        "delegation_chain": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK,TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK,TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK,TZAG-INT-ECOSYSTEM-PUBLISH-WRK"
+        ],
+        "pain_point_ids": [
+          "PAIN-INT-AUTH-BINDING-INCOMPLETE",
+          "PAIN-INT-CAPABILITY-NOT-BOUND",
+          "PAIN-INT-INVOCATION-SYNC-FAILURE",
+          "PAIN-INT-RECOVERY-NOT-EXECUTED",
+          "PAIN-INT-VERSION-MIGRATION-NOT-APPLIED",
+          "PAIN-INT-CROSS-SYSTEM-STEP-NOT-EXECUTED",
+          "PAIN-INT-CONNECTOR-CONFORMANCE-UNVERIFIED",
+          "PAIN-INT-UNCERTIFIED-PACKAGE-PUBLICATION",
+          "PAIN-INT-PERMISSION-DRIFT",
+          "PAIN-INT-SECRET-BOUNDARY-RISK",
+          "PAIN-INT-CAPABILITY-MISMATCH",
+          "PAIN-INT-PROVIDER-VERSION-DRIFT",
+          "PAIN-INT-CONNECTOR-DEGRADED",
+          "PAIN-INT-EXTERNAL-SIDE-EFFECT-UNCERTAIN",
+          "PAIN-INT-WORKFLOW-FRAGMENTATION",
+          "PAIN-INT-CROSS-SYSTEM-CONSISTENCY",
+          "PAIN-INT-THIRD-PARTY-CONNECTOR-QUALITY",
+          "PAIN-INT-DEVELOPER-CONTRACT-DRIFT"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "OUTCOME-TZAG-INT-CAPABILITY-BINDING-WRK",
+          "OUTCOME-TZAG-INT-INVOCATION-SYNC-WRK",
+          "OUTCOME-TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "OUTCOME-TZAG-INT-VERSION-MIGRATION-WRK",
+          "OUTCOME-TZAG-INT-WORKFLOW-STEP-WRK",
+          "OUTCOME-TZAG-INT-CONFORMANCE-TEST-WRK",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "OUTCOME-TZAG-INT-SECURITY-PERMISSION-SPC",
+          "OUTCOME-TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "OUTCOME-TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "recommendations": [
+          "Recommend the smallest connector scope and credential lifecycle change that restores the required capability without widening authority.",
+          "Recommend a compatible mapping, pinned version, migration or graceful capability disablement supported by current connector/provider evidence.",
+          "Recommend the least risky retry, pause, fallback, reconciliation or escalation based on idempotency and current external-state evidence.",
+          "Recommend a workflow decomposition that keeps each business outcome with its canonical domain owner while using connectors only for external transport/actions.",
+          "Recommend certify, reject, remediate, supersede or withdraw based on reproducible contract/security/compatibility evidence."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+            "TZAG-INT-CAPABILITY-BINDING-WRK",
+            "TZAG-INT-INVOCATION-SYNC-WRK",
+            "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+            "TZAG-INT-VERSION-MIGRATION-WRK",
+            "TZAG-INT-WORKFLOW-STEP-WRK",
+            "TZAG-INT-CONFORMANCE-TEST-WRK",
+            "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+            "TZAG-INT-SECURITY-PERMISSION-SPC",
+            "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+            "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+            "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+            "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-28-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "provider-neutral connector boundary review",
+          "no raw secret in prompt/log/client-cache contract",
+          "external side-effect idempotency/receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Workers execute bounded connector/configuration/test/publication steps only. Specialists choose/prepare/delegate technical integration work; business-domain actions still require the owning domain authority."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Connect",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Workforce/PackageWorkforceProviderAdapter.php",
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/ProviderHealthRefreshService.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php"
+            ],
+            "finding": "Capability binding, invocation, health refresh, retries/host sync, governed command dispatch and receipt persistence provide bounded worker primitives; version migration and package publication should use the same contract."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Host/TitanConnectHostManifest.php",
+              "System/Host/TitanConnectPermissionCatalogue.php",
+              "System/Onboarding/ProviderCredentialStore.php",
+              "System/Security/EncryptedCredentialVault.php",
+              "System/Services/ChannelHealthService.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Console/SyncTitanConnectHostCommand.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "System/Http/Middleware/EnforceCompanyRateLimit.php",
+              "tools/verify-package.php"
+            ],
+            "finding": "Capability binding, invocation, health refresh, retries/host sync, governed command dispatch and receipt persistence provide bounded worker primitives; version migration and package publication should use the same contract."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Services/CommandAdapterRegistry.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/DTO/CommandReceipt.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php",
+              "schemas/command-execution-receipt.v1.schema.json",
+              "schemas/events/command.requested.schema.json",
+              "schemas/events/command.completed.schema.json",
+              "tests/Standalone/ApprovalIntegrationTest.php",
+              "tests/Contract/wave4a_recovery_lifecycle.php"
+            ],
+            "finding": "Capability binding, invocation, health refresh, retries/host sync, governed command dispatch and receipt persistence provide bounded worker primitives; version migration and package publication should use the same contract."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:12:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Capability binding, invocation, health refresh, retries/host sync, governed command dispatch and receipt persistence provide bounded worker primitives; version migration and package publication should use the same contract."
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Implement Specialist layer and Integration & Ecosystem Manager ownership for security/permission integrity, compatibility, reliability, workflow integration and ecosystem certification",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Connect",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-28-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR"
+        ],
+        "canonical_agent_names": [
+          "Connector Security & Permission Integrity Specialist",
+          "Connector Capability & Compatibility Specialist",
+          "Connector Reliability & Recovery Specialist",
+          "Cross-System Workflow Integration Specialist",
+          "Connector Ecosystem Certification & Developer Contract Specialist",
+          "Integration & Ecosystem Manager"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Manager"
+        ],
+        "parent_agent_ids": [
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK,TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK,TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK,TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-CROSS-SYSTEM-ORCH -> TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC,TZAG-INT-CAPABILITY-COMPATIBILITY-SPC,TZAG-INT-RELIABILITY-RECOVERY-SPC,TZAG-INT-WORKFLOW-INTEGRATION-SPC,TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "pain_point_ids": [
+          "PAIN-INT-PERMISSION-DRIFT",
+          "PAIN-INT-SECRET-BOUNDARY-RISK",
+          "PAIN-INT-CAPABILITY-MISMATCH",
+          "PAIN-INT-PROVIDER-VERSION-DRIFT",
+          "PAIN-INT-CONNECTOR-DEGRADED",
+          "PAIN-INT-EXTERNAL-SIDE-EFFECT-UNCERTAIN",
+          "PAIN-INT-WORKFLOW-FRAGMENTATION",
+          "PAIN-INT-CROSS-SYSTEM-CONSISTENCY",
+          "PAIN-INT-THIRD-PARTY-CONNECTOR-QUALITY",
+          "PAIN-INT-DEVELOPER-CONTRACT-DRIFT",
+          "PAIN-INT-FRAGMENTED-CONNECTOR-OWNERSHIP",
+          "PAIN-INT-ECOSYSTEM-NO-ACCOUNTABILITY"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INT-SECURITY-PERMISSION-SPC",
+          "OUTCOME-TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "OUTCOME-TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "OUTCOME-TZAG-INT-INTEGRATION-ECOSYSTEM-MGR"
+        ],
+        "recommendations": [
+          "Recommend the smallest connector scope and credential lifecycle change that restores the required capability without widening authority.",
+          "Recommend a compatible mapping, pinned version, migration or graceful capability disablement supported by current connector/provider evidence.",
+          "Recommend the least risky retry, pause, fallback, reconciliation or escalation based on idempotency and current external-state evidence.",
+          "Recommend a workflow decomposition that keeps each business outcome with its canonical domain owner while using connectors only for external transport/actions.",
+          "Recommend certify, reject, remediate, supersede or withdraw based on reproducible contract/security/compatibility evidence.",
+          "Recommend integration priorities, remediation and certification decisions using business criticality, security, compatibility, reliability and developer evidence."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INT-SECURITY-PERMISSION-SPC",
+            "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+            "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+            "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+            "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+            "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-28-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "provider-neutral connector boundary review",
+          "no raw secret in prompt/log/client-cache contract",
+          "external side-effect idempotency/receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Specialists own narrow integration pains; Integration & Ecosystem Manager owns portfolio health/security/compatibility/certification, not connected business-domain outcomes."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Connect",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Workforce/PackageWorkforceProviderAdapter.php",
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/ProviderHealthRefreshService.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php"
+            ],
+            "finding": "Security/permission gates, provider health, company isolation and approval/receipt enforcement support Specialist/Manager ownership; one ecosystem certification workflow remains to be standardized."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Host/TitanConnectHostManifest.php",
+              "System/Host/TitanConnectPermissionCatalogue.php",
+              "System/Onboarding/ProviderCredentialStore.php",
+              "System/Security/EncryptedCredentialVault.php",
+              "System/Services/ChannelHealthService.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Console/SyncTitanConnectHostCommand.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "System/Http/Middleware/EnforceCompanyRateLimit.php",
+              "tools/verify-package.php"
+            ],
+            "finding": "Security/permission gates, provider health, company isolation and approval/receipt enforcement support Specialist/Manager ownership; one ecosystem certification workflow remains to be standardized."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Services/CommandAdapterRegistry.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/DTO/CommandReceipt.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php",
+              "schemas/command-execution-receipt.v1.schema.json",
+              "schemas/events/command.requested.schema.json",
+              "schemas/events/command.completed.schema.json",
+              "tests/Standalone/ApprovalIntegrationTest.php",
+              "tests/Contract/wave4a_recovery_lifecycle.php"
+            ],
+            "finding": "Security/permission gates, provider health, company isolation and approval/receipt enforcement support Specialist/Manager ownership; one ecosystem certification workflow remains to be standardized."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:12:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Security/permission gates, provider health, company isolation and approval/receipt enforcement support Specialist/Manager ownership; one ecosystem certification workflow remains to be standardized."
+      }
+    },
+    {
+      "subgoal": 6,
+      "title": "Implement Cross-System Integration Orchestrator coordination across domain Managers, external systems and Titan Prime without absorbing business-domain authority",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Connect",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-28-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Integration & Ecosystem Manager",
+          "Cross-System Integration Orchestrator"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-INT-CROSS-SYSTEM-ORCH -> TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC,TZAG-INT-CAPABILITY-COMPATIBILITY-SPC,TZAG-INT-RELIABILITY-RECOVERY-SPC,TZAG-INT-WORKFLOW-INTEGRATION-SPC,TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "pain_point_ids": [
+          "PAIN-INT-FRAGMENTED-CONNECTOR-OWNERSHIP",
+          "PAIN-INT-ECOSYSTEM-NO-ACCOUNTABILITY",
+          "PAIN-INT-CROSS-DOMAIN-INTEGRATION-CONFLICT"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "OUTCOME-TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "recommendations": [
+          "Recommend integration priorities, remediation and certification decisions using business criticality, security, compatibility, reliability and developer evidence.",
+          "Recommend cross-domain integration options and degradation/fallback paths while preserving domain Manager authority and clearly exposing trade-offs."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+            "TZAG-INT-CROSS-SYSTEM-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-28-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "provider-neutral connector boundary review",
+          "no raw secret in prompt/log/client-cache contract",
+          "external side-effect idempotency/receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Cross-System Integration Orchestrator coordinates dependencies and domain-manager handoffs; it does not duplicate Titan Prime or become a universal business orchestrator."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Connect",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Workforce/PackageWorkforceProviderAdapter.php",
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/ProviderHealthRefreshService.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php"
+            ],
+            "finding": "Cross-system orchestration can compose capability-selected providers with Command Bus intents/receipts, but operational business authority must remain with domain Managers and Titan Prime remains a governed consumer/coordinator."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Host/TitanConnectHostManifest.php",
+              "System/Host/TitanConnectPermissionCatalogue.php",
+              "System/Onboarding/ProviderCredentialStore.php",
+              "System/Security/EncryptedCredentialVault.php",
+              "System/Services/ChannelHealthService.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Console/SyncTitanConnectHostCommand.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "System/Http/Middleware/EnforceCompanyRateLimit.php",
+              "tools/verify-package.php"
+            ],
+            "finding": "Cross-system orchestration can compose capability-selected providers with Command Bus intents/receipts, but operational business authority must remain with domain Managers and Titan Prime remains a governed consumer/coordinator."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Services/CommandAdapterRegistry.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/DTO/CommandReceipt.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php",
+              "schemas/command-execution-receipt.v1.schema.json",
+              "schemas/events/command.requested.schema.json",
+              "schemas/events/command.completed.schema.json",
+              "tests/Standalone/ApprovalIntegrationTest.php",
+              "tests/Contract/wave4a_recovery_lifecycle.php"
+            ],
+            "finding": "Cross-system orchestration can compose capability-selected providers with Command Bus intents/receipts, but operational business authority must remain with domain Managers and Titan Prime remains a governed consumer/coordinator."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:12:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Cross-system orchestration can compose capability-selected providers with Command Bus intents/receipts, but operational business authority must remain with domain Managers and Titan Prime remains a governed consumer/coordinator."
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Implement earned proactive and predictive connector health, routing, fallback, compatibility and degradation behaviours across the existing hierarchy; no fifth Pro agent identity",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Connect",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-28-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Connector Authorization & Credential Binding Worker",
+          "Connector Capability Binding Worker",
+          "Connector Invocation & Sync Worker",
+          "Connector Recovery & Retry Worker",
+          "Connector Version Migration Worker",
+          "Cross-System Workflow Step Worker",
+          "Connector Conformance Test Worker",
+          "Connector Package Publication Worker",
+          "Connector Security & Permission Integrity Specialist",
+          "Connector Capability & Compatibility Specialist",
+          "Connector Reliability & Recovery Specialist",
+          "Cross-System Workflow Integration Specialist",
+          "Connector Ecosystem Certification & Developer Contract Specialist",
+          "Integration & Ecosystem Manager",
+          "Cross-System Integration Orchestrator"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK,TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK,TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK,TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-CROSS-SYSTEM-ORCH -> TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC,TZAG-INT-CAPABILITY-COMPATIBILITY-SPC,TZAG-INT-RELIABILITY-RECOVERY-SPC,TZAG-INT-WORKFLOW-INTEGRATION-SPC,TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "pain_point_ids": [
+          "PAIN-INT-AUTH-BINDING-INCOMPLETE",
+          "PAIN-INT-CAPABILITY-NOT-BOUND",
+          "PAIN-INT-INVOCATION-SYNC-FAILURE",
+          "PAIN-INT-RECOVERY-NOT-EXECUTED",
+          "PAIN-INT-VERSION-MIGRATION-NOT-APPLIED",
+          "PAIN-INT-CROSS-SYSTEM-STEP-NOT-EXECUTED",
+          "PAIN-INT-CONNECTOR-CONFORMANCE-UNVERIFIED",
+          "PAIN-INT-UNCERTIFIED-PACKAGE-PUBLICATION",
+          "PAIN-INT-PERMISSION-DRIFT",
+          "PAIN-INT-SECRET-BOUNDARY-RISK",
+          "PAIN-INT-CAPABILITY-MISMATCH",
+          "PAIN-INT-PROVIDER-VERSION-DRIFT",
+          "PAIN-INT-CONNECTOR-DEGRADED",
+          "PAIN-INT-EXTERNAL-SIDE-EFFECT-UNCERTAIN",
+          "PAIN-INT-WORKFLOW-FRAGMENTATION",
+          "PAIN-INT-CROSS-SYSTEM-CONSISTENCY",
+          "PAIN-INT-THIRD-PARTY-CONNECTOR-QUALITY",
+          "PAIN-INT-DEVELOPER-CONTRACT-DRIFT",
+          "PAIN-INT-FRAGMENTED-CONNECTOR-OWNERSHIP",
+          "PAIN-INT-ECOSYSTEM-NO-ACCOUNTABILITY",
+          "PAIN-INT-CROSS-DOMAIN-INTEGRATION-CONFLICT"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "OUTCOME-TZAG-INT-CAPABILITY-BINDING-WRK",
+          "OUTCOME-TZAG-INT-INVOCATION-SYNC-WRK",
+          "OUTCOME-TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "OUTCOME-TZAG-INT-VERSION-MIGRATION-WRK",
+          "OUTCOME-TZAG-INT-WORKFLOW-STEP-WRK",
+          "OUTCOME-TZAG-INT-CONFORMANCE-TEST-WRK",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "OUTCOME-TZAG-INT-SECURITY-PERMISSION-SPC",
+          "OUTCOME-TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "OUTCOME-TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "OUTCOME-TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "OUTCOME-TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the smallest connector scope and credential lifecycle change that restores the required capability without widening authority.",
+          "Recommend a compatible mapping, pinned version, migration or graceful capability disablement supported by current connector/provider evidence.",
+          "Recommend the least risky retry, pause, fallback, reconciliation or escalation based on idempotency and current external-state evidence.",
+          "Recommend a workflow decomposition that keeps each business outcome with its canonical domain owner while using connectors only for external transport/actions.",
+          "Recommend certify, reject, remediate, supersede or withdraw based on reproducible contract/security/compatibility evidence.",
+          "Recommend integration priorities, remediation and certification decisions using business criticality, security, compatibility, reliability and developer evidence.",
+          "Recommend cross-domain integration options and degradation/fallback paths while preserving domain Manager authority and clearly exposing trade-offs."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+            "TZAG-INT-CAPABILITY-BINDING-WRK",
+            "TZAG-INT-INVOCATION-SYNC-WRK",
+            "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+            "TZAG-INT-VERSION-MIGRATION-WRK",
+            "TZAG-INT-WORKFLOW-STEP-WRK",
+            "TZAG-INT-CONFORMANCE-TEST-WRK",
+            "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+            "TZAG-INT-SECURITY-PERMISSION-SPC",
+            "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+            "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+            "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+            "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+            "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+            "TZAG-INT-CROSS-SYSTEM-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-28-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "provider-neutral connector boundary review",
+          "no raw secret in prompt/log/client-cache contract",
+          "external side-effect idempotency/receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Prediction is an earned operating envelope, not a fifth Pro identity. Fallback/routing predictions cannot widen permissions or silently change business-domain authority."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Connect",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Workforce/PackageWorkforceProviderAdapter.php",
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/ProviderHealthRefreshService.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php"
+            ],
+            "finding": "Provider health, capability availability, policy/authority gating and rate limits support proactive degradation/fallback. Predictive routing should remain earned behavior over the same hierarchy, not a fifth agent identity."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Host/TitanConnectHostManifest.php",
+              "System/Host/TitanConnectPermissionCatalogue.php",
+              "System/Onboarding/ProviderCredentialStore.php",
+              "System/Security/EncryptedCredentialVault.php",
+              "System/Services/ChannelHealthService.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Console/SyncTitanConnectHostCommand.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "System/Http/Middleware/EnforceCompanyRateLimit.php",
+              "tools/verify-package.php"
+            ],
+            "finding": "Provider health, capability availability, policy/authority gating and rate limits support proactive degradation/fallback. Predictive routing should remain earned behavior over the same hierarchy, not a fifth agent identity."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Services/CommandAdapterRegistry.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/DTO/CommandReceipt.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php",
+              "schemas/command-execution-receipt.v1.schema.json",
+              "schemas/events/command.requested.schema.json",
+              "schemas/events/command.completed.schema.json",
+              "tests/Standalone/ApprovalIntegrationTest.php",
+              "tests/Contract/wave4a_recovery_lifecycle.php"
+            ],
+            "finding": "Provider health, capability availability, policy/authority gating and rate limits support proactive degradation/fallback. Predictive routing should remain earned behavior over the same hierarchy, not a fifth agent identity."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:12:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Provider health, capability availability, policy/authority gating and rate limits support proactive degradation/fallback. Predictive routing should remain earned behavior over the same hierarchy, not a fifth agent identity."
+      }
+    },
+    {
+      "subgoal": 8,
+      "title": "Expose governed connector capabilities, permissions, health, developer metadata, approvals and recovery consistently across Command/Hub/Go/model plugins/browser extensions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Connect",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-28-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Connector Authorization & Credential Binding Worker",
+          "Connector Capability Binding Worker",
+          "Connector Invocation & Sync Worker",
+          "Connector Recovery & Retry Worker",
+          "Connector Version Migration Worker",
+          "Cross-System Workflow Step Worker",
+          "Connector Conformance Test Worker",
+          "Connector Package Publication Worker",
+          "Connector Security & Permission Integrity Specialist",
+          "Connector Capability & Compatibility Specialist",
+          "Connector Reliability & Recovery Specialist",
+          "Cross-System Workflow Integration Specialist",
+          "Connector Ecosystem Certification & Developer Contract Specialist",
+          "Integration & Ecosystem Manager",
+          "Cross-System Integration Orchestrator"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK,TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK,TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK,TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-CROSS-SYSTEM-ORCH -> TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC,TZAG-INT-CAPABILITY-COMPATIBILITY-SPC,TZAG-INT-RELIABILITY-RECOVERY-SPC,TZAG-INT-WORKFLOW-INTEGRATION-SPC,TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "pain_point_ids": [
+          "PAIN-INT-AUTH-BINDING-INCOMPLETE",
+          "PAIN-INT-CAPABILITY-NOT-BOUND",
+          "PAIN-INT-INVOCATION-SYNC-FAILURE",
+          "PAIN-INT-RECOVERY-NOT-EXECUTED",
+          "PAIN-INT-VERSION-MIGRATION-NOT-APPLIED",
+          "PAIN-INT-CROSS-SYSTEM-STEP-NOT-EXECUTED",
+          "PAIN-INT-CONNECTOR-CONFORMANCE-UNVERIFIED",
+          "PAIN-INT-UNCERTIFIED-PACKAGE-PUBLICATION",
+          "PAIN-INT-PERMISSION-DRIFT",
+          "PAIN-INT-SECRET-BOUNDARY-RISK",
+          "PAIN-INT-CAPABILITY-MISMATCH",
+          "PAIN-INT-PROVIDER-VERSION-DRIFT",
+          "PAIN-INT-CONNECTOR-DEGRADED",
+          "PAIN-INT-EXTERNAL-SIDE-EFFECT-UNCERTAIN",
+          "PAIN-INT-WORKFLOW-FRAGMENTATION",
+          "PAIN-INT-CROSS-SYSTEM-CONSISTENCY",
+          "PAIN-INT-THIRD-PARTY-CONNECTOR-QUALITY",
+          "PAIN-INT-DEVELOPER-CONTRACT-DRIFT",
+          "PAIN-INT-FRAGMENTED-CONNECTOR-OWNERSHIP",
+          "PAIN-INT-ECOSYSTEM-NO-ACCOUNTABILITY",
+          "PAIN-INT-CROSS-DOMAIN-INTEGRATION-CONFLICT"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "OUTCOME-TZAG-INT-CAPABILITY-BINDING-WRK",
+          "OUTCOME-TZAG-INT-INVOCATION-SYNC-WRK",
+          "OUTCOME-TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "OUTCOME-TZAG-INT-VERSION-MIGRATION-WRK",
+          "OUTCOME-TZAG-INT-WORKFLOW-STEP-WRK",
+          "OUTCOME-TZAG-INT-CONFORMANCE-TEST-WRK",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "OUTCOME-TZAG-INT-SECURITY-PERMISSION-SPC",
+          "OUTCOME-TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "OUTCOME-TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "OUTCOME-TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "OUTCOME-TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the smallest connector scope and credential lifecycle change that restores the required capability without widening authority.",
+          "Recommend a compatible mapping, pinned version, migration or graceful capability disablement supported by current connector/provider evidence.",
+          "Recommend the least risky retry, pause, fallback, reconciliation or escalation based on idempotency and current external-state evidence.",
+          "Recommend a workflow decomposition that keeps each business outcome with its canonical domain owner while using connectors only for external transport/actions.",
+          "Recommend certify, reject, remediate, supersede or withdraw based on reproducible contract/security/compatibility evidence.",
+          "Recommend integration priorities, remediation and certification decisions using business criticality, security, compatibility, reliability and developer evidence.",
+          "Recommend cross-domain integration options and degradation/fallback paths while preserving domain Manager authority and clearly exposing trade-offs."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+            "TZAG-INT-CAPABILITY-BINDING-WRK",
+            "TZAG-INT-INVOCATION-SYNC-WRK",
+            "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+            "TZAG-INT-VERSION-MIGRATION-WRK",
+            "TZAG-INT-WORKFLOW-STEP-WRK",
+            "TZAG-INT-CONFORMANCE-TEST-WRK",
+            "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+            "TZAG-INT-SECURITY-PERMISSION-SPC",
+            "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+            "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+            "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+            "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+            "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+            "TZAG-INT-CROSS-SYSTEM-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-28-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "provider-neutral connector boundary review",
+          "no raw secret in prompt/log/client-cache contract",
+          "external side-effect idempotency/receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Surfaces must show connector capability, scopes, health, current version, degraded state, approval requirement and recovery evidence consistently; secrets are never rendered."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Connect",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Workforce/PackageWorkforceProviderAdapter.php",
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/ProviderHealthRefreshService.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php"
+            ],
+            "finding": "MCP catalogues, Connect host manifests and Command Bus receipts already expose most capability/permission/health/approval metadata; one Surface SDK projection should normalize them across Command/Hub/Go/plugins/extensions."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Host/TitanConnectHostManifest.php",
+              "System/Host/TitanConnectPermissionCatalogue.php",
+              "System/Onboarding/ProviderCredentialStore.php",
+              "System/Security/EncryptedCredentialVault.php",
+              "System/Services/ChannelHealthService.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Console/SyncTitanConnectHostCommand.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "System/Http/Middleware/EnforceCompanyRateLimit.php",
+              "tools/verify-package.php"
+            ],
+            "finding": "MCP catalogues, Connect host manifests and Command Bus receipts already expose most capability/permission/health/approval metadata; one Surface SDK projection should normalize them across Command/Hub/Go/plugins/extensions."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Services/CommandAdapterRegistry.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/DTO/CommandReceipt.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php",
+              "schemas/command-execution-receipt.v1.schema.json",
+              "schemas/events/command.requested.schema.json",
+              "schemas/events/command.completed.schema.json",
+              "tests/Standalone/ApprovalIntegrationTest.php",
+              "tests/Contract/wave4a_recovery_lifecycle.php"
+            ],
+            "finding": "MCP catalogues, Connect host manifests and Command Bus receipts already expose most capability/permission/health/approval metadata; one Surface SDK projection should normalize them across Command/Hub/Go/plugins/extensions."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:12:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "MCP catalogues, Connect host manifests and Command Bus receipts already expose most capability/permission/health/approval metadata; one Surface SDK projection should normalize them across Command/Hub/Go/plugins/extensions."
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Run connector security, failure, idempotency, rate-limit, version, schema, tenant-isolation, recovery and compatibility certification with verified evidence",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Connect",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-28-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Connector Authorization & Credential Binding Worker",
+          "Connector Capability Binding Worker",
+          "Connector Invocation & Sync Worker",
+          "Connector Recovery & Retry Worker",
+          "Connector Version Migration Worker",
+          "Cross-System Workflow Step Worker",
+          "Connector Conformance Test Worker",
+          "Connector Package Publication Worker",
+          "Connector Security & Permission Integrity Specialist",
+          "Connector Capability & Compatibility Specialist",
+          "Connector Reliability & Recovery Specialist",
+          "Cross-System Workflow Integration Specialist",
+          "Connector Ecosystem Certification & Developer Contract Specialist",
+          "Integration & Ecosystem Manager",
+          "Cross-System Integration Orchestrator"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK,TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK,TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK,TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-CROSS-SYSTEM-ORCH -> TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC,TZAG-INT-CAPABILITY-COMPATIBILITY-SPC,TZAG-INT-RELIABILITY-RECOVERY-SPC,TZAG-INT-WORKFLOW-INTEGRATION-SPC,TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "pain_point_ids": [
+          "PAIN-INT-AUTH-BINDING-INCOMPLETE",
+          "PAIN-INT-CAPABILITY-NOT-BOUND",
+          "PAIN-INT-INVOCATION-SYNC-FAILURE",
+          "PAIN-INT-RECOVERY-NOT-EXECUTED",
+          "PAIN-INT-VERSION-MIGRATION-NOT-APPLIED",
+          "PAIN-INT-CROSS-SYSTEM-STEP-NOT-EXECUTED",
+          "PAIN-INT-CONNECTOR-CONFORMANCE-UNVERIFIED",
+          "PAIN-INT-UNCERTIFIED-PACKAGE-PUBLICATION",
+          "PAIN-INT-PERMISSION-DRIFT",
+          "PAIN-INT-SECRET-BOUNDARY-RISK",
+          "PAIN-INT-CAPABILITY-MISMATCH",
+          "PAIN-INT-PROVIDER-VERSION-DRIFT",
+          "PAIN-INT-CONNECTOR-DEGRADED",
+          "PAIN-INT-EXTERNAL-SIDE-EFFECT-UNCERTAIN",
+          "PAIN-INT-WORKFLOW-FRAGMENTATION",
+          "PAIN-INT-CROSS-SYSTEM-CONSISTENCY",
+          "PAIN-INT-THIRD-PARTY-CONNECTOR-QUALITY",
+          "PAIN-INT-DEVELOPER-CONTRACT-DRIFT",
+          "PAIN-INT-FRAGMENTED-CONNECTOR-OWNERSHIP",
+          "PAIN-INT-ECOSYSTEM-NO-ACCOUNTABILITY",
+          "PAIN-INT-CROSS-DOMAIN-INTEGRATION-CONFLICT"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "OUTCOME-TZAG-INT-CAPABILITY-BINDING-WRK",
+          "OUTCOME-TZAG-INT-INVOCATION-SYNC-WRK",
+          "OUTCOME-TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "OUTCOME-TZAG-INT-VERSION-MIGRATION-WRK",
+          "OUTCOME-TZAG-INT-WORKFLOW-STEP-WRK",
+          "OUTCOME-TZAG-INT-CONFORMANCE-TEST-WRK",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "OUTCOME-TZAG-INT-SECURITY-PERMISSION-SPC",
+          "OUTCOME-TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "OUTCOME-TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "OUTCOME-TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "OUTCOME-TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the smallest connector scope and credential lifecycle change that restores the required capability without widening authority.",
+          "Recommend a compatible mapping, pinned version, migration or graceful capability disablement supported by current connector/provider evidence.",
+          "Recommend the least risky retry, pause, fallback, reconciliation or escalation based on idempotency and current external-state evidence.",
+          "Recommend a workflow decomposition that keeps each business outcome with its canonical domain owner while using connectors only for external transport/actions.",
+          "Recommend certify, reject, remediate, supersede or withdraw based on reproducible contract/security/compatibility evidence.",
+          "Recommend integration priorities, remediation and certification decisions using business criticality, security, compatibility, reliability and developer evidence.",
+          "Recommend cross-domain integration options and degradation/fallback paths while preserving domain Manager authority and clearly exposing trade-offs."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+            "TZAG-INT-CAPABILITY-BINDING-WRK",
+            "TZAG-INT-INVOCATION-SYNC-WRK",
+            "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+            "TZAG-INT-VERSION-MIGRATION-WRK",
+            "TZAG-INT-WORKFLOW-STEP-WRK",
+            "TZAG-INT-CONFORMANCE-TEST-WRK",
+            "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+            "TZAG-INT-SECURITY-PERMISSION-SPC",
+            "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+            "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+            "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+            "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+            "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+            "TZAG-INT-CROSS-SYSTEM-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-28-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "provider-neutral connector boundary review",
+          "no raw secret in prompt/log/client-cache contract",
+          "external side-effect idempotency/receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Certification covers permission boundaries, tenant isolation, idempotency, ambiguous side effects, rate limits, outages, schema/version drift, migration/rollback, degraded mode and provider recovery."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Connect",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Workforce/PackageWorkforceProviderAdapter.php",
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/ProviderHealthRefreshService.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php"
+            ],
+            "finding": "Company isolation, rate limits, capability gates, secret redaction, idempotent receipts, recovery lifecycle and package verification provide strong certification inputs; cross-connector schema/version/recovery matrix still needs one canonical suite."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Host/TitanConnectHostManifest.php",
+              "System/Host/TitanConnectPermissionCatalogue.php",
+              "System/Onboarding/ProviderCredentialStore.php",
+              "System/Security/EncryptedCredentialVault.php",
+              "System/Services/ChannelHealthService.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Console/SyncTitanConnectHostCommand.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "System/Http/Middleware/EnforceCompanyRateLimit.php",
+              "tools/verify-package.php"
+            ],
+            "finding": "Company isolation, rate limits, capability gates, secret redaction, idempotent receipts, recovery lifecycle and package verification provide strong certification inputs; cross-connector schema/version/recovery matrix still needs one canonical suite."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Services/CommandAdapterRegistry.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/DTO/CommandReceipt.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php",
+              "schemas/command-execution-receipt.v1.schema.json",
+              "schemas/events/command.requested.schema.json",
+              "schemas/events/command.completed.schema.json",
+              "tests/Standalone/ApprovalIntegrationTest.php",
+              "tests/Contract/wave4a_recovery_lifecycle.php"
+            ],
+            "finding": "Company isolation, rate limits, capability gates, secret redaction, idempotent receipts, recovery lifecycle and package verification provide strong certification inputs; cross-connector schema/version/recovery matrix still needs one canonical suite."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:12:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Company isolation, rate limits, capability gates, secret redaction, idempotent receipts, recovery lifecycle and package verification provide strong certification inputs; cross-connector schema/version/recovery matrix still needs one canonical suite."
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Run Worker→Specialist→Manager→Orchestrator connector-ecosystem acceptance and certify trust progression, secret safety, external-side-effect integrity, recovery and non-duplication",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Connect",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-28-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Connector Authorization & Credential Binding Worker",
+          "Connector Capability Binding Worker",
+          "Connector Invocation & Sync Worker",
+          "Connector Recovery & Retry Worker",
+          "Connector Version Migration Worker",
+          "Cross-System Workflow Step Worker",
+          "Connector Conformance Test Worker",
+          "Connector Package Publication Worker",
+          "Connector Security & Permission Integrity Specialist",
+          "Connector Capability & Compatibility Specialist",
+          "Connector Reliability & Recovery Specialist",
+          "Cross-System Workflow Integration Specialist",
+          "Connector Ecosystem Certification & Developer Contract Specialist",
+          "Integration & Ecosystem Manager",
+          "Cross-System Integration Orchestrator"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK",
+          "TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK",
+          "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC -> TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-CAPABILITY-COMPATIBILITY-SPC -> TZAG-INT-CAPABILITY-BINDING-WRK,TZAG-INT-VERSION-MIGRATION-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-RELIABILITY-RECOVERY-SPC -> TZAG-INT-INVOCATION-SYNC-WRK,TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-WORKFLOW-INTEGRATION-SPC -> TZAG-INT-WORKFLOW-STEP-WRK",
+          "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC -> TZAG-INT-CONFORMANCE-TEST-WRK,TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "TZAG-INT-CROSS-SYSTEM-ORCH -> TZAG-INT-INTEGRATION-ECOSYSTEM-MGR -> TZAG-INT-SECURITY-PERMISSION-SPC,TZAG-INT-CAPABILITY-COMPATIBILITY-SPC,TZAG-INT-RELIABILITY-RECOVERY-SPC,TZAG-INT-WORKFLOW-INTEGRATION-SPC,TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+        ],
+        "pain_point_ids": [
+          "PAIN-INT-AUTH-BINDING-INCOMPLETE",
+          "PAIN-INT-CAPABILITY-NOT-BOUND",
+          "PAIN-INT-INVOCATION-SYNC-FAILURE",
+          "PAIN-INT-RECOVERY-NOT-EXECUTED",
+          "PAIN-INT-VERSION-MIGRATION-NOT-APPLIED",
+          "PAIN-INT-CROSS-SYSTEM-STEP-NOT-EXECUTED",
+          "PAIN-INT-CONNECTOR-CONFORMANCE-UNVERIFIED",
+          "PAIN-INT-UNCERTIFIED-PACKAGE-PUBLICATION",
+          "PAIN-INT-PERMISSION-DRIFT",
+          "PAIN-INT-SECRET-BOUNDARY-RISK",
+          "PAIN-INT-CAPABILITY-MISMATCH",
+          "PAIN-INT-PROVIDER-VERSION-DRIFT",
+          "PAIN-INT-CONNECTOR-DEGRADED",
+          "PAIN-INT-EXTERNAL-SIDE-EFFECT-UNCERTAIN",
+          "PAIN-INT-WORKFLOW-FRAGMENTATION",
+          "PAIN-INT-CROSS-SYSTEM-CONSISTENCY",
+          "PAIN-INT-THIRD-PARTY-CONNECTOR-QUALITY",
+          "PAIN-INT-DEVELOPER-CONTRACT-DRIFT",
+          "PAIN-INT-FRAGMENTED-CONNECTOR-OWNERSHIP",
+          "PAIN-INT-ECOSYSTEM-NO-ACCOUNTABILITY",
+          "PAIN-INT-CROSS-DOMAIN-INTEGRATION-CONFLICT"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+          "OUTCOME-TZAG-INT-CAPABILITY-BINDING-WRK",
+          "OUTCOME-TZAG-INT-INVOCATION-SYNC-WRK",
+          "OUTCOME-TZAG-INT-CONNECTOR-RECOVERY-WRK",
+          "OUTCOME-TZAG-INT-VERSION-MIGRATION-WRK",
+          "OUTCOME-TZAG-INT-WORKFLOW-STEP-WRK",
+          "OUTCOME-TZAG-INT-CONFORMANCE-TEST-WRK",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+          "OUTCOME-TZAG-INT-SECURITY-PERMISSION-SPC",
+          "OUTCOME-TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-INT-RELIABILITY-RECOVERY-SPC",
+          "OUTCOME-TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+          "OUTCOME-TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+          "OUTCOME-TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+          "OUTCOME-TZAG-INT-CROSS-SYSTEM-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the smallest connector scope and credential lifecycle change that restores the required capability without widening authority.",
+          "Recommend a compatible mapping, pinned version, migration or graceful capability disablement supported by current connector/provider evidence.",
+          "Recommend the least risky retry, pause, fallback, reconciliation or escalation based on idempotency and current external-state evidence.",
+          "Recommend a workflow decomposition that keeps each business outcome with its canonical domain owner while using connectors only for external transport/actions.",
+          "Recommend certify, reject, remediate, supersede or withdraw based on reproducible contract/security/compatibility evidence.",
+          "Recommend integration priorities, remediation and certification decisions using business criticality, security, compatibility, reliability and developer evidence.",
+          "Recommend cross-domain integration options and degradation/fallback paths while preserving domain Manager authority and clearly exposing trade-offs."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+            "TZAG-INT-CAPABILITY-BINDING-WRK",
+            "TZAG-INT-INVOCATION-SYNC-WRK",
+            "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+            "TZAG-INT-VERSION-MIGRATION-WRK",
+            "TZAG-INT-WORKFLOW-STEP-WRK",
+            "TZAG-INT-CONFORMANCE-TEST-WRK",
+            "TZAG-INT-ECOSYSTEM-PUBLISH-WRK",
+            "TZAG-INT-SECURITY-PERMISSION-SPC",
+            "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+            "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+            "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+            "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+            "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR",
+            "TZAG-INT-CROSS-SYSTEM-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-28-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "provider-neutral connector boundary review",
+          "no raw secret in prompt/log/client-cache contract",
+          "external side-effect idempotency/receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Acceptance covers W→S→M→O delegation, connector security, compatibility, runtime recovery, developer certification, cross-domain handoff and strict non-duplication of provider/channel identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Connect",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Workforce/PackageWorkforceProviderAdapter.php",
+              "System/Workforce/CapabilityResolver.php",
+              "System/Workforce/ProviderHealthRefreshService.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php"
+            ],
+            "finding": "The three donors provide evidence for Worker→Specialist→Manager→Orchestrator acceptance, but trust progression, external-side-effect integrity, secret safety and no-duplication must be certified as one ecosystem contract."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Host/TitanConnectHostManifest.php",
+              "System/Host/TitanConnectPermissionCatalogue.php",
+              "System/Onboarding/ProviderCredentialStore.php",
+              "System/Security/EncryptedCredentialVault.php",
+              "System/Services/ChannelHealthService.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Console/SyncTitanConnectHostCommand.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "System/Http/Middleware/EnforceCompanyRateLimit.php",
+              "tools/verify-package.php"
+            ],
+            "finding": "The three donors provide evidence for Worker→Specialist→Manager→Orchestrator acceptance, but trust progression, external-side-effect integrity, secret safety and no-duplication must be certified as one ecosystem contract."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Services/CommandAdapterRegistry.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/DTO/CommandReceipt.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php",
+              "schemas/command-execution-receipt.v1.schema.json",
+              "schemas/events/command.requested.schema.json",
+              "schemas/events/command.completed.schema.json",
+              "tests/Standalone/ApprovalIntegrationTest.php",
+              "tests/Contract/wave4a_recovery_lifecycle.php"
+            ],
+            "finding": "The three donors provide evidence for Worker→Specialist→Manager→Orchestrator acceptance, but trust progression, external-side-effect integrity, secret safety and no-duplication must be certified as one ecosystem contract."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:12:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "The three donors provide evidence for Worker→Specialist→Manager→Orchestrator acceptance, but trust progression, external-side-effect integrity, secret safety and no-duplication must be certified as one ecosystem contract."
+      }
+    }
+  ],
+  "affinity_tags": [
+    "agents",
+    "business-operations",
+    "integration"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan MCP",
+    "Titan Connect",
+    "Titan Command Bus"
+  ],
+  "reuse_first": true,
+  "canonical_workforce_roster": {
+    "status": "DEFINED_PLANNED_IMPLEMENTATION",
+    "canonical_definition_home": "TZ-ROADMAP-28-SG-01",
+    "orchestrator_ids": [
+      "TZAG-INT-CROSS-SYSTEM-ORCH"
+    ],
+    "manager_ids": [
+      "TZAG-INT-INTEGRATION-ECOSYSTEM-MGR"
+    ],
+    "specialist_ids": [
+      "TZAG-INT-SECURITY-PERMISSION-SPC",
+      "TZAG-INT-CAPABILITY-COMPATIBILITY-SPC",
+      "TZAG-INT-RELIABILITY-RECOVERY-SPC",
+      "TZAG-INT-WORKFLOW-INTEGRATION-SPC",
+      "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC"
+    ],
+    "worker_ids": [
+      "TZAG-INT-CONNECTOR-AUTH-BINDING-WRK",
+      "TZAG-INT-CAPABILITY-BINDING-WRK",
+      "TZAG-INT-INVOCATION-SYNC-WRK",
+      "TZAG-INT-CONNECTOR-RECOVERY-WRK",
+      "TZAG-INT-VERSION-MIGRATION-WRK",
+      "TZAG-INT-WORKFLOW-STEP-WRK",
+      "TZAG-INT-CONFORMANCE-TEST-WRK",
+      "TZAG-INT-ECOSYSTEM-PUBLISH-WRK"
+    ],
+    "new_agent_count": 15,
+    "total_domain_roster_count": 15,
+    "boundary_rules": [
+      "Integration Ecosystem owns connector security/permission integrity, capability compatibility, runtime reliability/recovery, cross-system technical workflow integration and developer certification.",
+      "Connected business-domain Managers retain authority for Sales, Finance, Customer Experience, Service Delivery, Supply, Field and other domain outcomes; connector authority never becomes business-domain authority.",
+      "Titan Prime retains strategic orchestration; Cross-System Integration Orchestrator coordinates integration dependencies/handoffs and exposes trade-offs without replacing Prime.",
+      "Providers, APIs, channels, plugins, model connectors, SaaS systems, SDKs, adapters and marketplaces are tools/resources, not workforce identities.",
+      "Raw secrets remain behind Titan Locker/approved credential boundaries; connector workers receive only governed references/tokens/scopes needed for the bounded action.",
+      "Every external side effect must be scoped, correlated/idempotent where applicable and receipt-backed; ambiguous external state remains explicit until reconciled."
+    ]
+  },
+  "agent_goal_classification": "DOMAIN_WORKFORCE_ELIGIBLE",
+  "agent_goal_rule": "This goal owns durable business/domain outcomes and may reuse, extend or create canonical workforce identities subject to non-duplication and outcome-owner tests.",
+  "workforce_goal_classification": "DOMAIN_OUTCOME_AGENT_ELIGIBLE",
+  "workforce_goal_rule": "Agents are permitted only for durable business/operational outcomes with a distinct ownership boundary. Reuse or extend canonical identities before creating new ones."
+}
