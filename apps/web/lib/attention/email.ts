@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import { logger } from "@/lib/logger";
 import { appUrl } from "@/lib/email/mailer";
 import {
@@ -22,7 +22,7 @@ export function emailIdempotencyBucket(now = new Date()): string {
  * HIGH priority bypasses client cooldown caps. Never throws.
  */
 export async function enqueueAttentionOwnerEmail(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     type: AttentionEventType | string;
