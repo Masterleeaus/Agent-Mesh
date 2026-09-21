@@ -1,0 +1,42 @@
+name: Merge Unique Titan App Files
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/merge-unique-titan-app-files.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Move only non-colliding Titan app files into Dovetails
+        shell: bash
+        run: |
+          set -euo pipefail
+          moved=0
+          while IFS= read -r -d '' src; do
+            dst="${src#titan/}"
+            if [ ! -e "$dst" ]; then
+              mkdir -p "$(dirname "$dst")"
+              git mv "$src" "$dst"
+              moved=$((moved + 1))
+            fi
+          done < <(find titan/apps -type f -print0)
+
+          find titan/apps -depth -type d -empty -delete || true
+          echo "Moved $moved unique app files; colliding files remain in titan/apps for reconciliation."
+
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Merge unique Titan app files into Dovetails web app"
+          git push
