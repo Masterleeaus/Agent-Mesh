@@ -1,15 +1,21 @@
 class TitanSession {
+  static const Set<String> canonicalSurfaces = {'zero', 'go', 'hub'};
+
   final String companyId;
   final String actorId;
   final String deviceId;
   final String surface;
 
-  const TitanSession({
+  TitanSession({
     required this.companyId,
     required this.actorId,
     required this.deviceId,
     this.surface = 'zero',
-  }) : assert(surface == 'zero' || surface == 'go' || surface == 'hub');
+  }) {
+    if (!canonicalSurfaces.contains(surface)) {
+      throw ArgumentError.value(surface, 'surface', 'canonical-surface-required');
+    }
+  }
 
   Map<String, dynamic> toJson() => {
     'company_id': companyId,
