@@ -1,0 +1,1208 @@
+{
+  "goal_id": "TZ-ROADMAP-12",
+  "priority": "P1",
+  "title": "Mobile & Offline Runtime",
+  "objective": "Make Titan Command/Go/Hub reliable offline-first mobile/PWA clients.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "title": "Audit PWA/mobile architecture",
+      "status": "TODO",
+      "subgoal_order": 1,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Go",
+        "Titan Mobile Core",
+        "Titan Interface Runtime",
+        "Titan Interaction Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-12-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_STATUS_MANAGED",
+            "internal_paths": [
+              "System/Runtime/GoBootstrap.php",
+              "System/Runtime/GoSuiteRuntime.php",
+              "System/Runtime/GoRuntimeBridge.php",
+              "tests/go_pass9_pwa_device_shell.php"
+            ],
+            "finding": "Go is a thin governed field/mobile shell with company_id, provider-owned sync/replay routes and PWA policy."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_VERIFIED_ZERO_LOSS",
+            "internal_paths": [
+              "WORKCORE-PWA-PASS1-SYNC.md",
+              "WORKCORE-PWA-PASS3-DEVICE-CAPABILITIES.md",
+              "compatibility/chatbot-pwa-donor/README.md",
+              "System/Offline/SyncEngine.php",
+              "System/LocalIntelligence/LocalBrain.php"
+            ],
+            "finding": "Interaction Engine contains the strongest mobile/PWA offline, device-capability, sync and local-intelligence implementation."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_VERIFIED; HOST_SNAPSHOT_UNAVAILABLE_NONBLOCKING_FOR_SOURCE_DISCOVERY",
+            "internal_paths": [
+              "System/Surface/CanonicalSurfaceResolver.php",
+              "System/ProductSurface/ProductSurfacePolicyProjector.php",
+              "System/Offline/OfflineSyncWorkspaceComposer.php"
+            ],
+            "finding": "Interface Runtime provides canonical zero/go/hub projection and offline/sync presentation without owning execution."
+          },
+          {
+            "source_ref": "Titan Mobile Core recovery status",
+            "file_id": "file_00000000b98c81fa9e4b5a94307bd8ca",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Mobile Core/MASTER-STATUS.json",
+            "verification": "RECOVERY_REQUIRED_NO_CURRENT_MASTER",
+            "finding": "Historical Titan Mobile Core v0.23.1 evidence exists, but no genuine current source ZIP is recoverable. A mislabeled TitanAppsCore wrapper was rejected and retired after exact parity proof."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Go",
+          "Titan Interaction Engine",
+          "Titan Interface Runtime",
+          "Titan Mobile Core"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:12:04.042903Z",
+        "scan_notes": "Mobile architecture should converge Go + Interaction + Interface. Titan Mobile Core is recovery-only and must not trigger a fresh rewrite.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Unify mobile core/auth/bootstrap",
+      "status": "TODO",
+      "subgoal_order": 2,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Go",
+        "Titan Mobile Core",
+        "Titan Interface Runtime",
+        "Titan Interaction Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-12-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_STATUS_MANAGED",
+            "internal_paths": [
+              "System/Runtime/GoBootstrap.php",
+              "System/Integration/InteractionEngineGoActionIntentGateway.php"
+            ],
+            "finding": "Go bootstrap fixes surface=go, company boundary=company_id and routes consequential actions as governed intents."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_VERIFIED_ZERO_LOSS",
+            "internal_paths": [
+              "System/Company/AuthenticatedUserCompanyContextResolver.php",
+              "WORKCORE-PWA-PASS1-SYNC.md",
+              "compatibility/chatbot-sync-donor/System/Http/Controllers/Api/Sync/ChatbotDeviceController.php"
+            ],
+            "finding": "Interaction provides authenticated company context, auth refresh/device registration donors and sync bootstrap."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_VERIFIED; HOST_SNAPSHOT_UNAVAILABLE_NONBLOCKING_FOR_SOURCE_DISCOVERY",
+            "internal_paths": [
+              "System/Context/AuthenticatedContextPrincipal.php",
+              "System/Context/LaravelAuthenticatedContextPrincipalProvider.php",
+              "System/Surface/CanonicalSurfaceResolver.php"
+            ],
+            "finding": "Interface projects authenticated company/user/role/capability context into canonical surfaces."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Go",
+          "Titan Interaction Engine",
+          "Titan Interface Runtime"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:12:04.042903Z",
+        "scan_notes": "Unify bootstrap around authenticated company_id + actor/user + device + canonical surface; mobile clients render authority, never mint it.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Implement encrypted local state",
+      "status": "TODO",
+      "subgoal_order": 3,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Go",
+        "Titan Mobile Core",
+        "Titan Interface Runtime",
+        "Titan Interaction Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-12-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_VERIFIED_ZERO_LOSS",
+            "internal_paths": [
+              "resources/ts/offline/crypto.ts",
+              "resources/ts/offline/indexeddb-store.ts",
+              "resources/ts/offline/command-outbox.ts",
+              "docs/AGENT-3-OFFLINE-TRUST-INTEGRITY.md"
+            ],
+            "finding": "Interaction has AES-GCM encrypted offline envelopes, IndexedDB storage, lockout/integrity controls and offline identity/permission expiry."
+          },
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_STATUS_MANAGED",
+            "internal_paths": [
+              "System/Offline/GoOfflineOperationPolicy.php",
+              "tests/go_pass9_pwa_device_shell.php"
+            ],
+            "finding": "Go explicitly forbids credentials/tokens/permissions/authority material in offline audit context and only caches non-sensitive shell state."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Interaction Engine",
+          "Titan Go"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:12:04.042903Z",
+        "scan_notes": "Reuse Interaction's encrypted vault/outbox model. Go shell localStorage must remain non-sensitive only.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Implement offline mutation queue",
+      "status": "TODO",
+      "subgoal_order": 4,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Go",
+        "Titan Mobile Core",
+        "Titan Interface Runtime",
+        "Titan Interaction Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-12-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_VERIFIED_ZERO_LOSS",
+            "internal_paths": [
+              "System/Offline/OfflineQueue.php",
+              "resources/ts/offline/command-outbox.ts",
+              "System/Wizard/Offline/LocalCommandOutbox.php",
+              "compatibility/chatbot-pwa-donor/resources/outbox.js"
+            ],
+            "finding": "Interaction already has server and browser offline command queues plus wizard outbox support."
+          },
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_STATUS_MANAGED",
+            "internal_paths": [
+              "System/Offline/GoOfflineOperation.php",
+              "System/Offline/DeviceQueueEnvelopeFactory.php",
+              "System/Offline/GoOfflineBatchEnvelopeFactory.php",
+              "tests/go_pass10_offline_batch_scope.php"
+            ],
+            "finding": "Go supplies bounded company/actor/device-scoped queue envelopes with operation_id idempotency and provider-authoritative replay."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Interaction Engine",
+          "Titan Go"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:12:04.042903Z",
+        "scan_notes": "Converge one encrypted mobile outbox envelope carrying company_id, actor_id, device_id, agent/capability, idempotency, expected revision and evidence refs.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Implement sync/revision/conflict resolution",
+      "status": "TODO",
+      "subgoal_order": 5,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Go",
+        "Titan Mobile Core",
+        "Titan Interface Runtime",
+        "Titan Interaction Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-12-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_VERIFIED_ZERO_LOSS",
+            "internal_paths": [
+              "System/Offline/SyncEngine.php",
+              "System/Offline/ConflictResolver.php",
+              "System/LocalIntelligence/Sync/CausalSyncResolver.php",
+              "System/LocalIntelligence/Sync/VectorClock.php",
+              "resources/ts/offline/sync-client.ts",
+              "docs/SYNC-API-CONTRACT.md",
+              "WORKCORE-PWA-PASS1-SYNC.md"
+            ],
+            "finding": "Interaction already contains deterministic sync, conflict classification/resolution, vector clocks, cursor pull, revision/ETag reconciliation and resumable attachment sync."
+          },
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_STATUS_MANAGED",
+            "internal_paths": [
+              "System/Offline/GoOfflineReplayPolicy.php",
+              "tests/go_production_hardening.php"
+            ],
+            "finding": "Go enforces provider-authoritative entity versions and single-company/actor/device replay batches."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_VERIFIED; HOST_SNAPSHOT_UNAVAILABLE_NONBLOCKING_FOR_SOURCE_DISCOVERY",
+            "internal_paths": [
+              "System/Offline/OfflineSyncWorkspaceComposer.php",
+              "System/Offline/TitanInteractionOfflineSyncProvider.php"
+            ],
+            "finding": "Interface projects pending/syncing/conflict/failed state and safe resolution actions."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Interaction Engine",
+          "Titan Go",
+          "Titan Interface Runtime"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:12:04.042903Z",
+        "scan_notes": "Do not create a second sync engine. Converge Interaction sync as authority with provider/domain conflict rules and Interface projection.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add role-specific Command/Go/Hub experiences",
+      "status": "TODO",
+      "subgoal_order": 6,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Go",
+        "Titan Mobile Core",
+        "Titan Interface Runtime",
+        "Titan Interaction Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-12-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_VERIFIED; HOST_SNAPSHOT_UNAVAILABLE_NONBLOCKING_FOR_SOURCE_DISCOVERY",
+            "internal_paths": [
+              "System/Surface/CanonicalSurfaceResolver.php",
+              "System/ProductSurface/ProductSurfacePolicy.php",
+              "System/ProductSurface/ProductSurfacePolicyProjector.php",
+              "tests/Unit/ProductSurfacePolicyTest.php"
+            ],
+            "finding": "Interface canonicalizes command/owner/manager/business→zero, field/worker→go and customer→hub and prevents cross-audience leakage."
+          },
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_STATUS_MANAGED",
+            "internal_paths": [
+              "System/Presentation/GoPresentationService.php",
+              "System/Navigation/GoNavigation.php",
+              "resources/views/go/shell.blade.php"
+            ],
+            "finding": "Go provides the field-specific surface shell without becoming a separate business-logic authority."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_VERIFIED_ZERO_LOSS",
+            "internal_paths": [
+              "System/Surfaces/SurfaceWizardPolicy.php",
+              "compatibility/legacy-10.5.13-donor/System/InterfaceContributions/SurfaceProjectionRegistry.php"
+            ],
+            "finding": "Interaction has canonical surface policy/contribution donors for role-aware generative workflows."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Interface Runtime",
+          "Titan Go",
+          "Titan Interaction Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:12:04.042903Z",
+        "scan_notes": "Command/Go/Hub are projections of one runtime; preserve surface-specific visibility while sharing identity, conversations, capability execution and workforce state.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add push/notifications/voice input",
+      "status": "TODO",
+      "subgoal_order": 7,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Go",
+        "Titan Mobile Core",
+        "Titan Interface Runtime",
+        "Titan Interaction Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-12-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_VERIFIED_ZERO_LOSS",
+            "internal_paths": [
+              "WORKCORE-PWA-PASS3-DEVICE-CAPABILITIES.md",
+              "compatibility/chatbot-pwa-donor/resources/workcore/device-capabilities.js"
+            ],
+            "finding": "Interaction donor layer supports audio recording, camera, geolocation, wake lock, badges, share, launch queue and offline voice evidence recording."
+          },
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_STATUS_MANAGED",
+            "internal_paths": [
+              "tests/go_pass9_pwa_device_shell.php",
+              "System/Runtime/GoBootstrap.php"
+            ],
+            "finding": "Go has device/PWA shell but no complete push/voice transport implementation."
+          },
+          {
+            "source_ref": "Titan Mobile Core recovery status",
+            "file_id": "file_00000000b98c81fa9e4b5a94307bd8ca",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Mobile Core/MASTER-STATUS.json",
+            "verification": "RECOVERY_REQUIRED_NO_CURRENT_MASTER",
+            "finding": "Historical Titan Mobile Core v0.23.1 evidence exists, but no genuine current source ZIP is recoverable. A mislabeled TitanAppsCore wrapper was rejected and retired after exact parity proof."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Interaction Engine",
+          "Titan Go",
+          "Titan Mobile Core"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:12:04.042903Z",
+        "scan_notes": "Voice/device capability seams are strong; a complete canonical push-notification transport is not proven in these donors and should reuse communications/mobile providers rather than be fabricated locally.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add local/browser model seams",
+      "status": "TODO",
+      "subgoal_order": 8,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Go",
+        "Titan Mobile Core",
+        "Titan Interface Runtime",
+        "Titan Interaction Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-12-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_VERIFIED_ZERO_LOSS",
+            "internal_paths": [
+              "System/LocalIntelligence/LocalBrain.php",
+              "System/AI/LocalBrainGuidanceService.php",
+              "System/Engines/AIInfrastructure/Implementations/ModelSelectionEngine.php",
+              "System/Http/Controllers/LocalIntelligenceController.php",
+              "benchmarks/localbrain-v2.php"
+            ],
+            "finding": "Interaction has LocalBrain/local-language/reasoning/memory plus model-selection seams suitable for local/browser execution."
+          },
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_STATUS_MANAGED",
+            "internal_paths": [
+              "System/Integration/InteractionEngineGoActionIntentGateway.php"
+            ],
+            "finding": "Go delegates intelligent/action intent to Interaction rather than embedding its own model authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Interaction Engine",
+          "Titan Go"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:12:04.042903Z",
+        "scan_notes": "Local/browser model seams exist, but provider-specific Ollama/browser-model adapters should remain behind canonical model routing/cost-sovereignty policy.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Run low-connectivity/device lifecycle tests",
+      "status": "TODO",
+      "subgoal_order": 9,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Go",
+        "Titan Mobile Core",
+        "Titan Interface Runtime",
+        "Titan Interaction Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-12-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_STATUS_MANAGED",
+            "internal_paths": [
+              "tests/go_pass6_offline_envelope_security.php",
+              "tests/go_pass7_company_boundary.php",
+              "tests/go_pass9_pwa_device_shell.php",
+              "tests/go_pass10_offline_batch_scope.php",
+              "tests/go_production_hardening.php"
+            ],
+            "finding": "Go has explicit offline security, company-boundary, device-shell, batch-scope and production-hardening tests."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_VERIFIED; HOST_SNAPSHOT_UNAVAILABLE_NONBLOCKING_FOR_SOURCE_DISCOVERY",
+            "internal_paths": [
+              "tests/Unit/OfflineSyncAccessibilityPerformanceTest.php",
+              "tests/Feature/OfflineSyncQualityBindingTest.php"
+            ],
+            "finding": "Interface tests mobile accessibility/cache company isolation and sync binding."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_VERIFIED_ZERO_LOSS",
+            "internal_paths": [
+              "docs/AGENT-3-OFFLINE-TRUST-INTEGRITY.md",
+              "WORKCORE-PWA-PASS1-SYNC.md",
+              "WORKCORE-PWA-PASS3-DEVICE-CAPABILITIES.md"
+            ],
+            "finding": "Interaction documents browser harness/integrity, low-connectivity sync and progressive device capability behavior."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Go",
+          "Titan Interface Runtime",
+          "Titan Interaction Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:12:04.042903Z",
+        "scan_notes": "Existing donor tests are strong but fragmented. Final mobile certification still needs a shared physical-device/low-connectivity lifecycle matrix across Command/Go/Hub.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Certify PWA/mobile release",
+      "status": "TODO",
+      "subgoal_order": 10,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Go",
+        "Titan Mobile Core",
+        "Titan Interface Runtime",
+        "Titan Interaction Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-12-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_STATUS_MANAGED",
+            "internal_paths": [
+              "tests/go_production_hardening.php",
+              "tests/go_architecture.php",
+              "extension.manifest.json"
+            ],
+            "finding": "Go has source-level production and architecture certification evidence."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_VERIFIED; HOST_SNAPSHOT_UNAVAILABLE_NONBLOCKING_FOR_SOURCE_DISCOVERY",
+            "internal_paths": [
+              "tools/verify_pass18_builder_surfaces.php",
+              "tools/verify_pass20_lifecycle.php",
+              "tests/Unit/OfflineSyncAccessibilityPerformanceTest.php",
+              "tests/Unit/ProductSurfacePolicyTest.php"
+            ],
+            "finding": "Interface has lifecycle/surface/offline quality verification."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_VERIFIED_ZERO_LOSS",
+            "internal_paths": [
+              ".github/workflows/verify-interaction-engine.yml",
+              "tests/ts/localbrain-v2.test.js",
+              "docs/AGENT-3-OFFLINE-TRUST-INTEGRITY.md"
+            ],
+            "finding": "Interaction has verification workflow, local-intelligence tests and offline integrity evidence."
+          },
+          {
+            "source_ref": "Titan Mobile Core recovery status",
+            "file_id": "file_00000000b98c81fa9e4b5a94307bd8ca",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Mobile Core/MASTER-STATUS.json",
+            "verification": "RECOVERY_REQUIRED_NO_CURRENT_MASTER",
+            "finding": "Historical Titan Mobile Core v0.23.1 evidence exists, but no genuine current source ZIP is recoverable. A mislabeled TitanAppsCore wrapper was rejected and retired after exact parity proof."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Go",
+          "Titan Interface Runtime",
+          "Titan Interaction Engine",
+          "Titan Mobile Core"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:12:04.042903Z",
+        "scan_notes": "Certification should explicitly prove shared-source surfaces, company isolation, encrypted offline state, replay/conflict safety, authority contraction, local-model policy and physical-device behavior. Mobile Core recovery remains separate.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "mobile"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": false,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan Go",
+    "Titan Mobile Core",
+    "Titan Interface Runtime",
+    "Titan Interaction Engine"
+  ],
+  "reuse_first": true,
+  "agent_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENTS",
+  "agent_goal_rule": "This goal is platform/runtime/interface/infrastructure work. Do not create a workforce identity for the technology itself. Existing canonical agents may consume its capabilities.",
+  "workforce_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENT_IDENTITY",
+  "workforce_goal_rule": "Shared platform/runtime infrastructure may be consumed by agents but must not create an agent merely to mirror a technology, runtime, engine, SDK, protocol, deployment target or UI."
+}
