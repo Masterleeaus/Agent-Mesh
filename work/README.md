@@ -149,3 +149,30 @@ The following are always preserved for Manager review:
 The cleanup runs after PR closure, once daily, and on demand. It must never be changed into a blind “delete closed issue branches” job.
 
 The separate scheduled claim audit remains read-only and is responsible for surfacing stale/orphaned claims. Cleanup and audit are deliberately separate concerns.
+
+
+## Claim-to-PR handoff helper
+
+Use `.github/scripts/open-agent-pr.py` after a builder has pushed real implementation commits.
+
+Example:
+
+```bash
+python3 .github/scripts/open-agent-pr.py \
+  --verification "pnpm --filter <package> test — pass" \
+  --completion "Completed the verified remaining work for this pass." \
+  --risk "Rollback by reverting the PR; no new provider/runtime dependency."
+```
+
+Safety behavior:
+
+- exact canonical claim branch required;
+- matching open roadmap issue required;
+- branch must be ahead of `main`;
+- changed files and merge-base SHA are derived from GitHub;
+- an existing open PR for the claim branch is updated instead of duplicated;
+- PR always targets canonical `main`;
+- the matching issue is linked with `Closes #<issue-number>`;
+- Agent Claim Gate and Titan Zero CI remain the enforcement boundary.
+
+A builder should not create an empty PR just to mark activity. The issue claim comment and claim branch already provide that coordination signal.
