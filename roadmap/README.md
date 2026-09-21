@@ -1,21 +1,36 @@
-# Roadmap
+# Titan Zero Roadmap — Agent Mesh V3
 
 The roadmap is the planning authority for remaining Titan Zero work.
 
-Keep goal/subgoal IDs stable where practical. Completed implementation detail should be compacted rather than duplicated. Architecture specifications belong in architecture references, not roadmap text.
+Keep goal/subgoal IDs stable where practical. Completed implementation detail should be compacted rather than duplicated. Architecture and workforce specifications belong behind references/IDs, not copied into roadmap bodies.
 
-The existing authoritative Titan Zero roadmap should be migrated here without recreating completed work.
+## Current migration status
+
+- `roadmap/INDEX.json` is migrated to the current **55-goal** roadmap index.
+- Canonical goal JSON files are present on GitHub `main` for:
+  - `TZ-G00`
+  - `TZ-ROADMAP-01` through `TZ-ROADMAP-52`
+- `TZ-ROADMAP-53` and `TZ-ROADMAP-54` already have all **20 GitHub subgoal issues**, but their standalone goal JSON files still require authoritative restoration.
+- `roadmap/SUBGOAL-ISSUE-MANIFEST.json` currently covers **568 subgoal IDs** and drives idempotent GitHub issue synchronization.
 
 ## Migration integrity rule
 
-A GitHub Issue is not by itself proof that its canonical roadmap goal JSON has been migrated. Before agents execute a goal, confirm the corresponding `roadmap/goals/<goal_id>.json` exists on `main`. Missing goal files are a migration gap and must be restored from the authoritative roadmap source before roadmap execution/compaction for that goal.
+A GitHub Issue is an execution record, not by itself proof that its full canonical goal definition has been migrated.
 
-## Goal-file migration status
+Before an agent executes or compacts a goal:
 
-The V3 index currently references 53 legacy goals. Goal JSON migration is incomplete and must not be inferred from Issues.
+1. confirm `roadmap/goals/<goal_id>.json` exists on current `main`;
+2. read the matching issue and current code/evidence;
+3. implement only remaining work;
+4. never reconstruct missing authoritative goal content from memory.
 
-**Present on GitHub `main`:** `TZ-G00`, `TZ-ROADMAP-01` through `05`, and `TZ-ROADMAP-49` through `51`.
+For Goals 53–54, preserve their existing issues but restore authoritative goal JSON before treating those goals as fully migrated roadmap authority.
 
-**Still requiring canonical goal-file migration:** `TZ-ROADMAP-06` through `48`, plus `TZ-ROADMAP-52`.
+## Execution model
 
-Issues for some of these goals already exist. Those issues remain useful work records, but agents must not treat a missing goal JSON as migrated roadmap authority. Restore the goal JSON from the authoritative roadmap source before executing or compacting that goal.
+- Roadmap = remaining work and outcome intent.
+- Issues = claimable subgoals.
+- Branches = isolated implementation work.
+- Pull Requests = integration/evidence boundary.
+- GitHub Actions = automated verification.
+- `main` = canonical code.
