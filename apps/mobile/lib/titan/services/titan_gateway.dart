@@ -9,7 +9,7 @@ import 'offline_command_queue.dart';
 /// Titan Core; the Flutter client never grants itself execution authority.
 abstract class TitanGateway {
   Future<List<TitanGenerativeItem>> converse(String message);
-  Future<void> command(String capability, Map<String, dynamic> payload, {bool onlineRequired = false});
+  Future<void> command(String capability, Map<String, dynamic> payload, {String? operation, bool onlineRequired = false});
 }
 
 abstract class TitanSurfaceTransport {
@@ -58,7 +58,8 @@ class SurfaceSdkTitanGateway implements TitanGateway {
   }
 
   @override
-  Future<void> command(String capability, Map<String, dynamic> payload, {bool onlineRequired = false}) async {
+  Future<void> command(String capability, Map<String, dynamic> payload, {String? operation, bool onlineRequired = false}) async {
+    final requestedOperation = operation ?? capability;
     final projection = _projection ?? await refreshProjection();
     final capabilities = (projection['capabilities'] as List? ?? const [])
         .whereType<Map>()
@@ -67,7 +68,7 @@ class SurfaceSdkTitanGateway implements TitanGateway {
     Map<String, dynamic>? grant;
     for (final entry in capabilities) {
       final operations = (entry['operations'] as List? ?? const []).map((e) => e.toString());
-      if (entry['capability_id'] == capability && operations.contains(capability)) {
+      if (entry['capability_id'] == capability && operations.contains(requestedOperation)) {
         grant = entry;
         break;
       }
@@ -90,7 +91,7 @@ class SurfaceSdkTitanGateway implements TitanGateway {
       'actor_id': session.actorId,
       'projection_revision': projection['revision'],
       'capability_id': capability,
-      'operation': capability,
+      'operation': requestedOperation,
       'idempotency_key': commandId,
       'correlation_id': correlationId,
       'payload': payload,
@@ -123,7 +124,7 @@ class LocalMvpTitanGateway implements TitanGateway {
       demoGenerativeResponse(message);
 
   @override
-  Future<void> command(String capability, Map<String, dynamic> payload, {bool onlineRequired = false}) async {
+  Future<void> command(String capability, Map<String, dynamic> payload, {String? operation, bool onlineRequired = false}) async {
     if (onlineRequired) throw StateError('$capability requires the Titan server');
     final now = DateTime.now();
     await queue.enqueue(TitanCommand(
