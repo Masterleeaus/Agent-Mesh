@@ -3,6 +3,8 @@
 import { assertCanonicalCompanyId, rejectLegacyTenantAuthorityDeep } from '../boundary.js';
 
 const TOKEN = /^[a-z][a-z0-9._-]{0,63}$/;
+const SURFACE_ALIASES = Object.freeze({ zero:'zero', bos:'zero', command:'zero', owner:'zero', manager:'zero', business:'zero', go:'go', field:'go', worker:'go', hub:'hub', customer:'hub' });
+const canonicalProductSurface = (value) => { const raw=token(value,'product_surface'); const surface=SURFACE_ALIASES[raw]; if (!surface) throw new TypeError('product_surface must resolve to zero, go or hub'); return surface; };
 const TRACE = /^[A-Za-z0-9._:-]+$/;
 const PROTECTED = new Set(['company_id','user_id','roles','capabilities','product_surface','trace_id','correlation_id']);
 const ALLOWED_DERIVED = new Set(['domain','branch_id','workspace_id','team_id','device_id','object_ref','conversation_id','journey_id','causation_id']);
@@ -46,7 +48,7 @@ export function createInterfaceContext(input = {}) {
     context_version: '2.0',
     company_id,
     user_id,
-    product_surface: token(input.product_surface, 'product_surface'),
+    product_surface: canonicalProductSurface(input.product_surface),
     domain: token(input.domain, 'domain'),
     branch_id: branch,
     workspace_id: ref(input.workspace_id, 'workspace_id'),
