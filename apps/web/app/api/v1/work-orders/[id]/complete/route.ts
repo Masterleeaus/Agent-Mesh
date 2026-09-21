@@ -8,7 +8,7 @@ import { logger } from "../../../../../../lib/logger";
 
 export const dynamic = "force-dynamic";
 
-const ACTIVE_VISIT = ["dispatched", "traveling", "arrived", "in_progress", "waiting"];
+const ACTIVE_VISIT_SQL = "'dispatched', 'traveling', 'arrived', 'in_progress', 'waiting'";
 
 export const POST = withAuth(
   async (request: NextRequest, session: AuthSession) => {
@@ -33,8 +33,8 @@ export const POST = withAuth(
         const active = await client.query(
           `SELECT 1 FROM visits
            WHERE work_order_id = $1 AND account_id = $2
-             AND status = ANY($3::text[]) LIMIT 1`,
-          [id, session.accountId, ACTIVE_VISIT],
+             AND status IN (${ACTIVE_VISIT_SQL}) LIMIT 1`,
+          [id, session.accountId],
         );
         if (active.rowCount) {
           return { kind: "active_visit" as const };
@@ -52,7 +52,7 @@ export const POST = withAuth(
         }
 
         await client.query(
-          `UPDATE work_orders SET status = 'completed', completed_at = COALESCE(completed_at, now()), updated_at = now()
+          `UPDATE work_orders SET status = 'completed', completed_at = COALESCE(completed_at, CURRENT_TIMESTAMP), updated_at = CURRENT_TIMESTAMP
            WHERE id = $1 AND account_id = $2`,
           [id, session.accountId],
         );
