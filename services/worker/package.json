@@ -1,5 +1,5 @@
 {
-  "name": "@ai-fsm/worker",
+  "name": "@titan-zero/worker",
   "private": true,
   "version": "0.1.0",
   "scripts": {
@@ -12,9 +12,9 @@
     "test:integration": "vitest run --config vitest.integration.config.ts"
   },
   "dependencies": {
-    "@ai-fsm/domain": "workspace:*",
-    "@ai-fsm/email-templates": "workspace:*",
-    "@ai-fsm/log": "workspace:*",
+    "@titan-zero/domain": "workspace:*",
+    "@titan-zero/email-templates": "workspace:*",
+    "@titan-zero/log": "workspace:*",
     "pg": "^8.13.1",
     "nodemailer": "~6.9.16",
     "mysql2": "^3.14.5"
