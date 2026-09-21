@@ -1,0 +1,5 @@
+{
+  "schema": "titan-agent-mesh-claims/v3",
+  "authority": "coordination-only",
+  "claims": []
+}
