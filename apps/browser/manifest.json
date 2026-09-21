@@ -29,7 +29,8 @@
     }
   },
   "background": {
-    "service_worker": "src/lib/service-worker.js"
+    "service_worker": "src/lib/service-worker.js",
+    "type": "module"
   },
   "content_scripts": [
     {
