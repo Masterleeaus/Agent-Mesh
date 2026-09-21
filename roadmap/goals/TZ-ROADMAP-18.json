@@ -1,0 +1,1545 @@
+{
+  "goal_id": "TZ-ROADMAP-18",
+  "priority": "P0",
+  "title": "Security, Privacy & Authority",
+  "objective": "Harden authentication, secrets, permissions, auditability and action authority.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "title": "Threat-model full architecture",
+      "status": "TODO",
+      "subgoal_order": 1,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Risk Engine",
+        "Titan AI Assurance Engine",
+        "Titan Governance",
+        "Titan Shield",
+        "Titan Trust",
+        "Titan Locker",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-18-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "file_id": "file_0000000058248209a538c309708e9de4",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Assurance Engine/Titan AI Assurance Engine Master v2.3.3.zip",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "docs/SECURITY.md",
+              "System/Services/Assurance/AdversarialChallengeService.php",
+              "System/Services/Assurance/RiskClassificationService.php",
+              "tests/Architecture/AssuranceIdentityIsolationTest.php"
+            ],
+            "finding": "Assurance provides adversarial challenge, risk classification and identity-isolation primitives."
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "file_id": "file_00000000412881faaf8a0e89fe3fc1dc",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Risk Engine/Titan Risk Engine Master v1.0.0-rc.4.zip",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "docs/PASS-8-SECURITY-ABUSE-FUZZ-HARDENING.md",
+              "tests/Pass8/SecurityAbuseFuzzSmokeTest.php",
+              "tests/Pass8/SecurityBoundarySmokeTest.php",
+              "tests/Pass8/PolicyIntegritySmokeTest.php"
+            ],
+            "finding": "Risk contains explicit abuse/fuzz/security-boundary hardening and policy-integrity tests."
+          },
+          {
+            "source_ref": "Titan Shield",
+            "file_id": "file_000000008a048208bb0cc524a49549b7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Shield/Titan Shield Master v1.0.0-rc.3.zip",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "docs/SECURITY.md",
+              "tests/Standalone/SecurityBoundaryTest.php",
+              "System/Integrations/RiskEngineAdapter.php"
+            ],
+            "finding": "Shield contributes security-boundary inspection and risk integration."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Assurance Engine",
+          "Titan Risk Engine",
+          "Titan Shield"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:35:00+10:00",
+        "scan_notes": "Threat-model work should consolidate existing abuse, isolation, policy and inspection threats into one architecture-wide model.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Harden authentication/session/token lifecycle",
+      "status": "TODO",
+      "subgoal_order": 2,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Risk Engine",
+        "Titan AI Assurance Engine",
+        "Titan Governance",
+        "Titan Shield",
+        "Titan Trust",
+        "Titan Locker",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-18-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Governance",
+            "file_id": "file_00000000b6c081f8bf9843bca163f464",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Governance/Titan Governance Master v1.0.0-rc.4.zip",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Host/TitanHostAuthorizationAdapter.php",
+              "contracts/control-plane/authority-constraint.v1.json",
+              "docs/AUTHORIZATION-MATRIX.md"
+            ],
+            "finding": "Governance has host authorization and explicit authority constraints."
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "file_id": "file_00000000412881faaf8a0e89fe3fc1dc",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Risk Engine/Titan Risk Engine Master v1.0.0-rc.4.zip",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/AuthenticatedTenantResolver.php",
+              "System/Services/AuthenticatedActorIdentityResolver.php",
+              "System/Services/TrustedRiskContextFactory.php",
+              "tests/Unit/TrustedRiskContextFactoryTest.php"
+            ],
+            "finding": "Risk resolves authenticated company/actor identity into trusted runtime context."
+          },
+          {
+            "source_ref": "Titan Trust",
+            "file_id": "file_0000000071788230b0a9df377eb77ccf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Trust/Titan Trust Master v2.1.0.zip",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Security/TrustAuthorization.php",
+              "database/migrations/2026_02_20_000001_titantrust_hardening_identity_and_legacy_cleanup.php",
+              "tests/standalone-agent3-pass6-trust-authorization.php"
+            ],
+            "finding": "Trust supplies authorization hardening and identity cleanup evidence."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/FailClosedAuthorizationGate.php",
+              "System/Contracts/CommandAuthorizationGateContract.php"
+            ],
+            "finding": "Consequential execution already fails closed at the command authorization boundary."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Governance",
+          "Titan Risk Engine",
+          "Titan Trust",
+          "Titan Command Bus"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:35:00+10:00",
+        "scan_notes": "Authentication/session/token hardening should converge identity/session/token lifecycle around canonical company+actor authority, not add another auth authority.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Harden secrets/credential vault",
+      "status": "TODO",
+      "subgoal_order": 3,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Risk Engine",
+        "Titan AI Assurance Engine",
+        "Titan Governance",
+        "Titan Shield",
+        "Titan Trust",
+        "Titan Locker",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-18-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Locker",
+            "file_id": "file_00000000da9482088ae2a8f385951c3c",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Locker/Titan Locker Master v1.1.0-alpha.7.zip",
+            "sha256": "6c551f0ca698706bbbedbde241e1de175e56628548741383bfe1b9caf1faf294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "resources/pwa/chatbot-pwa/crypto-vault.js",
+              "resources/pwa/chatbot-pwa/workcore/vault.js",
+              "cost-sovereignty.contract.json"
+            ],
+            "finding": "Locker contains existing vault/crypto donor code and local cost-sovereignty constraints."
+          },
+          {
+            "source_ref": "Titan Governance",
+            "file_id": "file_00000000b6c081f8bf9843bca163f464",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Governance/Titan Governance Master v1.0.0-rc.4.zip",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "docs/SECURITY.md",
+              "release/DEPENDENCY-READINESS.json"
+            ],
+            "finding": "Governance security/release controls provide the policy envelope for secret handling."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/FailClosedAuthorizationGate.php",
+              "System/Services/FailClosedPrivacyGate.php"
+            ],
+            "finding": "Command execution can fail closed before secret-bearing or privacy-sensitive actions."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Locker",
+          "Titan Governance",
+          "Titan Command Bus"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:35:00+10:00",
+        "scan_notes": "Vault implementations exist but must be converged to a single credential/secret authority with company scope, redaction and no raw-secret logging.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Enforce company_id isolation/RLS",
+      "status": "TODO",
+      "subgoal_order": 4,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Assurance Engine",
+        "Titan Command Bus",
+        "Titan Governance",
+        "Titan Locker",
+        "Titan Risk Engine",
+        "Titan Shield",
+        "Titan Trust"
+      ],
+      "subgoal_id": "TZ-ROADMAP-18-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND_WITH_ENFORCEMENT_GAP",
+        "validated_at_utc": "2026-09-19T05:42:00Z",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Governance",
+            "file_id": "file_00000000b6c081f8bf9843bca163f464",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Governance/Titan Governance Master v1.0.0-rc.4.zip",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "database/migrations/2026_08_24_052200_wave1b_canonical_company_id.php",
+              "System/Context/TenantCompanyResolver.php",
+              "System/Host/TitanHostAuthorizationAdapter.php",
+              "tests/Contract/tenant_resolver_contract.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "file_id": "file_00000000412881faaf8a0e89fe3fc1dc",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Risk Engine/Titan Risk Engine Master v1.0.0-rc.4.zip",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "database/migrations/2026_08_24_052200_wave1b_canonical_company_id.php",
+              "System/Services/AuthenticatedTenantResolver.php",
+              "tests/Pass6/TenantResolverTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Trust",
+            "file_id": "file_0000000071788230b0a9df377eb77ccf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Trust/Titan Trust Master v2.1.0.zip",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; TRUST_SEMANTICS_REQUIRE_COMPATIBILITY_REVIEW_WITH_CURRENT_EARNED_TRUST_CONTRACT",
+            "internal_paths": [
+              "System/Models/Concerns/TenantScoped.php",
+              "System/Security/TrustAuthorization.php",
+              "tests/standalone-agent3-pass6-trust-authorization.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Shield",
+            "file_id": "file_000000008a048208bb0cc524a49549b7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Shield/Titan Shield Master v1.0.0-rc.3.zip",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "database/migrations/2026_08_24_052200_wave1b_canonical_company_id.php",
+              "System/Services/FindingAccessRedactionPolicy.php",
+              "tests/Standalone/FindingAccessRedactionTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Locker",
+            "file_id": "file_00000000da9482088ae2a8f385951c3c",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Locker/Titan Locker Master v1.1.0-alpha.7.zip",
+            "sha256": "6c551f0ca698706bbbedbde241e1de175e56628548741383bfe1b9caf1faf294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "database/migrations/2026_08_24_054000_wave1c_canonical_company_id.php"
+            ]
+          },
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "file_id": "file_0000000058248209a538c309708e9de4",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Assurance Engine/Titan AI Assurance Engine Master v2.3.3.zip",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "tests/Architecture/AssuranceIdentityIsolationTest.php",
+              "System/Services/Assurance/Integration/TitanAutonomyTenantAssuranceBridge.php"
+            ]
+          }
+        ],
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Governance",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9"
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18"
+          },
+          {
+            "source_ref": "Titan Trust",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; TRUST_SEMANTICS_REQUIRE_COMPATIBILITY_REVIEW_WITH_CURRENT_EARNED_TRUST_CONTRACT",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74"
+          },
+          {
+            "source_ref": "Titan Shield",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8"
+          },
+          {
+            "source_ref": "Titan Locker",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "6c551f0ca698706bbbedbde241e1de175e56628548741383bfe1b9caf1faf294"
+          },
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af"
+          }
+        ],
+        "notes": "Strong reusable company_id isolation and tenant-resolution primitives exist across Governance, Risk, Trust, Shield, Locker and Assurance. No database-native RLS policy artifact was found in the scanned masters; reuse the application/service-layer company scoping and tests, then implement or explicitly verify the datastore-level isolation mechanism appropriate to the canonical stack rather than assuming RLS already exists.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Implement action authority/policy engine",
+      "status": "TODO",
+      "subgoal_order": 5,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Assurance Engine",
+        "Titan Command Bus",
+        "Titan Governance",
+        "Titan Locker",
+        "Titan Risk Engine",
+        "Titan Shield",
+        "Titan Trust"
+      ],
+      "subgoal_id": "TZ-ROADMAP-18-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND",
+        "validated_at_utc": "2026-09-19T05:42:00Z",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "System/Services/FailClosedAuthorizationGate.php",
+              "System/Services/FailClosedApprovalGate.php",
+              "System/Services/FailClosedRiskGate.php",
+              "System/Services/FailClosedGovernanceGate.php",
+              "System/Contracts/CommandAuthorizationGateContract.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Governance",
+            "file_id": "file_00000000b6c081f8bf9843bca163f464",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Governance/Titan Governance Master v1.0.0-rc.4.zip",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "contracts/control-plane/authority-constraint.v1.json",
+              "contracts/control-plane/policy.v1.json",
+              "System/Services/GovernanceAuthorityConstraintFactory.php",
+              "System/Models/GovernancePolicyDecision.php",
+              "tests/Contract/governed_action_service_contract.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "file_id": "file_00000000412881faaf8a0e89fe3fc1dc",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Risk Engine/Titan Risk Engine Master v1.0.0-rc.4.zip",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "System/Services/FailClosedRiskGate.php",
+              "System/Services/DeterministicRiskPolicyResolver.php",
+              "System/Services/RiskPolicyGovernanceService.php",
+              "System/Services/RiskDirectivePolicy.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Shield",
+            "file_id": "file_000000008a048208bb0cc524a49549b7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Shield/Titan Shield Master v1.0.0-rc.3.zip",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "schemas/governance-authority-constraint.schema.json",
+              "System/Services/ShieldAuthorityConstraintFactory.php",
+              "System/Services/KnowledgeBindingPolicy.php",
+              "tests/Standalone/AuthorityConstraintTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "file_id": "file_0000000058248209a538c309708e9de4",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Assurance Engine/Titan AI Assurance Engine Master v2.3.3.zip",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "System/Services/Assurance/PermissionGateService.php",
+              "System/Services/Assurance/RiskClassificationService.php",
+              "System/Events/AssuranceHumanApprovalRequired.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Locker",
+            "file_id": "file_00000000da9482088ae2a8f385951c3c",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Locker/Titan Locker Master v1.1.0-alpha.7.zip",
+            "sha256": "6c551f0ca698706bbbedbde241e1de175e56628548741383bfe1b9caf1faf294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "System/Workforce/GovernedCommandEnvelope.php",
+              "System/Domains/Locker/Policies/InventoryQuantityPolicy.php",
+              "System/Domains/Locker/Policies/StockMovementPolicy.php"
+            ]
+          }
+        ],
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Command Bus",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294"
+          },
+          {
+            "source_ref": "Titan Governance",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9"
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18"
+          },
+          {
+            "source_ref": "Titan Shield",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8"
+          },
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af"
+          },
+          {
+            "source_ref": "Titan Locker",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "6c551f0ca698706bbbedbde241e1de175e56628548741383bfe1b9caf1faf294"
+          }
+        ],
+        "notes": "Fail-closed authorization, approval, risk and governance gates plus authority-constraint/policy contracts already exist. Main work is canonical convergence into one action-authority decision path, not creation of another policy engine.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Harden audit/evidence ledger",
+      "status": "TODO",
+      "subgoal_order": 6,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Assurance Engine",
+        "Titan Command Bus",
+        "Titan Governance",
+        "Titan Locker",
+        "Titan Risk Engine",
+        "Titan Shield",
+        "Titan Trust"
+      ],
+      "subgoal_id": "TZ-ROADMAP-18-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND",
+        "validated_at_utc": "2026-09-19T05:42:00Z",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "file_id": "file_0000000058248209a538c309708e9de4",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Assurance Engine/Titan AI Assurance Engine Master v2.3.3.zip",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "database/migrations/2026_08_11_000015_create_assurance_evidence_core_tables.php",
+              "System/Services/Assurance/AssuranceAuditService.php",
+              "System/Services/Assurance/Evidence/EvidenceRecordNormalizer.php",
+              "System/Services/Assurance/EvidencePacketService.php",
+              "docs/EVIDENCE-CONTRACT-V2.md"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "System/DTO/CommandReceipt.php",
+              "System/Contracts/CommandReceiptStoreContract.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php",
+              "database/migrations/2026_08_11_000001_create_titan_command_receipts_table.php",
+              "schemas/command-execution-receipt.v1.schema.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Governance",
+            "file_id": "file_00000000b6c081f8bf9843bca163f464",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Governance/Titan Governance Master v1.0.0-rc.4.zip",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "System/DecisionIntelligence/GovernanceDecisionEvidenceRegistry.php",
+              "System/DecisionIntelligence/GovernanceEvidenceSanitizer.php",
+              "System/Observability/TraceContext.php",
+              "tests/Contract/end_to_end_governance_trace_contract.php",
+              "tests/Contract/decision_evidence_contract.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "file_id": "file_00000000412881faaf8a0e89fe3fc1dc",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Risk Engine/Titan Risk Engine Master v1.0.0-rc.4.zip",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "System/Services/DatabaseRiskAssessmentLedger.php",
+              "System/Services/DatabaseRiskEnforcementReceiptStore.php",
+              "System/Services/RiskEnforcementReceiptVerifier.php",
+              "database/migrations/2026_08_11_000002_upgrade_titan_risk_assessments_to_ledger.php",
+              "tests/Unit/RiskLedgerIdempotencyTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Shield",
+            "file_id": "file_000000008a048208bb0cc524a49549b7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Shield/Titan Shield Master v1.0.0-rc.3.zip",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "System/Domain/Evidence/EvidenceManifest.php",
+              "System/Services/EvidenceCaptureService.php",
+              "System/Workforce/PersistentReceiptRegistry.php",
+              "tests/Standalone/EvidenceIntegrityTest.php",
+              "tests/Standalone/DurableDefinitionEvidenceContractTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Locker",
+            "file_id": "file_00000000da9482088ae2a8f385951c3c",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Locker/Titan Locker Master v1.1.0-alpha.7.zip",
+            "sha256": "6c551f0ca698706bbbedbde241e1de175e56628548741383bfe1b9caf1faf294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "System/Workforce/EvidenceReceipt.php",
+              "System/Workforce/PersistentReceiptRegistry.php",
+              "System/Domains/Locker/GoodsReceiptService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Trust",
+            "file_id": "file_0000000071788230b0a9df377eb77ccf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Trust/Titan Trust Master v2.1.0.zip",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; TRUST_SEMANTICS_REQUIRE_COMPATIBILITY_REVIEW_WITH_CURRENT_EARNED_TRUST_CONTRACT",
+            "internal_paths": [
+              "System/Audit/JobTimeline.php",
+              "System/Audit/RequestContext.php",
+              "System/Audit/JobEventWriter.php",
+              "System/Http/Middleware/CaptureAuditContext.php",
+              "System/Assurance/EvidenceRefFactory.php"
+            ]
+          }
+        ],
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af"
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294"
+          },
+          {
+            "source_ref": "Titan Governance",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9"
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18"
+          },
+          {
+            "source_ref": "Titan Shield",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8"
+          },
+          {
+            "source_ref": "Titan Locker",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_CANONICAL_STATUS_REMAINS_UNMANAGED",
+            "sha256": "6c551f0ca698706bbbedbde241e1de175e56628548741383bfe1b9caf1faf294"
+          },
+          {
+            "source_ref": "Titan Trust",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; TRUST_SEMANTICS_REQUIRE_COMPATIBILITY_REVIEW_WITH_CURRENT_EARNED_TRUST_CONTRACT",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74"
+          }
+        ],
+        "notes": "Durable command receipts, risk ledgers/enforcement receipts, assurance evidence records, governance decision traces, Shield evidence manifests and Trust audit context already exist. Harden one cross-engine evidence chain with stable IDs, company_id, decision provenance, idempotency and redaction rather than introducing a parallel audit ledger.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add privacy/redaction/retention controls",
+      "status": "TODO",
+      "subgoal_order": 7,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Risk Engine",
+        "Titan AI Assurance Engine",
+        "Titan Governance",
+        "Titan Shield",
+        "Titan Trust",
+        "Titan Locker",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-18-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Shield",
+            "file_id": "file_000000008a048208bb0cc524a49549b7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Shield/Titan Shield Master v1.0.0-rc.3.zip",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/FindingAccessRedactionPolicy.php",
+              "tests/Standalone/FindingAccessRedactionTest.php"
+            ],
+            "finding": "Shield already implements access-aware finding redaction."
+          },
+          {
+            "source_ref": "Titan Governance",
+            "file_id": "file_00000000b6c081f8bf9843bca163f464",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Governance/Titan Governance Master v1.0.0-rc.4.zip",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DecisionIntelligence/GovernanceEvidenceSanitizer.php",
+              "System/Observability/TraceContext.php"
+            ],
+            "finding": "Governance sanitizes evidence while preserving trace context."
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "file_id": "file_00000000412881faaf8a0e89fe3fc1dc",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Risk Engine/Titan Risk Engine Master v1.0.0-rc.4.zip",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/RiskMetadataSanitizer.php",
+              "tests/Unit/RiskMetadataSanitizerTest.php"
+            ],
+            "finding": "Risk explicitly sanitizes metadata."
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/FailClosedPrivacyGate.php",
+              "System/Contracts/CommandPrivacyGateContract.php"
+            ],
+            "finding": "Command Bus enforces a fail-closed privacy gate before execution."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Shield",
+          "Titan Governance",
+          "Titan Risk Engine",
+          "Titan Command Bus"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:35:00+10:00",
+        "scan_notes": "Redaction/privacy controls are strong; retention/deletion schedules still need one canonical cross-engine policy and certification.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add dependency/supply-chain/security scanning",
+      "status": "TODO",
+      "subgoal_order": 8,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Risk Engine",
+        "Titan AI Assurance Engine",
+        "Titan Governance",
+        "Titan Shield",
+        "Titan Trust",
+        "Titan Locker",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-18-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "SBOM.cdx.json",
+              "tests/Standalone/PackageContractTest.php"
+            ],
+            "finding": "Command Bus ships SBOM and package-contract validation."
+          },
+          {
+            "source_ref": "Titan Governance",
+            "file_id": "file_00000000b6c081f8bf9843bca163f464",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Governance/Titan Governance Master v1.0.0-rc.4.zip",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "SBOM.cdx.json",
+              "PACKAGE-FILES.sha256",
+              "release/DEPENDENCY-READINESS.json",
+              "tests/Contract/installer_176_dependency_policy_contract.php"
+            ],
+            "finding": "Governance has SBOM, package hashes, dependency readiness and installer dependency-policy tests."
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "file_id": "file_00000000412881faaf8a0e89fe3fc1dc",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Risk Engine/Titan Risk Engine Master v1.0.0-rc.4.zip",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "release/SBOM.json",
+              "tests/Pass9/ProductionContractAuditSmokeTest.php"
+            ],
+            "finding": "Risk ships SBOM and production contract audit evidence."
+          },
+          {
+            "source_ref": "Titan Shield",
+            "file_id": "file_000000008a048208bb0cc524a49549b7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Shield/Titan Shield Master v1.0.0-rc.3.zip",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "SBOM.cdx.json",
+              "PACKAGE-FILES.sha256",
+              "tests/Standalone/PackageContractTest.php"
+            ],
+            "finding": "Shield provides SBOM/hash/package validation."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Command Bus",
+          "Titan Governance",
+          "Titan Risk Engine",
+          "Titan Shield"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:35:00+10:00",
+        "scan_notes": "Supply-chain primitives exist; converge them into a single dependency/SBOM/signature/scanner release gate with severity policy.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Run adversarial penetration-style tests",
+      "status": "TODO",
+      "subgoal_order": 9,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Risk Engine",
+        "Titan AI Assurance Engine",
+        "Titan Governance",
+        "Titan Shield",
+        "Titan Trust",
+        "Titan Locker",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-18-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Risk Engine",
+            "file_id": "file_00000000412881faaf8a0e89fe3fc1dc",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Risk Engine/Titan Risk Engine Master v1.0.0-rc.4.zip",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Pass8/SecurityAbuseFuzzSmokeTest.php",
+              "tests/Pass8/SecurityBoundarySmokeTest.php",
+              "tests/Pass8/PolicyIntegritySmokeTest.php"
+            ],
+            "finding": "Risk already contains adversarial abuse/fuzz/boundary smoke tests."
+          },
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "file_id": "file_0000000058248209a538c309708e9de4",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Assurance Engine/Titan AI Assurance Engine Master v2.3.3.zip",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/Assurance/AdversarialChallengeService.php",
+              "tests/Architecture/AssuranceIdentityIsolationTest.php"
+            ],
+            "finding": "Assurance supports adversarial challenge and identity-isolation testing."
+          },
+          {
+            "source_ref": "Titan Shield",
+            "file_id": "file_000000008a048208bb0cc524a49549b7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Shield/Titan Shield Master v1.0.0-rc.3.zip",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Standalone/SecurityBoundaryTest.php",
+              "tests/Standalone/AuthorityConstraintTest.php",
+              "tests/Standalone/EvidenceIntegrityTest.php"
+            ],
+            "finding": "Shield tests security boundary, authority constraints and evidence integrity."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Risk Engine",
+          "Titan AI Assurance Engine",
+          "Titan Shield"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:35:00+10:00",
+        "scan_notes": "Build penetration-style scenarios by composing existing fuzz/adversarial/isolation/evidence tests across the full execution chain.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Certify security/privacy release gates",
+      "status": "TODO",
+      "subgoal_order": 10,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Risk Engine",
+        "Titan AI Assurance Engine",
+        "Titan Governance",
+        "Titan Shield",
+        "Titan Trust",
+        "Titan Locker",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-18-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Security/privacy/authority is shared control-plane enforcement; authentication, RLS, vaults, policy and audit controls must not be personified into independent agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Governance",
+            "file_id": "file_00000000b6c081f8bf9843bca163f464",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Governance/Titan Governance Master v1.0.0-rc.4.zip",
+            "sha256": "cc74d794401b6648beceaffcb15744f4619089afcbd11e295d57f2180a482fa9",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Contract/pass4_release_contract.php",
+              "tests/Contract/end_to_end_governance_trace_contract.php",
+              "release/DEPENDENCY-READINESS.json"
+            ],
+            "finding": "Governance has release, trace and dependency-readiness contracts."
+          },
+          {
+            "source_ref": "Titan Shield",
+            "file_id": "file_000000008a048208bb0cc524a49549b7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Shield/Titan Shield Master v1.0.0-rc.3.zip",
+            "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Standalone/FinalProductionContractTest.php",
+              "tests/Standalone/RequiredEvidenceEnforcementTest.php",
+              "tests/Standalone/ImmutablePersistenceHotfixTest.php"
+            ],
+            "finding": "Shield has final production/evidence/immutability certification tests."
+          },
+          {
+            "source_ref": "Titan Risk Engine",
+            "file_id": "file_00000000412881faaf8a0e89fe3fc1dc",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Risk Engine/Titan Risk Engine Master v1.0.0-rc.4.zip",
+            "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Pass9/ProductionContractAuditSmokeTest.php",
+              "tests/Pass9/LifecycleSafetySmokeTest.php"
+            ],
+            "finding": "Risk has production audit/lifecycle-safety tests."
+          },
+          {
+            "source_ref": "Titan AI Assurance Engine",
+            "file_id": "file_0000000058248209a538c309708e9de4",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Assurance Engine/Titan AI Assurance Engine Master v2.3.3.zip",
+            "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "docs/EVIDENCE-CONTRACT-V2.md",
+              "tests/Workforce/RuntimeIntegrationContractTest.php"
+            ],
+            "finding": "Assurance supplies evidence and runtime integration certification."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Governance",
+          "Titan Shield",
+          "Titan Risk Engine",
+          "Titan AI Assurance Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:35:00+10:00",
+        "scan_notes": "Final security/privacy release certification should be one cross-engine matrix with company isolation, auth, privacy, evidence, dependency and adversarial gates.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "security"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": false,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 3,
+  "library_reuse_refs": [
+    "Titan Risk Engine",
+    "Titan AI Assurance Engine",
+    "Titan Governance",
+    "Titan Shield",
+    "Titan Trust",
+    "Titan Locker",
+    "Titan Command Bus"
+  ],
+  "reuse_first": true,
+  "agent_goal_classification": "SHARED_AGENT_INFRASTRUCTURE_DEFAULT_NO_NEW_BUSINESS_AGENT",
+  "agent_goal_rule": "This goal governs shared machinery used by agents. Default to NO_AGENT_INFRASTRUCTURE_ONLY or reuse existing oversight/domain identities; create a new agent only if an independently durable outcome owner is proven.",
+  "workforce_goal_classification": "SHARED_AGENT_INFRASTRUCTURE_REUSE_FIRST",
+  "workforce_goal_rule": "Governs or equips agents. Create a new identity only for a distinct durable outcome owner; otherwise reuse existing agents or classify as infrastructure."
+}
