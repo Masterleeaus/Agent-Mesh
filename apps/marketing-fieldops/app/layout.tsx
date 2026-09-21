@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Titan Zero | Protect Every Service Promise",
-  description: "An AI-orchestrated dealership service operations system that recovers repair orders from capacity disruptions with human approval and auditable execution.",
+  description: "Automotive service operations intelligence that recovers repair orders from capacity disruptions with human approval and auditable execution.",
   icons: { icon: "/favicon.svg" },
 };
 
