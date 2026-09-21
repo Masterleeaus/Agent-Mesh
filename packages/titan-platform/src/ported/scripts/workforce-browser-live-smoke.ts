@@ -1,6 +1,6 @@
+#!/usr/bin/env node
 // @ts-nocheck
 // Ported from Titan Zero extension (portable-core): scripts/workforce-browser-live-smoke.mjs
-#!/usr/bin/env node
 import { spawn } from 'node:child_process';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
