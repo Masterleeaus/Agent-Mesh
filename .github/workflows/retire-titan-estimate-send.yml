@@ -1,0 +1,24 @@
+name: Retire Superseded Titan Estimate Send
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-titan-estimate-send.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          # Canonical send route is newer: line_item_count is explicitly cast to int,
+          # while retaining guardrails, mark-only delivery, cascade, PDF and audit behavior.
+          git rm -f 'titan/apps/web/app/api/v1/estimates/[id]/send/route.ts'
+          find titan/apps -depth -type d -empty -delete || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Retire superseded Titan estimate send route"
+          git push
