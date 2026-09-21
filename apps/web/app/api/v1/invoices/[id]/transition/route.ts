@@ -4,8 +4,8 @@ import { withRole } from "@/lib/auth/middleware";
 import { appendAuditLog } from "@/lib/db/audit";
 import { withInvoiceContext } from "@/lib/invoices/db";
 import { logger } from "@/lib/logger";
-import { invoiceStatusSchema, invoiceTransitions } from "@ai-fsm/domain";
-import type { InvoiceStatus } from "@ai-fsm/domain";
+import { invoiceStatusSchema, invoiceTransitions } from "@titan-zero/domain";
+import type { InvoiceStatus } from "@titan-zero/domain";
 import { writeWorkflowEvent } from "@/lib/workflow-events";
 import { recordStatusChange } from "@/lib/status-history";
 
