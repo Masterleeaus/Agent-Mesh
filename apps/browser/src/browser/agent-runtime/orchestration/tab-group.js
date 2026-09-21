@@ -27,15 +27,12 @@ export const GROUP_STORAGE_KEY = "auto_group_sessions";
 // chrome.tabGroups.Color values, curated to visually distinct hues and assigned
 // round-robin so concurrent sessions are easy to tell apart. "grey" is omitted
 // because it reads as a disabled/neutral group rather than an active agent one.
+// Titan Code uses the same black/slate/deep-blue visual language as the private
+// sidebar. Chrome tab groups cannot be custom-coloured, so use the closest
+// native restrained palette and deliberately exclude neon/pink/purple/cyan.
 export const SESSION_GROUP_COLORS = [
   "blue",
-  "green",
-  "purple",
-  "cyan",
-  "pink",
-  "orange",
-  "red",
-  "yellow",
+  "grey",
 ];
 
 // Chrome intermittently rejects chrome.tabs.group with "Tabs cannot be edited
@@ -179,6 +176,13 @@ export function createTabGroupManager({
       return existing;
     }
 
+    // Isolation is per Chrome window as well as per session. Never allow an
+    // anchor/window mismatch to mint an authority record for a tab in some other
+    // workspace window.
+    const anchor = await tabsApi.get?.(anchorTabId);
+    if (anchor && Number.isInteger(windowId) && anchor.windowId !== windowId) {
+      throw new Error(`ensureGroup: anchor tab ${anchorTabId} is not in window ${windowId}`);
+    }
     const chromeGroupId = await tabsApi.group({ tabIds: [anchorTabId] });
     const color = pickColor();
     await tabGroupsApi.update(chromeGroupId, { title: GROUP_TITLE, color });
@@ -206,6 +210,12 @@ export function createTabGroupManager({
 
   async function addMember(sessionId, tabId) {
     const record = requireRecord(sessionId, "addMember");
+    // A Chrome tab group cannot span windows. Check explicitly before grouping
+    // so a stale/malicious tab id cannot escape the session's workspace window.
+    const tab = await tabsApi.get?.(tabId);
+    if (tab && tab.windowId !== record.windowId) {
+      throw new Error(`addMember: tab ${tabId} is outside session "${sessionId}" window`);
+    }
     await groupWithRetry({ tabIds: [tabId], groupId: record.chromeGroupId });
     registerMember(record, tabId);
     record.updatedAt = now();
