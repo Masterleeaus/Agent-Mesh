@@ -87,6 +87,32 @@ Every agent PR is checked by `.github/workflows/agent-claim-gate.yml`. The PR mu
 - Workforce architecture is referenced by IDs/contracts; do not embed duplicate workforce specifications into roadmap/issues.
 - Titan Code is private development tooling only and must never become a Titan Zero production runtime dependency.
 
+## Automated PR handoff
+
+After the builder has committed and pushed verified work to the canonical claim branch, use:
+
+```bash
+python3 .github/scripts/open-agent-pr.py \
+  --verification "pnpm --filter <package> test — pass" \
+  --completion "Describe the verified completion basis" \
+  --risk "Describe rollback / compatibility / security implications"
+```
+
+The helper resolves the matching roadmap issue, refuses empty claim branches, derives the changed-file list and commit summary, and creates or updates the **single canonical PR** for that claim branch.
+
+It automatically includes:
+
+- `Closes #<issue-number>`;
+- subgoal ID and goal ID;
+- exact claim branch;
+- claim/base SHA information when available;
+- changed files;
+- verification evidence;
+- completion/remaining-work text;
+- architecture/risk/rollback sections.
+
+Do not create a second PR for the same claim branch. Re-run the helper to update the existing PR instead.
+
 ## Required PR evidence
 
 Every implementation PR must state:
