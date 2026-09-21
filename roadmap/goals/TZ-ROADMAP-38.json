@@ -1,0 +1,1333 @@
+{
+  "goal_id": "TZ-ROADMAP-38",
+  "priority": "P1",
+  "title": "Cross-Host Contract & CI Certification Matrix",
+  "objective": "Continuously prove Core × Vertical × Host × Agent-level behaviour, authority and compatibility.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define test matrix dimensions for core version, vertical, host, workforce tier and surface",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Forge",
+        "Titan Interaction Engine",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-38-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Forge",
+          "Titan Interaction Engine",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Feature/TitanMcpClientCompatibilityContractTest.php",
+              "tests/Standalone/TitanAppsConvergenceContractTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domain/BuildContext.php",
+              "System/Domain/ReleaseGateResult.php",
+              "tests/standalone/test_release_verifier.py"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "ZERO_LOSS_VERIFIED_PHYSICAL_SHA_MATCH_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Registry/CapabilityRegistry.php",
+              "System/Workforce/WorkforceIntegrationContract.php",
+              "System/Surfaces/SurfaceWizardPolicy.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/SharedEnvelopeContext.php",
+              "tests/Standalone/WorkforceIntegrationContractTest.php",
+              "extension.manifest.json"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:45:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Existing per-engine contracts already expose most matrix dimensions (host/client compatibility, company boundary, surface/workforce metadata, release/build context). Remaining work is a single canonical matrix definition joining core version + vertical + host + workforce tier + surface."
+      }
+    },
+    {
+      "subgoal": 2,
+      "title": "Test tool discovery and canonical schema validation across hosts",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Forge",
+        "Titan Interaction Engine",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-38-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Forge",
+          "Titan Interaction Engine",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/McpCatalogue.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/capabilities/tool-call.input.json",
+              "schemas/capabilities/tool-call.output.json",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "schemas/role-v1.schema.json",
+              "tests/standalone/verify_ai_generation_manifest_validation.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "ZERO_LOSS_VERIFIED_PHYSICAL_SHA_MATCH_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Registry/CapabilityRegistry.php",
+              "System/Schema/InteractionSchema.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "schemas/capabilities/command.dispatch.input.json",
+              "schemas/capabilities/command.dispatch.output.json",
+              "tests/Standalone/PackageContractTest.php"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:45:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "MCP already owns explicit tool catalogue/capability dispatch contracts and schemas; Forge validates generation manifests; Interaction/Command Bus expose capability and command schemas. Reuse these as matrix assertions rather than duplicating tool schema definitions."
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Test unified authentication, company isolation, permissions and effective authority",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Forge",
+        "Titan Interaction Engine",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-38-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Forge",
+          "Titan Interaction Engine",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/McpTokenScopeGate.php",
+              "System/Http/Middleware/AuthorizeTitanMcp.php",
+              "tests/Standalone/AuthoritativeCompanyBoundaryTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Http/Middleware/RequireForgeTenant.php",
+              "System/Support/ForgeTenantResolver.php",
+              "tests/standalone/verify_governance_boundaries.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "ZERO_LOSS_VERIFIED_PHYSICAL_SHA_MATCH_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Capabilities/CapabilityExecutionContext.php",
+              "System/Authority/ApprovalSigner.php",
+              "compatibility/legacy-10.5.13-donor/tests/Architecture/Pass12CanonicalCompanyBoundaryCertificationTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/FailClosedAuthorizationGate.php",
+              "tests/Standalone/CanonicalCompanyTenancyTest.php",
+              "tests/Architecture/BoundaryTest.php"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:45:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Authentication, token scope, company_id isolation, permissions, tenant resolution and fail-closed authorization tests already exist. Build one cross-host authority matrix over these existing gates."
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Test read/write operations, approvals, idempotency and replay protection",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Forge",
+        "Titan Interaction Engine",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-38-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Forge",
+          "Titan Interaction Engine",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Tools/MutationCoordinationTools.php",
+              "System/Mcp/Support/MutationTicketStore.php",
+              "System/Mcp/Support/WriteSafetyGate.php",
+              "tests/Feature/TitanMcpMutationTicketContractTest.php",
+              "tests/Feature/TitanMcpCodingWriteRecoveryTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Governance/ReleaseGovernanceService.php",
+              "tests/standalone/verify_security_gates.py"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "ZERO_LOSS_VERIFIED_PHYSICAL_SHA_MATCH_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Offline/OfflineQueue.php",
+              "System/Offline/ConflictResolver.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Standalone/CommandBusPipelineTest.php",
+              "tests/Standalone/ApprovalIntegrationTest.php",
+              "System/Infrastructure/Persistence/DatabaseCommandReceiptStore.php"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:45:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Governed write flows already include mutation preparation/tickets/backups, approvals, command receipts, idempotency and offline conflict primitives. Cross-host replay/idempotency certification should compose these existing tests."
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Test Worker/Specialist/Manager/Orchestrator responsibility and autonomy behaviour through every applicable host",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Forge",
+        "Titan Interaction Engine",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-38-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Forge",
+          "Titan Interaction Engine",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "schemas/workforce-integration-v1.5.schema.json",
+              "System/Workforce/CapabilityResolver.php",
+              "tests/standalone/verify_workforce_host_registration_v14.py"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Workforce/RoleCatalog.php",
+              "resources/workforce/capability-bindings.json",
+              "tests/standalone/verify_workforce_runtime_discovery_v12.py"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "ZERO_LOSS_VERIFIED_PHYSICAL_SHA_MATCH_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Workforce/WorkforceIntegrationContract.php",
+              "System/Engines/Cognitive/Implementations/CognitiveOrchestrator.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Standalone/AutonomyIntegrationTest.php",
+              "tests/Standalone/WorkforceIntegrationContractTest.php"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:45:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Workforce host-registration and autonomy tests exist, but explicit Worker/Specialist/Manager/Orchestrator matrix coverage is incomplete/inconsistent across the donor suites. The matrix must make tier responsibility and authority behaviour first-class rather than infer it."
+      }
+    },
+    {
+      "subgoal": 6,
+      "title": "Test generative/MCP Apps UI rendering plus graceful fallback",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Forge",
+        "Titan Interaction Engine",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-38-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Forge",
+          "Titan Interaction Engine",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Feature/TitanMcpExplicitCardSurfaceContractTest.php",
+              "tests/Feature/TitanMcpBladeCompatibilityTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Integration/TitanApps/TitanAppsContributionProvider.php",
+              "tests/Standalone/TitanAppsConvergenceContractTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "ZERO_LOSS_VERIFIED_PHYSICAL_SHA_MATCH_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Presentation/GeneratedUiPresenter.php",
+              "System/Renderer/ConversationalRenderer.php",
+              "System/Renderer/HybridRenderer.php",
+              "System/Template/TemplateCompatibilityChecker.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/SharedEnvelopeContext.php"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:45:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Interaction Engine already provides deterministic generated UI plus conversational/hybrid renderers and compatibility fallback; MCP has card/client compatibility tests. Add host-by-host UI/fallback assertions instead of another rendering layer."
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Test vertical terminology, capability exposure and manifest generation",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Forge",
+        "Titan Interaction Engine",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-38-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Forge",
+          "Titan Interaction Engine",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/McpCatalogue.php",
+              "extension.manifest.json",
+              "tests/Feature/TitanMcpClientCompatibilityContractTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "extension.manifest.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "ZERO_LOSS_VERIFIED_PHYSICAL_SHA_MATCH_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Profile/FieldHomeServicesProfile.php",
+              "System/Profile/FieldHomeServicesVerticalPackRegistry.php",
+              "System/Registry/CapabilityRegistry.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "schemas/command-execution-receipt.v1.schema.json"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:45:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Forge manifest generation/validation, MCP tool catalogue, Interaction vertical profiles and capability registry provide the required inputs. Test terminology and exposed capabilities from generated manifests across hosts."
+      }
+    },
+    {
+      "subgoal": 8,
+      "title": "Test cross-model continuity, offline/reconnect and failure containment",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Forge",
+        "Titan Interaction Engine",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-38-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Forge",
+          "Titan Interaction Engine",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/RuntimeDiagnostics.php",
+              "tests/Feature/TitanMcpClientCompatibilityContractTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/standalone/verify_lifecycle_hardening.php",
+              "tests/standalone/verify_rewind_source_projection_pass19.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "ZERO_LOSS_VERIFIED_PHYSICAL_SHA_MATCH_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Offline/OfflineDetector.php",
+              "System/Offline/OfflineQueue.php",
+              "System/Offline/SyncEngine.php",
+              "System/Offline/ConflictResolver.php",
+              "compatibility/chatbot-pwa-donor/resources/sync/engine.js"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Contract/wave4a_recovery_lifecycle.php",
+              "tests/Standalone/DurableLifecycleTest.php"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:45:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Interaction Engine contains offline detect/queue/sync/conflict resolution; Forge and Command Bus carry lifecycle/recovery verification. Use them to certify reconnect, cross-model continuity and failure containment."
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Test backwards compatibility, migrations, host degradation and adapter replacement",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Forge",
+        "Titan Interaction Engine",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-38-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Forge",
+          "Titan Interaction Engine",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Standalone/TenantCompanyScopeCompatibilityTest.php",
+              "tests/Feature/TitanMcpClientCompatibilityContractTest.php",
+              "tests/Feature/TitanMcpBladeCompatibilityTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_workforce_runtime_adapter_v13.py",
+              "System/Validation/Validators/GenerationManifestValidator.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "ZERO_LOSS_VERIFIED_PHYSICAL_SHA_MATCH_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Template/TemplateCompatibilityChecker.php",
+              "compatibility/legacy-10.5.13-donor/DONOR-MANIFEST.json",
+              "compatibility/legacy-10.5.13-donor/tests/Architecture/Pass12ChatbotSyncCompatibilityCompletenessTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/PublicApi/PlatformCommandBusGateway.php",
+              "tests/Standalone/CrossAgentLedgerGatewayCompatibilityTest.php"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:45:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Compatibility/migration/adapter replacement evidence already exists in MCP, Forge, Interaction compatibility donors and Command Bus public gateway tests. Consolidate into explicit backwards-compatibility and host-degradation rows."
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Gate release on matrix certification and produce deployment eligibility evidence",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Forge",
+        "Titan Interaction Engine",
+        "Titan Command Bus"
+      ],
+      "subgoal_id": "TZ-ROADMAP-38-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan MCP",
+          "Titan Forge",
+          "Titan Interaction Engine",
+          "Titan Command Bus"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Architecture/TitanMcpExtensionContractTest.php",
+              "tests/Security/TitanMcpSecurityContractTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domain/ReleaseGateResult.php",
+              "System/Governance/ReleaseGovernanceService.php",
+              "tests/standalone/test_release_verifier.py",
+              "tests/standalone/verify_security_gates.py",
+              "tests/standalone/verify_ai_generation_manifest_validation.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "ZERO_LOSS_VERIFIED_PHYSICAL_SHA_MATCH_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Release/CurrentRelease.php",
+              "compatibility/legacy-10.5.13-donor/tests/Architecture/Pass12CanonicalSurfaceCertificationTest.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Commands/CertifyExtensionCommand.php",
+              "tests/Standalone/GovernedActionPipelineConvergenceTest.php"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:45:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Forge has the strongest release gate/verifier primitives and Command Bus can certify governed extension execution. No single cross-host matrix runner/evidence bundle currently gates release; implement one canonical certification runner and deployment-eligibility receipt."
+      }
+    }
+  ],
+  "affinity_tags": [
+    "testing",
+    "certification",
+    "multi-model",
+    "authority"
+  ],
+  "preferred_predecessors": [
+    "TZ-ROADMAP-33",
+    "TZ-ROADMAP-37"
+  ],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "unified_architecture_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan MCP",
+    "Titan Forge",
+    "Titan Interaction Engine",
+    "Titan Command Bus"
+  ],
+  "reuse_first": true,
+  "agent_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENTS",
+  "agent_goal_rule": "This goal is platform/runtime/interface/infrastructure work. Do not create a workforce identity for the technology itself. Existing canonical agents may consume its capabilities.",
+  "workforce_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENT_IDENTITY",
+  "workforce_goal_rule": "Shared platform/runtime infrastructure may be consumed by agents but must not create an agent merely to mirror a technology, runtime, engine, SDK, protocol, deployment target or UI."
+}
