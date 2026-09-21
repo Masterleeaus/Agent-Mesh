@@ -7,7 +7,7 @@ from collections import Counter
 from pathlib import Path
 
 ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
-FAIL_RE = re.compile(r"^.*FAIL\s+(.+)$")
+FAIL_RE = re.compile(r"^FAIL\s+(.+)$")
 
 
 def main() -> int:
