@@ -44,6 +44,8 @@ def main():
     if args.self_test:
         self_test()
         return 0
+    if not args.branch or not args.reason:
+        raise SystemExit("--branch and --reason are required unless --self-test is used")
 
     match = BRANCH_RE.match(args.branch)
     if not match:
