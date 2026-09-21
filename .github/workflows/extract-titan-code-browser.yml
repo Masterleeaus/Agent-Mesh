@@ -1,0 +1,66 @@
+name: Extract Titan Code Browser
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore Pass 18 ZIP from prior commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/titan-code
+          git show 1e6dac160067499a0310af375142b75c76c9549e^:apps/browser/Titan-Code-v2.11.9-Browser-AI-Convergence-Pass18-CUMULATIVE.zip > /tmp/titan-code/pass18.zip
+          test -s /tmp/titan-code/pass18.zip
+          unzip -t /tmp/titan-code/pass18.zip
+
+      - name: Extract into apps/browser
+        shell: bash
+        run: |
+          set -euo pipefail
+          find apps/browser -mindepth 1 -maxdepth 1 ! -name 'readme.txt' -exec rm -rf {} +
+          unzip -q /tmp/titan-code/pass18.zip -d /tmp/titan-code/extracted
+
+          ROOT="/tmp/titan-code/extracted"
+          TOP_COUNT=$(find "$ROOT" -mindepth 1 -maxdepth 1 | wc -l | tr -d ' ')
+          if [ "$TOP_COUNT" = "1" ]; then
+            ONLY=$(find "$ROOT" -mindepth 1 -maxdepth 1 -type d | head -n 1 || true)
+            if [ -n "$ONLY" ]; then
+              ROOT="$ONLY"
+            fi
+          fi
+
+          cp -a "$ROOT"/. apps/browser/
+          rm -f apps/browser/Titan-Code-v2.11.9-Browser-AI-Convergence-Pass18-CUMULATIVE.zip
+
+      - name: Verify extension tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f apps/browser/manifest.json
+          test -d apps/browser/src
+          echo "Extracted file count: $(find apps/browser -type f | wc -l)"
+
+      - name: Commit extracted extension
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/browser
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Extract Titan Code Pass 18 into apps/browser"
+          git push
