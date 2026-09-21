@@ -47,3 +47,6 @@ State why this subgoal/pass is complete, or list only the verified remaining wor
 ### Evidence / risk / rollback
 
 Describe evidence, migration/compatibility implications, rollback path, and any security/privacy/cost impact.
+
+
+> **Automatic handoff note:** Agent PRs are normally created/refreshed by `.github/workflows/agent-pr-handoff.yml`. Builders should enrich verification/completion/risk evidence when the automatic text is insufficient; Manager review remains mandatory.
