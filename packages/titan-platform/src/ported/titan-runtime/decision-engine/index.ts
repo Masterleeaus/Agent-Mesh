@@ -10,7 +10,7 @@ export const AUTHORITY_CONFERRED_BY_ACTIVATION = false;
 
 export function createDecisionEngineEnvelope(input) {
   const envelope = freezeEnvelope(input);
-  return Object.freeze({ ...envelope, runtime_id: RUNTIME_ID, runtime_kind: RUNTIME_KIND, authority_conferred_by_activation: false });
+  return Object.freeze({ ...envelope, runtime_id: RUNTIME_ID, runtime_kind: RUNTIME_KIND, authority_neutral: true, execution_authority: false, recommendation_is_authority: false, authority_conferred_by_activation: false });
 }
 
 export const runtimeDescriptor = Object.freeze({
