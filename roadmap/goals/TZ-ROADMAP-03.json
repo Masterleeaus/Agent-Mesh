@@ -1,0 +1,1216 @@
+{
+  "goal_id": "TZ-ROADMAP-03",
+  "priority": "P1",
+  "title": "Business Memory & Knowledge",
+  "objective": "Create durable company memory so agents learn business-specific facts, preferences, history and procedures safely.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "title": "Inventory memory, notes, docs, CRM and event-ledger sources",
+      "status": "TODO",
+      "subgoal_order": 1,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Knowledge Authority",
+        "Titan Wisdom Engine",
+        "Titan Rewind",
+        "Titan AI Core"
+      ],
+      "subgoal_id": "TZ-ROADMAP-03-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Knowledge Authority",
+            "file_id": "file_00000000172c81fab7f3a239d09ab2e1",
+            "library_path": "/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domain/Models/KnowledgeSource.php",
+              "System/Domain/Models/KnowledgeSourceVersion.php",
+              "System/Domain/Models/KnowledgeDocument.php",
+              "System/Domain/Models/KnowledgeSection.php",
+              "System/Domain/Models/KnowledgeClaim.php"
+            ],
+            "finding": "Knowledge source/version/document/section/claim domains cover structured documents and knowledge records."
+          },
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Outcomes/OutcomeRecord.php",
+              "System/Evidence/EvidenceReference.php",
+              "System/Repositories/DatabaseOutcomeRecordRepository.php"
+            ],
+            "finding": "Outcome/evidence stores provide completed-business-outcome memory sources."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Reconstruction/RewindSourceAdapterRegistry.php",
+              "System/Sources/RewindHostSourceDiscovery.php",
+              "System/Services/RewindEvidenceStreamService.php"
+            ],
+            "finding": "Source-adapter discovery and event/evidence reconstruction provide event-ledger style source inventory."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/OutcomeRecord.php"
+            ],
+            "finding": "AI Core exposes compact runtime outcome records but is not a durable memory authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Knowledge Authority",
+          "Titan Wisdom Engine",
+          "Titan Rewind",
+          "Titan AI Core"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Core knowledge, outcome and event/evidence sources exist. Direct CRM notes/customer-history adapters are not represented as one canonical memory source map yet; inventory should register adapters, not duplicate source data.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Define company-scoped memory schema and provenance",
+      "status": "TODO",
+      "subgoal_order": 2,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Knowledge Authority",
+        "Titan Wisdom Engine",
+        "Titan Rewind",
+        "Titan AI Core"
+      ],
+      "subgoal_id": "TZ-ROADMAP-03-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Knowledge Authority",
+            "file_id": "file_00000000172c81fab7f3a239d09ab2e1",
+            "library_path": "/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "schemas/knowledge-source.schema.json",
+              "schemas/knowledge-source-version.schema.json",
+              "schemas/knowledge-document.schema.json",
+              "System/Domain/ValueObjects/KnowledgeAccessContext.php",
+              "System/Domain/Services/SourceVersionTenantLineagePolicy.php",
+              "System/Domain/Services/SourceVersionLineagePolicy.php"
+            ],
+            "finding": "Company-scoped immutable source/version schema with explicit lineage and access context."
+          },
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "database/migrations/2026_08_19_000004_create_titan_wisdom_outcome_records_table.php",
+              "database/migrations/2026_08_20_000005_create_titan_wisdom_evidence_tables.php",
+              "tests/Security/OutcomeTenantIsolationTest.php"
+            ],
+            "finding": "Company-isolated outcome/evidence records support episodic provenance."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/SupplyChain/RewindBuildProvenance.php",
+              "System/Audit/RewindEvidenceAssembler.php"
+            ],
+            "finding": "Immutable provenance/evidence packaging supports audit lineage."
+          }
+        ],
+        "relevant_source_refs": [
+          "Knowledge Authority",
+          "Titan Wisdom Engine",
+          "Titan Rewind"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Do not invent a separate memory tenant boundary. Normalize all memory scope to company_id and preserve source/version/evidence provenance.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Build ingestion and deduplication pipeline",
+      "status": "TODO",
+      "subgoal_order": 3,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Knowledge Authority",
+        "Titan Wisdom Engine",
+        "Titan Rewind",
+        "Titan AI Core"
+      ],
+      "subgoal_id": "TZ-ROADMAP-03-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Knowledge Authority",
+            "file_id": "file_00000000172c81fab7f3a239d09ab2e1",
+            "library_path": "/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/KnowledgeSourceVersionWriteService.php",
+              "System/Domain/Services/SourceVersionHasher.php",
+              "System/Domain/ValueObjects/KnowledgeSourceVersionAppendRequest.php",
+              "System/Services/OfficialKnowledgeRefreshService.php",
+              "System/Services/TrainingService.php"
+            ],
+            "finding": "Version append service performs content-hash deduplication and immutable supersession; refresh/training services provide ingestion seams."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Reconstruction/RewindSourceAdapterRegistry.php",
+              "System/Sources/RewindHostSourceDiscovery.php"
+            ],
+            "finding": "Source adapters provide a reusable ingestion-discovery pattern for ledger/event inputs."
+          }
+        ],
+        "relevant_source_refs": [
+          "Knowledge Authority",
+          "Titan Rewind"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Content-hash dedup/version ingestion already exists. Remaining gap is a canonical multi-source ingestion adapter pipeline for CRM/notes/docs/events, not another storage engine.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add retrieval/ranking with recency and source confidence",
+      "status": "TODO",
+      "subgoal_order": 4,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Knowledge Authority",
+        "Titan Wisdom Engine",
+        "Titan Rewind",
+        "Titan AI Core"
+      ],
+      "subgoal_id": "TZ-ROADMAP-03-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Knowledge Authority",
+            "file_id": "file_00000000172c81fab7f3a239d09ab2e1",
+            "library_path": "/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/KnowledgeCatalogReadService.php",
+              "System/Services/KnowledgeContextService.php",
+              "System/Domain/Repositories/KnowledgeSourceScopeQuery.php",
+              "System/Domain/Services/KnowledgeScopeVisibilityPolicy.php"
+            ],
+            "finding": "Scoped catalog/context retrieval exists with source/version metadata and visibility controls."
+          },
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/ContinuousIntelligence/LearningConfidenceAdapter.php",
+              "System/Evidence/EvidenceValidationState.php"
+            ],
+            "finding": "Outcome learning exposes confidence/evidence primitives that can inform ranking quality."
+          }
+        ],
+        "relevant_source_refs": [
+          "Knowledge Authority",
+          "Titan Wisdom Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "No canonical semantic retrieval/ranking engine combining relevance, recency and source confidence was found. Reuse catalog/context access and confidence/evidence primitives, then add one ranking contract rather than parallel retrievers.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add episodic memory from completed business outcomes",
+      "status": "TODO",
+      "subgoal_order": 5,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Knowledge Authority",
+        "Titan Wisdom Engine",
+        "Titan Rewind",
+        "Titan AI Core"
+      ],
+      "subgoal_id": "TZ-ROADMAP-03-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/WisdomOutcomeRecorder.php",
+              "System/Outcomes/OutcomeRecord.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php",
+              "System/Services/WisdomOutcomeReviser.php"
+            ],
+            "finding": "Durable completed-outcome recording, revision and learning are direct episodic-memory donors."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Reconstruction/RewindSourceAdapterRegistry.php",
+              "System/Services/RewindEvidencePackageService.php"
+            ],
+            "finding": "Event/evidence reconstruction can link episodes back to execution traces and receipts."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Rewind"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Use Wisdom outcome records as episodic memory and attach Rewind/receipt provenance; do not create a second event-history store.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add procedural memory for SOPs/playbooks/preferences",
+      "status": "TODO",
+      "subgoal_order": 6,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Knowledge Authority",
+        "Titan Wisdom Engine",
+        "Titan Rewind",
+        "Titan AI Core"
+      ],
+      "subgoal_id": "TZ-ROADMAP-03-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Knowledge Authority",
+            "file_id": "file_00000000172c81fab7f3a239d09ab2e1",
+            "library_path": "/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domain/Models/KnowledgeDocument.php",
+              "System/Domain/Models/KnowledgeSection.php",
+              "System/Domain/Models/KnowledgeClaim.php",
+              "schemas/knowledge-document.schema.json",
+              "schemas/knowledge-section.schema.json",
+              "schemas/knowledge-claim.schema.json"
+            ],
+            "finding": "General versioned documents/sections/claims can carry SOP/playbook content."
+          },
+          {
+            "source_ref": "Knowledge Authority",
+            "file_id": "file_00000000172c81fab7f3a239d09ab2e1",
+            "library_path": "/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/KnowledgeContextService.php",
+              "System/Services/KnowledgeDocumentProjectionService.php"
+            ],
+            "finding": "Projection/context services can expose procedures to agents."
+          }
+        ],
+        "relevant_source_refs": [
+          "Knowledge Authority"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "No explicit procedural-memory/preference schema was found. Extend Knowledge Authority metadata/types for SOP, playbook and preference semantics instead of creating a parallel procedural store.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add correction/forget/supersession mechanics",
+      "status": "TODO",
+      "subgoal_order": 7,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Knowledge Authority",
+        "Titan Wisdom Engine",
+        "Titan Rewind",
+        "Titan AI Core"
+      ],
+      "subgoal_id": "TZ-ROADMAP-03-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Knowledge Authority",
+            "file_id": "file_00000000172c81fab7f3a239d09ab2e1",
+            "library_path": "/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/KnowledgeSourceVersionWriteService.php",
+              "System/Domain/Services/SourceVersionLineagePolicy.php",
+              "System/Services/KnowledgeContradictionService.php",
+              "System/Domain/Enums/KnowledgeSourceStatus.php"
+            ],
+            "finding": "Immutable versions, supersedes lineage, contradiction handling and source status provide correction/supersession primitives."
+          },
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/WisdomOutcomeReviser.php",
+              "System/Outcomes/OutcomeRevisionDraft.php"
+            ],
+            "finding": "Outcome revision supports correction without destroying historical evidence."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/RewindRetentionService.php",
+              "System/Retention/RewindLegalHoldGuard.php",
+              "System/Retention/RewindRetentionPolicy.php"
+            ],
+            "finding": "Retention/legal-hold controls bound destructive removal and historical evidence."
+          }
+        ],
+        "relevant_source_refs": [
+          "Knowledge Authority",
+          "Titan Wisdom Engine",
+          "Titan Rewind"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Correction and supersession are strong. A user-facing forget flow must distinguish logical suppression, retention expiry and legally/audit-protected evidence; hard deletion must never bypass retention/legal hold.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add privacy, retention and access controls",
+      "status": "TODO",
+      "subgoal_order": 8,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Knowledge Authority",
+        "Titan Wisdom Engine",
+        "Titan Rewind",
+        "Titan AI Core"
+      ],
+      "subgoal_id": "TZ-ROADMAP-03-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Knowledge Authority",
+            "file_id": "file_00000000172c81fab7f3a239d09ab2e1",
+            "library_path": "/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domain/ValueObjects/KnowledgeAccessContext.php",
+              "System/Services/FailClosedKnowledgeAccessContextResolver.php",
+              "System/Domain/Services/KnowledgeScopeGuard.php",
+              "System/Domain/Services/KnowledgeScopeVisibilityPolicy.php",
+              "tests/Security/KnowledgeAuthorityPolicyTest.php"
+            ],
+            "finding": "Fail-closed company/scope access and visibility policy exist."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/RewindRetentionService.php",
+              "System/Retention/RewindRetentionPolicy.php",
+              "System/Retention/RewindLegalHoldGuard.php"
+            ],
+            "finding": "Retention and legal-hold controls exist."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/TenantModelAccessPolicy.php",
+              "System/Security/ModelAccessGuard.php"
+            ],
+            "finding": "Model access is company-bound and can prevent unauthorized/global fallback exposure."
+          }
+        ],
+        "relevant_source_refs": [
+          "Knowledge Authority",
+          "Titan Rewind",
+          "Titan AI Core"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Privacy/access/retention primitives already exist; converge them around company_id and explicit memory visibility/retention classes.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Evaluate retrieval quality and hallucination resistance",
+      "status": "TODO",
+      "subgoal_order": 9,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Knowledge Authority",
+        "Titan Wisdom Engine",
+        "Titan Rewind",
+        "Titan AI Core"
+      ],
+      "subgoal_id": "TZ-ROADMAP-03-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Knowledge Authority",
+            "file_id": "file_00000000172c81fab7f3a239d09ab2e1",
+            "library_path": "/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/KnowledgeContradictionService.php",
+              "System/Domain/Services/SourceVersionHasher.php",
+              "tests/Unit/SourceVersionLineagePolicyTest.php",
+              "tests/Security/KnowledgeAuthorityPolicyTest.php"
+            ],
+            "finding": "Contradiction, lineage and isolation tests provide factual-grounding safety inputs."
+          },
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Smoke/EvidenceResolutionSmoke.php",
+              "tests/Security/EvidenceTenantIsolationTest.php",
+              "System/Evidence/EvidenceValidationState.php"
+            ],
+            "finding": "Evidence resolution/isolation tests support grounded outcome-memory evaluation."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RewindEvidenceAssembler.php",
+              "System/Certification/RewindHostReadinessReport.php"
+            ],
+            "finding": "Evidence packages/readiness support traceable retrieval-evaluation evidence."
+          }
+        ],
+        "relevant_source_refs": [
+          "Knowledge Authority",
+          "Titan Wisdom Engine",
+          "Titan Rewind"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "No dedicated retrieval-quality/hallucination-resistance benchmark harness was found. Build evaluation over known source/version/evidence truth, contradiction cases, stale/superseded versions, cross-company negatives and citation/provenance completeness.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Certify business-memory API and agent integration",
+      "status": "TODO",
+      "subgoal_order": 10,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Knowledge Authority",
+        "Titan Wisdom Engine",
+        "Titan Rewind",
+        "Titan AI Core"
+      ],
+      "subgoal_id": "TZ-ROADMAP-03-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Business-memory and knowledge infrastructure provides evidence/context to canonical agents; memory stores/retrievers are capabilities, not workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Knowledge Authority",
+            "file_id": "file_00000000172c81fab7f3a239d09ab2e1",
+            "library_path": "/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip",
+            "sha256": "7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Contracts/KnowledgeAuthorityContract.php",
+              "System/Contracts/KnowledgeCatalogReadContract.php",
+              "System/Contracts/KnowledgeSourceVersionWriteContract.php",
+              "System/Contracts/KnowledgeAccessContextResolverContract.php"
+            ],
+            "finding": "Knowledge Authority already exposes domain contracts for write/read/access."
+          },
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Contracts/OutcomeRecordRepositoryContract.php",
+              "System/Contracts/ContinuousIntelligence/OutcomeLearningContract.php"
+            ],
+            "finding": "Outcome memory contracts exist."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Commands/CertifyExtensionCommand.php",
+              "System/Security/ModelAccessGuard.php"
+            ],
+            "finding": "AI Core provides certification/access-boundary patterns for agent integration."
+          }
+        ],
+        "relevant_source_refs": [
+          "Knowledge Authority",
+          "Titan Wisdom Engine",
+          "Titan AI Core"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Certify one business-memory facade that composes Knowledge Authority + Wisdom episodic outcomes + governed retrieval. Agents must consume memory through company-scoped contracts, never direct tables or hidden cross-company context.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "memory"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": false,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Knowledge Authority",
+    "Titan Wisdom Engine",
+    "Titan Rewind",
+    "Titan AI Core"
+  ],
+  "reuse_first": true,
+  "agent_goal_classification": "SHARED_AGENT_INFRASTRUCTURE_DEFAULT_NO_NEW_BUSINESS_AGENT",
+  "agent_goal_rule": "This goal governs shared machinery used by agents. Default to NO_AGENT_INFRASTRUCTURE_ONLY or reuse existing oversight/domain identities; create a new agent only if an independently durable outcome owner is proven.",
+  "workforce_goal_classification": "SHARED_AGENT_INFRASTRUCTURE_REUSE_FIRST",
+  "workforce_goal_rule": "Governs or equips agents. Create a new identity only for a distinct durable outcome owner; otherwise reuse existing agents or classify as infrastructure."
+}
