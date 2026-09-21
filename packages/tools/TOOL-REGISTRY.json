@@ -3,7 +3,7 @@
   "programme_id": "TZ-CLEANING-TOOLS-30PASS-001",
   "pass": 1,
   "status": "CANONICAL_REGISTRY_ESTABLISHED",
-  "source_census": "titan-tools/TOOL-CENSUS.json",
+  "source_census": "packages/tools/TOOL-CENSUS.json",
   "tool_count": 39,
   "canonical_company_boundary": "company_id",
   "rules": {
@@ -2123,5 +2123,10 @@
     "tools_changed": 26,
     "live_runtime_replacement": "titan-zero-chat-content.compat.js",
     "retired_visual_dependencies": "externalized_evidence"
+  },
+  "provenance": {
+    "canonical_owner": "packages/tools",
+    "authority": "canonical-registry",
+    "historical_programme_metadata_is_authority": false
   }
 }
