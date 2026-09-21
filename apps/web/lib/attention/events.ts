@@ -1,11 +1,11 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import {
   ATTENTION_RETENTION_DAYS,
   type AttentionEventRow,
 } from "./types";
 
 export async function listAttentionEvents(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   limit = 30,
 ): Promise<AttentionEventRow[]> {
@@ -24,7 +24,7 @@ export async function listAttentionEvents(
 }
 
 export async function markAttentionEventRead(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   eventId: string,
 ): Promise<boolean> {
@@ -38,7 +38,7 @@ export async function markAttentionEventRead(
 }
 
 export async function markAllAttentionEventsRead(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<number> {
   const r = await client.query(
@@ -53,7 +53,7 @@ export async function markAllAttentionEventsRead(
 }
 
 export async function pruneOldAttentionEvents(
-  client: PoolClient,
+  client: DbClient,
   retentionDays = ATTENTION_RETENTION_DAYS,
 ): Promise<number> {
   const r = await client.query(
