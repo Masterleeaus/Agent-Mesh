@@ -54,7 +54,7 @@ jobs:
 
             rsync -a --exclude='.git' --exclude='*.zip' "$ROOT/" apps/mobile/
             rm -rf "$TMP"
-          done
+          done < /tmp/mobile-zips.txt
 
           rm -rf apps/mobile/recovered-deltas
           cat > apps/mobile/RECOVERED_DELTA_MERGE.md <<'EOF'
