@@ -20,8 +20,8 @@
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "rm -rf .test-dist && node --max-old-space-size=6144 --stack-size=16384 ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false && node --test --test-concurrency=1 ./tests/*.test.mjs",
-    "test:unit": "rm -rf .test-dist && node --max-old-space-size=6144 --stack-size=16384 ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false && node --test --test-concurrency=1 ./tests/*.test.mjs",
+    "test": "rm -rf .test-dist && tsc -p tsconfig.test.json && node --test --test-concurrency=1 ./tests/*.test.mjs",
+    "test:unit": "rm -rf .test-dist && tsc -p tsconfig.test.json && node --test --test-concurrency=1 ./tests/*.test.mjs",
     "build": "tsc -p tsconfig.json --noEmit false --outDir dist --module NodeNext --moduleResolution NodeNext --isolatedModules false"
   }
 }
