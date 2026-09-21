@@ -52,6 +52,19 @@ function historyCharCount(history) {
   return n;
 }
 
+function normalizeBudget(budgetChars, keepChars) {
+  const budget = Number.isFinite(budgetChars) && budgetChars > 0
+    ? Math.floor(budgetChars)
+    : DEFAULT_HISTORY_BUDGET_CHARS;
+  const requestedKeep = Number.isFinite(keepChars) && keepChars > 0
+    ? Math.floor(keepChars)
+    : DEFAULT_HISTORY_KEEP_CHARS;
+  // A caller misconfiguration must never make compaction a permanent no-op by
+  // asking to keep as much as (or more than) the trigger budget.
+  const keep = Math.min(requestedKeep, Math.max(1, budget - 1));
+  return { budget, keep };
+}
+
 /**
  * @param {object} input
  * @param {Array<{role,content}>} input.history
@@ -69,16 +82,17 @@ export async function compactHistory({
   fetchLLM,
 } = {}) {
   if (typeof fetchLLM !== "function") return null;
-  if (historyCharCount(history) <= budgetChars) return null;
+  const { budget, keep } = normalizeBudget(budgetChars, keepChars);
+  if (historyCharCount(history) <= budget) return null;
 
-  // Walk backward; once we've gathered keepChars of recent content, everything
+  // Walk backward; once we've gathered keep chars of recent content, everything
   // earlier gets summarized.
   let kept = 0;
   let splitIdx = history.length;
   for (let i = history.length - 1; i >= 0; i--) {
     const c = history[i]?.content;
     kept += typeof c === "string" ? c.length : 0;
-    if (kept >= keepChars) {
+    if (kept >= keep) {
       splitIdx = i;
       break;
     }
@@ -88,7 +102,9 @@ export async function compactHistory({
   const toSummarize = history.slice(0, splitIdx);
   const toKeep = history.slice(splitIdx);
   const priorSummary = memorySummary ? `Earlier summary to incorporate:\n${memorySummary}\n\n` : "";
-  const transcript = toSummarize.map((m) => `${m.role}: ${m.content}`).join("\n");
+  const transcript = toSummarize
+    .map((m) => `${m.role}: ${typeof m?.content === "string" ? m.content : JSON.stringify(m?.content ?? "")}`)
+    .join("\n");
 
   let summary;
   try {
