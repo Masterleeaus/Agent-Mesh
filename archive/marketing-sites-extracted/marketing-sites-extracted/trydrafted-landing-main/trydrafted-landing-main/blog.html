@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Drafted</title>
+<meta name="description" content="Insights for field service contractors on AI automation, quoting, scheduling, and running a more efficient operation.">
+<link rel="canonical" href="https://trydrafted.io/blog.html">
+<script defer data-domain="trydrafted.io" src="https://plausible.io/js/script.tagged-events.js"></script>
+<!-- Meta Pixel Code --><script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '1242274827817542'); fbq('track', 'PageView');</script><noscript> <img height="1" width="1" src="https://www.facebook.com/tr?id=1242274827817542&ev=PageView&noscript=1"/></noscript><!-- End Meta Pixel Code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root[data-theme="dark"] {
+  --bg: #0a0a0a; --bg-elev: #131313; --bg-card: #161616; --bg-hover: #1d1d1d;
+  --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.14);
+  --text: #f5f5f5; --text-dim: #a3a3a3; --text-faint: #6b6b6b;
+  --accent: #84cc16; --accent-glow: rgba(132,204,22,0.18); --accent-soft: rgba(132,204,22,0.08);
+  --gradient: radial-gradient(circle at 50% 0%, rgba(132,204,22,0.08), transparent 70%);
+}
+:root[data-theme="light"] {
+  --bg: #fafafa; --bg-elev: #ffffff; --bg-card: #ffffff; --bg-hover: #f5f5f5;
+  --border: rgba(0,0,0,0.08); --border-strong: rgba(0,0,0,0.14);
+  --text: #0a0a0a; --text-dim: #525252; --text-faint: #a3a3a3;
+  --accent: #4d7c0f; --accent-glow: rgba(77,124,15,0.15); --accent-soft: rgba(77,124,15,0.06);
+  --gradient: radial-gradient(circle at 50% 0%, rgba(77,124,15,0.06), transparent 70%);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; transition: background 0.3s ease, color 0.3s ease; letter-spacing: -0.01em; }
+.serif { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+.ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; background: var(--gradient); }
+nav { position: sticky; top: 0; z-index: 100; padding: 16px 0; background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: saturate(180%) blur(16px); -webkit-backdrop-filter: saturate(180%) blur(16px); border-bottom: 1px solid var(--border); }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+.logo-mark { width: 22px; height: 22px; border-radius: 6px; background: var(--accent); display: grid; place-items: center; color: var(--bg); font-weight: 800; font-size: 12px; letter-spacing: -0.05em; box-shadow: 0 0 0 1px var(--accent), 0 0 24px var(--accent-glow); }
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-link { color: var(--text-dim); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.15s; }
+.nav-link:hover, .nav-link.active { color: var(--text); }
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+.theme-toggle { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-dim); cursor: pointer; display: grid; place-items: center; transition: all 0.15s; }
+.theme-toggle:hover { border-color: var(--border-strong); color: var(--text); }
+.theme-toggle svg { width: 14px; height: 14px; }
+[data-theme="dark"] .sun-icon { display: block; } [data-theme="dark"] .moon-icon { display: none; }
+[data-theme="light"] .sun-icon { display: none; } [data-theme="light"] .moon-icon { display: block; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 14px; font-weight: 500; border-radius: 8px; text-decoration: none; border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; font-family: inherit; letter-spacing: -0.01em; transition: all 0.15s ease; }
+.btn:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+.btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* BLOG PAGE */
+.blog-hero { max-width: 1200px; margin: 0 auto; padding: 80px 32px 56px; position: relative; z-index: 1; }
+.blog-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; border-radius: 100px; background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 600; font-family: 'Geist Mono', monospace; text-transform: uppercase; border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); margin-bottom: 20px; }
+.blog-title { font-size: clamp(36px, 5vw, 60px); font-weight: 600; letter-spacing: -0.04em; line-height: 1.02; margin-bottom: 16px; }
+.blog-sub { font-size: 18px; color: var(--text-dim); max-width: 560px; line-height: 1.55; }
+.blog-grid { max-width: 1200px; margin: 0 auto; padding: 0 32px 120px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; position: relative; z-index: 1; }
+.post-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 12px; transition: all 0.2s ease; }
+.post-card:hover { border-color: var(--border-strong); transform: translateY(-2px); box-shadow: 0 12px 32px -8px rgba(0,0,0,0.2); }
+.post-cat { font-family: 'Geist Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 600; }
+.post-title { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; color: var(--text); }
+.post-excerpt { font-size: 14px; color: var(--text-dim); line-height: 1.6; flex: 1; }
+.post-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-faint); font-family: 'Geist Mono', monospace; }
+.post-author { color: var(--text-dim); font-weight: 500; }
+footer { max-width: 1200px; margin: 0 auto; padding: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--text-faint); }
+footer a { color: var(--text-faint); text-decoration: none; }
+footer a:hover { color: var(--text); }
+@media (max-width: 640px) { .nav-links { display: none; } .blog-hero { padding: 56px 20px 40px; } .blog-grid { padding: 0 20px 80px; grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="logo-mark">D</span><span>drafted</span></a>
+    <div class="nav-links">
+      <a href="index.html#agents" class="nav-link">Agents</a>
+      <a href="index.html#how" class="nav-link">How it works</a>
+      <a href="index.html#case" class="nav-link">Customers</a>
+      <a href="pricing.html" class="nav-link">Pricing</a>
+      <a href="blog.html" class="nav-link active">Blog</a>
+    </div>
+    <div class="nav-actions">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="index.html#signup" class="btn btn-primary">Book demo →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="blog-hero">
+  <div class="blog-eyebrow">Insights</div>
+  <h1 class="blog-title">Built for operators, <span class="serif">by operators.</span></h1>
+  <p class="blog-sub">Practical writing on AI automation, quoting, scheduling, and running a tighter home service business.</p>
+</div>
+
+<div class="blog-grid">
+  <a href="blog/firsthand-lawns-38k-pipeline-case-study.html" class="post-card">
+    <div class="post-cat">Case Study</div>
+    <div class="post-title">14 Assessments, 11 Quotes Drafted, ~$38K in Pipeline: How One Lawn Crew Stopped Leaving Money on the Table</div>
+    <div class="post-excerpt">Inside Firsthand Lawns: how 14 property assessments became 11 drafted quotes and roughly $38K in overnight pipeline — without a process overhaul.</div>
+    <div class="post-meta">
+      <span class="post-author">Justin Grant</span>
+      <span>Jun 24, 2026</span>
+    </div>
+  </a>
+
+  <a href="blog/11-agents-lawn-care-back-office.html" class="post-card">
+    <div class="post-cat">AI Automation</div>
+    <div class="post-title">Meet the Night Shift: The 11 Agents Running Your Lawn Care Back Office While You Sleep</div>
+    <div class="post-excerpt">Eleven agents, one job each, all running overnight. What's actually happening to your lawn care back office between sundown and your morning coffee.</div>
+    <div class="post-meta">
+      <span class="post-author">Justin Grant</span>
+      <span>Jun 23, 2026</span>
+    </div>
+  </a>
+
+  <a href="blog/the-7pm-quote-problem-lawn-care.html" class="post-card">
+    <div class="post-cat">Lead Management</div>
+    <div class="post-title">The 7 PM Quote Problem: Why Lawn Care Crews Lose Jobs After the Trucks Park</div>
+    <div class="post-excerpt">Homeowners pick the contractor who replies first. Here's why the 7pm leak is killing your booking rate — and the fix that doesn't require hiring.</div>
+    <div class="post-meta">
+      <span class="post-author">Justin Grant</span>
+      <span>Jun 22, 2026</span>
+    </div>
+  </a>
+
+  <a href="blog/how-landscaping-companies-are-cutting-office-time-in-half-with-ai.html" class="post-card">
+    <div class="post-cat">AI Automation</div>
+    <div class="post-title">How Landscaping Companies Are Cutting Office Time in Half With AI</div>
+    <div class="post-excerpt">The back-office tasks eating your evenings — and how AI handles them overnight so you wake up to a finished inbox, not a pile of work.</div>
+    <div class="post-meta">
+      <span class="post-author">Justin Grant</span>
+      <span>Jun 2, 2026</span>
+    </div>
+  </a>
+
+  <a href="blog/why-your-landscaping-quotes-are-taking-too-long.html" class="post-card">
+    <div class="post-cat">Quoting</div>
+    <div class="post-title">Why Your Landscaping Quotes Are Taking Too Long (And What to Do About It)</div>
+    <div class="post-excerpt">Speed to quote is speed to close. Here's why most landscaping companies lose deals before they even send a number — and how to fix it.</div>
+    <div class="post-meta">
+      <span class="post-author">Justin Grant</span>
+      <span>Jun 3, 2026</span>
+    </div>
+  </a>
+
+  <a href="blog/stop-losing-landscaping-leads.html" class="post-card">
+    <div class="post-cat">Lead Management</div>
+    <div class="post-title">Stop Losing Landscaping Leads: How to Follow Up Faster Without Hiring More Staff</div>
+    <div class="post-excerpt">The 5-minute follow-up rule and why most landscaping companies can't hit it — and how to close that gap without adding headcount.</div>
+    <div class="post-meta">
+      <span class="post-author">Justin Grant</span>
+      <span>Jun 4, 2026</span>
+    </div>
+  </a>
+
+  <a href="blog/route-optimization-for-landscapers.html" class="post-card">
+    <div class="post-cat">Operations</div>
+    <div class="post-title">Route Optimization for Landscapers: The Hidden Cost of Inefficient Scheduling</div>
+    <div class="post-excerpt">Three crews, bad routing, and $38K/year in recoverable labor cost. The math every landscaping owner should run before next season.</div>
+    <div class="post-meta">
+      <span class="post-author">Tyler Roy</span>
+      <span>Jun 5, 2026</span>
+    </div>
+  </a>
+
+  <a href="blog/how-to-scale-a-landscaping-business-without-drowning-in-paperwork.html" class="post-card">
+    <div class="post-cat">Growth</div>
+    <div class="post-title">How to Scale a Landscaping Business Without Drowning in Paperwork</div>
+    <div class="post-excerpt">The growth wall every landscaping owner hits — and the systems that let you push through it without hiring an office manager first.</div>
+    <div class="post-meta">
+      <span class="post-author">Tyler Roy</span>
+      <span>Jun 6, 2026</span>
+    </div>
+  </a>
+</div>
+
+<footer>
+  <div>© 2026 Drafted · Fort Lauderdale, FL</div>
+  <div>Built by operators · for operators</div>
+  <div><a href="index.html#signup">Book a demo</a></div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const root = document.documentElement;
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  try { localStorage.setItem('drafted-theme', next); } catch(e) {}
+}
+(function () {
+  try { const s = localStorage.getItem('drafted-theme'); if (s) document.documentElement.setAttribute('data-theme', s); } catch(e) {}
+})();
+</script>
+</body>
+</html>
