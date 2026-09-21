@@ -252,3 +252,17 @@ Safety rules:
 - concurrent `main` movement causes a fresh retry rather than force-push.
 
 The completion receipt is retained in the goal JSON so later agents can prove why the status changed without relying on chat history.
+
+
+## Main integration guard
+
+`.github/workflows/canonical-main-integrity.yml` checks pushes to canonical `main`.
+
+Because the connected GitHub integration does not expose repository-admin ruleset writes, this is a **CI fallback**, not hard branch protection.
+
+Policy:
+
+- product/runtime/release changes require an associated merged PR;
+- Agent Mesh control-plane metadata may be maintained directly by Manager;
+- direct product pushes cause the Canonical Main Integrity check to fail visibly;
+- when GitHub ruleset administration becomes available, require PRs and status checks at the repository layer and keep this check as defense-in-depth.
