@@ -3,8 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — FLDWRK',
-  description: 'How FLDWRK collects, uses, and protects your personal information.',
+  title: 'Privacy Policy — Titan Zero',
+  description: 'Privacy information for the Titan Zero marketing site.',
 }
 
 export default function PrivacyPage() {

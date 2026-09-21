@@ -14,9 +14,9 @@ export async function POST(req: NextRequest) {
 
     // Notify Adeel
     await resend.emails.send({
-      from: 'FLDWRK Waitlist <waitlist@fldwrk.ai>',
+      from: 'Titan Zero Waitlist <waitlist@fldwrk.ai>',
       to: 'info@gatedenterprise.com',
-      subject: `🔧 New FLDWRK Waitlist Signup — ${fullName} (${trade})`,
+      subject: `🔧 New Titan Zero Waitlist Signup — ${fullName} (${trade})`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F9F8F6; padding: 32px; max-width: 520px; margin: 0 auto;">
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px;">
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: 'FLDWRK <waitlist@fldwrk.ai>',
       to: email,
-      subject: `You're on the FLDWRK founding list 🔧`,
+      subject: `You're on the Titan Zero founding list 🔧`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F9F8F6; padding: 40px; max-width: 520px; margin: 0 auto;">
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 32px;">

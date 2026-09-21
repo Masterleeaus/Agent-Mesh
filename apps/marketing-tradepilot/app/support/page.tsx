@@ -3,8 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Support — FLDWRK',
-  description: 'Get help with FLDWRK. Contact our support team.',
+  title: 'Support — Titan Zero',
+  description: 'Get help with Titan Zero. Contact our support team.',
 }
 
 export default function SupportPage() {
@@ -19,8 +19,8 @@ export default function SupportPage() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/fldwrk-logo-dark.png"
-              alt="FLDWRK"
+              src="/app_icon.png"
+              alt="Titan Zero"
               width={112}
               height={28}
               className="h-7 w-auto"
@@ -68,7 +68,7 @@ export default function SupportPage() {
             className="inline-flex items-center gap-3 rounded-2xl px-6 py-4 text-sm font-bold"
             style={{ background: '#1A1A1A', border: '1px solid rgba(255,255,255,0.08)' }}
           >
-            <span style={{ color: '#888' }}>Open FLDWRK</span>
+            <span style={{ color: '#888' }}>Open Titan Zero</span>
             <span style={{ color: 'rgba(255,255,255,0.2)' }}>→</span>
             <span style={{ color: '#aaa' }}>Account</span>
             <span style={{ color: 'rgba(255,255,255,0.2)' }}>→</span>
@@ -100,17 +100,17 @@ export default function SupportPage() {
             Not in the app yet? Send us an email and we&apos;ll get back to you within one business day.
           </p>
           <a
-            href="mailto:support@fldwrk.ai"
+            href="mailto:support@titanzero.io"
             className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold transition-opacity hover:opacity-80"
             style={{ background: 'rgba(232,53,42,0.1)', border: '1px solid rgba(232,53,42,0.25)', color: '#E8352A' }}
           >
-            support@fldwrk.ai
+            support@titanzero.io
           </a>
         </div>
 
         {/* Footer note */}
         <p className="text-xs" style={{ color: '#3A3A3A' }}>
-          FLDWRK Support · Mon–Fri 8am–6pm CT
+          Titan Zero Support · Mon–Fri 8am–6pm CT
         </p>
 
       </div>
@@ -119,8 +119,8 @@ export default function SupportPage() {
       <footer className="py-8 px-6" style={{ background: '#0A0A0A', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <Image
-            src="/FLDWRK_2.png"
-            alt="FLDWRK"
+            src="/Titan Zero_2.png"
+            alt="Titan Zero"
             width={80}
             height={22}
             className="h-5 w-auto"
@@ -130,7 +130,7 @@ export default function SupportPage() {
             <Link href="/privacy" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Privacy</Link>
             <Link href="/terms" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Terms</Link>
             <Link href="/support" style={{ color: '#E8352A' }} className="font-medium">Support</Link>
-            <a href="mailto:hello@fldwrk.ai" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Contact</a>
+            <a href="mailto:hello@titanzero.io" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Contact</a>
           </div>
         </div>
       </footer>
