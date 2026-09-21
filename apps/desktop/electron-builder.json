@@ -6,7 +6,7 @@
     "output": "dist/windows"
   },
   "files": [
-    "electron/main.cjs"
+    "apps/desktop/electron/main.cjs"
   ],
   "extraResources": [
     {
