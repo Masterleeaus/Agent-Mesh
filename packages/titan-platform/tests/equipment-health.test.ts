@@ -41,7 +41,7 @@ describe("equipment telemetry health projection", () => {
     expect(signal.execution_authority).toBe(false);
   });
 
-  it("requires the canonical company_id boundary", () => {
+  it("rejects legacy tenant boundaries", () => {\n    expect(() => evaluateEquipmentTelemetryHealth({\n      company_id: "company-1",\n      asset_id: "asset-1",\n      recorded_at: "2026-09-22T01:00:00Z",\n      tenant_id: "legacy-tenant",\n    } as never)).toThrow("equipment-health-legacy-boundary-forbidden:tenant_id");\n  });\n\n  it("requires the canonical company_id boundary", () => {
     expect(() => evaluateEquipmentTelemetryHealth({
       company_id: "",
       asset_id: "asset-1",
