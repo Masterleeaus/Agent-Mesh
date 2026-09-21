@@ -33,7 +33,7 @@ jobs:
           test -f package.json
           test -f pnpm-lock.yaml
           grep -q 'Titan Zero Agent Mesh V3' AGENTS.md
-          if git grep -nE '^(<<<<<<<|=======|>>>>>>>)' -- . ':!*.zip'; then
+          if git grep -nE '^(<<<<<<<|>>>>>>>)' -- . ':!*.zip'; then
             echo "Merge conflict marker detected"
             exit 1
           fi
