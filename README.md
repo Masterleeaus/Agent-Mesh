@@ -44,6 +44,12 @@ See `AGENTS.md` and `work/README.md` before doing development work.
 - `architecture/`, `docs/` — architecture, contracts, evidence and supporting documentation
 - `.github/workflows/` — CI and Agent Mesh automation
 
+## Titan Zero product baseline
+
+Titan Zero is the continuation and rebranding of the **complete Dovetails FSM application**, not a selective port from it. The existing FSM capabilities are the product baseline and must remain functional while Titan Zero's intelligence, workforce, governance, interaction, decision and interface systems are integrated around them.
+
+A feature is not considered migrated merely because a similarly named Titan module exists. Restoration work must verify end-to-end behavior and preserve the original FSM capability until its Titan Zero replacement is functionally equivalent or better.
+
 ## Authority
 
 GitHub `main` is canonical code. GitHub Issues are claimable work. Pull Requests are the integration boundary. The roadmap defines remaining work.
