@@ -8,14 +8,15 @@ import path from "path";
 import { randomUUID } from "crypto";
 import { withAuth } from "../../../../../../lib/auth/middleware";
 import type { AuthSession } from "../../../../../../lib/auth/middleware";
-import { query, queryOne, getPool } from "../../../../../../lib/db";
+import { query, queryOne } from "../../../../../../lib/db";
+import { withPortableTransaction } from "@/lib/db/portable";
 import { logger } from "../../../../../../lib/logger";
 
 export const dynamic = "force-dynamic";
 
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif"];
-const VALID_CATEGORIES = ["before", "after", "receipt", "assessment"] as const;
+const VALID_CATEGORIES = ["before", "after", "receipt", "assessment", "signature"] as const;
 type MediaCategory = typeof VALID_CATEGORIES[number];
 
 async function getVisit(visitId: string, session: AuthSession) {
@@ -116,7 +117,7 @@ export const POST = withAuth(
     }
     if (!category || !VALID_CATEGORIES.includes(category as MediaCategory)) {
       return NextResponse.json(
-        { error: { code: "VALIDATION_ERROR", message: "category must be before, after, receipt, or assessment", traceId: session.traceId } },
+        { error: { code: "VALIDATION_ERROR", message: "category must be before, after, receipt, assessment, or signature", traceId: session.traceId } },
         { status: 422 }
       );
     }
@@ -151,37 +152,23 @@ export const POST = withAuth(
       );
     }
 
-    const pool = getPool();
-    const client = await pool.connect();
     try {
-      await client.query("BEGIN");
-      await client.query(
-        `SELECT set_config('app.current_user_id', $1, true),
-                set_config('app.current_account_id', $2, true),
-                set_config('app.current_role', $3, true)`,
-        [session.userId, session.accountId, session.role]
-      );
-
-      const { rows } = await client.query(
-        `INSERT INTO visit_media (account_id, visit_id, category, filename, original_name, mime_type, size_bytes, created_by)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-         RETURNING id, visit_id, category, original_name, mime_type, size_bytes, created_at`,
-        [session.accountId, visitId, category, filename, file.name, file.type, file.size, session.userId]
-      );
-
-      await client.query("COMMIT");
-      return NextResponse.json({ data: rows[0] }, { status: 201 });
+      const row = await withPortableTransaction(async (client) => {
+        await client.query(
+          `INSERT INTO visit_media (id, account_id, visit_id, category, filename, original_name, mime_type, size_bytes, created_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+          [uuid, session.accountId, visitId, category, filename, file.name, file.type, file.size, session.userId]
+        );
+        const inserted = await client.query<Record<string, unknown>>(
+          `SELECT id, visit_id, category, original_name, mime_type, size_bytes, created_at FROM visit_media WHERE id = $1 AND account_id = $2`,
+          [uuid, session.accountId]
+        );
+        return inserted.rows[0];
+      });
+      return NextResponse.json({ data: row }, { status: 201 });
     } catch (err) {
-      await client.query("ROLLBACK");
-      // Clean up written file
       try { fs.unlinkSync(filePath); } catch { /* ignore */ }
       logger.error("[media POST] db insert failed", err, { traceId: session.traceId });
-      return NextResponse.json(
-        { error: { code: "INTERNAL_ERROR", message: "Failed to save media record", traceId: session.traceId } },
-        { status: 500 }
-      );
-    } finally {
-      client.release();
+      return NextResponse.json({ error: { code: "INTERNAL_ERROR", message: "Failed to save media record", traceId: session.traceId } }, { status: 500 });
     }
   }
 );

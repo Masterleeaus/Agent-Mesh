@@ -1,10 +1,11 @@
+import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
-import { getPool, query } from "@/lib/db";
 import { normalizeClientName } from "@/lib/crm/normalization";
 import { appendAuditLog } from "@/lib/db/audit";
+import { portableQuery, withPortableTransaction } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -19,24 +20,8 @@ const createClientBody = z.object({
   city: z.string().max(100).optional().or(z.literal("")),
   state: z.string().max(100).optional().or(z.literal("")),
   zip: z.string().max(20).optional().or(z.literal("")),
-  relationship_type: z
-    .enum(["standard", "realtor", "preferred", "referral_partner"])
-    .optional()
-    .default("standard"),
-  travel_rule: z
-    .enum([
-      "standard_policy",
-      "mileage_waived",
-      "travel_time_waived",
-      "all_travel_waived",
-      "custom_included_radius",
-      "custom_mileage_rate",
-      "custom_travel_time_rate",
-      "minimum_project_value_exemption",
-      "manual_review_required",
-    ])
-    .optional()
-    .default("standard_policy"),
+  relationship_type: z.enum(["standard", "realtor", "preferred", "referral_partner"]).optional().default("standard"),
+  travel_rule: z.enum(["standard_policy", "mileage_waived", "travel_time_waived", "all_travel_waived", "custom_included_radius", "custom_mileage_rate", "custom_travel_time_rate", "minimum_project_value_exemption", "manual_review_required"]).optional().default("standard_policy"),
   custom_included_one_way_miles: z.number().min(0).max(500).nullable().optional(),
   custom_mileage_rate_cents: z.number().int().min(0).nullable().optional(),
   custom_travel_time_rate_cents: z.number().int().min(0).nullable().optional(),
@@ -44,24 +29,13 @@ const createClientBody = z.object({
 });
 
 function validationError(parsed: z.SafeParseError<unknown>, traceId: string) {
-  return NextResponse.json(
-    {
-      error: {
-        code: "VALIDATION_ERROR",
-        message: "Invalid request body",
-        details: parsed.error.flatten().fieldErrors,
-        traceId,
-      },
-    },
-    { status: 422 }
-  );
+  return NextResponse.json({ error: { code: "VALIDATION_ERROR", message: "Invalid request body", details: parsed.error.flatten().fieldErrors, traceId } }, { status: 422 });
 }
 
 export const GET = withRole(["owner", "admin"], async (request: NextRequest, session: AuthSession) => {
   const { searchParams } = new URL(request.url);
   const q = (searchParams.get("q") ?? "").trim().toLowerCase();
   const limit = Math.min(Math.max(parseInt(searchParams.get("limit") ?? "100"), 1), 200);
-
   const params: unknown[] = [session.accountId];
   const conditions = ["c.account_id = $1"];
   let idx = 2;
@@ -71,11 +45,8 @@ export const GET = withRole(["owner", "admin"], async (request: NextRequest, ses
     idx++;
   }
   params.push(limit);
-
-  const rows = await query(
-    `SELECT c.*, 
-            COUNT(DISTINCT p.id)::int AS property_count,
-            COUNT(DISTINCT j.id)::int AS job_count
+  const rows = await portableQuery(
+    `SELECT c.*, COUNT(DISTINCT p.id) AS property_count, COUNT(DISTINCT j.id) AS job_count
      FROM clients c
      LEFT JOIN properties p ON p.client_id = c.id AND p.account_id = c.account_id
      LEFT JOIN jobs j ON j.client_id = c.id AND j.account_id = c.account_id
@@ -83,9 +54,8 @@ export const GET = withRole(["owner", "admin"], async (request: NextRequest, ses
      GROUP BY c.id
      ORDER BY c.name ASC
      LIMIT $${idx}`,
-    params
+    params,
   );
-
   return NextResponse.json({ data: rows, limit });
 });
 
@@ -93,82 +63,30 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
   const body = await request.json().catch(() => null);
   const parsed = createClientBody.safeParse(body);
   if (!parsed.success) return validationError(parsed, session.traceId);
-
-  const pool = getPool();
-  const client = await pool.connect();
+  const id = randomUUID();
   try {
-    await client.query("BEGIN");
-    await client.query(
-      `SELECT set_config('app.current_user_id', $1, true), set_config('app.current_account_id', $2, true), set_config('app.current_role', $3, true)`,
-      [session.userId, session.accountId, session.role]
-    );
-
-    const {
-      name,
-      email,
-      phone,
-      notes,
-      company_name,
-      address_line1,
-      city,
-      state,
-      zip,
-      relationship_type,
-      travel_rule,
-      custom_included_one_way_miles,
-      custom_mileage_rate_cents,
-      custom_travel_time_rate_cents,
-      minimum_project_value_exempt,
-    } = parsed.data;
-    const result = await client.query(
-      `INSERT INTO clients
-         (account_id, name, email, phone, notes, company_name, address_line1, city, state, zip,
-          relationship_type, travel_rule,
-          custom_included_one_way_miles, custom_mileage_rate_cents, custom_travel_time_rate_cents,
-          minimum_project_value_exempt)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
-       RETURNING *`,
-      [
-        session.accountId,
-        normalizeClientName(name),
-        email || null,
-        phone || null,
-        notes || null,
-        company_name || null,
-        address_line1 || null,
-        city || null,
-        state || null,
-        zip || null,
-        relationship_type ?? "standard",
-        travel_rule ?? "standard_policy",
-        custom_included_one_way_miles ?? null,
-        custom_mileage_rate_cents ?? null,
-        custom_travel_time_rate_cents ?? null,
-        minimum_project_value_exempt ?? false,
-      ]
-    );
-
-    const created = result.rows[0];
-    await appendAuditLog(client, {
-      account_id: session.accountId,
-      entity_type: "client",
-      entity_id: created.id,
-      action: "insert",
-      actor_id: session.userId,
-      trace_id: session.traceId,
-      new_value: created,
+    const created = await withPortableTransaction(async (client) => {
+      const v = parsed.data;
+      await client.query(
+        `INSERT INTO clients
+         (id, account_id, name, email, phone, notes, company_name, address_line1, city, state, zip,
+          relationship_type, travel_rule, custom_included_one_way_miles, custom_mileage_rate_cents,
+          custom_travel_time_rate_cents, minimum_project_value_exempt)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
+        [id, session.accountId, normalizeClientName(v.name), v.email || null, v.phone || null, v.notes || null,
+         v.company_name || null, v.address_line1 || null, v.city || null, v.state || null, v.zip || null,
+         v.relationship_type ?? "standard", v.travel_rule ?? "standard_policy", v.custom_included_one_way_miles ?? null,
+         v.custom_mileage_rate_cents ?? null, v.custom_travel_time_rate_cents ?? null, v.minimum_project_value_exempt ?? false],
+      );
+      const result = await client.query<Record<string, unknown>>(`SELECT * FROM clients WHERE id = $1 AND account_id = $2`, [id, session.accountId]);
+      const row = result.rows[0];
+      if (!row) throw new Error("Client insert did not return persisted row");
+      await appendAuditLog(client, { account_id: session.accountId, entity_type: "client", entity_id: id, action: "insert", actor_id: session.userId, trace_id: session.traceId, new_value: row });
+      return row;
     });
-
-    await client.query("COMMIT");
     return NextResponse.json({ data: created }, { status: 201 });
   } catch (err) {
-    await client.query("ROLLBACK");
     logger.error("[clients POST]", err, { traceId: session.traceId });
-    return NextResponse.json(
-      { error: { code: "INTERNAL_ERROR", message: "Failed to create client", traceId: session.traceId } },
-      { status: 500 }
-    );
-  } finally {
-    client.release();
+    return NextResponse.json({ error: { code: "INTERNAL_ERROR", message: "Failed to create client", traceId: session.traceId } }, { status: 500 });
   }
 });

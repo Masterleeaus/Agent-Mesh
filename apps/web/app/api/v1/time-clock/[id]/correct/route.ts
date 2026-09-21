@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withAuth } from "@/lib/auth/middleware";
-import { withDbSession } from "@/lib/db";
+import { withPortableTransaction } from "@/lib/db/portable";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
 import { validateClockCorrection } from "@ai-fsm/domain";
@@ -47,7 +47,7 @@ export const POST = withAuth(async (request: NextRequest, session) => {
     );
   }
   try {
-    const corrected = await withDbSession(session, async (client) => {
+    const corrected = await withPortableTransaction( async (client) => {
       const row = await correctClock(client, session.accountId, id, session.userId, {
         clockInAt: valid.clockInAt,
         clockOutAt: valid.clockOutAt,

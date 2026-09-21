@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole } from "@/lib/auth/middleware";
-import { getPool } from "@/lib/db";
+import { withTenantTransaction } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";
 import { createIntakeRecords } from "../../../../lib/intake/records";
 import { scoreSiteVisitProbability } from "@ai-fsm/domain";
@@ -83,20 +83,10 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
     intake_metadata: data.intake_metadata || null,
   });
 
-  const pool = getPool();
-  const client = await pool.connect();
-
   try {
-    await client.query("BEGIN");
-    await client.query(
-      `SELECT set_config('app.current_user_id', $1, true),
-              set_config('app.current_account_id', $2, true),
-              set_config('app.current_role', $3, true)`,
-      [session.userId, session.accountId, session.role]
-    );
-
-    const { bookingId, clientId, propertyId, jobId, routingPath } = await createIntakeRecords(client, {
-      accountId: session.accountId,
+    return await withTenantTransaction(session, async (client, accountId) => {
+      const { bookingId, clientId, propertyId, jobId, routingPath } = await createIntakeRecords(client, {
+      accountId,
       createdByUserId: session.userId,
       name: data.name,
       email: data.email || null,
@@ -117,19 +107,16 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
       intakeMetadata: data.intake_metadata || null,
     });
 
-    await client.query("COMMIT");
-    return NextResponse.json(
-      { id: bookingId, clientId, propertyId, jobId, routing_path: routingPath, walkthrough_score: decision.score },
-      { status: 201 }
-    );
+      return NextResponse.json(
+        { id: bookingId, clientId, propertyId, jobId, routing_path: routingPath, walkthrough_score: decision.score },
+        { status: 201 }
+      );
+    });
   } catch (err) {
-    await client.query("ROLLBACK");
     logger.error("POST /api/v1/intake error", err as Error, { traceId: session.traceId });
     return NextResponse.json(
       { error: { code: "INTERNAL_ERROR", message: "Failed to create booking request", traceId: session.traceId } },
       { status: 500 }
     );
-  } finally {
-    client.release();
   }
 });

@@ -3,7 +3,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "@/lib/auth/middleware";
-import { withDbSession } from "@/lib/db";
+import { withPortableTransaction } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";
 import { getOpenClock } from "@/lib/operations/time-clock";
 
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 export const GET = withAuth(async (_request: NextRequest, session) => {
   try {
-    const clock = await withDbSession(session, (client) =>
+    const clock = await withPortableTransaction( (client) =>
       getOpenClock(client, session.accountId, session.userId),
     );
     return NextResponse.json({ data: clock });

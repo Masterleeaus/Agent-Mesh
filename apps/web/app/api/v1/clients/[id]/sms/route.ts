@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
-import { queryOne } from "@/lib/db";
+import { portableQueryOne } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";
 import { normalizePhone } from "@/lib/phone";
 import { isSmsGatewayConfigured, sendSmsViaGateway } from "@/lib/sms/gateway";
+import { resolveTenantSmsSettings } from "@/lib/sms/settings";
 import {
   findActiveJobForClient,
   logOutboundSms,
@@ -34,13 +35,24 @@ export const POST = withRole(
       );
     }
 
-    if (!isSmsGatewayConfigured()) {
+    const account = await portableQueryOne<{ settings: unknown }>(
+      `SELECT settings FROM accounts WHERE id = $1`,
+      [session.accountId]
+    );
+    const smsSettings = resolveTenantSmsSettings(account?.settings);
+    if (!smsSettings.enabled) {
+      return NextResponse.json(
+        { error: { code: "SMS_DISABLED", message: "SMS is disabled for this business.", traceId: session.traceId } },
+        { status: 403 }
+      );
+    }
+    const gatewayConfig = { simNumber: smsSettings.simNumber };
+    if (!isSmsGatewayConfigured(gatewayConfig)) {
       return NextResponse.json(
         {
           error: {
             code: "NOT_CONFIGURED",
-            message:
-              "SMS gateway is not configured. Set SMS_GATEWAY_URL, SMS_GATEWAY_USERNAME, and SMS_GATEWAY_PASSWORD on the web service.",
+            message: "SMS gateway is not configured for this deployment.",
             traceId: session.traceId,
           },
         },
@@ -72,7 +84,7 @@ export const POST = withRole(
       );
     }
 
-    const client = await queryOne<{
+    const client = await portableQueryOne<{
       id: string;
       name: string;
       phone: string | null;
@@ -129,7 +141,7 @@ export const POST = withRole(
 
     let jobId = parsed.data.job_id ?? null;
     if (jobId) {
-      const job = await queryOne<{ id: string }>(
+      const job = await portableQueryOne<{ id: string }>(
         `SELECT id FROM jobs WHERE id = $1 AND account_id = $2 AND client_id = $3`,
         [jobId, session.accountId, clientId]
       );
@@ -144,7 +156,7 @@ export const POST = withRole(
     }
 
     const message = parsed.data.message.trim();
-    const sendResult = await sendSmsViaGateway({ phone, message });
+    const sendResult = await sendSmsViaGateway({ phone, message, config: gatewayConfig });
 
     if (!sendResult.ok) {
       await logOutboundSms({

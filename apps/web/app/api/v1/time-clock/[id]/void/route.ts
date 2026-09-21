@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withAuth } from "@/lib/auth/middleware";
-import { withDbSession } from "@/lib/db";
+import { withPortableTransaction } from "@/lib/db/portable";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
 import { voidClock } from "@/lib/operations/time-clock";
@@ -30,7 +30,7 @@ export const POST = withAuth(async (request: NextRequest, session) => {
     );
   }
   try {
-    const voided = await withDbSession(session, async (client) => {
+    const voided = await withPortableTransaction( async (client) => {
       const row = await voidClock(client, session.accountId, id, parsed.data.reason);
       if (row) {
         await appendAuditLog(client, {
