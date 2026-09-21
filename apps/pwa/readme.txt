@@ -1,1 +1,1 @@
-pwa apps
+mobile app
