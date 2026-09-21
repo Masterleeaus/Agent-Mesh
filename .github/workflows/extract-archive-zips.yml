@@ -22,17 +22,17 @@ jobs:
           set -euo pipefail
           shopt -s nullglob
           found=0
-          for zip in archive/*.zip; do
+          for zip in archive/*.zip archive/**/*.zip; do
             found=1
             base="$(basename "$zip" .zip)"
-            dest="archive/$base"
+            dest="$(dirname "$zip")/$base"
             echo "Extracting $zip -> $dest"
             rm -rf "$dest"
             mkdir -p "$dest"
             unzip -q -o "$zip" -d "$dest"
           done
           if [ "$found" -eq 0 ]; then
-            echo "No ZIP files found in archive/"
+            echo "No ZIP files found under archive/"
           fi
       - name: Commit extracted archive contents
         shell: bash
