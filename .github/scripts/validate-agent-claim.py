@@ -59,9 +59,16 @@ def validate_roadmap_integrity():
             if isinstance(sg, dict)
         }
         if sid not in goal_ids:
-            errors.append(
-                f"{sid} exists in issue manifest but not in {goal_path.relative_to(ROOT)}"
+            goal_status = str(goal.get("status") or "").upper()
+            item_status = str(item.get("status") or "").upper()
+            historical_only = (
+                goal_status == "SUPERSEDED"
+                and item_status in {"SUPERSEDED", "SUPERSEDED_BY_ARCHITECTURE"}
             )
+            if not historical_only:
+                errors.append(
+                    f"{sid} exists in issue manifest but not in {goal_path.relative_to(ROOT)}"
+                )
 
     goal_file_ids = set()
     for path in GOALS_DIR.glob("*.json"):
