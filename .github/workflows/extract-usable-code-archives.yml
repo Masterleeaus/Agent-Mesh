@@ -1,0 +1,40 @@
+name: Extract usable-code archives
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract ZIP donors
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="archive/Titan-Zero-Usable-Code-Donor-Pack/Titan-Zero-Usable-Code-Donor-Pack"
+          test -d "$ROOT"
+          find "$ROOT" -maxdepth 1 -type f -name '*.zip' -print0 | while IFS= read -r -d '' zip; do
+            name="$(basename "$zip" .zip)"
+            dest="$ROOT/$name"
+            mkdir -p "$dest"
+            unzip -oq "$zip" -d "$dest"
+          done
+          find "$ROOT" -type f -name '*.zip' -delete
+      - name: Commit extracted donors
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A archive/Titan-Zero-Usable-Code-Donor-Pack
+          if git diff --cached --quiet; then
+            echo "No extraction changes"
+          else
+            git commit -m "archive: extract usable-code donor zips"
+            git push
+          fi
