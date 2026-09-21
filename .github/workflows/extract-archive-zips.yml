@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - '.github/workflows/extract-archive-zips.yml'
+      - 'archive/**/*.zip'
 
 permissions:
   contents: write
