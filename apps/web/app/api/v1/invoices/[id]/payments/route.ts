@@ -3,7 +3,8 @@ import { withAuth, withRole } from "@/lib/auth/middleware";
 import { withInvoiceContext } from "@/lib/invoices/db";
 import { appendAuditLog } from "@/lib/db/audit";
 import { paymentMethodSchema, paymentTypeSchema } from "@ai-fsm/domain";
-import { validatePaymentAmount } from "@/lib/invoices/payments";
+import { deriveInvoiceStatus, validatePaymentAmount } from "@/lib/invoices/payments";
+import { randomUUID } from "node:crypto";
 import { logger } from "@/lib/logger";
 import { z } from "zod";
 import { writeWorkflowEvent } from "@/lib/workflow-events";
@@ -195,12 +196,13 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
       }
 
       // Deterministic duplicate guard: same invoice, amount, method within 60 seconds
+      const duplicateSince = new Date(Date.now() - 60_000).toISOString();
       const dupCheck = await client.query<{ id: string }>(
         `SELECT id FROM payments
          WHERE invoice_id = $1 AND account_id = $2
            AND amount_cents = $3 AND method = $4
-           AND created_at > now() - interval '60 seconds'`,
-        [invoiceId, session.accountId, amount_cents, method]
+           AND created_at > $5`,
+        [invoiceId, session.accountId, amount_cents, method, duplicateSince]
       );
       if (dupCheck.rowCount && dupCheck.rowCount > 0) {
         throw Object.assign(
@@ -224,13 +226,14 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
           ? received_at ?? new Date().toISOString()
           : null;
 
-      const insertResult = await client.query<{ id: string }>(
+      const paymentId = randomUUID();
+      await client.query(
         `INSERT INTO payments
-           (account_id, invoice_id, job_id, customer_id, amount_cents, method,
+           (id, account_id, invoice_id, job_id, customer_id, amount_cents, method,
             payment_type, status, received_at, paid_at, notes, created_by)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-         RETURNING id`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
         [
+          paymentId,
           session.accountId,
           invoiceId,
           invoice.job_id,
@@ -246,7 +249,32 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
         ]
       );
 
-      const paymentId = insertResult.rows[0].id;
+      // Cross-dialect invoice synchronization: do not rely on PostgreSQL-only
+      // triggers to advance paid_cents/status.
+      if (!isRefund && paymentStatus === "paid") {
+        const paidRows = await client.query<{ paid_cents: string | number }>(
+          `SELECT COALESCE(SUM(amount_cents), 0) AS paid_cents
+           FROM payments
+           WHERE invoice_id = $1 AND account_id = $2 AND status = 'paid'`,
+          [invoiceId, session.accountId]
+        );
+        const newPaidCents = Number(paidRows.rows[0]?.paid_cents ?? 0);
+        const newStatus = deriveInvoiceStatus(
+          invoice.total_cents,
+          newPaidCents,
+          invoice.deposit_cents,
+        );
+        await client.query(
+          `UPDATE invoices
+           SET paid_cents = $1,
+               status = $2,
+               paid_at = CASE WHEN $2 = 'paid' THEN COALESCE(paid_at, $3) ELSE paid_at END,
+               balance_cents = GREATEST(total_cents - $1 - deposit_cents, 0),
+               updated_at = now()
+           WHERE id = $4 AND account_id = $5`,
+          [newPaidCents, newStatus, paidAt ?? new Date().toISOString(), invoiceId, session.accountId]
+        );
+      }
 
       // Fetch updated invoice to return new status
       const updatedInvoice = await client.query<{
@@ -332,15 +360,6 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
             entityId: invoiceId,
             payload: { amountCents: amount_cents, method },
           });
-          if (invoice.job_id) {
-            const { closeJobIfFullyPaid } = await import("@/lib/jobs/close-if-paid");
-            await closeJobIfFullyPaid(client, {
-              accountId: session.accountId,
-              jobId: invoice.job_id,
-              actorId: session.userId,
-              traceId: session.traceId,
-            });
-          }
         }
       }
 
