@@ -34,6 +34,25 @@ export default function HomePage() {
 
       <section className={styles.strip}><span>CHAT</span><span>VOICE</span><span>CAMERA</span><span>GENERATIVE UI</span><span>LOCAL + CLOUD AI</span></section>
 
+      <section className={styles.field}>
+        <div>
+          <p className={styles.kicker}>BUILT FOR WORK AWAY FROM THE DESK</p>
+          <h2>Talk to the business while you’re doing the work.</h2>
+          <p>Field teams should not have to stop working to feed an office system. Titan Zero turns voice, camera and quick field input into structured operational context your workforce can use.</p>
+          <div className={styles.fieldList}>
+            <span><b>VOICE</b> Capture job notes, site conditions and customer context without retyping them later.</span>
+            <span><b>CAMERA</b> Give the system visual evidence for quoting, documentation and field support.</span>
+            <span><b>GO</b> Put the worker experience in the pocket instead of shrinking an office dashboard onto a phone.</span>
+          </div>
+        </div>
+        <div className={styles.phone}>
+          <div className={styles.phoneTop}><span>TITAN GO</span><i>● LIVE</i></div>
+          <small>ACTIVE JOB</small><h3>Capture what happened</h3>
+          <div className={styles.voice}><b>VOICE CAPTURE</b><em>00:47</em><div>▂ ▅ ▇ ▃ ▆ █ ▅ ▂ ▇ ▄ ▆ ▃</div><p>Replaced unit, photographed installation and confirmed customer approval…</p></div>
+          <button>Save + continue →</button>
+        </div>
+      </section>
+
       <section className={styles.section} id="workforce">
         <p className={styles.kicker}>YOUR TEAM, NOT ANOTHER DASHBOARD</p>
         <h2>An AI workforce that operates the business with you.</h2>
