@@ -1,0 +1,41 @@
+name: Deduplicate Archived Titan Files
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deduplicate-titan.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  dedupe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Remove files from titan that already exist identically outside titan
+        shell: bash
+        run: |
+          set -euo pipefail
+          removed=0
+          while IFS= read -r -d '' archived; do
+            rel="${archived#titan/}"
+            if [ -f "$rel" ] && cmp -s "$archived" "$rel"; then
+              git rm "$archived"
+              removed=$((removed + 1))
+            fi
+          done < <(find titan -type f -print0)
+
+          echo "Removed $removed byte-identical archived duplicates."
+          if git diff --cached --quiet; then
+            echo "No duplicates to remove."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Remove Titan files already present identically in Dovetails"
+          git push
