@@ -1,0 +1,22 @@
+name: Canonical Main Integrity
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v4
+
+      - name: Reject direct product-code pushes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/verify-main-integration.py
