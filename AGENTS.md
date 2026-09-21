@@ -232,3 +232,16 @@ The finalizer reconciles the already-established merge fact into roadmap state:
 This workflow is serialized to prevent two simultaneous Manager merges from racing on the roadmap manifest. It retries from fresh `main` if another canonical update lands first.
 
 Do not manually mark a builder subgoal complete before Manager merge merely because a builder says the work is finished.
+
+
+## Canonical main protection
+
+Product/runtime changes must reach `main` through a pull request. Builders must never push product code directly to `main`.
+
+The repository currently has no writable GitHub ruleset/branch-protection administration through this integration, so `.github/workflows/canonical-main-integrity.yml` provides a CI enforcement fallback:
+
+- direct changes under product/runtime/release paths fail the integrity check unless the commit is associated with a merged PR;
+- Manager/control-plane metadata under `.github/`, `work/`, `roadmap/`, `docs/`, plus root Agent Mesh docs may be updated directly while the GitHub-native control plane is being maintained;
+- this workflow is not equivalent to server-side branch protection and must not be described as such.
+
+If repository-admin access becomes available, replace the fallback with a GitHub ruleset requiring PR integration and the canonical status checks.
