@@ -115,7 +115,8 @@ class SurfaceSdkTitanGateway implements TitanGateway {
         receipt['command_id'] != commandId ||
         receipt['correlation_id'] != correlationId ||
         !validStatuses.contains(receipt['status']) ||
-        (receipt['receipt_id']?.toString().isEmpty ?? true)) {
+        receipt['authority_source'] != 'server' ||
+        (receipt['receipt_id']?.toString().trim().isEmpty ?? true)) {
       throw StateError('surface-receipt-mismatch');
     }
   }
