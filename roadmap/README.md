@@ -7,10 +7,7 @@ Keep goal/subgoal IDs stable where practical. Completed implementation detail sh
 ## Current migration status
 
 - `roadmap/INDEX.json` is migrated to the current **55-goal** roadmap index.
-- Canonical goal JSON files are present on GitHub `main` for:
-  - `TZ-G00`
-  - `TZ-ROADMAP-01` through `TZ-ROADMAP-52`
-- `TZ-ROADMAP-53` and `TZ-ROADMAP-54` already have all **20 GitHub subgoal issues**, but their standalone goal JSON files still require authoritative restoration.
+- Canonical goal JSON files are present on GitHub `main` for **all 55 goals**: `TZ-G00` and `TZ-ROADMAP-01` through `TZ-ROADMAP-54`.
 - `roadmap/SUBGOAL-ISSUE-MANIFEST.json` currently covers **568 subgoal IDs** and drives idempotent GitHub issue synchronization.
 
 ## Migration integrity rule
@@ -23,8 +20,6 @@ Before an agent executes or compacts a goal:
 2. read the matching issue and current code/evidence;
 3. implement only remaining work;
 4. never reconstruct missing authoritative goal content from memory.
-
-For Goals 53–54, preserve their existing issues but restore authoritative goal JSON before treating those goals as fully migrated roadmap authority.
 
 ## Execution model
 
