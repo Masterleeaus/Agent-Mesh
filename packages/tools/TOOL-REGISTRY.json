@@ -408,7 +408,11 @@
         "static/SearchAssistantExample.png",
         "static/global/src/static/OnboardingDialog/searchAgent.png"
       ],
-      "current_source_verification": "required"
+      "current_source_verification": "verified-current",
+      "current_sources": [
+        "apps/web/app/api/v1/search/route.ts",
+        "apps/web/components/GlobalSearch.tsx"
+      ]
     },
     {
       "tool_id": "webpage_assistant",
@@ -735,7 +739,12 @@
       "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "current_source_verification": "required"
+      "current_source_verification": "verified-current",
+      "current_sources": [
+        "apps/web/lib/pdf/document-pdf.ts",
+        "apps/web/app/api/v1/estimates/[id]/pdf/route.ts",
+        "apps/web/app/api/v1/invoices/[id]/pdf/route.ts"
+      ]
     },
     {
       "tool_id": "youtube_assistant",
@@ -2085,7 +2094,12 @@
       "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "current_source_verification": "required"
+      "current_source_verification": "verified-current",
+      "current_sources": [
+        "packages/titan-platform/src/ported/titan-runtime/scheduled-intelligence/index.ts",
+        "packages/workforce/scheduling/workforce-schedule-recurrence-runtime.mjs",
+        "apps/web/app/app/schedule/page.tsx"
+      ]
     },
     {
       "tool_id": "triggers",
@@ -2136,7 +2150,10 @@
       "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "current_source_verification": "required"
+      "current_source_verification": "verified-current",
+      "current_sources": [
+        "packages/workforce/customer-care/post-job-satisfaction-trigger.mjs"
+      ]
     }
   ],
   "phase3_retirement_migration": {
