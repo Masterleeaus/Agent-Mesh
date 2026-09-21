@@ -10,7 +10,7 @@ from pathlib import Path
 
 BRANCH_RE = re.compile(r"^agent/(TZ-(?:G00|ROADMAP-\d+)-SG-\d+)$")
 ISSUE_TITLE_RE = re.compile(r"^\[([A-Z0-9-]+-SG-\d+)\]")
-CLAIM_BASE_RE = re.compile(r"(?:Base main SHA|base)[:=]\s*([0-9a-f]{7,40})", re.I)
+CLAIM_BASE_RE = re.compile(r"(?:Base main SHA|base)[:=][^0-9a-f]*([0-9a-f]{7,40})", re.I)
 
 
 def run(args, *, check=True):
