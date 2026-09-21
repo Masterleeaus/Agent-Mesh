@@ -1,4 +1,4 @@
-# AGENTS.md - Execution Contract
+# AGENTS.md - Execution Contract\n\n<!-- Titan Zero Agent Mesh V3 -->
 
 This repository uses AI-assisted development, but product direction is defined only by the canonical documentation set.
 
