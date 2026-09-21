@@ -102,3 +102,27 @@ Every implementation PR must state:
 ## Historical material
 
 Files under archive/history paths are evidence and recovery material only unless explicitly promoted by current roadmap/architecture authority.
+
+
+## Canonical PR handoff
+
+After implementation commits are pushed to the canonical claim branch, create or refresh the PR with:
+
+```bash
+python3 .github/scripts/open-agent-pr.py \
+  --verification "pnpm <targeted-check> — pass" \
+  --completion "State verified completion or only remaining work." \
+  --risk "State rollback/security/privacy/cost implications."
+```
+
+The helper:
+
+- only accepts exact `agent/<subgoal-id>` claim branches;
+- resolves the matching roadmap issue automatically;
+- refuses a closed issue;
+- refuses an empty branch with zero commits ahead of `main`;
+- derives the current merge base and changed-file list;
+- creates one PR to `main`, or updates the existing PR for that branch;
+- writes the required `Closes #<issue>`, subgoal ID and claim metadata into the PR body.
+
+Builders must still provide truthful targeted verification and completion evidence. The helper standardizes the handoff; it does not invent proof.
