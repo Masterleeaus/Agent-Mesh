@@ -85,11 +85,8 @@ describe("findEligibleVisits", () => {
     expect(result).toEqual([VISIT]);
     expect(client.query).toHaveBeenCalledWith(
       expect.stringContaining("scheduled"),
-      expect.arrayContaining([AUTOMATION.account_id])
+      [AUTOMATION.account_id, 24]
     );
-    const params = (client.query as ReturnType<typeof vi.fn>).mock.calls[0][1];
-    expect(params).toHaveLength(3);
-    expect(new Date(params[2]).getTime() - new Date(params[1]).getTime()).toBe(24 * 60 * 60_000);
   });
 
   it("defaults hours_before to 24 when not in config", async () => {
@@ -101,9 +98,10 @@ describe("findEligibleVisits", () => {
 
     await findEligibleVisits(client, autoNoConfig);
 
-    const params = (client.query as ReturnType<typeof vi.fn>).mock.calls[0][1];
-    expect(params[0]).toBe(autoNoConfig.account_id);
-    expect(new Date(params[2]).getTime() - new Date(params[1]).getTime()).toBe(24 * 60 * 60_000);
+    expect(client.query).toHaveBeenCalledWith(
+      expect.any(String),
+      [autoNoConfig.account_id, 24]
+    );
   });
 
   it("uses custom hours_before from config", async () => {
@@ -115,9 +113,10 @@ describe("findEligibleVisits", () => {
 
     await findEligibleVisits(client, autoCustom);
 
-    const params = (client.query as ReturnType<typeof vi.fn>).mock.calls[0][1];
-    expect(params[0]).toBe(autoCustom.account_id);
-    expect(new Date(params[2]).getTime() - new Date(params[1]).getTime()).toBe(48 * 60 * 60_000);
+    expect(client.query).toHaveBeenCalledWith(
+      expect.any(String),
+      [autoCustom.account_id, 48]
+    );
   });
 
   it("excludes visits that already have reminders (NOT EXISTS clause)", async () => {

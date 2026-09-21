@@ -311,7 +311,7 @@ export function ReviewActions({
             disabled={!!pending}
             size="sm"
           >
-            Create Project →
+            Create Job →
           </Button>
         );
       case "schedule_assessment":
@@ -322,7 +322,7 @@ export function ReviewActions({
             disabled={!!pending}
             size="sm"
           >
-            Schedule Assessment →
+            Book a look →
           </Button>
         ) : null;
       case "schedule_work":
@@ -335,7 +335,7 @@ export function ReviewActions({
               disabled={!!pending}
               size="sm"
             >
-              Create Project →
+              Create Job →
             </Button>
           );
         }
@@ -473,7 +473,7 @@ export function ReviewActions({
               How should we proceed?
             </p>
             <p style={{ margin: "var(--space-1) 0 var(--space-3)", fontSize: "var(--text-sm)", color: "var(--fg-muted)" }}>
-              Required. Assessment for unclear scope · Book work when you can show up and work · Remote estimate for notes/photos only.
+              Required. Book a look for unclear scope · Book work when you can show up and work · Remote quote for notes/photos only.
             </p>
             <div style={{ display: "grid", gap: "var(--space-2)" }}>
               {PATH_OPTIONS.map((path) => {
@@ -552,7 +552,7 @@ export function ReviewActions({
             {primaryAction}
             {!primaryAction && guidance.followUpKind && guidance.followUpHref && (
               <LinkButton href={guidance.followUpHref} variant="primary" size="sm">
-                {guidance.followUpKind === "view_visit" ? "Open Visit →" : "Open Project →"}
+                {guidance.followUpKind === "view_visit" ? "Open Visit →" : "Open Job →"}
               </LinkButton>
             )}
           </div>
@@ -614,7 +614,7 @@ export function ReviewActions({
                   disabled={!!pending || !visitDate}
                   size="sm"
                 >
-                  Confirm Assessment
+                  Book a look
                 </Button>
                 <Button
                   variant="ghost"

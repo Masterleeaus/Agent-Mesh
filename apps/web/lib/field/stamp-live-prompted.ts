@@ -1,8 +1,8 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 
 /** First live-prompt stamp so HA ack is not required (TASK-116). */
 export async function stampLivePromptedAt(
-  client: DbClient,
+  client: PoolClient,
   candidateId: string,
   accountId: string,
 ): Promise<void> {

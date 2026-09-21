@@ -6,7 +6,7 @@
  * consulted only to enrich the display (title, filename).
  */
 
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { getPool } from "@/lib/db";
 import type { SessionPayload } from "@/lib/auth/session";
 
@@ -16,7 +16,7 @@ import type { SessionPayload } from "@/lib/auth/session";
 
 export async function withDocumentContext<T>(
   session: SessionPayload,
-  fn: (client: DbClient) => Promise<T>
+  fn: (client: PoolClient) => Promise<T>
 ): Promise<T> {
   const client = await getPool().connect();
   try {
@@ -59,7 +59,7 @@ export interface DocumentLinkRow {
  * Ordered newest-first.
  */
 export async function listDocumentLinks(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   entityType: string,
   entityId: string
@@ -82,7 +82,7 @@ export async function listDocumentLinks(
  * Return a single document link by id, or null if not found.
  */
 export async function getDocumentLink(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   linkId: string
 ): Promise<DocumentLinkRow | null> {
@@ -119,7 +119,7 @@ export interface CreateDocumentLinkInput {
  * Throws with code '23505' (UNIQUE_VIOLATION) if the link already exists.
  */
 export async function createDocumentLink(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   input: CreateDocumentLinkInput
 ): Promise<DocumentLinkRow> {
@@ -154,7 +154,7 @@ export async function createDocumentLink(
  * Returns true if a row was deleted, false if not found.
  */
 export async function deleteDocumentLink(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   linkId: string
 ): Promise<boolean> {

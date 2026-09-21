@@ -5,8 +5,6 @@
  * immediately client-redirect to /app (which feels like a login "loop").
  */
 
-import { standaloneNavigationHref } from "@/lib/navigation/standalone-navigation";
-
 export type PostLoginRole = "owner" | "admin" | "tech" | string;
 
 const COOKIE_MODE = "dv_ws_mode";
@@ -14,16 +12,15 @@ const OFFICE_ROOT = "/app";
 const FIELD_ROOT = "/app/my-work";
 export const CAPTURE_PATH = "/app/capture";
 
-/** Safe open-redirect allowlist for standalone/extension deep links. */
+/** Open-redirect allowlist: honor `next` only when it is exactly /app/capture. */
 export function allowlistedPostLoginNext(
   next: string | null | undefined,
 ): string | null {
-  return standaloneNavigationHref(next);
+  return next === CAPTURE_PATH ? CAPTURE_PATH : null;
 }
 
 export function loginRedirectForPath(pathname: string | null | undefined): string {
-  const safe = standaloneNavigationHref(pathname);
-  return safe ? `/login?next=${encodeURIComponent(safe)}` : "/login";
+  return pathname === CAPTURE_PATH ? `/login?next=${CAPTURE_PATH}` : "/login";
 }
 
 export function pathnameFromHeaders(headerList: {
@@ -51,15 +48,6 @@ export function pathnameFromHeaders(headerList: {
     }
   }
   return "";
-}
-
-export function requestTargetFromHeaders(headerList: {
-  get(name: string): string | null;
-}): string {
-  const explicit = headerList.get("x-request-target");
-  const safeExplicit = standaloneNavigationHref(explicit);
-  if (safeExplicit) return safeExplicit;
-  return pathnameFromHeaders(headerList);
 }
 
 export function readWorkspaceModeCookie(

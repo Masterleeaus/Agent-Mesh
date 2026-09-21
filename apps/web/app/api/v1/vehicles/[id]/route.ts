@@ -1,50 +1,80 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole } from "@/lib/auth/middleware";
-import { withPortableTransaction } from "@/lib/db/portable";
+import { queryOne } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
+
 const patchSchema = z.object({
-  nickname: z.string().min(1).max(80).optional(), make: z.string().max(80).nullable().optional(),
-  model: z.string().max(80).nullable().optional(), year: z.number().int().min(1900).max(2100).nullable().optional(),
-  plate: z.string().max(20).nullable().optional(), is_active: z.boolean().optional(),
-  bluetooth_id: z.string().max(120).nullable().optional(), is_default: z.boolean().optional(),
-  kind: z.enum(["truck", "van", "trailer", "other"]).optional(), vin: z.string().max(64).nullable().optional(),
-  purchase_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
-  purchase_price_cents: z.number().int().min(0).nullable().optional(),
+  nickname:     z.string().min(1).max(80).optional(),
+  make:         z.string().max(80).nullable().optional(),
+  model:        z.string().max(80).nullable().optional(),
+  year:         z.number().int().min(1900).max(2100).nullable().optional(),
+  plate:        z.string().max(20).nullable().optional(),
+  is_active:    z.boolean().optional(),
+  bluetooth_id: z.string().max(120).nullable().optional(),  // car-stereo BT identity (TASK-025)
+  is_default:   z.boolean().optional(),
 });
 
-type VehicleRow = Record<string, unknown>;
+type VehicleRow = {
+  id: string;
+  nickname: string;
+  make: string | null;
+  model: string | null;
+  year: number | null;
+  plate: string | null;
+  is_active: boolean;
+  is_default: boolean;
+  bluetooth_id: string | null;
+  created_at: string;
+};
+
 export const PATCH = withRole(["owner", "admin"], async (req: NextRequest, session) => {
-  const pathId = req.nextUrl.pathname.split("/").at(-1) ?? "";
-  const parsed = patchSchema.safeParse(await req.json().catch(() => ({})));
-  if (!parsed.success) return NextResponse.json({ error: { message: "Invalid input", details: parsed.error.issues } }, { status: 400 });
-  const fields: string[] = []; const params: unknown[] = [];
-  const allowed = ["nickname","make","model","year","plate","is_active","bluetooth_id","is_default","kind","vin","purchase_date","purchase_price_cents"] as const;
-  for (const key of allowed) {
-    const value = parsed.data[key];
-    if (value !== undefined) { params.push(value); fields.push(`${key} = $${params.length}`); }
+  const pathId = req.nextUrl.pathname.split("/").at(-1);
+  const body = await req.json().catch(() => ({}));
+  const parsed = patchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: { message: "Invalid input" } }, { status: 400 });
   }
-  if (!fields.length) return NextResponse.json({ error: { message: "No fields to update" } }, { status: 400 });
+
+  const fields: string[] = [];
+  const params: unknown[] = [];
+  let idx = 1;
+
+  const d = parsed.data;
+  if (d.nickname  !== undefined) { fields.push(`nickname = $${idx++}`);  params.push(d.nickname); }
+  if (d.make      !== undefined) { fields.push(`make = $${idx++}`);      params.push(d.make); }
+  if (d.model     !== undefined) { fields.push(`model = $${idx++}`);     params.push(d.model); }
+  if (d.year      !== undefined) { fields.push(`year = $${idx++}`);      params.push(d.year); }
+  if (d.plate     !== undefined) { fields.push(`plate = $${idx++}`);     params.push(d.plate); }
+  if (d.is_active    !== undefined) { fields.push(`is_active = $${idx++}`);    params.push(d.is_active); }
+  if (d.bluetooth_id !== undefined) { fields.push(`bluetooth_id = $${idx++}`); params.push(d.bluetooth_id); }
+  if (d.is_default   !== undefined) { fields.push(`is_default = $${idx++}`);   params.push(d.is_default); }
+
+  if (fields.length === 0) return NextResponse.json({ error: { message: "No fields to update" } }, { status: 400 });
+
+  params.push(pathId, session.accountId);
+
   try {
-    const row = await withPortableTransaction(async (client) => {
-      const existing = await client.query<{ id: string; kind: string }>(`SELECT id, kind FROM vehicles WHERE id = $1 AND account_id = $2`, [pathId, session.accountId]);
-      if (!existing.rows[0]) return null;
-      if (parsed.data.kind === "trailer") {
-        const active = await client.query<{ id: string }>(`SELECT id FROM technician_vehicle_assignments WHERE account_id = $1 AND vehicle_id = $2 AND unassigned_at IS NULL LIMIT 1`, [session.accountId, pathId]);
-        if (active.rows[0]) throw new Error("ASSIGNED_VEHICLE_CANNOT_BECOME_TRAILER");
-      }
-      if (parsed.data.is_default === true) await client.query(`UPDATE vehicles SET is_default = false, updated_at = CURRENT_TIMESTAMP WHERE account_id = $1 AND id <> $2 AND is_default = true`, [session.accountId, pathId]);
-      const finalParams = [...params, pathId, session.accountId];
-      await client.query(`UPDATE vehicles SET ${fields.join(", ")}, updated_at = CURRENT_TIMESTAMP WHERE id = $${params.length + 1} AND account_id = $${params.length + 2}`, finalParams);
-      const result = await client.query<VehicleRow>(`SELECT id, nickname, make, model, year, plate, kind, vin, purchase_date, purchase_price_cents, is_active, is_default, bluetooth_id, created_at FROM vehicles WHERE id = $1 AND account_id = $2`, [pathId, session.accountId]);
-      return result.rows[0] ?? null;
-    });
+    // Only one default per account (a partial unique index enforces it): clear
+    // the others first so flipping a new default doesn't collide.
+    if (d.is_default === true) {
+      await queryOne(
+        `UPDATE vehicles SET is_default = false
+         WHERE account_id = $1 AND id <> $2 AND is_default = true`,
+        [session.accountId, pathId],
+      );
+    }
+    const row = await queryOne<VehicleRow>(
+      `UPDATE vehicles SET ${fields.join(", ")}
+       WHERE id = $${idx} AND account_id = $${idx + 1}
+       RETURNING id, nickname, make, model, year, plate, is_active, is_default, bluetooth_id, created_at::text`,
+      params
+    );
     if (!row) return NextResponse.json({ error: { message: "Not found" } }, { status: 404 });
     return NextResponse.json({ data: row });
   } catch (err) {
-    if ((err as Error).message === "ASSIGNED_VEHICLE_CANNOT_BECOME_TRAILER") return NextResponse.json({ error: { message: "Unassign this vehicle from field staff before changing it to a trailer" } }, { status: 409 });
     logger.error("PATCH /api/v1/vehicles/[id]", err as Error, { traceId: session.traceId });
     return NextResponse.json({ error: { message: "Failed to update vehicle" } }, { status: 500 });
   }

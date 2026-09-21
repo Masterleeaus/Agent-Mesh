@@ -2,11 +2,11 @@
  * Resolve push recipients (EPIC-005 TASK-118). Mirrors the owner/admin lookup
  * in lib/attention/email.ts.
  */
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 
 /** All owner + admin user ids in the account (owner first). */
 export async function ownerAndAdminUserIds(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
 ): Promise<string[]> {
   const { rows } = await client.query<{ id: string }>(

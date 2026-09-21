@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   DEFAULT_TRAVEL_SETTINGS,
   type TravelSettings,
@@ -72,7 +72,7 @@ export function rowToTravelSettings(row: Record<string, unknown> | null | undefi
 
 /** Load settings; auto-seed row if missing (new accounts). */
 export async function loadTravelSettings(
-  client: DbClient,
+  client: PoolClient,
   accountId: string
 ): Promise<TravelSettings> {
   const existing = await client.query(
@@ -83,17 +83,11 @@ export async function loadTravelSettings(
     return rowToTravelSettings(existing.rows[0] as Record<string, unknown>);
   }
 
-  if (getDatabaseDialect() === "mysql") {
-    await client.query(
-      `INSERT IGNORE INTO business_travel_settings (account_id, customer_facing_description) VALUES ($1, $2)`,
-      [accountId, DEFAULT_TRAVEL_SETTINGS.customer_facing_description]
-    );
-  } else {
-    await client.query(
-      `INSERT INTO business_travel_settings (account_id) SELECT $1 WHERE NOT EXISTS (SELECT 1 FROM business_travel_settings WHERE account_id = $1)`,
-      [accountId]
-    );
-  }
+  await client.query(
+    `INSERT INTO business_travel_settings (account_id) VALUES ($1)
+     ON CONFLICT (account_id) DO NOTHING`,
+    [accountId]
+  );
   const seeded = await client.query(
     `SELECT * FROM business_travel_settings WHERE account_id = $1`,
     [accountId]
@@ -111,7 +105,7 @@ export interface ActiveMileageRate {
 
 /** Active mileage rate for new calculations. Falls back to settings default. */
 export async function loadActiveMileageRate(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   settings?: TravelSettings
 ): Promise<ActiveMileageRate> {
@@ -122,7 +116,7 @@ export async function loadActiveMileageRate(
     source: string;
     description: string | null;
   }>(
-    `SELECT id, rate_cents, effective_date, source, description
+    `SELECT id, rate_cents, effective_date::text, source, description
      FROM mileage_rates
      WHERE account_id = $1 AND is_active = true
      ORDER BY effective_date DESC, created_at DESC

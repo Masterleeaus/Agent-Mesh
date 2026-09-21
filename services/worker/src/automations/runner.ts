@@ -1,4 +1,4 @@
-import { databaseDialect, type DatabaseClient } from "../db-client.js";
+import type { Client } from "pg";
 import { logger } from "../logger.js";
 import { AUTOMATION_REGISTRY } from "./registry.js";
 import type { AutomationDefinition } from "./registry.js";
@@ -6,7 +6,7 @@ import type { RunResult } from "./types.js";
 
 export async function runAutomationType(
   def: AutomationDefinition,
-  client: DatabaseClient
+  client: Client
 ): Promise<RunResult[]> {
   const automations = await def.findDue(client);
   const results: RunResult[] = [];
@@ -33,12 +33,8 @@ export async function runAutomationType(
   return results;
 }
 
-export async function runAllDueAutomations(client: DatabaseClient): Promise<void> {
+export async function runAllDueAutomations(client: Client): Promise<void> {
   for (const def of AUTOMATION_REGISTRY) {
-    if (databaseDialect(client) === "mysql" && !def.mysqlCompatible) {
-      logger.debug(`${def.logLabel}: skipped until MySQL query slice is converged`);
-      continue;
-    }
     const results = await runAutomationType(def, client);
     if (results.length > 0) {
       const totalSent = results.reduce((sum, r) => sum + r.sent, 0);

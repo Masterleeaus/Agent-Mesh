@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   calculateTravelCharges,
   formatOriginAddress,
@@ -61,7 +61,7 @@ export interface CalculateTravelResponse {
 }
 
 export async function calculateTravelForAccount(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   req: CalculateTravelRequest
 ): Promise<CalculateTravelResponse> {

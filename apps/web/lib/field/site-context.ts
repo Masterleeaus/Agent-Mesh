@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   matchCustomerAtStop,
   type ConfirmedStopMatch,
@@ -68,7 +68,7 @@ function likelyFromMatch(match: ConfirmedStopMatch): LikelySiteCustomer {
 }
 
 async function loadTravelAroundStop(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   stopSegmentId: string,
   stopStartedAt: string,
@@ -128,7 +128,7 @@ async function loadTravelAroundStop(
 }
 
 async function resolveConfirmedStopMatch(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   openStop: {
     id: string;
@@ -223,7 +223,7 @@ async function resolveConfirmedStopMatch(
 }
 
 export async function loadFieldSiteContext(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   userId: string,
 ): Promise<FieldSiteContext> {

@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 
 export interface PruneLocationEventsResult {
@@ -10,7 +10,7 @@ export interface PruneLocationEventsResult {
  * Delete raw GPS breadcrumbs older than each account's location_retention_days.
  * Confirmed activity_entries and location_segments are untouched (TASK-046).
  */
-export async function pruneLocationEvents(client: DatabaseClient): Promise<PruneLocationEventsResult> {
+export async function pruneLocationEvents(client: Client): Promise<PruneLocationEventsResult> {
   try {
     const result = await client.query(
       `DELETE FROM location_events le

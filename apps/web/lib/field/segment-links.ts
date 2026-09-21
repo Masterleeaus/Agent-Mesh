@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   assertClientInAccount,
   assertJobForClient,
@@ -22,7 +22,7 @@ export interface ResolvedSegmentLinks {
 }
 
 export async function resolveSegmentLinks(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   input: SegmentLinkInput,
 ): Promise<ResolvedSegmentLinks> {
@@ -59,7 +59,7 @@ export async function resolveSegmentLinks(
 }
 
 export async function findVisitForJobOnDate(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   jobId: string,
   segmentDate: string,
@@ -78,7 +78,7 @@ export async function findVisitForJobOnDate(
 }
 
 export async function upsertSegmentVisitCandidate(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     segmentId: string;

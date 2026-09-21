@@ -2,8 +2,7 @@
  * Materials catalog learn helpers — upsert last/avg paid from receipt lines.
  * Spec: docs/superpowers/specs/2026-07-31-materials-catalog-receipt-learning-design.md
  */
-import type { DbClient, DatabaseDialect } from "@/lib/db-contract";
-import { buildMaterialCatalogSql } from "./catalog-sql";
+import type { PoolClient } from "pg";
 
 export type CatalogLineInput = {
   name: string;
@@ -99,12 +98,10 @@ function normalizeCategory(category?: string): string {
  * Match: SKU first (active rows), else lower(name)+unit.
  */
 export async function upsertMaterialFromPurchase(
-  client: DbClient,
+  client: PoolClient,
   ctx: CatalogLearnContext,
   line: CatalogLineInput,
-  dialect: DatabaseDialect = "postgres",
 ): Promise<MaterialsPriceBookRow | null> {
-  const sql = buildMaterialCatalogSql(dialect);
   const name = normalizeName(line.name);
   const unitCost = Math.round(line.unit_cost_cents);
   if (!name || unitCost <= 0) return null;
@@ -118,12 +115,34 @@ export async function upsertMaterialFromPurchase(
   let existing: MaterialsPriceBookRow | null = null;
 
   if (sku) {
-    const bySku = await client.query<MaterialsPriceBookRow>(sql.findBySku, [ctx.accountId, sku]);
+    const bySku = await client.query<MaterialsPriceBookRow>(
+      `SELECT id, account_id, name, brand, category, unit, unit_cost_cents, supplier, sku,
+              last_purchased_at::text AS last_purchased_at, notes, is_active,
+              avg_paid_cents, purchase_count
+       FROM materials_price_book
+       WHERE account_id = $1
+         AND is_active = true
+         AND sku IS NOT NULL
+         AND lower(btrim(sku)) = lower(btrim($2))
+       LIMIT 1`,
+      [ctx.accountId, sku],
+    );
     existing = bySku.rows[0] ?? null;
   }
 
   if (!existing) {
-    const byName = await client.query<MaterialsPriceBookRow>(sql.findByName, [ctx.accountId, name, unit]);
+    const byName = await client.query<MaterialsPriceBookRow>(
+      `SELECT id, account_id, name, brand, category, unit, unit_cost_cents, supplier, sku,
+              last_purchased_at::text AS last_purchased_at, notes, is_active,
+              avg_paid_cents, purchase_count
+       FROM materials_price_book
+       WHERE account_id = $1
+         AND is_active = true
+         AND lower(btrim(name)) = lower(btrim($2))
+         AND unit = $3
+       LIMIT 1`,
+      [ctx.accountId, name, unit],
+    );
     existing = byName.rows[0] ?? null;
   }
 
@@ -139,21 +158,48 @@ export async function upsertMaterialFromPurchase(
       ? purchasedAt ?? existing.last_purchased_at
       : existing.last_purchased_at;
     const updated = await client.query<MaterialsPriceBookRow>(
-      sql.update,
-      [existing.id, nextUnitCost, avg_paid_cents, purchase_count, sku, supplier, nextLastPurchased, name, ctx.accountId],
+      `UPDATE materials_price_book SET
+         unit_cost_cents   = $2,
+         avg_paid_cents    = $3,
+         purchase_count    = $4,
+         sku               = COALESCE(NULLIF(btrim($5), ''), sku),
+         supplier          = COALESCE($6, supplier),
+         last_purchased_at = $7::date,
+         name              = CASE
+                               WHEN length(btrim($8)) > length(btrim(name)) THEN btrim($8)
+                               ELSE name
+                             END,
+         updated_at        = now()
+       WHERE id = $1 AND account_id = $9
+       RETURNING id, account_id, name, brand, category, unit, unit_cost_cents, supplier, sku,
+                 last_purchased_at::text AS last_purchased_at, notes, is_active,
+                 avg_paid_cents, purchase_count`,
+      [
+        existing.id,
+        nextUnitCost,
+        avg_paid_cents,
+        purchase_count,
+        sku,
+        supplier,
+        nextLastPurchased,
+        name,
+        ctx.accountId,
+      ],
     );
-    if (dialect === "postgres") return updated.rows[0] ?? null;
-    const refreshed = await client.query<MaterialsPriceBookRow>(sql.selectById, [existing.id, ctx.accountId]);
-    return refreshed.rows[0] ?? null;
+    return updated.rows[0] ?? null;
   }
 
   const inserted = await client.query<MaterialsPriceBookRow>(
-    sql.insert,
+    `INSERT INTO materials_price_book
+       (account_id, name, category, unit, unit_cost_cents, supplier, sku,
+        last_purchased_at, avg_paid_cents, purchase_count)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8::date, $5, 1)
+     RETURNING id, account_id, name, brand, category, unit, unit_cost_cents, supplier, sku,
+               last_purchased_at::text AS last_purchased_at, notes, is_active,
+               avg_paid_cents, purchase_count`,
     [ctx.accountId, name, category, unit, unitCost, supplier, sku, purchasedAt],
   );
-  if (dialect === "postgres") return inserted.rows[0] ?? null;
-  const refreshed = await client.query<MaterialsPriceBookRow>(sql.selectByNaturalKey, [ctx.accountId, name, unit]);
-  return refreshed.rows[0] ?? null;
+  return inserted.rows[0] ?? null;
 }
 
 /**
@@ -161,14 +207,13 @@ export async function upsertMaterialFromPurchase(
  * Returns how many rows were upserted (skips invalid lines).
  */
 export async function learnMaterialsFromLineItems(
-  client: DbClient,
+  client: PoolClient,
   ctx: CatalogLearnContext,
   lines: CatalogLineInput[],
-  dialect: DatabaseDialect = "postgres",
 ): Promise<{ learned: number }> {
   let learned = 0;
   for (const line of lines) {
-    const row = await upsertMaterialFromPurchase(client, ctx, line, dialect);
+    const row = await upsertMaterialFromPurchase(client, ctx, line);
     if (row) learned += 1;
   }
   return { learned };

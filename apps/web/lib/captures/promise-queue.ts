@@ -13,7 +13,7 @@ export const OPEN_OWNER_PROMISES_SQL = `
   WHERE account_id = $1
     AND action_type = $2
     AND resolved_at IS NULL
-  ORDER BY CASE WHEN due_at IS NULL THEN 1 ELSE 0 END, due_at ASC, created_at ASC
+  ORDER BY due_at ASC NULLS LAST, created_at ASC
 `;
 
 export type OpenOwnerPromiseRow = {
@@ -79,7 +79,7 @@ export function promiseEntityLabel(entityType: string): string {
     case "estimate":
       return "Estimate";
     case "job":
-      return "Project";
+      return "Job";
     case "invoice":
       return "Invoice";
     default:

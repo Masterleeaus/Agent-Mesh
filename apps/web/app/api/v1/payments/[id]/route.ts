@@ -46,8 +46,8 @@ export const DELETE = withRole(["owner"], async (request, session) => {
         deposit_cents: number;
       }>(
         `SELECT status, paid_cents, total_cents, deposit_cents
-         FROM invoices WHERE id = $1 AND account_id = $2 FOR UPDATE`,
-        [payment.invoice_id, session.accountId]
+         FROM invoices WHERE id = $1 FOR UPDATE`,
+        [payment.invoice_id]
       );
 
       if (invoiceBefore.rowCount === 0) {
@@ -76,8 +76,8 @@ export const DELETE = withRole(["owner"], async (request, session) => {
       // (mirrors sync_invoice_on_payment, migration 117).
       const sumResult = await client.query<{ total_paid: string }>(
         `SELECT COALESCE(SUM(amount_cents), 0) AS total_paid
-         FROM payments WHERE invoice_id = $1 AND account_id = $2 AND status = 'paid'`,
-        [payment.invoice_id, session.accountId]
+         FROM payments WHERE invoice_id = $1 AND status = 'paid'`,
+        [payment.invoice_id]
       );
 
       const newPaidCents = parseInt(sumResult.rows[0].total_paid, 10);
@@ -95,17 +95,13 @@ export const DELETE = withRole(["owner"], async (request, session) => {
 
       // Update invoice
       await client.query(
-        `UPDATE invoices
-         SET paid_cents = $1, status = $2, paid_at = $3,
-             balance_cents = GREATEST(total_cents - $1 - deposit_cents, 0),
-             updated_at = now()
-         WHERE id = $4 AND account_id = $5`,
+        `UPDATE invoices SET paid_cents = $1, status = $2, paid_at = $3, updated_at = now()
+         WHERE id = $4`,
         [
           newPaidCents,
           newStatus,
           newStatus === "paid" ? new Date().toISOString() : null,
           payment.invoice_id,
-          session.accountId,
         ]
       );
 

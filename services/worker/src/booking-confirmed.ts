@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 import { bookingConfirmedEmailHtml } from "@ai-fsm/email-templates";
 import type { AutomationRow, RunResult } from "./automations/types.js";
@@ -32,29 +32,26 @@ interface EligibleBooking {
   tech_name: string | null;
 }
 
-export async function findDueBookingConfirmations(client: DatabaseClient): Promise<AutomationRow[]> {
+export async function findDueBookingConfirmations(client: Client): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
-    `SELECT id, account_id, type, config, enabled, next_run_at
+    `SELECT id, account_id, type, config, enabled, next_run_at::text
      FROM automations
      WHERE type = 'booking_confirmed'
        AND enabled = true
-       AND next_run_at <= CURRENT_TIMESTAMP`
+       AND next_run_at <= now()`
   );
   return rows;
 }
 
 export async function findEligibleBookings(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<EligibleBooking[]> {
   const hoursWindow = (automation.config as { hours_window?: number }).hours_window ?? 48;
 
-  const now = new Date();
-  const createdAfter = new Date(now.getTime() - hoursWindow * 60 * 60_000);
-
   const { rows } = await client.query<EligibleBooking>(
     `SELECT v.id, v.account_id, v.job_id, c.id AS client_id,
-            v.scheduled_start, v.scheduled_end,
+            v.scheduled_start::text, v.scheduled_end::text,
             j.title AS job_title,
             c.name AS client_name, c.email AS client_email,
             p.address AS property_address,
@@ -66,8 +63,8 @@ export async function findEligibleBookings(
      LEFT JOIN users u ON u.id = v.assigned_user_id
      WHERE v.account_id = $1
        AND v.status = 'scheduled'
-       AND v.scheduled_start > $2
-       AND v.created_at >= $3
+       AND v.scheduled_start > now()
+       AND v.created_at >= now() - ($2 || ' hours')::interval
        AND NOT EXISTS (
          SELECT 1 FROM audit_log al
          WHERE al.entity_type = 'booking_confirmed'
@@ -75,14 +72,14 @@ export async function findEligibleBookings(
            AND al.account_id = v.account_id
        )
      ORDER BY v.created_at ASC`,
-    [automation.account_id, now.toISOString(), createdAfter.toISOString()]
+    [automation.account_id, hoursWindow]
   );
 
   return rows;
 }
 
 async function emitBookingConfirmation(
-  client: DatabaseClient,
+  client: Client,
   booking: EligibleBooking,
   automationId: string
 ): Promise<boolean> {
@@ -149,7 +146,7 @@ async function emitBookingConfirmation(
 }
 
 export async function processBookingConfirmation(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<RunResult> {
   const result: RunResult = {

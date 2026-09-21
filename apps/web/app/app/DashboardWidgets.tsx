@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, EmptyState, LinkButton, SectionHeader, StatusBadge, useToast } from "@/components/ui";
 import type { StatusVariant } from "@/components/ui";
+import { formatBusinessTime } from "@/lib/time/business-tz";
+import { CloseoutWizard } from "@/components/visits/CloseoutWizard";
 
 export type CountAction = {
   label: string;
@@ -36,7 +38,7 @@ export type MaterialJob = {
 
 function fmtTime(iso: string | null): string {
   if (!iso) return "Today";
-  return new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  return formatBusinessTime(iso);
 }
 
 function accentForTone(tone: CountAction["tone"]): string {
@@ -123,26 +125,23 @@ export function JobsToday({ jobs, readOnly = false }: { jobs: CommandVisit[]; re
   const toast = useToast();
   const [pending, setPending] = useState<string | null>(null);
   const [guardedVisit, setGuardedVisit] = useState<string | null>(null);
+  const [closeoutVisitId, setCloseoutVisitId] = useState<string | null>(null);
 
-  async function transition(visitId: string, status: "arrived" | "completed") {
+  async function arrive(visitId: string) {
     setPending(visitId);
     setGuardedVisit(null);
     const res = await fetch(`/api/v1/visits/${visitId}/transition`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ status: "arrived" }),
     });
     const json = await res.json().catch(() => ({}));
     setPending(null);
     if (!res.ok) {
-      if (status === "completed" && ["MISSING_PHOTO", "MISSING_SIGNATURE"].includes(json.error?.code)) {
-        setGuardedVisit(visitId);
-        return;
-      }
       toast.error(json.error?.message ?? "Could not update visit");
       return;
     }
-    toast.success(status === "completed" ? "Visit completed" : "Arrived on site");
+    toast.success("Arrived on site");
     router.refresh();
   }
 
@@ -163,9 +162,10 @@ export function JobsToday({ jobs, readOnly = false }: { jobs: CommandVisit[]; re
   }
 
   return (
+    <>
     <Card>
-      <SectionHeader title="Today's Projects" count={jobs.length} action={<LinkButton href="/app/jobs" variant="ghost" size="sm">View all</LinkButton>} />
-      {jobs.length === 0 ? <EmptyState title="No projects scheduled today" description="Scheduled visits for today appear here." /> : (
+      <SectionHeader title="Today's Jobs" count={jobs.length} action={<LinkButton href="/app/jobs" variant="ghost" size="sm">View all</LinkButton>} />
+      {jobs.length === 0 ? <EmptyState title="No jobs scheduled today" description="Scheduled visits for today appear here." /> : (
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
           {jobs.map((job) => {
             const visitId = job.visit_id;
@@ -182,8 +182,8 @@ export function JobsToday({ jobs, readOnly = false }: { jobs: CommandVisit[]; re
                 </div>
                 {!readOnly && (canArrive || canComplete) && (
                   <div style={{ display: "flex", gap: "var(--space-2)", marginTop: "var(--space-3)", flexWrap: "wrap" }}>
-                    {canArrive && <button type="button" className="p7-btn p7-btn-primary p7-btn-sm" disabled={pending === visitId} onClick={() => transition(visitId, "arrived")}>{pending === visitId ? "Updating..." : "Arrive"}</button>}
-                    {canComplete && <button type="button" className="p7-btn p7-btn-secondary p7-btn-sm" disabled={pending === visitId} onClick={() => transition(visitId, "completed")}>{pending === visitId ? "Updating..." : "Complete"}</button>}
+                    {canArrive && <button type="button" className="p7-btn p7-btn-primary p7-btn-sm" disabled={pending === visitId} onClick={() => arrive(visitId)}>{pending === visitId ? "Updating..." : "Arrive"}</button>}
+                    {canComplete && <button type="button" className="p7-btn p7-btn-secondary p7-btn-sm" disabled={pending === visitId} onClick={() => setCloseoutVisitId(visitId)}>{pending === visitId ? "Updating..." : "Complete"}</button>}
                   </div>
                 )}
                 {!readOnly && visitId && guardedVisit === visitId && (
@@ -201,6 +201,14 @@ export function JobsToday({ jobs, readOnly = false }: { jobs: CommandVisit[]; re
         </div>
       )}
     </Card>
+      {closeoutVisitId ? (
+        <CloseoutWizard
+          visitId={closeoutVisitId}
+          open
+          onClose={() => setCloseoutVisitId(null)}
+        />
+      ) : null}
+    </>
   );
 }
 

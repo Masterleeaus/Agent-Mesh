@@ -2,7 +2,7 @@
  * Vehicle maintenance + renewal reminders → attention_events (TASK-093).
  * Due calc from schedules/renewals; delivery via attention_events.dedupe_key.
  */
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 
 const SOON_DAYS = 30;
@@ -34,7 +34,7 @@ function daysUntil(isoDate: string, today: Date): number {
   return Math.round((due - t) / 86_400_000);
 }
 
-export async function runVehicleMaintenanceReminders(client: DatabaseClient): Promise<{
+export async function runVehicleMaintenanceReminders(client: Client): Promise<{
   serviceReminders: number;
   renewalReminders: number;
   loanPayments: number;

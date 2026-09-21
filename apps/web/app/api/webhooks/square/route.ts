@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { portableQuery, withPortableTransaction } from "@/lib/db/portable";
-import { randomUUID } from "node:crypto";
+import type { PoolClient } from "pg";
+import { getPool } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { decryptJson } from "@/lib/crypto";
-import { verifySquareWebhook, type SquareSecrets, type SquarePublicConfig } from "@/lib/integrations/square-payments";
-import { synchronizeInvoicePaymentState } from "@/lib/invoices/payments";
+import { verifySquareWebhook, type SquareSecrets } from "@/lib/integrations/square-payments";
 
 export const dynamic = "force-dynamic";
 
@@ -60,38 +59,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true });
   }
 
-  // Resolve the account + signing key without database-specific JSON operators.
-  // The provider row count is small; config is normalized and matched in TypeScript.
-  const settingsRows = await portableQuery<{
+  const pool = getPool();
+
+  // Resolve the account + signing key from the location id (raw, RLS-bypassed).
+  const settingsRow = await pool.query<{
     account_id: string;
-    enabled: boolean | number;
+    enabled: boolean;
     secrets: Buffer | null;
-    config: SquarePublicConfig | string | null;
+    webhook_url: string | null;
   }>(
-    `SELECT account_id, enabled, secrets, config
+    `SELECT account_id, enabled, secrets, config->>'webhookUrl' AS webhook_url
      FROM integration_settings
-     WHERE provider = 'square'`,
+     WHERE provider = 'square' AND config->>'locationId' = $1`,
+    [locationId]
   );
-  const resolved = settingsRows.find((row) => {
-    const raw = row.config;
-    let config: SquarePublicConfig | null = null;
-    if (typeof raw === "string") {
-      try { config = JSON.parse(raw) as SquarePublicConfig; } catch { return false; }
-    } else {
-      config = raw;
-    }
-    return config?.locationId === locationId;
-  });
-  if (!resolved) {
+  if (settingsRow.rowCount === 0) {
     logger.error("Square webhook: no account for location", { locationId });
     return NextResponse.json({ received: true });
   }
-  const rawConfig = typeof resolved.config === "string"
-    ? (() => { try { return JSON.parse(resolved.config) as SquarePublicConfig; } catch { return null; } })()
-    : resolved.config;
-  const account_id = resolved.account_id;
-  const secrets = resolved.secrets;
-  const webhook_url = rawConfig?.webhookUrl ?? null;
+  const { account_id, secrets, webhook_url } = settingsRow.rows[0];
   const decrypted: SquareSecrets = secrets
     ? decryptJson<SquareSecrets>(secrets)
     : { accessToken: null, webhookSignatureKey: null };
@@ -123,9 +109,9 @@ export async function POST(request: NextRequest) {
 
   try {
     if (isPaymentEvent && payment?.status === "COMPLETED" && payment.id) {
-      await handleCompletedPayment(account_id, payment);
+      await handleCompletedPayment(pool, account_id, payment);
     } else if (isRefundEvent && refund?.status === "COMPLETED" && refund.id) {
-      await handleCompletedRefund(account_id, refund);
+      await handleCompletedRefund(pool, account_id, refund);
     }
   } catch (err) {
     logger.error("Square webhook: failed to process event", err);
@@ -138,10 +124,14 @@ export async function POST(request: NextRequest) {
 // Mark the invoice's pending Square payment paid (or insert a paid row), then
 // emit payment.recorded and, if the invoice cleared, invoice.paid.
 async function handleCompletedPayment(
+  pool: { connect: () => Promise<PoolClient> },
   accountId: string,
   payment: SquarePaymentObject
 ): Promise<void> {
-  await withPortableTransaction(async (client) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
     // Idempotency: bail if we've already recorded this Square payment.
     const dup = await client.query(
       `SELECT 1 FROM payments
@@ -149,10 +139,12 @@ async function handleCompletedPayment(
       [payment.id]
     );
     if (dup.rowCount && dup.rowCount > 0) {
+      await client.query("COMMIT");
       logger.info("Square webhook: duplicate payment ignored", { paymentId: payment.id });
       return;
     }
 
+    // Match the invoice by the saved Square order id.
     const invoiceRes = await client.query<{ id: string }>(
       `SELECT id FROM invoices
        WHERE account_id = $1 AND square_order_id = $2`,
@@ -160,47 +152,52 @@ async function handleCompletedPayment(
     );
     const invoiceId = invoiceRes.rows[0]?.id;
     if (!invoiceId) {
+      await client.query("COMMIT");
       logger.error("Square webhook: no invoice for order", { orderId: payment.order_id });
       return;
     }
 
-    const pending = await client.query<{ id: string; amount_cents: number }>(
-      `SELECT id, amount_cents FROM payments
-       WHERE invoice_id = $1 AND account_id = $2 AND external_provider = 'square'
+    // Prefer completing the existing PENDING link row; otherwise insert one.
+    const pending = await client.query<{ id: string }>(
+      `SELECT id FROM payments
+       WHERE invoice_id = $1 AND external_provider = 'square'
          AND status = 'pending' AND external_payment_id IS NULL
        ORDER BY created_at ASC
        LIMIT 1`,
-      [invoiceId, accountId]
+      [invoiceId]
     );
 
     let paymentRowId: string;
     let amountCents: number;
     if (pending.rowCount && pending.rowCount > 0) {
-      paymentRowId = pending.rows[0].id;
-      amountCents = Number(pending.rows[0].amount_cents);
-      await client.query(
+      const upd = await client.query<{ id: string; amount_cents: number }>(
         `UPDATE payments
          SET status = 'paid', external_payment_id = $2,
-             paid_at = now(), received_at = COALESCE(received_at, now())
-         WHERE id = $1 AND account_id = $3`,
-        [paymentRowId, payment.id, accountId]
+             paid_at = now(), received_at = now()
+         WHERE id = $1
+         RETURNING id, amount_cents`,
+        [pending.rows[0].id, payment.id]
       );
+      paymentRowId = upd.rows[0].id;
+      amountCents = upd.rows[0].amount_cents;
     } else {
       amountCents = payment.amount_money?.amount ?? 0;
       const inv = await client.query<{ account_id: string; client_id: string; job_id: string | null; created_by: string }>(
-        `SELECT account_id, client_id, job_id, created_by FROM invoices
-         WHERE id = $1 AND account_id = $2`,
-        [invoiceId, accountId]
+        `SELECT account_id, client_id, job_id, created_by FROM invoices WHERE id = $1`,
+        [invoiceId]
       );
-      if (!inv.rows[0]) return;
-      paymentRowId = randomUUID();
-      await client.query(
+      // payments.created_by is NOT NULL; system-recorded Square payments are
+      // attributed to whoever created the invoice.
+      const ins = await client.query<{ id: string }>(
         `INSERT INTO payments
-           (id, account_id, invoice_id, job_id, customer_id, amount_cents, method,
-            payment_type, status, external_provider, external_payment_id, paid_at, received_at, created_by)
-         VALUES ($1, $2, $3, $4, $5, $6, 'square', 'progress', 'paid', 'square', $7, now(), now(), $8)`,
+           (account_id, invoice_id, job_id, customer_id, amount_cents, method,
+            payment_type, status, external_provider, external_payment_id, paid_at, created_by)
+         VALUES ($1, $2, $3, $4, $5, 'square', 'progress', 'paid', 'square', $6, now(), $7)
+         ON CONFLICT (external_provider, external_payment_id)
+           WHERE external_provider IS NOT NULL AND external_payment_id IS NOT NULL
+           DO NOTHING
+         RETURNING id`,
         [
-          paymentRowId,
           inv.rows[0].account_id,
           invoiceId,
           inv.rows[0].job_id,
@@ -210,38 +207,70 @@ async function handleCompletedPayment(
           inv.rows[0].created_by,
         ]
       );
+      if (ins.rowCount === 0) {
+        await client.query("COMMIT");
+        return;
+      }
+      paymentRowId = ins.rows[0].id;
     }
 
-    const synced = await synchronizeInvoicePaymentState(client, accountId, invoiceId);
-
+    // Daily Operations Log: payment recorded, and invoice.paid if cleared.
     await client.query(
       `INSERT INTO workflow_events (account_id, event_type, entity_type, entity_id, payload)
        VALUES ($1, 'payment.recorded', 'payment', $2, $3)`,
-      [accountId, paymentRowId, JSON.stringify({ invoiceId, amountCents, method: "square", source: "square_webhook" })]
+      [
+        accountId,
+        paymentRowId,
+        JSON.stringify({ invoiceId, amountCents, method: "square", source: "square_webhook" }),
+      ]
     );
-    if (synced.status === "paid") {
+    const inv = await client.query<{ status: string; invoice_number: string }>(
+      `SELECT status, invoice_number FROM invoices WHERE id = $1`,
+      [invoiceId]
+    );
+    if (inv.rows[0]?.status === "paid") {
       await client.query(
         `INSERT INTO workflow_events (account_id, event_type, entity_type, entity_id, payload)
          VALUES ($1, 'invoice.paid', 'invoice', $2, $3)`,
         [accountId, invoiceId, JSON.stringify({ amountCents, method: "square" })]
       );
+      const jobLink = await client.query<{ job_id: string | null; created_by: string }>(
+        `SELECT job_id, created_by FROM invoices WHERE id = $1 AND account_id = $2`,
+        [invoiceId, accountId],
+      );
+      if (jobLink.rows[0]?.job_id) {
+        const { closeJobIfFullyPaid } = await import("@/lib/jobs/close-if-paid");
+        await closeJobIfFullyPaid(client, {
+          accountId,
+          jobId: jobLink.rows[0].job_id,
+          actorId: jobLink.rows[0].created_by,
+        });
+      }
     }
-    if (synced.status === "paid" || synced.status === "partial") {
+    // Owner attention (in-app + optional email via queue)
+    if (inv.rows[0] && (inv.rows[0].status === "paid" || inv.rows[0].status === "partial")) {
       try {
         const { emitInvoicePaymentAttention } = await import("@/lib/attention");
         await emitInvoicePaymentAttention(client, {
           accountId,
           invoiceId,
-          invoiceNumber: synced.invoice_number,
-          status: synced.status,
+          invoiceNumber: inv.rows[0].invoice_number,
+          status: inv.rows[0].status,
           paymentId: paymentRowId,
         });
       } catch (attErr) {
         logger.error("Square webhook: attention emit failed (non-fatal)", attErr);
       }
     }
+
+    await client.query("COMMIT");
     logger.info("Square payment recorded", { invoiceId, amountCents });
-  });
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 // Record a Square-initiated refund as a ledger-only payment row (status
@@ -249,20 +278,29 @@ async function handleCompletedPayment(
 // so paid_cents is unchanged — matching manual refund semantics. Linked to the
 // invoice via the original payment (refund.payment_id) or the order id.
 async function handleCompletedRefund(
+  pool: { connect: () => Promise<PoolClient> },
   accountId: string,
   refund: SquareRefundObject
 ): Promise<void> {
-  await withPortableTransaction(async (client) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    // Idempotency: refund.id is distinct from the payment id; the unique index
+    // on (external_provider, external_payment_id) also guards the INSERT.
     const dup = await client.query(
       `SELECT 1 FROM payments
        WHERE external_provider = 'square' AND external_payment_id = $1`,
       [refund.id]
     );
     if (dup.rowCount && dup.rowCount > 0) {
+      await client.query("COMMIT");
       logger.info("Square webhook: duplicate refund ignored", { refundId: refund.id });
       return;
     }
 
+    // Resolve the invoice + attribution. Prefer the original payment row
+    // (refund.payment_id); fall back to matching the invoice by order id.
     const orig = await client.query<{
       invoice_id: string;
       account_id: string;
@@ -296,6 +334,7 @@ async function handleCompletedRefund(
     }
 
     if (!target) {
+      await client.query("COMMIT");
       logger.error("Square webhook: no invoice for refund", {
         refundId: refund.id,
         paymentId: refund.payment_id,
@@ -304,14 +343,16 @@ async function handleCompletedRefund(
     }
 
     const amountCents = refund.amount_money?.amount ?? 0;
-    const refundRowId = randomUUID();
-    await client.query(
+    const ins = await client.query<{ id: string }>(
       `INSERT INTO payments
-         (id, account_id, invoice_id, job_id, customer_id, amount_cents, method,
+         (account_id, invoice_id, job_id, customer_id, amount_cents, method,
           payment_type, status, external_provider, external_payment_id, created_by)
-       VALUES ($1, $2, $3, $4, $5, $6, 'square', 'refund', 'refunded', 'square', $7, $8)`,
+       VALUES ($1, $2, $3, $4, $5, 'square', 'refund', 'refunded', 'square', $6, $7)
+       ON CONFLICT (external_provider, external_payment_id)
+         WHERE external_provider IS NOT NULL AND external_payment_id IS NOT NULL
+         DO NOTHING
+       RETURNING id`,
       [
-        refundRowId,
         target.account_id,
         target.invoice_id,
         target.job_id,
@@ -321,13 +362,17 @@ async function handleCompletedRefund(
         target.created_by,
       ]
     );
+    if (ins.rowCount === 0) {
+      await client.query("COMMIT");
+      return;
+    }
 
     await client.query(
       `INSERT INTO workflow_events (account_id, event_type, entity_type, entity_id, payload)
        VALUES ($1, 'payment.recorded', 'payment', $2, $3)`,
       [
         target.account_id,
-        refundRowId,
+        ins.rows[0].id,
         JSON.stringify({
           invoiceId: target.invoice_id,
           amountCents,
@@ -337,6 +382,13 @@ async function handleCompletedRefund(
         }),
       ]
     );
+
+    await client.query("COMMIT");
     logger.info("Square refund recorded", { invoiceId: target.invoice_id, amountCents });
-  });
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }

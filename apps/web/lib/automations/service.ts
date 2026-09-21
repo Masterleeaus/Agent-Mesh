@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { appendAuditLog } from "../db/audit";
 
 export type AutomationRecord = {
@@ -31,7 +31,7 @@ export interface TriggerContext {
 }
 
 export async function triggerAutomation(
-  client: DbClient,
+  client: PoolClient,
   automationId: string,
   automation: AutomationRecord,
   context: TriggerContext

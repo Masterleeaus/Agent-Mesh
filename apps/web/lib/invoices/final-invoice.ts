@@ -17,9 +17,8 @@
  *     roll back the job completion that triggered it.
  */
 
-import type { DbClient } from "@/lib/db-contract";
-import { randomUUID } from "node:crypto";
-import { generateInvoiceNumber } from "@/lib/invoices/db";
+import type { PoolClient } from "pg";
+import { generateInvoiceNumber, loadCreditedInvoicesForEstimate } from "@/lib/invoices/db";
 import { reconcileFinalInvoice } from "@/lib/invoices/billing";
 import { appendAuditLog } from "@/lib/db/audit";
 import {
@@ -46,7 +45,7 @@ import {
 } from "@/lib/travel/snapshots";
 
 interface CreateFinalInvoiceParams {
-  client: DbClient;
+  client: PoolClient;
   jobId: string;
   accountId: string;
   userId: string;
@@ -54,6 +53,9 @@ interface CreateFinalInvoiceParams {
    *  estimate items exist (e.g. time-and-materials jobs with no formal estimate). */
   visitId?: string;
   traceId?: string;
+  /** Field closeout: one labor description, materials rollup, dumping line, no handling. */
+  closeoutRollup?: boolean;
+  laborDescription?: string | null;
 }
 
 interface CreateFinalInvoiceResult {
@@ -70,7 +72,8 @@ interface CreateFinalInvoiceResult {
 export async function createDraftFinalInvoiceForJob(
   params: CreateFinalInvoiceParams
 ): Promise<CreateFinalInvoiceResult | null> {
-  const { client, jobId, accountId, userId, visitId, traceId } = params;
+  const { client, jobId, accountId, userId, visitId, traceId, closeoutRollup, laborDescription } =
+    params;
 
   // ── Guard: skip if a final invoice already exists for this job ──────────
   // We gate on job_id (not estimate_id) so the check catches invoices created
@@ -88,12 +91,30 @@ export async function createDraftFinalInvoiceForJob(
   }
 
   // ── Fetch the job and its approved estimate ─────────────────────────────
-  const baseJobRow = await client.query<{
+  const jobRow = await client.query<{
     client_id: string;
     property_id: string | null;
+    estimate_id: string | null;
+    presentation_mode: string | null;
+    pricing_mode: string | null;
     booking_pricing_mode: string | null;
+    subtotal_cents: number | null;
+    tax_cents: number | null;
+    total_cents: number | null;
+    estimate_notes: string | null;
+    deposit_cents: number | null;
+    travel_snapshot_id: string | null;
   }>(
     `SELECT j.client_id, j.property_id,
+            e.id           AS estimate_id,
+            e.presentation_mode,
+            e.pricing_mode,
+            e.subtotal_cents,
+            e.tax_cents,
+            e.total_cents,
+            e.notes        AS estimate_notes,
+            e.deposit_cents,
+            e.travel_snapshot_id,
             (
               SELECT br.pricing_mode
               FROM booking_requests br
@@ -102,47 +123,20 @@ export async function createDraftFinalInvoiceForJob(
               LIMIT 1
             ) AS booking_pricing_mode
      FROM jobs j
+     LEFT JOIN LATERAL (
+       SELECT id, presentation_mode, pricing_mode, subtotal_cents, tax_cents, total_cents,
+              notes, deposit_cents, travel_snapshot_id
+       FROM estimates
+       WHERE job_id = j.id AND account_id = j.account_id AND status = 'approved'
+       ORDER BY created_at DESC
+       LIMIT 1
+     ) e ON true
      WHERE j.id = $1 AND j.account_id = $2`,
     [jobId, accountId]
   );
 
-  if ((baseJobRow.rowCount ?? 0) === 0) return null;
-  const approvedEstimate = await client.query<{
-    estimate_id: string;
-    presentation_mode: string | null;
-    pricing_mode: string | null;
-    subtotal_cents: number | null;
-    tax_cents: number | null;
-    total_cents: number | null;
-    estimate_notes: string | null;
-    deposit_cents: number | null;
-    travel_snapshot_id: string | null;
-  }>(
-    `SELECT id AS estimate_id, presentation_mode, pricing_mode, subtotal_cents, tax_cents, total_cents,
-            notes AS estimate_notes, deposit_cents, travel_snapshot_id
-     FROM estimates
-     WHERE job_id = $1 AND account_id = $2 AND status = 'approved'
-     ORDER BY created_at DESC
-     LIMIT 1`,
-    [jobId, accountId]
-  );
-
-  const baseJob = baseJobRow.rows[0];
-  const estimate = approvedEstimate.rows[0] ?? null;
-  const job = {
-    client_id: baseJob.client_id,
-    property_id: baseJob.property_id,
-    booking_pricing_mode: baseJob.booking_pricing_mode,
-    estimate_id: estimate?.estimate_id ?? null,
-    presentation_mode: estimate?.presentation_mode ?? null,
-    pricing_mode: estimate?.pricing_mode ?? null,
-    subtotal_cents: estimate?.subtotal_cents ?? null,
-    tax_cents: estimate?.tax_cents ?? null,
-    total_cents: estimate?.total_cents ?? null,
-    estimate_notes: estimate?.estimate_notes ?? null,
-    deposit_cents: estimate?.deposit_cents ?? null,
-    travel_snapshot_id: estimate?.travel_snapshot_id ?? null,
-  };
+  if ((jobRow.rowCount ?? 0) === 0) return null;
+  const job = jobRow.rows[0];
 
   // T&M (hourly_internal): estimate lines are budget/allowance only.
   // Final invoice must bill actual tracked labor + materials, not the estimate.
@@ -162,6 +156,7 @@ export async function createDraftFinalInvoiceForJob(
   let appendTmMaterialsAfterCreate = false;
   /** When true, lift/equipment expenses are appended after insert. */
   let appendTmEquipmentAfterCreate = false;
+  let appendCloseoutRollupAfterCreate = false;
   /** Material + handling + equipment preview used only for totals before insert. */
   let materialPreviewSubtotal = 0;
 
@@ -264,7 +259,7 @@ export async function createDraftFinalInvoiceForJob(
         }
       }
       lineItems.push({
-        description: "Labor",
+        description: (laborDescription && laborDescription.trim()) || "Labor",
         quantity: billableHours,
         unit_price_cents: billRate,
         line_item_type: "labor",
@@ -274,7 +269,9 @@ export async function createDraftFinalInvoiceForJob(
 
     // Job materials receipts → invoice lines (with handling fee when configured).
     // Preview for totals; insert happens after invoice create so source_expense_id is set.
-    const materialPreview = await materialLineItemsFromJobExpenses(
+    const materialPreview = closeoutRollup
+      ? []
+      : await materialLineItemsFromJobExpenses(
       client,
       accountId,
       jobId,
@@ -288,8 +285,23 @@ export async function createDraftFinalInvoiceForJob(
       );
     }
 
+    if (closeoutRollup) {
+      const { loadJobExpensesForCloseout, closeoutRollupFromExpenses } = await import(
+        "@/lib/invoices/closeout-rollup"
+      );
+      const rollup = closeoutRollupFromExpenses(
+        await loadJobExpensesForCloseout(client, accountId, jobId),
+      );
+      if (rollup.materialsCents + rollup.dumpCents > 0) {
+        appendCloseoutRollupAfterCreate = true;
+        materialPreviewSubtotal += rollup.materialsCents + rollup.dumpCents;
+      }
+    }
+
     // Lift / equipment (tag or lift heuristic) — billed at cost, no handling fee.
-    const equipmentPreview = await equipmentLineItemsFromJobExpenses(
+    const equipmentPreview = closeoutRollup
+      ? []
+      : await equipmentLineItemsFromJobExpenses(
       client,
       accountId,
       jobId,
@@ -374,19 +386,9 @@ export async function createDraftFinalInvoiceForJob(
   let reconciliationNote: string | null = null;
 
   if (job.estimate_id) {
-    const depositRows = await client.query<{
-      invoice_number: string;
-      total_cents: number;
-      status: string;
-    }>(
-      `SELECT invoice_number, total_cents, status
-       FROM invoices
-       WHERE estimate_id = $1 AND account_id = $2 AND invoice_kind = 'deposit'`,
-      [job.estimate_id, accountId]
-    );
     const rec = reconcileFinalInvoice({
       invoiceTotalCents: totalCents,
-      depositInvoices: depositRows.rows,
+      depositInvoices: await loadCreditedInvoicesForEstimate(client, job.estimate_id, accountId),
     });
     depositCreditCents = rec.depositCreditCents;
     reconciliationNote = rec.reconciliationNote;
@@ -401,7 +403,7 @@ export async function createDraftFinalInvoiceForJob(
   let completionAt: Date | string = new Date();
   if (visitId) {
     const visitRow = await client.query<{ completed_at: string | null }>(
-      `SELECT completed_at FROM visits WHERE id = $1 AND account_id = $2`,
+      `SELECT completed_at::text FROM visits WHERE id = $1 AND account_id = $2`,
       [visitId, accountId]
     );
     if (visitRow.rows[0]?.completed_at) {
@@ -412,19 +414,18 @@ export async function createDraftFinalInvoiceForJob(
 
   const invoiceNumber = await generateInvoiceNumber(client, accountId);
 
-  const invoiceId = randomUUID();
-  await client.query(
+  const invoiceRes = await client.query<{ id: string }>(
     `INSERT INTO invoices
-       (id, account_id, client_id, job_id, estimate_id, property_id,
+       (account_id, client_id, job_id, estimate_id, property_id,
         status, invoice_kind, invoice_number,
         subtotal_cents, tax_cents, total_cents, paid_cents, deposit_cents,
         notes, due_date, created_by, travel_snapshot_id, travel_billing_mode)
-     VALUES ($1, $2, $3, $4, $5, $6,
-             'draft', 'final', $7,
-             $8, $9, $10, 0, $11,
-             $12, $13, $14, $15, $16)`,
+     VALUES ($1, $2, $3, $4, $5,
+             'draft', 'final', $6,
+             $7, $8, $9, 0, $10,
+             $11, $12, $13, $14, $15)
+     RETURNING id`,
     [
-      invoiceId,
       accountId,
       job.client_id,
       jobId,
@@ -442,6 +443,15 @@ export async function createDraftFinalInvoiceForJob(
       job.travel_snapshot_id ? "estimated" : null,
     ]
   );
+  const invoiceId = invoiceRes.rows[0].id;
+
+  if (closeoutRollup) {
+    await client.query(
+      `UPDATE invoices SET apply_material_handling = false, updated_at = now()
+       WHERE id = $1 AND account_id = $2`,
+      [invoiceId, accountId],
+    );
+  }
 
   // ── Line items ───────────────────────────────────────────────────────────
   for (let i = 0; i < lineItems.length; i++) {
@@ -458,7 +468,11 @@ export async function createDraftFinalInvoiceForJob(
   // T&M materials + equipment: link expenses with source_expense_id, then
   // re-sum totals so the draft matches what the job ledger showed as actuals.
   let materialLineCount = 0;
-  if (appendTmMaterialsAfterCreate || appendTmEquipmentAfterCreate) {
+  if (
+    appendTmMaterialsAfterCreate ||
+    appendTmEquipmentAfterCreate ||
+    appendCloseoutRollupAfterCreate
+  ) {
     if (appendTmMaterialsAfterCreate) {
       const { lineItems: materialLines } = await appendMaterialsFromJobExpenses(
         client,
@@ -477,23 +491,29 @@ export async function createDraftFinalInvoiceForJob(
       );
       materialLineCount += equipmentLines.length;
     }
+    if (appendCloseoutRollupAfterCreate) {
+      const {
+        loadJobExpensesForCloseout,
+        closeoutRollupFromExpenses,
+        appendCloseoutExpenseRollup,
+      } = await import("@/lib/invoices/closeout-rollup");
+      const rollup = closeoutRollupFromExpenses(
+        await loadJobExpensesForCloseout(client, accountId, jobId),
+      );
+      const rollupLines = await appendCloseoutExpenseRollup(
+        client,
+        invoiceId,
+        rollup,
+        lineItems.length,
+      );
+      materialLineCount += rollupLines.length;
+    }
     const totals = await recalculateInvoiceTotals(client, invoiceId, accountId);
     // Re-apply deposit credit against the post-actuals total.
     if (job.estimate_id && depositCreditCents > 0) {
       const rec = reconcileFinalInvoice({
         invoiceTotalCents: totals.total_cents,
-        depositInvoices: (
-          await client.query<{
-            invoice_number: string;
-            total_cents: number;
-            status: string;
-          }>(
-            `SELECT invoice_number, total_cents, status
-             FROM invoices
-             WHERE estimate_id = $1 AND account_id = $2 AND invoice_kind = 'deposit'`,
-            [job.estimate_id, accountId]
-          )
-        ).rows,
+        depositInvoices: await loadCreditedInvoicesForEstimate(client, job.estimate_id, accountId),
       });
       await client.query(
         `UPDATE invoices
@@ -541,18 +561,7 @@ export async function createDraftFinalInvoiceForJob(
         if (job.estimate_id) {
           const rec = reconcileFinalInvoice({
             invoiceTotalCents: totals.total_cents,
-            depositInvoices: (
-              await client.query<{
-                invoice_number: string;
-                total_cents: number;
-                status: string;
-              }>(
-                `SELECT invoice_number, total_cents, status
-                 FROM invoices
-                 WHERE estimate_id = $1 AND account_id = $2 AND invoice_kind = 'deposit'`,
-                [job.estimate_id, accountId]
-              )
-            ).rows,
+            depositInvoices: await loadCreditedInvoicesForEstimate(client, job.estimate_id, accountId),
           });
           await client.query(
             `UPDATE invoices

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { withPortableTransaction } from "@/lib/db/portable";
+import { getPool } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { scoreSiteVisitProbability } from "@ai-fsm/domain";
 
@@ -43,98 +43,121 @@ export async function POST(
   }
 
   const input = parseResult.data;
+  const pool = getPool();
 
+  // Load the invite (only unused, non-expired)
+  const { rows: inviteRows } = await pool.query<{
+    id: string; account_id: string; booking_request_id: string | null;
+    lead_name: string; lead_email: string;
+  }>(
+    `SELECT id, account_id, booking_request_id, lead_name, lead_email
+     FROM intake_invites
+     WHERE token = $1 AND used_at IS NULL AND expires_at > now()`,
+    [token]
+  );
+
+  if (!inviteRows[0]) {
+    // Check if it exists but is expired or used, to give a better message
+    const { rows: checkRows } = await pool.query<{ used_at: string | null; expires_at: string }>(
+      `SELECT used_at, expires_at FROM intake_invites WHERE token = $1`,
+      [token]
+    );
+    if (checkRows[0]?.used_at) {
+      return NextResponse.json({ error: { code: "ALREADY_USED", message: "This form has already been submitted." } }, { status: 409 });
+    }
+    if (checkRows[0]) {
+      return NextResponse.json({ error: { code: "EXPIRED", message: "This link has expired. Please contact Dovetails Services for a new link." } }, { status: 410 });
+    }
+    return NextResponse.json({ error: { code: "NOT_FOUND", message: "Invalid intake link." } }, { status: 404 });
+  }
+
+  const invite = inviteRows[0];
+
+  const client = await pool.connect();
   try {
-    return await withPortableTransaction(async (client) => {
-      const { rows: inviteRows } = await client.query<{
-        id: string; account_id: string; booking_request_id: string | null;
-        lead_name: string; lead_email: string; used_at: string | null; expires_at: string;
-      }>(
-        `SELECT id, account_id, booking_request_id, lead_name, lead_email, used_at, expires_at
-         FROM intake_invites
-         WHERE token = $1
-         FOR UPDATE`,
-        [token],
-      );
+    await client.query("BEGIN");
+    // Tenant context for RLS: the account is resolved from the token'd invite
+    // above, so account-scoped write policies (intake_invites, booking_requests)
+    // are satisfied under the restricted DB role. No-op as superuser today.
+    await client.query(
+      `SELECT set_config('app.current_account_id', $1, true),
+              set_config('app.current_role', 'owner', true)`,
+      [invite.account_id]
+    );
 
-      const invite = inviteRows[0];
-      if (!invite) {
-        return NextResponse.json({ error: { code: "NOT_FOUND", message: "Invalid intake link." } }, { status: 404 });
-      }
-      if (invite.used_at) {
-        return NextResponse.json({ error: { code: "ALREADY_USED", message: "This form has already been submitted." } }, { status: 409 });
-      }
-      if (new Date(invite.expires_at).getTime() <= Date.now()) {
-        return NextResponse.json({ error: { code: "EXPIRED", message: "This link has expired. Please contact Dovetails Services for a new link." } }, { status: 410 });
-      }
+    // Mark invite as used
+    await client.query(
+      `UPDATE intake_invites SET used_at = now() WHERE id = $1`,
+      [invite.id]
+    );
 
-      await client.query(
-        `UPDATE intake_invites SET used_at = now() WHERE id = $1 AND account_id = $2 AND used_at IS NULL`,
-        [invite.id, invite.account_id],
-      );
-
-      const score = scoreSiteVisitProbability({
-        service_category: input.service_category,
-        service_description: input.service_description,
-        intake_metadata: input.intake_metadata,
-      });
-
-      if (invite.booking_request_id) {
-        await client.query(
-          `UPDATE booking_requests
-           SET service_category = $1,
-               service_description = $2,
-               intake_metadata = $3,
-               address = COALESCE($4, address),
-               city = COALESCE($5, city),
-               zip = COALESCE($6, zip),
-               preferred_date = COALESCE($7, preferred_date),
-               preferred_time_slot = $8,
-               routing_path = $9,
-               walkthrough_score = $10,
-               name = $11,
-               email = COALESCE(NULLIF($12, ''), email),
-               phone = COALESCE(NULLIF($13, ''), phone),
-               referral_source = COALESCE($15, referral_source),
-               referral_name = COALESCE($16, referral_name),
-               brokerage_name = COALESCE($17, brokerage_name),
-               updated_at = now()
-           WHERE id = $14 AND account_id = $18`,
-          [
-            input.service_category,
-            input.service_description,
-            JSON.stringify(input.intake_metadata),
-            input.address || null,
-            input.city || null,
-            input.zip || null,
-            input.preferred_date || null,
-            input.preferred_time_slot,
-            score.path,
-            score.score,
-            input.name,
-            input.email || null,
-            input.phone || null,
-            invite.booking_request_id,
-            input.referral_source || null,
-            input.referral_name || null,
-            input.brokerage_name || null,
-            invite.account_id,
-          ],
-        );
-      }
-
-      logger.info("intake submit: client completed intake form", {
-        inviteId: invite.id,
-        bookingRequestId: invite.booking_request_id,
-        accountId: invite.account_id,
-        routingPath: score.path,
-        score: score.score,
-      });
-
-      return NextResponse.json({ ok: true });
+    // Re-score routing with the richer description
+    const score = scoreSiteVisitProbability({
+      service_category: input.service_category,
+      service_description: input.service_description,
+      intake_metadata: input.intake_metadata,
     });
+
+    if (invite.booking_request_id) {
+      // Update the existing booking request
+      await client.query(
+        `UPDATE booking_requests
+         SET service_category = $1,
+             service_description = $2,
+             intake_metadata = $3,
+             address = COALESCE($4, address),
+             city = COALESCE($5, city),
+             zip = COALESCE($6, zip),
+             preferred_date = COALESCE($7::date, preferred_date),
+             preferred_time_slot = $8,
+             routing_path = $9,
+             walkthrough_score = $10,
+             name = $11,
+             email = COALESCE(NULLIF($12, ''), email),
+             phone = COALESCE(NULLIF($13, ''), phone),
+             referral_source = COALESCE($15, referral_source),
+             referral_name = COALESCE($16, referral_name),
+             brokerage_name = COALESCE($17, brokerage_name),
+             updated_at = now()
+         WHERE id = $14`,
+        [
+          input.service_category,
+          input.service_description,
+          JSON.stringify(input.intake_metadata),
+          input.address || null,
+          input.city || null,
+          input.zip || null,
+          input.preferred_date || null,
+          input.preferred_time_slot,
+          score.path,
+          score.score,
+          input.name,
+          input.email || null,
+          input.phone || null,
+          invite.booking_request_id,
+          input.referral_source || null,
+          input.referral_name || null,
+          input.brokerage_name || null,
+        ]
+      );
+    }
+
+    await client.query("COMMIT");
+
+    logger.info("intake submit: client completed intake form", {
+      inviteId: invite.id,
+      bookingRequestId: invite.booking_request_id,
+      accountId: invite.account_id,
+      routingPath: score.path,
+      score: score.score,
+    });
+
+    return NextResponse.json({ ok: true });
   } catch (err) {
+    await client.query("ROLLBACK");
     logger.error("intake submit: error processing intake form", err as Error);
     return NextResponse.json({ error: { code: "INTERNAL_ERROR", message: "Failed to process intake. Please try again." } }, { status: 500 });
+  } finally {
+    client.release();
   }
 }

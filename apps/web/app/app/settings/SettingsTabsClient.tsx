@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import { Card } from "@/components/ui";
@@ -13,10 +13,6 @@ import { WorkspaceModeSetting } from "./WorkspaceModeSetting";
 import { LocationDaySettings, type LocationDayValues } from "./LocationDaySettings";
 import { TravelSettingsForm } from "./TravelSettingsForm";
 import { PricingSettingsForm } from "./PricingSettingsForm";
-import { WorkforceLifecyclePanel } from "./WorkforceLifecyclePanel";
-import { WorkforceHierarchyPanel } from "./WorkforceHierarchyPanel";
-import type { WorkforceHierarchyInspection } from "./workforce-hierarchy-data";
-import type { WorkforceLifecycleInspectionView } from "@/lib/titan/workforce-lifecycle/inspection";
 
 interface Props {
   role: "owner" | "admin" | "tech";
@@ -26,11 +22,9 @@ interface Props {
   users: TeamMember[];
   square: SquareStatus | null;
   locationDay?: LocationDayValues;
-  workforceLifecycle?: readonly WorkforceLifecycleInspectionView[];
-  workforceHierarchy?: WorkforceHierarchyInspection | null;
 }
 
-export function SettingsTabsClient({ role, userId, me, account, users, square, locationDay, workforceLifecycle = [], workforceHierarchy = null }: Props) {
+export function SettingsTabsClient({ role, userId, me, account, users, square, locationDay }: Props) {
   const isAdmin = role === "owner" || role === "admin";
   const isOwner = role === "owner";
 
@@ -44,43 +38,19 @@ export function SettingsTabsClient({ role, userId, me, account, users, square, l
     ...(isAdmin ? [{ id: "team", label: "Team", icon: <TeamIcon /> }] : []),
     ...(isOwner && square ? [{ id: "payments", label: "Payments", icon: <PaymentsIcon /> }] : []),
     ...(isOwner && locationDay ? [{ id: "location-day", label: "Location & Day", icon: <LocationDayIcon /> }] : []),
-    ...(isAdmin ? [{ id: "workforce-hierarchy", label: "Workforce Hierarchy", icon: <HierarchyIcon /> }] : []),
-    ...(isAdmin ? [{ id: "workforce-lifecycle", label: "Workforce Lifecycle", icon: <LifecycleIcon /> }] : []),
     ...(isAdmin ? [{ id: "system-health", label: "System Health", icon: <HealthIcon /> }] : []),
     ...(isAdmin ? [{ id: "tools", label: "Tools & Setup", icon: <ToolsIcon /> }] : []),
   ];
 
   const [activeTab, setActiveTab] = useState(tabs[0].id);
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-
-  const onTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
-    if (!["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
-    event.preventDefault();
-    const horizontal = event.key === "ArrowLeft" || event.key === "ArrowRight";
-    const delta = event.key === "ArrowUp" || event.key === "ArrowLeft" ? -1 : 1;
-    let next = index;
-    if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = tabs.length - 1;
-    else if (horizontal || event.key === "ArrowDown" || event.key === "ArrowUp") next = (index + delta + tabs.length) % tabs.length;
-    const tab = tabs[next];
-    setActiveTab(tab.id);
-    tabRefs.current[next]?.focus();
-  };
 
   return (
     <div className="p7-settings-layout">
       {/* Sidebar navigation */}
-      <div className="p7-settings-tabs" role="tablist" aria-label="Settings sections" aria-orientation="vertical">
-        {tabs.map((tab, index) => (
+      <div className="p7-settings-tabs">
+        {tabs.map((tab) => (
           <button
             key={tab.id}
-            ref={(node) => { tabRefs.current[index] = node; }}
-            id={`settings-tab-${tab.id}`}
-            role="tab"
-            aria-selected={activeTab === tab.id}
-            aria-controls="settings-panel"
-            tabIndex={activeTab === tab.id ? 0 : -1}
-            onKeyDown={(event) => onTabKeyDown(event, index)}
             onClick={() => setActiveTab(tab.id)}
             className={`p7-settings-tab-btn ${activeTab === tab.id ? "active" : ""}`}
           >
@@ -91,13 +61,7 @@ export function SettingsTabsClient({ role, userId, me, account, users, square, l
       </div>
 
       {/* Tab content */}
-      <div
-        className="p7-settings-content"
-        id="settings-panel"
-        role="tabpanel"
-        aria-labelledby={`settings-tab-${activeTab}`}
-        tabIndex={0}
-      >
+      <div className="p7-settings-content">
         {activeTab === "profile" && (
           <section>
             <h2 style={{ fontSize: 20, fontWeight: 700, margin: "0 0 8px 0" }}>Your Profile</h2>
@@ -221,26 +185,6 @@ export function SettingsTabsClient({ role, userId, me, account, users, square, l
             <Card padding="default">
               <LocationDaySettings {...locationDay} />
             </Card>
-          </section>
-        )}
-
-        {activeTab === "workforce-hierarchy" && isAdmin && workforceHierarchy && (
-          <section>
-            <h2 style={{ fontSize: 20, fontWeight: 700, margin: "0 0 8px 0" }}>Workforce Hierarchy</h2>
-            <p style={{ color: "var(--fg-muted)", fontSize: "var(--text-sm)", marginTop: 0, marginBottom: 24 }}>
-              Inspect the governed Manager → Supervisor → Agent → Worker structure. This view is read-only and does not grant, expand, or execute authority.
-            </p>
-            <WorkforceHierarchyPanel inspection={workforceHierarchy} />
-          </section>
-        )}
-
-        {activeTab === "workforce-lifecycle" && isAdmin && (
-          <section>
-            <h2 style={{ fontSize: 20, fontWeight: 700, margin: "0 0 8px 0" }}>Workforce Lifecycle</h2>
-            <p style={{ color: "var(--fg-muted)", fontSize: "var(--text-sm)", marginTop: 0, marginBottom: 24 }}>
-              Inspect agent readiness and lifecycle control availability. Requests still pass through governed workforce authority; Settings does not own marketplace installation or execution.
-            </p>
-            <WorkforceLifecyclePanel agents={workforceLifecycle} />
           </section>
         )}
 
@@ -389,34 +333,6 @@ function PaymentsIcon() {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="2" y="5" width="20" height="14" rx="2" ry="2" />
       <line x1="2" y1="10" x2="22" y2="10" />
-    </svg>
-  );
-}
-
-function HierarchyIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-      <path d="M12 4v4M6 10h12M6 10v4M12 10v4M18 10v4" />
-      <rect x="9" y="2" width="6" height="4" rx="1" />
-      <rect x="3" y="14" width="6" height="4" rx="1" />
-      <rect x="9" y="14" width="6" height="4" rx="1" />
-      <rect x="15" y="14" width="6" height="4" rx="1" />
-    </svg>
-  );
-}
-
-function LifecycleIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 2v4" />
-      <path d="M12 18v4" />
-      <path d="m4.93 4.93 2.83 2.83" />
-      <path d="m16.24 16.24 2.83 2.83" />
-      <path d="M2 12h4" />
-      <path d="M18 12h4" />
-      <path d="m4.93 19.07 2.83-2.83" />
-      <path d="m16.24 7.76 2.83-2.83" />
-      <circle cx="12" cy="12" r="3" />
     </svg>
   );
 }

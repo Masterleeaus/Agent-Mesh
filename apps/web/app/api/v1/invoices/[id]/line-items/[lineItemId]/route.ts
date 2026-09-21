@@ -96,19 +96,15 @@ export const DELETE = withRole(["owner", "admin"], async (request, session) => {
     const data = await withInvoiceContext(session, async (client) => {
       await assertDraftInvoice(client, invoiceId, session.accountId);
 
-      const existing = await client.query<{ id: string; description: string }>(
-        `SELECT id, description FROM invoice_line_items
-         WHERE id = $1 AND invoice_id = $2`,
+      const deleted = await client.query<{ id: string; description: string }>(
+        `DELETE FROM invoice_line_items
+         WHERE id = $1 AND invoice_id = $2
+         RETURNING id, description`,
         [lineItemId, invoiceId]
       );
-      if ((existing.rowCount ?? 0) === 0) {
+      if ((deleted.rowCount ?? 0) === 0) {
         throw Object.assign(new Error("Line item not found"), { code: "NOT_FOUND" });
       }
-      await client.query(
-        `DELETE FROM invoice_line_items WHERE id = $1 AND invoice_id = $2`,
-        [lineItemId, invoiceId]
-      );
-      const deleted = existing;
 
       const totals = await recalculateInvoiceTotals(client, invoiceId, session.accountId);
       await appendAuditLog(client, {

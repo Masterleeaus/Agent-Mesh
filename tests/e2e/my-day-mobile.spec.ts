@@ -37,7 +37,12 @@ test.describe("My Day mobile", () => {
     if (!(await startBtn.isVisible())) {
       test.skip();
     }
-    await startBtn.click();
+    const more = page.getByTestId("start-day-more");
+    if (await more.isVisible()) {
+      await more.click();
+    } else {
+      await startBtn.click();
+    }
     const wizard = page.getByTestId("start-my-day-wizard");
     await expect(wizard).toBeVisible();
     await expect(wizard.getByRole("button", { name: "Clock in" })).toBeVisible();
@@ -48,11 +53,14 @@ test.describe("My Day mobile", () => {
   test("quick actions grid visible", async ({ page }) => {
     await page.goto(`${BASE}/app/my-work`);
     await expect(page.getByTestId("field-quick-actions")).toBeVisible();
-    await expect(page.getByText("New Estimate")).toBeVisible();
+    await expect(page.getByText("Quote")).toBeVisible();
   });
 
   test("field right now visible when clocked in", async ({ page }) => {
     await page.goto(`${BASE}/app/my-work`);
+    // Tolerate the not-yet-clocked-in state: field-right-now renders only when
+    // clockedIn, so on a fresh DB / independent run the start-day entry shows
+    // instead. Keeps the assertion order-independent (Codex).
     await expect(
       page.getByTestId("field-right-now").or(page.getByTestId("start-my-day-button")),
     ).toBeVisible();
@@ -65,7 +73,7 @@ test.describe("My Day mobile", () => {
 
   test("no dashboard button on mobile", async ({ page }) => {
     await page.goto(`${BASE}/app/my-work`);
-    await expect(page.getByRole("link", { name: "← Overview" })).not.toBeVisible();
+    await expect(page.getByRole("link", { name: "← Desk" })).not.toBeVisible();
   });
 
   test("FAB hidden on my day", async ({ page }) => {

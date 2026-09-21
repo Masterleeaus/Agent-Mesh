@@ -16,12 +16,22 @@ import {
   isLivePromptEligible,
   shouldAutoStampPresence,
   resolveLocationPersonUserId,
+  shouldLearnHomeCoords,
 } from "@ai-fsm/domain";
-import type { DbClient } from "@/lib/db-contract";
-import { reduceLocationEvent, type OpenSegment } from "@/lib/location/segments";
+import type { PoolClient } from "pg";
+import { reduceLocationEvent, stopsAreSamePlace, type OpenSegment } from "@/lib/location/segments";
 import { sendPushToUser, sendPushToOwners } from "@/lib/push/send";
-import { autoRecordScheduledVisitPresence } from "@/lib/field/confirm-visit";
+import {
+  applyGpsPresenceToVisit,
+  autoRecordScheduledVisitPresence,
+  shouldCompleteVisitFromPresence,
+} from "@/lib/field/confirm-visit";
 import { listOpenWorkOrdersAtProperty } from "@/lib/field/open-work-orders";
+import {
+  isDifferentPropertyStill,
+  relocationRadiusForStop,
+  type PropertyGeo,
+} from "@/lib/field/stop-proximity";
 import { stampLivePromptedAt } from "@/lib/field/stamp-live-prompted";
 
 export const dynamic = "force-dynamic";
@@ -236,20 +246,101 @@ export async function POST(req: NextRequest) {
       : null;
     segmentId = open?.id ?? null;
 
-    const mut = reduceLocationEvent(open, {
-      kind: data.kind,
-      occurredAt,
+    // TASK-148: learn home coords from HA zone "home" so a geocoded street
+    // address at the shop/house stays private.
+    const { rows: homeRows } = await client.query<{
+      home_latitude: number | null;
+      home_longitude: number | null;
+    }>(
+      `SELECT home_latitude, home_longitude FROM accounts WHERE id = $1`,
+      [accountId],
+    );
+    const storedHome =
+      homeRows[0]?.home_latitude != null && homeRows[0]?.home_longitude != null
+        ? { latitude: homeRows[0].home_latitude, longitude: homeRows[0].home_longitude }
+        : null;
+    const learnHome = shouldLearnHomeCoords({
       zone: data.zone ?? null,
       latitude: data.latitude ?? null,
       longitude: data.longitude ?? null,
-      geocodedAddress: data.geocoded_address ?? null,
-      detectedActivity: data.detected_activity ?? null,
-      vehicleId: resolvedVehicleId,
+      stored: storedHome,
     });
+    if (learnHome.learn && data.latitude != null && data.longitude != null) {
+      await client.query(
+        `UPDATE accounts
+            SET home_latitude = $2, home_longitude = $3, updated_at = now()
+          WHERE id = $1`,
+        [accountId, data.latitude, data.longitude],
+      );
+    }
+
+    let relocationRadiusM: number | undefined;
+    let geos: PropertyGeo[] = [];
+    if (open?.kind === "stop" && open.latitude != null && open.longitude != null) {
+      const { rows: props } = await client.query<{
+        id: string;
+        client_id: string;
+        address: string | null;
+        latitude: number;
+        longitude: number;
+        geofence_radius_feet: number;
+      }>(
+        `SELECT p.id, p.client_id, p.address, p.latitude, p.longitude, p.geofence_radius_feet
+           FROM properties p
+          WHERE p.account_id = $1 AND p.latitude IS NOT NULL AND p.longitude IS NOT NULL`,
+        [accountId],
+      );
+      geos = props.map((p) => ({
+        propertyId: p.id,
+        clientId: p.client_id,
+        clientName: "",
+        address: p.address ?? "",
+        latitude: p.latitude,
+        longitude: p.longitude,
+        geofenceRadiusFeet: p.geofence_radius_feet,
+      }));
+      relocationRadiusM = relocationRadiusForStop(open, geos);
+    }
+
+    let differentProperty = false;
+    if (
+      data.kind === "activity_change" &&
+      data.detected_activity === "still" &&
+      open?.kind === "stop" &&
+      open.latitude != null &&
+      open.longitude != null &&
+      data.latitude != null &&
+      data.longitude != null
+    ) {
+      differentProperty = isDifferentPropertyStill(
+        { latitude: open.latitude, longitude: open.longitude },
+        { latitude: data.latitude, longitude: data.longitude },
+        geos,
+        relocationRadiusM ?? relocationRadiusForStop(open, geos),
+      );
+    }
+
+    const mut = reduceLocationEvent(
+      open,
+      {
+        kind: data.kind,
+        occurredAt,
+        zone: data.zone ?? null,
+        latitude: data.latitude ?? null,
+        longitude: data.longitude ?? null,
+        geocodedAddress: data.geocoded_address ?? null,
+        detectedActivity: data.detected_activity ?? null,
+        vehicleId: resolvedVehicleId,
+      },
+      { relocationRadiusM, differentProperty },
+    );
     mutOpenKind = mut.open?.kind ?? null;
     mutClosed = Boolean(mut.closeOpen);
 
     // 3. Apply. Close BEFORE open so the one-open invariant always holds.
+    // Hoisted so the blip-coalescing step below (after the close) can tell
+    // whether the drive that just closed was a sub-minute noise blip.
+    let driveDismissedAsNoise = false;
     if (mut.closeOpen && open) {
       // For a closing drive, estimate distance by accumulating great-circle
       // legs over the GPS points captured during the drive (periodic location
@@ -285,6 +376,7 @@ export async function POST(req: NextRequest) {
         const cls = classifyDrive({ distanceMeters, durationSeconds });
         isLikelyNoise = cls !== "ok";
         dismissAsNoise = cls === "noise";
+        driveDismissedAsNoise = dismissAsNoise;
       } else if (open.kind === "stop") {
         // Visit match first so a scheduled arrival keeps a short stop.
         stopDetect = await detectVisitCandidate(
@@ -338,7 +430,88 @@ export async function POST(req: NextRequest) {
         [u.placeLabel ?? null, u.zone ?? null, u.latitude ?? null, u.longitude ?? null, u.vehicleId ?? null, open.id, accountId],
       );
     }
-    if (mut.open) {
+    // Blip coalescing (TASK-147): if the drive we just closed was a sub-minute
+    // noise blip and the reducer wants to open a stop at the same place as the
+    // stop that preceded the drive, the dwell never really ended. Reopen the
+    // prior stop instead of leaving a duplicate second stop (+ dead drive) that
+    // would surface as its own end-of-day interview card. The prior stop's
+    // ended_at equals this drive's start (the reducer closed it there).
+    let coalescedPriorStopId: string | null = null;
+    if (driveDismissedAsNoise && open?.kind === "drive" && mut.open?.kind === "stop") {
+      const { rows: prior } = await client.query<{
+        id: string;
+        zone: string | null;
+        latitude: number | null;
+        longitude: number | null;
+      }>(
+        // Candidate prior stop: the one the noise drive closed (its ended_at
+        // equals the drive's start). Place-match is advisory; the reopen below
+        // re-asserts eligibility atomically.
+        `SELECT id, zone, latitude, longitude
+           FROM location_segments
+          WHERE account_id = $1 AND kind = 'stop' AND ended_at = $2::timestamptz
+          ORDER BY started_at DESC
+          LIMIT 1`,
+        [accountId, open.startedAt],
+      );
+      const p = prior[0];
+      if (
+        p &&
+        stopsAreSamePlace(p, {
+          zone: mut.open.zone,
+          latitude: mut.open.latitude,
+          longitude: mut.open.longitude,
+        })
+      ) {
+        // Reopen as 'provisional' (the un-dismissed active state — the status
+        // CHECK in migration 114 allows only provisional/confirmed/dismissed).
+        // The eligibility predicate is in the WHERE (not just the SELECT above)
+        // and gated by RETURNING, so a review that committed since the SELECT
+        // wins the race and is never clobbered. We only coalesce a stop the
+        // system still owns: unreviewed provisional, or auto-noise-dismissed.
+        const { rows: reopened } = await client.query<{ id: string }>(
+          `UPDATE location_segments
+              SET ended_at = NULL,
+                  is_likely_noise = false,
+                  status = 'provisional',
+                  zone = COALESCE(zone, $4),
+                  -- Day Review reads place_label before zone: when the prior
+                  -- stop was unzoned, prefer the returning event's (often
+                  -- recognized) label so a stale drive-time geocode is replaced.
+                  place_label = CASE WHEN zone IS NULL THEN COALESCE($5, place_label)
+                                     ELSE COALESCE(place_label, $5) END,
+                  latitude = COALESCE(latitude, $6),
+                  longitude = COALESCE(longitude, $7),
+                  suggested_activity_type = COALESCE(suggested_activity_type, $8),
+                  updated_at = now()
+            WHERE id = $1 AND account_id = $2 AND ended_at = $3::timestamptz
+              AND (status = 'provisional'
+                   OR (status = 'dismissed' AND COALESCE(is_likely_noise, false) = true))
+          RETURNING id`,
+          [
+            p.id,
+            accountId,
+            open.startedAt,
+            mut.open.zone,
+            mut.open.placeLabel,
+            mut.open.latitude,
+            mut.open.longitude,
+            mut.open.suggestedActivityType,
+          ],
+        );
+        // Only coalesce if the reopen actually matched an eligible stop. We do
+        // NOT delete the prior stop's pending visit_candidate: that would strand
+        // an arrival push already sent for it (and re-create a new one → double
+        // prompt). Instead the eventual real close refreshes that candidate's
+        // interval in place via ON CONFLICT DO UPDATE (see detectVisitCandidate).
+        if (reopened[0]) {
+          coalescedPriorStopId = reopened[0].id;
+          segmentId = reopened[0].id;
+        }
+      }
+    }
+
+    if (mut.open && !coalescedPriorStopId) {
       const o = mut.open;
       // segment_date derives from the event's own timestamp, not the server's
       // current date, so backfilled/retried events land on the right day (P2).
@@ -351,6 +524,33 @@ export async function POST(req: NextRequest) {
         [accountId, o.startedAt, o.kind, o.zone, o.placeLabel, o.latitude, o.longitude, o.suggestedActivityType, o.vehicleId],
       );
       segmentId = ins[0]?.id ?? segmentId;
+    }
+
+    // TASK-149: ignition off is the arrival signal. Don't wait 5 minutes of
+    // GPS still — match the open/just-opened stop to a job and push confirm.
+    if (data.kind === "vehicle_disconnect" && !arrivalPrompt) {
+      const parkId = segmentId;
+      const parkStarted =
+        mut.open?.kind === "stop"
+          ? mut.open.startedAt
+          : open?.kind === "stop"
+            ? open.startedAt
+            : null;
+      const parkLat =
+        mut.open?.latitude ?? open?.latitude ?? data.latitude ?? null;
+      const parkLng =
+        mut.open?.longitude ?? open?.longitude ?? data.longitude ?? null;
+      if (parkId && parkStarted && (parkLat != null || parkLng != null)) {
+        const parkDetect = await detectVisitCandidate(
+          client,
+          accountId,
+          { id: parkId, startedAt: parkStarted, latitude: parkLat, longitude: parkLng },
+          occurredAt,
+          data.person ?? data.device_id ?? null,
+          { parkedArrival: true },
+        );
+        arrivalPrompt = parkDetect.arrivalPrompt;
+      }
     }
 
     await client.query("COMMIT");
@@ -417,11 +617,12 @@ interface CandidateRow {
  * coordinates; distance is added once a property has learned coords.
  */
 async function detectVisitCandidate(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   stop: ClosedStop,
   endedAt: string,
   personOrDevice: string | null = null,
+  opts: { parkedArrival?: boolean } = {},
 ): Promise<DetectVisitResult> {
   const none: DetectVisitResult = { arrivalPrompt: null, hasScheduledVisit: false };
   const durationMinutes = (new Date(endedAt).getTime() - new Date(stop.startedAt).getTime()) / 60000;
@@ -449,18 +650,13 @@ async function detectVisitCandidate(
        LIMIT 1
      ) tv ON true
      LEFT JOIN LATERAL (
-       -- Active jobs + recently *completed* (false closeout / multi-day T&M).
-       -- Exclude *invoiced*: that kept Brian Floss scoring at home for 14 days
-       -- after the job was billed. Distance hard-gate still applies separately.
+       -- Open work only. Completed-in-14-days used to steal today's job_id
+       -- (TASK-148): the house can still match via coords; night interview
+       -- asks work-on-this vs new work. Invoiced stays excluded (Floss).
        SELECT j.id FROM jobs j
        WHERE j.property_id = p.id
-         AND (
-           j.status IN ('scheduled','in_progress')
-           OR (j.status = 'completed' AND j.updated_at >= now() - interval '14 days')
-         )
-       ORDER BY
-         CASE WHEN j.status IN ('scheduled','in_progress') THEN 0 ELSE 1 END,
-         j.scheduled_start ASC NULLS LAST
+         AND j.status IN ('scheduled','in_progress')
+       ORDER BY j.scheduled_start ASC NULLS LAST
        LIMIT 1
      ) oj ON true
      WHERE p.account_id = $1
@@ -478,7 +674,7 @@ async function detectVisitCandidate(
       longitude: r.longitude,
       scheduledToday: r.today_visit_id != null,
       openJob: r.open_job_id != null,
-      jobId: r.today_job_id ?? r.open_job_id ?? null,
+      jobId: r.open_job_id ?? null,
       visitId: r.today_visit_id ?? null,
       recentClient: r.recent_client,
       repeatClient: Number(r.job_count) > 1,
@@ -495,6 +691,7 @@ async function detectVisitCandidate(
       durationMinutes,
       hasScheduledVisit: top.visitId != null,
       distanceMeters: top.distanceMeters,
+      parkedArrival: opts.parkedArrival === true,
     })
   ) {
     return none;
@@ -511,9 +708,11 @@ async function detectVisitCandidate(
     overrideWorkOrderId: null,
   });
 
-  // ~150 ft near band (matches domain WITHIN_NEAR_FEET)
+  // Close-path live prompt uses the 150ft near band. Park (Bluetooth
+  // disconnect) uses the 250ft far band — same cap as auto-detect / hold.
+  const provenMeters = (opts.parkedArrival ? 250 : 150) * 0.3048;
   const distanceProven =
-    top.distanceMeters != null && top.distanceMeters <= 150 * 0.3048;
+    top.distanceMeters != null && top.distanceMeters <= provenMeters;
 
   // Prefer assignment from the resolved work order so job/visit/WO stay consistent.
   let jobIdForInsert = top.jobId;
@@ -578,18 +777,29 @@ async function detectVisitCandidate(
     confidenceScore: top.score,
     distanceProven,
     scheduledToday: top.visitId != null,
+    openJob: jobIdForInsert != null,
     alreadyPrompted: false,
     status: "pending",
   });
 
-  const { rows: inserted } = await client.query<{ id: string }>(
+  const { rows: inserted } = await client.query<{ id: string; was_inserted: boolean }>(
+    // Blip coalescing (TASK-147) can re-close a stop whose candidate already
+    // exists. Refresh the interval in place for a still-pending candidate (so the
+    // full-dwell departure/duration is recorded and a scheduled match is not lost
+    // to a frozen row) — but xmax=0 distinguishes a genuine INSERT from that
+    // refresh so the arrival push below fires exactly once. Reviewed candidates
+    // (status <> 'pending') are left untouched (the WHERE skips them).
     `INSERT INTO visit_candidates
        (account_id, location_segment_id, property_id, matched_client_id, job_id, visit_id,
         work_order_id, wo_resolution, live_eligible,
         distance_meters, confidence_score, arrival_time, departure_time, duration_minutes)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-     ON CONFLICT (location_segment_id) DO NOTHING
-     RETURNING id`,
+     ON CONFLICT (location_segment_id) DO UPDATE
+       SET departure_time = EXCLUDED.departure_time,
+           duration_minutes = EXCLUDED.duration_minutes,
+           distance_meters = EXCLUDED.distance_meters
+       WHERE visit_candidates.status = 'pending'
+     RETURNING id, (xmax::text::bigint = 0) AS was_inserted`,
     [
       accountId,
       stop.id,
@@ -607,9 +817,86 @@ async function detectVisitCandidate(
       Math.round(durationMinutes),
     ],
   );
+  // Reconcile a candidate the owner CONFIRMED during a reopened (coalesced)
+  // dwell: the confirm stamped its interval — and the billable activity it
+  // created — at the blip-truncated first close. The pending-only upsert above
+  // skips a confirmed row, so extend both here to the real departure. No-op
+  // unless a confirmed candidate exists for this segment (only on a coalesced
+  // re-close). RETURNING gates the activity extend + the keep signal.
+  const { rows: reconciled } = await client.query<{
+    id: string;
+    visit_id: string | null;
+    classification: string | null;
+  }>(
+    `UPDATE visit_candidates
+        SET departure_time = $3::timestamptz, duration_minutes = $4
+      WHERE account_id = $1 AND location_segment_id = $2
+        AND status = 'confirmed' AND departure_time < $3::timestamptz
+    RETURNING id, visit_id, classification`,
+    [accountId, stop.id, endedAt, Math.round(durationMinutes)],
+  );
+  if (reconciled[0]) {
+    // Ingest cannot 409 + proposeRebalance (that's the interactive confirm
+    // route). Cap ended_at at the next later activity start so a switch or
+    // log during the reopened dwell is never double-counted.
+    const { rows: extended } = await client.query<{ user_id: string }>(
+      `UPDATE activity_entries a
+          SET ended_at = LEAST(
+                $3::timestamptz,
+                COALESCE(
+                  (
+                    SELECT MIN(b.started_at)
+                    FROM activity_entries b
+                    WHERE b.account_id = a.account_id
+                      AND b.user_id = a.user_id
+                      AND b.voided_at IS NULL
+                      AND b.id <> a.id
+                      AND b.started_at > a.started_at
+                      AND b.started_at < $3::timestamptz
+                  ),
+                  $3::timestamptz
+                )
+              )
+         FROM visit_candidates vc
+        WHERE vc.account_id = $1 AND vc.location_segment_id = $2
+          AND vc.status = 'confirmed' AND vc.activity_entry_id = a.id
+          AND a.account_id = $1 AND a.ended_at < $3::timestamptz
+      RETURNING a.user_id`,
+      [accountId, stop.id, endedAt],
+    );
+    const linkedVisitId = reconciled[0].visit_id;
+    const restampUserId = stampUserId ?? extended[0]?.user_id ?? null;
+    if (linkedVisitId && restampUserId) {
+      // Human already confirmed this candidate; re-apply GPS presence with
+      // the full dwell so a visit left in_progress (short first close) can
+      // complete, and an already-completed visit gets the later completed_at.
+      await client.query(`SELECT set_config('app.current_user_id', $1, true)`, [
+        restampUserId,
+      ]);
+      await applyGpsPresenceToVisit(client, {
+        accountId,
+        userId: restampUserId,
+        visitId: linkedVisitId,
+        arrivalTime: stop.startedAt,
+        departureTime: endedAt,
+        complete: shouldCompleteVisitFromPresence({
+          classification: reconciled[0].classification ?? "",
+          durationMinutes: Math.round(durationMinutes),
+        }),
+      });
+    }
+    // An already-confirmed stop must never be dismissed by the dwell floor:
+    // signal "keep" so classifyStop treats the reopened close as a real stay.
+    return { arrivalPrompt: null, hasScheduledVisit: true };
+  }
   const candidateId = inserted[0]?.id;
   if (!candidateId) return none;
+  const wasInserted = inserted[0]?.was_inserted === true;
   const hasScheduledVisit = visitIdForInsert != null;
+  // A refresh (coalesced re-close) of an existing candidate: the interval is now
+  // corrected and hasScheduledVisit is reported, but the arrival prompt already
+  // fired on the first close — do not push again.
+  if (!wasInserted) return { arrivalPrompt: null, hasScheduledVisit };
 
   // Presence-only on scheduled visit: high-trust bar only (E4 harden). Never
   // owner-fallback; person map or assigned tech required.

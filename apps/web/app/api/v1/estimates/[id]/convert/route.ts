@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { randomUUID } from "node:crypto";
 import { withRole } from "@/lib/auth/middleware";
 import { appendAuditLog } from "@/lib/db/audit";
-import { withInvoiceContext, generateInvoiceNumber } from "@/lib/invoices/db";
+import { withInvoiceContext, generateInvoiceNumber, loadCreditedInvoicesForEstimate } from "@/lib/invoices/db";
 import { reconcileFinalInvoice } from "@/lib/invoices/billing";
 import { logger } from "@/lib/logger";
 import { loadTravelSettings } from "@/lib/travel/settings";
@@ -101,21 +100,11 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
         };
       }
 
-      // 3b. Reconcile against any deposit invoices already billed so the final
-      //     invoice credits the deposit and the two never double-bill.
-      const depositInvoices = await client.query<{
-        invoice_number: string;
-        total_cents: number;
-        status: string;
-      }>(
-        `SELECT invoice_number, total_cents, status FROM invoices
-         WHERE estimate_id = $1 AND account_id = $2 AND invoice_kind = 'deposit'`,
-        [id, session.accountId]
-      );
-
+      // 3b. Reconcile against any deposit/progress invoices already billed so the
+      //     final invoice credits them and the stages never double-bill.
       const reconciliation = reconcileFinalInvoice({
         invoiceTotalCents: estimate.total_cents,
-        depositInvoices: depositInvoices.rows,
+        depositInvoices: await loadCreditedInvoicesForEstimate(client, id, session.accountId),
       });
 
       // 4. Fetch estimate line items for copying (exclude travel — re-materialized
@@ -170,19 +159,18 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
         : null;
       const finalDueDate = resolveIssueDueDate({ invoiceKind: "final", jobStatus });
 
-      const invoiceId = randomUUID();
-      await client.query(
+      const invoiceResult = await client.query<{ id: string }>(
         `INSERT INTO invoices
-           (id, account_id, client_id, job_id, estimate_id, property_id,
+           (account_id, client_id, job_id, estimate_id, property_id,
             status, invoice_kind, invoice_number,
             subtotal_cents, tax_cents, total_cents, paid_cents, deposit_cents,
             notes, due_date, created_by, travel_snapshot_id, travel_billing_mode)
-         VALUES ($1, $2, $3, $4, $5, $6,
-                 'draft', 'final', $7,
-                 $8, $9, $10, 0, $11,
-                 $12, $13, $14, $15, $16)`,
+         VALUES ($1, $2, $3, $4, $5,
+                 'draft', 'final', $6,
+                 $7, $8, $9, 0, $10,
+                 $11, $12, $13, $14, $15)
+         RETURNING id`,
         [
-          invoiceId,
           session.accountId,
           estimate.client_id,
           estimate.job_id,
@@ -200,6 +188,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
           estimate.travel_snapshot_id ? "estimated" : null,
         ]
       );
+      const invoiceId = invoiceResult.rows[0].id;
 
       // Carry travel snapshot forward (do not recalculate — rate/charge frozen at estimate time)
       if (estimate.travel_snapshot_id) {

@@ -10,31 +10,16 @@
  *   SMS_GATEWAY_SIM_NUMBER Optional SIM slot (default 1 = business line)
  */
 
-export interface SmsGatewayConfig {
-  url?: string | null;
-  username?: string | null;
-  password?: string | null;
-  simNumber?: number | null;
-}
-
 export type SendSmsResult =
   | { ok: true; messageId: string; raw?: unknown }
   | { ok: false; error: string; status?: number };
 
-function resolveGatewayConfig(config?: SmsGatewayConfig): { url: string; username: string; password: string; simNumber: number } {
-  const envSim = Number(process.env.SMS_GATEWAY_SIM_NUMBER || "1");
-  const requestedSim = config?.simNumber ?? envSim;
-  return {
-    url: config?.url?.trim() || process.env.SMS_GATEWAY_URL?.trim() || "",
-    username: config?.username?.trim() || process.env.SMS_GATEWAY_USERNAME?.trim() || "",
-    password: config?.password?.trim() || process.env.SMS_GATEWAY_PASSWORD?.trim() || "",
-    simNumber: Number.isFinite(requestedSim) && requestedSim > 0 ? requestedSim : 1,
-  };
-}
-
-export function isSmsGatewayConfigured(config?: SmsGatewayConfig): boolean {
-  const resolved = resolveGatewayConfig(config);
-  return Boolean(resolved.url && resolved.username && resolved.password);
+export function isSmsGatewayConfigured(): boolean {
+  return Boolean(
+    process.env.SMS_GATEWAY_URL?.trim() &&
+      process.env.SMS_GATEWAY_USERNAME?.trim() &&
+      process.env.SMS_GATEWAY_PASSWORD?.trim()
+  );
 }
 
 export async function sendSmsViaGateway(opts: {
@@ -42,9 +27,11 @@ export async function sendSmsViaGateway(opts: {
   message: string;
   /** Optional idempotency / correlation id */
   id?: string;
-  config?: SmsGatewayConfig;
 }): Promise<SendSmsResult> {
-  const { url, username, password, simNumber } = resolveGatewayConfig(opts.config);
+  const url = process.env.SMS_GATEWAY_URL?.trim();
+  const username = process.env.SMS_GATEWAY_USERNAME?.trim();
+  const password = process.env.SMS_GATEWAY_PASSWORD?.trim();
+  const simNumber = Number(process.env.SMS_GATEWAY_SIM_NUMBER || "1");
 
   if (!url || !username || !password) {
     return {

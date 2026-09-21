@@ -6,8 +6,7 @@ import fs from "fs";
 import path from "path";
 import { withAuth } from "../../../../../../../lib/auth/middleware";
 import type { AuthSession } from "../../../../../../../lib/auth/middleware";
-import { queryOne } from "../../../../../../../lib/db";
-import { withPortableTransaction } from "@/lib/db/portable";
+import { queryOne, getPool } from "../../../../../../../lib/db";
 import { logger } from "../../../../../../../lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -44,20 +43,50 @@ export const DELETE = withAuth(
       );
     }
 
+    const pool = getPool();
+    const client = await pool.connect();
     try {
-      const filename = await withPortableTransaction(async (client) => {
-        const existing = await client.query<{ filename: string }>(`SELECT filename FROM visit_media WHERE id = $1 AND visit_id = $2 AND account_id = $3`, [mediaId, visitId, session.accountId]);
-        if (!existing.rows[0]) return null;
-        await client.query(`DELETE FROM visit_media WHERE id = $1 AND visit_id = $2 AND account_id = $3`, [mediaId, visitId, session.accountId]);
-        return existing.rows[0].filename;
-      });
-      if (!filename) return NextResponse.json({ error: { code: "NOT_FOUND", message: "Media not found", traceId: session.traceId } }, { status: 404 });
-      const filePath = path.join("/app/uploads/visits", visitId, filename);
-      try { fs.unlinkSync(filePath); } catch (err) { logger.warn("[media DELETE] file not found on disk", { filePath, err }); }
+      await client.query("BEGIN");
+      await client.query(
+        `SELECT set_config('app.current_user_id', $1, true),
+                set_config('app.current_account_id', $2, true),
+                set_config('app.current_role', $3, true)`,
+        [session.userId, session.accountId, session.role]
+      );
+
+      const { rows } = await client.query(
+        `DELETE FROM visit_media
+         WHERE id = $1 AND visit_id = $2 AND account_id = $3
+         RETURNING filename`,
+        [mediaId, visitId, session.accountId]
+      );
+
+      if (!rows[0]) {
+        await client.query("ROLLBACK");
+        return NextResponse.json(
+          { error: { code: "NOT_FOUND", message: "Media not found", traceId: session.traceId } },
+          { status: 404 }
+        );
+      }
+
+      await client.query("COMMIT");
+
+      // Delete file from disk (best effort)
+      const filePath = path.join("/app/uploads/visits", visitId, rows[0].filename);
+      try { fs.unlinkSync(filePath); } catch (err) {
+        logger.warn("[media DELETE] file not found on disk", { filePath, err });
+      }
+
       return NextResponse.json({ data: { deleted: true } });
     } catch (err) {
+      await client.query("ROLLBACK");
       logger.error("[media DELETE]", err, { traceId: session.traceId });
-      return NextResponse.json({ error: { code: "INTERNAL_ERROR", message: "Failed to delete media", traceId: session.traceId } }, { status: 500 });
+      return NextResponse.json(
+        { error: { code: "INTERNAL_ERROR", message: "Failed to delete media", traceId: session.traceId } },
+        { status: 500 }
+      );
+    } finally {
+      client.release();
     }
   }
 );

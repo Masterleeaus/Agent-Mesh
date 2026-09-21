@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   CLASSIFICATION_TO_ACTIVITY,
   FIELD_DAY_MIN_DURATION_MINUTES,
@@ -48,7 +48,7 @@ export function entityLinkFromCandidate(
  * from the stored pin (poisoned first-confirm).
  */
 export async function learnPropertyCoordsFromSegment(
-  client: DbClient,
+  client: PoolClient,
   propertyId: string,
   accountId: string,
   segmentId: string,
@@ -93,7 +93,7 @@ export async function learnPropertyCoordsFromSegment(
 }
 
 export async function insertVisitActivityEntry(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     userId: string;
@@ -135,7 +135,7 @@ export async function insertVisitActivityEntry(
 }
 
 export async function markVisitCandidateConfirmed(
-  client: DbClient,
+  client: PoolClient,
   candidateId: string,
   accountId: string,
   classification: Exclude<VisitClassification, "ignore">,
@@ -167,7 +167,7 @@ export async function markVisitCandidateConfirmed(
 }
 
 export async function ignoreVisitCandidateForSegment(
-  client: DbClient,
+  client: PoolClient,
   segmentId: string,
   accountId: string,
 ): Promise<void> {
@@ -185,7 +185,7 @@ export async function ignoreVisitCandidateForSegment(
  * (multi-WO jobs must not steal each other's field days).
  */
 export async function findVisitForJobOnDateIncludingCompleted(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   jobId: string,
   at: string,
@@ -213,7 +213,7 @@ export async function findVisitForJobOnDateIncludingCompleted(
  * prefer a single bookable WO; else the sole non-cancelled WO on the job.
  */
 async function resolveWorkOrderForFieldDay(
-  client: DbClient,
+  client: PoolClient,
   jobId: string,
   accountId: string,
 ): Promise<string | null> {
@@ -269,7 +269,7 @@ export function shouldCompleteVisitFromPresence(opts: {
  * GPS times in a status-unchanged UPDATE.
  */
 export async function applyGpsPresenceToVisit(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     userId: string;
@@ -363,7 +363,7 @@ export async function applyGpsPresenceToVisit(
  * and does **not** mark the visit_candidate confirmed — human confirm owns labor.
  */
 export async function autoRecordScheduledVisitPresence(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     userId: string;
@@ -412,7 +412,7 @@ export async function autoRecordScheduledVisitPresence(
  * completed standard field day under the work order (multi-day T&M).
  */
 export async function ensureFieldDayVisit(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     userId: string;
@@ -425,6 +425,11 @@ export async function ensureFieldDayVisit(
     workOrderId?: string | null;
     /** Note stored on auto-created visits (default: GPS confirm copy). */
     techNotes?: string | null;
+    /**
+     * Override GPS auto-complete. Night stop interview passes false so
+     * runVisitCloseout can apply Done vs Coming back after presence is stamped.
+     */
+    complete?: boolean;
   },
 ): Promise<EnsureFieldDayResult> {
   const durationMinutes = Math.max(
@@ -433,6 +438,12 @@ export async function ensureFieldDayVisit(
       (new Date(opts.departureTime).getTime() - new Date(opts.arrivalTime).getTime()) / 60_000,
     ),
   );
+  const complete =
+    opts.complete ??
+    shouldCompleteVisitFromPresence({
+      classification: opts.classification,
+      durationMinutes,
+    });
 
   if (opts.visitId) {
     // Existing calendar visit: mark that we were on site and stamp GPS times.
@@ -443,10 +454,7 @@ export async function ensureFieldDayVisit(
       visitId: opts.visitId,
       arrivalTime: opts.arrivalTime,
       departureTime: opts.departureTime,
-      complete: shouldCompleteVisitFromPresence({
-        classification: opts.classification,
-        durationMinutes,
-      }),
+      complete,
     });
     return { visitId: opts.visitId, created: false, reason: "candidate_visit" };
   }
@@ -523,10 +531,7 @@ export async function ensureFieldDayVisit(
       visitId: existing,
       arrivalTime: opts.arrivalTime,
       departureTime: opts.departureTime,
-      complete: shouldCompleteVisitFromPresence({
-        classification: opts.classification,
-        durationMinutes,
-      }),
+      complete,
     });
     return { visitId: existing, created: false, reason: "existing_day" };
   }
@@ -547,7 +552,7 @@ export async function ensureFieldDayVisit(
        tech_notes
      ) VALUES (
        $1, $2, $3, $4,
-       'standard', 'completed',
+       'standard', $9,
        $5, $6, $5, $7,
        $8
      )
@@ -559,8 +564,9 @@ export async function ensureFieldDayVisit(
       opts.userId,
       opts.arrivalTime,
       new Date(endMs).toISOString(),
-      opts.departureTime,
+      complete ? opts.departureTime : null,
       techNotes,
+      complete ? "completed" : "in_progress",
     ],
   );
 

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
-import { withPortableTransaction } from "@/lib/db/portable";
+import { getPool } from "@/lib/db";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
 import { loadTravelSettings, rowToTravelSettings } from "@/lib/travel/settings";
@@ -37,57 +37,130 @@ const patchSchema = z.object({
 });
 
 export const GET = withRole(["owner", "admin"], async (_req: NextRequest, session: AuthSession) => {
+  const pool = getPool();
+  const client = await pool.connect();
   try {
-    const settings = await withPortableTransaction((client) => loadTravelSettings(client, session.accountId));
+    await client.query(
+      `SELECT set_config('app.current_user_id', $1, true),
+              set_config('app.current_account_id', $2, true),
+              set_config('app.current_role', $3, true)`,
+      [session.userId, session.accountId, session.role]
+    );
+    const settings = await loadTravelSettings(client, session.accountId);
     return NextResponse.json({ data: settings });
   } catch (error) {
     logger.error("GET /api/v1/travel/settings", error, { traceId: session.traceId });
-    return NextResponse.json({ error: { code: "INTERNAL_ERROR", message: "Failed to load travel settings", traceId: session.traceId } }, { status: 500 });
+    return NextResponse.json(
+      { error: { code: "INTERNAL_ERROR", message: "Failed to load travel settings", traceId: session.traceId } },
+      { status: 500 }
+    );
+  } finally {
+    client.release();
   }
 });
 
 export const PATCH = withRole(["owner", "admin"], async (request: NextRequest, session: AuthSession) => {
-  const parsed = patchSchema.safeParse(await request.json().catch(() => null));
+  const body = await request.json().catch(() => null);
+  const parsed = patchSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: { code: "VALIDATION_ERROR", message: "Invalid travel settings", details: parsed.error.flatten().fieldErrors, traceId: session.traceId } }, { status: 422 });
+    return NextResponse.json(
+      {
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Invalid travel settings",
+          details: parsed.error.flatten().fieldErrors,
+          traceId: session.traceId,
+        },
+      },
+      { status: 422 }
+    );
   }
+
   const data = parsed.data;
+  const pool = getPool();
+  const client = await pool.connect();
   try {
-    const settings = await withPortableTransaction(async (client) => {
-      await loadTravelSettings(client, session.accountId);
-      const fields: string[] = [];
-      const params: unknown[] = [];
-      let i = 1;
-      const map: Array<[keyof typeof data, string]> = [
-        ["origin_address", "origin_address"], ["origin_city", "origin_city"], ["origin_state", "origin_state"],
-        ["origin_zip", "origin_zip"], ["origin_latitude", "origin_latitude"], ["origin_longitude", "origin_longitude"],
-        ["included_one_way_miles", "included_one_way_miles"], ["mileage_only_cutoff_miles", "mileage_only_cutoff_miles"],
-        ["travel_time_cutoff_miles", "travel_time_cutoff_miles"], ["long_distance_review_miles", "long_distance_review_miles"],
-        ["minimum_project_value_low_cents", "minimum_project_value_low_cents"], ["minimum_project_value_high_cents", "minimum_project_value_high_cents"],
-        ["default_mileage_rate_cents", "default_mileage_rate_cents"], ["default_travel_time_rate_cents", "default_travel_time_rate_cents"],
-        ["travel_time_rate_mode", "travel_time_rate_mode"], ["travel_time_rounding", "travel_time_rounding"],
-        ["default_trip_calculation_method", "default_trip_calculation_method"], ["default_trip_direction", "default_trip_direction"],
-        ["customer_facing_line_title", "customer_facing_line_title"], ["customer_facing_description", "customer_facing_description"],
-        ["show_formulas_to_customer", "show_formulas_to_customer"], ["high_travel_ratio_threshold", "high_travel_ratio_threshold"],
-      ];
-      for (const [key, col] of map) {
-        if (data[key] !== undefined) { fields.push(`${col} = $${i++}`); params.push(data[key]); }
+    await client.query("BEGIN");
+    await client.query(
+      `SELECT set_config('app.current_user_id', $1, true),
+              set_config('app.current_account_id', $2, true),
+              set_config('app.current_role', $3, true)`,
+      [session.userId, session.accountId, session.role]
+    );
+
+    // Ensure row exists
+    await loadTravelSettings(client, session.accountId);
+
+    const fields: string[] = [];
+    const params: unknown[] = [];
+    let i = 1;
+    const map: Array<[keyof typeof data, string]> = [
+      ["origin_address", "origin_address"],
+      ["origin_city", "origin_city"],
+      ["origin_state", "origin_state"],
+      ["origin_zip", "origin_zip"],
+      ["origin_latitude", "origin_latitude"],
+      ["origin_longitude", "origin_longitude"],
+      ["included_one_way_miles", "included_one_way_miles"],
+      ["mileage_only_cutoff_miles", "mileage_only_cutoff_miles"],
+      ["travel_time_cutoff_miles", "travel_time_cutoff_miles"],
+      ["long_distance_review_miles", "long_distance_review_miles"],
+      ["minimum_project_value_low_cents", "minimum_project_value_low_cents"],
+      ["minimum_project_value_high_cents", "minimum_project_value_high_cents"],
+      ["default_mileage_rate_cents", "default_mileage_rate_cents"],
+      ["default_travel_time_rate_cents", "default_travel_time_rate_cents"],
+      ["travel_time_rate_mode", "travel_time_rate_mode"],
+      ["travel_time_rounding", "travel_time_rounding"],
+      ["default_trip_calculation_method", "default_trip_calculation_method"],
+      ["default_trip_direction", "default_trip_direction"],
+      ["customer_facing_line_title", "customer_facing_line_title"],
+      ["customer_facing_description", "customer_facing_description"],
+      ["show_formulas_to_customer", "show_formulas_to_customer"],
+      ["high_travel_ratio_threshold", "high_travel_ratio_threshold"],
+    ];
+    for (const [key, col] of map) {
+      if (data[key] !== undefined) {
+        fields.push(`${col} = $${i++}`);
+        params.push(data[key]);
       }
-      if (!fields.length) throw new Error("NO_TRAVEL_FIELDS");
-      fields.push("updated_at = CURRENT_TIMESTAMP");
-      params.push(session.accountId);
-      await client.query(`UPDATE business_travel_settings SET ${fields.join(", ")} WHERE account_id = $${i}`, params);
-      const loaded = await loadTravelSettings(client, session.accountId);
-      await appendAuditLog(client, { account_id: session.accountId, entity_type: "account", entity_id: session.accountId,
-        action: "update", actor_id: session.userId, trace_id: session.traceId, new_value: { travel_settings: loaded } });
-      return loaded;
-    });
-    return NextResponse.json({ data: settings });
-  } catch (error) {
-    if (error instanceof Error && error.message === "NO_TRAVEL_FIELDS") {
-      return NextResponse.json({ error: { code: "VALIDATION_ERROR", message: "No fields to update", traceId: session.traceId } }, { status: 422 });
     }
+    if (fields.length === 0) {
+      await client.query("ROLLBACK");
+      return NextResponse.json(
+        { error: { code: "VALIDATION_ERROR", message: "No fields to update", traceId: session.traceId } },
+        { status: 422 }
+      );
+    }
+    fields.push("updated_at = now()");
+    params.push(session.accountId);
+
+    const { rows } = await client.query(
+      `UPDATE business_travel_settings SET ${fields.join(", ")}
+       WHERE account_id = $${i}
+       RETURNING *`,
+      params
+    );
+
+    await appendAuditLog(client, {
+      account_id: session.accountId,
+      entity_type: "account",
+      entity_id: session.accountId,
+      action: "update",
+      actor_id: session.userId,
+      trace_id: session.traceId,
+      new_value: { travel_settings: rows[0] as Record<string, unknown> },
+    });
+
+    await client.query("COMMIT");
+    return NextResponse.json({ data: rowToTravelSettings(rows[0] as Record<string, unknown>) });
+  } catch (error) {
+    await client.query("ROLLBACK");
     logger.error("PATCH /api/v1/travel/settings", error, { traceId: session.traceId });
-    return NextResponse.json({ error: { code: "INTERNAL_ERROR", message: "Failed to update travel settings", traceId: session.traceId } }, { status: 500 });
+    return NextResponse.json(
+      { error: { code: "INTERNAL_ERROR", message: "Failed to update travel settings", traceId: session.traceId } },
+      { status: 500 }
+    );
+  } finally {
+    client.release();
   }
 });

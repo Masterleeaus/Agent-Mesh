@@ -1,8 +1,6 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { logger } from "@/lib/logger";
 import { appUrl } from "@/lib/email/mailer";
-import { getDatabaseDialect } from "@/lib/db";
-import { attentionOwnerEmailHtml } from "@ai-fsm/email-templates";
 import {
   ATTENTION_EMAIL_TYPES,
   type AttentionEmailType,
@@ -24,7 +22,7 @@ export function emailIdempotencyBucket(now = new Date()): string {
  * HIGH priority bypasses client cooldown caps. Never throws.
  */
 export async function enqueueAttentionOwnerEmail(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     type: AttentionEventType | string;
@@ -69,24 +67,38 @@ export async function enqueueAttentionOwnerEmail(
     const base = appUrl();
     const link = `${base}${opts.href.startsWith("/") ? opts.href : `/${opts.href}`}`;
     const subject = `[Dovetails] ${opts.title}`;
-    const htmlBody = attentionOwnerEmailHtml({ title: opts.title, summary: opts.summary, href: link });
+    const summaryLine = opts.summary
+      ? `<p style="color:#57534e;margin:8px 0">${escapeHtml(opts.summary)}</p>`
+      : "";
+    const htmlBody = `
+      <div style="font-family:system-ui,sans-serif;max-width:520px">
+        <h2 style="margin:0 0 8px;color:#166534">${escapeHtml(opts.title)}</h2>
+        ${summaryLine}
+        <p><a href="${link}" style="color:#166534;font-weight:600">Open in app →</a></p>
+        <p style="font-size:12px;color:#78716c;margin-top:24px">You received this because something needs attention in Dovetails.</p>
+      </div>
+    `;
 
     // priority 30 = HIGH (bypass cooldown/daily cap for owner alerts)
-    const values = [
-      opts.accountId, `attention.${opts.type}`, to, subject, htmlBody, idempotencyKey,
-      opts.entityType, opts.entityId, JSON.stringify({ attentionType: opts.type, href: opts.href }),
-    ];
-    const insertSql = getDatabaseDialect() === "mysql"
-      ? `INSERT IGNORE INTO notification_queue
-           (account_id, client_id, automation_type, priority, to_address, subject, html_body,
-            idempotency_key, entity_type, entity_id, next_attempt_at, metadata)
-         VALUES ($1, NULL, $2, 30, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, $9)`
-      : `INSERT INTO notification_queue
-           (account_id, client_id, automation_type, priority, to_address, subject, html_body,
-            idempotency_key, entity_type, entity_id, next_attempt_at, metadata)
-         VALUES ($1, NULL, $2, 30, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP, $9)
-         ON CONFLICT (idempotency_key) DO NOTHING`;
-    await client.query(insertSql, values);
+    await client.query(
+      `INSERT INTO notification_queue
+         (account_id, client_id, automation_type, priority, to_address,
+          subject, html_body, idempotency_key, entity_type, entity_id,
+          next_attempt_at, metadata)
+       VALUES ($1, NULL, $2, 30, $3, $4, $5, $6, $7, $8, now(), $9)
+       ON CONFLICT (idempotency_key) DO NOTHING`,
+      [
+        opts.accountId,
+        `attention.${opts.type}`,
+        to,
+        subject,
+        htmlBody,
+        idempotencyKey,
+        opts.entityType,
+        opts.entityId,
+        JSON.stringify({ attentionType: opts.type, href: opts.href }),
+      ],
+    );
     return "enqueued";
   } catch (err) {
     logger.error("enqueueAttentionOwnerEmail failed (non-fatal)", err, {
@@ -95,4 +107,12 @@ export async function enqueueAttentionOwnerEmail(
     });
     return "error";
   }
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }

@@ -9,8 +9,11 @@ import {
   buildMapsUrl,
   buildTelUrl,
   heroPrimaryAction,
+  heroPrimaryLabel,
   type HeroVisit,
 } from "@/lib/my-day/visit-hero";
+import { formatBusinessTime } from "@/lib/time/business-tz";
+import { CloseoutWizard } from "@/components/visits/CloseoutWizard";
 
 async function transitionVisit(visitId: string, targetStatus: string): Promise<string | null> {
   const res = await fetch(`/api/v1/visits/${visitId}/transition`, {
@@ -24,33 +27,38 @@ async function transitionVisit(visitId: string, targetStatus: string): Promise<s
 }
 
 function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  return formatBusinessTime(iso);
 }
 
 export function NextVisitHero({ visit }: { visit: HeroVisit }) {
   const router = useRouter();
   const toast = useToast();
   const [pending, setPending] = useState(false);
+  const [closeoutOpen, setCloseoutOpen] = useState(false);
 
   const mapsUrl = buildMapsUrl(visit.property_address);
   const telUrl = buildTelUrl(visit.client_phone);
   const action = heroPrimaryAction(visit.status);
   const activeOnSite = visit.status === "arrived" || visit.status === "in_progress";
-  const kicker = activeOnSite ? "Right now" : "Next visit";
-  const primaryLabel =
-    action === "start" ? "I'm here" : action === "complete" ? "Complete visit" : null;
+  const kicker = activeOnSite ? "Right now" : "Next";
+  const primaryLabel = heroPrimaryLabel(visit.status);
 
   async function handlePrimary() {
     if (!action) return;
     setPending(true);
-    const target = action === "start" ? "arrived" : "completed";
+    if (action === "complete") {
+      setPending(false);
+      setCloseoutOpen(true);
+      return;
+    }
+    const target = "arrived";
     const err = await transitionVisit(visit.id, target);
     setPending(false);
     if (err) {
       toast.error(err);
       return;
     }
-    toast.success(action === "start" ? "Arrived on site" : "Visit completed");
+    toast.success("Job started");
     router.refresh();
   }
 
@@ -65,6 +73,11 @@ export function NextVisitHero({ visit }: { visit: HeroVisit }) {
       ) : null}
       {visit.property_address ? (
         <div className="p7-field-hero__meta">{visit.property_address}</div>
+      ) : null}
+      {visit.first_up ? (
+        <div className="p7-field-hero__meta" data-testid="hero-first-up">
+          First up: {visit.first_up}
+        </div>
       ) : null}
 
       <div className="p7-field-hero__actions">
@@ -108,26 +121,6 @@ export function NextVisitHero({ visit }: { visit: HeroVisit }) {
         </div>
       </div>
 
-      {activeOnSite && (
-        <div className="p7-field-hero__tools">
-          {[
-            { label: "Photos", icon: "📸" },
-            { label: "Checklist", icon: "✅" },
-            { label: "Parts", icon: "🔩" },
-            { label: "Notes", icon: "📝" },
-          ].map((tool) => (
-            <Link
-              key={tool.label}
-              href={`/app/visits/${visit.id}` as Route}
-              className="p7-field-hero__tool"
-            >
-              <span style={{ fontSize: "var(--text-lg)" }}>{tool.icon}</span>
-              {tool.label}
-            </Link>
-          ))}
-        </div>
-      )}
-
       <Link
         href={`/app/visits/${visit.id}` as Route}
         className="p7-field-hero__meta"
@@ -139,8 +132,9 @@ export function NextVisitHero({ visit }: { visit: HeroVisit }) {
           textDecoration: "none",
         }}
       >
-        Open visit →
+        Open →
       </Link>
+      <CloseoutWizard visitId={visit.id} open={closeoutOpen} onClose={() => setCloseoutOpen(false)} />
     </div>
   );
 }

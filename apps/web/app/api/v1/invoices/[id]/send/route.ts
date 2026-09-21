@@ -188,18 +188,18 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
         await client.query(
           `UPDATE invoices
            SET status = 'sent', sent_at = now(), updated_at = now(),
-               due_date = COALESCE(due_date, $2)
-           WHERE id = $1 AND account_id = $3`,
-          [id, dueDate, session.accountId]
+               due_date = COALESCE(due_date, $2::timestamptz)
+           WHERE id = $1`,
+          [id, dueDate]
         );
       } else if (!dueOnCompletion && !inv.due_date && ["sent", "partial", "overdue"].includes(inv.status)) {
         // One-time fill when due_date was never set (allowed by migration 149).
         // Uses sent_at as completion day so aging matches payment terms.
         await client.query(
           `UPDATE invoices
-           SET due_date = $2, updated_at = now()
-           WHERE id = $1 AND account_id = $3 AND due_date IS NULL`,
-          [id, dueDateUponCompletion(inv.sent_at), session.accountId]
+           SET due_date = $2::timestamptz, updated_at = now()
+           WHERE id = $1 AND due_date IS NULL`,
+          [id, dueDateUponCompletion(inv.sent_at)]
         );
       }
 

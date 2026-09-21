@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 import { invoiceFollowupEmailHtml } from "@ai-fsm/email-templates";
 import { appUrl } from "./mailer.js";
@@ -95,9 +95,9 @@ const DEFAULT_DAYS_OVERDUE = [7, 14, 30];
 /**
  * Find all invoice_followup automations that are due to run.
  */
-export async function findDueFollowups(client: DatabaseClient): Promise<AutomationRow[]> {
+export async function findDueFollowups(client: Client): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
-    `SELECT id, account_id, type, config, enabled, next_run_at
+    `SELECT id, account_id, type, config, enabled, next_run_at::text
      FROM automations
      WHERE type = 'invoice_followup'
        AND enabled = true
@@ -116,19 +116,26 @@ export async function findDueFollowups(client: DatabaseClient): Promise<Automati
  * 4. It has been overdue for at least one of the configured day thresholds
  */
 export async function findOverdueInvoices(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<OverdueInvoice[]> {
   const { rows } = await client.query<OverdueInvoice>(
     `SELECT i.id, i.account_id, i.client_id, i.invoice_number,
             i.status, i.total_cents, i.paid_cents,
-            i.due_date, c.name AS client_name, c.email AS client_email
+            i.due_date::text, c.name AS client_name, c.email AS client_email
      FROM invoices i
      JOIN clients c ON c.id = i.client_id
      LEFT JOIN jobs j ON j.id = i.job_id
      WHERE i.account_id = $1
        AND i.status IN ('overdue', 'sent', 'partial')
        AND i.due_date IS NOT NULL
+       -- Calendar-day overdue (ET): due local midnight same day must not
+       -- count as overdue until the next Eastern calendar day.
+       AND (i.due_date AT TIME ZONE 'America/New_York')::date
+           < (now() AT TIME ZONE 'America/New_York')::date
+       -- TASK-078: never dun a whole-job (standard/final) invoice while the job is
+       -- still open — that balance is "due on completion". Deposit invoices ARE due
+       -- immediately, so they stay eligible even on an open job.
        AND (
          i.job_id IS NULL
          OR i.invoice_kind = 'deposit'
@@ -138,9 +145,7 @@ export async function findOverdueInvoices(
     [automation.account_id]
   );
 
-  // Calendar-day overdue is deliberately evaluated in TypeScript so the same
-  // Eastern-time policy works on PostgreSQL and MySQL/MariaDB.
-  return rows.filter((row) => calendarDaysOverdue(row.due_date) > 0);
+  return rows;
 }
 
 /**
@@ -172,30 +177,25 @@ export function getCadenceSteps(
  * Returns true if emitted, false if already exists (idempotent).
  */
 export async function emitInvoiceFollowup(
-  client: DatabaseClient,
+  client: Client,
   invoice: OverdueInvoice,
   automationId: string,
   cadenceStep: number
 ): Promise<boolean> {
-  // Check for existing follow-up without database-specific JSON operators.
-  const existing = await client.query<{ new_value: unknown }>(
-    `SELECT new_value FROM audit_log
+  // Check for existing follow-up at this cadence step
+  const { rowCount } = await client.query(
+    `SELECT 1 FROM audit_log
      WHERE entity_type = 'invoice_followup'
        AND entity_id = $1
-       AND account_id = $2`,
-    [invoice.id, invoice.account_id]
+       AND account_id = $2
+       AND new_value->>'days_overdue_step' = $3
+     LIMIT 1`,
+    [invoice.id, invoice.account_id, String(cadenceStep)]
   );
-  const alreadySent = existing.rows.some((row) => {
-    const raw = row.new_value;
-    let value: Record<string, unknown> | null = null;
-    if (typeof raw === "string") {
-      try { value = JSON.parse(raw) as Record<string, unknown>; } catch { return false; }
-    } else if (raw && typeof raw === "object") {
-      value = raw as Record<string, unknown>;
-    }
-    return Number(value?.days_overdue_step) === cadenceStep;
-  });
-  if (alreadySent) return false;
+
+  if (rowCount && rowCount > 0) {
+    return false; // Already sent for this cadence step
+  }
 
   if (invoice.client_email && invoice.client_name) {
     const balanceCents = invoice.total_cents - invoice.paid_cents;
@@ -264,7 +264,7 @@ export async function emitInvoiceFollowup(
  * Runner owns next_run_at advancement via advanceNextRun.
  */
 export async function processInvoiceFollowup(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<RunResult> {
   const result: RunResult = {
@@ -275,15 +275,8 @@ export async function processInvoiceFollowup(
     errors: 0,
   };
 
-  const rawConfig = automation.config as Record<string, unknown> | string;
-  let config: Record<string, unknown> = {};
-  if (typeof rawConfig === "string") {
-    try { config = JSON.parse(rawConfig) as Record<string, unknown>; } catch { config = {}; }
-  } else if (rawConfig && typeof rawConfig === "object") {
-    config = rawConfig;
-  }
   const daysOverdue =
-    (config.days_overdue as number[] | undefined) ?? DEFAULT_DAYS_OVERDUE;
+    (automation.config.days_overdue as number[] | undefined) ?? DEFAULT_DAYS_OVERDUE;
   const invoices = await findOverdueInvoices(client, automation);
 
   for (const invoice of invoices) {

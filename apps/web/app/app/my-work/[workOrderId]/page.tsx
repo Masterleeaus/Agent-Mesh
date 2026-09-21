@@ -9,10 +9,11 @@ import {
 } from "@ai-fsm/domain";
 import { PageContainer, PageHeader, Card, SectionHeader, LinkButton, Timeline } from "@/components/ui";
 import { fetchWorkOrderTimeline } from "@/lib/work-orders/timeline";
-import { getPool } from "@/lib/db";
+import { withDbSession } from "@/lib/db";
 import { loadWorkOrderCompletionCriteria } from "@/lib/work-orders/task-time";
 import { FieldWorkActions } from "../FieldWorkActions";
 import { FieldCloseout } from "../FieldCloseout";
+import { formatBusinessDateTime } from "@/lib/time/business-tz";
 
 export const dynamic = "force-dynamic";
 
@@ -52,23 +53,9 @@ export default async function MyWorkOrderPage({
   const wo = rows[0];
   if (!wo) notFound();
 
-  const pool = getPool();
-  const client = await pool.connect();
-  let criteria;
-  try {
-    await client.query(
-      `SELECT set_config('app.current_user_id',$1,true), set_config('app.current_account_id',$2,true), set_config('app.current_role',$3,true)`,
-      [session.userId, session.accountId, session.role],
-    );
-    criteria = await loadWorkOrderCompletionCriteria(
-      client,
-      workOrderId,
-      session.accountId,
-      wo.completion_criteria,
-    );
-  } finally {
-    client.release();
-  }
+  const criteria = await withDbSession(session, (client) =>
+    loadWorkOrderCompletionCriteria(client, workOrderId, session.accountId, wo.completion_criteria),
+  );
 
   const [activeVisit, nextVisit, timeline] = await Promise.all([
     queryForSession<{ id: string }>(
@@ -99,7 +86,7 @@ export default async function MyWorkOrderPage({
         title={wo.title}
         subtitle={[wo.client_name, wo.property_address].filter(Boolean).join(" · ") || undefined}
         backHref="/app/my-work"
-        backLabel="My Work"
+        backLabel="Today"
       />
 
       <Card style={{ marginBottom: "var(--space-4)" }}>
@@ -118,13 +105,7 @@ export default async function MyWorkOrderPage({
             <div className="p7-detail-row">
               <dt>Next appointment</dt>
               <dd>
-                {new Date(nextVisit[0].scheduled_start).toLocaleString([], {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                })}
+                {formatBusinessDateTime(nextVisit[0].scheduled_start)}
               </dd>
             </div>
           )}

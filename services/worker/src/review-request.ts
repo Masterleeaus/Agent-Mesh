@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 import { reviewRequestEmailHtml } from "@ai-fsm/email-templates";
 import type { AutomationRow, RunResult } from "./automations/types.js";
@@ -17,7 +17,6 @@ import { PRIORITY } from "./notification/priority.js";
  *    — defaults to 1 day after completion (configurable via config.days_after)
  * 3. No 'review_request' audit entry exists for this job yet
  * 4. The client has an email address
- * 5. Any queued service-report delivery for the job has finished processing
  */
 
 interface EligibleJob {
@@ -30,69 +29,57 @@ interface EligibleJob {
   tech_name: string | null;
 }
 
-export async function findDueReviewRequests(client: DatabaseClient): Promise<AutomationRow[]> {
+export async function findDueReviewRequests(client: Client): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
-    `SELECT id, account_id, type, config, enabled, next_run_at
+    `SELECT id, account_id, type, config, enabled, next_run_at::text
      FROM automations
      WHERE type = 'review_request'
        AND enabled = true
-       AND next_run_at <= CURRENT_TIMESTAMP`
+       AND next_run_at <= now()`
   );
   return rows;
 }
 
 export async function findEligibleJobs(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<EligibleJob[]> {
   const daysAfter = (automation.config as { days_after?: number }).days_after ?? 1;
 
-  const now = new Date();
-  const windowEnd = new Date(now.getTime() - daysAfter * 24 * 60 * 60_000);
-  const windowStart = new Date(windowEnd.getTime() - 24 * 60 * 60_000);
-
   const { rows } = await client.query<EligibleJob>(
     `SELECT j.id, j.account_id, c.id AS client_id, j.title,
             c.name AS client_name, c.email AS client_email,
-            (SELECT u2.full_name
-               FROM visits v
-               JOIN users u2 ON u2.id = v.assigned_user_id
-              WHERE v.job_id = j.id
-                AND v.account_id = j.account_id
-                AND v.completed_at IS NOT NULL
-              ORDER BY v.completed_at DESC
-              LIMIT 1) AS tech_name
-       FROM jobs j
-       JOIN clients c ON c.id = j.client_id AND c.account_id = j.account_id
-      WHERE j.account_id = $1
-        AND j.status = 'completed'
-        AND j.updated_at >= $2
-        AND j.updated_at < $3
-        AND c.email IS NOT NULL
-        AND NOT EXISTS (
-          SELECT 1
-            FROM visits rv
-            JOIN notification_queue nq
-              ON nq.entity_type = 'visit' AND nq.entity_id = rv.id
-             AND nq.automation_type = 'service_report_delivery'
-           WHERE rv.job_id = j.id AND rv.account_id = j.account_id
-             AND nq.status IN ('pending', 'processing')
-        )
-        AND NOT EXISTS (
-          SELECT 1 FROM audit_log al
-           WHERE al.entity_type = 'review_request'
-             AND al.entity_id = j.id
-             AND al.account_id = j.account_id
-        )
-      ORDER BY j.updated_at ASC`,
-    [automation.account_id, windowStart.toISOString(), windowEnd.toISOString()]
+            u.full_name AS tech_name
+     FROM jobs j
+     JOIN clients c ON c.id = j.client_id
+     LEFT JOIN (
+       SELECT DISTINCT ON (v.job_id) v.job_id, u2.full_name
+       FROM visits v
+       JOIN users u2 ON u2.id = v.assigned_user_id
+       WHERE v.account_id = $1
+       ORDER BY v.job_id, v.completed_at DESC NULLS LAST
+     ) recent_tech ON recent_tech.job_id = j.id
+     LEFT JOIN users u ON u.full_name = recent_tech.full_name
+     WHERE j.account_id = $1
+       AND j.status = 'completed'
+       AND j.updated_at >= now() - ($2 || ' days')::interval - interval '1 day'
+       AND j.updated_at < now() - ($2 || ' days')::interval
+       AND c.email IS NOT NULL
+       AND NOT EXISTS (
+         SELECT 1 FROM audit_log al
+         WHERE al.entity_type = 'review_request'
+           AND al.entity_id = j.id
+           AND al.account_id = j.account_id
+       )
+     ORDER BY j.updated_at ASC`,
+    [automation.account_id, daysAfter]
   );
 
   return rows;
 }
 
 async function emitReviewRequest(
-  client: DatabaseClient,
+  client: Client,
   job: EligibleJob,
   automationId: string
 ): Promise<boolean> {
@@ -154,7 +141,7 @@ async function emitReviewRequest(
 }
 
 export async function processReviewRequests(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<RunResult> {
   const result: RunResult = {

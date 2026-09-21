@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { reduceLocationEvent, type OpenSegment, type IncomingLocationEvent } from "./segments";
+import { reduceLocationEvent, stopsAreSamePlace, type OpenSegment, type IncomingLocationEvent } from "./segments";
 
 const T1 = "2026-06-19T13:00:00.000Z";
 const T2 = "2026-06-19T13:30:00.000Z";
@@ -77,9 +77,13 @@ describe("reduceLocationEvent — zone_leave", () => {
 });
 
 describe("reduceLocationEvent — activity_change", () => {
-  it("in_vehicle opens a drive when stopped", () => {
+  it("in_vehicle while stopped is a no-op — Bluetooth connect is the leave (TASK-150)", () => {
     const out = reduceLocationEvent(stop({ zone: "home" }), ev({ kind: "activity_change", detectedActivity: "in_vehicle" }));
-    expect(out.closeOpen).toEqual({ endedAt: T2 });
+    expect(out).toEqual({});
+  });
+
+  it("in_vehicle with no open segment still opens a drive", () => {
+    const out = reduceLocationEvent(null, ev({ kind: "activity_change", detectedActivity: "in_vehicle" }));
     expect(out.open?.kind).toBe("drive");
   });
 
@@ -99,6 +103,53 @@ describe("reduceLocationEvent — activity_change", () => {
 
   it("still is a no-op when already stopped", () => {
     const out = reduceLocationEvent(stop(), ev({ kind: "activity_change", detectedActivity: "still" }));
+    expect(out).toEqual({});
+  });
+
+  it("still outside the fence holds unless it is a different known property (TASK-150)", () => {
+    const flicker = reduceLocationEvent(
+      stop({ placeLabel: "4 Ash", latitude: 43.201, longitude: -71.501 }),
+      ev({
+        kind: "activity_change",
+        detectedActivity: "still",
+        geocodedAddress: "8 Bus Rd",
+        latitude: 43.202,
+        longitude: -71.501,
+      }),
+    );
+    expect(flicker).toEqual({});
+
+    const otherJob = reduceLocationEvent(
+      stop({ placeLabel: "4 Ash", latitude: 43.201, longitude: -71.501 }),
+      ev({
+        kind: "activity_change",
+        detectedActivity: "still",
+        geocodedAddress: "63 Landing",
+        latitude: 43.202,
+        longitude: -71.501,
+      }),
+      { differentProperty: true },
+    );
+    expect(otherJob.closeOpen).toEqual({ endedAt: T2 });
+    expect(otherJob.open).toMatchObject({
+      kind: "stop",
+      placeLabel: "63 Landing",
+      latitude: 43.202,
+      longitude: -71.501,
+    });
+  });
+
+  it("still inside the fence does not split (walk around the house)", () => {
+    const out = reduceLocationEvent(
+      stop({ placeLabel: "4 Ash", latitude: 43.201, longitude: -71.501 }),
+      ev({
+        kind: "activity_change",
+        detectedActivity: "still",
+        geocodedAddress: "4 Ash",
+        latitude: 43.2012,
+        longitude: -71.501,
+      }),
+    );
     expect(out).toEqual({});
   });
 
@@ -125,12 +176,12 @@ describe("reduceLocationEvent — location_update", () => {
     expect(out.updateOpen).toEqual({ latitude: 42.1, longitude: -71.2 });
   });
 
-  it("refreshes an unknown stop label and coordinates as geocoding settles", () => {
+  it("lets a nearby geocode settle the label without walking the pin (TASK-148)", () => {
     const out = reduceLocationEvent(
-      stop({ placeLabel: "Old Road", latitude: 42, longitude: -71 }),
-      ev({ kind: "location_update", geocodedAddress: "Town Transfer Station", latitude: 42.1, longitude: -71.2 }),
+      stop({ placeLabel: "Old Road", latitude: 42.0, longitude: -71.0 }),
+      ev({ kind: "location_update", geocodedAddress: "Town Transfer Station", latitude: 42.0002, longitude: -71.0 }),
     );
-    expect(out.updateOpen).toEqual({ placeLabel: "Transfer station", latitude: 42.1, longitude: -71.2 });
+    expect(out.updateOpen).toEqual({ placeLabel: "Transfer station" });
   });
 
   it("is a no-op during a drive", () => {
@@ -157,12 +208,12 @@ describe("reduceLocationEvent — location_update", () => {
     expect(out.updateOpen).toEqual({ placeLabel: "16 Oak St" }); // label settles, pin stays
   });
 
-  it("still updates when the stop genuinely moves beyond the anchor radius", () => {
+  it("freezes the pin on a far location_update — walking must not smear the stop (TASK-148)", () => {
     const out = reduceLocationEvent(
       stop({ placeLabel: "14 Oak St", latitude: 42.0, longitude: -71.0 }),
       ev({ kind: "location_update", geocodedAddress: "50 Elm St", latitude: 42.001, longitude: -71.0 }),
     );
-    expect(out.updateOpen).toEqual({ placeLabel: "50 Elm St", latitude: 42.001, longitude: -71.0 });
+    expect(out).toEqual({});
   });
 
   it("still fills a missing label for an anchored stop even within the radius", () => {
@@ -290,5 +341,59 @@ describe("a typical morning", () => {
     // leave supply house (driving) then stop at a customer with no zone
     out = reduceLocationEvent(drive(), ev({ kind: "activity_change", detectedActivity: "still", geocodedAddress: "14 Oak St", occurredAt: "2026-06-19T09:05:00Z" }));
     expect(out.open).toMatchObject({ kind: "stop", placeLabel: "14 Oak St", suggestedActivityType: null });
+  });
+});
+
+describe("blip coalescing — stopsAreSamePlace (TASK-147)", () => {
+  const ashLat = 43.201, ashLng = -71.501;
+  it("same zone = same place (reopen the prior stop)", () => {
+    expect(
+      stopsAreSamePlace(
+        { zone: "4 Ash", latitude: null, longitude: null },
+        { zone: "4 Ash", latitude: null, longitude: null },
+      ),
+    ).toBe(true);
+  });
+  it("different zones are different places", () => {
+    expect(
+      stopsAreSamePlace(
+        { zone: "4 Ash", latitude: ashLat, longitude: ashLng },
+        { zone: "Home Depot", latitude: ashLat, longitude: ashLng },
+      ),
+    ).toBe(false);
+  });
+  it("zone-less coords within the anchor radius = same place", () => {
+    // ~15m north of the anchor — inside STOP_ANCHOR_RADIUS_M (40m).
+    expect(
+      stopsAreSamePlace(
+        { zone: null, latitude: ashLat, longitude: ashLng },
+        { zone: null, latitude: ashLat + 0.00013, longitude: ashLng },
+      ),
+    ).toBe(true);
+  });
+  it("coords beyond the anchor radius are a real relocation, not a blip", () => {
+    // ~110m north — a genuinely different stop, must NOT coalesce.
+    expect(
+      stopsAreSamePlace(
+        { zone: null, latitude: ashLat, longitude: ashLng },
+        { zone: null, latitude: ashLat + 0.001, longitude: ashLng },
+      ),
+    ).toBe(false);
+  });
+  it("no zone and missing coords cannot be judged the same place", () => {
+    expect(
+      stopsAreSamePlace(
+        { zone: null, latitude: null, longitude: null },
+        { zone: null, latitude: ashLat, longitude: ashLng },
+      ),
+    ).toBe(false);
+  });
+  it("phone in_vehicle while parked no longer blips a drive (TASK-150)", () => {
+    const parked = stop({ zone: "4 Ash", latitude: ashLat, longitude: ashLng });
+    const blip = reduceLocationEvent(
+      parked,
+      ev({ kind: "activity_change", detectedActivity: "in_vehicle", occurredAt: "2026-06-19T10:00:00Z" }),
+    );
+    expect(blip).toEqual({});
   });
 });

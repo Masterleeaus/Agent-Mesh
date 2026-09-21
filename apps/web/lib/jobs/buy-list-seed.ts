@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   computeMaterials,
   groupMaterialsBySection,
@@ -25,7 +25,7 @@ export interface SeedEstimatePick {
 
 /** Prefer approved, else latest sent (then any with shopping list). */
 export async function pickSeedEstimate(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   jobId: string,
 ): Promise<SeedEstimatePick | null> {
@@ -48,7 +48,7 @@ export async function pickSeedEstimate(
 }
 
 async function recomputeShoppingLines(
-  client: DbClient,
+  client: PoolClient,
   estimateId: string,
   lineRows: Array<{ category: string | null; code: string | null }>,
 ): Promise<BuyListLineInput[]> {
@@ -150,7 +150,7 @@ async function recomputeShoppingLines(
 
 /** Resolve seed line candidates from estimate (JSON first, else recompute). */
 export async function buildSeedLinesFromEstimate(
-  client: DbClient,
+  client: PoolClient,
   estimate: SeedEstimatePick,
 ): Promise<BuyListLineInput[]> {
   const fromJson = mapShoppingListJsonToLines(estimate.shopping_list_json);
@@ -185,7 +185,7 @@ export async function buildSeedLinesFromEstimate(
 }
 
 export async function hydrateBuyListLocations(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   lines: BuyListLineInput[],
 ): Promise<BuyListLineInput[]> {
@@ -261,7 +261,7 @@ export async function hydrateBuyListLocations(
 }
 
 export async function insertBuyListLines(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   jobId: string,
   lines: BuyListLineInput[],
@@ -305,7 +305,7 @@ export type SeedResult =
  * First seed (when materials_plan_seeded_at is null) or reseed (add-missing only).
  */
 export async function seedJobBuyList(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     jobId: string;

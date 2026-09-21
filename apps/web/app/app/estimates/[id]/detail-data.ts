@@ -8,6 +8,7 @@ import {
   type DocumentLocationRow,
 } from "@/lib/documents/service-location";
 import { loadPricingSettings, type BusinessPricingSettings } from "@/lib/pricing/settings";
+import { selectActiveHandoffInvoices } from "./handoff-invoices";
 
 // ---------------------------------------------------------------------------
 // Row types
@@ -219,7 +220,7 @@ export async function loadEstimateDetail(
       const pool = getPool();
       const jobRow = await pool.query<{ status: string; visit_count: string }>(
         `SELECT j.status,
-                (SELECT COUNT(*) FROM visits v
+                (SELECT COUNT(*)::text FROM visits v
                  WHERE v.job_id = j.id AND v.account_id = j.account_id
                    AND v.status != 'cancelled') AS visit_count
          FROM jobs j
@@ -242,11 +243,15 @@ export async function loadEstimateDetail(
       const invRows = await pool.query<EstimateInvoiceRow>(
         `SELECT id, invoice_kind, invoice_number, status, total_cents, balance_cents
          FROM invoices
-         WHERE estimate_id = $1 AND account_id = $2 AND invoice_kind IN ('deposit','final')`,
+         WHERE estimate_id = $1 AND account_id = $2
+           AND invoice_kind IN ('deposit','final')
+           AND status <> 'void'
+         ORDER BY created_at DESC`,
         [id, session.accountId]
       );
-      depositInvoice = invRows.rows.find((r) => r.invoice_kind === "deposit") ?? null;
-      finalInvoice = invRows.rows.find((r) => r.invoice_kind === "final") ?? null;
+      const picked = selectActiveHandoffInvoices(invRows.rows);
+      depositInvoice = picked.depositInvoice;
+      finalInvoice = picked.finalInvoice;
     } catch {
       // Non-critical — proceed without billing summary
     }

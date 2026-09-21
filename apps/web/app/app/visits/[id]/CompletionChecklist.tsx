@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Textarea, useToast } from "@/components/ui";
 import { checkCompletionPacket } from "@/lib/completion-guard";
+import { CloseoutWizard } from "@/components/visits/CloseoutWizard";
 
 type CompletionPacketValues = {
   photo_urls: string[];
@@ -55,11 +56,9 @@ export function CompletionChecklist({
   const router = useRouter();
   const toast = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const signatureInputRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [uploadingSignature, setUploadingSignature] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
   const [removingPhotoId, setRemovingPhotoId] = useState<string | null>(null);
   const [draftPhotoUrl, setDraftPhotoUrl] = useState("");
@@ -76,6 +75,7 @@ export function CompletionChecklist({
   const [notes, setNotes] = useState(initialPacket?.notes ?? "");
   const [photosWaived, setPhotosWaived] = useState(initialPacket?.photos_waived ?? false);
   const [photosWaiverReason, setPhotosWaiverReason] = useState(initialPacket?.photos_waiver_reason ?? "");
+  const [closeoutOpen, setCloseoutOpen] = useState(false);
 
   const photoUrls = useMemo(() => photoEntries.map((entry) => entry.url).filter(Boolean), [photoEntries]);
 
@@ -136,28 +136,6 @@ export function CompletionChecklist({
       return null;
     } catch {
       return "Photo upload failed";
-    }
-  }
-
-  async function handleSignatureFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setUploadingSignature(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("category", "signature");
-      const res = await fetch(`/api/v1/visits/${visitId}/media`, { method: "POST", body: formData });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.data?.id) { toast.error(data.error?.message ?? "Signature upload failed"); return; }
-      setSignatureUrl(`/api/v1/visits/${visitId}/media/${data.data.id}/image`);
-      setSignatureWaiver(false);
-      toast.success("Signature captured");
-    } catch {
-      toast.error("Signature upload failed");
-    } finally {
-      setUploadingSignature(false);
-      if (signatureInputRef.current) signatureInputRef.current.value = "";
     }
   }
 
@@ -285,28 +263,7 @@ export function CompletionChecklist({
 
   async function markComplete() {
     if (!guard.ok) return;
-    setCompleting(true);
-    try {
-      const saved = await savePacket();
-      if (!saved) return;
-      const res = await fetch(`/api/v1/visits/${visitId}/transition`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "completed" }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        const error = typeof data.error === "string" ? data.error : data.error?.message;
-        toast.error(error ?? "Could not complete visit");
-        return;
-      }
-      toast.success("Visit completed");
-      router.refresh();
-    } catch {
-      toast.error("Unexpected error completing visit");
-    } finally {
-      setCompleting(false);
-    }
+    setCloseoutOpen(true);
   }
 
   return (
@@ -543,16 +500,6 @@ export function CompletionChecklist({
         />
         <span style={{ fontSize: "var(--text-sm)" }}>Client signature waived</span>
       </label>
-      {canUpdate && !signatureWaiver && (
-        <div style={{ display: "flex", gap: "var(--space-2)", alignItems: "center", flexWrap: "wrap" }}>
-          <input ref={signatureInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleSignatureFileChange} />
-          <Button type="button" variant="secondary" onClick={() => signatureInputRef.current?.click()} disabled={uploadingSignature || saving || completing}>
-            {uploadingSignature ? "Uploading signature…" : "Upload signature image"}
-          </Button>
-          {signatureUrl && <span style={{ fontSize: "var(--text-xs)", color: "var(--fg-muted)" }}>Signature evidence attached</span>}
-        </div>
-      )}
-      
 
       {isQuickJob && (
         <p style={{ margin: 0, fontSize: "var(--text-sm)", color: "var(--fg-muted)" }}>
@@ -585,6 +532,12 @@ export function CompletionChecklist({
           {completing ? "Completing..." : "Mark Complete"}
         </Button>
       </div>
+      <CloseoutWizard
+        visitId={visitId}
+        open={closeoutOpen}
+        onClose={() => setCloseoutOpen(false)}
+        onBeforeSubmit={savePacket}
+      />
     </div>
   );
 }

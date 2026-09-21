@@ -2,7 +2,7 @@
  * Load hybrid mileage for a business day (TASK-091).
  * Odometer vehicle_session = PRIMARY; GPS drive segment sum = corroboration.
  */
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   buildHybridMileageDaySummary,
   type HybridMileageDaySummary,
@@ -23,7 +23,7 @@ type SessionRow = {
 async function gpsDriveMilesMeters(
   accountId: string,
   date: string,
-  client?: DbClient,
+  client?: PoolClient,
 ): Promise<number> {
   // Corroboration: non-dismissed drive segments for the day (not only confirmed).
   const sql = `
@@ -46,7 +46,7 @@ async function gpsDriveMilesMeters(
 export async function loadHybridMileageForDay(
   accountId: string,
   date: string,
-  opts?: { userId?: string | null; client?: DbClient },
+  opts?: { userId?: string | null; client?: PoolClient },
 ): Promise<HybridMileageDaySummary> {
   const userId = opts?.userId ?? null;
   const sessionSql = `

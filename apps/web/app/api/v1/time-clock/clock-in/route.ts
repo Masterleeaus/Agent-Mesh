@@ -8,7 +8,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withAuth } from "@/lib/auth/middleware";
-import { withPortableTransaction } from "@/lib/db/portable";
+import { withDbSession } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { PAY_TYPES } from "@ai-fsm/domain";
 import { clockIn } from "@/lib/operations/time-clock";
@@ -31,7 +31,7 @@ export const POST = withAuth(async (request: NextRequest, session) => {
     );
   }
   try {
-    const { clock, alreadyOpen } = await withPortableTransaction( (client) =>
+    const { clock, alreadyOpen } = await withDbSession(session, (client) =>
       clockIn(client, session.accountId, session.userId, {
         payType: parsed.data.pay_type,
         hourlyRateSnapshotCents: parsed.data.hourly_rate_snapshot_cents ?? null,

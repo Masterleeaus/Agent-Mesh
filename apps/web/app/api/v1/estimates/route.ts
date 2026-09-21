@@ -22,6 +22,7 @@ import { calculateDepositPolicy, estimateMaterialsDepositBasis } from "@/lib/est
 import type { EstimateSpec } from "@ai-fsm/domain";
 import { getPool } from "@/lib/db";
 import { loadPricingRules } from "@/lib/pricing/settings";
+import { laborCostCentsFromHours } from "@/lib/pricing/labor-hours";
 import { advanceBookingRequestStage } from "@/lib/booking-requests/advance-stage";
 
 export const dynamic = "force-dynamic";
@@ -186,6 +187,8 @@ const createEstimateSchema = z.object({
   flat_rate_cents: z.number().int().nonnegative().optional(),
   // Multi-option mode (Good/Better/Best)
   presentation_mode: z.enum(["standard", "multi_option"]).default("standard"),
+  // Commercial lane: bid vs T&M. Not the form layout.
+  pricing_mode: z.enum(["flat_rate", "hourly_internal"]).optional(),
   options: z.array(estimateOptionInputSchema).optional(),
   // Painting engine fields
   sq_ft: z.number().positive().optional(),
@@ -283,6 +286,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
     line_items,
     flat_rate_cents,
     presentation_mode,
+    pricing_mode,
     options,
     sq_ft,
     prep_level,
@@ -311,6 +315,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
 
   const is_painting = sq_ft !== undefined && prep_level !== undefined && labor_hours_estimate !== undefined;
   const is_multi_option = presentation_mode === "multi_option" && options && options.length > 0;
+  const commercialPricingMode = pricing_mode === "hourly_internal" ? "hourly_internal" : "flat_rate";
 
   if (is_multi_option && is_painting) {
     return NextResponse.json(
@@ -366,7 +371,10 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
       pricingRules
     );
     subtotal_cents = engine.summary.totalCents;
-    internal_labor_cost_cents = engine.internalSummary.estimatedCostCents;
+    internal_labor_cost_cents = laborCostCentsFromHours(
+      labor_hours_estimate,
+      pricingRules.laborCostCentsPerHour,
+    );
     margin_pct = engine.internalSummary.grossMarginPct;
   } else if (is_multi_option) {
     subtotal_cents = 0;
@@ -475,12 +483,12 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
             risk_adjustment_cents, minimum_service_override_reason,
             minimum_service_override_note, pricing_review_status, scope_assumptions,
             condition_tier, shopping_list_json, specified_materials_json, room_specs,
-            booking_request_id)
+            booking_request_id, pricing_mode)
           VALUES ($1, $2, $3, $4, $5, 'draft', $6, $7, $8, $9, $10, $11,
                   $12, $13, $14, $15, $16, $17, $18, $19,
                   $20, $21, $22, $23, $24, $25, $26, $27,
                   $28, $29, $30, $31, $32, $33, $34, $35,
-                  $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46)
+                  $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47)
           RETURNING id`,
         [
           session.accountId,
@@ -529,6 +537,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
           specified_materials_json ? JSON.stringify(specified_materials_json) : null,
           room_specs ? JSON.stringify(room_specs) : null,
           booking_request_id ?? null,
+          commercialPricingMode,
         ]
       );
       const estimateId = result.rows[0].id;

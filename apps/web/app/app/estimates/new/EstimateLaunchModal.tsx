@@ -15,8 +15,9 @@ type PricingMode = "itemized" | "flat_rate" | "multi_option";
 
 /**
  * Resolve the form's pricing mode from the chosen entry mode.
- * An explicit override (e.g. a ?pricing_mode= URL param) always wins; otherwise
- * Quick → flat-rate (the common default) and Detailed/AI/T&M → itemized.
+ * An explicit presentation override always wins; otherwise
+ * Quick → one price and Detailed/AI/T&M → itemized.
+ * Commercial bid vs T&M is a separate field (`pricing_mode` on the estimate).
  */
 export function resolveEntryPricingMode(
   mode: EstimateMode,
@@ -71,7 +72,7 @@ export function EstimateLaunchModal({ onSelect }: EstimateLaunchModalProps) {
     }}>
       <div style={{ textAlign: "center", marginBottom: "var(--space-2)" }}>
         <h2 style={{ margin: "0 0 var(--space-1)", fontSize: "var(--text-xl)", fontWeight: 700 }}>
-          New Estimate
+          New Quote
         </h2>
         <p style={{ margin: 0, color: "var(--fg-muted)", fontSize: "var(--text-sm)" }}>
           How would you like to build this estimate?

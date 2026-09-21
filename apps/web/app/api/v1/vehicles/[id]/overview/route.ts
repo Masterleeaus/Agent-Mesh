@@ -13,7 +13,7 @@ import {
   type ServiceScheduleForDue,
 } from "@ai-fsm/domain";
 import { withRole } from "@/lib/auth/middleware";
-import { withPortableTransaction } from "@/lib/db/portable";
+import { withDbSession } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { lastKnownOdometer } from "@/lib/vehicles/capture";
 
@@ -27,10 +27,9 @@ function vehicleIdFromPath(pathname: string): string {
 export const GET = withRole(["owner", "admin", "tech"], async (req: NextRequest, session) => {
   const vehicleId = vehicleIdFromPath(req.nextUrl.pathname);
   const today = new Date().toISOString().slice(0, 10);
-  const cutoff90 = new Date(Date.now() - 90 * 86_400_000).toISOString().slice(0, 10);
 
   try {
-    const data = await withPortableTransaction(async (client) => {
+    const data = await withDbSession(session, async (client) => {
       const { rows: vehicleRows } = await client.query<{
         id: string;
         nickname: string;
@@ -45,7 +44,7 @@ export const GET = withRole(["owner", "admin", "tech"], async (req: NextRequest,
         purchase_price_cents: number | null;
       }>(
         `SELECT id, nickname, make, model, year, plate, kind, vin, is_active,
-                purchase_date, purchase_price_cents
+                purchase_date::text, purchase_price_cents
          FROM vehicles
          WHERE id = $1 AND account_id = $2 AND is_active = true`,
         [vehicleId, session.accountId],
@@ -73,7 +72,7 @@ export const GET = withRole(["owner", "admin", "tech"], async (req: NextRequest,
         odometer_suspect: boolean;
         service_types: string[];
       }>(
-        `SELECT serviced_at, odometer, odometer_suspect, service_types
+        `SELECT serviced_at::text, odometer, odometer_suspect, service_types
          FROM vehicle_service_records
          WHERE account_id = $1 AND vehicle_id = $2
          ORDER BY serviced_at DESC
@@ -85,7 +84,7 @@ export const GET = withRole(["owner", "admin", "tech"], async (req: NextRequest,
         servicedAt: r.serviced_at,
         odometer: r.odometer,
         odometerSuspect: r.odometer_suspect,
-        serviceTypes: Array.isArray(r.service_types) ? r.service_types : (() => { try { return JSON.parse(String(r.service_types ?? "[]")); } catch { return []; } })(),
+        serviceTypes: r.service_types ?? [],
       }));
 
       const nextServiceDues = scheduleRows.map((s) => {
@@ -111,7 +110,7 @@ export const GET = withRole(["owner", "admin", "tech"], async (req: NextRequest,
         current_due_date: string;
         is_active: boolean;
       }>(
-        `SELECT id, renewal_type, provider, interval_months, current_due_date, is_active
+        `SELECT id, renewal_type, provider, interval_months, current_due_date::text, is_active
          FROM vehicle_renewals
          WHERE account_id = $1 AND vehicle_id = $2 AND is_active = true
          ORDER BY current_due_date ASC`,
@@ -151,7 +150,7 @@ export const GET = withRole(["owner", "admin", "tech"], async (req: NextRequest,
         amount_cents: number | null;
         has_receipt: boolean;
       }>(
-        `SELECT f.id, f.filled_at, f.odometer, f.gallons, f.is_full_tank,
+        `SELECT f.id, f.filled_at::text, f.odometer, f.gallons::text, f.is_full_tank,
                 f.odometer_suspect, f.notes, f.expense_id,
                 e.vendor_name, e.amount_cents, (e.receipt_url IS NOT NULL) AS has_receipt
          FROM vehicle_fuel_logs f
@@ -196,8 +195,8 @@ export const GET = withRole(["owner", "admin", "tech"], async (req: NextRequest,
       const lastFill = recentFuel[0] ?? null;
 
       const { rows: recentService } = await client.query(
-        `SELECT id, serviced_at, odometer, odometer_suspect, service_types,
-                vendor_name, notes, expense_id, created_at
+        `SELECT id, serviced_at::text, odometer, odometer_suspect, service_types,
+                vendor_name, notes, expense_id, created_at::text
          FROM vehicle_service_records
          WHERE account_id = $1 AND vehicle_id = $2
          ORDER BY serviced_at DESC
@@ -211,14 +210,14 @@ export const GET = withRole(["owner", "admin", "tech"], async (req: NextRequest,
         expense_count: string;
       }>(
         `SELECT category,
-                COALESCE(SUM(amount_cents), 0) AS total_cents,
-                COUNT(*) AS expense_count
+                COALESCE(SUM(amount_cents), 0)::text AS total_cents,
+                COUNT(*)::text AS expense_count
          FROM expenses
          WHERE account_id = $1 AND vehicle_id = $2
-           AND expense_date >= $3
+           AND expense_date >= ($3::date - interval '90 days')
          GROUP BY category
          ORDER BY category`,
-        [session.accountId, vehicleId, cutoff90],
+        [session.accountId, vehicleId, today],
       );
 
       const costLast90Days = {
@@ -231,8 +230,8 @@ export const GET = withRole(["owner", "admin", "tech"], async (req: NextRequest,
       };
 
       const { rows: loanRows } = await client.query(
-        `SELECT id, lender, original_principal_cents, apr, monthly_payment_cents,
-                start_date, term_months, current_balance_cents, is_active
+        `SELECT id, lender, original_principal_cents, apr::text, monthly_payment_cents,
+                start_date::text, term_months, current_balance_cents, is_active
          FROM vehicle_loans
          WHERE account_id = $1 AND vehicle_id = $2 AND is_active = true
          ORDER BY start_date DESC

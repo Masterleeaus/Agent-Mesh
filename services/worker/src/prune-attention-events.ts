@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 
 const RETENTION_DAYS = 90;
@@ -12,7 +12,7 @@ export interface PruneAttentionEventsResult {
  * Delete attention_events older than 90 days (design retention).
  */
 export async function pruneAttentionEvents(
-  client: DatabaseClient,
+  client: Client,
 ): Promise<PruneAttentionEventsResult> {
   try {
     const result = await client.query(

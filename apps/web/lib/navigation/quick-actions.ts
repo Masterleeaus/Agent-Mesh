@@ -1,5 +1,3 @@
-import { BUSINESS_OPS_ROUTES } from "@ai-fsm/domain";
-
 /**
  * Quick Action link sets for the owner Dashboard and the field My Day surface.
  *
@@ -22,37 +20,39 @@ export interface QuickAction {
 
 /** Owner Dashboard (`/app`) quick actions. */
 export const OWNER_QUICK_ACTIONS: QuickAction[] = [
-  { label: "Capture", href: BUSINESS_OPS_ROUTES.capture, icon: "🎙️" },
-  { label: "New Estimate", href: BUSINESS_OPS_ROUTES.estimates, icon: "📝" },
+  { label: "Capture", href: "/app/capture", icon: "🎙️" },
+  { label: "New Quote", href: "/app/estimates", icon: "📝" },
   { label: "Quick Materials", href: "/app/materials/quick", icon: "📦" },
-  { label: "New Project", href: BUSINESS_OPS_ROUTES.jobs, icon: "🛠️" },
-  { label: "Schedule", href: BUSINESS_OPS_ROUTES.schedule, icon: "📅" },
-  { label: "Invoices", href: BUSINESS_OPS_ROUTES.invoices, icon: "🧾" },
-  { label: "Clients", href: BUSINESS_OPS_ROUTES.clients, icon: "👥" },
+  { label: "New Job", href: "/app/jobs", icon: "🛠️" },
+  { label: "Schedule", href: "/app/schedule", icon: "📅" },
+  { label: "Bills", href: "/app/invoices", icon: "🧾" },
+  { label: "Clients", href: "/app/clients", icon: "👥" },
   { label: "New Request", href: "/app/intake/new", icon: "⚡" },
 ];
 
 /**
- * Field My Day (`/app/my-work`) quick actions. Rendered for technicians as well
- * as owners, so it intentionally omits owner/admin-only vehicle tracking.
+ * Today (`/app/my-work`) capture strip. Three intents: driveway job, receipt
+ * on the current house, quote. Everything else is a drawer on the desk.
  */
 export const FIELD_QUICK_ACTIONS: QuickAction[] = [
-  { label: "Quick job", href: BUSINESS_OPS_ROUTES.myDay, icon: "🧰", action: "quick-book" },
-  { label: "New Estimate", href: BUSINESS_OPS_ROUTES.estimates, icon: "📝" },
-  { label: "Quick Materials", href: "/app/materials/quick", icon: "📦" },
-  { label: "New Project", href: BUSINESS_OPS_ROUTES.jobs, icon: "🛠️" },
-  { label: "Add Expense", href: "/app/expenses/new", icon: "🛒" },
-  { label: "Upload Receipt", href: "/app/expenses/new", icon: "🧾" },
-  { label: "New Request", href: "/app/intake/new", icon: "⚡" },
+  { label: "Job", href: "/app/my-work", icon: "🧰", action: "quick-book" },
+  { label: "Receipt", href: "/app/expenses/new", icon: "🧾" },
+  { label: "Quote", href: "/app/estimates/new", icon: "📝" },
 ];
+
+/** Today Receipt tile. Pin to the open job so Home Depot does not float unattached. */
+export function fieldReceiptHref(jobId: string | null | undefined): string {
+  if (!jobId) return "/app/expenses/new";
+  return `/app/expenses/new?job=${encodeURIComponent(jobId)}`;
+}
 
 /** Global + sheet (owner/admin). Quick job opens the same modal as My Day / Schedule. */
 export const FAB_QUICK_ACTIONS: QuickAction[] = [
-  { label: "Capture", href: BUSINESS_OPS_ROUTES.capture, icon: "🎙️" },
-  { label: "Quick job", href: BUSINESS_OPS_ROUTES.myDay, icon: "🧰", action: "quick-book" },
-  { label: "Quick Estimate", href: "/app/estimates/quick", icon: "⚡" },
-  { label: "New Invoice", href: "/app/invoices/new", icon: "💵" },
-  { label: "New Project", href: "/app/jobs/new", icon: "🧰" },
+  { label: "Capture", href: "/app/capture", icon: "🎙️" },
+  { label: "Quick job", href: "/app/my-work", icon: "🧰", action: "quick-book" },
+  { label: "Quick Quote", href: "/app/estimates/quick", icon: "⚡" },
+  { label: "New Bill", href: "/app/invoices/new", icon: "💵" },
+  { label: "New Job", href: "/app/jobs/new", icon: "🧰" },
   { label: "New Request", href: "/app/intake/new", icon: "📋" },
   { label: "Material Run", href: "/app/expenses/new?mode=run", icon: "🧾" },
   { label: "Log Mileage", href: "/app/mileage/new", icon: "🚗" },

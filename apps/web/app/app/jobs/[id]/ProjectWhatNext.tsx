@@ -194,8 +194,8 @@ export function computeWhatNext(props: ProjectWhatNextProps): WhatNextContent {
     if (latestInvoiceId) {
       return {
         message: isTm
-          ? "Project closed — review and send the invoice"
-          : "Project closed — review and send the final invoice",
+          ? "Job closed — review and send the invoice"
+          : "Job closed — review and send the final invoice",
         actionLabel: "Open Invoice",
         actionHref: `/app/invoices/${latestInvoiceId}`,
         secondary: { label: "All invoices", href: `/app/invoices?job_id=${jobId}` },
@@ -205,8 +205,8 @@ export function computeWhatNext(props: ProjectWhatNextProps): WhatNextContent {
 
     return {
       message: isTm
-        ? "Project closed — invoice actual time and materials"
-        : "Project closed — send the final invoice",
+        ? "Job closed — invoice actual time and materials"
+        : "Job closed — send the final invoice",
       actionLabel: "Create Invoice",
       actionHref: `/app/invoices/new?job_id=${jobId}${cq}${estimateParam}`,
       extras,
@@ -250,8 +250,8 @@ export function computeWhatNext(props: ProjectWhatNextProps): WhatNextContent {
 
   if (hasCompletedAssessmentVisit && estimateCount === 0) {
     return {
-      message: "Create estimate from assessment",
-      actionLabel: "Create Estimate",
+      message: "Create quote from assessment",
+      actionLabel: "Create Quote",
       actionHref: `/app/estimates/new?job_id=${jobId}${cq}&pricing_mode=flat_rate`,
       secondary: {
         label: "Or T&M from notes",
@@ -264,10 +264,10 @@ export function computeWhatNext(props: ProjectWhatNextProps): WhatNextContent {
     return {
       message: "Pre-sale visit done without assessment packet",
       detail: "Create an estimate from notes, or schedule a full Assessment if more scope capture is needed.",
-      actionLabel: "Create Estimate",
+      actionLabel: "Create Quote",
       actionHref: `/app/estimates/new?job_id=${jobId}${cq}&pricing_mode=flat_rate`,
       secondary: {
-        label: "Schedule Assessment",
+        label: "Book a look",
         href: `/app/jobs/${jobId}/visits/new?visit_type=site_visit&intent=assessment`,
       },
     };
@@ -276,7 +276,7 @@ export function computeWhatNext(props: ProjectWhatNextProps): WhatNextContent {
   // ── Field execution ────────────────────────────────────────────────────
   if (stage === "waiting") {
     return {
-      message: "Project on hold",
+      message: "Job on hold",
       detail: "Resolve the blocker, then continue the visit.",
       actionLabel: visitId ? "Open Visit" : "Schedule Visit",
       actionHref: visitId ? `/app/visits/${visitId}` : `/app/jobs/${jobId}/visits/new`,
@@ -368,10 +368,15 @@ export function computeWhatNext(props: ProjectWhatNextProps): WhatNextContent {
   }
 
   if (hasApprovedEstimate && !hasDepositInvoice) {
+    // Deposit gate (TASK-120): a deposit is taken before work starts. Prompt for
+    // it as the primary action, but don't block — "Schedule anyway" stays open.
     return {
-      message: "Estimate approved — schedule the work",
-      actionLabel: "Schedule Visit",
-      actionHref: `/app/jobs/${jobId}/visits/new`,
+      message: "Collect a deposit before starting",
+      actionLabel: "Collect a deposit",
+      actionHref: approvedEstimateId
+        ? `/app/estimates/${approvedEstimateId}#materials-plan-handoff`
+        : `/app/jobs/${jobId}/visits/new`,
+      secondary: { label: "Schedule anyway", href: `/app/jobs/${jobId}/visits/new` },
       extras: approvedEstimateId
         ? [
             { label: "Approved estimate", href: `/app/estimates/${approvedEstimateId}` },
@@ -385,7 +390,7 @@ export function computeWhatNext(props: ProjectWhatNextProps): WhatNextContent {
   if (hasCompletedPreSaleSiteVisit && estimateCount === 0) {
     return {
       message: "Create estimate from walkthrough",
-      actionLabel: "Create Estimate",
+      actionLabel: "Create Quote",
       actionHref: `/app/estimates/new?job_id=${jobId}${cq}&pricing_mode=flat_rate`,
       secondary: {
         label: "Or T&M from notes",
@@ -397,7 +402,7 @@ export function computeWhatNext(props: ProjectWhatNextProps): WhatNextContent {
   if (hasDraftWorkOrderWithPricing && estimateCount === 0) {
     return {
       message: "Create estimate from work order scope",
-      actionLabel: "Create Estimate",
+      actionLabel: "Create Quote",
       actionHref: `/app/estimates/new?job_id=${jobId}${cq}&pricing_mode=flat_rate`,
       secondary: {
         label: "Or T&M from notes",
@@ -444,7 +449,7 @@ export function computeWhatNext(props: ProjectWhatNextProps): WhatNextContent {
   if ((jobStatus === "draft" || jobStatus === "quoted" || stage === "estimate_needed") && estimateCount === 0) {
     return {
       message: "Next step: create an estimate",
-      actionLabel: "Create Estimate",
+      actionLabel: "Create Quote",
       actionHref: `/app/estimates/new?job_id=${jobId}${cq}&pricing_mode=flat_rate`,
       secondary: {
         label: "Or T&M from notes",

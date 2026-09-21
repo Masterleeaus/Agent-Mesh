@@ -13,7 +13,7 @@ describe("syncWorkOrderLeadFromVisit", () => {
     await syncWorkOrderLeadFromVisit({ query } as never, "wo-1", "acct", "user-1");
     expect(query).toHaveBeenCalledWith(
       expect.stringContaining("assigned_user_id"),
-      ["user-1", "wo-1", "acct"],
+      ["wo-1", "acct", "user-1"],
     );
   });
 });

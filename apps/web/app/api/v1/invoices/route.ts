@@ -5,7 +5,7 @@ import { withInvoiceContext, generateInvoiceNumber } from "@/lib/invoices/db";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
 import { invoiceStatusSchema, resolveIssueDueDate } from "@ai-fsm/domain";
-import { randomUUID } from "node:crypto";
+import { manualInvoiceKind } from "@/lib/invoices/manual-kind";
 
 export const dynamic = "force-dynamic";
 
@@ -178,6 +178,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
       }
 
       const invoiceNumber = await generateInvoiceNumber(client, session.accountId);
+      const invoiceKind = manualInvoiceKind(job_id);
 
       // Payment terms: due upon completion (TASK-078). A standard invoice tied to
       // an open job has no due date yet — it's filled when the job completes.
@@ -191,44 +192,43 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
         : null;
       const resolvedDueDate = resolveIssueDueDate({
         providedDueDate: due_date,
-        invoiceKind: "standard",
+        invoiceKind,
         jobStatus,
       });
 
-      const invoiceId = randomUUID();
-      await client.query(
+      const result = await client.query<{ id: string }>(
         `INSERT INTO invoices
-           (id, account_id, client_id, job_id, property_id,
-            status, invoice_number,
-            subtotal_cents, tax_cents, total_cents, paid_cents, deposit_cents, balance_cents,
+           (account_id, client_id, job_id, property_id,
+            status, invoice_kind, invoice_number,
+            subtotal_cents, tax_cents, total_cents, paid_cents, deposit_cents,
             notes, due_date, created_by)
-         VALUES ($1, $2, $3, $4, $5, 'draft', $6, $7, $8, $9, 0, $10, $11, $12, $13, $14)`,
+         VALUES ($1, $2, $3, $4, 'draft', $5, $6, $7, $8, $9, 0, $10, $11, $12, $13)
+         RETURNING id`,
         [
-          invoiceId,
           session.accountId,
           client_id,
           job_id ?? null,
           property_id ?? null,
+          invoiceKind,
           invoiceNumber,
           subtotal_cents,
           tax_cents,
           total_cents,
           deposit_cents,
-          Math.max(total_cents - deposit_cents, 0),
           notes ?? null,
           resolvedDueDate,
           session.userId,
         ]
       );
+      const invoiceId = result.rows[0].id;
 
       for (let i = 0; i < line_items.length; i++) {
         const item = line_items[i];
         await client.query(
           `INSERT INTO invoice_line_items
-             (id, invoice_id, description, quantity, unit_price_cents, total_cents, sort_order)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+             (invoice_id, description, quantity, unit_price_cents, total_cents, sort_order)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
           [
-            randomUUID(),
             invoiceId,
             item.description,
             item.quantity,

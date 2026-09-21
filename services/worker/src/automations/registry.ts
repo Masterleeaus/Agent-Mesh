@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "../db-client.js";
+import type { Client } from "pg";
 import { findDueReminders, processVisitReminder } from "../visit-reminder.js";
 import { findDueFollowups, processInvoiceFollowup } from "../invoice-followup.js";
 import {
@@ -11,8 +11,8 @@ import { findDueLeadFollowups, processLeadFollowups } from "../lead-followup.js"
 import { findDueStaleJobNudges, processStaleJobs } from "../stale-job-nudge.js";
 import { findDuePropertyIssueScans, processPropertyIssueScan } from "../property-issue-scan.js";
 import {
-  findDueDatabaseClientReactivations,
-  processDatabaseClientReactivation,
+  findDueClientReactivations,
+  processClientReactivation,
 } from "../client-reactivation.js";
 import {
   findDueSeasonalSpring,
@@ -32,7 +32,7 @@ import {
   advanceLeadFollowupNextRun,
   advanceStaleJobNudgeNextRun,
   advancePropertyIssueScanNextRun,
-  advanceDatabaseClientReactivationNextRun,
+  advanceClientReactivationNextRun,
   advanceSeasonalNextRun,
   advanceRecurringInspectionNextRun,
 } from "./lifecycle.js";
@@ -58,16 +58,14 @@ export type DispatchedAutomationType = (typeof DISPATCHED_AUTOMATION_TYPES)[numb
 export interface AutomationDefinition {
   type: string;
   logLabel: string;
-  mysqlCompatible?: boolean;
-  findDue: (client: DatabaseClient) => Promise<AutomationRow[]>;
-  process: (client: DatabaseClient, automation: AutomationRow) => Promise<RunResult>;
-  advanceNextRun: (client: DatabaseClient, automation: AutomationRow, result: RunResult) => Promise<void>;
+  findDue: (client: Client) => Promise<AutomationRow[]>;
+  process: (client: Client, automation: AutomationRow) => Promise<RunResult>;
+  advanceNextRun: (client: Client, automation: AutomationRow, result: RunResult) => Promise<void>;
 }
 
 export const visitReminderDef: AutomationDefinition = {
   type: "visit_reminder",
   logLabel: "visit-reminder",
-  mysqlCompatible: true,
   findDue: findDueReminders,
   process: processVisitReminder,
   advanceNextRun: advanceVisitReminderNextRun,
@@ -76,7 +74,6 @@ export const visitReminderDef: AutomationDefinition = {
 export const invoiceFollowupDef: AutomationDefinition = {
   type: "invoice_followup",
   logLabel: "invoice-followup",
-  mysqlCompatible: true,
   findDue: findDueFollowups,
   process: processInvoiceFollowup,
   advanceNextRun: advanceInvoiceFollowupNextRun,
@@ -85,7 +82,6 @@ export const invoiceFollowupDef: AutomationDefinition = {
 export const bookingConfirmedDef: AutomationDefinition = {
   type: "booking_confirmed",
   logLabel: "booking-confirmed",
-  mysqlCompatible: true,
   findDue: findDueBookingConfirmations,
   process: processBookingConfirmation,
   advanceNextRun: advanceBookingConfirmedNextRun,
@@ -94,7 +90,6 @@ export const bookingConfirmedDef: AutomationDefinition = {
 export const reviewRequestDef: AutomationDefinition = {
   type: "review_request",
   logLabel: "review-request",
-  mysqlCompatible: true,
   findDue: findDueReviewRequests,
   process: processReviewRequests,
   advanceNextRun: advanceReviewRequestNextRun,
@@ -103,7 +98,6 @@ export const reviewRequestDef: AutomationDefinition = {
 export const estimateFollowupDef: AutomationDefinition = {
   type: "estimate_followup",
   logLabel: "estimate-followup",
-  mysqlCompatible: true,
   findDue: findDueEstimateFollowups,
   process: processEstimateFollowups,
   advanceNextRun: advanceEstimateFollowupNextRun,
@@ -112,7 +106,6 @@ export const estimateFollowupDef: AutomationDefinition = {
 export const leadFollowupDef: AutomationDefinition = {
   type: "lead_followup",
   logLabel: "lead-followup",
-  mysqlCompatible: true,
   findDue: findDueLeadFollowups,
   process: processLeadFollowups,
   advanceNextRun: advanceLeadFollowupNextRun,
@@ -121,7 +114,6 @@ export const leadFollowupDef: AutomationDefinition = {
 export const staleJobNudgeDef: AutomationDefinition = {
   type: "stale_job_nudge",
   logLabel: "stale-job-nudge",
-  mysqlCompatible: true,
   findDue: findDueStaleJobNudges,
   process: processStaleJobs,
   advanceNextRun: advanceStaleJobNudgeNextRun,
@@ -138,9 +130,9 @@ export const propertyIssueScanDef: AutomationDefinition = {
 export const clientReactivationDef: AutomationDefinition = {
   type: "client_reactivation",
   logLabel: "client-reactivation",
-  findDue: findDueDatabaseClientReactivations,
-  process: processDatabaseClientReactivation,
-  advanceNextRun: advanceDatabaseClientReactivationNextRun,
+  findDue: findDueClientReactivations,
+  process: processClientReactivation,
+  advanceNextRun: advanceClientReactivationNextRun,
 };
 
 export const seasonalSpringDef: AutomationDefinition = {
@@ -162,7 +154,6 @@ export const seasonalFallDef: AutomationDefinition = {
 export const recurringInspectionDef: AutomationDefinition = {
   type: "recurring_inspection",
   logLabel: "recurring-inspection",
-  mysqlCompatible: true,
   findDue: findDueRecurringInspections,
   process: processRecurringInspections,
   advanceNextRun: advanceRecurringInspectionNextRun,

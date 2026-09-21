@@ -33,5 +33,5 @@ export default async function CapturePage() {
     );
   }
 
-  return <CaptureRecorder companyId={session.accountId} />;
+  return <CaptureRecorder />;
 }

@@ -19,20 +19,13 @@
     "gate": "bash scripts/gate.sh",
     "gate:fast": "bash scripts/gate.sh --fast",
     "db:migrate": "bash scripts/db-migrate.sh",
-    "db:seed": "bash scripts/db-seed.sh",
-    "db:portability": "node scripts/db-portability-report.mjs",
-    "db:portability:strict": "node scripts/db-portability-report.mjs --strict",
-    "desktop:prepare": "pnpm --filter @ai-fsm/web build && node scripts/prepare-windows-runtime.mjs",
-    "desktop:dist:win": "pnpm desktop:prepare && electron-builder --win nsis --x64"
+    "db:seed": "bash scripts/db-seed.sh"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.9.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
-    "typescript": "^5.7.2",
-    "electron": "^38.0.0",
-    "electron-builder": "^26.0.0"
-  },
-  "main": "electron/main.cjs"
+    "typescript": "^5.7.2"
+  }
 }

@@ -68,7 +68,7 @@ export const PATCH = withRole(["owner", "admin"], async (request, session) => {
     await client.query("BEGIN");
 
     const existing = await queryOne<{ id: string; status: string; subtotal_cents: number; tax_cents: number }>(
-      `SELECT id, status, subtotal_cents, tax_cents FROM change_orders WHERE id = $1 AND account_id = $2 FOR UPDATE`,
+      `SELECT id, status, subtotal_cents, tax_cents FROM change_orders WHERE id = $1 AND account_id = $2`,
       [id, session.accountId]
     );
 
@@ -169,7 +169,7 @@ async function handleAction(id: string, action: string, session: { accountId: st
     await client.query("BEGIN");
 
     const existing = await queryOne<{ id: string; status: string; estimate_id: string; total_cents: number }>(
-      `SELECT id, status, estimate_id, total_cents FROM change_orders WHERE id = $1 AND account_id = $2 FOR UPDATE`,
+      `SELECT id, status, estimate_id, total_cents FROM change_orders WHERE id = $1 AND account_id = $2`,
       [id, session.accountId]
     );
 
@@ -211,7 +211,6 @@ async function handleAction(id: string, action: string, session: { accountId: st
       action: "update",
       actor_id: session.userId,
       trace_id: session.traceId,
-      old_value: { status: existing.status },
       new_value: { action, status: action === "approve" ? "approved" : action === "decline" ? "declined" : "sent" },
     });
 

@@ -5,17 +5,12 @@ import type { MetadataRoute } from "next";
 // Kept intentionally minimal — installability only, no caching/offline scope.
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    id: "/app",
-    name: "Titan Business Ops",
-    short_name: "Titan Ops",
-    lang: "en-AU",
-    dir: "ltr",
-    description: "Titan Business Ops — standalone field service and business operations",
-    start_url: "/app",
+    name: "Dovetails FSM",
+    short_name: "Dovetails",
+    description: "Dovetails Services LLC — field service management",
+    start_url: "/",
     scope: "/",
     display: "standalone",
-    orientation: "any",
-    categories: ["business", "productivity"],
     // Match Cedar & Clay rebrand (booking + login accent #c1540f), not legacy slate.
     background_color: "#fafaf9",
     theme_color: "#c1540f",

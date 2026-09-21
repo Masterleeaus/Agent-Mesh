@@ -22,7 +22,6 @@ import type { FilterDef, StatusVariant, MetricCardData } from "@/components/ui";
 import { WORK_HUB_LINKS } from "@/lib/navigation/hubs";
 import { estimateAttentionPredicate } from "@/lib/attention/counts";
 import { EstimateBoard } from "./EstimateBoard";
-import { bindNativeSurface } from "@/lib/navigation/native-service-bindings";
 
 export const dynamic = "force-dynamic";
 
@@ -93,7 +92,6 @@ export default async function EstimatesPage({ searchParams }: PageProps) {
   const { q, status, tier, view, attention } = await searchParams;
   const session = await getSession();
   if (!session) redirect("/login");
-  bindNativeSurface("quotes", session.accountId);
   if (session.role === "tech") redirect("/app/my-work"); // EPIC-006: techs have no estimate access
 
   const canCreate = canCreateEstimates(session.role);
@@ -210,7 +208,7 @@ export default async function EstimatesPage({ searchParams }: PageProps) {
   return (
     <PageContainer>
       <PageHeader
-        title="Estimates"
+        title="Quotes"
         subtitle={`${estimates.length} ${hasFilter ? "matching" : "total"}`}
         actions={
           canCreate ? (
@@ -227,7 +225,7 @@ export default async function EstimatesPage({ searchParams }: PageProps) {
                 variant="primary"
                 data-testid="create-estimate-btn"
               >
-                + New Estimate
+                + New Quote
               </LinkButton>
             </div>
           ) : undefined

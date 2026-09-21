@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole } from "@/lib/auth/middleware";
-import { portableQuery, withPortableTransaction } from "@/lib/db/portable";
+import { getPool } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { createIntakeRecords } from "../../../../lib/intake/records";
 import { bookingRequestStatusSchema } from "@ai-fsm/domain";
@@ -34,27 +34,48 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
   }
 
   const { name, phone, email, service_description } = parsed.data;
+  const pool = getPool();
+  const client = await pool.connect();
   try {
-    const result = await withPortableTransaction(async (client) => {
-      return createIntakeRecords(client, {
-        accountId: session.accountId,
-        createdByUserId: session.userId,
-        name, phone: phone ?? null, email: email || null,
-        serviceCategory: "general_repairs",
-        serviceDescription: service_description || "Quick lead captured for follow-up.",
-        preferredDate: new Date().toISOString().slice(0, 10),
-        preferredTimeSlot: "flexible", address: "TBD",
-        preferredContact: phone ? "phone" : "email",
-        smsConsent: false, smsConsentSource: "quick_lead",
-      });
+    await client.query("BEGIN");
+    await client.query(
+      `SELECT set_config('app.current_user_id', $1, true),
+              set_config('app.current_account_id', $2, true),
+              set_config('app.current_role', $3, true)`,
+      [session.userId, session.accountId, session.role]
+    );
+
+    const { bookingId, clientId, propertyId, jobId } = await createIntakeRecords(client, {
+      accountId: session.accountId,
+      createdByUserId: session.userId,
+      name,
+      phone: phone ?? null,
+      email: email || null,
+      serviceCategory: "general_repairs",
+      serviceDescription: service_description || "Quick lead captured for follow-up.",
+      preferredDate: new Date().toISOString().slice(0, 10),
+      preferredTimeSlot: "flexible",
+      address: "TBD",
+      preferredContact: phone ? "phone" : "email",
+      smsConsent: false,
+      smsConsentSource: "quick_lead",
     });
-    return NextResponse.json({ id: result.bookingId, clientId: result.clientId, propertyId: result.propertyId, jobId: result.jobId }, { status: 201 });
+
+    // Stale-lead follow-up is raised by the lead-followup worker once a pending
+    // request crosses its inactivity threshold — no action item is created here.
+
+    await client.query("COMMIT");
+
+    return NextResponse.json({ id: bookingId, clientId, propertyId, jobId }, { status: 201 });
   } catch (err) {
+    await client.query("ROLLBACK").catch(() => undefined);
     logger.error("POST /api/v1/booking-requests error", err, { traceId: session.traceId });
     return NextResponse.json(
       { error: { code: "INTERNAL_ERROR", message: "Failed to create lead", traceId: session.traceId } },
       { status: 500 }
     );
+  } finally {
+    client.release();
   }
 });
 
@@ -63,7 +84,16 @@ export const GET = withRole(["owner", "admin"], async (request: NextRequest, ses
   const status = searchParams.get("status");
   const limit = Math.min(parseInt(searchParams.get("limit") ?? "50", 10), 200);
 
+  const pool = getPool();
+  const client = await pool.connect();
   try {
+    await client.query(
+      `SELECT set_config('app.current_user_id', $1, true),
+              set_config('app.current_account_id', $2, true),
+              set_config('app.current_role', $3, true)`,
+      [session.userId, session.accountId, session.role]
+    );
+
     const conditions: string[] = ["br.account_id = $1"];
     const params: unknown[] = [session.accountId];
     let idx = 2;
@@ -74,27 +104,31 @@ export const GET = withRole(["owner", "admin"], async (request: NextRequest, ses
     }
 
     params.push(limit);
-    const rows = await portableQuery(
+    const rows = await client.query(
       `SELECT br.id, br.status, br.name, br.email, br.phone,
               br.service_category, br.service_description,
               br.preferred_date, br.preferred_time_slot,
               br.address, br.city, br.state, br.zip,
               br.review_notes, br.reviewed_at,
               br.job_id, br.visit_id, br.client_id,
-              br.created_at, u.full_name AS reviewed_by_name
+              br.created_at,
+              u.full_name AS reviewed_by_name
        FROM booking_requests br
-       LEFT JOIN users u ON u.id = br.reviewed_by AND u.account_id = br.account_id
+       LEFT JOIN users u ON u.id = br.reviewed_by
        WHERE ${conditions.join(" AND ")}
        ORDER BY br.created_at DESC
        LIMIT $${idx}`,
       params
     );
-    return NextResponse.json({ data: rows });
+
+    return NextResponse.json({ data: rows.rows });
   } catch (err) {
     logger.error("GET /api/v1/booking-requests error", err, { traceId: session.traceId });
     return NextResponse.json(
       { error: { code: "INTERNAL_ERROR", message: "Failed to list booking requests", traceId: session.traceId } },
       { status: 500 }
     );
+  } finally {
+    client.release();
   }
 });

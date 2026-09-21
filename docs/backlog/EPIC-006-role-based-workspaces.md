@@ -26,6 +26,12 @@ attention?"*; My Day answers *"What do I do right now?"*.
 owner is blocked from My Day. The fix is mostly *redistribute + unlock*, not
 build-from-scratch.
 
+## Active tasks
+
+# TASK-143: Overview is the leak list
+
+See [TASK-143-overview-leak-list.md](./TASK-143-overview-leak-list.md).
+
 ## Architecture
 
 > **Historical (2026-06):** the `WorkdayPanel`/`DailyCommandCenter` design below was
@@ -329,7 +335,12 @@ Acceptance Criteria:
 - [x] Mobile More sheet: panel stays inside the viewport.
 
 ## Completed
+- [TASK-130: Findability command search](../archive/backlog-done/TASK-130-command-search.md) — Done (validated 2026-09-09)
+- [TASK-129: My Day leftover fold](../archive/backlog-done/TASK-129-my-day-leftover-fold.md) — Done (validated 2026-09-09)
 
+- [TASK-124: De-jargon naming — "Needs attention" + consistent "My Day"](../archive/backlog-done/TASK-124-de-jargon-naming.md) — Done (#630)
+- [TASK-125: Nav restructure — Jobs→Projects, drop Work Orders from nav](../archive/backlog-done/TASK-125-nav-restructure-projects.md) — Done (#631)
+- [TASK-126: Phone job shortcuts go to the matching job surface](../archive/backlog-done/TASK-126-phone-job-shortcuts.md) — Done (#635)
 - [TASK-104: Discoverable vehicle tracking](../archive/backlog-done/TASK-104-discoverable-vehicle-tracking.md) — Done (PR #599)
 - [TASK-058: Workspace mode auto-by-device + Settings override](../archive/backlog-done/TASK-058-workspace-auto-route.md) — Done
 - [TASK-081: Nested hubs UX system (Home / Work / People / Money)](../archive/backlog-done/TASK-081-nested-hubs-ux.md) — Done

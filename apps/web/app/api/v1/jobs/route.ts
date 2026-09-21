@@ -1,9 +1,8 @@
-import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withAuth, withRole } from "../../../../lib/auth/middleware";
 import type { AuthSession } from "../../../../lib/auth/middleware";
-import { portableQuery, withPortableTransaction } from "../../../../lib/db/portable";
+import { query, getPool } from "../../../../lib/db";
 import { appendAuditLog } from "../../../../lib/db/audit";
 import { logger } from "../../../../lib/logger";
 import { JOB_ACCEPTANCE_CATEGORIES } from "@ai-fsm/domain";
@@ -53,7 +52,7 @@ export const GET = withAuth(
     params.push(limit, offset);
 
     const orderBy = openOnly ? receiptJobOrderSql() : "created_at DESC";
-    const jobs = await portableQuery(
+    const jobs = await query(
       `SELECT * FROM jobs WHERE ${where} ORDER BY ${orderBy} LIMIT $${params.length - 1} OFFSET $${params.length}`,
       params
     );
@@ -84,59 +83,60 @@ export const POST = withRole(
 
     const { client_id, property_id, title, description, job_type, job_category, priority } =
       parsed.data;
-    const jobId = randomUUID();
+
+    const pool = getPool();
+    const client = await pool.connect();
 
     try {
-      const job = await withPortableTransaction(async (client) => {
-        await client.query(
-          `INSERT INTO jobs (id, account_id, client_id, property_id, title, description, job_type, job_category, priority, created_by)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-          [
-            jobId,
-            session.accountId,
-            client_id,
-            property_id ?? null,
-            title,
-            description ?? null,
-            job_type,
-            job_category ?? null,
-            priority,
-            session.userId,
-          ]
-        );
+      await client.query("BEGIN");
+      await client.query(
+        `SELECT set_config('app.current_user_id', $1, true), set_config('app.current_account_id', $2, true), set_config('app.current_role', $3, true)`,
+        [session.userId, session.accountId, session.role]
+      );
 
-        const inserted = await client.query<Record<string, unknown>>(
-          `SELECT * FROM jobs WHERE id = $1 AND account_id = $2`,
-          [jobId, session.accountId],
-        );
-        const created = inserted.rows[0];
-        if (!created) throw new Error("Job insert did not return persisted row");
-
-        await appendAuditLog(client, {
-          account_id: session.accountId,
-          entity_type: "job",
-          entity_id: jobId,
-          action: "insert",
-          actor_id: session.userId,
-          trace_id: session.traceId,
-          new_value: created,
-        });
-
-        await createDefaultWorkOrderForJob({
-          client,
-          accountId: session.accountId,
-          clientId: client_id,
-          jobId,
+      const { rows } = await client.query(
+        `INSERT INTO jobs (account_id, client_id, property_id, title, description, job_type, job_category, priority, created_by)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         RETURNING *`,
+        [
+          session.accountId,
+          client_id,
+          property_id ?? null,
           title,
-          scope: description ?? null,
-          createdBy: session.userId,
-        });
+          description ?? null,
+          job_type,
+          job_category ?? null,
+          priority,
+          session.userId,
+        ]
+      );
 
-        return created;
+      const job = rows[0];
+
+      await appendAuditLog(client, {
+        account_id: session.accountId,
+        entity_type: "job",
+        entity_id: job.id,
+        action: "insert",
+        actor_id: session.userId,
+        trace_id: session.traceId,
+        new_value: job,
       });
 
+      await createDefaultWorkOrderForJob({
+        client,
+        accountId: session.accountId,
+        clientId: client_id,
+        jobId: job.id,
+        title,
+        scope: description ?? null,
+        createdBy: session.userId,
+      });
+
+      await client.query("COMMIT");
       return NextResponse.json({ data: job }, { status: 201 });
     } catch (err) {
+      await client.query("ROLLBACK");
       logger.error("[jobs POST]", err, { traceId: session.traceId });
       return NextResponse.json(
         {
@@ -148,6 +148,8 @@ export const POST = withRole(
         },
         { status: 500 }
       );
+    } finally {
+      client.release();
     }
   }
 );

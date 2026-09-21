@@ -1,5 +1,4 @@
-import { randomUUID } from "node:crypto";
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 
 export type StatusHistoryEntityType =
   | "job"
@@ -9,7 +8,7 @@ export type StatusHistoryEntityType =
   | "booking_request";
 
 export async function recordStatusChange(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     entityType: StatusHistoryEntityType;
@@ -22,10 +21,9 @@ export async function recordStatusChange(
 ): Promise<void> {
   await client.query(
     `INSERT INTO status_history
-       (id, account_id, entity_type, entity_id, from_status, to_status, changed_by, note)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+       (account_id, entity_type, entity_id, from_status, to_status, changed_by, note)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
     [
-      randomUUID(),
       opts.accountId,
       opts.entityType,
       opts.entityId,

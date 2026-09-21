@@ -10,7 +10,6 @@ import {
 import { requestedDepositCents, type InvoiceDepositType } from "@/lib/invoices/deposit";
 import { amountDueCents } from "@/lib/invoices/payments";
 import { z } from "zod";
-import { randomUUID } from "node:crypto";
 
 export const dynamic = "force-dynamic";
 
@@ -167,14 +166,13 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
 
       // Record a PENDING payment. external_payment_id stays NULL until the
       // webhook delivers the actual Square payment id (matched via order id).
-      const paymentId = randomUUID();
-      await client.query(
+      const inserted = await client.query<{ id: string }>(
         `INSERT INTO payments
-           (id, account_id, invoice_id, job_id, customer_id, amount_cents, method,
+           (account_id, invoice_id, job_id, customer_id, amount_cents, method,
             payment_type, status, external_provider, external_checkout_url, created_by)
-         VALUES ($1, $2, $3, $4, $5, $6, 'square', $7, 'pending', 'square', $8, $9)`,
+         VALUES ($1, $2, $3, $4, $5, 'square', $6, 'pending', 'square', $7, $8)
+         RETURNING id`,
         [
-          paymentId,
           session.accountId,
           invoiceId,
           invoice.job_id,
@@ -189,7 +187,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
       await appendAuditLog(client, {
         account_id: session.accountId,
         entity_type: "payment",
-        entity_id: paymentId,
+        entity_id: inserted.rows[0].id,
         action: "insert",
         actor_id: session.userId,
         trace_id: session.traceId,
@@ -203,7 +201,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
       });
 
       return {
-        payment_id: paymentId,
+        payment_id: inserted.rows[0].id,
         url: link.url,
         order_id: link.orderId,
         amount_cents: amount,

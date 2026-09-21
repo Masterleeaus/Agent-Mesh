@@ -2,7 +2,7 @@
  * Recompute and persist work order planning status from child visits.
  */
 
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   deriveWorkOrderStatus,
   type WorkOrderVisitSnapshot,
@@ -28,7 +28,7 @@ const schedulableList = SCHEDULABLE_WORK_ORDER_STATUSES.map((s) => `'${s}'`).joi
 const bookableList = BOOKABLE_WORK_ORDER_STATUSES.map((s) => `'${s}'`).join(", ");
 
 export async function syncWorkOrderStatus(
-  client: DbClient,
+  client: PoolClient,
   workOrderId: string,
   accountId: string,
 ): Promise<WorkOrderStatus | null> {
@@ -41,7 +41,7 @@ export async function syncWorkOrderStatus(
   if (!wo || wo.status === "draft" || wo.status === "cancelled") return null;
 
   const visitRes = await client.query<WorkOrderVisitSnapshot>(
-    `SELECT status, scheduled_start FROM visits
+    `SELECT status, scheduled_start, closeout_kind FROM visits
      WHERE work_order_id = $1 AND account_id = $2`,
     [workOrderId, accountId],
   );
@@ -59,6 +59,7 @@ export async function syncWorkOrderStatus(
     visits: visitRes.rows.map((v) => ({
       status: v.status as VisitStatus,
       scheduled_start: v.scheduled_start,
+      closeout_kind: v.closeout_kind,
     })),
     completionCriteria: criteria,
   });
@@ -66,13 +67,13 @@ export async function syncWorkOrderStatus(
   if (derived !== wo.status) {
     await client.query(
       `UPDATE work_orders SET
-         status = $1,
-         completed_at = CASE WHEN $2 = 'completed' THEN COALESCE(completed_at, CURRENT_TIMESTAMP)
+         status = $3,
+         completed_at = CASE WHEN $3 = 'completed' THEN COALESCE(completed_at, now())
                              WHEN $3 <> 'completed' THEN NULL
                              ELSE completed_at END,
-         updated_at = CURRENT_TIMESTAMP
-       WHERE id = $4 AND account_id = $5`,
-      [derived, derived, derived, workOrderId, accountId],
+         updated_at = now()
+       WHERE id = $1 AND account_id = $2`,
+      [workOrderId, accountId, derived],
     );
   }
 
@@ -81,7 +82,7 @@ export async function syncWorkOrderStatus(
 
 /** Sync all work orders on a project (after visit create/transition). */
 export async function syncWorkOrdersForJob(
-  client: DbClient,
+  client: PoolClient,
   jobId: string,
   accountId: string,
 ): Promise<void> {
@@ -101,13 +102,13 @@ export async function syncWorkOrdersForJob(
  * No-op if not draft. Returns true when a row was updated.
  */
 export async function promoteDraftWorkOrderToReady(
-  client: DbClient,
+  client: PoolClient,
   workOrderId: string,
   accountId: string,
 ): Promise<boolean> {
   const r = await client.query(
     `UPDATE work_orders
-     SET status = 'ready', updated_at = CURRENT_TIMESTAMP
+     SET status = 'ready', updated_at = now()
      WHERE id = $1 AND account_id = $2 AND status = 'draft'`,
     [workOrderId, accountId],
   );
@@ -120,7 +121,7 @@ export async function promoteDraftWorkOrderToReady(
  * - Auto: single bookable WO on the job (including one draft).
  */
 export async function resolveWorkOrderForVisit(
-  client: DbClient,
+  client: PoolClient,
   jobId: string,
   accountId: string,
   workOrderId?: string | null,

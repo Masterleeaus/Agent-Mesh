@@ -1,5 +1,4 @@
-import { randomUUID } from "crypto";
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import type { CompletionCriterion } from "@ai-fsm/domain";
 
 /**
@@ -56,27 +55,26 @@ export function criteriaItemsToTaskSeeds(
  * has tasks (idempotent for promote/retry). Call after INSERT/UPDATE of criteria.
  */
 export async function seedWorkOrderTasksFromCriteria(
-  client: DbClient,
+  client: PoolClient,
   opts: { accountId: string; workOrderId: string; criteria: unknown; source?: "estimate" | "manual" | "ai" },
 ): Promise<number> {
   const seeds = criteriaItemsToTaskSeeds(opts.criteria);
   if (seeds.length === 0) return 0;
 
-  const existing = await client.query<{ n: number | string }>(
-    `SELECT COUNT(*) AS n FROM work_order_tasks WHERE work_order_id = $1 AND account_id = $2`,
+  const existing = await client.query<{ n: string }>(
+    `SELECT COUNT(*)::text AS n FROM work_order_tasks WHERE work_order_id = $1 AND account_id = $2`,
     [opts.workOrderId, opts.accountId],
   );
-  if (Number(existing.rows[0]?.n ?? 0) > 0) return 0;
+  if (parseInt(existing.rows[0]?.n ?? "0", 10) > 0) return 0;
 
   const source = opts.source ?? "manual";
   let inserted = 0;
   for (const s of seeds) {
-    const taskId = randomUUID();
     await client.query(
       `INSERT INTO work_order_tasks
-         (id, account_id, work_order_id, label, required, completed, completed_at, status, sort_order, source)
-       VALUES ($1, $2, $3, $4, $5, $6, CASE WHEN $7 THEN CURRENT_TIMESTAMP END, CASE WHEN $8 THEN 'done' ELSE 'open' END, $9, $10)`,
-      [taskId, opts.accountId, opts.workOrderId, s.label, s.required, s.completed, s.completed, s.completed, s.sort_order, source],
+         (account_id, work_order_id, label, required, completed, completed_at, status, sort_order, source)
+       VALUES ($1, $2, $3, $4, $5, CASE WHEN $5 THEN now() END, CASE WHEN $5 THEN 'done' ELSE 'open' END, $6, $7)`,
+      [opts.accountId, opts.workOrderId, s.label, s.required, s.completed, s.sort_order, source],
     );
     inserted++;
   }
@@ -120,7 +118,7 @@ export function minutesByTask(entries: TaskTimeEntry[]): Map<string, number> {
 
 /** Load first-class tasks for a work order (sort_order). */
 export async function loadWorkOrderTasks(
-  client: DbClient,
+  client: PoolClient,
   workOrderId: string,
   accountId: string,
 ): Promise<WorkOrderTask[]> {
@@ -140,7 +138,7 @@ export async function loadWorkOrderTasks(
  * as CompletionCriterion. Falls back to JSONB only if still empty.
  */
 export async function loadWorkOrderCompletionCriteria(
-  client: DbClient,
+  client: PoolClient,
   workOrderId: string,
   accountId: string,
   fallbackJson?: unknown,
@@ -170,16 +168,16 @@ export async function loadWorkOrderCompletionCriteria(
  * readers and the dual-write era stay consistent.
  */
 export async function mirrorTasksToCompletionCriteria(
-  client: DbClient,
+  client: PoolClient,
   workOrderId: string,
   accountId: string,
 ): Promise<CompletionCriterion[]> {
   const tasks = await loadWorkOrderTasks(client, workOrderId, accountId);
   const criteria = tasksToCriteria(tasks);
   await client.query(
-    `UPDATE work_orders SET completion_criteria = $1, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $2 AND account_id = $3`,
-    [JSON.stringify(criteria), workOrderId, accountId],
+    `UPDATE work_orders SET completion_criteria = $3::jsonb, updated_at = now()
+      WHERE id = $1 AND account_id = $2`,
+    [workOrderId, accountId, JSON.stringify(criteria)],
   );
   return criteria;
 }
@@ -189,7 +187,7 @@ export async function mirrorTasksToCompletionCriteria(
  * Mirrors the result into completion_criteria JSONB.
  */
 export async function applyTaskCompletionToggles(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     workOrderId: string;
     accountId: string;
@@ -204,7 +202,7 @@ export async function applyTaskCompletionToggles(
             SET completed = false,
                 completed_at = NULL,
                 status = CASE WHEN status = 'done' THEN 'done' ELSE 'open' END,
-                updated_at = CURRENT_TIMESTAMP
+                updated_at = now()
           WHERE id = $1 AND work_order_id = $2 AND account_id = $3
             AND status <> 'done' AND completed = false`,
         [t.id, opts.workOrderId, opts.accountId],
@@ -214,9 +212,9 @@ export async function applyTaskCompletionToggles(
     await client.query(
       `UPDATE work_order_tasks
           SET completed = true,
-              completed_at = COALESCE(completed_at, CURRENT_TIMESTAMP),
+              completed_at = COALESCE(completed_at, now()),
               status = 'done',
-              updated_at = CURRENT_TIMESTAMP
+              updated_at = now()
         WHERE id = $1 AND work_order_id = $2 AND account_id = $3`,
       [t.id, opts.workOrderId, opts.accountId],
     );
@@ -235,7 +233,7 @@ const UUID_RE =
  * Always mirrors into completion_criteria.
  */
 export async function syncWorkOrderTasksFromCriteriaList(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     workOrderId: string;
     accountId: string;
@@ -265,23 +263,23 @@ export async function syncWorkOrderTasksFromCriteriaList(
     if (isUuid && byId.has(id)) {
       await client.query(
         `UPDATE work_order_tasks
-            SET label = $1, required = $2, completed = $3,
-                completed_at = CASE WHEN $4 THEN COALESCE(completed_at, CURRENT_TIMESTAMP) ELSE NULL END,
+            SET label = $3, required = $4, completed = $5,
+                completed_at = CASE WHEN $5 THEN COALESCE(completed_at, now()) ELSE NULL END,
                 status = CASE WHEN $5 THEN 'done' ELSE 'open' END,
-                sort_order = $6, updated_at = CURRENT_TIMESTAMP
-          WHERE id = $7 AND work_order_id = $8 AND account_id = $9`,
-        [label, required, completed, completed, completed, sort, id, opts.workOrderId, opts.accountId],
+                sort_order = $6, updated_at = now()
+          WHERE id = $1 AND work_order_id = $2 AND account_id = $7`,
+        [id, opts.workOrderId, label, required, completed, sort, opts.accountId],
       );
       kept.add(id);
     } else {
-      const taskId = randomUUID();
-      await client.query(
+      const ins = await client.query<{ id: string }>(
         `INSERT INTO work_order_tasks
-           (id, account_id, work_order_id, label, required, completed, completed_at, status, sort_order, source)
-         VALUES ($1,$2,$3,$4,$5,$6, CASE WHEN $7 THEN CURRENT_TIMESTAMP END, CASE WHEN $8 THEN 'done' ELSE 'open' END, $9, $10)`,
-        [taskId, opts.accountId, opts.workOrderId, label, required, completed, completed, completed, sort, source],
+           (account_id, work_order_id, label, required, completed, completed_at, status, sort_order, source)
+         VALUES ($1,$2,$3,$4,$5, CASE WHEN $5 THEN now() END, CASE WHEN $5 THEN 'done' ELSE 'open' END, $6, $7)
+         RETURNING id`,
+        [opts.accountId, opts.workOrderId, label, required, completed, sort, source],
       );
-      kept.add(taskId);
+      kept.add(ins.rows[0].id);
     }
     sort += 1;
   }

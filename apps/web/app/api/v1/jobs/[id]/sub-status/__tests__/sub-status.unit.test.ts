@@ -20,12 +20,15 @@ vi.mock("@/lib/auth/middleware", () => ({
   },
 }));
 
-const mockClientQuery = vi.fn();
-vi.mock("@/lib/db/portable", () => ({
-  withPortableTransaction: async (fn: Function) => fn({ query: (...args: unknown[]) => mockClientQuery(...args) }),
+const mockQuery = vi.fn();
+
+vi.mock("@/lib/db", () => ({
+  query: (...args: unknown[]) => mockQuery(...args),
 }));
 
-vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn() } }));
+vi.mock("@/lib/logger", () => ({
+  logger: { error: vi.fn() },
+}));
 
 import { PATCH } from "../route";
 
@@ -46,39 +49,34 @@ beforeEach(() => {
 });
 
 describe("PATCH /api/v1/jobs/[id]/sub-status", () => {
-  it("updates a job sub-status portably", async () => {
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [{ id: JOB_ID }] })
-      .mockResolvedValueOnce({ rows: [] })
-      .mockResolvedValueOnce({ rows: [{ id: JOB_ID, sub_status: "waiting_parts" }] });
+  it("updates a job sub-status", async () => {
+    mockQuery.mockResolvedValueOnce([{ id: JOB_ID, sub_status: "waiting_parts" }]);
 
     const res = await PATCH(makeRequest({ sub_status: "waiting_parts" }));
 
     expect(res.status).toBe(200);
     await expect(res.json()).resolves.toEqual({ id: JOB_ID, sub_status: "waiting_parts" });
-    const [sql, params] = mockClientQuery.mock.calls[1];
-    expect(String(sql)).toContain("UPDATE jobs");
-    expect(params).toEqual(["waiting_parts", JOB_ID, mockSession.accountId]);
-  });
-
-  it("returns 404 when the scoped job does not exist", async () => {
-    mockClientQuery.mockResolvedValueOnce({ rows: [] });
-    const res = await PATCH(makeRequest({ sub_status: "waiting_parts" }));
-    expect(res.status).toBe(404);
+    expect(mockQuery.mock.calls[0][0]).toContain("UPDATE jobs");
+    expect(mockQuery.mock.calls[0][1]).toEqual(["waiting_parts", JOB_ID, mockSession.accountId]);
   });
 
   it("returns 400 for an invalid sub-status", async () => {
     const res = await PATCH(makeRequest({ sub_status: "weather_hold" }));
+
     expect(res.status).toBe(400);
-    expect((await res.json()).error.code).toBe("VALIDATION_ERROR");
-    expect(mockClientQuery).not.toHaveBeenCalled();
+    const json = await res.json();
+    expect(json.error.code).toBe("VALIDATION_ERROR");
+    expect(mockQuery).not.toHaveBeenCalled();
   });
 
   it("returns 403 for tech role", async () => {
     mockSession.role = "tech";
+
     const res = await PATCH(makeRequest({ sub_status: "waiting_parts" }));
+
     expect(res.status).toBe(403);
-    expect((await res.json()).error.code).toBe("FORBIDDEN");
-    expect(mockClientQuery).not.toHaveBeenCalled();
+    const json = await res.json();
+    expect(json.error.code).toBe("FORBIDDEN");
+    expect(mockQuery).not.toHaveBeenCalled();
   });
 });

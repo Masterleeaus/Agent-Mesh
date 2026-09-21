@@ -1,6 +1,29 @@
-import type { DbClient } from "@/lib/db-contract";
-import { withPortableTransaction } from "../db/portable";
+import type { PoolClient } from "pg";
+import { withDbSession } from "../db";
 import type { SessionPayload } from "../auth/session";
+import type { DepositInvoiceSummary } from "./billing";
+
+/**
+ * Load the invoices an estimate's FINAL invoice must credit so it never
+ * double-bills: both the deposit (kind='deposit') and any staged progress
+ * invoices (kind='progress', TASK-120). reconcileFinalInvoice excludes void
+ * ones and clamps the credit to the total. Single loader so every final-invoice
+ * path (Convert + auto-final-on-completion) credits the same set.
+ */
+export async function loadCreditedInvoicesForEstimate(
+  client: PoolClient,
+  estimateId: string,
+  accountId: string,
+): Promise<DepositInvoiceSummary[]> {
+  const res = await client.query<DepositInvoiceSummary>(
+    `SELECT invoice_number, total_cents, status
+     FROM invoices
+     WHERE estimate_id = $1 AND account_id = $2
+       AND invoice_kind IN ('deposit', 'progress')`,
+    [estimateId, accountId],
+  );
+  return res.rows;
+}
 
 /**
  * Run fn within a PostgreSQL transaction with RLS session context set.
@@ -13,9 +36,9 @@ import type { SessionPayload } from "../auth/session";
  */
 export async function withInvoiceContext<T>(
   session: SessionPayload,
-  fn: (client: DbClient) => Promise<T>
+  fn: (client: PoolClient) => Promise<T>
 ): Promise<T> {
-  return withPortableTransaction(fn);
+  return withDbSession(session, fn);
 }
 
 /**
@@ -29,25 +52,18 @@ export async function withInvoiceContext<T>(
  * index. Gaps are acceptable. Must run inside a transaction to avoid races.
  */
 export async function generateInvoiceNumber(
-  client: DbClient,
+  client: PoolClient,
   accountId: string
 ): Promise<string> {
-  // Keep number allocation database-dialect neutral. Pull only the generator's
-  // INV-* namespace and parse the numeric suffix in TypeScript rather than using
-  // PostgreSQL regex/cast syntax. The unique account+invoice_number constraint
-  // remains the final concurrency guard.
-  const result = await client.query<{ invoice_number: string }>(
-    `SELECT invoice_number
+  // Only consider numbers this generator produced (INV-####); custom/historical
+  // invoice numbers in other formats are left out of the sequence (the unique
+  // index still keeps everything distinct).
+  const result = await client.query<{ next: string }>(
+    `SELECT COALESCE(MAX(substring(invoice_number from '^INV-(\\d+)$')::int), 0) + 1 AS next
      FROM invoices
-     WHERE account_id = $1 AND invoice_number LIKE 'INV-%'`,
+     WHERE account_id = $1 AND invoice_number ~ '^INV-\\d+$'`,
     [accountId]
   );
-  let max = 0;
-  for (const row of result.rows) {
-    const match = /^INV-(\d+)$/.exec(row.invoice_number);
-    if (!match) continue;
-    const n = Number.parseInt(match[1], 10);
-    if (Number.isFinite(n) && n > max) max = n;
-  }
-  return `INV-${String(max + 1).padStart(4, "0")}`;
+  const next = parseInt(result.rows[0]?.next ?? "1", 10);
+  return `INV-${String(next).padStart(4, "0")}`;
 }

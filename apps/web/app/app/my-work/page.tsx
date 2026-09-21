@@ -3,7 +3,8 @@ import type { Route } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { queryForSession } from "@/lib/db";
-import { isSameCalendarDay } from "@/lib/visits/formatting";
+import { formatVisitTime, isSameCalendarDay } from "@/lib/visits/formatting";
+import { formatBusinessDateTime } from "@/lib/time/business-tz";
 import { pickHeroVisit, type HeroVisit } from "@/lib/my-day/visit-hero";
 import { loadFieldDayData } from "@/lib/my-work/field-day-data";
 import {
@@ -23,11 +24,21 @@ import {
   type VisitType,
 } from "@ai-fsm/domain";
 import { PageContainer, PageHeader, Card, SectionHeader, EmptyState, LinkButton } from "@/components/ui";
+import { loadNeedsAttention } from "@/lib/attention/load-needs-attention";
+import { NeedsAttentionPanel } from "../NeedsAttentionPanel";
+import { TodayTimeline } from "./TodayTimeline";
+import { todayEmptyCopy, todayJobCountLabel, todayJobsHeading } from "./today-list";
+import { filterAttentionForSurface } from "@/lib/attention/surfaces";
 
 export const dynamic = "force-dynamic";
 
+type PageProps = {
+  searchParams: Promise<{ promises?: string }>;
+};
+
 type WoCard = {
   id: string;
+  job_id: string;
   title: string;
   status: string;
   client_name: string | null;
@@ -45,10 +56,11 @@ type AssessmentCard = {
   job_title: string | null;
 };
 
-export default async function MyWorkPage() {
+export default async function MyWorkPage({ searchParams }: PageProps) {
   const session = await getSession();
   if (!session) redirect("/login");
   if (session.role === "admin") redirect("/app");
+  const { promises: promisesParam } = await searchParams;
 
   const isTech = session.role === "tech";
   const isOwner = session.role === "owner";
@@ -59,7 +71,7 @@ export default async function MyWorkPage() {
     loadFieldDayData(session, isOwner),
     queryForSession<WoCard>(
       session,
-      `SELECT w.id, w.title, w.status, c.name AS client_name, p.address AS property_address,
+      `SELECT w.id, w.job_id::text, w.title, w.status, c.name AS client_name, p.address AS property_address,
               (SELECT MIN(v.scheduled_start)::text FROM visits v
                WHERE v.work_order_id = w.id AND v.status = 'scheduled' AND v.scheduled_start > now()) AS next_scheduled,
               (SELECT v.id::text FROM visits v
@@ -95,8 +107,13 @@ export default async function MyWorkPage() {
     ),
     queryForSession<HeroVisit>(
       session,
-      `SELECT v.id, v.status, v.scheduled_start::text, j.title AS job_title,
-              p.address AS property_address, c.name AS client_name, c.phone AS client_phone
+      `SELECT v.id, v.status, v.scheduled_start::text, j.id::text AS job_id, j.title AS job_title,
+              p.address AS property_address, c.name AS client_name, c.phone AS client_phone,
+              (SELECT t.label FROM visit_tasks vt
+               JOIN work_order_tasks t ON t.id = vt.task_id
+               WHERE vt.visit_id = v.id AND vt.account_id = v.account_id
+                 AND t.completed = false AND t.status <> 'done'
+               ORDER BY t.sort_order ASC LIMIT 1) AS first_up
        FROM visits v
        LEFT JOIN jobs j ON j.id = v.job_id
        LEFT JOIN clients c ON c.id = j.client_id
@@ -122,23 +139,27 @@ export default async function MyWorkPage() {
 
   const todayVisits = heroVisits.filter((v) => isSameCalendarDay(v.scheduled_start));
   const heroVisit = pickHeroVisit(todayVisits, now.getTime());
+  const needsAttentionRaw = isOwner ? await loadNeedsAttention(session) : null;
+  const needsAttention = needsAttentionRaw
+    ? { items: filterAttentionForSurface(needsAttentionRaw.items, "today"), openPromiseRows: [] as typeof needsAttentionRaw.openPromiseRows }
+    : null;
 
   const nowHour = now.getHours();
   const greeting =
     nowHour < 12 ? "Good morning" : nowHour < 17 ? "Good afternoon" : "Good evening";
 
-  let statusLabel = `${workOrders.length} work order${workOrders.length !== 1 ? "s" : ""}`;
+  let statusLabel = todayJobCountLabel(workOrders.length);
   if (heroVisit?.status === "in_progress" || heroVisit?.status === "arrived") {
     statusLabel += " · In progress now";
   } else if (heroVisit) {
     const d = new Date(heroVisit.scheduled_start);
-    statusLabel += ` · ${d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toLowerCase()} next`;
+    statusLabel += ` · ${formatVisitTime(heroVisit.scheduled_start).toLowerCase()} next`;
   }
 
   return (
     <PageContainer>
       <PageHeader
-        title="My Work"
+        title="Today"
         subtitle={`${greeting} — ${statusLabel}`}
         actions={
           isTech ? (
@@ -153,7 +174,7 @@ export default async function MyWorkPage() {
               <ManualSiteVisitButton />
               <span className="p7-only-desktop">
                 <LinkButton href="/app" variant="secondary" size="sm">
-                  ← Overview
+                  ← Desk
                 </LinkButton>
               </span>
             </span>
@@ -198,53 +219,6 @@ export default async function MyWorkPage() {
         </div>
       )}
 
-      {fieldDay.ownerPeek && (
-        <Link
-          href={"/app/action-queue" as Route}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "var(--space-3)",
-            marginBottom: "var(--space-4)",
-            padding: "var(--space-2) var(--space-3)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius-md)",
-            background: "var(--bg-card)",
-            textDecoration: "none",
-            color: "inherit",
-          }}
-        >
-          <div style={{ display: "flex", gap: "var(--space-5)", flexWrap: "wrap" }}>
-            <span style={{ fontSize: "var(--text-sm)" }}>
-              <strong style={{ color: "var(--color-red-600)" }}>
-                ${(fieldDay.ownerPeek.outstandingCents / 100).toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                })}
-              </strong>
-              <span style={{ color: "var(--fg-muted)" }}> outstanding</span>
-            </span>
-            <span style={{ fontSize: "var(--text-sm)" }}>
-              <strong>{fieldDay.ownerPeek.draftInvoices}</strong>
-              <span style={{ color: "var(--fg-muted)" }}>
-                {" "}
-                draft invoice{fieldDay.ownerPeek.draftInvoices !== 1 ? "s" : ""} to review
-              </span>
-            </span>
-          </div>
-          <span
-            style={{
-              color: "var(--accent)",
-              fontSize: "var(--text-xs)",
-              fontWeight: 700,
-              whiteSpace: "nowrap",
-            }}
-          >
-            Office →
-          </span>
-        </Link>
-      )}
-
       <MyDayMobileLayout
         openSession={fieldDay.openSession}
         vehicles={fieldDay.vehicles}
@@ -252,15 +226,32 @@ export default async function MyWorkPage() {
         dayMileage={fieldDay.dayMileage}
         heroVisit={heroVisit}
         clockedIn={fieldDay.clockedIn}
+        hasParkProposal={proposals.length > 0}
+        currentJobId={heroVisit?.job_id ?? workOrders.find((w) => w.active_visit_id)?.job_id ?? workOrders[0]?.job_id ?? null}
         canCapture={isOwner}
         canQuickBook={isOwner}
       >
+        {needsAttention && (
+          <NeedsAttentionPanel
+            items={needsAttention.items}
+            openPromiseRows={needsAttention.openPromiseRows}
+            promisesParam={promisesParam}
+          />
+        )}
+        <TodayTimeline
+          entries={
+            isTech
+              ? fieldDay.activityEntries.filter((e) => e.user_id === session.userId)
+              : fieldDay.activityEntries
+          }
+          showTrackingLink={!isTech}
+        />
         <Card style={{ marginBottom: "var(--space-4)" }}>
-          <SectionHeader title="Active Work Orders" count={workOrders.length} />
+          <SectionHeader title={todayJobsHeading()} count={workOrders.length} />
           {workOrders.length === 0 ? (
             <EmptyState
-              title="No work orders assigned"
-              description="When you're the lead on a work order, it appears here. Start your day above to clock in and log mileage."
+              title={todayEmptyCopy().title}
+              description={todayEmptyCopy().description}
             />
           ) : (
             <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
@@ -285,11 +276,7 @@ export default async function MyWorkPage() {
                         {status}
                         {derived}
                         {wo.next_scheduled &&
-                          ` · Next ${new Date(wo.next_scheduled).toLocaleString([], {
-                            weekday: "short",
-                            hour: "numeric",
-                            minute: "2-digit",
-                          })}`}
+                          ` · Next ${formatBusinessDateTime(wo.next_scheduled)}`}
                       </small>
                     </Link>
                   </li>
@@ -319,13 +306,7 @@ export default async function MyWorkPage() {
                       {VISIT_TYPE_LABELS[v.visit_type as VisitType] ?? v.visit_type}
                     </div>
                     <small style={{ color: "var(--fg-muted)" }}>
-                      {new Date(v.scheduled_start).toLocaleString([], {
-                        weekday: "short",
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}
+                      {formatBusinessDateTime(v.scheduled_start)}
                     </small>
                   </Link>
                 </li>

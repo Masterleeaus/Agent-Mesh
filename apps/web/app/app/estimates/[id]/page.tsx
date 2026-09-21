@@ -20,6 +20,7 @@ import { buildClientDocumentFilename } from "@/lib/estimates/guardrails";
 import { ChangeOrdersClient } from "./ChangeOrdersClient";
 import { DecomposeWorkPanel } from "./DecomposeWorkPanel";
 import { loadEstimateDetail } from "./detail-data";
+import { laborHoursFromCostCents } from "@/lib/pricing/labor-hours";
 import { LinkedDocuments } from "@/components/documents/LinkedDocuments";
 import { STATUS_LABELS } from "./format";
 import { EstimateBanners } from "./sections/EstimateBanners";
@@ -78,7 +79,7 @@ export default async function EstimateDetailPage({
   const documentFilename = buildClientDocumentFilename({
     date: estimate.sent_at ?? estimate.created_at,
     clientName: estimate.client_name,
-    jobType: estimate.job_title ?? "Project",
+    jobType: estimate.job_title ?? "Job",
     documentType: "estimate",
     status: estimate.status === "declined" || estimate.status === "expired" ? "archived" : estimate.status,
   });
@@ -90,7 +91,7 @@ export default async function EstimateDetailPage({
       )}
       <Breadcrumbs
         items={[
-          { href: "/app/estimates", label: "Estimates" },
+          { href: "/app/estimates", label: "Quotes" },
           ...(estimate.client_id
             ? [
                 {
@@ -103,7 +104,7 @@ export default async function EstimateDetailPage({
             ? [
                 {
                   href: `/app/jobs/${estimate.job_id}`,
-                  label: estimate.job_title ?? "Project",
+                  label: estimate.job_title ?? "Job",
                 },
               ]
             : []),
@@ -116,7 +117,7 @@ export default async function EstimateDetailPage({
       />
       <PageHeader
         backHref="/app/estimates"
-        backLabel="Estimates"
+        backLabel="Quotes"
         title={`${estimate.estimate_number ? `${estimate.estimate_number} — ` : "Estimate — "}${estimate.client_name ?? "Unknown client"}`}
         actions={
           <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", flexWrap: "wrap" }}>
@@ -262,8 +263,11 @@ export default async function EstimateDetailPage({
           initialIncludesTrim={estimate.includes_trim}
           initialIncludesCeiling={estimate.includes_ceiling}
           initialMaterialCostCents={estimate.internal_material_cost_cents}
-          initialLaborHours={estimate.internal_labor_cost_cents !== null && estimate.sq_ft !== null
-            ? Math.round((estimate.internal_labor_cost_cents / 8500) * 10) / 10
+          initialLaborHours={estimate.sq_ft !== null
+            ? laborHoursFromCostCents(
+                estimate.internal_labor_cost_cents,
+                pricingSettings.labor_cost_cents_per_hour,
+              )
             : null}
           initialTripCount={estimate.trip_count}
           initialRequiresDryingOrCuring={estimate.requires_drying_or_curing}

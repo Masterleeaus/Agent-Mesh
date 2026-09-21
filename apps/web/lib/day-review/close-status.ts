@@ -28,7 +28,7 @@ export async function loadDayCloseStatus(
   date: string,
   userId: string = session.userId,
 ): Promise<DayCloseStatusPayload> {
-  const [clockRows, activityRows, sessionRows, receiptRows, visitRows] = await Promise.all([
+  const [clockRows, activityRows, sessionRows, receiptRows, visitRows, stopRows] = await Promise.all([
     queryForSession<{ status: string }>(
       session,
       `SELECT status FROM time_clock_sessions
@@ -70,6 +70,34 @@ export async function loadDayCloseStatus(
          AND status NOT IN ('cancelled')`,
       [session.accountId, date, userId],
     ),
+    queryForSession<{ count: string }>(
+      session,
+      // GPS ingest is account-scoped (one HA feed, one open segment per account;
+      // location_segments has no user_id). Unanswered stops therefore gate the
+      // account's Close Day, not a per-technician subset.
+      `SELECT COUNT(*)::text AS count
+         FROM location_segments s
+         JOIN accounts a ON a.id = s.account_id
+        WHERE s.account_id = $1
+          AND s.segment_date = $2::date
+          AND s.kind = 'stop'
+          AND s.status <> 'dismissed'
+          AND COALESCE(s.is_likely_noise, false) = false
+          AND s.stop_reason IS NULL
+          AND lower(COALESCE(s.zone, '')) NOT IN ('home', 'private')
+          AND lower(COALESCE(s.place_label, '')) NOT IN ('home', 'private')
+          AND NOT (
+            a.home_latitude IS NOT NULL AND s.latitude IS NOT NULL AND s.longitude IS NOT NULL
+            AND (
+              6371000 * acos(LEAST(1::float, GREATEST(-1::float,
+                cos(radians(a.home_latitude)) * cos(radians(s.latitude))
+                * cos(radians(s.longitude) - radians(a.home_longitude))
+                + sin(radians(a.home_latitude)) * sin(radians(s.latitude))
+              )))
+            ) <= COALESCE(a.home_radius_meters, 100)
+          )`,
+      [session.accountId, date],
+    ),
   ]);
 
   const active = activityRows[0];
@@ -90,5 +118,6 @@ export async function loadDayCloseStatus(
     missingReceiptPhotos: parseInt(receiptRows[0]?.count ?? "0", 10),
     visitsToday: parseInt(visitRows[0]?.count ?? "0", 10),
     notesAcknowledged: false,
+    unansweredStops: parseInt(stopRows[0]?.count ?? "0", 10),
   };
 }

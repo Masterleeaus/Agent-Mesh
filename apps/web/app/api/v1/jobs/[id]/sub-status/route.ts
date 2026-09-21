@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { JOB_SUB_STATUSES } from "@ai-fsm/domain";
 import { withRole } from "@/lib/auth/middleware";
-import { withPortableTransaction } from "@/lib/db/portable";
+import { query } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -37,34 +37,22 @@ export const PATCH = withRole(["owner", "admin"], async (request: NextRequest, s
   }
 
   try {
-    const row = await withPortableTransaction(async (client) => {
-      const existing = await client.query<{ id: string }>(
-        `SELECT id FROM jobs WHERE id = $1 AND account_id = $2 FOR UPDATE`,
-        [id, session.accountId],
-      );
-      if (!existing.rows[0]) return null;
+    const rows = await query<{ id: string; sub_status: string | null }>(
+      `UPDATE jobs
+       SET sub_status = $1, updated_at = now()
+       WHERE id = $2 AND account_id = $3
+       RETURNING id, sub_status`,
+      [parsed.data.sub_status, id, session.accountId]
+    );
 
-      await client.query(
-        `UPDATE jobs
-         SET sub_status = $1, updated_at = CURRENT_TIMESTAMP
-         WHERE id = $2 AND account_id = $3`,
-        [parsed.data.sub_status, id, session.accountId]
-      );
-      const persisted = await client.query<{ id: string; sub_status: string | null }>(
-        `SELECT id, sub_status FROM jobs WHERE id = $1 AND account_id = $2`,
-        [id, session.accountId],
-      );
-      return persisted.rows[0] ?? null;
-    });
-
-    if (!row) {
+    if (!rows[0]) {
       return NextResponse.json(
         { error: { code: "NOT_FOUND", message: "Job not found", traceId: session.traceId } },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(row);
+    return NextResponse.json(rows[0]);
   } catch (err) {
     logger.error("[jobs sub-status PATCH]", err, { traceId: session.traceId });
     return NextResponse.json(

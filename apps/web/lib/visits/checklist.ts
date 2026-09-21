@@ -9,7 +9,7 @@
  * visit_checklist_items on the first GET request for a visit.
  */
 
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { getPool } from "@/lib/db";
 import type { SessionPayload } from "@/lib/auth/session";
 import type { VisitChecklistItem } from "@ai-fsm/domain";
@@ -20,7 +20,7 @@ import type { VisitChecklistItem } from "@ai-fsm/domain";
 
 export async function withChecklistContext<T>(
   session: SessionPayload,
-  fn: (client: DbClient) => Promise<T>
+  fn: (client: PoolClient) => Promise<T>
 ): Promise<T> {
   const client = await getPool().connect();
   try {
@@ -285,7 +285,7 @@ export const CLOSING_CHECKLIST_TEMPLATE = CLOSING_CHECKLIST_TEMPLATES._default;
  * Uses ON CONFLICT DO NOTHING for idempotency — safe to call multiple times.
  */
 export async function seedChecklistItems(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   visitId: string,
   template: ChecklistTemplateItem[] = DEFAULT_CHECKLIST_TEMPLATE
@@ -325,7 +325,7 @@ export async function seedChecklistItems(
  * any other jobType → CLOSING_CHECKLIST_TEMPLATE (6 closing steps)
  */
 export async function getOrSeedChecklist(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   visitId: string,
   jobType?: string,
@@ -387,7 +387,7 @@ export async function getOrSeedChecklist(
  * Returns the updated row, or null if not found.
  */
 export async function updateChecklistItem(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   visitId: string,
   itemId: string,

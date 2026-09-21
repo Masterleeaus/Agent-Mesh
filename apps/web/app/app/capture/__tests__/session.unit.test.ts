@@ -3,40 +3,39 @@ import {
   allowlistedPostLoginNext,
   loginRedirectForPath,
   pathnameFromHeaders,
-  requestTargetFromHeaders,
   resolvePostLoginHref,
 } from "@/lib/auth/post-login-destination";
 
-describe("Business Ops post-login allowlist", () => {
-  it("honors safe internal /app destinations", () => {
+describe("capture post-login allowlist", () => {
+  it("honors next only when it is exactly /app/capture", () => {
     expect(allowlistedPostLoginNext("/app/capture")).toBe("/app/capture");
-    expect(allowlistedPostLoginNext("/app/jobs/job-1?tab=visits")).toBe("/app/jobs/job-1?tab=visits");
-    expect(allowlistedPostLoginNext("/app")).toBe("/app");
+    expect(allowlistedPostLoginNext("/app/capture/")).toBeNull();
+    expect(allowlistedPostLoginNext("/app")).toBeNull();
     expect(allowlistedPostLoginNext("https://evil.example/app/capture")).toBeNull();
     expect(allowlistedPostLoginNext("//evil.example")).toBeNull();
   });
 
-  it("lands on the requested Business Ops destination after login", () => {
+  it("lands on /app/capture after login when next is allowlisted", () => {
     expect(
       resolvePostLoginHref("owner", { isPhone: true, next: "/app/capture" }),
     ).toBe("/app/capture");
     expect(
-      resolvePostLoginHref("admin", { next: "/app/jobs/job-1" }),
-    ).toBe("/app/jobs/job-1");
+      resolvePostLoginHref("admin", { next: "/app/jobs" }),
+    ).toBe("/app");
   });
 
-  it("sends unauthenticated Business Ops routes to login with an encoded next target", () => {
-    expect(loginRedirectForPath("/app/capture")).toBe("/login?next=%2Fapp%2Fcapture");
-    expect(loginRedirectForPath("/app")).toBe("/login?next=%2Fapp");
-    expect(loginRedirectForPath("/portal/client")).toBe("/login");
+  it("sends unauthenticated /app/capture to login with next", () => {
+    expect(loginRedirectForPath("/app/capture")).toBe("/login?next=/app/capture");
+    expect(loginRedirectForPath("/app")).toBe("/login");
   });
 
-  it("reads path and query from middleware request headers", () => {
+  it("reads /app/capture from request headers", () => {
     const headers = new Headers({
-      "x-pathname": "/app/invoices/inv-1",
-      "x-request-target": "/app/invoices/inv-1?tab=payments",
+      "x-matched-path": "/app/capture",
     });
-    expect(pathnameFromHeaders(headers)).toBe("/app/invoices/inv-1");
-    expect(requestTargetFromHeaders(headers)).toBe("/app/invoices/inv-1?tab=payments");
+    expect(pathnameFromHeaders(headers)).toBe("/app/capture");
+    expect(
+      pathnameFromHeaders(new Headers({ "next-url": "http://localhost:3000/app/capture" })),
+    ).toBe("/app/capture");
   });
 });

@@ -246,6 +246,27 @@ describe("shouldCreateVisitCandidate (TASK-079 dwell floor)", () => {
   it("keeps even a brief stop when a visit is scheduled there today", () => {
     expect(shouldCreateVisitCandidate({ score: 90, durationMinutes: 0, hasScheduledVisit: true })).toBe(true);
   });
+  it("Bluetooth park (TASK-149) skips the dwell floor when distance is known", () => {
+    expect(
+      shouldCreateVisitCandidate({
+        score: 90,
+        durationMinutes: 0,
+        hasScheduledVisit: false,
+        distanceMeters: 20,
+        parkedArrival: true,
+      }),
+    ).toBe(true);
+  });
+  it("Bluetooth park without a distance proof still needs the 5-minute floor", () => {
+    expect(
+      shouldCreateVisitCandidate({
+        score: 90,
+        durationMinutes: 0,
+        hasScheduledVisit: false,
+        parkedArrival: true,
+      }),
+    ).toBe(false);
+  });
   it("rejects known-far matches even when scheduled today", () => {
     expect(
       shouldCreateVisitCandidate({
@@ -341,8 +362,14 @@ describe("isLivePromptEligible", () => {
     expect(isLivePromptEligible({ ...base, distanceProven: false })).toBe(false);
   });
 
-  it("false when not scheduled today", () => {
+  it("false when not scheduled today and no open job", () => {
     expect(isLivePromptEligible({ ...base, scheduledToday: false })).toBe(false);
+  });
+
+  it("true for a distance-proven open job even without a visit scheduled today (TASK-148)", () => {
+    expect(
+      isLivePromptEligible({ ...base, scheduledToday: false, openJob: true }),
+    ).toBe(true);
   });
 
   it("false when already prompted or not pending", () => {
@@ -397,7 +424,7 @@ describe("selectArrivalNextAction", () => {
     expect(r.suppressReason).toBe("already_on_site_work");
   });
 
-  it("offers Start job work when traveling / idle and still on site", () => {
+  it("offers Start this job when traveling / idle and still on site", () => {
     const r = selectArrivalNextAction({
       hasProposal: true,
       confidenceScore: 90,
@@ -407,10 +434,10 @@ describe("selectArrivalNextAction", () => {
       stillOnSite: true,
     });
     expect(r.show).toBe(true);
-    expect(r.primaryLabel).toBe("Start job work");
+    expect(r.primaryLabel).toBe("Start this job");
   });
 
-  it("does not promise Start job work for closed (departed) proposals", () => {
+  it("does not promise Start this job for closed (departed) proposals", () => {
     const r = selectArrivalNextAction({
       hasProposal: true,
       confidenceScore: 90,

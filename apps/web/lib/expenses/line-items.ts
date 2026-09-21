@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 
 export type ExpenseLineItemRow = {
   id: string;
@@ -19,7 +19,7 @@ export type ExpenseLineItemInput = {
 };
 
 export async function fetchExpenseLineItems(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   expenseId: string,
 ): Promise<ExpenseLineItemRow[]> {
@@ -35,7 +35,7 @@ export async function fetchExpenseLineItems(
 }
 
 export async function replaceExpenseLineItems(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   expenseId: string,
   items: ExpenseLineItemInput[],

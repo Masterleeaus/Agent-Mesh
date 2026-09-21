@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { appendAuditLog } from "@/lib/db/audit";
 
 export interface CompleteAssessmentCascadeCtx {
@@ -16,7 +16,7 @@ export interface CompleteAssessmentCascadeCtx {
  * Does not advance job status (pre-sale walkthrough ≠ execution complete).
  */
 export async function completeAssessmentCascade(
-  client: DbClient,
+  client: PoolClient,
   ctx: CompleteAssessmentCascadeCtx
 ): Promise<void> {
   if (!ctx.assessmentCompletedAt) {
@@ -88,7 +88,7 @@ const DEFAULT_ESTIMATE_EXPIRY_DAYS = 30;
  * Reads accounts.settings.estimate_expiry_days (default 30 when null/invalid).
  */
 export async function resolveEstimateExpiryDays(
-  client: DbClient,
+  client: PoolClient,
   accountId: string
 ): Promise<number> {
   const { rows } = await client.query<{ days: string | null }>(
@@ -124,7 +124,7 @@ export interface SendEstimateCascadeCtx {
  * Idempotent: no-op when expires_at is already set or job is not draft.
  */
 export async function sendEstimateCascade(
-  client: DbClient,
+  client: PoolClient,
   ctx: SendEstimateCascadeCtx
 ): Promise<void> {
   const expiryDays = await resolveEstimateExpiryDays(client, ctx.accountId);

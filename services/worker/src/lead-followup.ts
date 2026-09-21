@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 import { appUrl } from "./mailer.js";
 import type { AutomationRow, RunResult } from "./automations/types.js";
@@ -30,36 +30,33 @@ interface StaleLead {
   owner_email: string | null;
 }
 
-export async function findDueLeadFollowups(client: DatabaseClient): Promise<AutomationRow[]> {
+export async function findDueLeadFollowups(client: Client): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
-    `SELECT id, account_id, type, config, enabled, next_run_at
+    `SELECT id, account_id, type, config, enabled, next_run_at::text
        FROM automations
       WHERE type = 'lead_followup'
         AND enabled = true
-        AND next_run_at <= CURRENT_TIMESTAMP`
+        AND next_run_at <= now()`
   );
   return rows;
 }
 
 export async function findStaleLeads(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<StaleLead[]> {
   const hoursThreshold = (automation.config as { hours_threshold?: number }).hours_threshold ?? 24;
 
-  const now = new Date();
-  const cutoff = new Date(now.getTime() - hoursThreshold * 60 * 60_000);
-  type StaleLeadRow = Omit<StaleLead, "hours_pending"> & { created_at: string };
-
-  const { rows } = await client.query<StaleLeadRow>(
-    `SELECT br.id, br.account_id, br.name, br.created_at,
+  const { rows } = await client.query<StaleLead>(
+    `SELECT br.id, br.account_id, br.name,
+            EXTRACT(EPOCH FROM (now() - br.created_at)) / 3600 AS hours_pending,
             (SELECT u.email FROM users u
               WHERE u.account_id = br.account_id AND u.role = 'owner'
               ORDER BY u.created_at ASC LIMIT 1) AS owner_email
        FROM booking_requests br
       WHERE br.account_id = $1
         AND br.status = 'pending'
-        AND br.created_at <= $2
+        AND br.created_at <= now() - ($2 || ' hours')::interval
         AND NOT EXISTS (
           SELECT 1 FROM audit_log al
            WHERE al.account_id = br.account_id
@@ -68,13 +65,10 @@ export async function findStaleLeads(
         )
       ORDER BY br.created_at ASC
       LIMIT 50`,
-    [automation.account_id, cutoff.toISOString()]
+    [automation.account_id, hoursThreshold]
   );
 
-  return rows.map((row) => ({
-    ...row,
-    hours_pending: Math.max(0, (now.getTime() - new Date(row.created_at).getTime()) / (60 * 60_000)),
-  }));
+  return rows;
 }
 
 function leadFollowupHtml(lead: StaleLead): string {
@@ -88,7 +82,7 @@ function leadFollowupHtml(lead: StaleLead): string {
 }
 
 async function emitLeadFollowup(
-  client: DatabaseClient,
+  client: Client,
   lead: StaleLead,
   automationId: string
 ): Promise<boolean> {
@@ -145,7 +139,7 @@ async function emitLeadFollowup(
   return true;
 }
 
-export async function processLeadFollowups(client: DatabaseClient, automation: AutomationRow): Promise<RunResult> {
+export async function processLeadFollowups(client: Client, automation: AutomationRow): Promise<RunResult> {
   const result: RunResult = {
     automationId: automation.id,
     accountId: automation.account_id,

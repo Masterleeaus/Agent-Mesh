@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { extractFirmCommitments } from "@ai-fsm/domain/promise-capture";
 import { logger } from "./logger.js";
 
@@ -105,7 +105,7 @@ export function parseProposedDueAt(
   return due;
 }
 
-async function markFailed(client: DatabaseClient, id: string, message: string): Promise<void> {
+async function markFailed(client: Client, id: string, message: string): Promise<void> {
   await client.query(
     `UPDATE capture_evidence
         SET processing_state = 'failed',
@@ -117,7 +117,7 @@ async function markFailed(client: DatabaseClient, id: string, message: string): 
 }
 
 async function processOne(
-  client: DatabaseClient,
+  client: Client,
   row: CaptureEvidenceRow,
   transcribe: TranscribeCaptureAudio,
 ): Promise<"proposed" | "low_confidence" | "failed"> {
@@ -249,7 +249,7 @@ async function transcribeWithWhisper(
 }
 
 export async function processCaptures(
-  client: DatabaseClient,
+  client: Client,
   deps: ProcessCapturesDeps = {},
 ): Promise<ProcessCapturesResult> {
   const transcribe = deps.transcribe ?? transcribeCaptureAudio;

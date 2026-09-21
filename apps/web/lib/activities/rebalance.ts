@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { appendAuditLog } from "@/lib/db/audit";
 import {
   proposeRebalance,
@@ -61,7 +61,7 @@ interface RebalanceContext {
  * Deletes only apply to completed rows.
  */
 export async function applyRebalance(
-  client: DbClient,
+  client: PoolClient,
   ctx: RebalanceContext,
   adjustments: RebalanceAdjustment[] | undefined,
 ): Promise<void> {
@@ -300,7 +300,7 @@ export function resolveOverlapRebalance(opts: {
 
 /** Load day-scoped entries for proposeRebalance (account ledger). */
 export async function loadTimelineEntriesForRebalance(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   changeStartIso: string,
   changeEndIso: string,

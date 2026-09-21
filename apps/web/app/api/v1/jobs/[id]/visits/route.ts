@@ -14,13 +14,11 @@ import {
 } from "../../../../../../lib/work-orders/sync-status";
 import { withAuth, withRole } from "../../../../../../lib/auth/middleware";
 import type { AuthSession } from "../../../../../../lib/auth/middleware";
-import { portableQuery, withPortableTransaction } from "../../../../../../lib/db/portable";
-import { randomUUID } from "crypto";
+import { query, getPool } from "../../../../../../lib/db";
 import { appendAuditLog } from "../../../../../../lib/db/audit";
 import { logger } from "../../../../../../lib/logger";
 import { advanceBookingRequestStage } from "../../../../../../lib/booking-requests/advance-stage";
 import { setVisitPlannedTasks } from "../../../../../../lib/work-orders/job-tasks";
-import { getVisitScheduleConflicts } from "../../../../../../lib/scheduling/visit-conflicts";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +51,7 @@ export const GET = withAuth(
     const offset = parseInt(searchParams.get("offset") ?? "0");
 
     // RLS automatically scopes tech to assigned visits — no extra filter needed
-    const visits = await portableQuery(
+    const visits = await query(
       `SELECT * FROM visits WHERE job_id = $1 AND account_id = $2 ORDER BY scheduled_start ASC LIMIT $3 OFFSET $4`,
       [jobId, session.accountId, limit, offset]
     );
@@ -102,15 +100,15 @@ export const POST = withRole(
       task_ids,
     } = parsed.data;
 
-    if (new Date(scheduled_end).getTime() <= new Date(scheduled_start).getTime()) {
-      return NextResponse.json(
-        { error: { code: "VALIDATION_ERROR", message: "scheduled_end must be after scheduled_start", traceId: session.traceId } },
-        { status: 422 },
-      );
-    }
+    const pool = getPool();
+    const client = await pool.connect();
 
     try {
-      return await withPortableTransaction(async (client) => {
+      await client.query("BEGIN");
+      await client.query(
+        `SELECT set_config('app.current_user_id', $1, true), set_config('app.current_account_id', $2, true), set_config('app.current_role', $3, true)`,
+        [session.userId, session.accountId, session.role]
+      );
 
       const { rows: jobRows } = await client.query<{ status: string }>(
         `SELECT status FROM jobs WHERE id = $1 AND account_id = $2 FOR UPDATE`,
@@ -118,38 +116,28 @@ export const POST = withRole(
       );
       // Only field-active visits block booking — future `scheduled` days must coexist (multi-day).
       const { rows: fieldActiveRows } = await client.query<{ count: string }>(
-        `SELECT COUNT(*) AS count FROM visits
+        `SELECT COUNT(*) FROM visits
          WHERE job_id = $1 AND account_id = $2
-           AND status IN (${FIELD_ACTIVE_VISIT_STATUSES.map((status) => `'${status}'`).join(", ")})`,
-        [jobId, session.accountId],
+           AND status = ANY($3::text[])`,
+        [jobId, session.accountId, [...FIELD_ACTIVE_VISIT_STATUSES]],
       );
-      const conflicts = await getVisitScheduleConflicts(client, {
-        accountId: session.accountId,
-        jobId,
-        assignedUserId: assigned_user_id ?? null,
-        scheduledStart: scheduled_start,
-        scheduledEnd: scheduled_end,
-      });
-      if (conflicts.technicianOverlapCount > 0) {
-        return NextResponse.json(
-          {
-            error: {
-              code: "TECHNICIAN_CONFLICT",
-              message: "That technician already has another visit during this time.",
-              traceId: session.traceId,
-            },
-          },
-          { status: 422 },
-        );
-      }
+      const { rows: overlapRows } = await client.query<{ count: string }>(
+        `SELECT COUNT(*) FROM visits
+         WHERE job_id = $1 AND account_id = $2
+           AND status NOT IN ('cancelled','completed')
+           AND scheduled_start < $4::timestamptz
+           AND scheduled_end > $3::timestamptz`,
+        [jobId, session.accountId, scheduled_start, scheduled_end],
+      );
       const guard = checkSchedulingPreconditions({
         jobStatus: jobRows[0]?.status ?? null,
         fieldActiveVisitCount: parseInt(fieldActiveRows[0]?.count ?? "0", 10),
-        overlappingVisitCount: conflicts.jobOverlapCount,
+        overlappingVisitCount: parseInt(overlapRows[0]?.count ?? "0", 10),
       });
 
       if (!guard.ok) {
-                const message =
+        await client.query("ROLLBACK");
+        const message =
           guard.error === "ACTIVE_VISIT_EXISTS"
             ? "A visit is already in progress for this project. Finish or cancel it before scheduling another day."
             : guard.error === "VISIT_OVERLAP"
@@ -172,7 +160,8 @@ export const POST = withRole(
           work_order_id,
         );
         if (!resolvedWorkOrderId) {
-                    return NextResponse.json(
+          await client.query("ROLLBACK");
+          return NextResponse.json(
             {
               error: {
                 code: "PRECONDITION_FAILED",
@@ -187,12 +176,11 @@ export const POST = withRole(
         }
       }
 
-      const visitId = randomUUID();
-      await client.query(
-        `INSERT INTO visits (id, account_id, job_id, work_order_id, assigned_user_id, scheduled_start, scheduled_end, tech_notes, visit_type)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      const { rows } = await client.query(
+        `INSERT INTO visits (account_id, job_id, work_order_id, assigned_user_id, scheduled_start, scheduled_end, tech_notes, visit_type)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING *`,
         [
-          visitId,
           session.accountId,
           jobId,
           resolvedWorkOrderId,
@@ -203,11 +191,8 @@ export const POST = withRole(
           visit_type,
         ]
       );
-      const inserted = await client.query<Record<string, unknown>>(
-        `SELECT * FROM visits WHERE id = $1 AND account_id = $2`,
-        [visitId, session.accountId],
-      );
-      const visit = inserted.rows[0] as Record<string, unknown> & { id: string };
+
+      const visit = rows[0];
 
       if (task_ids && task_ids.length > 0) {
         try {
@@ -219,7 +204,8 @@ export const POST = withRole(
             taskIds: task_ids,
           });
         } catch (e) {
-                    return NextResponse.json(
+          await client.query("ROLLBACK");
+          return NextResponse.json(
             {
               error: {
                 code: "VALIDATION_ERROR",
@@ -242,7 +228,8 @@ export const POST = withRole(
         );
         const br = brCheck.rows[0];
         if (!br || (br.job_id != null && br.job_id !== jobId)) {
-                    return NextResponse.json(
+          await client.query("ROLLBACK");
+          return NextResponse.json(
             {
               error: {
                 code: "PRECONDITION_FAILED",
@@ -290,7 +277,7 @@ export const POST = withRole(
       const jobStatus = jobRows[0]?.status;
       if (jobStatus === "draft" || jobStatus === "quoted") {
         await client.query(
-          `UPDATE jobs SET status = 'scheduled', updated_at = CURRENT_TIMESTAMP
+          `UPDATE jobs SET status = 'scheduled', updated_at = now()
            WHERE id = $1 AND account_id = $2`,
           [jobId, session.accountId]
         );
@@ -316,10 +303,11 @@ export const POST = withRole(
         await syncWorkOrderStatus(client, resolvedWorkOrderId, session.accountId);
       }
 
+      await client.query("COMMIT");
       return NextResponse.json({ data: visit }, { status: 201 });
-      });
     } catch (err) {
-            logger.error("[visits POST]", err, { traceId: session.traceId });
+      await client.query("ROLLBACK");
+      logger.error("[visits POST]", err, { traceId: session.traceId });
       return NextResponse.json(
         {
           error: {
@@ -330,6 +318,8 @@ export const POST = withRole(
         },
         { status: 500 }
       );
+    } finally {
+      client.release();
     }
   }
 );

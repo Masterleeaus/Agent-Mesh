@@ -4,7 +4,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole } from "@/lib/auth/middleware";
-import { withPortableTransaction } from "@/lib/db/portable";
+import { withDbSession } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { createFuelLogWithExpense } from "@/lib/vehicles/capture";
 
@@ -32,7 +32,7 @@ export const POST = withRole(["owner", "admin", "tech"], async (req: NextRequest
   }
   const d = parsed.data;
   try {
-    const result = await withPortableTransaction((client) =>
+    const result = await withDbSession(session, (client) =>
       createFuelLogWithExpense(client, {
         accountId: session.accountId,
         userId: session.userId,

@@ -9,7 +9,6 @@ import { NextResponse, type NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-pathname", request.nextUrl.pathname);
-  requestHeaders.set("x-request-target", `${request.nextUrl.pathname}${request.nextUrl.search}`);
   const response = NextResponse.next({
     request: { headers: requestHeaders },
   });

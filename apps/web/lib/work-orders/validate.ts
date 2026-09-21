@@ -1,11 +1,11 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   completionGateMessage,
   type CompletionCriterion,
 } from "@ai-fsm/domain";
 
 export async function validateWorkOrderForeignKeys(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   refs: {
     client_id: string;
@@ -77,7 +77,7 @@ export function enforceDraftOnlyFromAssessment(input: {
 
 /** Reject work order `completed` when visits or criteria are not satisfied. */
 export async function validateWorkOrderCompletion(
-  client: DbClient,
+  client: PoolClient,
   workOrderId: string,
   accountId: string,
   completionCriteria: CompletionCriterion[],

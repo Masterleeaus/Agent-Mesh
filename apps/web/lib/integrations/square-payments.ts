@@ -1,5 +1,5 @@
 import { SquareClient, SquareEnvironment, WebhooksHelper } from "square";
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { encryptJson, decryptJson } from "@/lib/crypto";
 import { randomUUID } from "node:crypto";
 
@@ -44,7 +44,7 @@ export interface SquareSettingsRow {
  * row exists. Must be called within a session-scoped client (RLS owner-only).
  */
 export async function loadSquareSettings(
-  client: DbClient,
+  client: PoolClient,
   accountId: string
 ): Promise<SquareSettingsRow | null> {
   const result = await client.query<{
@@ -63,20 +63,13 @@ export async function loadSquareSettings(
   );
   if (result.rowCount === 0) return null;
   const row = result.rows[0];
-  const rawConfig = row.config as SquarePublicConfig | string | null;
-  let config: SquarePublicConfig = { locationId: null, applicationId: null, webhookUrl: null };
-  if (typeof rawConfig === "string") {
-    try { config = { ...config, ...JSON.parse(rawConfig) }; } catch { /* keep safe defaults */ }
-  } else if (rawConfig && typeof rawConfig === "object") {
-    config = { ...config, ...rawConfig };
-  }
   const secrets: SquareSecrets = row.secrets
     ? decryptJson<SquareSecrets>(row.secrets)
     : { accessToken: null, webhookSignatureKey: null };
   return {
-    enabled: Boolean(row.enabled),
+    enabled: row.enabled,
     environment: row.environment,
-    config,
+    config: row.config ?? { locationId: null, applicationId: null, webhookUrl: null },
     secrets,
     status: row.status,
     statusDetail: row.status_detail,
@@ -91,7 +84,7 @@ export function encryptSquareSecrets(secrets: SquareSecrets): Buffer {
 
 function toSettings(row: SquareSettingsRow): SquareSettings {
   return {
-    enabled: Boolean(row.enabled),
+    enabled: row.enabled,
     environment: row.environment,
     locationId: row.config.locationId,
     applicationId: row.config.applicationId,

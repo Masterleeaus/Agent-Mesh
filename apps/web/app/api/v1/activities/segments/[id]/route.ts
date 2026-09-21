@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { z } from "zod";
 import { withAuth, type AuthSession } from "@/lib/auth/middleware";
 import { getPool } from "@/lib/db";
@@ -108,7 +108,7 @@ function estimatedMilesFromSegment(seg: SegRow): number | null {
  * deletes require client rebalance; otherwise 409 with proposed_rebalance.
  */
 async function resolveSegmentOverlaps(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   startedAt: string,
   endedAt: string,

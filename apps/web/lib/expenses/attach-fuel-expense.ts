@@ -2,7 +2,7 @@
  * When a fuel receipt is saved, stamp the open truck and write a fuel log.
  * TASK-113. Money stays on expenses; gallons live on vehicle_fuel_logs.
  */
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   coerceGallons,
   gallonsFromParsedReceipt,
@@ -32,7 +32,7 @@ export type AttachFuelExpenseResult = {
 };
 
 export async function resolveLoggedInVehicle(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   userId: string,
   explicitVehicleId?: string | null,
@@ -83,7 +83,7 @@ export async function resolveLoggedInVehicle(
 }
 
 export async function odometerForFuelDate(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   vehicleId: string,
   expenseDate: string,
@@ -115,7 +115,7 @@ export async function odometerForFuelDate(
 }
 
 async function odometerSuspectForFill(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   vehicleId: string,
   filledAt: string,
@@ -146,7 +146,7 @@ async function odometerSuspectForFill(
 }
 
 export async function attachFuelExpenseToVehicle(
-  client: DbClient,
+  client: PoolClient,
   input: AttachFuelExpenseInput,
 ): Promise<AttachFuelExpenseResult> {
   if (!isFuelExpenseCategory(input.category)) {

@@ -91,6 +91,12 @@ export function shouldCreateVisitCandidate(input: {
   hasScheduledVisit: boolean;
   /** Distance to matched property when both have coords; omit if unknown. */
   distanceMeters?: number | null;
+  /**
+   * Bluetooth ignition-off (TASK-149). Skip the 5-minute GPS dwell when we
+   * already have a distance to a property — the van parked is the arrival.
+   * Without distance, still require the dwell floor.
+   */
+  parkedArrival?: boolean;
 }): boolean {
   if (
     input.distanceMeters != null &&
@@ -100,6 +106,7 @@ export function shouldCreateVisitCandidate(input: {
   }
   if (input.score < VISIT_CONFIDENCE_FLOOR) return false;
   if (input.hasScheduledVisit) return true;
+  if (input.parkedArrival && input.distanceMeters != null) return true;
   return input.durationMinutes >= VISIT_CANDIDATE_MIN_DWELL_MINUTES;
 }
 
@@ -376,13 +383,15 @@ export function isLivePromptEligible(input: {
   confidenceScore: number;
   distanceProven: boolean;
   scheduledToday: boolean;
+  /** Distance-proven open job (scheduled/in_progress) — TASK-148. */
+  openJob?: boolean;
   alreadyPrompted: boolean;
   status: "pending" | "confirmed" | "ignored" | string;
 }): boolean {
   if (input.status !== "pending") return false;
   if (input.alreadyPrompted) return false;
   if (!input.workdayOpen) return false;
-  if (!input.scheduledToday) return false;
+  if (!input.scheduledToday && !input.openJob) return false;
   if (!input.distanceProven) return false;
   if (input.confidenceScore < LIVE_PROMPT_CONFIDENCE_FLOOR) return false;
   return true;
@@ -430,7 +439,7 @@ export function selectArrivalNextAction(input: {
   alreadyOnSiteWork: boolean;
   /**
    * Still on site (open stop / null departure). When false, confirm is historical
-   * labeling only — do not promise "Start job work" (switch_activity stays off).
+   * labeling only — do not promise "Start this job" (switch_activity stays off).
    */
   stillOnSite?: boolean;
 }): ArrivalNextAction {
@@ -461,7 +470,7 @@ export function selectArrivalNextAction(input: {
       input.activityType === "admin");
   return {
     show: true,
-    primaryLabel: startingJob ? "Start job work" : "Confirm arrival",
+    primaryLabel: startingJob ? "Start this job" : "Confirm arrival",
     suppressReason: null,
   };
 }

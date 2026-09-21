@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withAuth } from "../../../../../../lib/auth/middleware";
 import type { AuthSession } from "../../../../../../lib/auth/middleware";
-import { withPortableTransaction } from "../../../../../../lib/db/portable";
+import { getPool } from "../../../../../../lib/db";
 import { appendAuditLog } from "../../../../../../lib/db/audit";
 import { logger } from "../../../../../../lib/logger";
 import { checkCompletionPacket, isQuickJobPacketExempt } from "../../../../../../lib/completion-guard";
@@ -67,8 +67,15 @@ export const POST = withAuth(
     const targetStatus = parsed.data.status as VisitStatus;
     const techNotes = parsed.data.tech_notes;
 
+    const pool = getPool();
+    const client = await pool.connect();
+
     try {
-      return await withPortableTransaction(async (client) => {
+      await client.query("BEGIN");
+      await client.query(
+        `SELECT set_config('app.current_user_id', $1, true), set_config('app.current_account_id', $2, true), set_config('app.current_role', $3, true)`,
+        [session.userId, session.accountId, session.role]
+      );
 
       const existing = await client.query(
         `SELECT v.*,
@@ -83,6 +90,7 @@ export const POST = withAuth(
       );
 
       if (!existing.rows[0]) {
+        await client.query("ROLLBACK");
         return NextResponse.json(
           { error: { code: "NOT_FOUND", message: "Visit not found", traceId: session.traceId } },
           { status: 404 }
@@ -94,6 +102,7 @@ export const POST = withAuth(
       const allowed = visitTransitions[currentStatus];
 
       if (!allowed.includes(targetStatus)) {
+        await client.query("ROLLBACK");
         return NextResponse.json(
           {
             error: {
@@ -112,11 +121,12 @@ export const POST = withAuth(
         if (session.role === "owner" || session.role === "admin") {
           visit.assigned_user_id = session.userId;
           await client.query(
-            `UPDATE visits SET assigned_user_id = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 AND account_id = $3`,
+            `UPDATE visits SET assigned_user_id = $1, updated_at = now() WHERE id = $2 AND account_id = $3`,
             [session.userId, id, session.accountId]
           );
         } else {
-            return NextResponse.json(
+          await client.query("ROLLBACK");
+          return NextResponse.json(
             {
               error: {
                 code: "PRECONDITION_FAILED",
@@ -135,6 +145,7 @@ export const POST = withAuth(
         visit.generated_from_plan_id &&
         visit.membership_visit_phase !== "reporting"
       ) {
+        await client.query("ROLLBACK");
         return NextResponse.json(
           {
             error: {
@@ -154,6 +165,7 @@ export const POST = withAuth(
         visit.generated_from_plan_id &&
         !visit.membership_snapshot_sent_at
       ) {
+        await client.query("ROLLBACK");
         return NextResponse.json(
           {
             error: {
@@ -180,7 +192,8 @@ export const POST = withAuth(
         });
 
         if (!guard.ok) {
-            const message = guard.error === "MISSING_PHOTO"
+          await client.query("ROLLBACK");
+          const message = guard.error === "MISSING_PHOTO"
             ? "At least one photo is required before completing this visit (or waive photos)"
             : "A signature or waiver is required before completing this visit";
           return NextResponse.json(
@@ -203,7 +216,7 @@ export const POST = withAuth(
       if (targetStatus === "arrived") {
         // Step 1: scheduled → arrived (DB trigger allows this)
         await client.query(
-          `UPDATE visits SET status = 'arrived', arrived_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+          `UPDATE visits SET status = 'arrived', arrived_at = now(), updated_at = now()
            WHERE id = $1 AND account_id = $2`,
           [id, session.accountId]
         );
@@ -211,33 +224,27 @@ export const POST = withAuth(
         const noteClause2 = techNotes !== undefined ? `, tech_notes = $3` : "";
         const params2: unknown[] = [id, session.accountId];
         if (techNotes !== undefined) params2.push(techNotes);
-        await client.query(
-          `UPDATE visits SET status = 'in_progress', updated_at = CURRENT_TIMESTAMP${noteClause2}
-           WHERE id = $1 AND account_id = $2`,
+        const { rows: rows2 } = await client.query<VisitRow>(
+          `UPDATE visits SET status = 'in_progress', updated_at = now()${noteClause2}
+           WHERE id = $1 AND account_id = $2
+           RETURNING *`,
           params2
         );
-        const rows2 = await client.query<VisitRow>(
-          `SELECT * FROM visits WHERE id = $1 AND account_id = $2`,
-          [id, session.accountId],
-        );
-        updated = rows2.rows[0];
+        updated = rows2[0];
         effectiveStatus = "in_progress";
       } else {
-        const completedClause = targetStatus === "completed" ? ", completed_at = CURRENT_TIMESTAMP" : "";
+        const completedClause = targetStatus === "completed" ? ", completed_at = now()" : "";
         const noteClause = techNotes !== undefined ? `, tech_notes = $4` : "";
         const params: unknown[] = [targetStatus, id, session.accountId];
         if (techNotes !== undefined) params.push(techNotes);
-        await client.query(
+        const { rows } = await client.query<VisitRow>(
           `UPDATE visits
-           SET status = $1, updated_at = CURRENT_TIMESTAMP${completedClause}${noteClause}
-           WHERE id = $2 AND account_id = $3`,
+           SET status = $1, updated_at = now()${completedClause}${noteClause}
+           WHERE id = $2 AND account_id = $3
+           RETURNING *`,
           params
         );
-        const refreshed = await client.query<VisitRow>(
-          `SELECT * FROM visits WHERE id = $1 AND account_id = $2`,
-          [id, session.accountId],
-        );
-        updated = refreshed.rows[0];
+        updated = rows[0];
         effectiveStatus = targetStatus;
       }
 
@@ -247,7 +254,7 @@ export const POST = withAuth(
         // visit_time_logs writer was removed in TASK-064). Close whatever was
         // active, start job_work linked to this visit.
         await client.query(
-          `UPDATE activity_entries SET ended_at = CURRENT_TIMESTAMP
+          `UPDATE activity_entries SET ended_at = now()
            WHERE account_id = $1 AND user_id = $2
              AND ended_at IS NULL AND voided_at IS NULL
              AND NOT (activity_type = 'job_work' AND entity_type = 'visit' AND entity_id = $3)`,
@@ -259,10 +266,10 @@ export const POST = withAuth(
            SELECT $1, $2, CURRENT_DATE, 'job_work', 'revenue', 'visit', $3, 'auto_visit'
            WHERE NOT EXISTS (
              SELECT 1 FROM activity_entries
-             WHERE account_id = $4 AND user_id = $5
+             WHERE account_id = $1 AND user_id = $2
                AND ended_at IS NULL AND voided_at IS NULL
            )`,
-          [session.accountId, session.userId, id, session.accountId, session.userId]
+          [session.accountId, session.userId, id]
         );
       }
 
@@ -270,7 +277,7 @@ export const POST = withAuth(
         // Activity ledger: closing out the visit ends its job_work segment.
         // (The legacy visit_time_logs close was removed in TASK-064.)
         await client.query(
-          `UPDATE activity_entries SET ended_at = CURRENT_TIMESTAMP
+          `UPDATE activity_entries SET ended_at = now()
            WHERE account_id = $1 AND user_id = $2
              AND ended_at IS NULL AND voided_at IS NULL
              AND entity_type = 'visit' AND entity_id = $3`,
@@ -317,7 +324,7 @@ export const POST = withAuth(
           ) {
             // Execution visit started — advance job from scheduled → in_progress
             await client.query(
-              `UPDATE jobs SET status = 'in_progress', updated_at = CURRENT_TIMESTAMP
+              `UPDATE jobs SET status = 'in_progress', updated_at = now()
                WHERE id = $1 AND account_id = $2`,
               [updated.job_id, session.accountId]
             );
@@ -338,7 +345,7 @@ export const POST = withAuth(
           ) {
             // Day of work finished — project is active, not closed
             await client.query(
-              `UPDATE jobs SET status = 'in_progress', updated_at = CURRENT_TIMESTAMP
+              `UPDATE jobs SET status = 'in_progress', updated_at = now()
                WHERE id = $1 AND account_id = $2`,
               [updated.job_id, session.accountId]
             );
@@ -364,9 +371,11 @@ export const POST = withAuth(
               active: string;
             }>(
               `SELECT
-                 SUM(CASE WHEN status NOT IN ('completed','cancelled') THEN 1 ELSE 0 END) AS pending,
-                 SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
-                 SUM(CASE WHEN status IN ('in_progress','arrived','dispatched','traveling','waiting') THEN 1 ELSE 0 END) AS active
+                 COUNT(*) FILTER (WHERE status NOT IN ('completed','cancelled')) AS pending,
+                 COUNT(*) FILTER (WHERE status = 'completed') AS completed,
+                 COUNT(*) FILTER (
+                   WHERE status IN ('in_progress','arrived','dispatched','traveling','waiting')
+                 ) AS active
                FROM visits
                WHERE job_id = $1 AND account_id = $2
                  AND visit_type IN ('standard','punch_list')`,
@@ -379,7 +388,7 @@ export const POST = withAuth(
               parseInt(completedCount, 10) === 0
             ) {
               await client.query(
-                `UPDATE jobs SET status = 'scheduled', updated_at = CURRENT_TIMESTAMP
+                `UPDATE jobs SET status = 'scheduled', updated_at = now()
                  WHERE id = $1 AND account_id = $2`,
                 [updated.job_id, session.accountId]
               );
@@ -430,9 +439,10 @@ export const POST = withAuth(
         });
       }
 
+      await client.query("COMMIT");
       return NextResponse.json({ data: updated });
-      });
     } catch (err) {
+      await client.query("ROLLBACK");
       logger.error("[visits transition POST]", err, { traceId: session.traceId });
       return NextResponse.json(
         {
@@ -444,6 +454,8 @@ export const POST = withAuth(
         },
         { status: 500 }
       );
+    } finally {
+      client.release();
     }
   }
 );

@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 import type { AutomationRow, RunResult } from "./automations/types.js";
 
@@ -23,75 +23,65 @@ interface StaleJob {
   days_without_visit: number;
 }
 
-export async function findDueStaleJobNudges(client: DatabaseClient): Promise<AutomationRow[]> {
+export async function findDueStaleJobNudges(client: Client): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
-    `SELECT id, account_id, type, config, enabled, next_run_at
+    `SELECT id, account_id, type, config, enabled, next_run_at::text
        FROM automations
       WHERE type = 'stale_job_nudge'
         AND enabled = true
-        AND next_run_at <= CURRENT_TIMESTAMP`
+        AND next_run_at <= now()`
   );
   return rows;
 }
 
 export async function findStaleJobs(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<StaleJob[]> {
   const days = (automation.config as { days_without_visit?: number }).days_without_visit ?? 14;
 
-  const now = new Date();
-  const staleCutoff = new Date(now.getTime() - days * 24 * 60 * 60_000);
-  const weeklyCutoff = new Date(now.getTime() - 7 * 24 * 60 * 60_000);
-  type StaleJobRow = Omit<StaleJob, "days_without_visit"> & { updated_at: string };
-
-  const { rows } = await client.query<StaleJobRow>(
-    `SELECT j.id, j.account_id, j.client_id, j.title, j.status, j.updated_at,
-            (SELECT MAX(v.completed_at)
-               FROM visits v
-              WHERE v.job_id = j.id
-                AND v.account_id = j.account_id
-                AND v.completed_at IS NOT NULL) AS last_visit_at
+  const { rows } = await client.query<StaleJob>(
+    `SELECT j.id, j.account_id, j.client_id, j.title, j.status,
+            last_v.completed_at::text AS last_visit_at,
+            COALESCE(
+              EXTRACT(DAY FROM (now() - last_v.completed_at))::int,
+              EXTRACT(DAY FROM (now() - j.updated_at))::int
+            ) AS days_without_visit
        FROM jobs j
+       LEFT JOIN LATERAL (
+         SELECT completed_at FROM visits v
+          WHERE v.job_id = j.id AND v.account_id = j.account_id
+            AND v.completed_at IS NOT NULL
+          ORDER BY v.completed_at DESC LIMIT 1
+       ) last_v ON true
       WHERE j.account_id = $1
         AND j.status IN ('scheduled', 'in_progress')
         AND NOT EXISTS (
           SELECT 1 FROM visits v2
            WHERE v2.job_id = j.id AND v2.account_id = j.account_id
              AND v2.status = 'scheduled'
-             AND v2.scheduled_start > $2
+             AND v2.scheduled_start > now()
         )
-        AND COALESCE(
-          (SELECT MAX(v3.completed_at)
-             FROM visits v3
-            WHERE v3.job_id = j.id
-              AND v3.account_id = j.account_id
-              AND v3.completed_at IS NOT NULL),
-          j.updated_at
-        ) < $3
+        AND (
+          (last_v.completed_at IS NOT NULL AND last_v.completed_at < now() - ($2 || ' days')::interval) OR
+          (last_v.completed_at IS NULL     AND j.updated_at        < now() - ($2 || ' days')::interval)
+        )
         AND NOT EXISTS (
           SELECT 1 FROM audit_log al
            WHERE al.entity_type = 'stale_job_nudge'
              AND al.entity_id = j.id
              AND al.account_id = j.account_id
-             AND al.created_at > $4
+             AND al.created_at > now() - interval '7 days'
         )
       ORDER BY j.updated_at ASC`,
-    [automation.account_id, now.toISOString(), staleCutoff.toISOString(), weeklyCutoff.toISOString()]
+    [automation.account_id, days]
   );
 
-  return rows.map((row) => {
-    const basis = row.last_visit_at ?? row.updated_at;
-    return {
-      ...row,
-      last_visit_at: row.last_visit_at ? new Date(row.last_visit_at).toISOString() : null,
-      days_without_visit: Math.max(0, Math.floor((now.getTime() - new Date(basis).getTime()) / (24 * 60 * 60_000))),
-    };
-  });
+  return rows;
 }
 
 async function emitStaleJobNudge(
-  client: DatabaseClient,
+  client: Client,
   job: StaleJob,
   automationId: string
 ): Promise<boolean> {
@@ -116,7 +106,7 @@ async function emitStaleJobNudge(
   return true;
 }
 
-export async function processStaleJobs(client: DatabaseClient, automation: AutomationRow): Promise<RunResult> {
+export async function processStaleJobs(client: Client, automation: AutomationRow): Promise<RunResult> {
   const result: RunResult = {
     automationId: automation.id,
     accountId: automation.account_id,

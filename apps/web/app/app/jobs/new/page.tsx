@@ -3,7 +3,7 @@ import { getSession } from "@/lib/auth/session";
 import { canTransitionJob } from "@/lib/auth/permissions";
 import { query } from "@/lib/db";
 import { JobCreateForm } from "./JobCreateForm";
-import { QuickJobForm } from "./QuickJobForm";
+import { QuickBookButton } from "@/components/jobs/QuickBookButton";
 import { Card, PageContainer, PageHeader, SectionHeader } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
@@ -44,20 +44,20 @@ export default async function NewJobPage({ searchParams }: PageProps) {
 
   return (
     <PageContainer>
-      <PageHeader title="New Project" backHref="/app/jobs" backLabel="Projects" />
+      <PageHeader title="New Job" backHref="/app/jobs" backLabel="Jobs" />
 
-      {/* Quick Job — primary path */}
+      {/* Driveway lane — same capture as Today / FAB. House required. */}
       <Card>
-        <SectionHeader title="Quick Project" />
+        <SectionHeader title="Quick job" />
         <p style={{ fontSize: "var(--text-sm)", color: "var(--fg-muted)", marginTop: "-8px", marginBottom: "var(--space-3)" }}>
-          Title + client, done. Fill in details later.
+          Person, house, and today. Time and materials. No estimate.
         </p>
-        <QuickJobForm
-          clients={clients}
-          properties={properties}
-          initialClientId={client_id}
-          initialPropertyId={property_id}
-        />
+        <QuickBookButton
+          className="p7-btn p7-btn-primary"
+          style={{ minHeight: 48, fontWeight: 700 }}
+        >
+          + Job
+        </QuickBookButton>
       </Card>
 
       {/* Full Setup — secondary path */}

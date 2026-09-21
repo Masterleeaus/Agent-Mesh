@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
-import { withPortableTransaction, portableQueryOne } from "@/lib/db/portable";
+import { getPool } from "@/lib/db";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
 import { calculateTravelForAccount } from "@/lib/travel/calculate";
@@ -56,8 +56,16 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
   }
   const data = parsed.data;
 
+  const pool = getPool();
+  const client = await pool.connect();
   try {
-    return await withPortableTransaction(async (client) => {
+    await client.query("BEGIN");
+    await client.query(
+      `SELECT set_config('app.current_user_id', $1, true),
+              set_config('app.current_account_id', $2, true),
+              set_config('app.current_role', $3, true)`,
+      [session.userId, session.accountId, session.role]
+    );
 
     const inv = await client.query<{
       id: string;
@@ -74,6 +82,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
       [invoiceId, session.accountId]
     );
     if (!inv.rowCount) {
+      await client.query("ROLLBACK");
       return NextResponse.json(
         { error: { code: "NOT_FOUND", message: "Invoice not found", traceId: session.traceId } },
         { status: 404 }
@@ -81,6 +90,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
     }
     const invoice = inv.rows[0];
     if (invoice.status !== "draft") {
+      await client.query("ROLLBACK");
       return NextResponse.json(
         {
           error: {
@@ -185,6 +195,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
       });
     } else if (data.billing_mode === "custom") {
       if (data.custom_total_cents == null) {
+        await client.query("ROLLBACK");
         return NextResponse.json(
           {
             error: {
@@ -197,6 +208,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
         );
       }
       if (!data.override_reason?.trim()) {
+        await client.query("ROLLBACK");
         return NextResponse.json(
           {
             error: {
@@ -250,10 +262,11 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
         // Dedupe by session id so a session tagged with both job + visit is counted once.
         // Fall back to mileage_logs (job_id or visit→job) when no session miles exist.
         const sessions = await client.query<{ total_miles: string }>(
-          `SELECT COALESCE(SUM(session_miles), 0) AS total_miles
+          `SELECT COALESCE(SUM(session_miles), 0)::text AS total_miles
            FROM (
-             SELECT s.id,
-                    MAX(COALESCE(s.miles, (s.end_odometer - s.start_odometer))) AS session_miles
+             SELECT DISTINCT ON (s.id)
+                    s.id,
+                    COALESCE(s.miles, (s.end_odometer - s.start_odometer)::numeric) AS session_miles
              FROM vehicle_sessions s
              JOIN vehicle_session_activities a ON a.session_id = s.id
              LEFT JOIN visits v
@@ -261,7 +274,8 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
               AND a.entity_type = 'visit'
               AND v.account_id = s.account_id
              WHERE s.account_id = $1
-               AND (s.status IS NULL OR s.status <> 'voided')
+               AND s.status IS DISTINCT FROM 'voided'
+               AND (s.miles_source IN ('odometer', 'manual_miles') OR s.miles_source IS NULL)
                AND (
                  (a.entity_type = 'job' AND a.entity_id = $2)
                  OR (a.entity_type = 'visit' AND v.job_id = $2)
@@ -270,7 +284,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
                  s.miles IS NOT NULL
                  OR (s.start_odometer IS NOT NULL AND s.end_odometer IS NOT NULL)
                )
-             GROUP BY s.id
+             ORDER BY s.id
            ) deduped`,
           [session.accountId, invoice.job_id]
         );
@@ -278,7 +292,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
 
         if (total <= 0) {
           const logs = await client.query<{ total_miles: string }>(
-            `SELECT COALESCE(SUM(ml.miles), 0) AS total_miles
+            `SELECT COALESCE(SUM(ml.miles), 0)::text AS total_miles
              FROM mileage_logs ml
              LEFT JOIN visits v
                ON v.id = ml.visit_id
@@ -320,6 +334,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
           actual_total_cents: chargeCents,
         });
         if (diff.requires_owner_review && !data.owner_review_approved) {
+          await client.query("ROLLBACK");
           return NextResponse.json(
             {
               error: {
@@ -382,6 +397,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
       },
     });
 
+    await client.query("COMMIT");
     return NextResponse.json({
       data: {
         snapshot,
@@ -395,55 +411,63 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
             : null,
       },
     });
-    });
   } catch (error) {
+    await client.query("ROLLBACK");
     logger.error("POST /api/v1/invoices/[id]/travel", error, { traceId: session.traceId });
     return NextResponse.json(
       { error: { code: "INTERNAL_ERROR", message: "Failed to apply invoice travel", traceId: session.traceId } },
       { status: 500 }
     );
+  } finally {
+    client.release();
   }
 });
 
 export const GET = withRole(["owner", "admin", "tech"], async (request: NextRequest, session: AuthSession) => {
   const invoiceId = invoiceIdFromPath(request.nextUrl.pathname);
-  const inv = await portableQueryOne<{
-    travel_snapshot_id: string | null;
-    travel_billing_mode: string | null;
-    estimate_id: string | null;
-  }>(
-    `SELECT travel_snapshot_id, travel_billing_mode, estimate_id
-     FROM invoices WHERE id = $1 AND account_id = $2`,
-    [invoiceId, session.accountId]
-  );
-  if (!inv) {
-    return NextResponse.json(
-      { error: { code: "NOT_FOUND", message: "Invoice not found", traceId: session.traceId } },
-      { status: 404 }
+  const pool = getPool();
+  const client = await pool.connect();
+  try {
+    await client.query(
+      `SELECT set_config('app.current_user_id', $1, true),
+              set_config('app.current_account_id', $2, true),
+              set_config('app.current_role', $3, true)`,
+      [session.userId, session.accountId, session.role]
     );
-  }
-
-  return withPortableTransaction(async (client) => {
-    const current = inv.travel_snapshot_id
-      ? await getTravelSnapshot(client, inv.travel_snapshot_id)
-      : null;
-
-    let estimated = null as Awaited<ReturnType<typeof getTravelSnapshot>>;
-    if (inv.estimate_id) {
+    const inv = await client.query<{
+      travel_snapshot_id: string | null;
+      travel_billing_mode: string | null;
+      estimate_id: string | null;
+    }>(
+      `SELECT travel_snapshot_id, travel_billing_mode, estimate_id
+       FROM invoices WHERE id = $1 AND account_id = $2`,
+      [invoiceId, session.accountId]
+    );
+    if (!inv.rowCount) {
+      return NextResponse.json(
+        { error: { code: "NOT_FOUND", message: "Invoice not found", traceId: session.traceId } },
+        { status: 404 }
+      );
+    }
+    let current = null;
+    if (inv.rows[0].travel_snapshot_id) {
+      current = await getTravelSnapshot(client, inv.rows[0].travel_snapshot_id);
+    }
+    let estimated = null;
+    if (inv.rows[0].estimate_id) {
       const est = await client.query<{ travel_snapshot_id: string | null }>(
-        `SELECT travel_snapshot_id FROM estimates WHERE id = $1 AND account_id = $2`,
-        [inv.estimate_id, session.accountId]
+        `SELECT travel_snapshot_id FROM estimates WHERE id = $1`,
+        [inv.rows[0].estimate_id]
       );
       if (est.rows[0]?.travel_snapshot_id) {
         estimated = await getTravelSnapshot(client, est.rows[0].travel_snapshot_id);
       }
     }
-
     return NextResponse.json({
       data: {
         current,
         estimated,
-        billing_mode: inv.travel_billing_mode,
+        billing_mode: inv.rows[0].travel_billing_mode,
         comparison:
           current && estimated
             ? compareTravelSnapshots({
@@ -453,5 +477,7 @@ export const GET = withRole(["owner", "admin", "tech"], async (request: NextRequ
             : null,
       },
     });
-  });
+  } finally {
+    client.release();
+  }
 });

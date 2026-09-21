@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { geofenceMeters, isStopNearProperty, matchCustomerAtStop } from "../stop-proximity";
+import {
+  geofenceMeters,
+  isDifferentPropertyStill,
+  isStopNearProperty,
+  matchCustomerAtStop,
+  relocationRadiusForStop,
+} from "../stop-proximity";
+import { DEFAULT_RELOCATION_METERS, MIN_RELOCATION_METERS } from "@ai-fsm/domain";
 
 describe("stop-proximity", () => {
   const stop = { latitude: 42.9956, longitude: -71.4548 };
@@ -50,5 +57,81 @@ describe("stop-proximity", () => {
       }),
     ).toBe(true);
     expect(geofenceMeters(500)).toBeLessThanOrEqual(250 * 0.3048);
+  });
+
+  it("relocationRadiusForStop uses unmatched default when no property hits", () => {
+    expect(
+      relocationRadiusForStop({ latitude: 42.9956, longitude: -71.4548 }, []),
+    ).toBeCloseTo(DEFAULT_RELOCATION_METERS);
+  });
+
+  it("relocationRadiusForStop floors a 150ft match at 80m (TASK-148)", () => {
+    const r = relocationRadiusForStop(stop, [
+      {
+        propertyId: "p1",
+        clientId: "c1",
+        clientName: "Gina",
+        address: "142 Brock",
+        latitude: 42.99565,
+        longitude: -71.45485,
+        geofenceRadiusFeet: 150,
+        jobId: "j1",
+      },
+    ]);
+    expect(r).toBe(MIN_RELOCATION_METERS);
+  });
+
+  it("isDifferentPropertyStill holds on unmatched neighbor geocode (TASK-150)", () => {
+    const ash = {
+      propertyId: "p-ash",
+      clientId: "c1",
+      clientName: "Peter",
+      address: "4 Ash St",
+      latitude: 42.789695,
+      longitude: -71.247093,
+      geofenceRadiusFeet: 250,
+      jobId: "j1",
+    };
+    const open = { latitude: 42.7896, longitude: -71.2471 };
+    // ~110m north — outside 80m floor, no other property → hold
+    expect(
+      isDifferentPropertyStill(
+        open,
+        { latitude: 42.7906, longitude: -71.2471 },
+        [ash],
+        MIN_RELOCATION_METERS,
+      ),
+    ).toBe(false);
+  });
+
+  it("isDifferentPropertyStill splits when the ping is a different known property", () => {
+    const ash = {
+      propertyId: "p-ash",
+      clientId: "c1",
+      clientName: "Peter",
+      address: "4 Ash St",
+      latitude: 42.789695,
+      longitude: -71.247093,
+      geofenceRadiusFeet: 250,
+      jobId: "j1",
+    };
+    const landing = {
+      propertyId: "p-landing",
+      clientId: "c2",
+      clientName: "TJ",
+      address: "63 Landing",
+      latitude: 42.801,
+      longitude: -71.26,
+      geofenceRadiusFeet: 150,
+      jobId: "j2",
+    };
+    expect(
+      isDifferentPropertyStill(
+        { latitude: 42.7896, longitude: -71.2471 },
+        { latitude: 42.801, longitude: -71.26 },
+        [ash, landing],
+        MIN_RELOCATION_METERS,
+      ),
+    ).toBe(true);
   });
 });

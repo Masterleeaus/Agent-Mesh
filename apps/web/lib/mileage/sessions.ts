@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 
 /**
  * Vehicle-session mileage helpers.
@@ -24,7 +24,7 @@ export type StartValidation =
  * open session's start still pins the floor.
  */
 export async function lastKnownOdometer(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   vehicleId: string,
 ): Promise<number | null> {
@@ -45,7 +45,7 @@ export type OpenSessionRow = {
 
 /** The open/incomplete prior session for a vehicle, if one exists. */
 export async function findOpenSessionForVehicle(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   vehicleId: string,
 ): Promise<OpenSessionRow | null> {

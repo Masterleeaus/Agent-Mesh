@@ -3,6 +3,7 @@ import {
   OWNER_QUICK_ACTIONS,
   FIELD_QUICK_ACTIONS,
   FAB_QUICK_ACTIONS,
+  fieldReceiptHref,
 } from "../quick-actions";
 
 describe("quick actions", () => {
@@ -34,16 +35,23 @@ describe("quick actions", () => {
     expect(FIELD_QUICK_ACTIONS.some((a) => a.href === "/app/capture")).toBe(false);
   });
 
-  it("puts Quick job first on My Day (TASK-119 launch point)", () => {
-    expect(FIELD_QUICK_ACTIONS[0]).toMatchObject({
-      label: "Quick job",
-      action: "quick-book",
-    });
+  it("Today strip is Job, Receipt, Quote — nothing else", () => {
+    expect(FIELD_QUICK_ACTIONS.map((a) => a.label)).toEqual(["Job", "Receipt", "Quote"]);
+    expect(FIELD_QUICK_ACTIONS[0]).toMatchObject({ action: "quick-book" });
+    expect(FIELD_QUICK_ACTIONS[1].href).toBe("/app/expenses/new");
+    expect(FIELD_QUICK_ACTIONS[2].href).toMatch(/^\/app\/estimates/);
   });
 
   it("exposes Quick job on the global FAB (TASK-119 launch point)", () => {
     expect(FAB_QUICK_ACTIONS.some((a) => a.label === "Quick job" && a.action === "quick-book")).toBe(
       true,
     );
+  });
+
+  it("pins a Today receipt to the current job when we know the house", () => {
+    expect(fieldReceiptHref("fc42141c-870d-4af3-9933-b2e03d4950a0")).toBe(
+      "/app/expenses/new?job=fc42141c-870d-4af3-9933-b2e03d4950a0",
+    );
+    expect(fieldReceiptHref(null)).toBe("/app/expenses/new");
   });
 });

@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth/session";
 import { query, queryOne } from "@/lib/db";
 import { buildClientDocumentFilename } from "@/lib/estimates/guardrails";
 import { PrintButton } from "./PrintButton";
+import { formatBusinessTime } from "@/lib/time/business-tz";
 import type { ChecklistDisposition } from "@ai-fsm/domain";
 
 export const dynamic = "force-dynamic";
@@ -40,22 +41,6 @@ interface ChecklistRow extends Record<string, unknown> {
   sort_order: number;
 }
 
-interface CompletionPacketRow extends Record<string, unknown> {
-  photo_urls: string[] | string;
-  signature_url: string | null;
-  signature_waiver: boolean;
-  notes: string | null;
-  photos_waived: boolean;
-  photos_waiver_reason: string | null;
-}
-
-interface AcknowledgementRow extends Record<string, unknown> {
-  customer_name: string;
-  customer_email: string | null;
-  acknowledgement_notes: string | null;
-  acknowledged_at: Date | string;
-}
-
 function fmtDate(d: Date | string | null | undefined): string {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-US", {
@@ -65,9 +50,7 @@ function fmtDate(d: Date | string | null | undefined): string {
 
 function fmtTime(d: Date | string | null | undefined): string {
   if (!d) return "—";
-  return new Date(d).toLocaleTimeString("en-US", {
-    hour: "numeric", minute: "2-digit", hour12: true,
-  });
+  return formatBusinessTime(d);
 }
 
 function addr(
@@ -162,22 +145,6 @@ export default async function VisitReportPrintPage({
      WHERE visit_id = $1 AND account_id = $2
      ORDER BY sort_order ASC`,
     [id, session.accountId]
-  );
-
-  const completionPacket = await queryOne<CompletionPacketRow>(
-    `SELECT photo_urls, signature_url, signature_waiver, notes, photos_waived, photos_waiver_reason
-     FROM completion_packets WHERE visit_id = $1 AND account_id = $2`,
-    [id, session.accountId],
-  );
-  if (completionPacket && typeof completionPacket.photo_urls === "string") {
-    try { completionPacket.photo_urls = JSON.parse(completionPacket.photo_urls) as string[]; }
-    catch { completionPacket.photo_urls = []; }
-  }
-  const acknowledgement = await queryOne<AcknowledgementRow>(
-    `SELECT customer_name, customer_email, acknowledgement_notes, acknowledged_at
-     FROM field_service_report_acknowledgements
-     WHERE visit_id = $1 AND account_id = $2`,
-    [id, session.accountId],
   );
 
   const reportNumber = `RPT-${visit.id.slice(0, 8).toUpperCase()}`;
@@ -396,34 +363,7 @@ export default async function VisitReportPrintPage({
           </div>
         )}
 
-                {completionPacket && (
-          <div className="section-block">
-            <h2>Completion Evidence</h2>
-            <p>{Array.isArray(completionPacket.photo_urls) && completionPacket.photo_urls.length > 0
-              ? `${completionPacket.photo_urls.length} completion photo${completionPacket.photo_urls.length === 1 ? "" : "s"} captured.`
-              : completionPacket.photos_waived
-                ? `Photos waived${completionPacket.photos_waiver_reason ? `: ${completionPacket.photos_waiver_reason}` : "."}`
-                : "No completion photos recorded."}</p>
-            <p>{completionPacket.signature_url ? "Customer signature captured." : completionPacket.signature_waiver ? "Customer signature waived." : "No customer signature recorded."}</p>
-            {completionPacket.notes && <p style={{ whiteSpace: "pre-wrap", marginTop: 8 }}>{completionPacket.notes}</p>}
-          </div>
-        )}
-
-        <div className="section-block">
-          <h2>Customer Acknowledgement</h2>
-          {acknowledgement ? (
-            <>
-              <p><strong>{acknowledgement.customer_name}</strong>{acknowledgement.customer_email ? ` · ${acknowledgement.customer_email}` : ""}</p>
-              <p>Reviewed and acknowledged this service report on {fmtDate(acknowledgement.acknowledged_at)} at {fmtTime(acknowledgement.acknowledged_at)}.</p>
-              {acknowledgement.acknowledgement_notes && <p style={{ whiteSpace: "pre-wrap" }}>{acknowledgement.acknowledgement_notes}</p>}
-              <p className="meta-label" style={{ marginTop: 8 }}>Acknowledgement records report review only; it is not a payment confirmation, warranty waiver, or legal release.</p>
-            </>
-          ) : (
-            <p className="meta-label">No customer acknowledgement has been recorded for this report.</p>
-          )}
-        </div>
-
-<div className="footer">
+        <div className="footer">
           Dovetails Services LLC &nbsp;·&nbsp; {reportNumber} &nbsp;·&nbsp; {visitDate}
         </div>
       </div>

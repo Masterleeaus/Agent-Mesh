@@ -3,7 +3,7 @@
  * RLS session is set (withDbSession) for the authed subscribe/unsubscribe
  * routes, or a pool client for internal sends.
  */
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 
 export interface PushSubscriptionRow {
   id: string;
@@ -20,7 +20,7 @@ export interface WebPushSubscription {
 
 /** Upsert a subscription for a user. Re-subscribing the same endpoint refreshes it. */
 export async function saveSubscription(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   userId: string,
   sub: WebPushSubscription,
@@ -42,7 +42,7 @@ export async function saveSubscription(
 
 /** Delete a subscription by endpoint (unsubscribe / expired). */
 export async function deleteSubscription(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   endpoint: string,
 ): Promise<void> {

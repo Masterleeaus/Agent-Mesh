@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { z } from "zod";
 
 export const documentLinksBodySchema = z.object({
@@ -19,7 +19,7 @@ export const documentLinksBodySchema = z.object({
 export type DocumentLinksBody = z.infer<typeof documentLinksBodySchema>;
 
 export async function assertClientInAccount(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   clientId: string,
 ): Promise<{ id: string; name: string }> {
@@ -34,7 +34,7 @@ export async function assertClientInAccount(
 }
 
 export async function assertJobForClient(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   jobId: string,
   clientId: string,
@@ -50,7 +50,7 @@ export async function assertJobForClient(
 }
 
 export async function assertPropertyForClient(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   propertyId: string,
   clientId: string,
@@ -66,7 +66,7 @@ export async function assertPropertyForClient(
 }
 
 export async function createPropertyForClient(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   clientId: string,
   input: NonNullable<DocumentLinksBody["new_property"]>,

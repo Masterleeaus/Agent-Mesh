@@ -421,7 +421,10 @@ Acceptance Criteria:
 - [x] Mounted once, so every page under `AppShell` benefits.
 
 ## Completed
+- [TASK-131: Audit hardening — framework security patch](../archive/backlog-done/TASK-131-framework-security-patch.md) — Done (validated 2026-09-09)
+- [TASK-128: CI guard against new duplicate migration numbers](../archive/backlog-done/TASK-128-migration-prefix-guard.md) — Done (validated 2026-09-09)
 
+- [TASK-123: Agent accessibility — invariants doc + one-command dev/test stack](../archive/backlog-done/TASK-123-agent-accessibility.md) — Done (#632)
 - [TASK-020: PWA Installability](../archive/backlog-done/TASK-020-pwa-installability.md) — Done
 - [TASK-033: Read-Only Business MCP Server](../archive/backlog-done/TASK-033-read-only-mcp.md) — Done
 - [TASK-083: Attention Phase 2 — estimates badge, email, prune, filters](../archive/backlog-done/TASK-083-attention-phase-2.md) — Done (PR #571)

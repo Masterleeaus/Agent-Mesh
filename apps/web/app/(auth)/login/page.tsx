@@ -58,8 +58,8 @@ export default function LoginPage() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1>Titan Business Ops</h1>
-        <p>Sign in to run your business</p>
+        <h1>Dovetails</h1>
+        <p>Sign in to your account</p>
 
         {error && (
           <div className="error-message" role="alert">

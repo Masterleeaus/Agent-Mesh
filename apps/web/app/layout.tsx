@@ -13,20 +13,17 @@ const archivo = Archivo({
 });
 
 export const metadata: Metadata = {
-  title: "Titan Business Ops",
-  description: "Titan Business Ops — standalone field service and business operations",
+  title: "Dovetails",
+  description: "Dovetails Services LLC — field service management",
   appleWebApp: {
     capable: true,
-    title: "Titan Business Ops",
+    title: "Dovetails",
     statusBarStyle: "default",
   },
 };
 
 export const viewport: Viewport = {
   // Browser chrome / PWA status bar — burnt-orange brand, not legacy slate.
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
   themeColor: "#c1540f",
 };
 

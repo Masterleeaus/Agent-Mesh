@@ -6,7 +6,7 @@
  *
  * Never regresses funnel rank. Terminal requests are no-ops.
  */
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import type { BookingRequestClosedReason, BookingRequestStatus } from "@ai-fsm/domain";
 import {
   BOOKING_REQUEST_TERMINAL_STATUSES,
@@ -66,7 +66,7 @@ function shouldAdvance(current: string, target: BookingRequestStatus): boolean {
  * Idempotent: no-ops when already terminal or target is not a forward step.
  */
 export async function advanceBookingRequestStage(
-  client: DbClient,
+  client: PoolClient,
   opts: AdvanceStageOpts
 ): Promise<AdvanceStageResult> {
   const {
@@ -171,7 +171,7 @@ export async function advanceBookingRequestStage(
  * Resolve booking_request_id from an estimate (direct or via job) and advance.
  */
 export async function advanceBookingRequestForEstimate(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     estimateId: string;

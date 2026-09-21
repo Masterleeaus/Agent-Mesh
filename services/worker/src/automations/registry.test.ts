@@ -37,21 +37,6 @@ describe("AUTOMATION_REGISTRY", () => {
     ]);
   });
 
-  it("enables the seven converted customer/operations automations on MySQL", () => {
-    const mysqlReady = new Set(
-      AUTOMATION_REGISTRY.filter((def) => def.mysqlCompatible).map((def) => def.type)
-    );
-    expect(mysqlReady).toEqual(new Set([
-      "visit_reminder",
-      "invoice_followup",
-      "booking_confirmed",
-      "review_request",
-      "estimate_followup",
-      "lead_followup",
-      "stale_job_nudge",
-    ]));
-  });
-
   it("each definition has required hooks", () => {
     for (const def of AUTOMATION_REGISTRY) {
       expect(def.type).toBeTruthy();

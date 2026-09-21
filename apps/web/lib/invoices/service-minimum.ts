@@ -9,7 +9,7 @@
  * The decision is a pure function (`planServiceMinimum`, unit-tested); the DB
  * wrapper (`applyServiceMinimum`) just executes it.
  */
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { serviceMinimumAdjustmentCents } from "./tracked-labor";
 import {
   createInvoiceLineItem,
@@ -73,7 +73,7 @@ export function planServiceMinimum(lines: MinLine[], minimumCents: number): Serv
  * Caller must have the invoice's RLS/session context set (finalize path).
  */
 export async function applyServiceMinimum(
-  client: DbClient,
+  client: PoolClient,
   invoiceId: string,
   accountId: string,
 ): Promise<InvoiceTotals> {

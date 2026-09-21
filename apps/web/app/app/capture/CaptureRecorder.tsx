@@ -67,7 +67,7 @@ async function postCapture(item: PendingCapture): Promise<"ok" | "auth" | "fail"
   }
 }
 
-export function CaptureRecorder({ companyId }: { companyId: string }) {
+export function CaptureRecorder() {
   const [mic, setMic] = useState<MicState>("starting");
   const [record, setRecord] = useState<RecordState>("idle");
   const [status, setStatus] = useState("Starting microphone…");
@@ -99,7 +99,7 @@ export function CaptureRecorder({ companyId }: { companyId: string }) {
   }, [photo]);
 
   const flushPending = useCallback(async () => {
-    const pending = await listPending(companyId);
+    const pending = await listPending();
     if (pending.length === 0) {
       setFailedCount(0);
       return;
@@ -109,7 +109,7 @@ export function CaptureRecorder({ companyId }: { companyId: string }) {
     for (const item of pending) {
       const result = await postCapture(item);
       if (result === "ok") {
-        await removePending(companyId, item.id);
+        await removePending(item.id);
       } else if (result === "auth") {
         remaining += 1;
         window.location.replace(LOGIN_NEXT);
@@ -122,13 +122,13 @@ export function CaptureRecorder({ companyId }: { companyId: string }) {
     if (remaining > 0) {
       setStatus("Couldn't save. Tap retry — the recording is still on this phone.");
     }
-  }, [companyId]);
+  }, []);
 
   const saveItem = useCallback(async (item: PendingCapture, spoken: string) => {
-    await savePending(companyId, item);
+    await savePending(item);
     const result = await postCapture(item);
     if (result === "ok") {
-      await removePending(companyId, item.id);
+      await removePending(item.id);
       setPhoto(null);
       setNeedTyped(false);
       setTypedDraft("");
@@ -145,7 +145,7 @@ export function CaptureRecorder({ companyId }: { companyId: string }) {
     setFailedCount((count) => count + 1);
     setRecordState("idle");
     setStatus("Couldn't save. Tap retry — the recording is still on this phone.");
-  }, [companyId, flushPending]);
+  }, [flushPending]);
 
   useEffect(() => {
     let cancelled = false;

@@ -29,5 +29,3 @@ export * from "./Timeline";
 export * from "./Toast";
 export * from "./LocalTime";
 export * from "./ClientTypeahead";
-
-export * from "./SurfaceState";

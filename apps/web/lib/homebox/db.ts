@@ -1,11 +1,11 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { getPool } from "@/lib/db";
 import type { SessionPayload } from "@/lib/auth/session";
 import type { AssetLinkStatus } from "@ai-fsm/domain";
 
 export async function withAssetContext<T>(
   session: SessionPayload,
-  fn: (client: DbClient) => Promise<T>
+  fn: (client: PoolClient) => Promise<T>
 ): Promise<T> {
   const client = await getPool().connect();
   try {
@@ -37,7 +37,7 @@ export interface AssetLinkRow {
 }
 
 export async function listAssetLinks(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   entityType: string,
   entityId: string
@@ -54,7 +54,7 @@ export async function listAssetLinks(
 }
 
 export async function createAssetLink(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   data: {
     entityType: string;
@@ -86,7 +86,7 @@ export async function createAssetLink(
 }
 
 export async function deleteAssetLink(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   linkId: string
 ): Promise<boolean> {
@@ -98,7 +98,7 @@ export async function deleteAssetLink(
 }
 
 export async function updateAssetLinkStatus(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   linkId: string,
   status: AssetLinkStatus
@@ -115,7 +115,7 @@ export async function updateAssetLinkStatus(
 }
 
 export async function getAssetLinkConflicts(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   homeboxItemId: string,
   excludeEntityId: string

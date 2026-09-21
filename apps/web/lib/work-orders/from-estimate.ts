@@ -3,7 +3,7 @@
  * estimate is accepted and linked to a project.
  */
 
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { seedCompletionCriteriaFromLineItems } from "@ai-fsm/domain";
 import { deriveJobTitle, deriveJobDescription } from "../estimates/job-from-estimate";
 import { seedWorkOrderTasksFromCriteria } from "./task-time";
@@ -34,7 +34,7 @@ export async function promoteOrCreateWorkOrderFromEstimate({
   accountId,
   createdBy,
 }: {
-  client: DbClient;
+  client: PoolClient;
   estimateId: string;
   jobId: string;
   accountId: string;

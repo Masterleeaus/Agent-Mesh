@@ -1,24 +1,10 @@
-import type { DbClient, DatabaseDialect } from "@/lib/db-contract";
-import { getDatabaseDialect } from "@/lib/db";
-import { randomUUID } from "node:crypto";
+import type { PoolClient } from "pg";
 import { appendAuditLog } from "@/lib/db/audit";
 import { calcTotals, lineItemTotal } from "./math";
 import { computeEstimate, sqftPaintingToSpec, CURRENT_RULES } from "@ai-fsm/domain";
+import { laborCostCentsFromHours } from "@/lib/pricing/labor-hours";
 import { calculateDepositPolicy, estimateMaterialsDepositBasis } from "./deposit-policy";
 import { computeConditionTier } from "./guardrails";
-
-
-function portableSql(sql: string, dialect: DatabaseDialect): string {
-  if (dialect === "postgres") return sql;
-  return sql.replace(/\$(\d+)/g, "?").replace(/now\(\)/gi, "CURRENT_TIMESTAMP");
-}
-
-function portableClient(client: DbClient, dialect: DatabaseDialect): DbClient {
-  return {
-    query: (sql: string, params?: unknown[]) =>
-      client.query(portableSql(sql, dialect), params),
-  };
-}
 
 export interface LineItemInput {
   description: string;
@@ -85,8 +71,7 @@ interface SessionContext {
   traceId: string;
 }
 
-export async function getEstimateById(rawClient: DbClient, id: string, accountId: string) {
-  const client = portableClient(rawClient, getDatabaseDialect());
+export async function getEstimateById(client: PoolClient, id: string, accountId: string) {
   const estimateResult = await client.query(
     `SELECT e.id, e.status, e.subtotal_cents, e.tax_cents, e.total_cents,
             e.notes, e.internal_notes, e.sent_at, e.expires_at,
@@ -144,12 +129,11 @@ export async function getEstimateById(rawClient: DbClient, id: string, accountId
 }
 
 export async function updateEstimateById(
-  rawClient: DbClient,
+  client: PoolClient,
   id: string,
   session: SessionContext,
   patch: PatchEstimateInput
 ): Promise<{ updated: true }> {
-  const client = portableClient(rawClient, getDatabaseDialect());
   const existing = await client.query<{
     id: string;
     status: string;
@@ -319,7 +303,10 @@ export async function updateEstimateById(
         CURRENT_RULES
       );
       subtotal_cents = engine.summary.totalCents;
-      new_internal_labor = engine.internalSummary.estimatedCostCents;
+      new_internal_labor = laborCostCentsFromHours(
+        patch.labor_hours_estimate!,
+        CURRENT_RULES.laborCostCentsPerHour,
+      );
       new_internal_material = patch.material_cost_cents ?? null;
     } else {
       if (patch.flat_rate_cents !== undefined) {
@@ -345,7 +332,7 @@ export async function updateEstimateById(
     let currentMaterialBasis = new_internal_material ?? 0;
     if (itemsToInsert.length === 0 && currentMaterialBasis === 0) {
       const materialRows = await client.query<{ total: string }>(
-        `SELECT COALESCE(SUM(total_cents), 0) AS total
+        `SELECT COALESCE(SUM(total_cents), 0)::text AS total
          FROM estimate_line_items
          WHERE estimate_id = $1 AND visible_to_customer = true AND line_item_type = 'materials'`,
         [id]
@@ -409,13 +396,14 @@ export async function updateEstimateById(
       const optionTax = Math.round((optionSubtotal * taxRate) / 100);
       const optionTotal = optionSubtotal + optionTax;
 
-      const optionId = randomUUID();
-      await client.query(
+      const optionResult = await client.query<{ id: string }>(
         `INSERT INTO estimate_options
-           (id, estimate_id, label, description, sort_order, subtotal_cents, tax_cents, total_cents, is_recommended)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        [optionId, id, option.label, option.description ?? null, option.sort_order ?? oi, optionSubtotal, optionTax, optionTotal, option.is_recommended]
+           (estimate_id, label, description, sort_order, subtotal_cents, tax_cents, total_cents, is_recommended)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         RETURNING id`,
+        [id, option.label, option.description ?? null, option.sort_order ?? oi, optionSubtotal, optionTax, optionTotal, option.is_recommended]
       );
+      const optionId = optionResult.rows[0].id;
 
       for (let li = 0; li < option.line_items.length; li++) {
         const item = option.line_items[li];
@@ -503,11 +491,10 @@ export async function updateEstimateById(
 }
 
 export async function deleteEstimateById(
-  rawClient: DbClient,
+  client: PoolClient,
   id: string,
   session: SessionContext
 ): Promise<void> {
-  const client = portableClient(rawClient, getDatabaseDialect());
   const existing = await client.query<{
     id: string;
     status: string;

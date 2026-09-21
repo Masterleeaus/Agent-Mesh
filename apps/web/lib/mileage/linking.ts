@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import type { MilesSource } from "@ai-fsm/domain";
 import { isGpsEstimateSource } from "@ai-fsm/domain";
 import { completedSessionMiles, type SessionMiles } from "./sessions";
@@ -31,7 +31,7 @@ export type GpsSessionToVoid = SessionMiles & {
  * day. Odometer wins; voided rows stay for audit (OPERATIONS.md).
  */
 export async function voidEnclosedGpsEstimates(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   sessionDate: string,
   odometerSessionId: string,

@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { getPool } from "@/lib/db";
 import type { SessionPayload } from "@/lib/auth/session";
 
@@ -11,7 +11,7 @@ import type { SessionPayload } from "@/lib/auth/session";
  */
 export async function withExpenseContext<T>(
   session: SessionPayload,
-  fn: (client: DbClient) => Promise<T>
+  fn: (client: PoolClient) => Promise<T>
 ): Promise<T> {
   const client = await getPool().connect();
   try {

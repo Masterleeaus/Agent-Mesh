@@ -14,6 +14,7 @@ import {
   type AssignmentKind,
 } from "@ai-fsm/domain";
 import { summarizeDay, formatMinutes, formatElapsed } from "@/lib/activities/summary";
+import { formatBusinessTime } from "@/lib/time/business-tz";
 import type { ActivityEntryDto } from "@/lib/my-work/field-day-types";
 
 
@@ -167,20 +168,13 @@ export function NowBar({
         data-ops-clocked-in={opsSummary ? String(opsSummary.clockedIn) : undefined}
         data-ops-transitions={opsSummary ? opsSummary.transitions.join(",") : undefined}
       >
-        {opsSummary && (
+        {opsSummary ? (
           <span
             data-testid="ops-state-hint"
-            style={{
-              fontSize: "var(--text-xs)",
-              fontWeight: 600,
-              letterSpacing: "0.04em",
-              textTransform: "uppercase",
-              color: hasActive ? "rgba(255,255,255,0.65)" : "var(--fg-muted)",
-            }}
-          >
-            {opsSummary.clockedIn ? "Payroll clock on" : "Payroll clock off"}
-          </span>
-        )}
+            data-ops-clocked-in={String(opsSummary.clockedIn)}
+            hidden
+          />
+        ) : null}
         {hasActive && meta && displayStartedAt ? (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
             <span style={{ fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "rgba(255, 255, 255, 0.7)", fontWeight: 700 }}>
@@ -418,7 +412,7 @@ export function DayTimeSummary({ entries }: { entries: ActivityEntryDto[] }) {
             🔴 {formatMinutes(summary.unaccountedMinutes)} unaccounted
           </strong>
           <span style={{ color: "#92400e", fontSize: "var(--text-sm)", marginLeft: 8 }}>
-            biggest gap {new Date(summary.largestGap.start).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}–{new Date(summary.largestGap.end).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+            biggest gap {formatBusinessTime(summary.largestGap.start)}–{formatBusinessTime(summary.largestGap.end)}
           </span>
           <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap", marginTop: "var(--space-2)" }}>
             {BACKFILL_TYPES.map((t) => (

@@ -1,42 +1,74 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockPortableQuery = vi.fn();
-const mockPortableQueryOne = vi.fn();
-const mockDialect = vi.fn();
-const mockRandomUUID = vi.fn(() => "generated");
-vi.mock("@/lib/db/portable", () => ({
-  portableQuery: (...args: unknown[]) => mockPortableQuery(...args),
-  portableQueryOne: (...args: unknown[]) => mockPortableQueryOne(...args),
+const mockQuery = vi.fn();
+
+vi.mock("@/lib/db", () => ({
+  query: (...args: unknown[]) => mockQuery(...args),
 }));
-vi.mock("@/lib/db", () => ({ getDatabaseDialect: () => mockDialect() }));
-vi.mock("node:crypto", () => ({ randomUUID: () => mockRandomUUID() }));
 
 import { logCommunication } from "../communications-log";
 
-describe("logCommunication portable communications audit", () => {
-  beforeEach(() => { vi.clearAllMocks(); mockDialect.mockReturnValue("mysql"); });
-
-  it("returns null without inserting when provider external id is already logged", async () => {
-    mockPortableQuery.mockResolvedValueOnce([{ id: "existing" }]);
-    const id = await logCommunication({ accountId: "a1", channel: "email", direction: "outbound", outcome: "sent", externalId: "provider-1" });
-    expect(id).toBeNull();
-    expect(mockPortableQuery).toHaveBeenCalledTimes(1);
-    expect(mockPortableQuery.mock.calls[0][0]).toMatch(/account_id = \$1 AND external_id = \$2/);
+describe("logCommunication", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("uses MySQL INSERT IGNORE and verifies ownership of the generated id", async () => {
-    mockPortableQuery.mockResolvedValueOnce([]).mockResolvedValueOnce([]).mockResolvedValueOnce([{ id: "generated" }]);
-    const id = await logCommunication({ accountId: "a1", channel: "sms", direction: "inbound", outcome: "received", clientId: "c1", bodyPreview: "hello", externalId: "provider-2" });
-    expect(id).toBe("generated");
-    expect(mockPortableQuery.mock.calls[1][0]).toMatch(/^INSERT IGNORE INTO communications_log/);
-    expect(mockPortableQuery.mock.calls[1][1][0]).toBe("generated");
+  it("maps communication fields to insert parameters", async () => {
+    mockQuery.mockResolvedValueOnce([]);
+
+    await logCommunication({
+      accountId: "account-1",
+      channel: "email",
+      direction: "outbound",
+      outcome: "sent",
+      clientId: "client-1",
+      bookingRequestId: "booking-1",
+      jobId: "job-1",
+      visitId: "visit-1",
+      bodyPreview: "Preview text",
+      initiatedBy: "user-1",
+      externalId: "provider-1",
+    });
+
+    expect(mockQuery).toHaveBeenCalledTimes(1);
+    expect(mockQuery.mock.calls[0][0]).toContain("INSERT INTO communications_log");
+    expect(mockQuery.mock.calls[0][1]).toEqual([
+      "account-1",
+      "email",
+      "outbound",
+      "sent",
+      "client-1",
+      "booking-1",
+      "job-1",
+      "visit-1",
+      "Preview text",
+      "user-1",
+      "provider-1",
+    ]);
   });
 
-  it("uses portable explicit-id insert when no external id is supplied", async () => {
-    mockDialect.mockReturnValue("postgres");
-    mockPortableQuery.mockResolvedValueOnce([]);
-    const id = await logCommunication({ accountId: "a1", channel: "phone", direction: "outbound", outcome: "left_voicemail" });
-    expect(id).toBe("generated");
-    expect(mockPortableQuery.mock.calls[0][0]).not.toMatch(/RETURNING|ON CONFLICT/);
+  it("defaults optional ids and metadata to null", async () => {
+    mockQuery.mockResolvedValueOnce([]);
+
+    await logCommunication({
+      accountId: "account-1",
+      channel: "phone",
+      direction: "outbound",
+      outcome: "left_voicemail",
+    });
+
+    expect(mockQuery.mock.calls[0][1]).toEqual([
+      "account-1",
+      "phone",
+      "outbound",
+      "left_voicemail",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    ]);
   });
 });

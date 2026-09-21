@@ -117,7 +117,7 @@ describe("computeWhatNext — pre-sale and close-out branches", () => {
     );
 
     expect(next.message).toMatch(/without assessment packet/i);
-    expect(next.actionLabel).toBe("Create Estimate");
+    expect(next.actionLabel).toBe("Create Quote");
     expect(next.secondary?.href).toContain("visit_type=site_visit");
   });
 
@@ -130,7 +130,7 @@ describe("computeWhatNext — pre-sale and close-out branches", () => {
     );
 
     expect(next.message).toBe("Create estimate from walkthrough");
-    expect(next.actionLabel).toBe("Create Estimate");
+    expect(next.actionLabel).toBe("Create Quote");
     expect(next.actionHref).toBe(
       `/app/estimates/new?job_id=${JOB_ID}&client_id=${CLIENT_ID}&pricing_mode=flat_rate`,
     );
@@ -146,7 +146,7 @@ describe("computeWhatNext — pre-sale and close-out branches", () => {
     );
 
     expect(next.message).toBe("Create estimate from work order scope");
-    expect(next.actionLabel).toBe("Create Estimate");
+    expect(next.actionLabel).toBe("Create Quote");
     expect(next.actionHref).toBe(
       `/app/estimates/new?job_id=${JOB_ID}&client_id=${CLIENT_ID}&pricing_mode=flat_rate`,
     );
@@ -217,7 +217,7 @@ describe("computeWhatNext — money, field, T&M", () => {
       }),
     );
 
-    expect(next.message).toBe("Project closed — send the final invoice");
+    expect(next.message).toBe("Job closed — send the final invoice");
     expect(next.actionLabel).toBe("Create Invoice");
     expect(next.actionHref).toContain(`/app/invoices/new?job_id=${JOB_ID}`);
     expect(next.actionHref).toContain(`approved_estimate_id=${ESTIMATE_ID}`);
@@ -237,11 +237,29 @@ describe("computeWhatNext — money, field, T&M", () => {
       }),
     );
 
-    expect(next.message).toMatch(/Project closed/);
+    expect(next.message).toMatch(/Job closed/);
     expect(next.actionLabel).toBe("Open Invoice");
     expect(next.actionHref).toBe(`/app/invoices/${INVOICE_ID}`);
     // Must not fall through to "schedule the work"
     expect(next.message).not.toMatch(/schedule/i);
+  });
+
+  it("approved estimate with no deposit prompts to collect one before starting (deposit gate)", () => {
+    const next = computeWhatNext(
+      baseProps({
+        jobStatus: "draft",
+        stage: "approved",
+        hasApprovedEstimate: true,
+        approvedEstimateId: ESTIMATE_ID,
+        hasDepositInvoice: false,
+        depositPaid: false,
+      }),
+    );
+
+    expect(next.message).toMatch(/collect a deposit/i);
+    expect(next.actionHref).toContain(`/app/estimates/${ESTIMATE_ID}`);
+    // Prompt, don't block: scheduling stays reachable as the secondary.
+    expect(next.secondary?.href).toContain("/visits/new");
   });
 
   it("T&M owner-completed copy mentions time and materials", () => {

@@ -1,51 +1,63 @@
-# Titan Zero Agent Mesh
+# Dovetails FSM
 
-This repository is the GitHub-based **Titan Zero Agent Mesh V3**: canonical Titan Zero source, roadmap execution, agent coordination, pull-request integration and CI evidence in one durable system.
+Dovetails FSM is a residential handyman and home maintenance operating system focused on preserving property history, managing client relationships, creating accurate estimates, executing work efficiently, and maintaining a permanent service record for every property.
 
-## Current state
+## Documentation Hierarchy
 
-- Canonical extracted Titan Zero Merge84 source is on `main`.
-- The roadmap index contains **55 goals**.
-- Canonical goal JSON files are present for **all 55 goals**: `TZ-G00` and `TZ-ROADMAP-01` through `TZ-ROADMAP-54`.
-- GitHub Issues represent **568 current subgoals**.
-- `roadmap/SUBGOAL-ISSUE-MANIFEST.json` keeps roadmap subgoal IDs synchronized to GitHub Issues.
-- `.github/workflows/agent-mesh-ci.yml` validates implementation PRs.
-- `.github/workflows/sync-roadmap-issues.yml` recreates missing roadmap issues idempotently.
+Use documentation in this order:
 
-## Agent workflow
+1. Code and database migrations are the implemented truth.
+2. `docs/canonical/` is the authoritative product, domain, and architecture truth.
+3. `docs/contracts/` and `docs/working/` contain supporting implementation notes.
+4. `ai/` is only a compact AI-agent quick-reference layer.
+5. `docs/archive/` and `docs/generated/` are historical/evidence only, not active instruction sources.
 
-```text
-Roadmap subgoal
-      ↓
-GitHub Issue
-      ↓
-claim one issue
-      ↓
-agent/<subgoal-id>-<short-name>
-      ↓
-implementation + verification
-      ↓
-Pull Request
-      ↓
-GitHub Actions / Manager review
-      ↓
-merge to main
-      ↓
-issue + roadmap compaction
+## Canonical Product Docs
+
+Product direction comes only from:
+
+- [Product Vision](docs/canonical/PRODUCT_VISION.md)
+- [Domain Model](docs/canonical/DOMAIN_MODEL.md)
+- [Workflow](docs/canonical/WORKFLOW.md)
+- [Architecture](docs/canonical/ARCHITECTURE.md)
+- [Roadmap](docs/canonical/ROADMAP.md)
+
+Historical plans, generated reports, archived agent docs, and working notes are supporting material only.
+
+## Quick Start
+
+```bash
+cp .env.example .env
+pnpm install
+docker compose -f infra/compose.dev.yml up -d postgres redis
+pnpm db:migrate
+pnpm dev:web
 ```
 
-See `AGENTS.md` and `work/README.md` before doing development work.
+## Project Layout
 
-## Repository areas
+- `apps/web`: Next.js web app for owner/admin/tech workflows.
+- `services/worker`: background worker for queued notifications and automation support.
+- `packages/domain`: shared schemas, labels, constants, and domain helpers.
+- `db/migrations`: SQL schema and migration history.
+- `infra`: Docker Compose profiles.
+- `docs/canonical`: source-of-truth product direction.
+- `docs/working`: implementation and operations support.
+- `docs/archive`: historical planning material.
+- `docs/generated`: generated reports, audits, and migration records.
 
-- `app/`, `apps/`, `packages/`, `services/`, `titan-*/` — Titan Zero implementation
-- `roadmap/` — roadmap index, canonical goal files and issue-sync manifest
-- `work/` — Agent Mesh coordination records
-- `architecture/`, `docs/` — architecture, contracts, evidence and supporting documentation
-- `.github/workflows/` — CI and Agent Mesh automation
+## Quality Gate
 
-## Authority
+```bash
+pnpm gate
+```
 
-GitHub `main` is canonical code. GitHub Issues are claimable work. Pull Requests are the integration boundary. The roadmap defines remaining work.
+For faster local static/unit feedback:
 
-Older Merge84 root documentation that described the source as Dovetails FSM is retained under `docs/archive/` for provenance; it is not the Agent Mesh execution authority.
+```bash
+pnpm gate:fast
+```
+
+## Production Target
+
+Production runs on garonhome.local using `infra/compose.garonhome.yml` and deploy root `/opt/business/ai-fsm`.

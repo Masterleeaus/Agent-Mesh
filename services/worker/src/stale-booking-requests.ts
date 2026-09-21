@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 
 export interface StaleBookingRequestsResult {
@@ -12,7 +12,7 @@ export interface StaleBookingRequestsResult {
  * Runs every worker poll — idempotent WHERE clause.
  */
 export async function closeStaleBookingRequests(
-  client: DatabaseClient
+  client: Client
 ): Promise<StaleBookingRequestsResult> {
   try {
     const result = await client.query<{ id: string; account_id: string }>(

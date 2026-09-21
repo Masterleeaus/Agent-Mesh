@@ -1,5 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
-import { databaseDialect } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 
 export interface ExpireEstimatesResult {
@@ -12,23 +11,17 @@ export interface ExpireEstimatesResult {
  * Runs on every worker poll iteration — no automation record required.
  * Safe to run repeatedly; the WHERE clause is idempotent.
  */
-export async function expireEstimates(client: DatabaseClient): Promise<ExpireEstimatesResult> {
+export async function expireEstimates(client: Client): Promise<ExpireEstimatesResult> {
   try {
-    const dialect = databaseDialect(client);
-    const due = await client.query<{ id: string; account_id: string }>(
-      `SELECT id, account_id FROM estimates
-       WHERE status = 'sent' AND expires_at IS NOT NULL
-         AND expires_at < CURRENT_TIMESTAMP`
+    const result = await client.query<{ id: string; account_id: string }>(
+      `UPDATE estimates
+       SET status = 'expired', updated_at = now()
+       WHERE status = 'sent'
+         AND expires_at IS NOT NULL
+         AND expires_at < now()
+       RETURNING id, account_id`
     );
-    for (const row of due.rows) {
-      const placeholder = dialect === "mysql" ? "?" : "$1";
-      await client.query(
-        `UPDATE estimates SET status = 'expired', updated_at = CURRENT_TIMESTAMP
-         WHERE id = ${placeholder} AND status = 'sent'`,
-        [row.id]
-      );
-    }
-    const result = { rows: due.rows, rowCount: due.rows.length };
+
     const expired = result.rowCount ?? 0;
     if (expired > 0) {
       logger.info("expire-estimates: marked expired", {

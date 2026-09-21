@@ -24,14 +24,14 @@ export async function sendEmail(opts: {
   subject: string;
   html: string;
   text?: string;
-}): Promise<{ ok: boolean; error?: string; providerMessageId?: string }> {
+}): Promise<{ ok: boolean; error?: string }> {
   if (!isEmailConfigured()) {
     return { ok: false, error: "Email not configured" };
   }
   try {
     const from = process.env.SMTP_FROM ?? process.env.SMTP_USER!;
-    const info = await getTransporter().sendMail({ from, ...opts });
-    return { ok: true, providerMessageId: info.messageId || undefined };
+    await getTransporter().sendMail({ from, ...opts });
+    return { ok: true };
   } catch (err) {
     return { ok: false, error: (err as Error).message };
   }

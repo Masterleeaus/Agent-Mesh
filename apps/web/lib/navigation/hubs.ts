@@ -1,5 +1,3 @@
-import { BUSINESS_OPS_ROUTES } from "@ai-fsm/domain";
-
 /**
  * Nested-hubs IA helpers (TASK-081).
  * Sidebar owns destinations; list pages use these for in-page hub chips (T1).
@@ -11,26 +9,25 @@ export type HubLink = {
 };
 
 export const WORK_HUB_LINKS: HubLink[] = [
-  { href: BUSINESS_OPS_ROUTES.requests, label: "Requests" },
-  { href: BUSINESS_OPS_ROUTES.estimates, label: "Estimates" },
-  { href: BUSINESS_OPS_ROUTES.jobs, label: "Projects" },
-  { href: BUSINESS_OPS_ROUTES.workOrders, label: "Work Orders" },
-  { href: BUSINESS_OPS_ROUTES.schedule, label: "Schedule" },
-  { href: "/app/dispatch", label: "Dispatch" },
-  { href: BUSINESS_OPS_ROUTES.visits, label: "Visits" },
+  { href: "/app/requests", label: "Requests" },
+  { href: "/app/estimates", label: "Quotes" },
+  { href: "/app/jobs", label: "Jobs" },
+  // Work orders are reached inside a Job, not from the hub.
+  { href: "/app/schedule", label: "Schedule" },
+  { href: "/app/visits", label: "Visits" },
 ];
 
 export const PEOPLE_HUB_LINKS: HubLink[] = [
-  { href: BUSINESS_OPS_ROUTES.clients, label: "Clients" },
-  { href: BUSINESS_OPS_ROUTES.properties, label: "Properties" },
+  { href: "/app/clients", label: "Clients" },
+  { href: "/app/properties", label: "Houses" },
 ];
 
 export const MONEY_HUB_LINKS: HubLink[] = [
-  { href: BUSINESS_OPS_ROUTES.invoices, label: "Invoices" },
+  { href: "/app/invoices", label: "Bills" },
   { href: "/app/expenses", label: "Expenses" },
   { href: "/app/mileage", label: "Mileage" },
   { href: "/app/materials", label: "Materials" },
-  { href: BUSINESS_OPS_ROUTES.reports, label: "Reports" },
+  { href: "/app/reports", label: "Reports" },
 ];
 
 /** Prefix match, same rules as AppShell isNavActive for non-root paths. */

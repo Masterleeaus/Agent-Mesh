@@ -3,10 +3,9 @@ import Link from "next/link";
 import type { Route } from "next";
 import type { ReactNode } from "react";
 import { getSession } from "@/lib/auth/session";
-import { getPool, queryForSession, queryOneForSession } from "@/lib/db";
-import { formatVisitTime, isVisitOverdue } from "@/lib/visits/formatting";
+import { withDbSession, queryForSession, queryOneForSession } from "@/lib/db";
+import { formatVisitDateTime, formatVisitTime, isVisitOverdue } from "@/lib/visits/formatting";
 import {
-  canManageExpenses,
   canTransitionJob,
   canCreateVisit,
   canDeleteRecords,
@@ -27,15 +26,17 @@ import { ProjectCloseoutCoach } from "./ProjectCloseoutCoach";
 import { ProjectOverview } from "./ProjectOverview";
 import { ProjectUnplannedTasks } from "./ProjectUnplannedTasks";
 import { UseTmBriefingButton } from "./UseTmBriefingButton";
+import { NewProgressInvoiceButton } from "./NewProgressInvoiceButton";
 import { buildJobTmBriefing } from "@/lib/estimates/job-tm-briefing";
 import { VendorCoordinationCard } from "./VendorCoordinationCard";
 import { JobWorkOrdersPanel, type JobWorkOrderRow } from "./JobWorkOrdersPanel";
 import { JobTasksPanel } from "./JobTasksPanel";
 import { loadJobTaskProgress } from "@/lib/work-orders/job-tasks";
-import { LinkForgottenExpensesPanel } from "@/components/invoices/LinkForgottenExpensesPanel";
 import { fetchJobMaterialExpenses, type JobMaterialExpenseWithLines } from "@/lib/invoices/job-expenses";
 import { withExpenseContext } from "@/lib/expenses/db";
-import { JobMaterialsPanel } from "./JobMaterialsPanel";
+import { MaterialsBudgetLine } from "./MaterialsBudgetLine";
+import { mobileJobActionHrefs } from "./mobile-job-actions";
+import { JobPhotoGallery } from "./JobPhotoGallery";
 import { JobLedgerCard } from "./JobLedgerCard";
 import { loadJobLedger } from "@/lib/jobs/job-ledger";
 import {
@@ -176,18 +177,27 @@ function AdvancedDetails({ title, children }: { title: string; children: ReactNo
   );
 }
 
-function MobileJobAction({ href, label, detail, primary = false }: { href: Route; label: string; detail?: string; primary?: boolean }) {
-  return (
-    <Link
-      href={href}
-      className={`mobile-work-item ${primary ? "mobile-work-item-primary" : ""}`}
-      style={{ minHeight: 72 }}
-    >
+function MobileJobAction({ href, label, detail, primary = false }: { href: Route | string; label: string; detail?: string; primary?: boolean }) {
+  const className = `mobile-work-item ${primary ? "mobile-work-item-primary" : ""}`;
+  const body = (
+    <>
       <span>
         <strong>{label}</strong>
         {detail && <small>{detail}</small>}
       </span>
       <b>Open</b>
+    </>
+  );
+  if (href.startsWith("#")) {
+    return (
+      <a href={href} className={className} style={{ minHeight: 72 }}>
+        {body}
+      </a>
+    );
+  }
+  return (
+    <Link href={href as Route} className={className} style={{ minHeight: 72 }}>
+      {body}
     </Link>
   );
 }
@@ -239,32 +249,9 @@ export default async function JobDetailPage({
     if (!assigned) notFound();
   }
 
-  // Task progress for multi-day jobs (project hub).
-  let taskProgress = {
-    total: 0,
-    required_total: 0,
-    done: 0,
-    required_done: 0,
-    percent: 0,
-    tasks: [] as Awaited<ReturnType<typeof loadJobTaskProgress>>["tasks"],
-  };
-  {
-    const pool = getPool();
-    const client = await pool.connect();
-    try {
-      await client.query(
-        `SELECT set_config('app.current_user_id',$1,true), set_config('app.current_account_id',$2,true), set_config('app.current_role',$3,true)`,
-        [session.userId, session.accountId, session.role],
-      );
-      taskProgress = await loadJobTaskProgress(client, id, session.accountId);
-    } finally {
-      client.release();
-    }
-  }
-
   const homeboxEnabled = isHomeboxEnabled();
 
-  const [visits, workOrders, commercialCounts, assetLinks, jobMaterialExpenses, trackedLaborDayRows, visitTaskRows] =
+  const [visits, workOrders, commercialCounts, assetLinks, jobMaterialExpenses, trackedLaborDayRows, visitTaskRows, taskProgress, jobPhotos, otherJobExpenses] =
     await Promise.all([
     session.role === "tech"
       ? queryForSession<VisitRow>(
@@ -506,6 +493,46 @@ export default async function JobDetailPage({
         ORDER BY t.sort_order ASC, t.created_at ASC`,
       [id, session.accountId],
     ).catch(() => []),
+    withDbSession(session, (client) => loadJobTaskProgress(client, id, session.accountId)),
+    queryForSession<{
+    id: string;
+    visit_id: string;
+    category: string;
+    original_name: string;
+  }>(
+    session,
+    session.role === "tech"
+      ? `SELECT vm.id, vm.visit_id, vm.category, vm.original_name
+         FROM visit_media vm
+         JOIN visits v ON v.id = vm.visit_id AND v.account_id = vm.account_id
+         WHERE v.job_id = $1 AND vm.account_id = $2 AND v.assigned_user_id = $3
+         ORDER BY vm.created_at DESC
+         LIMIT 12`
+      : `SELECT vm.id, vm.visit_id, vm.category, vm.original_name
+         FROM visit_media vm
+         JOIN visits v ON v.id = vm.visit_id AND v.account_id = vm.account_id
+         WHERE v.job_id = $1 AND vm.account_id = $2
+         ORDER BY vm.created_at DESC
+         LIMIT 12`,
+    session.role === "tech"
+      ? [id, session.accountId, session.userId]
+      : [id, session.accountId],
+  ).catch(() => []),
+    session.role !== "tech"
+      ? queryForSession<{
+          amount_cents: number;
+          commercial_tag: string | null;
+          category: string;
+          notes: string | null;
+          vendor_name: string;
+        }>(
+          session,
+          `SELECT amount_cents, commercial_tag, category, notes, vendor_name
+           FROM expenses
+           WHERE account_id = $2 AND job_id = $1 AND category <> 'materials'`,
+          [id, session.accountId],
+        ).catch(() => [])
+      : [],
   ]);
 
   const trackedLaborDays: TrackedLaborDay[] = mapTrackedLaborDayRows(trackedLaborDayRows ?? []);
@@ -515,7 +542,6 @@ export default async function JobDetailPage({
   const canTransition = canTransitionJob(session.role);
   const canAddVisit = canCreateVisit(session.role);
   const canDelete = canDeleteRecords(session.role);
-  const canLinkExpenses = canManageExpenses(session.role);
   const canEstimate = canCreateEstimates(session.role);
   const isTech = session.role === "tech";
 
@@ -644,24 +670,6 @@ export default async function JobDetailPage({
   const estimatedLaborCents = commercialCounts?.estimated_labor_cost_cents ?? null;
   const trackedMinutes = Number(commercialCounts?.tracked_labor_minutes ?? 0);
 
-  // Non-materials job expenses (lift/tools/other) so equipment actuals are not dropped
-  // when materials preload is supplied.
-  const otherJobExpenses =
-    !isTech
-      ? await queryForSession<{
-          amount_cents: number;
-          commercial_tag: string | null;
-          category: string;
-          notes: string | null;
-          vendor_name: string;
-        }>(
-          session,
-          `SELECT amount_cents, commercial_tag, category, notes, vendor_name
-           FROM expenses
-           WHERE account_id = $2 AND job_id = $1 AND category <> 'materials'`,
-          [id, session.accountId],
-        ).catch(() => [])
-      : [];
 
   const jobLedger =
     !isTech
@@ -866,7 +874,22 @@ export default async function JobDetailPage({
   // Phone layout — rendered alongside the desktop layout and toggled by
   // viewport width (p7-only-* utilities), replacing the workspace-mode cookie.
   const currentVisit = activeVisits.find((v) => v.status === "in_progress" || v.status === "arrived") ?? activeVisits[0] ?? visits[0] ?? null;
-  const visitHref = currentVisit ? (`/app/visits/${currentVisit.id}` as Route) : null;
+  const actionHrefs = mobileJobActionHrefs({
+    jobId: job.id,
+    visitId: currentVisit?.id ?? null,
+  });
+  const projectNotes = [
+    ...(job.intake_notes?.trim()
+      ? [{ key: "intake", label: "Intake", body: job.intake_notes.trim() }]
+      : []),
+    ...visits
+      .filter((v) => typeof v.tech_notes === "string" && v.tech_notes.trim())
+      .map((v) => ({
+        key: v.id,
+        label: v.scheduled_start ? formatVisitDateTime(String(v.scheduled_start)) : "Visit",
+        body: v.tech_notes!.trim(),
+      })),
+  ];
   // Universal maps link: opens the native maps app on both iOS and Android
   // (and the browser as fallback). maps.apple.com only deep-links cleanly on iOS.
   const mapHref = job.property_address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(job.property_address)}` : null;
@@ -927,7 +950,7 @@ export default async function JobDetailPage({
           {mapHref ? <MobileJobExternalAction href={mapHref} label="Map" /> : null}
         </section>
 
-        <section style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+        <section id="job-scope" style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)", scrollMarginTop: 16 }}>
           <h2 style={{ margin: 0, fontSize: "var(--text-lg)", fontWeight: 800 }}>Current Job</h2>
           <div style={{ padding: "var(--space-4)", border: "1px solid var(--border)", borderRadius: 8, background: "var(--bg-card)", fontSize: "var(--text-sm)", whiteSpace: "pre-wrap", color: job.description ? "var(--fg)" : "var(--fg-muted)" }}>
             {job.description || "No scope notes have been added yet."}
@@ -944,14 +967,12 @@ export default async function JobDetailPage({
         </section>
 
         <section style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
-          {visitHref ? (
-            <>
-              <MobileJobAction href={visitHref} label="Scope" detail="Open the active visit scope and checklist" primary />
-              <MobileJobAction href={`${visitHref}#visit-issue` as Route} label="Photos" detail="Capture before, assessment, and completion photos" />
-              <MobileJobAction href={`${visitHref}#visit-parts` as Route} label="Materials" detail="Record parts and materials used" />
-              <MobileJobAction href={`${visitHref}#visit-resolution` as Route} label="Notes" detail="Document the work performed" />
-              <MobileJobAction href={`${visitHref}#visit-completion` as Route} label="Complete Visit" detail="Finish photos, signature, and closeout" primary />
-            </>
+          <MobileJobAction href={actionHrefs.scope} label="Scope" detail="This job's scope" primary />
+          <MobileJobAction href={actionHrefs.photos} label="Photos" detail="Photos from this job" />
+          <MobileJobAction href={actionHrefs.materials} label="Materials" detail="Buy list and receipts for this job" />
+          <MobileJobAction href={actionHrefs.notes} label="Notes" detail="Notes for this project" />
+          {actionHrefs.complete ? (
+            <MobileJobAction href={actionHrefs.complete} label="Complete Visit" detail="Finish and close out the current visit" primary />
           ) : (
             <div style={{ padding: "var(--space-4)", border: "1px solid var(--border)", borderRadius: 8, background: "var(--bg-card)", color: "var(--fg-muted)", fontSize: "var(--text-sm)" }}>
               No visit is scheduled for this job yet.
@@ -967,6 +988,43 @@ export default async function JobDetailPage({
               {visits.length > 0 ? "Add a day to schedule" : "Schedule a day"}
             </Link>
           ) : null}
+        </section>
+
+        <section id="job-photos" style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)", scrollMarginTop: 16 }}>
+          <h2 style={{ margin: 0, fontSize: "var(--text-lg)", fontWeight: 800 }}>Photos</h2>
+          {jobPhotos.length === 0 ? (
+            <p style={{ margin: 0, color: "var(--fg-muted)", fontSize: "var(--text-sm)" }}>
+              No photos on this job yet. Capture them from a visit.
+            </p>
+          ) : (
+            <JobPhotoGallery photos={jobPhotos} />
+          )}
+        </section>
+
+        <section id="job-notes" style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)", scrollMarginTop: 16 }}>
+          <h2 style={{ margin: 0, fontSize: "var(--text-lg)", fontWeight: 800 }}>Notes</h2>
+          {projectNotes.length === 0 ? (
+            <p style={{ margin: 0, color: "var(--fg-muted)", fontSize: "var(--text-sm)" }}>
+              No notes on this project yet.
+            </p>
+          ) : (
+            projectNotes.map((note) => (
+              <div
+                key={note.key}
+                style={{
+                  padding: "var(--space-4)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 8,
+                  background: "var(--bg-card)",
+                }}
+              >
+                <div style={{ fontSize: "var(--text-xs)", color: "var(--fg-muted)", fontWeight: 700, marginBottom: "var(--space-1)" }}>
+                  {note.label}
+                </div>
+                <div style={{ fontSize: "var(--text-sm)", whiteSpace: "pre-wrap" }}>{note.body}</div>
+              </div>
+            ))
+          )}
         </section>
 
         <AdvancedDetails title="Secondary Details">
@@ -1061,7 +1119,7 @@ export default async function JobDetailPage({
             .join(" · ") || undefined
         }
         backHref="/app/jobs"
-        backLabel="Projects"
+        backLabel="Jobs"
         actions={
           <span data-testid="job-status" style={{ display: "inline-flex", gap: "var(--space-2)", flexWrap: "wrap", alignItems: "center" }}>
             {toSupplyPo(job.job_number) ? (
@@ -1196,6 +1254,22 @@ export default async function JobDetailPage({
           workOrderCount={workOrderBoard.length}
         />
       )}
+
+      {/* Staged (thirds) billing for long jobs: deposit exists → bill a midpoint
+          progress payment before the final. Hidden once the job is closed out. */}
+      {!isTech &&
+        commercialCounts?.has_approved_estimate &&
+        !commercialCounts.latest_invoice_id &&
+        !["completed", "invoiced", "cancelled"].includes(currentStatus) && (
+          <Card style={{ marginBottom: "var(--space-4)" }} data-testid="progress-billing">
+            <SectionHeader title="Progress billing" />
+            <p style={{ margin: "0 0 var(--space-3)", fontSize: "var(--text-sm)", color: "var(--muted)" }}>
+              For a long job, bill a staged payment now. The final invoice credits
+              it so the stages sum to the project total.
+            </p>
+            <NewProgressInvoiceButton jobId={job.id} />
+          </Card>
+        )}
 
       {job.description ? (
         <Card style={{ marginBottom: "var(--space-4)" }} data-testid="project-scope">
@@ -1352,59 +1426,35 @@ export default async function JobDetailPage({
             </Card>
           )}
 
-          {/* Materials: buy list link + receipts + link unassigned */}
+          {/* Materials & spend summary — the full plan (buy list) + receipts +
+              link-unassigned live on the Materials page (TASK-121). This is the
+              at-a-glance budget + a way in. */}
           {!isTech && (
             <Card id="job-materials" data-testid="job-materials-panel">
               <SectionHeader
-                title="Materials"
+                title="Materials & spend"
                 count={jobMaterialExpenses.length > 0 ? jobMaterialExpenses.length : undefined}
                 action={
                   <LinkButton
-                    href={`/app/jobs/${job.id}/materials?tab=buy` as Route}
+                    href={`/app/jobs/${job.id}/materials?tab=${jobMaterialExpenses.length > 0 ? "purchases" : "buy"}` as Route}
                     variant="secondary"
                     size="sm"
-                    data-testid="open-buy-list"
+                    data-testid="open-materials"
                   >
-                    Buy list →
+                    Materials →
                   </LinkButton>
                 }
               />
-              {jobLedger?.rows.find((r) => r.bucket === "materials")?.estimateCents != null ? (
-                <p
-                  style={{
-                    margin: "0 0 var(--space-2)",
-                    fontSize: "var(--text-sm)",
-                    color: "var(--fg-muted)",
-                  }}
-                  data-testid="materials-allowance-remaining"
-                >
-                  Allowance{" "}
-                  {formatCents(jobLedger.rows.find((r) => r.bucket === "materials")!.estimateCents!)}
-                  {" · "}
-                  Spent{" "}
-                  {formatCents(jobLedger.rows.find((r) => r.bucket === "materials")!.actualCents)}
-                  {" · "}
-                  {(() => {
-                    const m = jobLedger.rows.find((r) => r.bucket === "materials")!;
-                    const v = (m.estimateCents ?? 0) - m.actualCents;
-                    return v >= 0
-                      ? `${formatCents(v)} remaining`
-                      : `${formatCents(-v)} over`;
-                  })()}
-                </p>
-              ) : null}
-              {(jobMaterialExpenses.length > 0 || canLinkExpenses) ? (
-                <>
-                  <JobMaterialsPanel expenses={jobMaterialExpenses} />
-                  {canLinkExpenses && (
-                    <LinkForgottenExpensesPanel mode="job" jobId={job.id} />
-                  )}
-                </>
-              ) : (
-                <p style={{ margin: 0, fontSize: "var(--text-sm)", color: "var(--fg-muted)" }}>
-                  Open the buy list to plan what to purchase. Receipts show here after you log a material run.
-                </p>
-              )}
+              <MaterialsBudgetLine
+                allowanceCents={jobLedger?.rows.find((r) => r.bucket === "materials")?.estimateCents}
+                spentCents={jobLedger?.rows.find((r) => r.bucket === "materials")?.actualCents ?? 0}
+                testId="materials-allowance-remaining"
+              />
+              <p style={{ margin: 0, fontSize: "var(--text-sm)", color: "var(--fg-muted)" }}>
+                {jobMaterialExpenses.length > 0
+                  ? `${jobMaterialExpenses.length} receipt${jobMaterialExpenses.length === 1 ? "" : "s"} logged. Open Materials to see purchases, plan the buy list, or link expenses.`
+                  : "Open Materials to plan the buy list and log receipts as you buy."}
+              </p>
             </Card>
           )}
 
@@ -1570,7 +1620,7 @@ export default async function JobDetailPage({
                       size="sm"
                       data-testid="new-estimate-btn"
                     >
-                      + New Estimate
+                      + New Quote
                     </LinkButton>
                   }
                 />

@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   DEFAULT_PRICING_SETTINGS,
   buildPricingRules,
@@ -41,7 +41,7 @@ export function rowToPricingSettings(
 
 /** Load settings; auto-seed row if missing (new accounts). */
 export async function loadPricingSettings(
-  client: DbClient,
+  client: PoolClient,
   accountId: string
 ): Promise<BusinessPricingSettings> {
   const existing = await client.query(
@@ -52,14 +52,11 @@ export async function loadPricingSettings(
     return rowToPricingSettings(existing.rows[0] as Record<string, unknown>);
   }
 
-  if (getDatabaseDialect() === "mysql") {
-    await client.query(`INSERT IGNORE INTO business_pricing_settings (account_id) VALUES ($1)`, [accountId]);
-  } else {
-    await client.query(
-      `INSERT INTO business_pricing_settings (account_id) SELECT $1 WHERE NOT EXISTS (SELECT 1 FROM business_pricing_settings WHERE account_id = $1)`,
-      [accountId]
-    );
-  }
+  await client.query(
+    `INSERT INTO business_pricing_settings (account_id) VALUES ($1)
+     ON CONFLICT (account_id) DO NOTHING`,
+    [accountId]
+  );
   const seeded = await client.query(
     `SELECT * FROM business_pricing_settings WHERE account_id = $1`,
     [accountId]
@@ -69,7 +66,7 @@ export async function loadPricingSettings(
 
 /** Convenience: settings → engine rules for estimate compute / guardrails. */
 export async function loadPricingRules(
-  client: DbClient,
+  client: PoolClient,
   accountId: string
 ): Promise<{ settings: BusinessPricingSettings; rules: PricingRules }> {
   const settings = await loadPricingSettings(client, accountId);

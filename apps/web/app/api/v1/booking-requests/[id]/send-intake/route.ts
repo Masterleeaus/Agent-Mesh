@@ -1,8 +1,7 @@
-import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole } from "@/lib/auth/middleware";
-import { portableQuery } from "@/lib/db/portable";
+import { getPool } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { sendEmail, appUrl, isEmailConfigured } from "@/lib/email/mailer";
 import { intakeInviteEmailHtml, intakeInviteEmailText } from "@ai-fsm/email-templates";
@@ -39,8 +38,10 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
       );
     }
 
-    // Load the booking request through the portable DB seam.
-    const brRows = await portableQuery<{
+    const pool = getPool();
+
+    // Load the booking request
+    const { rows: brRows } = await pool.query<{
       id: string; account_id: string; name: string; email: string | null;
       phone: string | null; client_id: string | null;
     }>(
@@ -68,12 +69,11 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
     }
 
     // Check for an active (unexpired, unused) invite
-    const existingInvites = await portableQuery<{ token: string; expires_at: string }>(
+    const { rows: existingInvites } = await pool.query<{ token: string; expires_at: string }>(
       `SELECT token, expires_at FROM intake_invites
-       WHERE booking_request_id = $1 AND account_id = $2
-         AND used_at IS NULL AND expires_at > now()
+       WHERE booking_request_id = $1 AND used_at IS NULL AND expires_at > now()
        ORDER BY created_at DESC LIMIT 1`,
-      [bookingRequestId, session.accountId]
+      [bookingRequestId]
     );
 
     let token: string;
@@ -85,23 +85,21 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
       expiresAt = existingInvites[0].expires_at;
     } else {
       // Create a new invite
-      // Generate identity/expiry in application code: portable across PostgreSQL and MySQL/MariaDB.
-      const inviteId = randomUUID();
-      token = randomUUID();
-      const expiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-      expiresAt = expiry.toISOString();
-      await portableQuery(
+      const { rows: insertRows } = await pool.query<{ token: string; expires_at: string }>(
         `INSERT INTO intake_invites
-           (id, account_id, booking_request_id, token, lead_name, lead_email, lead_phone, expires_at, delivery_method)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'email')`,
-        [inviteId, session.accountId, bookingRequestId, token, br.name, email, br.phone ?? null, expiresAt]
+           (account_id, booking_request_id, lead_name, lead_email, lead_phone)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING token::text, expires_at`,
+        [session.accountId, bookingRequestId, br.name, email, br.phone ?? null]
       );
+      token = insertRows[0].token;
+      expiresAt = insertRows[0].expires_at;
 
       // Update the booking request email if it was missing
       if (!br.email && email) {
-        await portableQuery(
-          `UPDATE booking_requests SET email = $1 WHERE id = $2 AND account_id = $3`,
-          [email, bookingRequestId, session.accountId]
+        await pool.query(
+          `UPDATE booking_requests SET email = $1 WHERE id = $2`,
+          [email, bookingRequestId]
         );
       }
     }

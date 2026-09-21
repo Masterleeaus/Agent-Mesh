@@ -48,7 +48,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
                 e.travel_surcharge_cents, e.risk_adjustment_cents,
                 e.minimum_service_override_reason,
                 c.id AS client_id, c.name AS client_name, c.email AS client_email,
-                (SELECT COUNT(*) FROM estimate_line_items eli
+                (SELECT COUNT(*)::int FROM estimate_line_items eli
                  WHERE eli.estimate_id = e.id AND eli.visible_to_customer = true) AS line_item_count
          FROM estimates e
          JOIN clients c ON c.id = e.client_id

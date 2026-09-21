@@ -4,9 +4,11 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import { nextHalfHourLocal } from "@/lib/jobs/quick-book";
+import { easternWallToUtc, formatBusinessTime } from "@/lib/time/business-tz";
 
 interface UserOption { id: string; full_name: string; role: string; }
 interface ClientResult { id: string; name: string; }
+interface PropertyResult { id: string; address: string; }
 
 interface Props {
   initialDate: string;        // YYYY-MM-DD
@@ -60,7 +62,7 @@ const DURATION_OPTIONS = [
 ];
 
 function buildISO(date: string, time: string): string {
-  return new Date(`${date}T${time}:00`).toISOString();
+  return easternWallToUtc(date, time).toISOString();
 }
 
 export function QuickBookModal({
@@ -80,6 +82,10 @@ export function QuickBookModal({
   const [showDropdown, setShowDropdown] = useState(false);
   const [createNew, setCreateNew] = useState(false);
   const searchDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [houses, setHouses] = useState<PropertyResult[]>([]);
+  const [selectedHouse, setSelectedHouse] = useState<PropertyResult | null>(null);
+  const [address, setAddress] = useState("");
 
   // Job fields
   const [jobTitle, setJobTitle] = useState("");
@@ -124,6 +130,8 @@ export function QuickBookModal({
     setClientQuery(value);
     setSelectedClient(null);
     setCreateNew(false);
+    setHouses([]);
+    setSelectedHouse(null);
     searchClients(value);
   }
 
@@ -132,22 +140,31 @@ export function QuickBookModal({
     setClientQuery(c.name);
     setShowDropdown(false);
     setCreateNew(false);
+    setSelectedHouse(null);
+    setAddress("");
+    fetch(`/api/v1/properties?client_id=${c.id}&limit=20`)
+      .then((r) => r.json())
+      .then((d: { data?: PropertyResult[] }) => setHouses(d.data ?? []))
+      .catch(() => setHouses([]));
   }
 
   function selectCreateNew() {
     setSelectedClient(null);
     setCreateNew(true);
     setShowDropdown(false);
+    setHouses([]);
+    setSelectedHouse(null);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!clientQuery.trim()) { setError("Client name is required"); return; }
     if (!jobTitle.trim()) { setError("Job title is required"); return; }
+    if (!selectedHouse && !address.trim()) { setError("House address is required"); return; }
     setError(null);
     setSubmitting(true);
 
-    const endMs = new Date(`${date}T${startTime}:00`).getTime() + duration * 60_000;
+    const endMs = easternWallToUtc(date, startTime).getTime() + duration * 60_000;
     const endISO = new Date(endMs).toISOString();
 
     const payload: Record<string, unknown> = {
@@ -164,6 +181,11 @@ export function QuickBookModal({
       payload.client_id = selectedClient.id;
     } else {
       payload.client_name = clientQuery.trim();
+    }
+    if (selectedHouse) {
+      payload.property_id = selectedHouse.id;
+    } else {
+      payload.address = address.trim();
     }
 
     try {
@@ -188,8 +210,8 @@ export function QuickBookModal({
   }
 
   // Computed end time label
-  const endMs = new Date(`${date}T${startTime}:00`).getTime() + duration * 60_000;
-  const endLabel = new Date(endMs).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  const endMs = easternWallToUtc(date, startTime).getTime() + duration * 60_000;
+  const endLabel = formatBusinessTime(endMs);
 
   return (
     <div
@@ -243,6 +265,43 @@ export function QuickBookModal({
                     + Create &ldquo;{clientQuery}&rdquo;
                   </button>
                 )}
+              </div>
+            )}
+          </div>
+
+          {/* House — required. GPS and receipts attach here. */}
+          <div>
+            <label style={labelStyle}>House</label>
+            {houses.length > 0 && (
+              <select
+                value={selectedHouse?.id ?? ""}
+                onChange={(e) => {
+                  const found = houses.find((h) => h.id === e.target.value) ?? null;
+                  setSelectedHouse(found);
+                  if (found) setAddress("");
+                }}
+                style={{ ...inputStyle, marginBottom: 8 }}
+              >
+                <option value="">Choose a house, or type a new address</option>
+                {houses.map((h) => (
+                  <option key={h.id} value={h.id}>{h.address}</option>
+                ))}
+              </select>
+            )}
+            <input
+              type="text"
+              placeholder="Street address…"
+              value={address}
+              onChange={(e) => {
+                setAddress(e.target.value);
+                if (e.target.value.trim()) setSelectedHouse(null);
+              }}
+              autoComplete="street-address"
+              style={inputStyle}
+            />
+            {selectedHouse && (
+              <div style={{ fontSize: "var(--text-xs)", color: "var(--accent)", marginTop: 3 }}>
+                ✓ {selectedHouse.address}
               </div>
             )}
           </div>

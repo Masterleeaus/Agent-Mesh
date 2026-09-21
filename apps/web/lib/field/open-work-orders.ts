@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import type { OpenWorkOrderOption } from "@ai-fsm/domain";
 
 /**
@@ -6,7 +6,7 @@ import type { OpenWorkOrderOption } from "@ai-fsm/domain";
  * Includes today's visit when one exists on that WO.
  */
 export async function listOpenWorkOrdersAtProperty(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   propertyId: string,
   atIso: string,

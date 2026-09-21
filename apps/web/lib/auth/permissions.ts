@@ -1,4 +1,4 @@
-import { canBusinessOpsAction, type Role } from "@ai-fsm/domain";
+import type { Role } from "@ai-fsm/domain";
 
 /**
  * Role hierarchy: owner > admin > tech
@@ -32,175 +32,175 @@ export function hasRole(userRole: Role, allowedRoles: Role[]): boolean {
  * Can manage account settings (owner only)
  */
 export function canManageAccountSettings(role: Role): boolean {
-  return canBusinessOpsAction(role, "account.manage_settings");
+  return role === "owner";
 }
 
 /**
  * Can invite users and manage memberships (owner, admin)
  */
 export function canManageUsers(role: Role): boolean {
-  return canBusinessOpsAction(role, "members.manage");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can create and manage clients (owner, admin)
  */
 export function canManageClients(role: Role): boolean {
-  return canBusinessOpsAction(role, "clients.manage");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can create jobs (all roles)
  */
 export function canCreateJobs(role: Role): boolean {
-  return canBusinessOpsAction(role, "jobs.create");
+  return hasRole(role, ["owner", "admin", "tech"]);
 }
 
 /**
  * Can assign techs to jobs/visits (owner, admin)
  */
 export function canAssignTechs(role: Role): boolean {
-  return canBusinessOpsAction(role, "jobs.assign_worker");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can create estimates (owner, admin)
  */
 export function canCreateEstimates(role: Role): boolean {
-  return canBusinessOpsAction(role, "estimates.create");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can send estimates (owner, admin)
  */
 export function canSendEstimates(role: Role): boolean {
-  return canBusinessOpsAction(role, "estimates.send");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can convert estimates to invoices (owner, admin)
  */
 export function canConvertEstimates(role: Role): boolean {
-  return canBusinessOpsAction(role, "estimates.convert_to_invoice");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can create invoices (owner, admin)
  */
 export function canCreateInvoices(role: Role): boolean {
-  return canBusinessOpsAction(role, "invoices.create");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can send invoices (owner, admin)
  */
 export function canSendInvoices(role: Role): boolean {
-  return canBusinessOpsAction(role, "invoices.send");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can record payments (owner, admin)
  */
 export function canRecordPayments(role: Role): boolean {
-  return canBusinessOpsAction(role, "payments.record");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can view audit log (owner, admin)
  */
 export function canViewAuditLog(role: Role): boolean {
-  return canBusinessOpsAction(role, "audit.view");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can delete records (owner only)
  */
 export function canDeleteRecords(role: Role): boolean {
-  return canBusinessOpsAction(role, "records.delete");
+  return role === "owner";
 }
 
 /**
  * Can create visits (owner, admin)
  */
 export function canCreateVisit(role: Role): boolean {
-  return canBusinessOpsAction(role, "visits.create");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can assign a tech to a visit (owner, admin)
  */
 export function canAssignVisit(role: Role): boolean {
-  return canBusinessOpsAction(role, "visits.assign_worker");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can transition job status (owner, admin)
  */
 export function canTransitionJob(role: Role): boolean {
-  return canBusinessOpsAction(role, "jobs.transition");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can transition visit status — all roles; tech is limited to assigned visits server-side
  */
 export function canTransitionVisit(role: Role): boolean {
-  return canBusinessOpsAction(role, "visits.transition");
+  return hasRole(role, ["owner", "admin", "tech"]);
 }
 
 /**
  * Can update visit notes — all roles; tech limited to assigned visits server-side
  */
 export function canUpdateVisitNotes(role: Role): boolean {
-  return canBusinessOpsAction(role, "visits.update_notes");
+  return hasRole(role, ["owner", "admin", "tech"]);
 }
 
 /**
  * Can view all jobs — owner/admin see all; tech sees assigned jobs only (query filtered)
  */
 export function canViewAllJobs(role: Role): boolean {
-  return canBusinessOpsAction(role, "jobs.view_all");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can view all visits — owner/admin see all; tech sees assigned visits only (query filtered)
  */
 export function canViewAllVisits(role: Role): boolean {
-  return canBusinessOpsAction(role, "visits.view_all");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can view expenses — all roles can read expense records
  */
 export function canViewExpenses(role: Role): boolean {
-  return canBusinessOpsAction(role, "expenses.view");
+  return hasRole(role, ["owner", "admin", "tech"]);
 }
 
 /**
  * Can create/update expenses (owner, admin)
  */
 export function canManageExpenses(role: Role): boolean {
-  return canBusinessOpsAction(role, "expenses.manage");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can view profitability reports — owner and admin only
  */
 export function canViewReports(role: Role): boolean {
-  return canBusinessOpsAction(role, "reports.view");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can close a period month for bookkeeping handoff (owner, admin)
  */
 export function canCloseMonth(role: Role): boolean {
-  return canBusinessOpsAction(role, "period.close");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can reopen a closed period month (owner only — higher-risk reversal)
  */
 export function canReopenMonth(role: Role): boolean {
-  return canBusinessOpsAction(role, "period.reopen");
+  return role === "owner";
 }
 
 /**
@@ -208,12 +208,12 @@ export function canReopenMonth(role: Role): boolean {
  * Techs can view linked documents but cannot add or remove links.
  */
 export function canLinkDocuments(role: Role): boolean {
-  return canBusinessOpsAction(role, "documents.link");
+  return hasRole(role, ["owner", "admin"]);
 }
 
 /**
  * Can update visit checklist items — all roles; tech limited to assigned visits server-side.
  */
 export function canUpdateChecklist(role: Role): boolean {
-  return canBusinessOpsAction(role, "visits.update_checklist");
+  return hasRole(role, ["owner", "admin", "tech"]);
 }

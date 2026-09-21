@@ -1,5 +1,4 @@
-import { randomUUID } from "crypto";
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { isFieldDeliverableTaskLabel } from "@ai-fsm/domain";
 import type { WorkOrderTask } from "./task-time";
 import { mirrorTasksToCompletionCriteria, tasksToCriteria } from "./task-time";
@@ -23,7 +22,7 @@ export type JobTaskProgress = {
  * All first-class tasks on a project's work orders, ordered by WO then sort.
  */
 export async function loadJobTasks(
-  client: DbClient,
+  client: PoolClient,
   jobId: string,
   accountId: string,
 ): Promise<JobTaskRow[]> {
@@ -59,7 +58,7 @@ export function computeTaskProgress(tasks: JobTaskRow[]): JobTaskProgress {
 }
 
 export async function loadJobTaskProgress(
-  client: DbClient,
+  client: PoolClient,
   jobId: string,
   accountId: string,
 ): Promise<JobTaskProgress> {
@@ -72,7 +71,7 @@ export async function loadJobTaskProgress(
  * Done tasks are never selectable. Partial/open/blocked can still be planned.
  */
 export async function loadOpenTasksForWorkOrder(
-  client: DbClient,
+  client: PoolClient,
   workOrderId: string,
   accountId: string,
 ): Promise<Array<{ id: string; label: string; required: boolean; status: string }>> {
@@ -94,7 +93,7 @@ export async function loadOpenTasksForWorkOrder(
 
 /** All incomplete tasks on a job (for visit-day planner when WO is known or not). */
 export async function loadSelectableTasksForJob(
-  client: DbClient,
+  client: PoolClient,
   jobId: string,
   accountId: string,
   workOrderId?: string | null,
@@ -132,7 +131,7 @@ export async function loadSelectableTasksForJob(
  * work order (or any WO on the visit's job if work_order_id is null).
  */
 export async function setVisitPlannedTasks(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     visitId: string;
@@ -143,45 +142,54 @@ export async function setVisitPlannedTasks(
 ): Promise<number> {
   const unique = [...new Set(opts.taskIds.filter(Boolean))];
 
-  for (const taskId of unique) {
-    const valid = await client.query<{ id: string }>(
+  if (unique.length > 0) {
+    // Open/partial may be newly planned. Done tasks may stay on the day if already
+    // planned (locked in the UI) so re-saving a plan does not drop completed work.
+    const { rows: valid } = await client.query<{ id: string }>(
       opts.workOrderId
         ? `SELECT t.id FROM work_order_tasks t
-             JOIN work_orders wo ON wo.id = t.work_order_id AND wo.account_id = t.account_id
-            WHERE t.account_id = $1 AND wo.job_id = $2 AND wo.id = $3 AND t.id = $4
+             JOIN work_orders wo ON wo.id = t.work_order_id
+            WHERE t.account_id = $1 AND wo.job_id = $2 AND wo.id = $3
+              AND t.id = ANY($4::uuid[])
               AND (
                 (t.completed = false AND t.status <> 'done')
                 OR EXISTS (
                   SELECT 1 FROM visit_tasks vt
-                   WHERE vt.visit_id = $5 AND vt.task_id = t.id AND vt.account_id = $6
+                  WHERE vt.visit_id = $5 AND vt.task_id = t.id AND vt.account_id = $1
                 )
               )`
         : `SELECT t.id FROM work_order_tasks t
-             JOIN work_orders wo ON wo.id = t.work_order_id AND wo.account_id = t.account_id
-            WHERE t.account_id = $1 AND wo.job_id = $2 AND t.id = $3
+             JOIN work_orders wo ON wo.id = t.work_order_id
+            WHERE t.account_id = $1 AND wo.job_id = $2
+              AND t.id = ANY($3::uuid[])
               AND (
                 (t.completed = false AND t.status <> 'done')
                 OR EXISTS (
                   SELECT 1 FROM visit_tasks vt
-                   WHERE vt.visit_id = $4 AND vt.task_id = t.id AND vt.account_id = $5
+                  WHERE vt.visit_id = $4 AND vt.task_id = t.id AND vt.account_id = $1
                 )
               )`,
       opts.workOrderId
-        ? [opts.accountId, opts.jobId, opts.workOrderId, taskId, opts.visitId, opts.accountId]
-        : [opts.accountId, opts.jobId, taskId, opts.visitId, opts.accountId],
+        ? [opts.accountId, opts.jobId, opts.workOrderId, unique, opts.visitId]
+        : [opts.accountId, opts.jobId, unique, opts.visitId],
     );
-    if (!valid.rows[0]) {
+    if (valid.length !== unique.length) {
       throw new Error("Only open or started (not finished) tasks can be planned on a day — done tasks are locked");
     }
   }
 
-  await client.query(`DELETE FROM visit_tasks WHERE visit_id = $1 AND account_id = $2`, [opts.visitId, opts.accountId]);
+  await client.query(`DELETE FROM visit_tasks WHERE visit_id = $1 AND account_id = $2`, [
+    opts.visitId,
+    opts.accountId,
+  ]);
 
   let n = 0;
   for (const taskId of unique) {
     await client.query(
-      `INSERT INTO visit_tasks (id, account_id, visit_id, task_id) VALUES ($1, $2, $3, $4)`,
-      [randomUUID(), opts.accountId, opts.visitId, taskId],
+      `INSERT INTO visit_tasks (account_id, visit_id, task_id)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (visit_id, task_id) DO NOTHING`,
+      [opts.accountId, opts.visitId, taskId],
     );
     n += 1;
   }
@@ -199,7 +207,7 @@ export type VisitTaskRow = {
 };
 
 export async function loadVisitPlannedTasks(
-  client: DbClient,
+  client: PoolClient,
   visitId: string,
   accountId: string,
 ): Promise<VisitTaskRow[]> {
@@ -237,7 +245,7 @@ export function visitTasksAsCriteria(tasks: VisitTaskRow[]) {
  * ("what is left to do"). The remainder is open and required.
  */
 export async function markTaskPartialWithRemainder(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     workOrderId: string;
@@ -269,22 +277,21 @@ export async function markTaskPartialWithRemainder(
 
   await client.query(
     `UPDATE work_order_tasks
-        SET note = COALESCE(NULLIF($1, ''), note),
-            status = 'partial',
+        SET status = 'partial',
             completed = false,
             completed_at = NULL,
-            updated_at = CURRENT_TIMESTAMP
-      WHERE id = $2 AND account_id = $3`,
-    [opts.note ?? null, opts.taskId, opts.accountId],
+            note = COALESCE(NULLIF($3, ''), note),
+            updated_at = now()
+      WHERE id = $1 AND account_id = $2`,
+    [opts.taskId, opts.accountId, opts.note ?? null],
   );
 
-  const remainderId = randomUUID();
-  await client.query(
+  const { rows: ins } = await client.query<{ id: string }>(
     `INSERT INTO work_order_tasks
-       (id, account_id, work_order_id, label, required, completed, status, sort_order, source, parent_task_id, note)
-     VALUES ($1, $2, $3, $4, true, false, 'open', $5, 'manual', $6, $7)`,
+       (account_id, work_order_id, label, required, completed, status, sort_order, source, parent_task_id, note)
+     VALUES ($1, $2, $3, true, false, 'open', $4, 'manual', $5, $6)
+     RETURNING id`,
     [
-      remainderId,
       opts.accountId,
       opts.workOrderId,
       remainder.slice(0, 300),
@@ -296,5 +303,5 @@ export async function markTaskPartialWithRemainder(
 
   await mirrorTasksToCompletionCriteria(client, opts.workOrderId, opts.accountId);
 
-  return { originalId: opts.taskId, remainderId };
+  return { originalId: opts.taskId, remainderId: ins[0].id };
 }

@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 import { estimateFollowupHtml } from "@ai-fsm/email-templates";
 import { appUrl } from "./mailer.js";
@@ -30,40 +30,36 @@ interface EligibleEstimate {
   client_email: string | null;
 }
 
-export async function findDueEstimateFollowups(client: DatabaseClient): Promise<AutomationRow[]> {
+export async function findDueEstimateFollowups(client: Client): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
-    `SELECT id, account_id, type, config, enabled, next_run_at
+    `SELECT id, account_id, type, config, enabled, next_run_at::text
        FROM automations
       WHERE type = 'estimate_followup'
         AND enabled = true
-        AND next_run_at <= CURRENT_TIMESTAMP`
+        AND next_run_at <= now()`
   );
   return rows;
 }
 
 export async function findEligibleEstimates(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<EligibleEstimate[]> {
   const daysAfter = (automation.config as { days_after_sent?: number }).days_after_sent ?? 3;
 
-  const now = new Date();
-  const windowEnd = new Date(now.getTime() - daysAfter * 24 * 60 * 60_000);
-  const windowStart = new Date(windowEnd.getTime() - 24 * 60 * 60_000);
-
-  type EligibleEstimateRow = Omit<EligibleEstimate, "days_since_sent">;
-  const { rows } = await client.query<EligibleEstimateRow>(
+  const { rows } = await client.query<EligibleEstimate>(
     `SELECT e.id, e.account_id, c.id AS client_id,
             e.total_cents,
-            e.sent_at,
+            e.sent_at::text AS sent_at,
+            EXTRACT(DAY FROM (now() - e.sent_at))::int AS days_since_sent,
             c.name AS client_name, c.email AS client_email
        FROM estimates e
        JOIN clients c ON c.id = e.client_id AND c.account_id = e.account_id
       WHERE e.account_id = $1
         AND e.status = 'sent'
         AND e.sent_at IS NOT NULL
-        AND e.sent_at <= $2
-        AND e.sent_at > $3
+        AND e.sent_at <= now() - ($2 || ' days')::interval
+        AND e.sent_at >  now() - ($2 || ' days')::interval - interval '1 day'
         AND c.email IS NOT NULL
         AND NOT EXISTS (
           SELECT 1 FROM audit_log al
@@ -72,18 +68,14 @@ export async function findEligibleEstimates(
              AND al.account_id = e.account_id
         )
       ORDER BY e.sent_at ASC`,
-    [automation.account_id, windowEnd.toISOString(), windowStart.toISOString()]
+    [automation.account_id, daysAfter]
   );
 
-  return rows.map((row) => ({
-    ...row,
-    sent_at: new Date(row.sent_at).toISOString(),
-    days_since_sent: Math.max(0, Math.floor((now.getTime() - new Date(row.sent_at).getTime()) / (24 * 60 * 60_000))),
-  }));
+  return rows;
 }
 
 async function emitEstimateFollowup(
-  client: DatabaseClient,
+  client: Client,
   est: EligibleEstimate,
   automationId: string
 ): Promise<boolean> {
@@ -143,7 +135,7 @@ async function emitEstimateFollowup(
   return true;
 }
 
-export async function processEstimateFollowups(client: DatabaseClient, automation: AutomationRow): Promise<RunResult> {
+export async function processEstimateFollowups(client: Client, automation: AutomationRow): Promise<RunResult> {
   const result: RunResult = {
     automationId: automation.id,
     accountId: automation.account_id,

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole } from "../../../../../../lib/auth/middleware";
 import type { AuthSession } from "../../../../../../lib/auth/middleware";
-import { withPortableTransaction } from "../../../../../../lib/db/portable";
+import { getPool } from "../../../../../../lib/db";
 import { appendAuditLog } from "../../../../../../lib/db/audit";
 import { logger } from "../../../../../../lib/logger";
 import { jobTransitions, jobStatusSchema, dueDateUponCompletion } from "@ai-fsm/domain";
@@ -49,8 +49,15 @@ export const POST = withRole(
 
     const targetStatus = parsed.data.status as JobStatus;
 
+    const pool = getPool();
+    const client = await pool.connect();
+
     try {
-      return await withPortableTransaction(async (client) => {
+      await client.query("BEGIN");
+      await client.query(
+        `SELECT set_config('app.current_user_id', $1, true), set_config('app.current_account_id', $2, true), set_config('app.current_role', $3, true)`,
+        [session.userId, session.accountId, session.role]
+      );
 
       const existing = await client.query(
         `SELECT * FROM jobs WHERE id = $1 AND account_id = $2 FOR UPDATE`,
@@ -58,6 +65,7 @@ export const POST = withRole(
       );
 
       if (!existing.rows[0]) {
+        await client.query("ROLLBACK");
         return NextResponse.json(
           { error: { code: "NOT_FOUND", message: "Job not found", traceId: session.traceId } },
           { status: 404 }
@@ -69,6 +77,7 @@ export const POST = withRole(
       const allowed = jobTransitions[currentStatus];
 
       if (!allowed.includes(targetStatus)) {
+        await client.query("ROLLBACK");
         return NextResponse.json(
           {
             error: {
@@ -86,6 +95,7 @@ export const POST = withRole(
       if (currentStatus === "draft" && targetStatus === "quoted") {
         const gate = reviewJobIntakeGate(job);
         if (gate.status === "blocked") {
+          await client.query("ROLLBACK");
           return NextResponse.json(
             {
               error: {
@@ -100,20 +110,31 @@ export const POST = withRole(
         intakeWarning = gate.warning;
       }
 
-      await client.query(
-        `UPDATE jobs SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 AND account_id = $3`,
+      const { rows } = await client.query(
+        `UPDATE jobs SET status = $1, updated_at = now() WHERE id = $2 AND account_id = $3 RETURNING *`,
         [targetStatus, id, session.accountId]
       );
-      const updatedRows = await client.query(
-        `SELECT * FROM jobs WHERE id = $1 AND account_id = $2`,
-        [id, session.accountId]
-      );
-      const updated = updatedRows.rows[0];
+
+      const updated = rows[0];
 
       // Owner explicit project completion → draft final invoice for billing review.
       // Visits / work orders never complete the project or create this invoice.
       let final_invoice_id: string | null = null;
+      let closedBecausePaid = false;
       if (targetStatus === "completed") {
+        const { closeJobIfFullyPaid } = await import("@/lib/jobs/close-if-paid");
+        const paidClose = await closeJobIfFullyPaid(client, {
+          accountId: session.accountId,
+          jobId: id,
+          actorId: session.userId,
+          traceId: session.traceId,
+        });
+        if (paidClose?.to === "invoiced") {
+          closedBecausePaid = true;
+          updated.status = "invoiced";
+        }
+      }
+      if (targetStatus === "completed" && !closedBecausePaid) {
         await client.query("SAVEPOINT before_final_invoice");
         try {
           const result = await createDraftFinalInvoiceForJob({
@@ -157,14 +178,14 @@ export const POST = withRole(
         // immutability trigger (migration 149). Deposits are excluded (due now).
         await client.query(
           `UPDATE invoices
-             SET due_date = $1, updated_at = CURRENT_TIMESTAMP
-           WHERE job_id = $2 AND account_id = $3
+             SET due_date = $3::timestamptz, updated_at = now()
+           WHERE job_id = $1 AND account_id = $2
              AND due_date IS NULL
              AND invoice_kind IN ('standard', 'final')
              -- Only non-terminal invoices: the immutability trigger (149) rejects
              -- any update to a paid/void invoice, so filling one would 500.
              AND status IN ('draft', 'sent', 'partial', 'overdue')`,
-          [dueDateUponCompletion(), id, session.accountId],
+          [id, session.accountId, dueDateUponCompletion()],
         );
       }
 
@@ -193,19 +214,28 @@ export const POST = withRole(
         actor_id: session.userId,
         trace_id: session.traceId,
         old_value: { status: currentStatus },
-        new_value: { status: targetStatus, final_invoice_id },
+        new_value: {
+          status: closedBecausePaid ? "invoiced" : targetStatus,
+          final_invoice_id,
+        },
       });
+
+      await client.query("COMMIT");
 
       const response: Record<string, unknown> = { data: updated };
       if (final_invoice_id) {
         response.final_invoice_id = final_invoice_id;
       }
+      if (closedBecausePaid) {
+        response.job_status = "invoiced";
+        response.closed_because_paid = true;
+      }
       if (intakeWarning) {
         response.warning = intakeWarning;
       }
       return NextResponse.json(response);
-      });
     } catch (err) {
+      await client.query("ROLLBACK");
       logger.error("[jobs transition POST]", err, { traceId: session.traceId });
       return NextResponse.json(
         {
@@ -217,6 +247,8 @@ export const POST = withRole(
         },
         { status: 500 }
       );
+    } finally {
+      client.release();
     }
   }
 );

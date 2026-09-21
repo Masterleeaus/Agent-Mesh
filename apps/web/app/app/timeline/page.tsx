@@ -12,6 +12,7 @@ import { TimelineDayNav } from "../TimelineDayNav";
 import type { ActivityEntryDto } from "@/lib/my-work/field-day-types";
 import { loadHybridMileageForSessionDay } from "@/lib/mileage/hybrid-day";
 import { HybridMileageStrip } from "@/components/mileage/HybridMileageStrip";
+import { formatBusinessYmd } from "@/lib/time/business-tz";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export const dynamic = "force-dynamic";
 
 function normalizeDate(input: string | undefined): string {
   if (input && /^\d{4}-\d{2}-\d{2}$/.test(input)) return input;
-  return new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD, local
+  return formatBusinessYmd(new Date());
 }
 
 export default async function TimelinePage({
@@ -46,7 +47,7 @@ export default async function TimelinePage({
   const [entries, hybridMileage] = await Promise.all([
     queryForSession<ActivityEntryDto>(
       session,
-      `SELECT id, activity_type, category, started_at::text, ended_at::text,
+      `SELECT id, user_id::text, activity_type, category, started_at::text, ended_at::text,
               entity_type, entity_id, assignment_kind, labor_bucket, note
        FROM activity_entries
        WHERE account_id = $1 AND session_date = $2::date AND voided_at IS NULL

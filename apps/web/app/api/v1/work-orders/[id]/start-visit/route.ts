@@ -4,10 +4,10 @@ import type { AuthSession } from "../../../../../../lib/auth/middleware";
 import { withLeadWorkOrderContext } from "../../../../../../lib/work-orders/lead-access";
 import { syncWorkOrderStatus } from "../../../../../../lib/work-orders/sync-status";
 import { logger } from "../../../../../../lib/logger";
-import { randomUUID } from "crypto";
 
 export const dynamic = "force-dynamic";
 
+const ACTIVE_VISIT = ["dispatched", "traveling", "arrived", "in_progress", "waiting"] as const;
 
 export const POST = withAuth(
   async (request: NextRequest, session: AuthSession) => {
@@ -45,9 +45,9 @@ export const POST = withAuth(
         const activeRes = await client.query<{ id: string }>(
         `SELECT id FROM visits
          WHERE work_order_id = $1 AND account_id = $2 AND assigned_user_id = $3
-           AND status IN ('dispatched','traveling','arrived','in_progress','waiting')
+           AND status = ANY($4::text[])
          ORDER BY scheduled_start DESC LIMIT 1`,
-        [id, session.accountId, session.userId],
+        [id, session.accountId, session.userId, ACTIVE_VISIT],
       );
         if (activeRes.rows[0]) {
           return { kind: "visit" as const, visit_id: activeRes.rows[0].id, resumed: true, created: false };
@@ -57,33 +57,33 @@ export const POST = withAuth(
         `SELECT id, status FROM visits
          WHERE work_order_id = $1 AND account_id = $2 AND assigned_user_id = $3
            AND status = 'scheduled'
-           AND DATE(scheduled_start) = CURRENT_DATE
+           AND scheduled_start::date = CURRENT_DATE
          ORDER BY scheduled_start ASC LIMIT 1`,
         [id, session.accountId, session.userId],
       );
         const scheduled = scheduledRes.rows[0];
         if (scheduled) {
-          await client.query(
-            `UPDATE visits SET status = 'arrived', arrived_at = COALESCE(arrived_at, CURRENT_TIMESTAMP), updated_at = CURRENT_TIMESTAMP
-             WHERE id = $1 AND account_id = $2`,
-            [scheduled.id, session.accountId],
+          const updated = await client.query<{ id: string }>(
+            `UPDATE visits SET status = 'arrived', arrived_at = COALESCE(arrived_at, now()), updated_at = now()
+             WHERE id = $1 RETURNING id`,
+            [scheduled.id],
           );
           await syncWorkOrderStatus(client, id, session.accountId);
-          return { kind: "visit" as const, visit_id: scheduled.id, resumed: false, created: false };
+          return { kind: "visit" as const, visit_id: updated.rows[0].id, resumed: false, created: false };
         }
 
         const now = new Date();
         const end = new Date(now.getTime() + 60 * 60 * 1000);
-        const visitId = randomUUID();
-        await client.query(
+        const inserted = await client.query<{ id: string }>(
           `INSERT INTO visits (
-             id, account_id, job_id, work_order_id, assigned_user_id,
+             account_id, job_id, work_order_id, assigned_user_id,
              scheduled_start, scheduled_end, status, arrived_at, visit_type
-           ) VALUES ($1, $2, $3, $4, $5, $6, $7, 'arrived', CURRENT_TIMESTAMP, 'standard')`,
-          [visitId, session.accountId, wo.job_id, id, session.userId, now.toISOString(), end.toISOString()],
+           ) VALUES ($1, $2, $3, $4, $5, $6, 'arrived', now(), 'standard')
+           RETURNING id`,
+          [session.accountId, wo.job_id, id, session.userId, now.toISOString(), end.toISOString()],
         );
         await syncWorkOrderStatus(client, id, session.accountId);
-        return { kind: "visit" as const, visit_id: visitId, resumed: false, created: true };
+        return { kind: "visit" as const, visit_id: inserted.rows[0].id, resumed: false, created: true };
       });
 
       if (result.kind === "not_found") {

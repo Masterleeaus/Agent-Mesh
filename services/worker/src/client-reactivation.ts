@@ -1,11 +1,11 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 import { clientReactivationHtml } from "@ai-fsm/email-templates";
 import type { AutomationRow, RunResult } from "./automations/types.js";
 import { enqueueNotification } from "./notification/enqueue.js";
 import { PRIORITY } from "./notification/priority.js";
 
-interface InactiveDatabaseClient {
+interface InactiveClient {
   id: string;
   account_id: string;
   name: string | null;
@@ -13,7 +13,7 @@ interface InactiveDatabaseClient {
   months_since_last_job: number;
 }
 
-export async function findDueDatabaseClientReactivations(client: DatabaseClient): Promise<AutomationRow[]> {
+export async function findDueClientReactivations(client: Client): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
     `SELECT id, account_id, type, config, enabled, next_run_at::text
      FROM automations
@@ -24,14 +24,14 @@ export async function findDueDatabaseClientReactivations(client: DatabaseClient)
   return rows;
 }
 
-export async function findInactiveDatabaseClients(
-  client: DatabaseClient,
+export async function findInactiveClients(
+  client: Client,
   automation: AutomationRow
-): Promise<InactiveDatabaseClient[]> {
+): Promise<InactiveClient[]> {
   const daysInactive = (automation.config as { days_inactive?: number }).days_inactive ?? 180;
   const year = new Date().getFullYear();
 
-  const { rows } = await client.query<InactiveDatabaseClient>(
+  const { rows } = await client.query<InactiveClient>(
     `SELECT c.id, c.account_id, c.name,
             c.email,
             EXTRACT(MONTH FROM (now() - MAX(j.updated_at)))::int AS months_since_last_job
@@ -57,9 +57,9 @@ export async function findInactiveDatabaseClients(
   return rows;
 }
 
-async function emitDatabaseClientReactivation(
-  client: DatabaseClient,
-  inactive: InactiveDatabaseClient,
+async function emitClientReactivation(
+  client: Client,
+  inactive: InactiveClient,
   automationId: string
 ): Promise<boolean> {
   const year = new Date().getFullYear();
@@ -119,8 +119,8 @@ async function emitDatabaseClientReactivation(
   return true;
 }
 
-export async function processDatabaseClientReactivation(
-  client: DatabaseClient,
+export async function processClientReactivation(
+  client: Client,
   automation: AutomationRow
 ): Promise<RunResult> {
   const result: RunResult = {
@@ -131,10 +131,10 @@ export async function processDatabaseClientReactivation(
     errors: 0,
   };
 
-  const inactiveDatabaseClients = await findInactiveDatabaseClients(client, automation);
-  for (const inactive of inactiveDatabaseClients) {
+  const inactiveClients = await findInactiveClients(client, automation);
+  for (const inactive of inactiveClients) {
     try {
-      const emitted = await emitDatabaseClientReactivation(client, inactive, automation.id);
+      const emitted = await emitClientReactivation(client, inactive, automation.id);
       if (emitted) result.sent++;
       else result.skipped++;
     } catch (error) {

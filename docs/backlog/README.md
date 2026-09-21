@@ -95,7 +95,7 @@ tasks in `docs/archive/backlog-done/`.
 
 ## Task index
 
-Next available ID: **TASK-123**.
+Next available ID: **TASK-151**.
 
 Wave 0b 2026-08-05 closed 079/080; Wave 0a 2026-08-05 closed false In Progress: 046, 053, 068, 071, 078.
 Truth pass 2026-08-05: fixed ID collisions (ledger/T&M/terms had reused 081–083),
@@ -108,12 +108,33 @@ Code-audit 2026-08-06: closed TASK-069 (live Square prod pay), TASK-054 (day clo
 TASK-076 (stop anchor). Left PARTIAL: 052 payroll residual, 049 inbox, 066 visit rollup.
 Wave finish 2026-08-05: In Progress emptied — TASK-056, TASK-018, TASK-017 shipped;
 truth-pass also archived TASK-023 and TASK-050 (epic already Done, README lagged).
+Validation closeout 2026-09-09: archived shipped TASK-052, 112, 127–131 after fresh `pnpm gate`; live/manual tasks remain open.
 Truth pass 2026-08-17: archived shipped 104/105/106/107 (#599–#602) and 095
 (script + 2026-08-08 run). Ticked TASK-094 merged-to-main. TASK-103 seed AC
 closed in tests; owner-flow AC still open.
 
 | ID | Title | Epic | Status |
 | --- | --- | --- | --- |
+| TASK-131 | Audit hardening — framework security patch | 005 | Done |
+| TASK-132 | [Audit hardening: CI, database roles, project loading](TASK-132-audit-hardening.md) | 005 | In Progress |
+| TASK-133 | [Job closeout on Complete (parent)](TASK-133-job-closeout-on-complete.md) | 007 | Proposed |
+| TASK-134 | [Complete fork — done vs coming back](TASK-134-complete-done-or-return.md) | 007 | Proposed |
+| TASK-135 | [Coming back — day log, next visit, first-up](TASK-135-return-day-log-next-visit.md) | 007 | Proposed |
+| TASK-136 | [Done — complete project and draft the invoice](TASK-136-done-invoice-from-complete.md) | 004 | Proposed |
+| TASK-137 | [Next-person briefing on the next visit](TASK-137-next-person-briefing.md) | 007 | Proposed |
+| TASK-138 | [Night leftovers after job closeout](TASK-138-night-closeout-leftovers.md) | 007 | Proposed |
+| TASK-139 | [Paid invoice closes the job](TASK-139-paid-invoice-closes-job.md) | 004 | In Progress |
+| TASK-140 | [Mileage page — claim vs GPS hops](TASK-140-mileage-claim-vs-gps.md) | 001 | In Progress |
+| TASK-141 | [Tag miles from Complete](TASK-141-tag-miles-from-complete.md) | 001 | In Progress |
+| TASK-142 | [Untagged claim miles leftover](TASK-142-untagged-miles-leftover.md) | 001 | In Progress |
+| TASK-143 | [Overview is the leak list](TASK-143-overview-leak-list.md) | 006 | In Progress |
+| TASK-144 | [Receipt destinations](TASK-144-receipt-destinations.md) | 004 | In Progress |
+| TASK-145 | [Night stop interview](TASK-145-night-stop-interview.md) | 007 | In Progress |
+| TASK-146 | [RLS enforcement on the web tier](TASK-146-rls-web-tier-enforcement.md) | 005 | In Progress |
+| TASK-147 | [GPS blip coalescing — one dwell, one stop](TASK-147-gps-blip-coalescing.md) | 007 | Done |
+| TASK-148 | [Geofence-anchored stops + home fence](TASK-148-geofence-anchored-stops.md) | 007 | Done |
+| TASK-149 | [Park (Bluetooth disconnect) → confirm location](TASK-149-park-arrival-prompt.md) | 007 | Done |
+| TASK-150 | [Hold the stop until Bluetooth / zone / different property](TASK-150-hold-until-vehicle.md) | 007 | In Progress |
 | TASK-001 | Vehicle Mileage Sessions | 001 | Done |
 | TASK-002 | Vehicle Session Recovery | 001 | Done |
 | TASK-003 | Wrong Vehicle Correction | 001 | Done |
@@ -164,7 +185,7 @@ closed in tests; owner-flow AC still open.
 | TASK-049 | Operational Inbox (single review surface) | 007 | Proposed |
 | TASK-050 | Link mileage ↔ travel-time + capture-method | 001 | Done |
 | TASK-051 | Business Day aggregate (decouple day close) | 001 | Done |
-| TASK-052 | Payroll clock + payroll policies | 001 | Proposed |
+| TASK-052 | Payroll clock + payroll policies | 001 | Done |
 | TASK-053 | Activity + Assignment model | 001 | Done |
 | TASK-054 | Day Close checklist + Reopen | 001 | Done |
 | TASK-055 | Operational Intelligence (profitability→automation) | 008 | Proposed |
@@ -222,16 +243,24 @@ closed in tests; owner-flow AC still open.
 | TASK-109 | Ponytail second cut — MCP, dead APIs, unused paint helpers | 005 | Done |
 | TASK-110 | Delete Daily Recap (Day Draft is the evening close) | 007 | Done |
 | TASK-111 | Keep attention notification panel on-screen (desktop) | 006 | Done |
-| TASK-112 | Job materials builder templates (Build from tasks) | 002 | In Progress |
+| TASK-112 | Job materials builder templates (Build from tasks) | 002 | Done |
 | TASK-113 | Fuel receipt attaches to the logged-in vehicle | 001 | Done |
 | TASK-114 | Fuel receipt odometer from that day + number sanity check | 001 | Done |
 | TASK-115 | Promise Capture Pilot | 005 | In Progress |
 | TASK-116 | Field-ops Web Push (start-day, home arrival, My Work prompt) | 005 | In Progress |
 | TASK-118 | Native Web Push notifications | 005 | Done |
-| TASK-119 | Quick-job billing seam — time → invoice for quick-booked jobs | 004 | Proposed |
-| TASK-120 | Big-job billing — deposit gate + progress (thirds) billing | 004 | Proposed |
-| TASK-121 | Unified job materials & spend view | 004 | Proposed |
-| TASK-122 | Backup hardening — uploads + encrypted .env | 005 | In Progress |
+| TASK-119 | Quick-job billing seam — time → invoice for quick-booked jobs | 004 | Done |
+| TASK-120 | Big-job billing — deposit gate + progress (thirds) billing | 004 | Done |
+| TASK-121 | Unified job materials & spend view | 004 | Done |
+| TASK-122 | Backup hardening — uploads + encrypted .env alongside DB dump | 005 | In Progress |
+| TASK-124 | De-jargon naming — "Needs attention" + consistent "My Day" | 006 | Done |
+| TASK-125 | Nav restructure — Jobs→Projects, drop Work Orders from nav | 006 | Done |
+| TASK-123 | Agent accessibility — invariants doc + dev/test stack script | 005 | Done |
+| TASK-126 | Phone job shortcuts go to the matching job surface | 006 | Done |
+| TASK-127 | Pricing reconciliation — retire stray hardcoded labor rates | 004 | Done |
+| TASK-128 | CI guard against new duplicate migration numbers | 005 | Done |
+| TASK-129 | One daily home leftover fold — Needs attention + today's timeline on My Day | 006 | Done |
+| TASK-130 | Findability — lightweight "what can I do here?" command search | 006 | Done |
 
 ## Status legend
 

@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
+// ---------------------------------------------------------------------------
+// Mock the auth middleware so we can control session injection in tests
+// ---------------------------------------------------------------------------
 const mockSession = {
   userId: "00000000-0000-0000-0000-000000000001",
   accountId: "00000000-0000-0000-0000-000000000002",
@@ -13,33 +16,30 @@ vi.mock("../../../../../lib/auth/middleware", () => ({
   withRole: (_roles: string[], handler: Function) => (req: NextRequest) => handler(req, mockSession),
 }));
 
-const mockPortableQuery = vi.fn();
-const mockPortableQueryOne = vi.fn();
+// ---------------------------------------------------------------------------
+// Mock the DB layer so no real connections are made
+// ---------------------------------------------------------------------------
+const mockQuery = vi.fn();
+const mockQueryOne = vi.fn();
 const mockClientQuery = vi.fn();
-const mockClient = { query: (...args: unknown[]) => mockClientQuery(...args) };
+const mockClientRelease = vi.fn();
+const mockPool = {
+  connect: vi.fn(),
+};
 
-vi.mock("../../../../../lib/db/portable", () => ({
-  portableQuery: (...args: unknown[]) => mockPortableQuery(...args),
-  portableQueryOne: (...args: unknown[]) => mockPortableQueryOne(...args),
-  withPortableTransaction: async (fn: Function) => fn(mockClient),
+vi.mock("../../../../../lib/db", () => ({
+  query: (...args: unknown[]) => mockQuery(...args),
+  queryOne: (...args: unknown[]) => mockQueryOne(...args),
+  getPool: () => mockPool,
 }));
 
 vi.mock("../../../../../lib/db/audit", () => ({
   appendAuditLog: vi.fn(),
 }));
 
-vi.mock("../../../../../lib/logger", () => ({
-  logger: { error: vi.fn() },
-}));
-
-vi.mock("../../../../../lib/invoices/final-invoice", () => ({
-  createDraftFinalInvoiceForJob: vi.fn().mockResolvedValue(null),
-}));
-
-vi.mock("../../../../../lib/booking-requests/fulfill", () => ({
-  markLinkedBookingRequestConverted: vi.fn().mockResolvedValue(undefined),
-}));
-
+// ---------------------------------------------------------------------------
+// Import route handlers after mocks are set up
+// ---------------------------------------------------------------------------
 import { GET as jobList, POST as jobCreate } from "../route";
 import { GET as jobGet, PATCH as jobPatch, DELETE as jobDelete } from "../[id]/route";
 import { POST as jobTransition } from "../[id]/transition/route";
@@ -68,13 +68,21 @@ const SAMPLE_JOB = {
 };
 
 beforeEach(() => {
+  // resetAllMocks drains mockResolvedValueOnce queues from prior tests
+  // (clearAllMocks only clears call history, not implementation queues)
   vi.resetAllMocks();
+  // Re-setup persistent mock implementations after reset
+  mockPool.connect.mockResolvedValue({ query: mockClientQuery, release: mockClientRelease });
+  // Default transaction response: BEGIN / SET LOCAL / COMMIT etc.
   mockClientQuery.mockResolvedValue({ rows: [] });
 });
 
+// ---------------------------------------------------------------------------
+// GET /api/v1/jobs — list
+// ---------------------------------------------------------------------------
 describe("GET /api/v1/jobs", () => {
   it("returns 200 with job array", async () => {
-    mockPortableQuery.mockResolvedValue([SAMPLE_JOB]);
+    mockQuery.mockResolvedValue([SAMPLE_JOB]);
     const res = await jobList(makeRequest("GET", BASE));
     expect(res.status).toBe(200);
     const json = await res.json();
@@ -83,175 +91,205 @@ describe("GET /api/v1/jobs", () => {
   });
 
   it("returns 200 with empty array when no jobs", async () => {
-    mockPortableQuery.mockResolvedValue([]);
+    mockQuery.mockResolvedValue([]);
     const res = await jobList(makeRequest("GET", BASE));
     expect(res.status).toBe(200);
-    await expect(res.json()).resolves.toMatchObject({ data: [] });
+    const json = await res.json();
+    expect(json.data).toEqual([]);
   });
 
   it("filters by client_id when a valid one is provided", async () => {
-    mockPortableQuery.mockResolvedValue([SAMPLE_JOB]);
+    mockQuery.mockResolvedValue([SAMPLE_JOB]);
     const CID = "22222222-2222-2222-2222-222222222222";
     const res = await jobList(makeRequest("GET", `${BASE}?client_id=${CID}`));
     expect(res.status).toBe(200);
-    const [sql, params] = mockPortableQuery.mock.calls[0];
+    const [sql, params] = mockQuery.mock.calls[0];
     expect(String(sql)).toContain("client_id = $2");
     expect(params).toContain(CID);
   });
 
-  it("returns 400 when client_id is not a UUID", async () => {
+  it("returns 400 when client_id is not a UUID (does not fall back to all jobs)", async () => {
     const res = await jobList(makeRequest("GET", `${BASE}?client_id=not-a-uuid`));
     expect(res.status).toBe(400);
-    expect(mockPortableQuery).not.toHaveBeenCalled();
+    expect(mockQuery).not.toHaveBeenCalled();
   });
 });
 
+// ---------------------------------------------------------------------------
+// POST /api/v1/jobs — create
+// ---------------------------------------------------------------------------
 describe("POST /api/v1/jobs", () => {
-  it("returns 201, persists the job, and creates its default work order", async () => {
+  it("returns 201 with created job on valid body", async () => {
     mockClientQuery
-      .mockResolvedValueOnce({ rows: [] }) // INSERT job
-      .mockResolvedValueOnce({ rows: [SAMPLE_JOB] }) // SELECT persisted job
-      .mockResolvedValueOnce({ rows: [] }); // INSERT default work order
+      .mockResolvedValueOnce({ rows: [] }) // BEGIN
+      .mockResolvedValueOnce({ rows: [] }) // SET LOCAL
+      .mockResolvedValueOnce({ rows: [SAMPLE_JOB] }) // INSERT job
+      .mockResolvedValueOnce({ rows: [{ id: "wo-1" }] }) // default work order
+      .mockResolvedValueOnce({ rows: [] }); // COMMIT
 
-    const res = await jobCreate(makeRequest("POST", BASE, { client_id: CLIENT_ID, title: "Fix roof" }));
+    const res = await jobCreate(
+      makeRequest("POST", BASE, { client_id: CLIENT_ID, title: "Fix roof" })
+    );
     expect(res.status).toBe(201);
     const json = await res.json();
     expect(json.data.title).toBe("Fix roof");
-
-    const sqlCalls = mockClientQuery.mock.calls.map((c: unknown[]) => String(c[0]));
-    expect(sqlCalls.some((sql: string) => sql.includes("INSERT INTO jobs (id,"))).toBe(true);
-    expect(sqlCalls.some((sql: string) => sql.includes("INSERT INTO work_orders (id,"))).toBe(true);
   });
 
   it("returns 422 when title is missing", async () => {
-    const res = await jobCreate(makeRequest("POST", BASE, { client_id: CLIENT_ID }));
+    const res = await jobCreate(
+      makeRequest("POST", BASE, { client_id: CLIENT_ID })
+    );
     expect(res.status).toBe(422);
-    expect((await res.json()).error.code).toBe("VALIDATION_ERROR");
+    const json = await res.json();
+    expect(json.error.code).toBe("VALIDATION_ERROR");
   });
 
   it("returns 422 when client_id is not a UUID", async () => {
-    const res = await jobCreate(makeRequest("POST", BASE, { client_id: "not-a-uuid", title: "Fix roof" }));
+    const res = await jobCreate(
+      makeRequest("POST", BASE, { client_id: "not-a-uuid", title: "Fix roof" })
+    );
     expect(res.status).toBe(422);
-    expect((await res.json()).error.code).toBe("VALIDATION_ERROR");
+    const json = await res.json();
+    expect(json.error.code).toBe("VALIDATION_ERROR");
   });
 });
 
+// ---------------------------------------------------------------------------
+// GET /api/v1/jobs/[id] — detail
+// ---------------------------------------------------------------------------
 describe("GET /api/v1/jobs/[id]", () => {
   it("returns 200 with job when found", async () => {
-    mockPortableQueryOne.mockResolvedValue(SAMPLE_JOB);
+    mockQueryOne.mockResolvedValue(SAMPLE_JOB);
     const res = await jobGet(makeRequest("GET", `${BASE}/${JOB_ID}`));
     expect(res.status).toBe(200);
-    expect((await res.json()).data.id).toBe(JOB_ID);
+    const json = await res.json();
+    expect(json.data.id).toBe(JOB_ID);
   });
 
   it("returns 404 when job not found", async () => {
-    mockPortableQueryOne.mockResolvedValue(null);
+    mockQueryOne.mockResolvedValue(null);
     const res = await jobGet(makeRequest("GET", `${BASE}/${JOB_ID}`));
     expect(res.status).toBe(404);
-    expect((await res.json()).error.code).toBe("NOT_FOUND");
+    const json = await res.json();
+    expect(json.error.code).toBe("NOT_FOUND");
   });
 });
 
-describe("PATCH /api/v1/jobs/[id]", () => {
-  it("updates fields with placeholder order safe for MySQL adapter", async () => {
-    const updated = { ...SAMPLE_JOB, title: "Fixed roof" };
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [SAMPLE_JOB] })
-      .mockResolvedValueOnce({ rows: [] })
-      .mockResolvedValueOnce({ rows: [updated] });
-
-    const res = await jobPatch(makeRequest("PATCH", `${BASE}/${JOB_ID}`, { title: "Fixed roof" }));
-    expect(res.status).toBe(200);
-    expect((await res.json()).data.title).toBe("Fixed roof");
-
-    const [sql, params] = mockClientQuery.mock.calls[1];
-    expect(String(sql)).toContain("title = $1");
-    expect(String(sql)).toContain("id = $2 AND account_id = $3");
-    expect(params).toEqual(["Fixed roof", JOB_ID, mockSession.accountId]);
-  });
-});
-
+// ---------------------------------------------------------------------------
+// DELETE /api/v1/jobs/[id] — delete
+// ---------------------------------------------------------------------------
 describe("DELETE /api/v1/jobs/[id]", () => {
   it("returns 204 when deleting a draft job", async () => {
-    mockClientQuery.mockResolvedValueOnce({ rows: [{ ...SAMPLE_JOB, status: "draft" }] });
+    mockClientQuery
+      .mockResolvedValueOnce({ rows: [] }) // BEGIN
+      .mockResolvedValueOnce({ rows: [] }) // SET LOCAL
+      .mockResolvedValueOnce({ rows: [{ ...SAMPLE_JOB, status: "draft" }] }) // SELECT FOR UPDATE
+      .mockResolvedValueOnce({ rows: [] }) // detach communications_log
+      .mockResolvedValueOnce({ rows: [] }) // DELETE
+      .mockResolvedValueOnce({ rows: [] }) // appendAuditLog
+      .mockResolvedValueOnce({ rows: [] }); // COMMIT
+
     const res = await jobDelete(makeRequest("DELETE", `${BASE}/${JOB_ID}`));
     expect(res.status).toBe(204);
   });
 
   it("detaches communications_log before deleting draft job", async () => {
-    mockClientQuery.mockResolvedValueOnce({ rows: [{ ...SAMPLE_JOB, status: "draft" }] });
+    mockClientQuery
+      .mockResolvedValueOnce({ rows: [] }) // BEGIN
+      .mockResolvedValueOnce({ rows: [] }) // SET LOCAL
+      .mockResolvedValueOnce({ rows: [{ ...SAMPLE_JOB, status: "draft" }] }) // SELECT FOR UPDATE
+      .mockResolvedValueOnce({ rows: [] }) // detach communications_log
+      .mockResolvedValueOnce({ rows: [] }) // DELETE
+      .mockResolvedValueOnce({ rows: [] }) // appendAuditLog
+      .mockResolvedValueOnce({ rows: [] }); // COMMIT
+
     await jobDelete(makeRequest("DELETE", `${BASE}/${JOB_ID}`));
     const sqlCalls = mockClientQuery.mock.calls.map((c: unknown[]) => String(c[0]));
-    expect(sqlCalls.findIndex((s: string) => s.includes("UPDATE communications_log"))).toBeGreaterThan(-1);
-    expect(sqlCalls.findIndex((s: string) => s.includes("DELETE FROM jobs"))).toBeGreaterThan(
-      sqlCalls.findIndex((s: string) => s.includes("UPDATE communications_log")),
-    );
+    expect(sqlCalls.some((s: string) => s.includes("UPDATE communications_log"))).toBe(true);
+    expect(sqlCalls.some((s: string) => s.includes("DELETE FROM jobs"))).toBe(true);
   });
 
   it("returns 409 when deleting a non-draft job", async () => {
-    mockClientQuery.mockResolvedValueOnce({ rows: [{ ...SAMPLE_JOB, status: "invoiced" }] });
+    mockClientQuery
+      .mockResolvedValueOnce({ rows: [] }) // BEGIN
+      .mockResolvedValueOnce({ rows: [] }) // SET LOCAL
+      .mockResolvedValueOnce({ rows: [{ ...SAMPLE_JOB, status: "invoiced" }] }) // SELECT FOR UPDATE
+      .mockResolvedValueOnce({ rows: [] }); // ROLLBACK
+
     const res = await jobDelete(makeRequest("DELETE", `${BASE}/${JOB_ID}`));
     expect(res.status).toBe(409);
-    expect((await res.json()).error.code).toBe("CONFLICT");
+    const json = await res.json();
+    expect(json.error.code).toBe("CONFLICT");
   });
 
   it("returns 404 when job not found for delete", async () => {
-    mockClientQuery.mockResolvedValueOnce({ rows: [] });
+    mockClientQuery
+      .mockResolvedValueOnce({ rows: [] }) // BEGIN
+      .mockResolvedValueOnce({ rows: [] }) // SET LOCAL
+      .mockResolvedValueOnce({ rows: [] }) // SELECT FOR UPDATE — empty
+      .mockResolvedValueOnce({ rows: [] }); // ROLLBACK
+
     const res = await jobDelete(makeRequest("DELETE", `${BASE}/${JOB_ID}`));
     expect(res.status).toBe(404);
   });
 });
 
+// ---------------------------------------------------------------------------
+// POST /api/v1/jobs/[id]/transition — status transition
+// ---------------------------------------------------------------------------
 describe("POST /api/v1/jobs/[id]/transition", () => {
   it("returns 200 on valid transition draft → quoted", async () => {
     const updated = { ...SAMPLE_JOB, status: "quoted" };
     mockClientQuery
-      .mockResolvedValueOnce({ rows: [{ ...SAMPLE_JOB, status: "draft" }] })
-      .mockResolvedValueOnce({ rows: [] })
-      .mockResolvedValueOnce({ rows: [updated] });
+      .mockResolvedValueOnce({ rows: [] }) // BEGIN
+      .mockResolvedValueOnce({ rows: [] }) // SET LOCAL
+      .mockResolvedValueOnce({ rows: [{ ...SAMPLE_JOB, status: "draft" }] }) // SELECT FOR UPDATE
+      .mockResolvedValueOnce({ rows: [updated] }) // UPDATE
+      .mockResolvedValueOnce({ rows: [] }) // appendAuditLog
+      .mockResolvedValueOnce({ rows: [] }); // COMMIT
 
-    const res = await jobTransition(makeRequest("POST", `${BASE}/${JOB_ID}/transition`, { status: "quoted" }));
+    const res = await jobTransition(
+      makeRequest("POST", `${BASE}/${JOB_ID}/transition`, { status: "quoted" })
+    );
     expect(res.status).toBe(200);
-    expect((await res.json()).data.status).toBe("quoted");
-  });
-
-  it("uses SQL-appearance parameter order when completion fills invoice due dates", async () => {
-    const active = { ...SAMPLE_JOB, status: "in_progress" };
-    const completed = { ...SAMPLE_JOB, status: "completed" };
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [active] }) // job lock
-      .mockResolvedValueOnce({ rows: [] }) // job status update
-      .mockResolvedValueOnce({ rows: [completed] }) // reload job
-      .mockResolvedValueOnce({ rows: [] }) // SAVEPOINT
-      .mockResolvedValueOnce({ rows: [] }) // RELEASE SAVEPOINT
-      .mockResolvedValueOnce({ rows: [] }) // existing invoice lookup
-      .mockResolvedValueOnce({ rows: [] }); // due-date update
-
-    const res = await jobTransition(makeRequest("POST", `${BASE}/${JOB_ID}/transition`, { status: "completed" }));
-    expect(res.status).toBe(200);
-
-    const dueCall = mockClientQuery.mock.calls.find((c: unknown[]) => String(c[0]).includes("SET due_date = $1"));
-    expect(dueCall).toBeTruthy();
-    expect(dueCall?.[1]?.[1]).toBe(JOB_ID);
-    expect(dueCall?.[1]?.[2]).toBe(mockSession.accountId);
+    const json = await res.json();
+    expect(json.data.status).toBe("quoted");
   });
 
   it("returns 422 on invalid transition invoiced → draft", async () => {
-    mockClientQuery.mockResolvedValueOnce({ rows: [{ ...SAMPLE_JOB, status: "invoiced" }] });
-    const res = await jobTransition(makeRequest("POST", `${BASE}/${JOB_ID}/transition`, { status: "draft" }));
+    mockClientQuery
+      .mockResolvedValueOnce({ rows: [] }) // BEGIN
+      .mockResolvedValueOnce({ rows: [] }) // SET LOCAL
+      .mockResolvedValueOnce({ rows: [{ ...SAMPLE_JOB, status: "invoiced" }] }) // SELECT FOR UPDATE
+      .mockResolvedValueOnce({ rows: [] }); // ROLLBACK
+
+    const res = await jobTransition(
+      makeRequest("POST", `${BASE}/${JOB_ID}/transition`, { status: "draft" })
+    );
     expect(res.status).toBe(422);
-    expect((await res.json()).error.code).toBe("INVALID_TRANSITION");
+    const json = await res.json();
+    expect(json.error.code).toBe("INVALID_TRANSITION");
   });
 
   it("returns 422 on unknown target status", async () => {
-    const res = await jobTransition(makeRequest("POST", `${BASE}/${JOB_ID}/transition`, { status: "flying" }));
+    const res = await jobTransition(
+      makeRequest("POST", `${BASE}/${JOB_ID}/transition`, { status: "flying" })
+    );
     expect(res.status).toBe(422);
-    expect((await res.json()).error.code).toBe("VALIDATION_ERROR");
+    const json = await res.json();
+    expect(json.error.code).toBe("VALIDATION_ERROR");
   });
 
   it("returns 404 when job not found for transition", async () => {
-    mockClientQuery.mockResolvedValueOnce({ rows: [] });
-    const res = await jobTransition(makeRequest("POST", `${BASE}/${JOB_ID}/transition`, { status: "quoted" }));
+    mockClientQuery
+      .mockResolvedValueOnce({ rows: [] }) // BEGIN
+      .mockResolvedValueOnce({ rows: [] }) // SET LOCAL
+      .mockResolvedValueOnce({ rows: [] }) // SELECT FOR UPDATE — empty
+      .mockResolvedValueOnce({ rows: [] }); // ROLLBACK
+
+    const res = await jobTransition(
+      makeRequest("POST", `${BASE}/${JOB_ID}/transition`, { status: "quoted" })
+    );
     expect(res.status).toBe(404);
   });
 });

@@ -19,6 +19,53 @@ detection), Passive Capture, Bluetooth vehicle detection, Drive detection,
 Mileage automation, Day Map, Visit Review, Operational Inbox, Site Presence, and
 the Visit production surfaces (Production Rollup + Timeline).
 
+## Active tasks
+
+# TASK-133: Job closeout on Complete (parent)
+
+See [TASK-133-job-closeout-on-complete.md](./TASK-133-job-closeout-on-complete.md). Children: TASK-134, TASK-135, TASK-137, TASK-138 (invoice slice is TASK-136 in EPIC-004).
+
+# TASK-134: Complete fork — done vs coming back
+
+See [TASK-134-complete-done-or-return.md](./TASK-134-complete-done-or-return.md).
+
+# TASK-135: Coming back — today’s work, next visit, first-up
+
+See [TASK-135-return-day-log-next-visit.md](./TASK-135-return-day-log-next-visit.md).
+
+# TASK-137: Next-person briefing on the next visit
+
+See [TASK-137-next-person-briefing.md](./TASK-137-next-person-briefing.md).
+
+# TASK-138: Night leftovers after job closeout
+
+See [TASK-138-night-closeout-leftovers.md](./TASK-138-night-closeout-leftovers.md).
+
+# TASK-145: Night stop interview
+
+See [TASK-145-night-stop-interview.md](./TASK-145-night-stop-interview.md).
+Day Review walks GPS stops (reason → job / receipt / tomorrow). TASK-138
+counts stay on Overview; this is the question walk.
+
+# TASK-148: Geofence-anchored stops + home fence
+
+See [TASK-148-geofence-anchored-stops.md](./TASK-148-geofence-anchored-stops.md).
+Walking must not smear one stop across two houses. Home is a fence, not the
+string `home`. Live prompt for a distance-proven open job; night interview
+sees the stop that is still open.
+
+# TASK-149: Park (Bluetooth disconnect) → confirm location
+
+See [TASK-149-park-arrival-prompt.md](./TASK-149-park-arrival-prompt.md).
+Ignition off matches the open job immediately and pushes “You’re on site.”
+The 5-minute GPS floor stays for still/jitter.
+
+# TASK-150: Hold until Bluetooth / zone / different property
+
+See [TASK-150-hold-until-vehicle.md](./TASK-150-hold-until-vehicle.md).
+Do not split a job stop on geocode flicker or phone `in_vehicle`. Leave is
+vehicle connect, a named zone, or `still` at a different known property.
+
 ## Relationship to existing work (read first)
 
 This epic **extends TASK-024**, it does not replace it. The phone→FSM pipeline is

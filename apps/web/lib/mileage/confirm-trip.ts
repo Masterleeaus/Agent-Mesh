@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import type { ActivityType } from "@ai-fsm/domain";
 import { activityCategoryFor } from "@ai-fsm/domain";
 import { inferTripMilesSource } from "./linking";
@@ -29,7 +29,7 @@ export type ConfirmTripResult = {
  * Idempotent when both FKs are already stamped on the segment.
  */
 export async function confirmDriveTrip(
-  client: DbClient,
+  client: PoolClient,
   opts: {
     accountId: string;
     userId: string;

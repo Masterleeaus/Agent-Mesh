@@ -1,6 +1,7 @@
+import type { ReactNode } from "react";
 import { redirect, notFound } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
-import { getPool, queryForSession, queryOneForSession } from "@/lib/db";
+import { withDbSession, queryForSession, queryOneForSession } from "@/lib/db";
 import {
   canTransitionVisit,
   canAssignVisit,
@@ -34,8 +35,6 @@ import { VisitResolutionPanel } from "./VisitResolutionPanel";
 import { VisitPartsPanel } from "./VisitPartsPanel";
 import { VisitClosingChecklist } from "./VisitClosingChecklist";
 import { CompletionChecklist } from "./CompletionChecklist";
-import { CustomerAcknowledgement, type CustomerAcknowledgementValue } from "./CustomerAcknowledgement";
-import { ReportDeliveryPanel, type ReportDeliveryValue } from "./ReportDeliveryPanel";
 import { isQuickJobPacketExempt } from "@/lib/completion-guard";
 import { SubStatusSelect } from "@/components/SubStatusSelect";
 import { MembershipVisitPanel } from "./MembershipVisitPanel";
@@ -44,6 +43,8 @@ import { VisitCommandBanner } from "./VisitCommandBanner";
 import { VisitDayTasks } from "./VisitDayTasks";
 import { loadVisitPlannedTasks } from "@/lib/work-orders/job-tasks";
 import { VisitPropertyContext } from "./VisitPropertyContext";
+import { VisitHandoffCard } from "@/components/visits/VisitHandoffCard";
+import { loadVisitBriefing } from "@/lib/visits/briefing";
 import type { PropertyIssueContextRow, PropertyNoteContextRow, LastServiceRow } from "./VisitPropertyContext";
 import { VisitRecommendationPanel } from "./VisitRecommendationPanel";
 import { OnMyWayButton } from "./OnMyWayButton";
@@ -51,6 +52,8 @@ import {
   shouldShowPropertyContext,
   shouldShowFollowUp,
   shouldShowCompletionRecord,
+  visitFieldKind,
+  visitPanelSlot,
 } from "./visit-execution-helpers";
 import {
   Breadcrumbs,
@@ -76,6 +79,34 @@ import { VISIT_STATUS_LABELS } from "@/lib/visits/triage";
 
 export const dynamic = "force-dynamic";
 
+function Disclosure({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <details
+      data-testid="visit-more"
+      style={{
+        border: "1px solid var(--border)",
+        borderRadius: "var(--radius-lg)",
+        background: "var(--bg-card)",
+        padding: "var(--space-4)",
+        marginBottom: "var(--space-4)",
+      }}
+    >
+      <summary
+        style={{
+          cursor: "pointer",
+          fontWeight: 600,
+          fontSize: "var(--text-sm)",
+          color: "var(--fg)",
+          userSelect: "none",
+        }}
+      >
+        {title}
+      </summary>
+      <div style={{ marginTop: "var(--space-4)" }}>{children}</div>
+    </details>
+  );
+}
+
 interface PhotoMeta extends Record<string, unknown> {
   id: string;
   original_name: string;
@@ -99,10 +130,6 @@ interface CompletionPacketRow extends Record<string, unknown> {
   photos_waived: boolean;
   photos_waiver_reason: string | null;
 }
-
-interface CustomerContactRow extends Record<string, unknown> { name: string; email: string | null; }
-interface CustomerAckRow extends Record<string, unknown>, CustomerAcknowledgementValue {}
-interface ReportDeliveryRow extends Record<string, unknown>, ReportDeliveryValue {}
 
 type VisitRow = Visit & {
   job_title: string | null;
@@ -287,20 +314,9 @@ export default async function VisitDetailPage({
     : null;
 
   // Planned tasks for this field day (progress on the project).
-  let dayTasks: Awaited<ReturnType<typeof loadVisitPlannedTasks>> = [];
-  {
-    const pool = getPool();
-    const client = await pool.connect();
-    try {
-      await client.query(
-        `SELECT set_config('app.current_user_id',$1,true), set_config('app.current_account_id',$2,true), set_config('app.current_role',$3,true)`,
-        [session.userId, session.accountId, session.role],
-      );
-      dayTasks = await loadVisitPlannedTasks(client, id, session.accountId);
-    } finally {
-      client.release();
-    }
-  }
+  const dayTasks = await withDbSession(session, (client) =>
+    loadVisitPlannedTasks(client, id, session.accountId),
+  );
 
   // Load checklist (lazy-seeded on first access) unless visit is cancelled
   const checklistItems =
@@ -352,39 +368,6 @@ export default async function VisitDetailPage({
         )
       : null;
 
-  if (completionPacket && typeof completionPacket.photo_urls === "string") {
-    try { completionPacket.photo_urls = JSON.parse(completionPacket.photo_urls) as string[]; } catch { completionPacket.photo_urls = []; }
-  }
-
-  const customerContact = currentStatus === "completed" && visit.job_client_id
-    ? await queryOneForSession<CustomerContactRow>(
-        session,
-        `SELECT name, email FROM clients WHERE id = $1 AND account_id = $2`,
-        [visit.job_client_id, session.accountId],
-      )
-    : null;
-  const customerAcknowledgement = currentStatus === "completed"
-    ? await queryOneForSession<CustomerAckRow>(
-        session,
-        `SELECT customer_name, customer_email, acknowledgement_notes, acknowledged_at
-         FROM field_service_report_acknowledgements
-         WHERE visit_id = $1 AND account_id = $2`,
-        [id, session.accountId],
-      )
-    : null;
-  const reportDelivery = currentStatus === "completed"
-    ? await queryOneForSession<ReportDeliveryRow>(
-        session,
-        `SELECT d.recipient_email, d.delivery_count, d.last_queued_at,
-                q.status AS queue_status, q.sent_at
-         FROM field_service_report_deliveries d
-         LEFT JOIN notification_queue q
-           ON q.idempotency_key = CONCAT('service_report_delivery:', d.visit_id, ':', d.delivery_count)
-         WHERE d.visit_id = $1 AND d.account_id = $2`,
-        [id, session.accountId],
-      )
-    : null;
-
   const overdue = isVisitOverdue(visit);
 
   const estimateOnJob = visit.job_id
@@ -402,6 +385,10 @@ export default async function VisitDetailPage({
     work_order_id: visit.work_order_id,
     has_estimate: Boolean(estimateOnJob?.exists),
   });
+
+  const briefing = visit.job_id
+    ? await withDbSession(session, (c) => loadVisitBriefing(c, session.accountId, visit.id))
+    : null;
 
   // For repair visits that are active, check for an approved estimate so we can surface the conditions panel
   const approvedEstimate =
@@ -438,6 +425,13 @@ export default async function VisitDetailPage({
   const showTransitionEarly =
     canTransition &&
     (currentStatus === "scheduled" || currentStatus === "arrived");
+  const fieldKind = visitFieldKind({
+    visitType: visit.visit_type ?? "standard",
+    isRepairFlow,
+    isMembershipVisit,
+  });
+  const showMore = (panel: Parameters<typeof visitPanelSlot>[0]) =>
+    visitPanelSlot(panel, fieldKind) === "more";
 
   // pg returns timestamptz as Date objects — normalise to ISO strings throughout
   const toISO = (v: unknown): string =>
@@ -477,10 +471,10 @@ export default async function VisitDetailPage({
             : [
                 ...(visit.job_id
                   ? [
-                      { href: "/app/jobs", label: "Projects" },
+                      { href: "/app/jobs", label: "Jobs" },
                       {
                         href: `/app/jobs/${visit.job_id}`,
-                        label: visit.job_title ?? "Project",
+                        label: visit.job_title ?? "Job",
                       },
                     ]
                   : [{ href: "/app/visits", label: "Visits" }]),
@@ -510,8 +504,14 @@ export default async function VisitDetailPage({
         subtitle={`${formatVisitTime(visit.scheduled_start)} – ${formatVisitTime(
           visit.scheduled_end
         )}`}
-        backHref={visit.job_id ? `/app/jobs/${visit.job_id}` : "/app/visits"}
-        backLabel={visit.job_title ?? "Visits"}
+        backHref={
+          visit.job_property_id
+            ? `/app/properties/${visit.job_property_id}`
+            : visit.job_id
+              ? `/app/jobs/${visit.job_id}`
+              : "/app/visits"
+        }
+        backLabel={visit.property_address ?? visit.job_title ?? "House"}
         actions={
           <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
             {!isRepairFlow && checklistItems.length > 0 &&
@@ -601,10 +601,16 @@ export default async function VisitDetailPage({
             </Card>
           )}
 
-          <Card id="visit-timeline" data-testid="visit-production-timeline">
-            <SectionHeader title="Production story" />
-            <VisitTimelinePanel events={productionTimeline} />
-          </Card>
+          {showMore("production_story") ? (
+            <Disclosure title="More · production story">
+              <VisitTimelinePanel events={productionTimeline} />
+            </Disclosure>
+          ) : (
+            <Card id="visit-timeline" data-testid="visit-production-timeline">
+              <SectionHeader title="Production story" />
+              <VisitTimelinePanel events={productionTimeline} />
+            </Card>
+          )}
 
           {(dayTasks.length > 0 || visit.work_order_id || visit.job_id) && (
             <Card id="visit-day-tasks" data-testid="visit-day-tasks-card">
@@ -629,15 +635,31 @@ export default async function VisitDetailPage({
             </Card>
           )}
 
+          {briefing && currentStatus !== "cancelled" && currentStatus !== "completed" && (
+            <VisitHandoffCard briefing={briefing} />
+          )}
+
           {/* ── Property context — shown for active visits with a property ── */}
           {shouldShowPropertyContext(currentStatus) && visit.job_property_id && (
-            <VisitPropertyContext
-              propertyId={visit.job_property_id}
-              propertyAddress={visit.property_address}
-              issues={propertyContextIssues}
-              pinnedNotes={propertyContextNotes}
-              lastService={lastServiceVisit}
-            />
+            showMore("property_context") ? (
+              <Disclosure title="More · house history">
+                <VisitPropertyContext
+                  propertyId={visit.job_property_id}
+                  propertyAddress={visit.property_address}
+                  issues={propertyContextIssues}
+                  pinnedNotes={propertyContextNotes}
+                  lastService={lastServiceVisit}
+                />
+              </Disclosure>
+            ) : (
+              <VisitPropertyContext
+                propertyId={visit.job_property_id}
+                propertyAddress={visit.property_address}
+                issues={propertyContextIssues}
+                pinnedNotes={propertyContextNotes}
+                lastService={lastServiceVisit}
+              />
+            )
           )}
 
           {/* ── Membership visit: phase stepper + labor cap ── */}
@@ -727,35 +749,63 @@ export default async function VisitDetailPage({
           {/* ── Maintenance flow: full 28-item walkthrough (health_check / included_action phases) ── */}
           {!isRepairFlow && currentStatus !== "cancelled" && checklistItems.length > 0 &&
             visit.membership_visit_phase !== "reporting" && (
-            <Card id="visit-checklist" data-testid="visit-checklist-panel">
-              <SectionHeader title="Walkthrough Checklist" />
-              <VisitChecklistForm
-                visitId={visit.id}
-                initialItems={checklistItems}
-                canUpdate={canChecklist}
-                propertyId={visit.job_property_id ?? null}
-              />
-            </Card>
+            showMore("walkthrough_checklist") ? (
+              <Disclosure title="More · walkthrough">
+                <VisitChecklistForm
+                  visitId={visit.id}
+                  initialItems={checklistItems}
+                  canUpdate={canChecklist}
+                  propertyId={visit.job_property_id ?? null}
+                />
+              </Disclosure>
+            ) : (
+              <Card id="visit-checklist" data-testid="visit-checklist-panel">
+                <SectionHeader title="Walkthrough Checklist" />
+                <VisitChecklistForm
+                  visitId={visit.id}
+                  initialItems={checklistItems}
+                  canUpdate={canChecklist}
+                  propertyId={visit.job_property_id ?? null}
+                />
+              </Card>
+            )
           )}
 
           {/* ── Membership reporting phase + completed membership visits: visit snapshot ── */}
           {isMembershipVisit && !isRepairFlow &&
             (visit.membership_visit_phase === "reporting" || currentStatus === "completed") && (
-            <Card id="visit-summary" data-testid="visit-snapshot-card">
-              <SectionHeader title="Visit Summary" />
-              <VisitSnapshotPanel
-                visitId={visit.id}
-                checklistItems={checklistItems}
-                techNotes={visit.tech_notes ?? null}
-                jobId={visit.job_id ?? null}
-                clientId={visit.job_client_id ?? null}
-                propertyId={visit.job_property_id ?? null}
-                canCreateEstimate={canCreateEstimate}
-                canUpdateDelivery={canNotes}
-                visitDate={toISO(visit.scheduled_start)}
-                snapshotSentAt={visit.membership_snapshot_sent_at ? toISO(visit.membership_snapshot_sent_at) : null}
-              />
-            </Card>
+            showMore("snapshot") ? (
+              <Disclosure title="More · visit summary">
+                <VisitSnapshotPanel
+                  visitId={visit.id}
+                  checklistItems={checklistItems}
+                  techNotes={visit.tech_notes ?? null}
+                  jobId={visit.job_id ?? null}
+                  clientId={visit.job_client_id ?? null}
+                  propertyId={visit.job_property_id ?? null}
+                  canCreateEstimate={canCreateEstimate}
+                  canUpdateDelivery={canNotes}
+                  visitDate={toISO(visit.scheduled_start)}
+                  snapshotSentAt={visit.membership_snapshot_sent_at ? toISO(visit.membership_snapshot_sent_at) : null}
+                />
+              </Disclosure>
+            ) : (
+              <Card id="visit-summary" data-testid="visit-snapshot-card">
+                <SectionHeader title="Visit Summary" />
+                <VisitSnapshotPanel
+                  visitId={visit.id}
+                  checklistItems={checklistItems}
+                  techNotes={visit.tech_notes ?? null}
+                  jobId={visit.job_id ?? null}
+                  clientId={visit.job_client_id ?? null}
+                  propertyId={visit.job_property_id ?? null}
+                  canCreateEstimate={canCreateEstimate}
+                  canUpdateDelivery={canNotes}
+                  visitDate={toISO(visit.scheduled_start)}
+                  snapshotSentAt={visit.membership_snapshot_sent_at ? toISO(visit.membership_snapshot_sent_at) : null}
+                />
+              </Card>
+            )
           )}
 
           {/* ── Repair / painting / custom flow ── */}
@@ -827,14 +877,24 @@ export default async function VisitDetailPage({
               </Card>
 
               {currentStatus !== "completed" && (
-                <Card id="visit-closing-checklist">
-                  <SectionHeader title="Closing Checklist" />
-                  <VisitClosingChecklist
-                    visitId={visit.id}
-                    initialItems={checklistItems}
-                    canUpdate={canChecklist}
-                  />
-                </Card>
+                showMore("closing_checklist") ? (
+                  <Disclosure title="More · closing checklist">
+                    <VisitClosingChecklist
+                      visitId={visit.id}
+                      initialItems={checklistItems}
+                      canUpdate={canChecklist}
+                    />
+                  </Disclosure>
+                ) : (
+                  <Card id="visit-closing-checklist">
+                    <SectionHeader title="Closing Checklist" />
+                    <VisitClosingChecklist
+                      visitId={visit.id}
+                      initialItems={checklistItems}
+                      canUpdate={canChecklist}
+                    />
+                  </Card>
+                )
               )}
             </>
           )}
@@ -890,6 +950,18 @@ export default async function VisitDetailPage({
                 initialValue={(visit as Visit & { materials_used?: string | null }).materials_used ?? null}
                 canUpdate={canNotes}
               />
+              {visit.job_id ? (
+                <div style={{ marginTop: "var(--space-3)" }}>
+                  <LinkButton
+                    href={`/app/expenses/new?job=${visit.job_id}`}
+                    variant="secondary"
+                    size="sm"
+                    data-testid="visit-receipt-link"
+                  >
+                    Receipt
+                  </LinkButton>
+                </div>
+              ) : null}
             </Card>
           )}
 
@@ -932,42 +1004,32 @@ export default async function VisitDetailPage({
             </Card>
           )}
 
-          {currentStatus === "completed" && (
-            <Card data-testid="customer-acknowledgement">
-              <SectionHeader title="Customer Acknowledgement" />
-              <CustomerAcknowledgement
-                visitId={visit.id}
-                initialValue={customerAcknowledgement}
-                defaultName={customerContact?.name ?? null}
-                defaultEmail={customerContact?.email ?? null}
-              />
-              <div style={{ marginTop: "var(--space-4)", paddingTop: "var(--space-4)", borderTop: "1px solid var(--border)" }}>
-                <SectionHeader title="Report delivery" />
-                <ReportDeliveryPanel
-                  visitId={visit.id}
-                  defaultEmail={customerAcknowledgement?.customer_email ?? customerContact?.email ?? null}
-                  initialValue={reportDelivery}
-                />
-              </div>
-              <div style={{ marginTop: "var(--space-3)" }}>
-                <LinkButton href={`/app/visits/${visit.id}/print`} variant="secondary">Open service report</LinkButton>
-              </div>
-            </Card>
-          )}
-
           {/* ── Follow-Up — post-completion recommendations ── */}
           {shouldShowFollowUp(currentStatus) && visit.job_property_id && (
-            <Card data-testid="visit-follow-up">
-              <SectionHeader title="Follow-Up" />
-              <VisitRecommendationPanel
-                propertyId={visit.job_property_id}
-                visitId={visit.id}
-                jobId={visit.job_id ?? null}
-                clientId={visit.job_client_id ?? null}
-                propertyAddress={visit.property_address}
-                canCreateEstimate={canCreateEstimate}
-              />
-            </Card>
+            showMore("follow_up") ? (
+              <Disclosure title="More · follow-up">
+                <VisitRecommendationPanel
+                  propertyId={visit.job_property_id}
+                  visitId={visit.id}
+                  jobId={visit.job_id ?? null}
+                  clientId={visit.job_client_id ?? null}
+                  propertyAddress={visit.property_address}
+                  canCreateEstimate={canCreateEstimate}
+                />
+              </Disclosure>
+            ) : (
+              <Card data-testid="visit-follow-up">
+                <SectionHeader title="Follow-Up" />
+                <VisitRecommendationPanel
+                  propertyId={visit.job_property_id}
+                  visitId={visit.id}
+                  jobId={visit.job_id ?? null}
+                  clientId={visit.job_client_id ?? null}
+                  propertyAddress={visit.property_address}
+                  canCreateEstimate={canCreateEstimate}
+                />
+              </Card>
+            )
           )}
         </div>
 
@@ -1009,7 +1071,7 @@ export default async function VisitDetailPage({
             <dl className="p7-detail-list">
               {visit.job_title && (
                 <div className="p7-detail-row">
-                  <dt>Project</dt>
+                  <dt>Job</dt>
                   <dd>
                     {visit.job_id ? (
                       <LinkButton href={`/app/jobs/${visit.job_id}`} variant="ghost" size="sm">
@@ -1023,10 +1085,10 @@ export default async function VisitDetailPage({
               )}
               {visit.job_property_id && (
                 <div className="p7-detail-row">
-                  <dt>Property</dt>
+                  <dt>House</dt>
                   <dd>
                     <LinkButton href={`/app/properties/${visit.job_property_id}`} variant="ghost" size="sm">
-                      {visit.property_address ?? "View property"} →
+                      {visit.property_address ?? "View house"} →
                     </LinkButton>
                   </dd>
                 </div>

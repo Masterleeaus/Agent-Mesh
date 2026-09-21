@@ -2,17 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type { Route } from "next";
 import type { Role } from "@ai-fsm/domain";
 import { ToastProvider } from "./ui/Toast";
 import { QuickLeadModal } from "./QuickLeadModal";
 import { FloatingActionButton } from "./FloatingActionButton";
+import { CommandPalette } from "./CommandPalette";
 import { CAPTURE_HREF, CaptureLink } from "./CaptureLink";
 import { WorkspaceAutoRoute } from "./WorkspaceAutoRoute";
 import { LiveRefresh } from "./LiveRefresh";
-import { ConnectionStatus } from "./ConnectionStatus";
-import { GlobalSearch } from "./GlobalSearch";
 import {
   IconDashboard,
   IconEstimates,
@@ -26,7 +25,6 @@ import {
   IconReports,
   IconVisits,
   IconSchedule,
-  IconQueue,
   IconDayReview,
   IconField,
   IconCapture,
@@ -75,23 +73,21 @@ interface NavSection {
 // bar is a 4-hub shortcut subset (+ More button in AppShell).
 // ---------------------------------------------------------------------------
 
-// The office overview/dashboard. Labelled "Overview" (not "Today") so it reads
-// as the numbers screen and doesn't compete with the My Day field surface.
-const NAV_TODAY:      NavItem = { href: "/app",              label: "Overview",   Icon: IconDashboard };
-// EPIC-006 Phase 5: the field surface. Owners can switch into it; pure admins
-// (who don't do field work) and the all-techs list never see it here.
-const NAV_MY_DAY:     NavItem = { href: "/app/my-work",      label: "My Day",     Icon: IconMyDay };
+// The office desk. Labelled "Desk" (not "Today") so it doesn't compete with the field home.
+const NAV_TODAY:      NavItem = { href: "/app",              label: "Desk",       Icon: IconDashboard };
+// Field home. Owners can switch into it; pure admins (who don't do field work) never see it here.
+const NAV_MY_DAY:     NavItem = { href: "/app/my-work",      label: "Today",      Icon: IconMyDay };
 const NAV_CAPTURE:    NavItem = { href: "/app/capture",      label: "Capture",    Icon: IconCapture };
 const NAV_DAY_REVIEW: NavItem = { href: "/app/day-review",   label: "Day Review", Icon: IconDayReview };
 const NAV_TRACKING:   NavItem = { href: "/app/timeline",     label: "Tracking",   Icon: IconField };
 const NAV_REQUESTS:   NavItem = { href: "/app/requests",     label: "Requests",   Icon: IconInbox };
 const NAV_CLIENTS:    NavItem = { href: "/app/clients",      label: "Clients",    Icon: IconClients,   adminOnly: true };
-const NAV_PROPS:      NavItem = { href: "/app/properties",   label: "Properties", Icon: IconProperties, adminOnly: true };
-const NAV_ESTIMATES:  NavItem = { href: "/app/estimates",    label: "Estimates",  Icon: IconEstimates, adminOnly: true };
+const NAV_PROPS:      NavItem = { href: "/app/properties",   label: "Houses",     Icon: IconProperties, adminOnly: true };
+const NAV_ESTIMATES:  NavItem = { href: "/app/estimates",    label: "Quotes",     Icon: IconEstimates, adminOnly: true };
 const NAV_JOBS:       NavItem = { href: "/app/jobs",         label: "Jobs",       Icon: IconJobs,       adminOnly: true };
-const NAV_WORK_ORDERS: NavItem = { href: "/app/work-orders", label: "Work Orders", Icon: IconQueue,     adminOnly: true };
+// Work orders are reached inside a Job, not from the top nav.
 const NAV_SCHEDULE:   NavItem = { href: "/app/schedule",     label: "Schedule",   Icon: IconSchedule,  adminOnly: true };
-const NAV_INVOICES:   NavItem = { href: "/app/invoices",     label: "Invoices",   Icon: IconInvoices,  adminOnly: true };
+const NAV_INVOICES:   NavItem = { href: "/app/invoices",     label: "Bills",      Icon: IconInvoices,  adminOnly: true };
 const NAV_REPORTS:    NavItem = { href: "/app/reports",      label: "Reports",    Icon: IconReports,   adminOnly: true };
 const NAV_SETTINGS:   NavItem = { href: "/app/settings",     label: "Settings",   Icon: IconSettings,  adminOnly: true };
 
@@ -101,7 +97,7 @@ function buildHubSections(home: NavItem): NavSection[] {
     { label: "Home", items: [home, NAV_CAPTURE, NAV_DAY_REVIEW, NAV_TRACKING] },
     {
       label: "Work",
-      items: [NAV_REQUESTS, NAV_ESTIMATES, NAV_JOBS, NAV_WORK_ORDERS, NAV_SCHEDULE],
+      items: [NAV_REQUESTS, NAV_ESTIMATES, NAV_JOBS, NAV_SCHEDULE],
     },
     { label: "People", items: [NAV_CLIENTS, NAV_PROPS] },
     { label: "Money", items: [NAV_INVOICES, NAV_REPORTS] },
@@ -116,7 +112,7 @@ function buildHubSections(home: NavItem): NavSection[] {
 /** Returns filtered nav sections for a given role and active workspace view. */
 export function getNavSections(role: Role, view: "office" | "field" = "field"): NavSection[] {
   if (role === "tech") {
-    const myDay: NavItem = { href: "/app/my-work", label: "My Day", Icon: IconMyDay };
+    const myDay: NavItem = { href: "/app/my-work", label: "Today", Icon: IconMyDay };
     const visits: NavItem = { href: "/app/visits", label: "Visits", Icon: IconVisits };
     return [{ label: "", items: [myDay, visits, NAV_DAY_REVIEW] }];
   }
@@ -133,12 +129,13 @@ export function getNavSections(role: Role, view: "office" | "field" = "field"): 
 }
 
 /**
- * Mobile bottom tab shortcuts. Owner/admin: 4 hubs (Home / Work / People / Money);
- * AppShell adds the More button as the 5th slot. Tech: My Day + Visits.
+ * Mobile bottom tab shortcuts. Owner: Today / Jobs / People / Money;
+ * Admin: Desk / Jobs / People / Money. AppShell adds More as the 5th slot.
+ * Tech: Today + Visits.
  */
 export function getBottomNavItems(role: Role): NavItem[] {
   if (role === "tech") {
-    const myDay: NavItem = { href: "/app/my-work", label: "My Day", Icon: IconMyDay };
+    const myDay: NavItem = { href: "/app/my-work", label: "Today", Icon: IconMyDay };
     const visits: NavItem = { href: "/app/visits", label: "Visits", Icon: IconVisits };
     return [myDay, visits];
   }
@@ -147,20 +144,20 @@ export function getBottomNavItems(role: Role): NavItem[] {
     role === "owner"
       ? {
           href: "/app/my-work",
-          label: "Home",
+          label: "Today",
           Icon: IconMyDay,
-          activePrefixes: ["/app/my-work", "/app/day-review", "/app/timeline", "/app/capture"],
+          activePrefixes: ["/app/my-work", "/app/my-day", "/app/day-review", "/app/timeline", "/app/capture"],
         }
       : {
           href: "/app",
-          label: "Home",
+          label: "Desk",
           Icon: IconDashboard,
           activePrefixes: ["/app/day-review", "/app/timeline", "/app/capture"],
         };
 
   const work: NavItem = {
     href: "/app/jobs",
-    label: "Work",
+    label: "Jobs",
     Icon: IconJobs,
     activePrefixes: [
       "/app/jobs",
@@ -219,15 +216,13 @@ interface AppShellProps {
 
 export function AppShell({ role, userName, reviewPending, children }: AppShellProps) {
   const pathname = usePathname();
-  // The sidebar follows the surface you're on: My Day = field, everything else =
-  // office. So Field never shows the Overview home and vice-versa.
+  // The sidebar follows the surface you're on: Today = field, everything else =
+  // office. So Field never shows the Desk home and vice-versa.
   const sections = getNavSections(role, pathname.startsWith("/app/my-work") ? "field" : "office");
   const bottomItems = getBottomNavItems(role);
   const [showQuickLead, setShowQuickLead] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const moreButtonRef = useRef<HTMLButtonElement>(null);
-  const moreSheetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const val = localStorage.getItem("p7-sidebar-collapsed");
@@ -243,8 +238,7 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
   };
 
   const isAdminOrOwner = role === "owner" || role === "admin";
-  // Logo goes to each role's home: My Day for field roles, the office dashboard
-  // for pure admins (who get bounced there from My Day anyway).
+  // Logo goes to each role's home: Today for field roles, Desk for pure admins.
   const homeHref = role === "admin" ? "/app" : "/app/my-work";
 
   const { summary: attention, refresh: refreshAttention } = useAttentionSummary(isAdminOrOwner);
@@ -255,67 +249,12 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
     if (isAdminOrOwner) void refreshAttention();
   }, [pathname, isAdminOrOwner, refreshAttention]);
 
-  // Mobile More is a real modal navigation surface: move focus in, trap Tab,
-  // support Escape, then return focus to the trigger. This preserves keyboard
-  // reachability in installed/PWA mode where browser chrome may be absent.
-  useEffect(() => {
-    if (!showMore) return;
-
-    const sheet = moreSheetRef.current;
-    if (!sheet) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const getFocusable = () =>
-      Array.from(
-        sheet.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ),
-      ).filter((el) => !el.hasAttribute("hidden") && el.getAttribute("aria-hidden") !== "true");
-
-    const focusable = getFocusable();
-    (focusable[0] ?? sheet).focus();
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        setShowMore(false);
-        requestAnimationFrame(() => moreButtonRef.current?.focus());
-        return;
-      }
-      if (event.key !== "Tab") return;
-
-      const items = getFocusable();
-      if (!items.length) {
-        event.preventDefault();
-        sheet.focus();
-        return;
-      }
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [showMore]);
-
   const avatarLetter = userName ? userName[0].toUpperCase() : role[0].toUpperCase();
   const displayName = userName || "Account";
 
   return (
     <ToastProvider>
       <LiveRefresh />
-      <a className="p7-skip-link" href="#main-content">Skip to main content</a>
       <div className={`p7-layout ${collapsed ? "p7-layout-collapsed" : ""}`}>
         {/* ---- Desktop/Tablet Sidebar ---- */}
         <aside className="p7-sidebar" aria-label="Main navigation">
@@ -343,14 +282,15 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
             </button>
           </div>
 
-          {isAdminOrOwner && <GlobalSearch />}
+          <div style={{ display: "flex", gap: 8, padding: collapsed ? "0 8px" : "0 0 4px", alignItems: "center" }}>
+            <FindButton testId="command-palette-open" />
+          </div>
 
           {/* New Request button — owner/admin only */}
           {isAdminOrOwner && (
             <button
               type="button"
               onClick={() => setShowQuickLead(true)}
-              className="p7-new-request-btn"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -368,8 +308,8 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
                 textAlign: "left",
               }}
             >
-              <span style={{ fontSize: 16 }} aria-hidden="true">⚡</span>
-              <span className="p7-new-request-label">New Request</span>
+              <span style={{ fontSize: 16 }}>⚡</span>
+              New Request
             </button>
           )}
 
@@ -405,9 +345,6 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
                         )}
                       </span>
                       <span className="p7-nav-label">{item.label}</span>
-                      {item.href === NAV_DAY_REVIEW.href && reviewPending && (
-                        <span className="sr-only">Review pending</span>
-                      )}
                       {isAdminOrOwner && <NavCountBadge count={count} />}
                     </>
                   );
@@ -472,12 +409,11 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
         </aside>
 
         {/* ---- Main content ---- */}
-        <main className="p7-main" id="main-content" tabIndex={-1}>
+        <main className="p7-main" id="main-content">
           {/* TASK-058: workspace mode is automatic by device (phone → Field,
               tablet/computer → Office) with an override in Settings — no on-screen
               toggle or daily popup. This renders nothing; it only steers entry. */}
           {role === "owner" && <WorkspaceAutoRoute />}
-          <ConnectionStatus />
           {children}
         </main>
 
@@ -504,10 +440,8 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
                 Sign out are reachable on a phone (sidebar is hidden < 768px). */}
             {(
               <button
-                ref={moreButtonRef}
                 type="button"
                 className={`p7-bottom-nav-item p7-more-btn ${showMore ? "p7-nav-active" : ""}`}
-                aria-label={showMore ? "Close all destinations" : "Open all destinations"}
                 aria-expanded={showMore}
                 aria-controls="p7-more-sheet"
                 onClick={() => setShowMore((v) => !v)}
@@ -531,39 +465,15 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
             <div
               className="p7-more-overlay"
               aria-hidden="true"
-              onClick={() => {
-                setShowMore(false);
-                requestAnimationFrame(() => moreButtonRef.current?.focus());
-              }}
+              onClick={() => setShowMore(false)}
             />
-            <div
-              ref={moreSheetRef}
-              id="p7-more-sheet"
-              className="p7-more-sheet"
-              role="dialog"
-              aria-modal="true"
-              aria-label="All destinations"
-              tabIndex={-1}
-            >
-              <div className="p7-more-sheet-header">
-                <strong>All destinations</strong>
-                <button
-                  type="button"
-                  className="p7-more-close"
-                  onClick={() => {
-                    setShowMore(false);
-                    requestAnimationFrame(() => moreButtonRef.current?.focus());
-                  }}
-                  aria-label="Close all destinations"
-                >
-                  ×
-                </button>
-              </div>
-              {isAdminOrOwner && (
-                <div style={{ display: "flex", justifyContent: "flex-end", padding: "8px 12px 0" }}>
+            <div id="p7-more-sheet" className="p7-more-sheet" role="dialog" aria-label="All destinations">
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, padding: "8px 12px 0" }}>
+                <FindButton />
+                {isAdminOrOwner && (
                   <AttentionBell summary={attention} onChanged={() => void refreshAttention()} />
-                </div>
-              )}
+                )}
+              </div>
               <div className="p7-more-sections">
                 {sections.map((section, sectionIdx) => (
                   <div key={sectionIdx} className="p7-more-section">
@@ -620,9 +530,6 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
                               )}
                             </span>
                             <span>{item.label}</span>
-                            {item.href === NAV_DAY_REVIEW.href && reviewPending && (
-                              <span className="sr-only">Review pending</span>
-                            )}
                           </>
                         );
                         if (item.href === CAPTURE_HREF) {
@@ -681,8 +588,38 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
       {showQuickLead && <QuickLeadModal onClose={() => setShowQuickLead(false)} />}
       {isAdminOrOwner &&
         !pathname.startsWith("/app/my-work") &&
+        !pathname.startsWith("/app/my-day") &&
         !pathname.startsWith("/app/capture") && <FloatingActionButton />}
+      <CommandPalette role={role} />
     </ToastProvider>
+  );
+}
+
+function FindButton({ testId }: { testId?: string }) {
+  return (
+    <button
+      type="button"
+      data-testid={testId}
+      onClick={() => window.dispatchEvent(new Event("dovetails:find"))}
+      aria-label="Find what you can do"
+      title="Find (Ctrl/⌘ K)"
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "6px 10px",
+        borderRadius: 6,
+        border: "1px solid var(--border)",
+        background: "var(--bg-card)",
+        color: "var(--fg-muted)",
+        fontSize: 13,
+        fontWeight: 600,
+        cursor: "pointer",
+      }}
+    >
+      Find
+      <kbd style={{ fontSize: 11, opacity: 0.7 }}>⌘K</kbd>
+    </button>
   );
 }
 

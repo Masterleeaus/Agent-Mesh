@@ -32,4 +32,3 @@ export {
   seasonalReminderHtml,
   recurringInspectionHtml,
 } from "./automation.js";
-export { attentionOwnerEmailHtml } from "./attention.js";

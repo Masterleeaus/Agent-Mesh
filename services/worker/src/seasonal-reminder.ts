@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 import { seasonalReminderHtml } from "@ai-fsm/email-templates";
 import type { AutomationRow, RunResult } from "./automations/types.js";
@@ -13,7 +13,7 @@ const SEASON_MONTHS: Record<Season, number[]> = {
   fall: [9, 10, 11],
 };
 
-interface SeasonalDatabaseClient {
+interface SeasonalClient {
   id: string;
   account_id: string;
   name: string | null;
@@ -37,16 +37,16 @@ export function nextSeasonStartDate(season: Season): Date {
   return new Date(Date.UTC(year, startMonth - 1, 1, 0, 0, 0));
 }
 
-export async function findDueSeasonalSpring(client: DatabaseClient): Promise<AutomationRow[]> {
+export async function findDueSeasonalSpring(client: Client): Promise<AutomationRow[]> {
   return findDueSeasonalRemindersForType(client, "seasonal_reminder_spring");
 }
 
-export async function findDueSeasonalFall(client: DatabaseClient): Promise<AutomationRow[]> {
+export async function findDueSeasonalFall(client: Client): Promise<AutomationRow[]> {
   return findDueSeasonalRemindersForType(client, "seasonal_reminder_fall");
 }
 
 async function findDueSeasonalRemindersForType(
-  client: DatabaseClient,
+  client: Client,
   type: string
 ): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
@@ -60,14 +60,14 @@ async function findDueSeasonalRemindersForType(
   return rows;
 }
 
-async function findEligibleSeasonalDatabaseClients(
-  client: DatabaseClient,
+async function findEligibleSeasonalClients(
+  client: Client,
   automation: AutomationRow
-): Promise<SeasonalDatabaseClient[]> {
+): Promise<SeasonalClient[]> {
   const year = new Date().getFullYear();
   const auditEntityType = automation.type; // 'seasonal_reminder_spring' or 'seasonal_reminder_fall'
 
-  const { rows } = await client.query<SeasonalDatabaseClient>(
+  const { rows } = await client.query<SeasonalClient>(
     `SELECT c.id, c.account_id, c.name, c.email
      FROM clients c
      WHERE c.account_id = $1
@@ -88,8 +88,8 @@ async function findEligibleSeasonalDatabaseClients(
 }
 
 async function emitSeasonalReminder(
-  client: DatabaseClient,
-  seasonDatabaseClient: SeasonalDatabaseClient,
+  client: Client,
+  seasonClient: SeasonalClient,
   automation: AutomationRow
 ): Promise<boolean> {
   const year = new Date().getFullYear();
@@ -102,31 +102,31 @@ async function emitSeasonalReminder(
        AND account_id = $3
        AND (new_value->>'year')::int = $4
      LIMIT 1`,
-    [automation.type, seasonDatabaseClient.id, seasonDatabaseClient.account_id, year]
+    [automation.type, seasonClient.id, seasonClient.account_id, year]
   );
   if (rowCount && rowCount > 0) return false;
 
-  if (seasonDatabaseClient.name) {
+  if (seasonClient.name) {
     const enqueueResult = await enqueueNotification(client, {
-      accountId: seasonDatabaseClient.account_id,
-      clientId: seasonDatabaseClient.id,
+      accountId: seasonClient.account_id,
+      clientId: seasonClient.id,
       automationType: automation.type,
       priority: PRIORITY.LOW,
-      toAddress: seasonDatabaseClient.email,
+      toAddress: seasonClient.email,
       subject: season === "spring"
         ? "Spring Home Maintenance — We're Booking Now"
         : "Get Your Home Ready for Fall — Book Now",
       htmlBody: seasonalReminderHtml({
-        clientName: seasonDatabaseClient.name,
+        clientName: seasonClient.name,
         season,
       }),
-      idempotencyKey: `${automation.type}:${seasonDatabaseClient.id}:${year}`,
+      idempotencyKey: `${automation.type}:${seasonClient.id}:${year}`,
       entityType: "client",
-      entityId: seasonDatabaseClient.id,
+      entityId: seasonClient.id,
       metadata: { automationId: automation.id, season, year },
     });
     if (enqueueResult === "suppressed") {
-      logger.debug("seasonal-reminder: suppressed by governor", { clientId: seasonDatabaseClient.id, season });
+      logger.debug("seasonal-reminder: suppressed by governor", { clientId: seasonClient.id, season });
       return false;
     }
   }
@@ -136,13 +136,13 @@ async function emitSeasonalReminder(
        (account_id, entity_type, entity_id, action, actor_id, old_value, new_value)
      VALUES ($1, $2, $3, 'insert', $4, NULL, $5)`,
     [
-      seasonDatabaseClient.account_id,
+      seasonClient.account_id,
       automation.type,
-      seasonDatabaseClient.id,
+      seasonClient.id,
       automation.id,
       JSON.stringify({
         automation_id: automation.id,
-        client_name: seasonDatabaseClient.name,
+        client_name: seasonClient.name,
         season,
         year,
         queued_at: new Date().toISOString(),
@@ -153,7 +153,7 @@ async function emitSeasonalReminder(
 }
 
 export async function processSeasonalReminder(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<RunResult> {
   const result: RunResult = {
@@ -177,7 +177,7 @@ export async function processSeasonalReminder(
     return result;
   }
 
-  const clients = await findEligibleSeasonalDatabaseClients(client, automation);
+  const clients = await findEligibleSeasonalClients(client, automation);
   for (const c of clients) {
     try {
       const emitted = await emitSeasonalReminder(client, c, automation);

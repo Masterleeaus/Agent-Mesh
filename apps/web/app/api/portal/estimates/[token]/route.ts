@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { queryOne, query, getPool, getDatabaseDialect } from "@/lib/db";
-import { appendAuditLog } from "@/lib/db/audit";
+import { queryOne, query, getPool } from "@/lib/db";
 import { createJobFromEstimate, getAccountOwnerUserId } from "@/lib/estimates/create-job-db";
 import { createApprovalArtifacts } from "@/lib/estimates/approve";
 import { logger } from "@/lib/logger";
@@ -87,6 +86,23 @@ export async function POST(
 ) {
   const { token } = await params;
 
+  const estimate = await queryOne<{
+    id: string;
+    status: string;
+    account_id: string;
+  } & Record<string, unknown>>(
+    `SELECT id, status, account_id FROM estimates WHERE share_token = $1`,
+    [token]
+  );
+
+  if (!estimate) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  if (!["sent", "approved", "declined"].includes(estimate.status)) {
+    return NextResponse.json(
+      { error: "This estimate cannot be responded to in its current state" },
+      { status: 422 }
+    );
+  }
 
   const body = await request.json().catch(() => null);
   const parsed = respondBody.safeParse(body);
@@ -107,27 +123,6 @@ export async function POST(
   try {
     await dbClient.query("BEGIN");
 
-    // Serialize public responses so approve/decline is first-writer-wins.
-    const locked = await dbClient.query<{ id: string; status: string; account_id: string }>(
-      `SELECT id, status, account_id FROM estimates WHERE share_token = $1 FOR UPDATE`,
-      [token]
-    );
-    const estimate = locked.rows[0];
-    if (!estimate) {
-      await dbClient.query("ROLLBACK");
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    }
-    if (estimate.status !== "sent") {
-      await dbClient.query("ROLLBACK");
-      if (estimate.status === newStatus) {
-        return NextResponse.json({ status: newStatus, idempotent: true });
-      }
-      return NextResponse.json(
-        { error: "This estimate has already been responded to", status: estimate.status },
-        { status: 409 }
-      );
-    }
-
     await dbClient.query(
       `UPDATE estimates
        SET status = $1,
@@ -139,21 +134,6 @@ export async function POST(
       [newStatus, name ?? null, signature_svg ?? null, estimate.id]
     );
 
-    await appendAuditLog(dbClient, {
-      account_id: estimate.account_id,
-      entity_type: "estimate",
-      entity_id: estimate.id,
-      action: "update",
-      actor_id: null,
-      old_value: { status: "sent" },
-      new_value: {
-        status: newStatus,
-        responded_at: new Date().toISOString(),
-        via: "portal",
-        client_approved_name: name ?? null,
-      },
-    });
-
     // On approval: set RLS context then create job + deposit invoice artifacts,
     // matching the behavior of the admin transition and email respond paths.
     // Each artifact step uses its own savepoint so one failure never rolls
@@ -162,14 +142,12 @@ export async function POST(
       const ownerId = await getAccountOwnerUserId(dbClient, estimate.account_id);
       if (ownerId) {
         // Set RLS session context so INSERT policies on jobs/invoices pass.
-        if (getDatabaseDialect() === "postgres") {
-          await dbClient.query(
-            `SELECT set_config('app.current_user_id', $1, true),
-                    set_config('app.current_account_id', $2, true),
-                    set_config('app.current_role', 'owner', true)`,
-            [ownerId, estimate.account_id]
-          );
-        }
+        await dbClient.query(
+          `SELECT set_config('app.current_user_id', $1, true),
+                  set_config('app.current_account_id', $2, true),
+                  set_config('app.current_role', 'owner', true)`,
+          [ownerId, estimate.account_id]
+        );
 
         // Auto-create or link job (non-fatal). CLIENT_RECENT_WORK skips spawn
         // so approving a loose estimate after T&M work does not fork a second project.

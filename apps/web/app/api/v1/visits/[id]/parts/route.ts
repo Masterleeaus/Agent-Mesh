@@ -4,7 +4,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { withAuth } from "../../../../../../lib/auth/middleware";
 import type { AuthSession } from "../../../../../../lib/auth/middleware";
 import { query, queryOne, getPool } from "../../../../../../lib/db";
@@ -26,7 +26,7 @@ async function getVisit(visitId: string, session: AuthSession) {
   );
 }
 
-async function recalcJobCost(client: DbClient, visitId: string, accountId: string) {
+async function recalcJobCost(client: PoolClient, visitId: string, accountId: string) {
   await client.query(
     `UPDATE jobs SET actual_cost_cents = (
        SELECT COALESCE(SUM(ROUND(p.actual_cost_cents * p.quantity)), 0)

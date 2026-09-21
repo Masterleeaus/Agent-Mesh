@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 import { logger } from "./logger.js";
 import { visitReminderEmailHtml } from "@ai-fsm/email-templates";
 import { enqueueNotification } from "./notification/enqueue.js";
@@ -47,13 +47,13 @@ export interface EligibleVisit {
 /**
  * Find all visit_reminder automations that are due to run.
  */
-export async function findDueReminders(client: DatabaseClient): Promise<AutomationRow[]> {
+export async function findDueReminders(client: Client): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
-    `SELECT id, account_id, type, config, enabled, next_run_at
+    `SELECT id, account_id, type, config, enabled, next_run_at::text
      FROM automations
      WHERE type = 'visit_reminder'
        AND enabled = true
-       AND next_run_at <= CURRENT_TIMESTAMP`
+       AND next_run_at <= now()`
   );
   return rows;
 }
@@ -68,17 +68,14 @@ export async function findDueReminders(client: DatabaseClient): Promise<Automati
  * 4. No reminder audit entry exists for this visit yet
  */
 export async function findEligibleVisits(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<EligibleVisit[]> {
   const hoursBefore = (automation.config.hours_before as number | undefined) ?? 24;
 
-  const now = new Date();
-  const latest = new Date(now.getTime() + hoursBefore * 60 * 60_000);
-
   const { rows } = await client.query<EligibleVisit>(
     `SELECT v.id, v.account_id, v.job_id, c.id AS client_id, v.assigned_user_id,
-            v.scheduled_start, j.title AS job_title,
+            v.scheduled_start::text, j.title AS job_title,
             c.name AS client_name, c.email AS client_email,
             p.address AS property_address,
             u.full_name AS tech_name
@@ -89,8 +86,8 @@ export async function findEligibleVisits(
      LEFT JOIN users u ON u.id = v.assigned_user_id
      WHERE v.account_id = $1
        AND v.status = 'scheduled'
-       AND v.scheduled_start > $2
-       AND v.scheduled_start <= $3
+       AND v.scheduled_start > now()
+       AND v.scheduled_start <= now() + ($2 || ' hours')::interval
        AND NOT EXISTS (
          SELECT 1 FROM audit_log al
          WHERE al.entity_type = 'visit_reminder'
@@ -98,7 +95,7 @@ export async function findEligibleVisits(
            AND al.account_id = v.account_id
        )
      ORDER BY v.scheduled_start ASC`,
-    [automation.account_id, now.toISOString(), latest.toISOString()]
+    [automation.account_id, hoursBefore]
   );
 
   return rows;
@@ -111,7 +108,7 @@ export async function findEligibleVisits(
  * Returns true if emitted, false if already exists (idempotent).
  */
 export async function emitVisitReminder(
-  client: DatabaseClient,
+  client: Client,
   visit: EligibleVisit,
   automationId: string
 ): Promise<boolean> {
@@ -197,7 +194,7 @@ export async function emitVisitReminder(
  * Runner owns next_run_at advancement via advanceNextRun.
  */
 export async function processVisitReminder(
-  client: DatabaseClient,
+  client: Client,
   automation: AutomationRow
 ): Promise<RunResult> {
   const result: RunResult = {

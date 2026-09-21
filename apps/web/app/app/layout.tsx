@@ -2,14 +2,13 @@ import { redirect } from "next/navigation";
 import type { Route } from "next";
 import { headers } from "next/headers";
 import { getSession } from "@/lib/auth/session";
-import { portableQuery } from "@/lib/db/portable";
+import { queryForSession } from "@/lib/db";
 import { businessToday } from "@/lib/operations/business-day";
 import { AppShell } from "@/components/AppShell";
 import {
   CAPTURE_PATH,
   loginRedirectForPath,
   pathnameFromHeaders,
-  requestTargetFromHeaders,
 } from "@/lib/auth/post-login-destination";
 
 export const dynamic = "force-dynamic";
@@ -21,24 +20,25 @@ export default async function AppLayout({
 }) {
   const headerList = await headers();
   const pathname = pathnameFromHeaders(headerList);
-  const requestTarget = requestTargetFromHeaders(headerList);
   const session = await getSession();
-  // Known standalone app paths can round-trip safely through /login?next=.
-  if (!session) redirect(loginRedirectForPath(requestTarget) as Route);
+  // Capture is the only path allowed to round-trip through /login?next=.
+  if (!session) redirect(loginRedirectForPath(pathname) as Route);
 
   if (pathname === CAPTURE_PATH) {
     return <>{children}</>;
   }
 
   const [users, reviewRows] = await Promise.all([
-    portableQuery<{ full_name: string }>(
-      `SELECT full_name FROM users WHERE id = $1 AND account_id = $2`,
-      [session.userId, session.accountId],
+    queryForSession<{ full_name: string }>(
+      session,
+      `SELECT full_name FROM users WHERE id = $1`,
+      [session.userId],
     ),
-    portableQuery<{ pending: boolean }>(
+    queryForSession<{ pending: boolean }>(
+      session,
       `SELECT (review_prompted_at IS NOT NULL AND closed_at IS NULL) AS pending
        FROM business_days
-       WHERE account_id = $1 AND business_date = $2`,
+       WHERE account_id = $1 AND business_date = $2::date`,
       [session.accountId, businessToday()],
     ),
   ]);

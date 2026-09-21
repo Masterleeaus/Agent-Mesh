@@ -152,7 +152,7 @@ describe("getNavSections (nested hubs)", () => {
   });
 
   it("Owner nav has the active home + all shared business destinations", () => {
-    // The home swaps with the workspace (My Day in Field, Overview in Office);
+    // The home swaps with the workspace (Today in Field, Desk in Office);
     // the shared destinations are present in both. (TASK-058 follow-up)
     const shared = [
       "/app/requests",
@@ -160,7 +160,6 @@ describe("getNavSections (nested hubs)", () => {
       "/app/properties",
       "/app/estimates",
       "/app/jobs",
-      "/app/work-orders",
       "/app/schedule",
       "/app/invoices",
       "/app/reports",
@@ -173,18 +172,18 @@ describe("getNavSections (nested hubs)", () => {
       expect(hrefs).toContain("/app/timeline");
       expect(hrefs).not.toContain("/app/mileage");
       expect(hrefs).toContain("/app/capture");
-      expect(hrefs).toHaveLength(14);
+      expect(hrefs).toHaveLength(13);
     }
   });
 
-  it("Admin nav drops My Day (pure admins don't do field work) — 12 items", () => {
+  it("Admin nav drops Today (pure admins don't do field work) — 12 items", () => {
     const hrefs = flattenSections(getNavSections("admin")).map((i) => i.href);
     expect(hrefs).not.toContain("/app/my-work"); // EPIC-006 P5
     expect(hrefs).toContain("/app");
     expect(hrefs).toContain("/app/settings");
     expect(hrefs).toContain("/app/timeline");
     expect(hrefs).toContain("/app/capture");
-    expect(hrefs).toHaveLength(14);
+    expect(hrefs).toHaveLength(13);
   });
 
   it("Layer 2+ tools are not in main nav", () => {
@@ -204,20 +203,20 @@ describe("getNavSections (nested hubs)", () => {
       const sections = getNavSections("owner", view);
       expect(sections.map((s) => s.label).filter(Boolean)).toEqual(HUB_LABELS);
       const hrefs = flattenSections(sections).map((i) => i.href);
-      expect(hrefs).toHaveLength(14);
+      expect(hrefs).toHaveLength(13);
       expect(hrefs).toContain("/app/timeline");
       expect(hrefs).toContain("/app/capture");
       if (view === "field") {
         expect(hrefs).toContain("/app/my-work");
-        expect(hrefs).not.toContain("/app"); // no Overview home in Field
+        expect(hrefs).not.toContain("/app"); // no Desk home in Field
       } else {
         expect(hrefs).toContain("/app");
-        expect(hrefs).not.toContain("/app/my-work"); // no My Day home in Office
+        expect(hrefs).not.toContain("/app/my-work"); // no Today home in Office
       }
     }
   });
 
-  it("returns My Day, Visits, and Day Review for tech role", () => {
+  it("returns Today, Visits, and Day Review for tech role", () => {
     const sections = getNavSections("tech");
     const items = flattenSections(sections);
     expect(items).toHaveLength(3);
@@ -234,19 +233,20 @@ describe("getNavSections (nested hubs)", () => {
     expect(hrefs).not.toContain("/app/capture");
   });
 
-  it("leads with My Day for owner/tech, Overview for pure admin", () => {
+  it("leads with Today for owner/tech, Desk for pure admin", () => {
     for (const role of ["tech", "owner"] as const) {
       const items = flattenSections(getNavSections(role));
       expect(items[0].href).toBe("/app/my-work");
+      expect(items[0].label).toBe("Today");
     }
 
     const adminFirst = flattenSections(getNavSections("admin"))[0];
     expect(adminFirst.href).toBe("/app");
-    expect(adminFirst.label).toBe("Overview");
+    expect(adminFirst.label).toBe("Desk");
   });
 
   it("owner sidebar shows the active workspace's home, not both", () => {
-    // Field surface: My Day leads, Overview is not in the sidebar (reach it from
+    // Field surface: Today leads, Desk is not in the sidebar (reach it from
     // Settings → Workspace). Office surface: the reverse.
     const field = flattenSections(getNavSections("owner", "field")).map((i) => i.href);
     expect(field[0]).toBe("/app/my-work");
@@ -266,7 +266,7 @@ describe("getNavSections (nested hubs)", () => {
   it("Home hub lists Tracking next to Day Review for owner/admin", () => {
     const adminHome = getNavSections("admin").find((s) => s.label === "Home");
     expect(adminHome?.items.map((i) => i.label)).toEqual([
-      "Overview",
+      "Desk",
       "Capture",
       "Day Review",
       "Tracking",
@@ -282,23 +282,26 @@ describe("getNavSections (nested hubs)", () => {
     expect(tech).not.toContain("/app/timeline");
   });
 
-  it("Work hub lists requests through schedule in order", () => {
+  it("Work hub lists requests through schedule in order — Work Orders dropped (TASK-125)", () => {
     const work = getNavSections("admin").find((s) => s.label === "Work");
     expect(work?.items.map((i) => i.href)).toEqual([
       "/app/requests",
       "/app/estimates",
       "/app/jobs",
-      "/app/work-orders",
       "/app/schedule",
     ]);
+    // Work Orders are reached inside a Job, not from the top nav.
+    expect(work?.items.map((i) => i.href)).not.toContain("/app/work-orders");
+    expect(work?.items.find((i) => i.href === "/app/jobs")?.label).toBe("Jobs");
+    expect(work?.items.find((i) => i.href === "/app/estimates")?.label).toBe("Quotes");
   });
 });
 
 describe("getBottomNavItems (mobile hubs)", () => {
-  it("returns 4 hub tabs for admin (Home Work People Money) — More is the 5th slot", () => {
+  it("returns 4 hub tabs for admin (Desk Jobs People Money) — More is the 5th slot", () => {
     const items = getBottomNavItems("admin");
     expect(items).toHaveLength(4);
-    expect(items.map((i) => i.label)).toEqual(["Home", "Work", "People", "Money"]);
+    expect(items.map((i) => i.label)).toEqual(["Desk", "Jobs", "People", "Money"]);
     expect(items.map((i) => i.href)).toEqual([
       "/app",
       "/app/jobs",
@@ -309,7 +312,7 @@ describe("getBottomNavItems (mobile hubs)", () => {
     expect(hrefs).not.toContain("/app/booking-requests");
   });
 
-  it("returns 2 items for tech role with My Day and Visits", () => {
+  it("returns 2 items for tech role with Today and Visits", () => {
     const items = getBottomNavItems("tech");
     expect(items).toHaveLength(2);
     const hrefs = items.map((i) => i.href);
@@ -319,9 +322,9 @@ describe("getBottomNavItems (mobile hubs)", () => {
     expect(hrefs).not.toContain("/app/jobs");
   });
 
-  it("returns 4 hub tabs for owner leading with Home (My Day)", () => {
+  it("returns 4 hub tabs for owner leading with Today", () => {
     const items = getBottomNavItems("owner");
-    expect(items.map((i) => i.label)).toEqual(["Home", "Work", "People", "Money"]);
+    expect(items.map((i) => i.label)).toEqual(["Today", "Jobs", "People", "Money"]);
     expect(items.map((i) => i.href)).toEqual([
       "/app/my-work",
       "/app/jobs",
@@ -331,7 +334,7 @@ describe("getBottomNavItems (mobile hubs)", () => {
   });
 
   it("Work hub tab stays active on estimates and schedule", () => {
-    const work = getBottomNavItems("owner").find((i) => i.label === "Work");
+    const work = getBottomNavItems("owner").find((i) => i.label === "Jobs");
     expect(work).toBeDefined();
     expect(isNavActive("/app/estimates/new", work!.href, work!.activePrefixes)).toBe(true);
     expect(isNavActive("/app/schedule", work!.href, work!.activePrefixes)).toBe(true);
@@ -339,7 +342,7 @@ describe("getBottomNavItems (mobile hubs)", () => {
   });
 
   it("Home stays active on Tracking; Money stays active on Mileage", () => {
-    const ownerHome = getBottomNavItems("owner").find((i) => i.label === "Home");
+    const ownerHome = getBottomNavItems("owner").find((i) => i.label === "Today");
     const money = getBottomNavItems("owner").find((i) => i.label === "Money");
     expect(isNavActive("/app/timeline", ownerHome!.href, ownerHome!.activePrefixes)).toBe(true);
     expect(isNavActive("/app/day-review", ownerHome!.href, ownerHome!.activePrefixes)).toBe(true);
@@ -354,7 +357,7 @@ describe("isNavActive (route detection)", () => {
     expect(isNavActive("/app", "/app")).toBe(true);
   });
 
-  it("returns false for /app when pathname is /app/jobs (prevents My Day lighting up everywhere)", () => {
+  it("returns false for /app when pathname is /app/jobs (prevents Desk lighting up everywhere)", () => {
     expect(isNavActive("/app/jobs", "/app")).toBe(false);
   });
 
@@ -375,7 +378,7 @@ describe("isNavActive (route detection)", () => {
     expect(isNavActive("/app/visits", "/app/operations")).toBe(false);
   });
 
-  // Projects (/app/jobs) — prefix match
+  // Jobs (/app/jobs) — prefix match
   it("returns true for /app/jobs when pathname is /app/jobs", () => {
     expect(isNavActive("/app/jobs", "/app/jobs")).toBe(true);
   });

@@ -70,6 +70,8 @@ Location capture, visit candidates, day map, hybrid tracking are **shipped infra
 
 **Phase 1 exception — TASK-115 Promise Capture Pilot.** Authorized 2026-09-01. Adds a capture-evidence table and an additive `action_items.source_capture_id` change so an owner promise recorded on Tuesday still exists on an FSM object on Thursday. This is an explicit exception to the table freeze. It does not open Owner OS, coaching, a second inbox, or a new priority scorer. See `docs/superpowers/specs/2026-09-01-promise-capture-pilot-design.md`.
 
+**Phase 1 follow-on — TASK-140–142 mileage claim vs GPS + tags.** Authorized 2026-09-12. Mileage month headline is odometer/manual claim miles; GPS hops are nested corroboration (hide voided and &lt;1 mi). Complete tags the day’s claim session when it is the only job, or overlapping hops when two jobs share a day. Needs Attention lists untagged claim days. Job reports ignore GPS estimate miles. No new tables.
+
 **Phase 1 exception — TASK-116 Field-ops Web Push.** Authorized 2026-09-05. No new table. Wires start-day and home-arrival day-review onto the TASK-118 send helper, stamps arrival `live_prompted_at`, adds a one-time My Work subscribe prompt, and drops the remaining Companion `notify.mobile_app` actions for those events. Does not reopen Owner OS or replace Companion GPS/Bluetooth.
 
 ### Phase 2 — Property-Centered Surfaces
@@ -80,6 +82,7 @@ Location capture, visit candidates, day map, hybrid tracking are **shipped infra
 
 ### Phase 3 — Estimate & Billing Closure
 
+- **Phase 3 wedge — TASK-133 Job closeout on Complete (proposed 2026-09-12).** Field Complete asks done vs coming back. Done completes the project and drafts the invoice (work named, materials rolled up, dumping separate). Coming back requires today’s notes, next visit, and first-up for the covering tech. Night is leftovers only. Spec: `docs/superpowers/specs/2026-09-12-job-closeout-on-complete-design.md`. Does not add a chatbot, briefing table, or GPS-creates-project. Owner approval required before build.
 - Assessment summary engine complete (TASK-018)
 - Estimate guardrails visible; approved estimate → project readiness explicit
 - Invoice discounts, payment provider model, Square card payments (TASK-060, TASK-068, TASK-069)

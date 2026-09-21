@@ -1,4 +1,10 @@
-import { haversineMeters, rankVisitCandidates, type VisitMatchCandidate } from "@ai-fsm/domain";
+import {
+  haversineMeters,
+  isOutsideStopFence,
+  rankVisitCandidates,
+  relocationRadiusMeters,
+  type VisitMatchCandidate,
+} from "@ai-fsm/domain";
 
 /** Hard cap — auto-detect never fires beyond ~250 ft even if geofence is wider. */
 export const MAX_AUTO_DETECT_METERS = 250 * 0.3048;
@@ -104,4 +110,49 @@ export function matchCustomerAtStop(
   }
 
   return null;
+}
+
+/** Fence used by the ingest reducer: matched property geofence, else unmatched default. */
+export function relocationRadiusForStop(
+  stop: { latitude: number | null; longitude: number | null },
+  properties: PropertyGeo[],
+): number {
+  if (stop.latitude == null || stop.longitude == null || properties.length === 0) {
+    return relocationRadiusMeters(null);
+  }
+  const match = matchCustomerAtStop(
+    { latitude: stop.latitude, longitude: stop.longitude },
+    10,
+    properties,
+  );
+  if (!match) return relocationRadiusMeters(null);
+  const prop = properties.find((p) => p.propertyId === match.propertyId);
+  return relocationRadiusMeters(prop?.geofenceRadiusFeet);
+}
+
+/**
+ * TASK-150: a `still` ping outside the current fence only means "left this
+ * job" when it matches a *different* known property. Unmatched neighbor
+ * geocodes (8 Bus Rd, 69 N Policy next to 4 Ash) hold.
+ */
+export function isDifferentPropertyStill(
+  openStop: StopCoords,
+  ping: StopCoords,
+  properties: PropertyGeo[],
+  relocationRadiusM: number,
+): boolean {
+  if (
+    !isOutsideStopFence({
+      from: openStop,
+      to: ping,
+      radiusMeters: relocationRadiusM,
+    })
+  ) {
+    return false;
+  }
+  const there = matchCustomerAtStop(ping, 10, properties);
+  if (!there) return false;
+  const here = matchCustomerAtStop(openStop, 10, properties);
+  if (!here) return true;
+  return here.propertyId !== there.propertyId;
 }

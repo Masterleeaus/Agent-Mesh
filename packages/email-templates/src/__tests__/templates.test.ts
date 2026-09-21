@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  attentionOwnerEmailHtml,
   bookingConfirmedEmailHtml,
   clientReactivationHtml,
   estimateEmailHtml,
@@ -19,17 +18,6 @@ import {
 } from "../index.js";
 
 describe("canonical email template snapshots", () => {
-  it("attentionOwnerEmailHtml escapes customer-controlled copy and keeps the action link", () => {
-    const html = attentionOwnerEmailHtml({
-      title: "Needs <review>",
-      summary: "Customer & owner",
-      href: "https://example.test/attention/1",
-    });
-    expect(html).toContain("Needs &lt;review&gt;");
-    expect(html).toContain("Customer &amp; owner");
-    expect(html).toContain("https://example.test/attention/1");
-  });
-
   it("invoiceEmailHtml", () => {
     expect(
       invoiceEmailHtml({

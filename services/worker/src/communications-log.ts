@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "./db-client.js";
+import type { Client } from "pg";
 
 export interface WorkerCommunicationLog {
   accountId: string;
@@ -13,7 +13,7 @@ export interface WorkerCommunicationLog {
 }
 
 export async function logWorkerCommunication(
-  client: DatabaseClient,
+  client: Client,
   opts: WorkerCommunicationLog
 ): Promise<void> {
   await client.query(

@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import { logger } from "@/lib/logger";
 import type { EmitAttentionEventInput } from "./types";
 import { ATTENTION_PUSH_TYPES } from "./types";
@@ -11,7 +11,7 @@ import { sendPushToOwners } from "@/lib/push/send";
  * On new insert, may enqueue owner email for high-signal types.
  */
 export async function emitAttentionEvent(
-  client: DbClient,
+  client: PoolClient,
   input: EmitAttentionEventInput,
 ): Promise<string | null> {
   try {
@@ -102,7 +102,7 @@ export async function emitAttentionEvent(
 
 /** Mark all unread events for an entity as read (when owner opens the record). */
 export async function markEntityAttentionRead(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   entityType: string,
   entityId: string,

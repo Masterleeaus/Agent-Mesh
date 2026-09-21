@@ -1,4 +1,4 @@
-import type { DatabaseClient } from "../db-client.js";
+import type { Client } from "pg";
 import { COOLDOWN_BYPASS_MINIMUM } from "./priority.js";
 
 interface NotificationSettings {
@@ -52,7 +52,7 @@ function nextWorkingHoursStart(rules: NotificationSettings): Date {
   return new Date(now.getTime() + hoursUntilStart * 3_600_000);
 }
 
-export async function getRules(client: DatabaseClient, accountId: string): Promise<NotificationSettings> {
+export async function getRules(client: Client, accountId: string): Promise<NotificationSettings> {
   const { rows } = await client.query<NotificationSettings>(
     `SELECT cooldown_hours, max_per_day, working_hours_start, working_hours_end, working_hours_tz
      FROM automation_settings WHERE account_id = $1`,
@@ -68,7 +68,7 @@ export async function getRules(client: DatabaseClient, accountId: string): Promi
 }
 
 export async function checkGovernor(
-  client: DatabaseClient,
+  client: Client,
   notification: NotificationRow,
   rules: NotificationSettings
 ): Promise<GovernorResult> {
@@ -108,23 +108,14 @@ export async function checkGovernor(
 }
 
 export async function updateCooldown(
-  client: DatabaseClient,
+  client: Client,
   accountId: string,
   clientId: string
 ): Promise<void> {
-  const existing = await client.query(
-    `SELECT account_id FROM notification_cooldowns WHERE account_id = $1 AND client_id = $2 LIMIT 1`,
-    [accountId, clientId],
+  await client.query(
+    `INSERT INTO notification_cooldowns (account_id, client_id, last_sent_at)
+     VALUES ($1, $2, now())
+     ON CONFLICT (account_id, client_id) DO UPDATE SET last_sent_at = now()`,
+    [accountId, clientId]
   );
-  if (existing.rows.length > 0) {
-    await client.query(
-      `UPDATE notification_cooldowns SET last_sent_at = CURRENT_TIMESTAMP WHERE account_id = $1 AND client_id = $2`,
-      [accountId, clientId],
-    );
-  } else {
-    await client.query(
-      `INSERT INTO notification_cooldowns (account_id, client_id, last_sent_at) VALUES ($1, $2, CURRENT_TIMESTAMP)`,
-      [accountId, clientId],
-    );
-  }
 }

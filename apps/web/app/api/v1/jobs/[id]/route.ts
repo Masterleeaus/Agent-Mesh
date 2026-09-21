@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withAuth, withRole } from "../../../../../lib/auth/middleware";
 import type { AuthSession } from "../../../../../lib/auth/middleware";
-import { portableQueryOne, withPortableTransaction } from "../../../../../lib/db/portable";
+import { queryOne, getPool } from "../../../../../lib/db";
 import { appendAuditLog } from "../../../../../lib/db/audit";
 import { logger } from "../../../../../lib/logger";
 import { JOB_ACCEPTANCE_CATEGORIES, JOB_INTAKE_DECISIONS, VENDOR_COORDINATION_MODES } from "@ai-fsm/domain";
@@ -36,7 +36,7 @@ export const GET = withAuth(
       );
     }
 
-    const job = await portableQueryOne(
+    const job = await queryOne(
       `SELECT * FROM jobs WHERE id = $1 AND account_id = $2`,
       [id, session.accountId]
     );
@@ -81,71 +81,75 @@ export const PATCH = withRole(
       );
     }
 
+    const pool = getPool();
+    const client = await pool.connect();
+
     try {
-      const result = await withPortableTransaction(async (client) => {
-        const existing = await client.query<Record<string, unknown>>(
-          `SELECT * FROM jobs WHERE id = $1 AND account_id = $2 FOR UPDATE`,
-          [id, session.accountId]
-        );
+      await client.query("BEGIN");
+      await client.query(
+        `SELECT set_config('app.current_user_id', $1, true), set_config('app.current_account_id', $2, true), set_config('app.current_role', $3, true)`,
+        [session.userId, session.accountId, session.role]
+      );
 
-        const old = existing.rows[0];
-        if (!old) return { kind: "missing" as const };
+      const existing = await client.query(
+        `SELECT * FROM jobs WHERE id = $1 AND account_id = $2 FOR UPDATE`,
+        [id, session.accountId]
+      );
 
-        const fields: string[] = [];
-        const values: unknown[] = [];
-        let idx = 1;
-
-        for (const [key, val] of Object.entries(parsed.data)) {
-          if (val !== undefined) {
-            fields.push(`${key} = $${idx++}`);
-            values.push(val);
-          }
-        }
-
-        if (fields.length === 0) {
-          return { kind: "unchanged" as const, job: old };
-        }
-
-        values.push(id, session.accountId);
-        await client.query(
-          `UPDATE jobs SET ${fields.join(", ")}, updated_at = CURRENT_TIMESTAMP WHERE id = $${idx++} AND account_id = $${idx}`,
-          values
-        );
-
-        const persisted = await client.query<Record<string, unknown>>(
-          `SELECT * FROM jobs WHERE id = $1 AND account_id = $2`,
-          [id, session.accountId],
-        );
-        const updated = persisted.rows[0];
-        if (!updated) throw new Error("Updated job disappeared");
-
-        await appendAuditLog(client, {
-          account_id: session.accountId,
-          entity_type: "job",
-          entity_id: id,
-          action: "update",
-          actor_id: session.userId,
-          trace_id: session.traceId,
-          old_value: old,
-          new_value: updated,
-        });
-
-        return { kind: "updated" as const, job: updated };
-      });
-
-      if (result.kind === "missing") {
+      if (!existing.rows[0]) {
+        await client.query("ROLLBACK");
         return NextResponse.json(
           { error: { code: "NOT_FOUND", message: "Job not found", traceId: session.traceId } },
           { status: 404 }
         );
       }
-      return NextResponse.json({ data: result.job });
+
+      const old = existing.rows[0];
+      const fields: string[] = [];
+      const values: unknown[] = [];
+      let idx = 3;
+
+      for (const [key, val] of Object.entries(parsed.data)) {
+        if (val !== undefined) {
+          fields.push(`${key} = $${idx++}`);
+          values.push(val);
+        }
+      }
+
+      if (fields.length === 0) {
+        await client.query("ROLLBACK");
+        return NextResponse.json({ data: old });
+      }
+
+      const { rows } = await client.query(
+        `UPDATE jobs SET ${fields.join(", ")}, updated_at = now() WHERE id = $1 AND account_id = $2 RETURNING *`,
+        [id, session.accountId, ...values]
+      );
+
+      const updated = rows[0];
+
+      await appendAuditLog(client, {
+        account_id: session.accountId,
+        entity_type: "job",
+        entity_id: id,
+        action: "update",
+        actor_id: session.userId,
+        trace_id: session.traceId,
+        old_value: old,
+        new_value: updated,
+      });
+
+      await client.query("COMMIT");
+      return NextResponse.json({ data: updated });
     } catch (err) {
+      await client.query("ROLLBACK");
       logger.error("[jobs PATCH]", err, { traceId: session.traceId });
       return NextResponse.json(
         { error: { code: "INTERNAL_ERROR", message: "Failed to update job", traceId: session.traceId } },
         { status: 500 }
       );
+    } finally {
+      client.release();
     }
   }
 );
@@ -162,69 +166,77 @@ export const DELETE = withRole(
       );
     }
 
+    const pool = getPool();
+    const client = await pool.connect();
+
     try {
-      const result = await withPortableTransaction(async (client) => {
-        const existing = await client.query<Record<string, unknown>>(
-          `SELECT * FROM jobs WHERE id = $1 AND account_id = $2 FOR UPDATE`,
-          [id, session.accountId]
-        );
+      await client.query("BEGIN");
+      await client.query(
+        `SELECT set_config('app.current_user_id', $1, true), set_config('app.current_account_id', $2, true), set_config('app.current_role', $3, true)`,
+        [session.userId, session.accountId, session.role]
+      );
 
-        const job = existing.rows[0];
-        if (!job) return { kind: "missing" as const };
+      const existing = await client.query(
+        `SELECT * FROM jobs WHERE id = $1 AND account_id = $2 FOR UPDATE`,
+        [id, session.accountId]
+      );
 
-        if (job.status !== "draft") {
-          return { kind: "conflict" as const, status: String(job.status) };
-        }
-
-        // Detach SMS/comms history so draft delete is not blocked by
-        // communications_log_job_id_fkey (NO ACTION before migration 163).
-        await client.query(
-          `UPDATE communications_log
-           SET job_id = NULL
-           WHERE job_id = $1 AND account_id = $2`,
-          [id, session.accountId],
-        );
-
-        await client.query(`DELETE FROM jobs WHERE id = $1 AND account_id = $2`, [id, session.accountId]);
-
-        await appendAuditLog(client, {
-          account_id: session.accountId,
-          entity_type: "job",
-          entity_id: id,
-          action: "delete",
-          actor_id: session.userId,
-          trace_id: session.traceId,
-          old_value: job,
-        });
-
-        return { kind: "deleted" as const };
-      });
-
-      if (result.kind === "missing") {
+      if (!existing.rows[0]) {
+        await client.query("ROLLBACK");
         return NextResponse.json(
           { error: { code: "NOT_FOUND", message: "Job not found", traceId: session.traceId } },
           { status: 404 }
         );
       }
-      if (result.kind === "conflict") {
+
+      const job = existing.rows[0];
+
+      if (job.status !== "draft") {
+        await client.query("ROLLBACK");
         return NextResponse.json(
           {
             error: {
               code: "CONFLICT",
-              message: `Only draft projects can be deleted (current status: ${result.status}). Cancel or complete active projects instead.`,
+              message: `Only draft projects can be deleted (current status: ${job.status}). Cancel or complete active projects instead.`,
               traceId: session.traceId,
             },
           },
           { status: 409 }
         );
       }
+
+      // Detach SMS/comms history so draft delete is not blocked by
+      // communications_log_job_id_fkey (NO ACTION before migration 163).
+      await client.query(
+        `UPDATE communications_log
+         SET job_id = NULL
+         WHERE job_id = $1 AND account_id = $2`,
+        [id, session.accountId],
+      );
+
+      await client.query(`DELETE FROM jobs WHERE id = $1 AND account_id = $2`, [id, session.accountId]);
+
+      await appendAuditLog(client, {
+        account_id: session.accountId,
+        entity_type: "job",
+        entity_id: id,
+        action: "delete",
+        actor_id: session.userId,
+        trace_id: session.traceId,
+        old_value: job,
+      });
+
+      await client.query("COMMIT");
       return new NextResponse(null, { status: 204 });
     } catch (err) {
+      await client.query("ROLLBACK");
       logger.error("[jobs DELETE]", err, { traceId: session.traceId });
       return NextResponse.json(
         { error: { code: "INTERNAL_ERROR", message: "Failed to delete job", traceId: session.traceId } },
         { status: 500 }
       );
+    } finally {
+      client.release();
     }
   }
 );

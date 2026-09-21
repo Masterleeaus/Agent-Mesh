@@ -4,7 +4,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "@/lib/auth/middleware";
-import { withPortableTransaction } from "@/lib/db/portable";
+import { withDbSession } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { listTodayClocks } from "@/lib/operations/time-clock";
 
@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 export const GET = withAuth(async (_request: NextRequest, session) => {
   try {
-    const rows = await withPortableTransaction( (client) =>
+    const rows = await withDbSession(session, (client) =>
       listTodayClocks(client, session.accountId, session.userId),
     );
     return NextResponse.json({ data: rows });

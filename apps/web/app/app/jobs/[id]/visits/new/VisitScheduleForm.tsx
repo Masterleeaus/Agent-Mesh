@@ -12,7 +12,9 @@ import {
 import type { ScheduleValue } from "@/components/ui";
 import { scheduleToISOPair } from "@/components/ui";
 import { reviewScheduleDay } from "@/lib/jobs/schedule-guard";
+import { easternWallToUtc, formatBusinessDate, formatBusinessTime } from "@/lib/time/business-tz";
 import { VISIT_TYPES, VISIT_TYPE_LABELS, type VisitType } from "@ai-fsm/domain";
+import { coveringTechFieldHint, coveringTechFieldLabel } from "@/lib/visits/covering-tech";
 
 interface User {
   id: string;
@@ -56,16 +58,10 @@ interface VisitScheduleFormProps {
 }
 
 function formatDayLabel(dateStr: string, startTime: string, durationMin: number): string {
-  const start = new Date(`${dateStr}T${startTime}:00`);
+  const start = easternWallToUtc(dateStr, startTime);
   const end = new Date(start.getTime() + durationMin * 60_000);
-  const day = start.toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  });
-  const t0 = start.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-  const t1 = end.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-  return `${day} · ${t0} – ${t1}`;
+  const day = formatBusinessDate(start, { weekday: "short", year: undefined });
+  return `${day} · ${formatBusinessTime(start)} – ${formatBusinessTime(end)}`;
 }
 
 function defaultVisitType(
@@ -553,14 +549,14 @@ export function VisitScheduleForm({
       {canAssign && (
         <Select
           id="assigned_user_id"
-          label="Assign To"
+          label={coveringTechFieldLabel()}
           value={assignedUserId}
           onChange={(e) => setAssignedUserId(e.target.value)}
           disabled={pending}
           hint={
             users.length === 0
               ? "No users available. Create users first."
-              : undefined
+              : coveringTechFieldHint()
           }
           options={techUsers.map((u) => ({
             value: u.id,

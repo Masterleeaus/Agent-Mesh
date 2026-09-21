@@ -2,10 +2,12 @@ export type HeroVisit = {
   id: string;
   status: string;
   scheduled_start: string;
+  job_id?: string | null;
   job_title: string | null;
   property_address: string | null;
   client_name: string | null;
   client_phone: string | null;
+  first_up?: string | null;
 };
 
 function isOverdueScheduled(visit: HeroVisit, nowMs: number): boolean {
@@ -46,6 +48,18 @@ export function heroPrimaryAction(status: string): "start" | "complete" | null {
   if (status === "scheduled") return "start";
   if (status === "arrived" || status === "in_progress") return "complete";
   return null;
+}
+
+export function heroPrimaryLabel(status: string): string | null {
+  const action = heroPrimaryAction(status);
+  if (action === "start") return "Start this job";
+  if (action === "complete") return "Complete";
+  return null;
+}
+
+/** GPS park confirm is the one arrival question — do not stack a second hero. */
+export function shouldShowVisitHero(input: { hasParkProposal: boolean }): boolean {
+  return !input.hasParkProposal;
 }
 
 export function excludeHeroVisit<T extends { id: string }>(visits: T[], heroId: string | null): T[] {

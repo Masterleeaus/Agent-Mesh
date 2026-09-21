@@ -1,19 +1,13 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
-import { portableQuery } from "@/lib/db/portable";
-import { PageContainer, PageHeader, HubSubnav, SurfaceState } from "@/components/ui";
+import { query } from "@/lib/db";
+import { PageContainer, PageHeader, HubSubnav } from "@/components/ui";
 import { getTriageVisits } from "@/lib/visits/queries";
 import { WORK_HUB_LINKS } from "@/lib/navigation/hubs";
 import { ScheduleCalendar } from "./ScheduleCalendar";
 import type { VisitRow, ViewMode } from "./ScheduleCalendar";
 import { ScheduleViewToggle } from "./ScheduleViewToggle";
 import { VisitTriage } from "../visits/VisitTriage";
-import { bindNativeSurface } from "@/lib/navigation/native-service-bindings";
-
-type DbVisitRow = Omit<VisitRow, "scheduled_start" | "scheduled_end"> & {
-  scheduled_start: string | Date;
-  scheduled_end: string | Date;
-};
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +46,7 @@ interface PageProps {
 }
 
 const VISIT_SELECT = `
-  SELECT v.id, v.scheduled_start, v.scheduled_end, v.status,
+  SELECT v.id, v.scheduled_start::text, v.scheduled_end::text, v.status,
          j.title AS job_title, c.name AS client_name,
          p.address AS property_address, u.full_name AS tech_name,
          v.assigned_user_id
@@ -67,8 +61,6 @@ export default async function SchedulePage({ searchParams }: PageProps) {
   if (!session) redirect("/login");
 
   const isAdmin = session.role === "owner" || session.role === "admin";
-
-  bindNativeSurface("scheduling", session.accountId);
 
   const params = await searchParams;
   const allowed = isAdmin ? ["week", "month", "year", "list"] : ["week", "month", "year"];
@@ -115,7 +107,7 @@ export default async function SchedulePage({ searchParams }: PageProps) {
   }
 
   const visits = isAdmin
-    ? await portableQuery<DbVisitRow>(
+    ? await query<VisitRow>(
         `${VISIT_SELECT}
          WHERE v.account_id = $1
            AND v.scheduled_start >= $2
@@ -124,7 +116,7 @@ export default async function SchedulePage({ searchParams }: PageProps) {
          ORDER BY v.scheduled_start ASC`,
         [session.accountId, rangeStart.toISOString(), rangeEnd.toISOString()]
       )
-    : await portableQuery<DbVisitRow>(
+    : await query<VisitRow>(
         `${VISIT_SELECT}
          WHERE v.account_id = $1
            AND v.assigned_user_id = $2
@@ -135,18 +127,6 @@ export default async function SchedulePage({ searchParams }: PageProps) {
         [session.accountId, session.userId, rangeStart.toISOString(), rangeEnd.toISOString()]
       );
 
-  const normalizedVisits = visits.map((visit) => ({
-    ...visit,
-    scheduled_start:
-      visit.scheduled_start instanceof Date
-        ? visit.scheduled_start.toISOString()
-        : String(visit.scheduled_start),
-    scheduled_end:
-      visit.scheduled_end instanceof Date
-        ? visit.scheduled_end.toISOString()
-        : String(visit.scheduled_end),
-  })) as VisitRow[];
-
   const viewLabel =
     view === "week" ? "Week" : view === "month" ? "Month" : view === "year" ? "Year" : "Calendar";
 
@@ -154,24 +134,15 @@ export default async function SchedulePage({ searchParams }: PageProps) {
     <PageContainer>
       <PageHeader
         title="Schedule"
-        subtitle={`${viewLabel} · ${normalizedVisits.length} visit${normalizedVisits.length === 1 ? "" : "s"} in range`}
+        subtitle={`${viewLabel} · ${visits.length} visit${visits.length === 1 ? "" : "s"} in range`}
       />
       {isAdmin && <HubSubnav hub="Work" links={WORK_HUB_LINKS} pathname="/app/schedule" />}
-      {normalizedVisits.length === 0 ? (
-        <SurfaceState
-          kind="empty"
-          title="No visits in this range"
-          description="Scheduled visits will appear here when they fall inside the selected period."
-          testId="schedule-empty-state"
-        />
-      ) : (
-        <ScheduleCalendar
-          visits={normalizedVisits}
-          view={view}
-          rangeStart={toDateStr(rangeStart)}
-          isAdmin={isAdmin}
-        />
-      )}
+      <ScheduleCalendar
+        visits={visits}
+        view={view}
+        rangeStart={toDateStr(rangeStart)}
+        isAdmin={isAdmin}
+      />
     </PageContainer>
   );
 }
