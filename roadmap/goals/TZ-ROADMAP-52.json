@@ -1,0 +1,1197 @@
+{
+  "goal_id": "TZ-ROADMAP-52",
+  "priority": "P0",
+  "title": "TypeScript Base App Completion, Cleanup & Canonical Convergence",
+  "objective": "Deep-clean and finish the recovered Merge83 TypeScript base app so every production feature/function is implemented, verified, intentionally removed, or explicitly represented by a roadmap subgoal; converge the chat-first Zero/Go/Hub architecture and shared runtimes without parallel legacy authorities; converge the Phia-derived Titan Decision Engine into the TypeScript base as a governed, continuously observing business-decision runtime with active evidence acquisition, temporal re-evaluation, persistent decision-object memory, ecosystem intelligence and authority-separated execution.",
+  "status": "PLANNED",
+  "affinity_tags": [
+    "typescript-base-app",
+    "cleanup",
+    "convergence",
+    "chat-first",
+    "zero-go-hub",
+    "runtime-completion"
+  ],
+  "preferred_predecessors": [
+    "TZ-ROADMAP-44",
+    "TZ-ROADMAP-48"
+  ],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "manager_only": true,
+  "builder_access": false,
+  "manager_ownership": "EXCLUSIVE",
+  "manager_only_reason": "Goal 52 is the Mesh Manager control-plane and TypeScript base-app convergence gate. Builders must not claim, execute, reserve, or modify any Goal 52 subgoal. Builder implementation work belongs in other eligible roadmap subgoals and is brought here only as evidence/deltas for Manager convergence.",
+  "manager_pass_protocol": {
+    "status": "ACTIVE",
+    "owner": "Manager",
+    "builder_touches": false,
+    "purpose": "Provide one recurring Manager-only control loop for base-app convergence, delta intake, canonical reconciliation, roadmap integrity and corrective work.",
+    "pass_sequence": [
+      "PREPASS: resolve Manager role, latest canonical, BASELINE, ROUND-CONTROL, sync state, active claims, merge queue and conflicts",
+      "EVERY_PASS: deep-scan relevant Agent Mesh state, revalidate the current canonical/base, inspect active Builder work and detect collisions, stale references, misplaced deltas and incomplete handoffs",
+      "EVERY_PASS: reconcile eligible evidence against Goal 52 and update only the authoritative roadmap/control-plane records using version-bound CAS/rebase",
+      "EVERY_5TH_PASS: perform a formal DELTA_QUEUE_CONVERGENCE checkpoint \u2014 deep-scan the authoritative Manager delta queue plus legacy/misplaced delta locations, validate receipts/lineage/base compatibility, merge all eligible final cumulative deltas, resolve conflicts, run reconstruction/verification, update merge receipts and canonical promotion state as appropriate, and clear only consumed/validated queue entries",
+      "EVERY_6TH_PASS: perform a Manager corrective/maintenance pass \u2014 address any control-plane defect, roadmap inconsistency, stale canonical pointer, misplaced artifact, failed verification, unresolved collision, missing traceability, security/privacy issue, regression or other Manager-owned task discovered during the preceding five-pass cycle",
+      "ON_CANONICAL_CHANGE: refresh Manager BASELINE, canonical pointers, integrity/hash evidence, dependency/feature traceability and affected Builder guidance before allowing subsequent convergence",
+      "ON_SUBGOAL_COMPLETION: verify acceptance evidence, confirm no missing feature/function remains unexplained, reconcile final delta, update roadmap state, and only then mark the subgoal COMPLETE",
+      "ON_NO_QUEUE_WORK: do not manufacture merges; use the pass for deep audit, repair, verification, roadmap hygiene, reference-library reconciliation or another concrete Manager-owned task",
+      "NEVER: let Builder ownership enter Goal 52, blindly stack midpoint checkpoints, promote an unverified build, overwrite a newer roadmap with stale content, or leave duplicate canonical/roadmap authorities active"
+    ],
+    "manager_required_tasks": [
+      "Canonical resolution and integrity verification",
+      "Latest-base revalidation before every convergence decision",
+      "Agent Mesh control-plane health and synchronization audit",
+      "Active claims, leases and collision audit",
+      "Authoritative delta queue intake, lineage and receipt validation",
+      "Misplaced/legacy delta discovery and safe reconciliation",
+      "Final cumulative delta merge and reconstruction verification",
+      "Canonical promotion/release gate management",
+      "Roadmap single-source-of-truth and stale-reference cleanup",
+      "Feature/function-to-roadmap traceability audit",
+      "Base-app integration and dependency consistency audit",
+      "Security, privacy, authority and company_id boundary audit",
+      "Regression/test evidence review and unresolved-failure triage",
+      "Performance/startup/PWA integration regression review",
+      "Reference Library freshness and donor-lineage reconciliation",
+      "Conflict resolution and semantic convergence across parallel work",
+      "Documentation/control-plane cleanup",
+      "Backup/recovery/checkpoint integrity verification",
+      "Manager receipts, audit trail and provenance maintenance",
+      "Post-merge smoke/regression verification",
+      "Roadmap state/priority/subgoal hygiene and evidence-based gap creation",
+      "Select and coordinate the next eligible Builder work outside Goal 52 without taking ownership of Builder implementation"
+    ],
+    "queue_rule": "Only the authoritative Manager delta queue is a merge authority. Legacy/misplaced queues are discovery/provenance sources and may be reconciled into the authoritative queue or directly converged only under Manager verification.",
+    "merge_cadence": "Every 5th Manager pass, with an immediate earlier convergence if safety, integrity, release, dependency or queue pressure requires it.",
+    "corrective_cadence": "Every 6th Manager pass, following the fifth-pass convergence checkpoint, unless an urgent corrective action is required sooner.",
+    "completion_authority": "Manager only"
+  },
+  "goal_claim_rule": "Goals are not claimable; Builders claim subgoals only and proceed immediately under lease.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "SUBGOALS_ONLY",
+  "reuse_first": true,
+  "mvp_p0_subgoal_count": 28,
+  "library_reuse_refs": [
+    "CURRENT canonical",
+    "Merge83 recovered staging donor",
+    "Interaction Engine",
+    "Interface Runtime",
+    "Visual Runtime",
+    "Titan Builder",
+    "Command Bus",
+    "Signal",
+    "Assurance",
+    "Autonomy",
+    "Risk",
+    "Governance"
+  ],
+  "agent_goal_classification": "BASE_APP_CONVERGENCE_NO_DUPLICATE_WORKFORCE",
+  "agent_goal_rule": "Reuse canonical workforce identities; create no surface-specific duplicate agents.",
+  "workforce_goal_classification": "BASE_APP_CONVERGENCE_NO_DUPLICATE_WORKFORCE",
+  "workforce_goal_rule": "Workforce features are projections of canonical agents and authority, not separate app-local workers.",
+  "subgoals": [
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-01",
+      "subgoal_id": "TZ-ROADMAP-52-SG-01",
+      "title": "Merge83 base-app inventory, dead/duplicate/legacy tree cleanup and canonical package-boundary audit",
+      "status": "TODO",
+      "subgoal_order": 1,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-02",
+      "subgoal_id": "TZ-ROADMAP-52-SG-02",
+      "title": "TypeScript compile/build dependency closure across root, titan-platform and web app",
+      "status": "TODO",
+      "subgoal_order": 2,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-03",
+      "subgoal_id": "TZ-ROADMAP-52-SG-03",
+      "title": "Zero/Go/Hub canonical surface normalization and legacy Command/BOS alias containment",
+      "status": "TODO",
+      "subgoal_order": 3,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-04",
+      "subgoal_id": "TZ-ROADMAP-52-SG-04",
+      "title": "Chat-first base shell convergence: Zero + generative UI + three-card presentation contract",
+      "status": "TODO",
+      "subgoal_order": 4,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-05",
+      "subgoal_id": "TZ-ROADMAP-52-SG-05",
+      "title": "Interaction Engine + Interface Runtime + Visual Runtime end-to-end base-app convergence",
+      "status": "TODO",
+      "subgoal_order": 5,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-06",
+      "subgoal_id": "TZ-ROADMAP-52-SG-06",
+      "title": "Titan Builder end-to-end base-app convergence and generated UI/runtime handoff",
+      "status": "TODO",
+      "subgoal_order": 6,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-07",
+      "subgoal_id": "TZ-ROADMAP-52-SG-07",
+      "title": "Command Bus + Signal + Assurance mutation/evidence path completion",
+      "status": "TODO",
+      "subgoal_order": 7,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-08",
+      "subgoal_id": "TZ-ROADMAP-52-SG-08",
+      "title": "company_id tenancy and authorization boundary full-tree enforcement",
+      "status": "TODO",
+      "subgoal_order": 8,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-09",
+      "subgoal_id": "TZ-ROADMAP-52-SG-09",
+      "title": "Device-first/offline/local-first execution, sync, queue and recovery completion",
+      "status": "TODO",
+      "subgoal_order": 9,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-10",
+      "subgoal_id": "TZ-ROADMAP-52-SG-10",
+      "title": "Cost Sovereignty routing: on-device/local/BYO/customer/Titan-entitled/metred guardrails",
+      "status": "TODO",
+      "subgoal_order": 10,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-11",
+      "subgoal_id": "TZ-ROADMAP-52-SG-11",
+      "title": "AI Workforce runtime, trust/autonomy gates and surface-neutral agent projection completion",
+      "status": "TODO",
+      "subgoal_order": 11,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-12",
+      "subgoal_id": "TZ-ROADMAP-52-SG-12",
+      "title": "Core business capability completeness: customers, leads, quotes, jobs, schedule, communications, finance, inventory and documents",
+      "status": "TODO",
+      "subgoal_order": 12,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-13",
+      "subgoal_id": "TZ-ROADMAP-52-SG-13",
+      "title": "Remove production placeholders/stubs/TODO runtime paths or convert intentional gaps to explicit governed roadmap items",
+      "status": "TODO",
+      "subgoal_order": 13,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-14",
+      "subgoal_id": "TZ-ROADMAP-52-SG-14",
+      "title": "Test-suite baseline repair: eliminate unexplained failures and separate fixture/environment failures",
+      "status": "TODO",
+      "subgoal_order": 14,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-15",
+      "subgoal_id": "TZ-ROADMAP-52-SG-15",
+      "title": "Security/privacy/secrets/provenance/replay/recovery hardening",
+      "status": "TODO",
+      "subgoal_order": 15,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-16",
+      "subgoal_id": "TZ-ROADMAP-52-SG-16",
+      "title": "Performance, payload, startup and mobile/PWA responsiveness cleanup",
+      "status": "TODO",
+      "subgoal_order": 16,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-17",
+      "subgoal_id": "TZ-ROADMAP-52-SG-17",
+      "title": "Documentation/source-of-truth cleanup: remove embedded legacy merge sources and stale canonical references from product package",
+      "status": "TODO",
+      "subgoal_order": 17,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-18",
+      "subgoal_id": "TZ-ROADMAP-52-SG-18",
+      "title": "Final full regression, feature-to-roadmap traceability audit, convergence package and Manager promotion candidate",
+      "status": "TODO",
+      "subgoal_order": 18,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Resolve CURRENT and Reference Library donors first; revalidate against current base before implementation.",
+      "library_reuse_refs": [
+        "Merge83 recovered staging donor",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
+        "source": "Merge83 cleanup audit 2026-09-20"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-19",
+      "subgoal_id": "TZ-ROADMAP-52-SG-19",
+      "title": "Decision Runtime Orchestrator and canonical Step-9 DecisionPacket convergence",
+      "description": "Wire Observation through Learning as one executable TypeScript runtime; reuse the existing canonical Step-9 DecisionPacket rather than creating a duplicate contract.",
+      "status": "TODO",
+      "subgoal_order": 19,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification, provenance and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Decision Engine and retained Phia donor first; reimplement/generalize useful behavior through Titan contracts. Preserve Step-9 DecisionPacket, company_id-only tenancy and authority separation; do not copy donor implementation blindly or create parallel decision authorities.",
+      "library_reuse_refs": [
+        "Titan Decision Engine Master Step 25",
+        "Phia-Decision-Engine-Donor-v1.10.37.zip",
+        "TITAN-COMMERCIAL-DECISION-MARKET-INTELLIGENCE-CAPABILITY-MAP.md",
+        "Canonical DecisionPacket Step 9",
+        "Interaction Engine",
+        "DecisionPlane / Governance / Assurance / Autonomy",
+        "Command Bus",
+        "Signal",
+        "Rewind",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "PHIA_DONOR_AND_STEP25_DECISION_ENGINE_DEEP_SCAN_IDENTIFIED",
+        "source": "Phia v1.10.37 vs Titan Decision Engine Step 25 gap analysis 2026-09-21"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-20",
+      "subgoal_id": "TZ-ROADMAP-52-SG-20",
+      "title": "Generalized Observation Provider Network and adaptive browser sensing",
+      "description": "Generalize Phia page/object recognition, structured extraction and scrape-health patterns into governed providers spanning browser, camera, files, knowledge, business modules, connected apps and local/device sources.",
+      "status": "TODO",
+      "subgoal_order": 20,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification, provenance and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Decision Engine and retained Phia donor first; reimplement/generalize useful behavior through Titan contracts. Preserve Step-9 DecisionPacket, company_id-only tenancy and authority separation; do not copy donor implementation blindly or create parallel decision authorities.",
+      "library_reuse_refs": [
+        "Titan Decision Engine Master Step 25",
+        "Phia-Decision-Engine-Donor-v1.10.37.zip",
+        "TITAN-COMMERCIAL-DECISION-MARKET-INTELLIGENCE-CAPABILITY-MAP.md",
+        "Canonical DecisionPacket Step 9",
+        "Interaction Engine",
+        "DecisionPlane / Governance / Assurance / Autonomy",
+        "Command Bus",
+        "Signal",
+        "Rewind",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "PHIA_DONOR_AND_STEP25_DECISION_ENGINE_DEEP_SCAN_IDENTIFIED",
+        "source": "Phia v1.10.37 vs Titan Decision Engine Step 25 gap analysis 2026-09-21"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-21",
+      "subgoal_id": "TZ-ROADMAP-52-SG-21",
+      "title": "Active Evidence Acquisition Planner and confidence-driven investigation",
+      "description": "Allow decisions with missing/weak evidence to request targeted observations, sources or human input, record provenance, and re-enter evaluation without granting evidence providers execution authority.",
+      "status": "TODO",
+      "subgoal_order": 21,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification, provenance and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Decision Engine and retained Phia donor first; reimplement/generalize useful behavior through Titan contracts. Preserve Step-9 DecisionPacket, company_id-only tenancy and authority separation; do not copy donor implementation blindly or create parallel decision authorities.",
+      "library_reuse_refs": [
+        "Titan Decision Engine Master Step 25",
+        "Phia-Decision-Engine-Donor-v1.10.37.zip",
+        "TITAN-COMMERCIAL-DECISION-MARKET-INTELLIGENCE-CAPABILITY-MAP.md",
+        "Canonical DecisionPacket Step 9",
+        "Interaction Engine",
+        "DecisionPlane / Governance / Assurance / Autonomy",
+        "Command Bus",
+        "Signal",
+        "Rewind",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "PHIA_DONOR_AND_STEP25_DECISION_ENGINE_DEEP_SCAN_IDENTIFIED",
+        "source": "Phia v1.10.37 vs Titan Decision Engine Step 25 gap analysis 2026-09-21"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-22",
+      "subgoal_id": "TZ-ROADMAP-52-SG-22",
+      "title": "Decision Watch, trigger and temporal re-evaluation runtime",
+      "description": "Support persistent WATCHING decisions, thresholds, event/time triggers, buy/wait/act-later reasoning, material-change detection and governed re-evaluation when facts change.",
+      "status": "TODO",
+      "subgoal_order": 22,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification, provenance and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Decision Engine and retained Phia donor first; reimplement/generalize useful behavior through Titan contracts. Preserve Step-9 DecisionPacket, company_id-only tenancy and authority separation; do not copy donor implementation blindly or create parallel decision authorities.",
+      "library_reuse_refs": [
+        "Titan Decision Engine Master Step 25",
+        "Phia-Decision-Engine-Donor-v1.10.37.zip",
+        "TITAN-COMMERCIAL-DECISION-MARKET-INTELLIGENCE-CAPABILITY-MAP.md",
+        "Canonical DecisionPacket Step 9",
+        "Interaction Engine",
+        "DecisionPlane / Governance / Assurance / Autonomy",
+        "Command Bus",
+        "Signal",
+        "Rewind",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "PHIA_DONOR_AND_STEP25_DECISION_ENGINE_DEEP_SCAN_IDENTIFIED",
+        "source": "Phia v1.10.37 vs Titan Decision Engine Step 25 gap analysis 2026-09-21"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-23",
+      "subgoal_id": "TZ-ROADMAP-52-SG-23",
+      "title": "Persistent Decision Object Memory, durable entity correlation and decision state",
+      "description": "Maintain company-scoped stable identities and lifecycle memory for customers, suppliers, assets, services, jobs and other decision objects, including prior decisions, observations and verified outcomes.",
+      "status": "TODO",
+      "subgoal_order": 23,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification, provenance and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Decision Engine and retained Phia donor first; reimplement/generalize useful behavior through Titan contracts. Preserve Step-9 DecisionPacket, company_id-only tenancy and authority separation; do not copy donor implementation blindly or create parallel decision authorities.",
+      "library_reuse_refs": [
+        "Titan Decision Engine Master Step 25",
+        "Phia-Decision-Engine-Donor-v1.10.37.zip",
+        "TITAN-COMMERCIAL-DECISION-MARKET-INTELLIGENCE-CAPABILITY-MAP.md",
+        "Canonical DecisionPacket Step 9",
+        "Interaction Engine",
+        "DecisionPlane / Governance / Assurance / Autonomy",
+        "Command Bus",
+        "Signal",
+        "Rewind",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "PHIA_DONOR_AND_STEP25_DECISION_ENGINE_DEEP_SCAN_IDENTIFIED",
+        "source": "Phia v1.10.37 vs Titan Decision Engine Step 25 gap analysis 2026-09-21"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-24",
+      "subgoal_id": "TZ-ROADMAP-52-SG-24",
+      "title": "Ecosystem, supplier, market and external-context intelligence providers",
+      "description": "Generalize Phia seller/brand/market intelligence into provider-neutral supplier, competitor, labour, marketplace, price, availability and external-environment context usable by arbitrary business decisions.",
+      "status": "TODO",
+      "subgoal_order": 24,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification, provenance and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Decision Engine and retained Phia donor first; reimplement/generalize useful behavior through Titan contracts. Preserve Step-9 DecisionPacket, company_id-only tenancy and authority separation; do not copy donor implementation blindly or create parallel decision authorities.",
+      "library_reuse_refs": [
+        "Titan Decision Engine Master Step 25",
+        "Phia-Decision-Engine-Donor-v1.10.37.zip",
+        "TITAN-COMMERCIAL-DECISION-MARKET-INTELLIGENCE-CAPABILITY-MAP.md",
+        "Canonical DecisionPacket Step 9",
+        "Interaction Engine",
+        "DecisionPlane / Governance / Assurance / Autonomy",
+        "Command Bus",
+        "Signal",
+        "Rewind",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "PHIA_DONOR_AND_STEP25_DECISION_ENGINE_DEEP_SCAN_IDENTIFIED",
+        "source": "Phia v1.10.37 vs Titan Decision Engine Step 25 gap analysis 2026-09-21"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-25",
+      "subgoal_id": "TZ-ROADMAP-52-SG-25",
+      "title": "Lifecycle Value and total-outcome modelling",
+      "description": "Extend prediction/comparison beyond immediate price or action outcome to total cost, revenue, maintenance, downtime, retention, residual value, environmental impact, reversibility and verified long-term outcomes.",
+      "status": "TODO",
+      "subgoal_order": 25,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification, provenance and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Decision Engine and retained Phia donor first; reimplement/generalize useful behavior through Titan contracts. Preserve Step-9 DecisionPacket, company_id-only tenancy and authority separation; do not copy donor implementation blindly or create parallel decision authorities.",
+      "library_reuse_refs": [
+        "Titan Decision Engine Master Step 25",
+        "Phia-Decision-Engine-Donor-v1.10.37.zip",
+        "TITAN-COMMERCIAL-DECISION-MARKET-INTELLIGENCE-CAPABILITY-MAP.md",
+        "Canonical DecisionPacket Step 9",
+        "Interaction Engine",
+        "DecisionPlane / Governance / Assurance / Autonomy",
+        "Command Bus",
+        "Signal",
+        "Rewind",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "PHIA_DONOR_AND_STEP25_DECISION_ENGINE_DEEP_SCAN_IDENTIFIED",
+        "source": "Phia v1.10.37 vs Titan Decision Engine Step 25 gap analysis 2026-09-21"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-26",
+      "subgoal_id": "TZ-ROADMAP-52-SG-26",
+      "title": "Decision Journey State and lifecycle-aware reasoning",
+      "description": "Generalize Phia view-save-cart-checkout-order awareness into typed business journeys such as lead-quote-follow-up-accept-schedule-job-payment-review-retention, with stage-sensitive evidence, options and constraints.",
+      "status": "TODO",
+      "subgoal_order": 26,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification, provenance and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Decision Engine and retained Phia donor first; reimplement/generalize useful behavior through Titan contracts. Preserve Step-9 DecisionPacket, company_id-only tenancy and authority separation; do not copy donor implementation blindly or create parallel decision authorities.",
+      "library_reuse_refs": [
+        "Titan Decision Engine Master Step 25",
+        "Phia-Decision-Engine-Donor-v1.10.37.zip",
+        "TITAN-COMMERCIAL-DECISION-MARKET-INTELLIGENCE-CAPABILITY-MAP.md",
+        "Canonical DecisionPacket Step 9",
+        "Interaction Engine",
+        "DecisionPlane / Governance / Assurance / Autonomy",
+        "Command Bus",
+        "Signal",
+        "Rewind",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "PHIA_DONOR_AND_STEP25_DECISION_ENGINE_DEEP_SCAN_IDENTIFIED",
+        "source": "Phia v1.10.37 vs Titan Decision Engine Step 25 gap analysis 2026-09-21"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-27",
+      "subgoal_id": "TZ-ROADMAP-52-SG-27",
+      "title": "Generalized opportunity discovery, alternatives and incentive optimization",
+      "description": "Expand option discovery to proactively find substitutes, suppliers, schedule alternatives, staffing options, bundles, discounts, retention offers and other governed opportunity candidates without embedding domain-specific authority.",
+      "status": "TODO",
+      "subgoal_order": 27,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification, provenance and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Decision Engine and retained Phia donor first; reimplement/generalize useful behavior through Titan contracts. Preserve Step-9 DecisionPacket, company_id-only tenancy and authority separation; do not copy donor implementation blindly or create parallel decision authorities.",
+      "library_reuse_refs": [
+        "Titan Decision Engine Master Step 25",
+        "Phia-Decision-Engine-Donor-v1.10.37.zip",
+        "TITAN-COMMERCIAL-DECISION-MARKET-INTELLIGENCE-CAPABILITY-MAP.md",
+        "Canonical DecisionPacket Step 9",
+        "Interaction Engine",
+        "DecisionPlane / Governance / Assurance / Autonomy",
+        "Command Bus",
+        "Signal",
+        "Rewind",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "PHIA_DONOR_AND_STEP25_DECISION_ENGINE_DEEP_SCAN_IDENTIFIED",
+        "source": "Phia v1.10.37 vs Titan Decision Engine Step 25 gap analysis 2026-09-21"
+      }
+    },
+    {
+      "subgoal": "TZ-ROADMAP-52-SG-28",
+      "subgoal_id": "TZ-ROADMAP-52-SG-28",
+      "title": "Decision authority boundary, continuous outcome loop and full regression certification",
+      "description": "Enforce best-action-is-not-authority: route DecisionPacket through Governance/Risk/Assurance/Autonomy/DecisionPlane before Command Bus execution; observe outcomes through Signal/Rewind, learn only from verified outcomes, and certify company_id isolation, offline/local-first behavior and no duplicate decision authorities.",
+      "status": "TODO",
+      "subgoal_order": 28,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "SUBGOAL",
+      "manager_only": true,
+      "builder_access": false,
+      "execution_owner": "Manager",
+      "claimable": false,
+      "pass_plan": null,
+      "completion_basis": "Manager convergence receipt after implementation, verification, provenance and traceability evidence",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Decision Engine and retained Phia donor first; reimplement/generalize useful behavior through Titan contracts. Preserve Step-9 DecisionPacket, company_id-only tenancy and authority separation; do not copy donor implementation blindly or create parallel decision authorities.",
+      "library_reuse_refs": [
+        "Titan Decision Engine Master Step 25",
+        "Phia-Decision-Engine-Donor-v1.10.37.zip",
+        "TITAN-COMMERCIAL-DECISION-MARKET-INTELLIGENCE-CAPABILITY-MAP.md",
+        "Canonical DecisionPacket Step 9",
+        "Interaction Engine",
+        "DecisionPlane / Governance / Assurance / Autonomy",
+        "Command Bus",
+        "Signal",
+        "Rewind",
+        "CURRENT canonical",
+        "Reference Library"
+      ],
+      "execution": {
+        "state": "MANAGER_ONLY",
+        "claimed_by": "Manager",
+        "builder_claim_allowed": false
+      },
+      "agent_model": {
+        "assessment_status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_NEW_AGENT_UNLESS_GAP_PROVEN"
+      },
+      "code_discovery": {
+        "status": "PHIA_DONOR_AND_STEP25_DECISION_ENGINE_DEEP_SCAN_IDENTIFIED",
+        "source": "Phia v1.10.37 vs Titan Decision Engine Step 25 gap analysis 2026-09-21"
+      }
+    }
+  ]
+}
