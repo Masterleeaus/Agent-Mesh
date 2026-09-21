@@ -117,3 +117,35 @@ Selection behavior:
 - atomic branch creation resolves concurrent-worker races.
 
 The selector posts the actor, branch and base `main` SHA back to the issue after a successful claim.
+
+
+## Automatic safe claim release
+
+Completed claims are cleaned by:
+
+```text
+.github/workflows/release-completed-agent-claims.yml
+.github/scripts/release-safe-agent-claims.py
+```
+
+The release process is intentionally conservative.
+
+A claim branch may be deleted automatically only when:
+
+1. the matching roadmap issue is **closed**;
+2. there is **no open PR** for the claim branch; and
+3. either:
+   - a **merged PR** exists for that exact claim branch, or
+   - the branch is **0 commits ahead of `main`**.
+
+The following are always preserved for Manager review:
+
+- open issues;
+- open PRs;
+- missing/mismatched issues;
+- invalid claim branches;
+- closed issues whose claim branch still contains unmerged commits.
+
+The cleanup runs after PR closure, once daily, and on demand. It must never be changed into a blind “delete closed issue branches” job.
+
+The separate scheduled claim audit remains read-only and is responsible for surfacing stale/orphaned claims. Cleanup and audit are deliberately separate concerns.
