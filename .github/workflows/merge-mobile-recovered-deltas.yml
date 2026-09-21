@@ -1,4 +1,4 @@
-name: Unzip Titan Mobile Recovered Deltas
+name: Merge Titan Mobile Delta ZIPs
 
 on:
   push:
@@ -10,27 +10,62 @@ permissions:
   contents: write
 
 jobs:
-  unzip:
+  merge:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Unzip recovery bundle
+      - name: Extract and merge all recovered deltas
         shell: bash
         run: |
           set -euo pipefail
-          ZIP="apps/mobile/Titan-Mobile-Recovered-Deltas.zip"
-          test -f "$ZIP"
-          mkdir -p apps/mobile/recovered-deltas
-          unzip -o "$ZIP" -d apps/mobile/recovered-deltas
-          rm -f "$ZIP"
-          echo "Extracted files:"
-          find apps/mobile/recovered-deltas -type f | sort
+          SRC="apps/mobile/recovered-deltas/mobile_deltas"
+          test -d "$SRC"
+          mapfile -t ZIPS < <(find "$SRC" -maxdepth 1 -type f -name '*.zip' | sort -V)
+          test "${#ZIPS[@]}" -gt 0
 
-      - name: Commit extracted deltas
+          for ZIP in "${ZIPS[@]}"; do
+            echo "=== $ZIP ==="
+            TMP="$(mktemp -d)"
+            unzip -q -o "$ZIP" -d "$TMP"
+            echo "Contents:"
+            find "$TMP" -type f | sort
+
+            ROOT="$TMP"
+            # Strip harmless single wrapper directories.
+            while true; do
+              mapfile -t ENTRIES < <(find "$ROOT" -mindepth 1 -maxdepth 1 -printf '%p\n')
+              if [ "${#ENTRIES[@]}" -eq 1 ] && [ -d "${ENTRIES[0]}" ]; then
+                ROOT="${ENTRIES[0]}"
+              else
+                break
+              fi
+            done
+
+            # Deltas may contain repo-relative apps/mobile, mobile-relative files,
+            # or a delta payload directory. Resolve to the mobile payload.
+            if [ -d "$ROOT/apps/mobile" ]; then
+              ROOT="$ROOT/apps/mobile"
+            elif [ -d "$ROOT/mobile" ] && [ ! -d "$ROOT/lib" ]; then
+              ROOT="$ROOT/mobile"
+            fi
+
+            rsync -a --exclude='.git' --exclude='*.zip' "$ROOT/" apps/mobile/
+            rm -rf "$TMP"
+          done
+
+          rm -rf apps/mobile/recovered-deltas
+          cat > apps/mobile/RECOVERED_DELTA_MERGE.md <<'EOF'
+# Recovered mobile delta merge
+
+Recovered Titan Mobile delta ZIPs were applied in version-sorted order over the
+existing Flutter mobile source. The temporary delta ZIP staging directory was
+removed after the overlay completed.
+EOF
+
+      - name: Commit merged Flutter source
         shell: bash
         run: |
           set -euo pipefail
@@ -38,8 +73,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A apps/mobile
           if git diff --cached --quiet; then
-            echo "Nothing to commit"
+            echo "No changes to commit"
             exit 0
           fi
-          git commit -m "Unzip recovered Titan mobile deltas"
+          git commit -m "Merge recovered Titan mobile deltas into Flutter source"
           git push origin HEAD:main
