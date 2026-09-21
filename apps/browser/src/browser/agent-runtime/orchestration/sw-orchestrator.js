@@ -29,6 +29,7 @@ export function createOrchestrator({
   onTaskComplete, // optional: dissolve the group when the turn reaches task_complete
   markTurnActive, // optional: durable resume evidence — a turn is live for this session
   clearTurnActive, // optional: clear that evidence — nothing survives this worker life
+  resolveUnknownIntents, // optional: retire unknown-outcome evidence only after a safe resumed loop
   onResumeStart, // optional: notify a re-perceive resume is starting (best-effort, not awaited)
   onError,
   config = {},
@@ -117,6 +118,12 @@ export function createOrchestrator({
       for (const message of pendingMessages.get(tabId) ?? []) deliverToHost(host, message);
       pendingMessages.delete(tabId);
       await runLoop(host, config);
+      // Unknown-outcome mutation evidence is NOT a replay queue. A resumed loop
+      // first re-perceives via its recovery reminder and then continues from the
+      // fresh state. Retire those old intents only after that safe loop returns.
+      if (hostOpts?.resume?.unreplayable?.length) {
+        await safeCall(resolveUnknownIntents, sessionId, hostOpts.resume.unreplayable);
+      }
     } catch (err) {
       // Isolate the failure: a throw must not wedge the tab "running" or bubble
       // raw to the message handler — surface it and always clear the guard.
