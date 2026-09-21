@@ -1,6 +1,8 @@
 import { classifyRisk, type TitanRiskAssessment } from "./intelligence.js";
 import { routeOperationalRole, type TitanRoleRouteResult } from "./workforce.js";
 
+export type TitanBusinessOpsAgentKey = "dispatch" | "invoicing" | "rebooking" | "quote" | "crm";
+
 export type TitanBusinessOpsAgentCommandId =
   | "estimates.list"
   | "estimates.get"
@@ -22,11 +24,14 @@ export type TitanBusinessOpsAgentCommandId =
   | "invoices.get"
   | "invoices.create"
   | "invoices.transition"
-  | "invoices.send";
+  | "invoices.send"
+  | "booking_requests.create"
+  | "clients.list"
+  | "clients.create";
 
 export type TitanBusinessOpsAgentCommand = Readonly<{
   id: TitanBusinessOpsAgentCommandId;
-  domain: "estimating" | "projects" | "dispatch" | "field" | "invoicing";
+  domain: "estimating" | "projects" | "dispatch" | "field" | "invoicing" | "booking" | "crm";
   method: "GET" | "POST" | "PATCH";
   path: string;
   mutating: boolean;
@@ -56,6 +61,9 @@ export const TITAN_BUSINESS_OPS_AGENT_COMMANDS: readonly TitanBusinessOpsAgentCo
   { id: "invoices.create", domain: "invoicing", method: "POST", path: "/api/v1/invoices", mutating: true, description: "Create an invoice", allowedRoles: ["owner", "admin"] },
   { id: "invoices.transition", domain: "invoicing", method: "POST", path: "/api/v1/invoices/:id/transition", mutating: true, description: "Transition invoice lifecycle", allowedRoles: ["owner", "admin"] },
   { id: "invoices.send", domain: "invoicing", method: "POST", path: "/api/v1/invoices/:id/send", mutating: true, description: "Send an invoice through the native Business Ops delivery flow", allowedRoles: ["owner", "admin"] },
+  { id: "booking_requests.create", domain: "booking", method: "POST", path: "/api/v1/booking-requests", mutating: true, description: "Create a governed booking request", allowedRoles: ["owner", "admin"] },
+  { id: "clients.list", domain: "crm", method: "GET", path: "/api/v1/clients", mutating: false, description: "Search and list CRM clients", allowedRoles: ["owner", "admin"] },
+  { id: "clients.create", domain: "crm", method: "POST", path: "/api/v1/clients", mutating: true, description: "Create a CRM client", allowedRoles: ["owner", "admin"] },
 ]);
 
 export function getTitanBusinessOpsAgentCommand(id: string): TitanBusinessOpsAgentCommand | null {
@@ -93,4 +101,20 @@ export function routeTitanBusinessOpsAgent(commandId: TitanBusinessOpsAgentComma
   const command = getTitanBusinessOpsAgentCommand(commandId);
   if (!command) return routeOperationalRole("", "");
   return routeOperationalRole(command.description, command.domain);
+}
+
+const TITAN_BUSINESS_OPS_AGENT_PROFILES: Readonly<Record<TitanBusinessOpsAgentKey, readonly TitanBusinessOpsAgentCommandId[]>> = Object.freeze({
+  dispatch: Object.freeze(["work_orders.list", "work_orders.create"]),
+  invoicing: Object.freeze(["invoices.list", "invoices.get", "invoices.create", "invoices.transition", "invoices.send"]),
+  rebooking: Object.freeze(["booking_requests.create"]),
+  quote: Object.freeze(["estimates.list", "estimates.get", "estimates.create", "estimates.transition", "estimates.create_project"]),
+  crm: Object.freeze(["clients.list", "clients.create"]),
+});
+
+export function assertTitanBusinessOpsAgentCommandAllowed(agentKey: TitanBusinessOpsAgentKey, commandId: TitanBusinessOpsAgentCommandId): TitanBusinessOpsAgentCommand {
+  const allowed = TITAN_BUSINESS_OPS_AGENT_PROFILES[agentKey];
+  if (!allowed.includes(commandId)) throw new Error(`business-ops-command-not-allowed:${agentKey}:${commandId}`);
+  const command = getTitanBusinessOpsAgentCommand(commandId);
+  if (!command) throw new Error(`business-ops-command-not-registered:${commandId}`);
+  return command;
 }
