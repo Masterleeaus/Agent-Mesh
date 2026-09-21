@@ -39,6 +39,15 @@ class SurfaceSdkTitanGateway implements TitanGateway {
     if (projection['surface'] != session.surface) {
       throw StateError('surface-projection-role-mismatch');
     }
+    if (projection['schema_version'] != '1.0') {
+      throw StateError('surface-projection-schema-mismatch');
+    }
+    if (projection['actor_id'] != session.actorId) {
+      throw StateError('surface-projection-actor-mismatch');
+    }
+    if ((projection['revision']?.toString().trim().isEmpty ?? true)) {
+      throw StateError('surface-projection-revision-required');
+    }
     final expiresAt = DateTime.tryParse(projection['expires_at']?.toString() ?? '');
     if (expiresAt == null || !expiresAt.isAfter(DateTime.now().toUtc())) {
       throw StateError('surface-projection-expired');
