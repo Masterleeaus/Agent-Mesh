@@ -35,6 +35,14 @@ export class AiProviderRegistry {
     return provider;
   }
 
+  list(company_id?:string|null) {
+    const company=company_id==null?null:String(company_id).trim();
+    if(company_id!=null&&!company) throw new Error("company_id-required");
+    return Object.freeze([...this.#providers.values()]
+      .filter(provider=>provider.enabled!==false && (provider.company_id==null || (company!=null && provider.company_id===company)))
+      .sort((a,b)=>AI_CORE_PROVIDER_LOCALITY_ORDER.indexOf(a.locality)-AI_CORE_PROVIDER_LOCALITY_ORDER.indexOf(b.locality) || a.id.localeCompare(b.id)));
+  }
+
   resolve(id:string, company_id?:string|null) {
     const company=company_id==null?null:String(company_id).trim();
     if(company_id!=null&&!company) throw new Error("company_id-required");
@@ -48,3 +56,9 @@ export class AiProviderRegistry {
 export const AI_CORE_PROVIDER_LOCALITY_ORDER=Object.freeze([
   "device","customer-hosted","byo-cloud","titan-managed",
 ] as const);
+
+export function resolvePreferredAiProvider(registry: AiProviderRegistry, capability:string, company_id?:string|null) {
+  const required=String(capability??"").trim();
+  if(!required) throw new Error("ai-capability-required");
+  return registry.list(company_id).find(provider=>(provider.capabilities??[]).includes(required))??null;
+}
