@@ -6,6 +6,7 @@ import {
   resolveVisualContribution,
   resolveVisualResource,
   VISUAL_RUNTIME_ID,
+  createVisualRuntimeEnvelope,
 } from '../.test-dist/runtime.js';
 
 test('visual runtime is exposed through canonical TypeScript runtime', () => {
@@ -58,4 +59,12 @@ test('visual contributions and resources resolve deterministically', () => {
     { role: 'logo', kind: 'asset', uri: '/global.svg', priority: 1 },
     { role: 'logo', kind: 'asset', uri: '/company.svg', company_id: '1', priority: 5 },
   ])?.uri, '/company.svg');
+});
+
+
+test('visual runtime envelope is explicitly authority neutral', () => {
+  const envelope = createVisualRuntimeEnvelope({ company_id: 'company-1' });
+  assert.equal(envelope.authority_neutral, true);
+  assert.equal(envelope.execution_authority, false);
+  assert.equal(envelope.authority_conferred_by_activation, false);
 });
