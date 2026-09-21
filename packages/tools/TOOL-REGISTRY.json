@@ -64,15 +64,14 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_and_ui_evidence",
+      "historical_evidence": [
         "static/global/src/static/chatBox/chatHomeView/chatHomeViewWrite.png",
         "static/global/src/static/chatBox/chatHomeView/writingAgent.png",
-        "titan-zero-chat-content.compat.js"
-      ],
-      "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+        "titan-zero-chat-content.compat.js",
         "static/writingToolExample.png"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "rewrite",
@@ -123,13 +122,12 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
-        "titan-zero-chat-content.compat.js"
-      ],
       "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+      "historical_evidence": [
+        "titan-zero-chat-content.compat.js",
         "static/global/src/static/OnboardingDialog/rewriteText.png"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "grammar",
@@ -179,15 +177,14 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_and_ui_evidence",
+      "historical_evidence": [
         "static/global/src/static/chatBox/chatHomeView/grammarly.png",
         "static/grammarCheck.mp4",
-        "titan-zero-chat-content.compat.js"
-      ],
-      "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+        "titan-zero-chat-content.compat.js",
         "static/grammarCheckExample.png"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "translate",
@@ -237,15 +234,14 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_and_ui_evidence",
+      "historical_evidence": [
         "static/global/src/static/chatBox/chatHomeView/chatHomeViewTranslate.png",
         "static/global/src/static/discover/discoverTranslate.png",
-        "titan-zero-chat-content.compat.js"
-      ],
-      "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+        "titan-zero-chat-content.compat.js",
         "static/global/src/static/OnboardingDialog/webTranslate.png"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "summarize",
@@ -294,11 +290,12 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "static_parity_evidence",
+      "historical_evidence": [
         "titan-regression/monica-retriever/PASS05-VISUAL-DOM-FEATURE-MATRIX.json",
         "titan-zero-chat-content.compat.js"
       ],
-      "retained_status": "static_parity_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "read",
@@ -347,14 +344,13 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
-        "static/global/src/static/chatBox/chatHomeView/read.png",
-        "titan-zero-chat-content.compat.js"
-      ],
       "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+      "historical_evidence": [
+        "static/global/src/static/chatBox/chatHomeView/read.png",
+        "titan-zero-chat-content.compat.js",
         "static/readingToolExample.png"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "search",
@@ -405,15 +401,14 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
-        "static/global/src/static/chatBox/chatHomeView/aiSearch.png",
-        "titan-zero-chat-content.compat.js"
-      ],
       "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+      "historical_evidence": [
+        "static/global/src/static/chatBox/chatHomeView/aiSearch.png",
+        "titan-zero-chat-content.compat.js",
         "static/SearchAssistantExample.png",
         "static/global/src/static/OnboardingDialog/searchAgent.png"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "webpage_assistant",
@@ -461,15 +456,14 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
-        "titan-regression/monica-retriever/fixtures/webpage-assistant.html",
-        "titan-zero-chat-content.compat.js"
-      ],
       "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+      "historical_evidence": [
+        "titan-regression/monica-retriever/fixtures/webpage-assistant.html",
+        "titan-zero-chat-content.compat.js",
         "static/global/src/static/OnboardingDialog/webAccessV2.png",
         "static/global/src/static/OnboardingDialog/webSummary.png"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "full_page",
@@ -517,11 +511,12 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "ui_asset_evidence",
+      "historical_evidence": [
         "static/global/src/static/chatBox/chatHomeView/fullPage.png",
         "chatTab.html"
       ],
-      "retained_status": "ui_asset_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "text_selection",
@@ -569,12 +564,13 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "static_parity_evidence",
+      "historical_evidence": [
         "static/contextual-toolbar-guide.webp",
         "titan-regression/monica-retriever/PASS05-VISUAL-DOM-FEATURE-MATRIX.json",
         "titan-zero-chat-content.compat.js"
       ],
-      "retained_status": "static_parity_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "floating_assistant",
@@ -621,11 +617,14 @@
         "requires_queue_for_effects": false
       },
       "dependencies": [
+        "monica-content.js"
+      ],
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "titan-zero-chat-content.compat.js",
-        "monica-content.js",
         "content.css"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "chatpdf",
@@ -677,16 +676,15 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_and_ui_evidence",
+      "historical_evidence": [
         "static/global/src/static/chatBox/chatHomeView/chatHomeViewChatPdf.png",
         "static/global/src/static/discover/discoverChatPdf.png",
         "static/pdf.worker.min.mjs",
-        "titan-zero-chat-content.compat.js"
-      ],
-      "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+        "titan-zero-chat-content.compat.js",
         "static/global/src/static/OnboardingDialog/chatWithPDF.png"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "pdf_generate_fill",
@@ -786,14 +784,13 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
-        "static/youtube-injected-script.js",
-        "titan-regression/monica-retriever/PASS05-VISUAL-DOM-FEATURE-MATRIX.json"
-      ],
       "retained_status": "static_parity_evidence",
-      "externalized_evidence": [
+      "historical_evidence": [
+        "static/youtube-injected-script.js",
+        "titan-regression/monica-retriever/PASS05-VISUAL-DOM-FEATURE-MATRIX.json",
         "static/global/src/static/OnboardingDialog/youTubeSummary.png"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "mindmap",
@@ -841,15 +838,14 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_and_ui_evidence",
+      "historical_evidence": [
         "static/global/src/static/chatBox/chatHomeView/chatHomeViewMindmap.png",
         "static/global/src/static/discover/mindmap.png",
-        "titan-zero-chat-content.compat.js"
-      ],
-      "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+        "titan-zero-chat-content.compat.js",
         "static/global/src/static/lowCode/mindmapCover.webp"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "ai_detector",
@@ -896,15 +892,14 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_and_ui_evidence",
+      "historical_evidence": [
         "static/global/src/static/chatBox/chatHomeView/chatHomeViewAiDetector.png",
         "static/global/src/static/discover/aiDetector.png",
-        "titan-zero-chat-content.compat.js"
-      ],
-      "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+        "titan-zero-chat-content.compat.js",
         "static/global/src/static/OnboardingDialog/aiContentDetector.webp"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "humanize",
@@ -951,11 +946,12 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "ui_asset_evidence",
+      "historical_evidence": [
         "static/global/src/static/chatBox/chatHomeView/chatHomeViewHumanize.png",
         "static/global/src/static/discover/discoverHumanize.png"
       ],
-      "retained_status": "ui_asset_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "podcast",
@@ -1003,11 +999,12 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "ui_asset_evidence",
+      "historical_evidence": [
         "static/global/src/static/chatBox/chatHomeView/chatHomeViewPodcast.png",
         "static/global/src/static/discover/discoverPodcast.png"
       ],
-      "retained_status": "ui_asset_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "audio_to_text",
@@ -1057,14 +1054,13 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
-        "static/global/src/static/mainNav/fillAudioIcon.png",
-        "titan-zero-chat-content.compat.js"
-      ],
       "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+      "historical_evidence": [
+        "static/global/src/static/mainNav/fillAudioIcon.png",
+        "titan-zero-chat-content.compat.js",
         "static/global/src/static/lowCode/audioToTextCover.webp"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "image_generate",
@@ -1113,15 +1109,14 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_and_ui_evidence",
+      "historical_evidence": [
         "static/global/src/static/chatBox/chatHomeView/imageGenerator.webp",
         "static/global/src/static/mainNav/fillAiArt.png",
-        "titan-zero-chat-content.compat.js"
-      ],
-      "retained_status": "runtime_and_ui_evidence",
-      "externalized_evidence": [
+        "titan-zero-chat-content.compat.js",
         "static/global/src/static/OnboardingDialog/imageToolsV2.png"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "image_edit",
@@ -1170,13 +1165,12 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
-        "titan-zero-chat-content.compat.js"
-      ],
       "retained_status": "runtime_evidence",
-      "externalized_evidence": [
+      "historical_evidence": [
+        "titan-zero-chat-content.compat.js",
         "static/imageToolExample.png"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "image_realtime",
@@ -1224,10 +1218,11 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "titan-zero-chat-content.compat.js"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "image_restore_transform",
@@ -1275,13 +1270,12 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
-        "titan-zero-chat-content.compat.js"
-      ],
       "retained_status": "runtime_evidence",
-      "externalized_evidence": [
+      "historical_evidence": [
+        "titan-zero-chat-content.compat.js",
         "static/global/src/static/lowCode/stableDiffusionCover.webp"
-      ]
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "video_generate",
@@ -1330,13 +1324,14 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_and_ui_evidence",
+      "historical_evidence": [
         "static/global/src/static/chatBox/chatHomeView/videoGenerator.png",
         "static/global/src/static/mainNav/fillVideo.png",
         "static/global/src/static/video/image2VideoCover.webp",
         "titan-zero-chat-content.compat.js"
       ],
-      "retained_status": "runtime_and_ui_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "text_to_video",
@@ -1384,10 +1379,11 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "titan-zero-chat-content.compat.js"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "image_to_video",
@@ -1435,11 +1431,12 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_and_ui_evidence",
+      "historical_evidence": [
         "static/global/src/static/video/image2VideoCover.webp",
         "titan-zero-chat-content.compat.js"
       ],
-      "retained_status": "runtime_and_ui_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "screenshots",
@@ -1487,11 +1484,12 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_and_ui_evidence",
+      "historical_evidence": [
         "static/global/src/static/screenshotGuideVideo.mp4",
         "titan-zero-chat-content.compat.js"
       ],
-      "retained_status": "runtime_and_ui_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "attachments",
@@ -1540,11 +1538,12 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "titan-zero-chat-content.compat.js",
         "titan-capabilities/donors/ai-extensions/catalog.json"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "model_selection",
@@ -1593,11 +1592,12 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "titan-zero-chat-content.compat.js",
         "side-panel/assets/index-C8c-GDqp.js"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "prompts_skills",
@@ -1646,10 +1646,13 @@
         "requires_queue_for_effects": false
       },
       "dependencies": [
-        "side-panel/assets/skillStorageService-LGvOYmp_.js",
         "retriever-capability-catalog.json"
       ],
-      "retained_status": "runtime_evidence"
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
+        "side-panel/assets/skillStorageService-LGvOYmp_.js"
+      ],
+      "current_source_verification": "required"
     },
     {
       "tool_id": "browser_actions",
@@ -1855,10 +1858,13 @@
         "requires_queue_for_effects": true
       },
       "dependencies": [
-        "retriever-capability-catalog.json",
+        "retriever-capability-catalog.json"
+      ],
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "titan-zero-chat-content.compat.js"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "docs_slides_web",
@@ -2127,6 +2133,7 @@
     "authority": "canonical-registry",
     "historical_programme_metadata_is_authority": false,
     "versioning": "repository-source-and-schema",
-    "historical_cleaning_programme_metadata_removed": true
+    "historical_cleaning_programme_metadata_removed": true,
+    "historical_evidence_is_runtime_dependency": false
   }
 }
