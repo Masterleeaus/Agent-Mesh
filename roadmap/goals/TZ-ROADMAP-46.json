@@ -1,0 +1,1723 @@
+{
+  "goal_id": "TZ-ROADMAP-46",
+  "priority": "P0",
+  "title": "LLM Plugin, MCP & Model-Host Surface Roadmap",
+  "objective": "Ship the ChatGPT MVP fastest by converting the verified ChatGPT Apps SDK NextJS Starter into the Titan Zero ChatGPT App, while keeping Titan MCP, shared capabilities, workforce, governance, authority and business state canonical; then project the same shared layer to Claude, Gemini and generic MCP/tool hosts.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "subgoal_order": 1,
+      "title": "PREFLIGHT the SDK-base conversion: audit the verified Apps SDK starter, Task Manager interaction donor and Titan shared backends; produce retain/delete/rename/connect map for the ChatGPT MVP",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "MVP FAST PATH: treat the verified ChatGPT Apps SDK NextJS Starter as the physical implementation base, not merely a donor. Audit it in-place for RETAIN/DELETE/RENAME/REPLACE/CONNECT decisions. Use ChatGPT Task Manager only for reusable interaction/CRUD/widget patterns. Resolve Titan MCP, Titan Connect, Shared Platform Services and Merge77 canonical contracts before implementation. Do not redesign host plumbing already supplied by the starter.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Zero",
+        "Titan Connect",
+        "Shared Platform Services",
+        "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Apps SDK NextJS Starter",
+        "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Task Manager"
+      ],
+      "subgoal_id": "TZ-ROADMAP-46-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_LIVE_PREFLIGHT_ALREADY_COMPLETE",
+        "last_scanned_at_utc": "2026-09-19T06:38:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_VERIFIED",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Connect",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238"
+          },
+          {
+            "source_ref": "Shared Platform Services",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "18b5fe4696f61facc0882ba53da09a4f10dd46ec49b3b352e5f578aa1f23e116"
+          },
+          {
+            "source_ref": "ChatGPT Apps SDK NextJS Starter",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED; BASE_SHELL_DONOR",
+            "sha256": "e4ac1ec7e528607c1eb1b4871ddc3623e59d7f8fc7f33a5b4c508688bad9c99b"
+          },
+          {
+            "source_ref": "ChatGPT Task Manager",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED; INTERACTION_PATTERN_ONLY",
+            "sha256": "87d91b8559ed54645b3146bc4e021c8b09246e4516fa1561af63ee674b7484fe"
+          },
+          {
+            "source_ref": "Live Goal46 P00 reconciliation",
+            "verification": "COMPLETE_RETROACTIVE_RECONCILIATION"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Goal46 P00 preflight evidence",
+            "file_id": "file_00000000bc3c81f490343e78b07247d8",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/EVIDENCE/TZ-R46-P00-PREFLIGHT-RECONCILIATION.json",
+            "verification": "COMPLETE_RETROACTIVE_RECONCILIATION"
+          },
+          {
+            "source_ref": "Goal46 active ChatGPT MVP plan",
+            "file_id": "file_0000000094f8820b9a2d316a2a180867",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+            "verification": "LIVE_V6; P00-P08 DONE; P09 NEXT"
+          },
+          {
+            "source_ref": "ChatGPT Apps SDK NextJS Starter",
+            "file_id": "file_0000000085b481fa8b0e60a78cc6f942",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/Reference Library/Donors/ChatGPT Apps SDK NextJS Starter/chatgpt-apps-sdk-nextjs-starter-main.zip",
+            "sha256": "e4ac1ec7e528607c1eb1b4871ddc3623e59d7f8fc7f33a5b4c508688bad9c99b",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED; BASE_SHELL_DONOR",
+            "internal_paths": [
+              "chatgpt-apps-sdk-nextjs-starter-main/app/mcp/route.ts",
+              "chatgpt-apps-sdk-nextjs-starter-main/app/hooks/use-call-tool.ts",
+              "chatgpt-apps-sdk-nextjs-starter-main/app/hooks/use-widget-props.ts",
+              "chatgpt-apps-sdk-nextjs-starter-main/app/hooks/use-widget-state.ts"
+            ]
+          },
+          {
+            "source_ref": "ChatGPT Task Manager",
+            "file_id": "file_00000000eee881f5802487af0f9d8339",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/Reference Library/Donors/ChatGPT Task Manager/chatgpt-task-manager-app-main.zip",
+            "sha256": "87d91b8559ed54645b3146bc4e021c8b09246e4516fa1561af63ee674b7484fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED; INTERACTION_PATTERN_ONLY",
+            "internal_paths": [
+              "chatgpt-task-manager-app-main/app/mcp/route.ts",
+              "chatgpt-task-manager-app-main/components/tasks/TaskForm.tsx",
+              "chatgpt-task-manager-app-main/components/tasks/TaskSuccess.tsx",
+              "chatgpt-task-manager-app-main/app/hooks/use-call-tool.ts",
+              "chatgpt-task-manager-app-main/app/hooks/use-widget-state.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Contracts/CompanyContext.php",
+              "System/Security/AuthenticatedCompanyContext.php",
+              "System/Contracts/CompanyActorDirectory.php",
+              "System/Security/DatabaseCompanyActorDirectory.php",
+              "System/Http/Middleware/EnsureCompanyRouteBindings.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "database/migrations/2026_08_09_000003_migrate_tenant_boundary_to_company.php"
+            ]
+          },
+          {
+            "source_ref": "Shared Platform Services",
+            "file_id": "file_00000000e34c81f587dd2f4136bc8780",
+            "library_path": "/MASTER Software/Masters/Platform/Shared Platform Services/Titan Shared Platform Services Master Step 14.zip",
+            "sha256": "18b5fe4696f61facc0882ba53da09a4f10dd46ec49b3b352e5f578aa1f23e116",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Shared-Platform-Services-Step14/contracts/DecisionPacket.schema.json",
+              "Titan-Shared-Platform-Services-Step14/contracts/PlatformServiceEnvelope.schema.json",
+              "Titan-Shared-Platform-Services-Step14/contracts/ProviderContribution.schema.json"
+            ]
+          }
+        ],
+        "scan_notes": "P00 already records KEEP/ADAPT/DELETE/REPLACE/CONNECT decisions: Apps SDK starter modified in place; Task Manager patterns only; Titan MCP/Connect/Shared Services connected to canonical Titan Zero. Do not repeat preflight or re-import donor domain state.",
+        "exhaustion_evidence": null
+      },
+      "chatgpt_mvp_plan_binding": {
+        "plan_id": "TZ-R46-CHATGPT-MVP-PLAN-001",
+        "plan_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+        "mapped_passes": "P00"
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 2,
+      "subgoal_order": 2,
+      "title": "Implement the shared Capability Layer and Titan MCP projection so plugins expose canonical capabilities, schemas, authority and receipts without host-specific business logic",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Implement only the minimum shared Capability Layer/Titan MCP projection required to connect the SDK-base ChatGPT MVP to canonical Titan capabilities. Prefer adapting existing Titan MCP/Shared Platform Services contracts over creating new abstractions. Initial MVP capability groups: Ask Titan, Customers, Bookings, Jobs, Quotes, Invoices, Messages.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Zero",
+        "Titan Connect",
+        "Shared Platform Services"
+      ],
+      "subgoal_id": "TZ-ROADMAP-46-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_LIVE_IMPLEMENTATION_P06_P08_CANONICAL_CAPABILITY_LAYER_BOUND_WITH_BACKEND_GAP",
+        "last_scanned_at_utc": "2026-09-19T06:38:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_VERIFIED",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Connect",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238"
+          },
+          {
+            "source_ref": "Shared Platform Services",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "18b5fe4696f61facc0882ba53da09a4f10dd46ec49b3b352e5f578aa1f23e116"
+          },
+          {
+            "source_ref": "Live ChatGPT app",
+            "verification": "P02/P06/P08 IMPLEMENTED"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Goal46 P06 MCP evidence",
+            "file_id": "file_000000005184820bbf72a543cd9ed6df",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/EVIDENCE/TZ-R46-P06-IMPLEMENTATION-EVIDENCE.json",
+            "verification": "IMPLEMENTED_WITH_BACKEND_CONTRACT_GAP_EXPLICIT"
+          },
+          {
+            "source_ref": "Goal46 P08 execution evidence",
+            "file_id": "file_00000000f47881fabded66eed1c3b3bc",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/EVIDENCE/TZ-R46-P08-IMPLEMENTATION-EVIDENCE.json",
+            "verification": "COMPLETE; focused TypeScript verification noted"
+          },
+          {
+            "source_ref": "Live ChatGPT MCP client",
+            "file_id": "file_00000000078881f89047b62d3ac1a906",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/mcp-client.ts",
+            "verification": "LIVE_IMPLEMENTATION"
+          },
+          {
+            "source_ref": "Live ChatGPT capability catalogue",
+            "file_id": "file_000000003c7881f5b58ac53a2cb6e5c7",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/catalogue.ts",
+            "verification": "LIVE_IMPLEMENTATION"
+          },
+          {
+            "source_ref": "Live ChatGPT schemas",
+            "file_id": "file_00000000eb00820b8ab1887a909cdd25",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/schemas.ts",
+            "verification": "LIVE_IMPLEMENTATION_V2"
+          },
+          {
+            "source_ref": "Live ChatGPT gateway",
+            "file_id": "file_00000000dbb4820b90c0cb6639d7a6ac",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts",
+            "verification": "LIVE_IMPLEMENTATION_V2"
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Http/Middleware/AuthorizeTitanMcp.php",
+              "System/Workforce/CapabilityResolver.php",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Feature/TitanMcpExpandedPermissionsContractTest.php"
+            ]
+          },
+          {
+            "source_ref": "Shared Platform Services",
+            "file_id": "file_00000000e34c81f587dd2f4136bc8780",
+            "library_path": "/MASTER Software/Masters/Platform/Shared Platform Services/Titan Shared Platform Services Master Step 14.zip",
+            "sha256": "18b5fe4696f61facc0882ba53da09a4f10dd46ec49b3b352e5f578aa1f23e116",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Shared-Platform-Services-Step14/contracts/DecisionPacket.schema.json",
+              "Titan-Shared-Platform-Services-Step14/contracts/PlatformServiceEnvelope.schema.json",
+              "Titan-Shared-Platform-Services-Step14/contracts/ProviderContribution.schema.json"
+            ]
+          }
+        ],
+        "scan_notes": "Canonical MCP discovery/tools-list binding, schema/receipt validation, execution correlation/causation/idempotency and recovery projection are implemented. Critical backend gap remains explicit: Titan MCP 1.5.14 exposes 34 coding/runtime/operations tools but no named seven-business-MVP tools; use an explicit canonical dispatcher/capability map and never fabricate backend tool names.",
+        "exhaustion_evidence": null
+      },
+      "chatgpt_mvp_plan_binding": {
+        "plan_id": "TZ-R46-CHATGPT-MVP-PLAN-001",
+        "plan_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+        "mapped_passes": "P06-P07"
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 3,
+      "subgoal_order": 3,
+      "title": "Convert the verified ChatGPT Apps SDK NextJS Starter into the Titan Zero ChatGPT App; strip demo content, Titan-brand it, connect Titan MCP/capabilities and add Task Manager-derived generative interaction patterns",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "PRIMARY BASE CONVERSION — MANDATORY: copy the verified ChatGPT Apps SDK NextJS Starter into /Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App and evolve that source directly. Retain working Apps SDK/MCP/Next.js host plumbing where compatible; delete demo-only assets/features; rename/rebrand to Titan Zero; connect canonical Titan MCP/capability projection; then selectively port useful Task Manager tool→widget→state/form patterns. Never copy demo identity, Convex authority, direct ungoverned mutations or duplicate Titan workforce/business state.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Zero",
+        "Titan Connect",
+        "Shared Platform Services",
+        "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Apps SDK NextJS Starter",
+        "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Task Manager"
+      ],
+      "subgoal_id": "TZ-ROADMAP-46-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_SURFACE_BINDING",
+        "workforce_impact": "SURFACE_BINDING_EXISTING_AGENTS",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Bind only canonical domain/workforce agents relevant to the user outcome; never create a host/surface-specific agent identity."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_LIVE_CHATGPT_APP_CONVERSION_IMPLEMENTED_P01_P05",
+        "last_scanned_at_utc": "2026-09-19T06:38:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_VERIFIED",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Connect",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238"
+          },
+          {
+            "source_ref": "Shared Platform Services",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "18b5fe4696f61facc0882ba53da09a4f10dd46ec49b3b352e5f578aa1f23e116"
+          },
+          {
+            "source_ref": "ChatGPT Apps SDK NextJS Starter",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED; BASE_SHELL_DONOR",
+            "sha256": "e4ac1ec7e528607c1eb1b4871ddc3623e59d7f8fc7f33a5b4c508688bad9c99b"
+          },
+          {
+            "source_ref": "ChatGPT Task Manager",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED; INTERACTION_PATTERN_ONLY",
+            "sha256": "87d91b8559ed54645b3146bc4e021c8b09246e4516fa1561af63ee674b7484fe"
+          },
+          {
+            "source_ref": "Live ChatGPT app",
+            "verification": "P01-P05 DONE"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Goal46 active ChatGPT MVP plan",
+            "file_id": "file_0000000094f8820b9a2d316a2a180867",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+            "verification": "LIVE_V6; P00-P08 DONE; P09 NEXT"
+          },
+          {
+            "source_ref": "Live ChatGPT generative UI page",
+            "file_id": "file_0000000056cc820b895ad3738c08f2bb",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/app/page.tsx",
+            "verification": "LIVE_IMPLEMENTATION_V5"
+          },
+          {
+            "source_ref": "Live ChatGPT MCP route",
+            "file_id": "file_000000002ca881f58e139307d6f10fb1",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/app/mcp/route.ts",
+            "verification": "LIVE_IMPLEMENTATION_V6"
+          },
+          {
+            "source_ref": "Live ChatGPT contracts",
+            "file_id": "file_000000005e2481fa9d740d08a3f5f072",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/contracts.ts",
+            "verification": "LIVE_IMPLEMENTATION"
+          },
+          {
+            "source_ref": "Live ChatGPT gateway",
+            "file_id": "file_00000000dbb4820b90c0cb6639d7a6ac",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts",
+            "verification": "LIVE_IMPLEMENTATION_V2"
+          },
+          {
+            "source_ref": "ChatGPT Apps SDK NextJS Starter",
+            "file_id": "file_0000000085b481fa8b0e60a78cc6f942",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/Reference Library/Donors/ChatGPT Apps SDK NextJS Starter/chatgpt-apps-sdk-nextjs-starter-main.zip",
+            "sha256": "e4ac1ec7e528607c1eb1b4871ddc3623e59d7f8fc7f33a5b4c508688bad9c99b",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED; BASE_SHELL_DONOR",
+            "internal_paths": [
+              "chatgpt-apps-sdk-nextjs-starter-main/app/mcp/route.ts",
+              "chatgpt-apps-sdk-nextjs-starter-main/app/hooks/use-call-tool.ts",
+              "chatgpt-apps-sdk-nextjs-starter-main/app/hooks/use-widget-props.ts",
+              "chatgpt-apps-sdk-nextjs-starter-main/app/hooks/use-widget-state.ts"
+            ]
+          },
+          {
+            "source_ref": "ChatGPT Task Manager",
+            "file_id": "file_00000000eee881f5802487af0f9d8339",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/Reference Library/Donors/ChatGPT Task Manager/chatgpt-task-manager-app-main.zip",
+            "sha256": "87d91b8559ed54645b3146bc4e021c8b09246e4516fa1561af63ee674b7484fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED; INTERACTION_PATTERN_ONLY",
+            "internal_paths": [
+              "chatgpt-task-manager-app-main/app/mcp/route.ts",
+              "chatgpt-task-manager-app-main/components/tasks/TaskForm.tsx",
+              "chatgpt-task-manager-app-main/components/tasks/TaskSuccess.tsx",
+              "chatgpt-task-manager-app-main/app/hooks/use-call-tool.ts",
+              "chatgpt-task-manager-app-main/app/hooks/use-widget-state.ts"
+            ]
+          }
+        ],
+        "scan_notes": "Verified Apps SDK starter has already been converted into a Titan Zero chat-first app with customers/bookings/jobs/quotes/invoices/messages interactions and governed prepare→confirm patterns. Task Manager contributed interaction patterns only; Convex/task domain and demo identity were explicitly not ported.",
+        "exhaustion_evidence": null
+      },
+      "donor_acceptance_requirements": [
+        "ChatGPT Apps SDK NextJS Starter is inspected and reusable structural patterns are recorded before replacement implementation.",
+        "ChatGPT Task Manager is inspected and reusable interactive tool-to-widget-to-state patterns are recorded before replacement implementation.",
+        "Any donor behavior not reused has an incompatibility/supersession reason recorded.",
+        "No donor demo identity, Convex business-state authority or direct ungoverned mutation path becomes Titan authority.",
+        "Result remains a thin ChatGPT projection of canonical Titan capabilities."
+      ],
+      "implementation_strategy": "MODIFY_EXISTING_SDK_BASE_NOT_GREENFIELD",
+      "physical_working_source": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App",
+      "mvp_acceptance_order": [
+        "starter boots as Titan Zero ChatGPT App",
+        "MCP endpoint/tool-resource plumbing retained and Titan-namespaced",
+        "Titan actor/company context connected",
+        "initial canonical capability groups callable",
+        "generative UI card/form round-trip works",
+        "consequential action reaches governed Titan path and returns receipt",
+        "no duplicate business logic/state/agents in ChatGPT surface"
+      ],
+      "chatgpt_mvp_plan_binding": {
+        "plan_id": "TZ-R46-CHATGPT-MVP-PLAN-001",
+        "plan_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+        "mapped_passes": "P01-P05"
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 4,
+      "subgoal_order": 4,
+      "title": "Deliver the Claude remote-MCP connector/adapter with feature negotiation, graceful degradation and parity with canonical Titan outcomes",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Zero",
+        "Titan Connect",
+        "Shared Platform Services"
+      ],
+      "subgoal_id": "TZ-ROADMAP-46-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_SURFACE_BINDING",
+        "workforce_impact": "SURFACE_BINDING_EXISTING_AGENTS",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Bind only canonical domain/workforce agents relevant to the user outcome; never create a host/surface-specific agent identity."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "ChatGPT mcp-client",
+            "file_id": "file_00000000078881f89047b62d3ac1a906",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/mcp-client.ts",
+            "verification": "LIVE_IMPLEMENTATION_OR_EVIDENCE",
+            "internal_paths": [],
+            "finding": "Claude is already declared as remote-MCP thin host. Reuse the live authenticated context/capability/authority/MCP contracts and implement only Claude transport/feature negotiation/degradation. No Claude-specific Titan business agents or authority."
+          },
+          {
+            "source_ref": "ChatGPT contracts",
+            "file_id": "file_000000005e2481fa9d740d08a3f5f072",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/contracts.ts",
+            "verification": "LIVE_IMPLEMENTATION_OR_EVIDENCE",
+            "internal_paths": [],
+            "finding": "Claude is already declared as remote-MCP thin host. Reuse the live authenticated context/capability/authority/MCP contracts and implement only Claude transport/feature negotiation/degradation. No Claude-specific Titan business agents or authority."
+          },
+          {
+            "source_ref": "ChatGPT authority",
+            "file_id": "file_0000000035b881f5ab50349b699b0805",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/authority.ts",
+            "verification": "LIVE_IMPLEMENTATION_OR_EVIDENCE",
+            "internal_paths": [],
+            "finding": "Claude is already declared as remote-MCP thin host. Reuse the live authenticated context/capability/authority/MCP contracts and implement only Claude transport/feature negotiation/degradation. No Claude-specific Titan business agents or authority."
+          },
+          {
+            "source_ref": "Titan Zero ChatGPT App live contracts",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_P00_P08",
+            "internal_paths": [],
+            "finding": "Claude is already declared as remote-MCP thin host. Reuse the live authenticated context/capability/authority/MCP contracts and implement only Claude transport/feature negotiation/degradation. No Claude-specific Titan business agents or authority."
+          },
+          {
+            "source_ref": "Goal46 Host Registry",
+            "file_id": "file_000000009fc881fabe6c78559cabd195",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/REGISTRY/HOST-REGISTRY.json",
+            "sha256": null,
+            "verification": "LIVE_REGISTRY",
+            "internal_paths": [],
+            "finding": "Claude is already declared as remote-MCP thin host. Reuse the live authenticated context/capability/authority/MCP contracts and implement only Claude transport/feature negotiation/degradation. No Claude-specific Titan business agents or authority."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Claude is already declared as remote-MCP thin host. Reuse the live authenticated context/capability/authority/MCP contracts and implement only Claude transport/feature negotiation/degradation. No Claude-specific Titan business agents or authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero ChatGPT App live contracts",
+          "Goal46 Host Registry",
+          "Titan MCP"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:10:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Claude is already declared as remote-MCP thin host. Reuse the live authenticated context/capability/authority/MCP contracts and implement only Claude transport/feature negotiation/degradation. No Claude-specific Titan business agents or authority."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 5,
+      "subgoal_order": 5,
+      "title": "Deliver Gemini and generic MCP host profiles plus a non-MCP tool/function-calling fallback framework from the same canonical capability definitions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Zero",
+        "Titan Connect",
+        "Shared Platform Services"
+      ],
+      "subgoal_id": "TZ-ROADMAP-46-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_SURFACE_BINDING",
+        "workforce_impact": "SURFACE_BINDING_EXISTING_AGENTS",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Bind only canonical domain/workforce agents relevant to the user outcome; never create a host/surface-specific agent identity."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "ChatGPT gateway",
+            "file_id": "file_00000000dbb4820b90c0cb6639d7a6ac",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts",
+            "verification": "LIVE_IMPLEMENTATION_OR_EVIDENCE",
+            "internal_paths": [],
+            "finding": "Gemini and Generic MCP host profiles are already declared with MCP/structured fallback rules. Generalize the canonical gateway/schema/context contracts and add function/tool-calling fallback as transport adaptation only."
+          },
+          {
+            "source_ref": "ChatGPT schemas",
+            "file_id": "file_00000000eb00820b8ab1887a909cdd25",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/schemas.ts",
+            "verification": "LIVE_IMPLEMENTATION_OR_EVIDENCE",
+            "internal_paths": [],
+            "finding": "Gemini and Generic MCP host profiles are already declared with MCP/structured fallback rules. Generalize the canonical gateway/schema/context contracts and add function/tool-calling fallback as transport adaptation only."
+          },
+          {
+            "source_ref": "ChatGPT context",
+            "file_id": "file_00000000f7cc81fa870c0322a2189df4",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts",
+            "verification": "LIVE_IMPLEMENTATION_OR_EVIDENCE",
+            "internal_paths": [],
+            "finding": "Gemini and Generic MCP host profiles are already declared with MCP/structured fallback rules. Generalize the canonical gateway/schema/context contracts and add function/tool-calling fallback as transport adaptation only."
+          },
+          {
+            "source_ref": "Titan Zero ChatGPT App live contracts",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_P00_P08",
+            "internal_paths": [],
+            "finding": "Gemini and Generic MCP host profiles are already declared with MCP/structured fallback rules. Generalize the canonical gateway/schema/context contracts and add function/tool-calling fallback as transport adaptation only."
+          },
+          {
+            "source_ref": "Goal46 Host Registry",
+            "file_id": "file_000000009fc881fabe6c78559cabd195",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/REGISTRY/HOST-REGISTRY.json",
+            "sha256": null,
+            "verification": "LIVE_REGISTRY",
+            "internal_paths": [],
+            "finding": "Gemini and Generic MCP host profiles are already declared with MCP/structured fallback rules. Generalize the canonical gateway/schema/context contracts and add function/tool-calling fallback as transport adaptation only."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Gemini and Generic MCP host profiles are already declared with MCP/structured fallback rules. Generalize the canonical gateway/schema/context contracts and add function/tool-calling fallback as transport adaptation only."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero ChatGPT App live contracts",
+          "Goal46 Host Registry",
+          "Titan MCP"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:10:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Gemini and Generic MCP host profiles are already declared with MCP/structured fallback rules. Generalize the canonical gateway/schema/context contracts and add function/tool-calling fallback as transport adaptation only."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 6,
+      "subgoal_order": 6,
+      "title": "Implement plugin identity, auth, tenant isolation, entitlement/authority/autonomy separation, trust-cycle state and cross-host conversation/task continuity",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Bind the SDK-base app to canonical Titan identity/company context and existing entitlement/authority/autonomy/trust contracts. MVP auth/isolation is mandatory; cross-host continuity may be staged after ChatGPT continuity is proven, without weakening company_id isolation or governed execution.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Zero",
+        "Titan Connect",
+        "Shared Platform Services"
+      ],
+      "subgoal_id": "TZ-ROADMAP-46-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_LIVE_IDENTITY_AUTHORITY_TRUST_CONTINUITY_IMPLEMENTED_FOCUSED",
+        "last_scanned_at_utc": "2026-09-19T06:38:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_VERIFIED",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Connect",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238"
+          },
+          {
+            "source_ref": "Shared Platform Services",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "18b5fe4696f61facc0882ba53da09a4f10dd46ec49b3b352e5f578aa1f23e116"
+          },
+          {
+            "source_ref": "Live ChatGPT app",
+            "verification": "P07-P08 DONE_FOCUSED"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Goal46 P07 identity/trust evidence",
+            "file_id": "file_00000000370481f594e4458f7400eb78",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/EVIDENCE/TZ-R46-P07-IMPLEMENTATION-EVIDENCE.json",
+            "verification": "IMPLEMENTED_VERIFIED_FOCUSED"
+          },
+          {
+            "source_ref": "Goal46 P08 execution evidence",
+            "file_id": "file_00000000f47881fabded66eed1c3b3bc",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/EVIDENCE/TZ-R46-P08-IMPLEMENTATION-EVIDENCE.json",
+            "verification": "COMPLETE; focused TypeScript verification noted"
+          },
+          {
+            "source_ref": "Live ChatGPT Titan context",
+            "file_id": "file_00000000f7cc81fa870c0322a2189df4",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts",
+            "verification": "LIVE_IMPLEMENTATION_V2"
+          },
+          {
+            "source_ref": "Live ChatGPT Titan authority projection",
+            "file_id": "file_0000000035b881f5ab50349b699b0805",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/authority.ts",
+            "verification": "LIVE_IMPLEMENTATION"
+          },
+          {
+            "source_ref": "Live ChatGPT contracts",
+            "file_id": "file_000000005e2481fa9d740d08a3f5f072",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/contracts.ts",
+            "verification": "LIVE_IMPLEMENTATION"
+          },
+          {
+            "source_ref": "Live ChatGPT gateway",
+            "file_id": "file_00000000dbb4820b90c0cb6639d7a6ac",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts",
+            "verification": "LIVE_IMPLEMENTATION_V2"
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Contracts/CompanyContext.php",
+              "System/Security/AuthenticatedCompanyContext.php",
+              "System/Contracts/CompanyActorDirectory.php",
+              "System/Security/DatabaseCompanyActorDirectory.php",
+              "System/Http/Middleware/EnsureCompanyRouteBindings.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "database/migrations/2026_08_09_000003_migrate_tenant_boundary_to_company.php"
+            ]
+          },
+          {
+            "source_ref": "Shared Platform Services",
+            "file_id": "file_00000000e34c81f587dd2f4136bc8780",
+            "library_path": "/MASTER Software/Masters/Platform/Shared Platform Services/Titan Shared Platform Services Master Step 14.zip",
+            "sha256": "18b5fe4696f61facc0882ba53da09a4f10dd46ec49b3b352e5f578aa1f23e116",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Shared-Platform-Services-Step14/contracts/DecisionPacket.schema.json",
+              "Titan-Shared-Platform-Services-Step14/contracts/PlatformServiceEnvelope.schema.json",
+              "Titan-Shared-Platform-Services-Step14/contracts/ProviderContribution.schema.json"
+            ]
+          }
+        ],
+        "scan_notes": "Authenticated Titan session context, caller-resistant company/actor binding, entitlement vs authority separation, responsibility-scoped desired/earned/effective autonomy, recursive handshake projection, EARNED_BUT_PLAN_LOCKED, execution receipts and recovery are implemented. Full Next build and live backend session/MCP roundtrip remain deferred; plugin must never earn/grant authority locally.",
+        "exhaustion_evidence": null
+      },
+      "chatgpt_mvp_plan_binding": {
+        "plan_id": "TZ-R46-CHATGPT-MVP-PLAN-001",
+        "plan_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+        "mapped_passes": "P07-P08"
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 7,
+      "subgoal_order": 7,
+      "title": "Generate plugin metadata, tool catalogues, schemas, onboarding, agent catalogue and host-specific packaging automatically from canonical registries and vertical manifests",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Zero",
+        "Titan Connect",
+        "Shared Platform Services",
+        "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Apps SDK NextJS Starter",
+        "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Task Manager"
+      ],
+      "subgoal_id": "TZ-ROADMAP-46-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "ChatGPT catalogue",
+            "file_id": "file_000000003c7881f5b58ac53a2cb6e5c7",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/catalogue.ts",
+            "verification": "LIVE_IMPLEMENTATION_OR_EVIDENCE",
+            "internal_paths": [],
+            "finding": "P09 is explicitly planned to replace hand-maintained metadata/tool/schema declarations with canonical generation. Catalogue/schema code and Forge manifest validation are reusable, but automated plugin metadata/onboarding/agent-catalogue generation is not yet implemented."
+          },
+          {
+            "source_ref": "ChatGPT schemas",
+            "file_id": "file_00000000eb00820b8ab1887a909cdd25",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/schemas.ts",
+            "verification": "LIVE_IMPLEMENTATION_OR_EVIDENCE",
+            "internal_paths": [],
+            "finding": "P09 is explicitly planned to replace hand-maintained metadata/tool/schema declarations with canonical generation. Catalogue/schema code and Forge manifest validation are reusable, but automated plugin metadata/onboarding/agent-catalogue generation is not yet implemented."
+          },
+          {
+            "source_ref": "Titan Zero ChatGPT App live contracts",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_P00_P08",
+            "internal_paths": [],
+            "finding": "P09 is explicitly planned to replace hand-maintained metadata/tool/schema declarations with canonical generation. Catalogue/schema code and Forge manifest validation are reusable, but automated plugin metadata/onboarding/agent-catalogue generation is not yet implemented."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "P09 is explicitly planned to replace hand-maintained metadata/tool/schema declarations with canonical generation. Catalogue/schema code and Forge manifest validation are reusable, but automated plugin metadata/onboarding/agent-catalogue generation is not yet implemented."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "P09 is explicitly planned to replace hand-maintained metadata/tool/schema declarations with canonical generation. Catalogue/schema code and Forge manifest validation are reusable, but automated plugin metadata/onboarding/agent-catalogue generation is not yet implemented."
+          },
+          {
+            "source_ref": "Goal46 Multi-pass Plan",
+            "file_id": "file_0000000094f8820b9a2d316a2a180867",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+            "sha256": null,
+            "verification": "ACTIVE_PLAN_P00_P08_DONE_P09_NEXT",
+            "internal_paths": [],
+            "finding": "P09 is explicitly planned to replace hand-maintained metadata/tool/schema declarations with canonical generation. Catalogue/schema code and Forge manifest validation are reusable, but automated plugin metadata/onboarding/agent-catalogue generation is not yet implemented."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero ChatGPT App live contracts",
+          "Titan MCP",
+          "Titan Forge",
+          "Goal46 Multi-pass Plan"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:10:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "P09 is explicitly planned to replace hand-maintained metadata/tool/schema declarations with canonical generation. Catalogue/schema code and Forge manifest validation are reusable, but automated plugin metadata/onboarding/agent-catalogue generation is not yet implemented."
+      },
+      "chatgpt_mvp_plan_binding": {
+        "plan_id": "TZ-R46-CHATGPT-MVP-PLAN-001",
+        "plan_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+        "mapped_passes": "P09"
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 8,
+      "subgoal_order": 8,
+      "title": "Implement plugin auto-sync, compatibility manifests, version negotiation, selective rebuild/publication, rollback and partial-deploy recovery after canonical changes",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Zero",
+        "Titan Connect",
+        "Shared Platform Services"
+      ],
+      "subgoal_id": "TZ-ROADMAP-46-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Goal46 Host Registry",
+            "file_id": "file_000000009fc881fabe6c78559cabd195",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/REGISTRY/HOST-REGISTRY.json",
+            "sha256": null,
+            "verification": "LIVE_REGISTRY",
+            "internal_paths": [],
+            "finding": "Compatibility/host registry and release primitives exist, but no completed cross-host auto-sync/version-negotiation/selective-rebuild/publication/rollback pipeline was found. Build one propagation controller keyed to canonical capability/profile changes."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Compatibility/host registry and release primitives exist, but no completed cross-host auto-sync/version-negotiation/selective-rebuild/publication/rollback pipeline was found. Build one propagation controller keyed to canonical capability/profile changes."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Compatibility/host registry and release primitives exist, but no completed cross-host auto-sync/version-negotiation/selective-rebuild/publication/rollback pipeline was found. Build one propagation controller keyed to canonical capability/profile changes."
+          },
+          {
+            "source_ref": "Goal46 Multi-pass Plan",
+            "file_id": "file_0000000094f8820b9a2d316a2a180867",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+            "sha256": null,
+            "verification": "ACTIVE_PLAN_P00_P08_DONE_P09_NEXT",
+            "internal_paths": [],
+            "finding": "Compatibility/host registry and release primitives exist, but no completed cross-host auto-sync/version-negotiation/selective-rebuild/publication/rollback pipeline was found. Build one propagation controller keyed to canonical capability/profile changes."
+          }
+        ],
+        "relevant_source_refs": [
+          "Goal46 Host Registry",
+          "Titan MCP",
+          "Titan Forge",
+          "Goal46 Multi-pass Plan"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:10:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Compatibility/host registry and release primitives exist, but no completed cross-host auto-sync/version-negotiation/selective-rebuild/publication/rollback pipeline was found. Build one propagation controller keyed to canonical capability/profile changes."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 9,
+      "subgoal_order": 9,
+      "title": "Certify the ChatGPT MVP first for contract, security, company isolation, schema, receipt/event correlation, authority and no-private-business-logic; expand the same certification matrix to later hosts",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "MVP release gate is ChatGPT-first. Do not block ChatGPT MVP on Claude/Gemini implementation. Certify SDK-base ChatGPT app against canonical Titan contracts and fail-closed authority/isolation requirements; retain matrix slots for later hosts.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Zero",
+        "Titan Connect",
+        "Shared Platform Services",
+        "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Apps SDK NextJS Starter",
+        "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Task Manager"
+      ],
+      "subgoal_id": "TZ-ROADMAP-46-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_CERTIFICATION_PLAN_AND_EVIDENCE_AVAILABLE_P10_P11_PENDING",
+        "last_scanned_at_utc": "2026-09-19T06:38:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan MCP",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f"
+          },
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "CANONICAL_PROMOTION_VERIFIED",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Connect",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238"
+          },
+          {
+            "source_ref": "Shared Platform Services",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "sha256": "18b5fe4696f61facc0882ba53da09a4f10dd46ec49b3b352e5f578aa1f23e116"
+          },
+          {
+            "source_ref": "ChatGPT Apps SDK NextJS Starter",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED; BASE_SHELL_DONOR",
+            "sha256": "e4ac1ec7e528607c1eb1b4871ddc3623e59d7f8fc7f33a5b4c508688bad9c99b"
+          },
+          {
+            "source_ref": "ChatGPT Task Manager",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED; INTERACTION_PATTERN_ONLY",
+            "sha256": "87d91b8559ed54645b3146bc4e021c8b09246e4516fa1561af63ee674b7484fe"
+          },
+          {
+            "source_ref": "Goal46 active plan",
+            "verification": "P10/P11 PLANNED"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Goal46 active ChatGPT MVP plan",
+            "file_id": "file_0000000094f8820b9a2d316a2a180867",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+            "verification": "LIVE_V6; P00-P08 DONE; P09 NEXT"
+          },
+          {
+            "source_ref": "Goal46 P06 MCP evidence",
+            "file_id": "file_000000005184820bbf72a543cd9ed6df",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/EVIDENCE/TZ-R46-P06-IMPLEMENTATION-EVIDENCE.json",
+            "verification": "IMPLEMENTED_WITH_BACKEND_CONTRACT_GAP_EXPLICIT"
+          },
+          {
+            "source_ref": "Goal46 P07 identity/trust evidence",
+            "file_id": "file_00000000370481f594e4458f7400eb78",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/EVIDENCE/TZ-R46-P07-IMPLEMENTATION-EVIDENCE.json",
+            "verification": "IMPLEMENTED_VERIFIED_FOCUSED"
+          },
+          {
+            "source_ref": "Goal46 P08 execution evidence",
+            "file_id": "file_00000000f47881fabded66eed1c3b3bc",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/EVIDENCE/TZ-R46-P08-IMPLEMENTATION-EVIDENCE.json",
+            "verification": "COMPLETE; focused TypeScript verification noted"
+          },
+          {
+            "source_ref": "Live ChatGPT schemas",
+            "file_id": "file_00000000eb00820b8ab1887a909cdd25",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/schemas.ts",
+            "verification": "LIVE_IMPLEMENTATION_V2"
+          },
+          {
+            "source_ref": "Live ChatGPT contracts",
+            "file_id": "file_000000005e2481fa9d740d08a3f5f072",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/contracts.ts",
+            "verification": "LIVE_IMPLEMENTATION"
+          },
+          {
+            "source_ref": "Live ChatGPT gateway",
+            "file_id": "file_00000000dbb4820b90c0cb6639d7a6ac",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts",
+            "verification": "LIVE_IMPLEMENTATION_V2"
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Contracts/CompanyContext.php",
+              "System/Security/AuthenticatedCompanyContext.php",
+              "System/Contracts/CompanyActorDirectory.php",
+              "System/Security/DatabaseCompanyActorDirectory.php",
+              "System/Http/Middleware/EnsureCompanyRouteBindings.php",
+              "System/Certification/CompanyIsolationProbe.php",
+              "database/migrations/2026_08_09_000003_migrate_tenant_boundary_to_company.php"
+            ]
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Http/Middleware/AuthorizeTitanMcp.php",
+              "System/Workforce/CapabilityResolver.php",
+              "tests/Feature/TitanMcpCentralCapabilityDispatchContractTest.php",
+              "tests/Feature/TitanMcpExpandedPermissionsContractTest.php"
+            ]
+          }
+        ],
+        "scan_notes": "Most certification inputs exist, but SG09 must not be marked product-certified yet. P10/P11 still need full contract/security/company-isolation/schema/receipt/workforce/no-private-business-logic and full Apps SDK build/runtime/negative-path verification. Current P07 evidence explicitly defers full Next build; P06 lacks a deployed canonical business MCP endpoint.",
+        "exhaustion_evidence": null
+      },
+      "chatgpt_mvp_plan_binding": {
+        "plan_id": "TZ-R46-CHATGPT-MVP-PLAN-001",
+        "plan_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+        "mapped_passes": "P10-P11"
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 10,
+      "subgoal_order": 10,
+      "title": "Certify plugin ecosystem release readiness, generated-package provenance and canonical propagation; retire superseded standalone plugin roadmaps after verified convergence",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; bookend analysis/convergence with coding-heavy middle passes; cumulative checkpoints normally every 4-6 passes",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "library_reuse_refs": [
+        "Titan MCP",
+        "Titan Zero",
+        "Titan Connect",
+        "Shared Platform Services",
+        "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Apps SDK NextJS Starter",
+        "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Task Manager"
+      ],
+      "subgoal_id": "TZ-ROADMAP-46-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "P08 execution evidence",
+            "file_id": "file_00000000f47881fabded66eed1c3b3bc",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/EVIDENCE/TZ-R46-P08-IMPLEMENTATION-EVIDENCE.json",
+            "verification": "LIVE_IMPLEMENTATION_OR_EVIDENCE",
+            "internal_paths": [],
+            "finding": "Release blocker criteria and provenance/workforce invariants are documented, but P10-P12 full build/negative-path/cross-host propagation certification has not been executed. Final convergence must prove generated-package provenance and retire superseded standalone host plans only after parity."
+          },
+          {
+            "source_ref": "Workforce integration map",
+            "file_id": "file_00000000bbf881f5a5215ecf417f7c8e",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/EVIDENCE/TZ-R46-WORKFORCE-INTEGRATION-MAP.json",
+            "verification": "LIVE_IMPLEMENTATION_OR_EVIDENCE",
+            "internal_paths": [],
+            "finding": "Release blocker criteria and provenance/workforce invariants are documented, but P10-P12 full build/negative-path/cross-host propagation certification has not been executed. Final convergence must prove generated-package provenance and retire superseded standalone host plans only after parity."
+          },
+          {
+            "source_ref": "Goal46 Acceptance Matrix",
+            "file_id": "file_00000000954481fa900940a2be6be816",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/REGISTRY/ACCEPTANCE-MATRIX.json",
+            "sha256": null,
+            "verification": "LIVE_RELEASE_POLICY",
+            "internal_paths": [],
+            "finding": "Release blocker criteria and provenance/workforce invariants are documented, but P10-P12 full build/negative-path/cross-host propagation certification has not been executed. Final convergence must prove generated-package provenance and retire superseded standalone host plans only after parity."
+          },
+          {
+            "source_ref": "Goal46 Multi-pass Plan",
+            "file_id": "file_0000000094f8820b9a2d316a2a180867",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+            "sha256": null,
+            "verification": "ACTIVE_PLAN_P00_P08_DONE_P09_NEXT",
+            "internal_paths": [],
+            "finding": "Release blocker criteria and provenance/workforce invariants are documented, but P10-P12 full build/negative-path/cross-host propagation certification has not been executed. Final convergence must prove generated-package provenance and retire superseded standalone host plans only after parity."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Release blocker criteria and provenance/workforce invariants are documented, but P10-P12 full build/negative-path/cross-host propagation certification has not been executed. Final convergence must prove generated-package provenance and retire superseded standalone host plans only after parity."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Release blocker criteria and provenance/workforce invariants are documented, but P10-P12 full build/negative-path/cross-host propagation certification has not been executed. Final convergence must prove generated-package provenance and retire superseded standalone host plans only after parity."
+          }
+        ],
+        "relevant_source_refs": [
+          "Goal46 Acceptance Matrix",
+          "Goal46 Multi-pass Plan",
+          "Titan Forge",
+          "Titan MCP"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:10:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Release blocker criteria and provenance/workforce invariants are documented, but P10-P12 full build/negative-path/cross-host propagation certification has not been executed. Final convergence must prove generated-package provenance and retire superseded standalone host plans only after parity."
+      },
+      "chatgpt_mvp_plan_binding": {
+        "plan_id": "TZ-R46-CHATGPT-MVP-PLAN-001",
+        "plan_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+        "mapped_passes": "P12"
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    }
+  ],
+  "affinity_tags": [
+    "plugins",
+    "mcp",
+    "chatgpt",
+    "claude",
+    "gemini",
+    "host-adapters"
+  ],
+  "preferred_predecessors": [
+    "TZ-G00"
+  ],
+  "preferred_successors": [
+    "TZ-ROADMAP-28",
+    "TZ-ROADMAP-32",
+    "TZ-ROADMAP-33",
+    "TZ-ROADMAP-37",
+    "TZ-ROADMAP-38"
+  ],
+  "agent_tier_contract_required": true,
+  "unified_architecture_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: Builders claim one contained sub-goal.",
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 5,
+  "library_reuse_refs": [
+    "Titan MCP",
+    "Titan Zero",
+    "Titan Connect",
+    "Shared Platform Services",
+    "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Apps SDK NextJS Starter",
+    "LLM Plugin Workspace/Reference Library/Donors/ChatGPT Task Manager"
+  ],
+  "reuse_first": true,
+  "mvp_strategy": {
+    "strategy": "STARTER_BASE_CONVERSION",
+    "primary_physical_base": "/Titan Zero/LLM Plugin Workspace/Reference Library/Donors/ChatGPT Apps SDK NextJS Starter/chatgpt-apps-sdk-nextjs-starter-main.zip",
+    "secondary_interaction_donor": "/Titan Zero/LLM Plugin Workspace/Reference Library/Donors/ChatGPT Task Manager/chatgpt-task-manager-app-main.zip",
+    "working_source": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App",
+    "rule": "Fork/convert the verified SDK starter; do not rebuild host plumbing from scratch. Task Manager supplies interaction patterns only. Titan Zero remains authoritative for identity, company scope, workforce, capabilities, trust, governance, mutations and business state.",
+    "mvp_surface": "Chat-first; generative UI/cards/forms only where interaction benefits.",
+    "initial_capability_groups": [
+      "Ask Titan",
+      "Customers",
+      "Bookings",
+      "Jobs",
+      "Quotes",
+      "Invoices",
+      "Messages"
+    ]
+  },
+  "chatgpt_mvp_multi_pass_plan": {
+    "plan_id": "TZ-R46-CHATGPT-MVP-PLAN-001",
+    "plan_path": "/Titan Zero/LLM Plugin Workspace/WORK/TZ-ROADMAP-46-CHATGPT-MVP-MULTIPASS-PLAN.json",
+    "status": "ACTIVE_IMPLEMENTATION_PLAN",
+    "scope_rule": "One coordinated implementation plan mapped to existing Goal 46 subgoals. It does not create a second roadmap or make the goal claimable. Builders still claim exactly one subgoal at a time.",
+    "checkpoint_rule": "Create cumulative checkpoint after every 4-6 implementation passes; final cumulative delta at convergence.",
+    "completed_passes_before_plan_formalization": [
+      {
+        "pass": 1,
+        "mapped_subgoal_id": "TZ-ROADMAP-46-SG-03",
+        "outcome": "Starter converted/rebranded to Titan Zero surface and canonical MVP capability vocabulary."
+      },
+      {
+        "pass": 2,
+        "mapped_subgoal_ids": [
+          "TZ-ROADMAP-46-SG-02",
+          "TZ-ROADMAP-46-SG-06"
+        ],
+        "outcome": "Capability contracts, actor/company context and fail-closed Titan gateway boundary added."
+      },
+      {
+        "pass": 3,
+        "mapped_subgoal_id": "TZ-ROADMAP-46-SG-03",
+        "outcome": "Customer and booking structured generative-UI interaction path added."
+      },
+      {
+        "pass": 4,
+        "mapped_subgoal_ids": [
+          "TZ-ROADMAP-46-SG-03",
+          "TZ-ROADMAP-46-SG-06"
+        ],
+        "outcome": "Customer/booking forms plus prepare-confirm approval-token workflow added."
+      }
+    ],
+    "remaining_passes_summary": "Continue SG03 implementation, then SG02/SG06 hard binding, SG07 packaging, SG09 certification and SG10 convergence. SG01 preflight evidence must be formalized before final acceptance; SG04/SG05 are post-ChatGPT-MVP host projections."
+  },
+  "agent_goal_classification": "SURFACE_ONLY_NO_SURFACE_SPECIFIC_AGENTS",
+  "agent_goal_rule": "This goal delivers an authorised surface/host projection. It MUST NOT create agents because of the surface. Reuse canonical domain agents where user journeys require them; otherwise classify technical subgoals NO_AGENT_INFRASTRUCTURE_ONLY.",
+  "workforce_goal_classification": "SURFACE_ONLY_NO_SURFACE_SPECIFIC_AGENT_IDENTITY",
+  "workforce_goal_rule": "Never create PWA, Chrome, ChatGPT, Claude, Gemini, MCP, iOS, Android, Flutter or other host-specific workforce identities. Bind existing canonical domain agents only where the surface exposes their capabilities."
+}
