@@ -1,61 +1,67 @@
-# AGENTS.md - Execution Contract
+# Titan Zero Agent Mesh V3 — Execution Contract
 
-This repository uses AI-assisted development, but product direction is defined only by the canonical documentation set.
+## Authority
 
-## Documentation Hierarchy
+This branch family is Titan Zero. GitHub is the development authority.
 
-Use documentation in this order:
+- Integration branch: `titan-zero/main`
+- Exact code identity: Git commit SHA
+- Durable work queue: GitHub Issues with `TZ-ROADMAP-*` IDs
+- Roadmap authority: `roadmap/INDEX.json` and its referenced goal files
+- Dovetails/default `main` is a separate product and is not a Titan Zero development base.
+- Legacy Library V2 HEAD, ZIP names, timestamps, merge numbers and conversation memory are not code authority.
 
-1. Code and database migrations are the implemented truth.
-2. `docs/canonical/` is the authoritative product, domain, and architecture truth.
-3. `docs/contracts/` and `docs/working/` contain supporting implementation notes.
-4. `ai/` is only a compact AI-agent quick-reference layer.
-5. `docs/archive/` and `docs/generated/` are historical/evidence only, not active instruction sources.
+## Bootstrap
 
-## Read This First
+Before implementation:
 
-Product direction:
+1. Start from current `titan-zero/main`.
+2. Read this file and the applicable roadmap goal/subgoal.
+3. Read the linked architecture/source references needed for that subgoal.
+4. Check the matching GitHub issue and existing PRs so completed work is not repeated.
+5. Work only on remaining scope.
 
-- `docs/canonical/PRODUCT_VISION.md`
-- `docs/canonical/DOMAIN_MODEL.md`
-- `docs/canonical/WORKFLOW.md`
-- `docs/canonical/ARCHITECTURE.md`
-- `docs/canonical/ROADMAP.md`
-- `docs/canonical/PRODUCTION_INTELLIGENCE.md`
-- `docs/canonical/OPERATIONS.md`
+Do not treat Dovetails canonical docs, backlog, deployment targets or product rules as Titan Zero authority merely because donor files remain in the Merge84 source tree.
 
-Archived, generated, and working documents may provide evidence, implementation notes, or historical context. They do not override canonical docs.
+## Builder workflow
 
-Active implementation backlog: docs/backlog/README.md
+- Claim one eligible Titan Zero roadmap subgoal.
+- Create a dedicated branch from `titan-zero/main`, normally `goal<goal>/sg<subgoal>-<actor>`.
+- Never implement directly on `titan-zero/main`.
+- One user `next` means complete one useful implementation pass before reporting.
+- Preserve existing proven implementation; do not rewrite working systems without evidence.
+- Commit the completed pass and open/update a PR targeting `titan-zero/main`.
+- Builders do not self-approve or self-merge.
+- If genuinely blocked, record the blocker precisely; do not fabricate verification.
 
-## Prime Directive
+## Manager workflow
 
-Complete requested tasks end-to-end while preserving reliability, traceability, and canonical product scope.
+- Review the PR diff, linked roadmap subgoal and available verification.
+- Reconcile overlapping work with Git.
+- Merge only acceptable work into `titan-zero/main`.
+- After merge, that Git commit is canonical immediately.
+- Do not recreate V2 CAS/reflog/ZIP/delta-queue promotion machinery.
 
-## Non-Negotiable Rules
+## Architecture invariants
 
-1. Never skip relevant quality gates for code changes.
-2. Any failed gate requires fix attempts before asking for help.
-3. Never store secrets in code; use `.env`.
-4. Migrations must be additive and reversible unless a migration plan is explicit.
-5. Business logic changes must include tests or an explicit documented test gap.
-6. Production runs on garonhome.local using `infra/compose.garonhome.yml`.
-7. Do not use archived or generated planning documents as product instructions.
-8. Do not start new work unless it maps to an existing `docs/backlog/` task, or a new task is added to `docs/backlog/` first.
+- `company_id` is the only canonical company/tenant boundary. Legacy tenant fields are compatibility inputs only and normalize before authorization, persistence or execution.
+- Canonical surfaces are `zero`, `go`, and `hub`; aliases normalize to them.
+- Consequential mutations route through governed execution / Command Bus and accepted mutations emit Signal.
+- AI, provider, model, device, surface or agent identity never grants authority.
+- Offline operation never elevates authority; consequential replay is revalidated.
+- Device-first and privacy-first behavior is preferred.
+- Cost Sovereignty order: on-device → local/customer-hosted → BYO key/provider → customer service → Titan-managed entitled → explicit metered add-on.
+- Free operation must not silently consume Titan-funded AI, telephony, SMS, storage, maps, search, vision or other metered services.
+- Reuse canonical workforce/capability definitions; do not duplicate workforce specification bodies into roadmap or surfaces.
+- Architecture defines the system; roadmap records remaining work and references. Do not embed full architecture specifications into roadmap files.
+- Titan Code is private development tooling only. It is never a Titan Zero production runtime dependency.
 
-## Decision Policy
+## Verification
 
-If multiple options exist, choose the one with:
+Run the narrowest relevant tests first, then applicable repository gates. Record exactly what ran and what did not.
 
-1. Lower operational complexity.
-2. Lower total maintenance burden.
-3. Better alignment with canonical product direction.
-4. Better compatibility with garonhome.local.
+Never claim typecheck, tests, build, integration, mobile/device, database or deployment verification unless it actually ran successfully in an environment capable of performing it.
 
-## Required Deliverable Format Per Task
+## Merge84 bootstrap note
 
-1. Objective
-2. Files changed
-3. Commands executed
-4. Gate results
-5. Risks and follow-up tasks
+The current Titan Zero integration baseline was imported from the extracted Merge84 source. It contains historical/donor Dovetails naming and documentation. Those files may be implementation evidence, but they do not override this Agent Mesh contract or the Titan Zero roadmap. Convergence/removal should happen through roadmap work rather than an uncontrolled bulk rewrite.
