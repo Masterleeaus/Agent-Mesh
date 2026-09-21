@@ -13,6 +13,19 @@ export function createInterfaceRuntimeEnvelope(input) {
   return Object.freeze({ ...envelope, runtime_id: RUNTIME_ID, runtime_kind: RUNTIME_KIND, authority_neutral: true, execution_authority: false, authority_conferred_by_activation: false });
 }
 
+
+export function createInterfaceReceipt(input: any = {}) {
+  const envelope = createInterfaceRuntimeEnvelope(input);
+  return Object.freeze({
+    ...envelope,
+    receipt_kind: "interface",
+    company_id: envelope.company_id ?? null,
+    authority_neutral: true,
+    execution_authority: false,
+    authority_conferred_by_activation: false,
+  });
+}
+
 export const runtimeDescriptor = Object.freeze({
   id: RUNTIME_ID, name: RUNTIME_NAME, kind: RUNTIME_KIND, purpose: RUNTIME_PURPOSE,
   authority_conferred_by_activation: AUTHORITY_CONFERRED_BY_ACTIVATION,
