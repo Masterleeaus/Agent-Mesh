@@ -134,9 +134,9 @@ export function buildQuoteLifecycleEvidence(input: Readonly<Record<string, any>>
     }),
     canonical_transition: Object.freeze({
       lifecycle_schema: REVENUE_QUOTE_LIFECYCLE_SCHEMA,
-      from_state: lifecycleEvent.transition.from_state,
-      to_state: lifecycleEvent.transition.to_state,
-      disposition: lifecycleEvent.transition.disposition,
+      from_state: String(lifecycleEvent.transition.from_state),
+      to_state: String(lifecycleEvent.transition.to_state),
+      disposition: String(lifecycleEvent.transition.disposition),
       canonical_reason: canonicalReason,
     }),
     source: Object.freeze({
