@@ -23,13 +23,26 @@ const CANCEL_TRIGGERS = new Set([
   "membership.cancelled",
 ]);
 
-export async function processWorkflowEvents(client: Client): Promise<number> {
+export interface WorkflowEventProcessOptions {
+  batchSize?: number;
+}
+
+function retryDelaySeconds(attempt: number): number {
+  return Math.min(3600, 5 * 2 ** Math.max(0, attempt - 1));
+}
+
+export const workflowEventOutboxInternals = { retryDelaySeconds };
+
+export async function processWorkflowEvents(client: Client, options: WorkflowEventProcessOptions = {}): Promise<number> {
+  const batchSize = Math.max(1, Math.min(100, options.batchSize ?? 100));
   const { rows } = await client.query<WorkflowEvent>(
     `SELECT id, account_id, event_type, entity_type, entity_id, payload
      FROM workflow_events
      WHERE processed = false
      ORDER BY created_at ASC
-     LIMIT 100`
+     LIMIT $1
+     FOR UPDATE SKIP LOCKED`,
+    [batchSize]
   );
 
   if (rows.length === 0) return 0;
@@ -55,7 +68,7 @@ export async function processWorkflowEvents(client: Client): Promise<number> {
       }
 
       await client.query(
-        `UPDATE workflow_events SET processed = true, processed_at = now() WHERE id = $1`,
+        `UPDATE workflow_events SET processed = true, processed_at = now(), status = 'completed' WHERE id = $1`,
         [event.id]
       );
       processed++;
