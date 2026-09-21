@@ -64,7 +64,7 @@ export default function PrivacyPage() {
               {[
                 { title: 'Waitlist Information', desc: 'When you join our waitlist, we collect your first name, last name, email address, trade type, and team size.' },
                 { title: 'Usage Data', desc: 'We may collect information about how you interact with our website, including pages visited, time spent, and browser type.' },
-                { title: 'Voice Data (App)', desc: 'When you use VoiceLog™ in the app, audio recordings are processed to generate structured job notes. Recordings are not stored longer than necessary for processing.' },
+                { title: 'Voice Data (App)', desc: 'When voice features are enabled, audio processing and retention depend on the configured deployment, selected providers, and applicable service agreement.' },
                 { title: 'Job & Business Data', desc: 'Information you provide through Titan Zero services.' },
               ].map(item => (
                 <li key={item.title} className="flex gap-3 rounded-2xl px-5 py-4" style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.05)' }}>

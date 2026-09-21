@@ -214,7 +214,7 @@ export default function Home() {
         {/* Contour map pattern */}
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: 'url(/patterns/fldwrk-contour-map-pattern.svg)',
+          backgroundImage: 'url(/patterns/titan-contour-map-pattern.svg)',
           backgroundSize: 'cover', opacity: 0.04,
         }} />
 
@@ -397,7 +397,7 @@ export default function Home() {
         {/* Grid nodes pattern */}
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: 'url(/patterns/fldwrk-grid-nodes-pattern.svg)',
+          backgroundImage: 'url(/patterns/titan-grid-nodes-pattern.svg)',
           backgroundRepeat: 'repeat', backgroundSize: '120px 120px',
           opacity: 0.03,
         }} />
