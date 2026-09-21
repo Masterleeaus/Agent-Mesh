@@ -40,6 +40,7 @@ jobs:
           python3 .github/scripts/validate-agent-claim.py --self-test
           python3 .github/scripts/claim-next-subgoal.py --self-test
           python3 .github/scripts/audit-agent-claims.py --self-test
+          python3 .github/scripts/release-safe-agent-claims.py --self-test
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
