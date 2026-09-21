@@ -1,8 +1,8 @@
 ---
-name: Dovetails FSM
-description: A sturdy, field-first operating system for a residential handyman business — Cedar & Clay (burnt-orange), matched to the Dovetails marketing site.
+name: Titan Zero
+description: Titan Zero's field-ready operating interface — dark/slate foundations, Command orange, clear status signals, and high-contrast execution surfaces.
 colors:
-  # Brand ramp is burnt-orange, matched to mydovetails-site (--brand: oklch(0.62 0.17 42)).
+  # Legacy token names remain for compatibility; live accent values are Titan Command orange.
   # Token names stay `forest-*` for consumer compatibility; values are burnt-orange.
   forest-800: "oklch(0.56 0.16 41)"  # accent
   forest-700: "oklch(0.49 0.15 40)"  # accent hover / ring
@@ -107,20 +107,20 @@ components:
     padding: "2px 8px"
 ---
 
-# Design System: Dovetails FSM
+# Design System: Titan Zero
 
 ## 1. Overview
 
 **Creative North Star: "The Well-Kept Toolbox"**
 
-Dovetails FSM looks and feels like a craftsman's well-kept toolbox: every control is solid, labeled, and in its place; nothing is decorative that doesn't carry weight. This is a *product* register — the design serves the work of running a residential handyman business, it does not perform. The interface recedes so the real subject (the client↔property service history, what's done, what's owed) stays in focus. The identity is **"Cedar & Clay"**: a burnt-orange accent used sparingly, set on warm stone neutrals — a trade brand, not a generic SaaS. Token names stay `forest-*` for compatibility; the live values are burnt-orange.
+Titan Zero is an operational Advanced Intelligence system: calm, high-contrast, information-dense, and built for real work. The owner-facing identity is Command; field and customer experiences are Go and Hub. Dark black/slate establishes the system identity, Command orange is the primary accent, and blue/green/red/orange are reserved for meaningful operational signals. Existing `forest-*` token names remain temporarily for compatibility while their values converge on the Titan palette.
 
 Density is deliberate. The base text size is 15px (smaller than the typical 16px) because owners and office staff scan a lot of structured information — clients, estimates, line items, invoices, schedules — and the layout favors getting more honest data on screen over airy marketing whitespace. At the same time, the dominant real-world context is a **technician on a phone, outdoors, one-handed**, so anything they touch in the field must be high-contrast and large-target. The system holds both: dense and desk-efficient where coordination happens, bold and one-tap where the field happens.
 
-What it explicitly rejects: the SaaS dashboard suite (walls of KPI cards, gradient hero-metrics, a "command center" of widgets), AI-first estimator framing, membership/subscription scaffolding, the abstract multi-company "platform" feel, and consumer-app gloss. Sturdy over slick, always.
+What it explicitly rejects: decorative SaaS dashboard clutter, AI theatre, unnecessary admin surfaces, and visual choices that hide operational truth. Chat, voice, camera and generated UI should reduce navigation rather than create another dashboard to manage.
 
 **Key Characteristics:**
-- Burnt-orange accent on warm stone neutrals; orange earns its place, it doesn't flood the screen.
+- Dark black/slate foundations with Command orange used sparingly; operational status colors retain specific meanings.
 - Dense, legible, information-first layout — desk-efficient, never cramped in the field.
 - Status is everywhere (pills for estimates, invoices, visits) and never color-only.
 - Calm chrome, flat-by-default surfaces; depth appears only on interaction.
@@ -128,7 +128,7 @@ What it explicitly rejects: the SaaS dashboard suite (walls of KPI cards, gradie
 
 ## 2. Colors
 
-A restrained palette: one burnt-orange accent carries identity at ≤10% of any screen, set on a warm-stone neutral ramp, with four reserved status hues that never get used as decoration. CSS token names stay `forest-*`; values match the Cedar & Clay YAML frontmatter.
+A restrained Titan palette: black/slate establishes the product identity, Command orange carries primary emphasis, and blue/green/red/orange status hues communicate operational meaning. Legacy `forest-*` token names remain compatibility aliases until consumers are migrated.
 
 ### Primary
 - **Forest 800** (`oklch(0.56 0.16 41)`): The brand accent. Primary buttons, active nav, focus rings, key links. Deliberately *rare* — it marks the one important action or the live state, not every surface.
