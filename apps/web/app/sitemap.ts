@@ -1,0 +1,1 @@
+import type { MetadataRoute } from "next"; export default function sitemap():MetadataRoute.Sitemap{const base=process.env.NEXT_PUBLIC_SITE_URL||"https://titanzero.io";return ["","/workforce","/assessment"].map((p)=>({url:`${base}${p}`,lastModified:new Date(),changeFrequency:p?"monthly":"weekly",priority:p?0.8:1}))}
