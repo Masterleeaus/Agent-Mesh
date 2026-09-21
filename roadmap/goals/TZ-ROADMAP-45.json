@@ -388,7 +388,7 @@
     {
       "subgoal": 3,
       "subgoal_order": 3,
-      "title": "Absorb Titan Code Chrome capabilities into Studio, Developer and System Development modes without retaining a separate Titan Code product runtime or duplicate source tree",
+      "title": "Keep Titan Code private and separate; extract only proven reusable browser capabilities into a hardened Titan Zero production browser surface",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -402,7 +402,7 @@
       "priority": "P0",
       "mvp_required": true,
       "reuse_first": true,
-      "reuse_instruction": "Deep-scan the canonical Titan Zero source, Reference Library, registries and relevant donor workspaces first. Converge verified behavior into the shared platform; do not create parallel business logic or independent surface forks.",
+      "reuse_instruction": "Titan Code is private development/management tooling and MUST remain separate from Titan Zero production runtime and source authority. Deep-scan it only as a donor. Extract/adapt only proven reusable subsystems into a separately hardened customer-facing Titan Zero browser surface (working name Titan Browser Node) using canonical production contracts, Capability Registry, Command Bus and node protocol. Never make Titan Zero customers depend on Titan Code, Agent Mesh, Plan Runner, repository/coding intelligence, builder workspaces or developer diagnostics.",
       "library_reuse_refs": [
         "Titan Zero",
         "Titan Code",
@@ -465,7 +465,7 @@
       },
       "code_discovery": {
         "lane": "P0",
-        "status": "DEEP_SCANNED_REUSE_READY_TITAN_CODE_MODE_ABSORPTION_REQUIRED",
+        "status": "DEEP_SCANNED_REUSE_READY_PRIVATE_DONOR_EXTRACTION_REQUIRED",
         "last_scanned_at_utc": "2026-09-19T06:32:30Z",
         "relevant_source_refs": [
           {
@@ -531,7 +531,7 @@
             ]
           }
         ],
-        "scan_notes": "Titan Code already exposes explicit development/developer/core profile modules. Absorb these capabilities into Titan Zero Studio/Developer/System Development mode projections while retaining one Chrome identity/source tree; do not preserve Titan Code as a separate product runtime.",
+        "scan_notes": "Titan Code remains a private development/management product and separate source/runtime. It is donor evidence only. Proven reusable browser/local-edge subsystems may be extracted and hardened into a distinct Titan Zero production browser surface (working name Titan Browser Node) connected through canonical production contracts, Capability Registry, Command Bus and node protocol. Development-only Titan Code capabilities remain private and are never a Titan Zero runtime dependency.",
         "exhaustion_evidence": null
       },
       "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
