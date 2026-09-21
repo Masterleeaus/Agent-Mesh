@@ -68,47 +68,41 @@ If multiple options exist, choose the one with:
 
 ## Mandatory GitHub Issue Claim Protocol
 
-All agents MUST claim an issue before doing implementation work. This is a hard execution gate, not an optional coordination convention.
+All agents MUST claim an issue before implementation. The **GitHub branch ref is the canonical claim lock**.
+
+### Canonical claim authority
+
+- Claim branch: `agent/<subgoal-id>`
+- Resolve the current required `main` SHA immediately before claiming.
+- Atomically create `refs/heads/agent/<subgoal-id>` from that SHA.
+- Successful branch creation establishes the claim.
+- If GitHub reports that the ref already exists, the issue is already claimed. Do not create a suffixed, worker-named, timestamped, or alternate-prefix branch; select another eligible issue.
+- `work/claims.json`, browser state, Manager ledgers, issue comments, assignees, AI output, and local state are **projections/evidence only** and MUST NOT act as a competing claim mutex.
 
 ### Before starting any issue
 
-1. Fetch the issue and its latest comments immediately before claiming it.
-2. Look for an active claim marker in the issue comments using this exact machine-readable form:
-   `<!-- TITAN_AGENT_CLAIM agent="<agent-id>" issue="<number>" status="active" -->`
-3. If another agent has an active claim, STOP. Do not inspect/modify implementation files for that issue. Select another eligible unclaimed issue.
-4. If no active claim exists, post a claim comment containing:
-   - the exact marker above,
-   - agent/workspace identifier,
-   - intended scope,
-   - `CLAIMED` in visible text.
-5. Immediately re-fetch the issue comments after posting the claim.
-6. The earliest still-active claim wins. If another active claim was posted before yours, post a release marker for your claim and select another issue.
-7. Only after the post-claim re-check confirms ownership may implementation begin.
+1. Resolve the open GitHub issue and its subgoal identity.
+2. Re-read current `main`, existing `agent/*` refs, and open PRs.
+3. Confirm the issue is eligible and has no canonical claim branch/open canonical PR.
+4. Atomically create `agent/<subgoal-id>` from the required current base SHA.
+5. After successful creation, record an issue comment containing agent/workspace identity, claim branch, and base SHA for human-visible audit evidence.
+6. Only then begin implementation.
 
 ### While working
 
-- One agent may hold only one implementation issue claim at a time unless an explicit manager issue says otherwise.
-- Never work an issue merely because it is unassigned. GitHub assignees are supplemental; the claim marker is the Agent Mesh lock because multiple agents can share one GitHub identity.
-- Agents must not edit, replace, or delete another agent's active claim.
-- If work is intentionally handed off, the current claimant releases it before the next agent claims it.
-- Parent/meta issues must not be claimed when claimable child implementation issues exist.
+- One agent should hold one implementation claim at a time unless an explicit Manager task requires otherwise.
+- The canonical claim branch must remain `agent/<subgoal-id>`.
+- Issue comments and GitHub assignees are supplemental audit/coordination evidence, not the lock.
+- Parent/meta issues must not be claimed while claimable child implementation issues exist.
+- GitHub remains durable development truth: issue → claim branch → commits/checks → pull request → review → merge → issue closure.
 
-### Release / completion
+### Completion and release
 
-Before moving to another issue, post one of:
-
-`<!-- TITAN_AGENT_CLAIM agent="<agent-id>" issue="<number>" status="completed" -->`
-
-or
-
-`<!-- TITAN_AGENT_CLAIM agent="<agent-id>" issue="<number>" status="released" -->`
-
-Include the PR/commit/evidence when completed. A completed or released marker by the same claimant ends that claimant's active lock.
-
-### Stale claims
-
-Do not silently steal a claim. If a claim appears abandoned, an agent must record why it is considered stale and explicitly release/take over the claim in the issue before changing implementation. Prefer manager/supervisor resolution when available.
+- Normal completion occurs through the canonical PR linked with `Closes #<issue-number>`, followed by verified merge.
+- Claim branches are released/deleted only when the repository's safe-claim-release logic proves deletion is safe.
+- A comment saying work is completed/released does not by itself release the GitHub claim.
+- Never silently steal, overwrite, or bypass an existing canonical claim branch.
 
 ### Archive donor issues
 
-Archive donor work must use the dedicated donor issues (for example #720-#724) rather than claiming parent #66. Each donor issue is independently claimable.
+Archive donor work must use its dedicated donor issues (for example #720-#724) rather than parent #66. Each donor issue is independently claimable through its own canonical `agent/<subgoal-id>` branch.
