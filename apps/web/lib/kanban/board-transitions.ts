@@ -8,7 +8,7 @@ import {
   jobTransitions,
   type EstimateStatus,
   type JobStatus,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export function canJobBoardDrop(from: string, to: string): boolean {
   const allowed = jobTransitions[from as JobStatus];
