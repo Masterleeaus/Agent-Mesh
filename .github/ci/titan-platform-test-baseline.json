@@ -102,5 +102,12 @@
     "tests/workforce-native-workflow.test.mjs": 1,
     "tests/workforce-roadmap-impact.test.mjs": 1,
     "workforce-native and workforce-delegation public exports coexist": 1
+  },
+  "roadmap_owner": {
+    "subgoal_id": "TZ-ROADMAP-52-SG-14",
+    "issue_number": 64,
+    "issue_url": "https://github.com/Masterleeaus/Agent-Mesh/issues/64",
+    "debt": "Titan Platform test-harness baseline repair",
+    "exit_rule": "Reduce or delete this baseline only when current CI evidence proves the corresponding errors/failures are fixed. New/increased failures remain forbidden."
   }
 }
