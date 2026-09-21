@@ -269,7 +269,7 @@ let titanAnalysisMutationQueue = Promise.resolve();
 let repositoryAnalysisMutationQueue = Promise.resolve();
 let preferencesMutationQueue = Promise.resolve();
 
-const CURRENT_NAVIGATION_VIEWS = Object.freeze(['dashboard','runner','plans','browser','connections','mcp','repository-host','prompts','skills','settings','diagnostics','about']);
+const CURRENT_NAVIGATION_VIEWS = Object.freeze(['dashboard','runner','plans','history','artifacts','intelligence','workforce','repository','titan-zero','browser','connections','mcp','repository-host','prompts','skills','knowledge','settings','diagnostics','about']);
 
 function initializeNavigationRegistry() {
     if (!globalThis.CodeeNavigationRegistry || !globalThis.CodeeNavigationReadiness) {
