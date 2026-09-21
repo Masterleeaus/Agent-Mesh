@@ -1,5 +1,99 @@
 {
-  "schema": "titan-agent-mesh-agents/v3",
+  "schema": "titan-agent-mesh-agents/v4",
+  "authority": "coordination-registry",
+  "note": "Workers are disposable; durable code/work state lives in GitHub. Five builder slots may claim roadmap work concurrently through atomic branch refs.",
+  "default_claim_command": "AGENT_MESH_ACTOR=<worker-id> python3 .github/scripts/claim-next-subgoal.py --order <order>",
+  "workers": [
+    {
+      "id": "manager-1",
+      "role": "MANAGER",
+      "claim_mode": "none",
+      "responsibilities": [
+        "review",
+        "merge",
+        "roadmap compaction",
+        "claim release",
+        "canonical convergence"
+      ]
+    },
+    {
+      "id": "scanner-1",
+      "role": "SCANNER",
+      "claim_mode": "none",
+      "responsibilities": [
+        "evidence scan",
+        "duplicate detection",
+        "claim audit",
+        "roadmap/code reconciliation"
+      ]
+    },
+    {
+      "id": "librarian-1",
+      "role": "LIBRARIAN",
+      "claim_mode": "none",
+      "responsibilities": [
+        "roadmap/source-of-truth hygiene",
+        "documentation",
+        "provenance",
+        "archive separation"
+      ]
+    },
+    {
+      "id": "builder-1",
+      "role": "BUILDER",
+      "claim_mode": "auto",
+      "order": "asc",
+      "responsibilities": [
+        "smallest-goal-first implementation",
+        "verification",
+        "PR evidence"
+      ]
+    },
+    {
+      "id": "builder-2",
+      "role": "BUILDER",
+      "claim_mode": "auto",
+      "order": "asc",
+      "responsibilities": [
+        "smallest-goal-first implementation",
+        "verification",
+        "PR evidence"
+      ]
+    },
+    {
+      "id": "builder-3",
+      "role": "BUILDER",
+      "claim_mode": "auto",
+      "order": "asc",
+      "responsibilities": [
+        "smallest-goal-first implementation",
+        "verification",
+        "PR evidence"
+      ]
+    },
+    {
+      "id": "builder-4",
+      "role": "BUILDER",
+      "claim_mode": "auto",
+      "order": "desc",
+      "responsibilities": [
+        "largest-goal-first implementation",
+        "verification",
+        "PR evidence"
+      ]
+    },
+    {
+      "id": "builder-5",
+      "role": "BUILDER",
+      "claim_mode": "auto",
+      "order": "desc",
+      "responsibilities": [
+        "largest-goal-first implementation",
+        "verification",
+        "PR evidence"
+      ]
+    }
+  ],
   "execution_modes": [
     "CHATGPT_SUBSCRIPTION",
     "LOCAL_MODEL",
@@ -7,5 +101,11 @@
     "TITAN_MANAGED",
     "HUMAN"
   ],
-  "note": "Agents are disposable workers. Durable code state lives in GitHub."
+  "invariants": [
+    "one subgoal id equals one canonical agent/<subgoal-id> claim branch",
+    "builders never bypass an existing claim by changing the branch name",
+    "manager integration does not require builders to remain idle",
+    "blocked builders document the blocker and claim another eligible issue",
+    "Titan Code remains outside Titan Zero production runtime"
+  ]
 }
