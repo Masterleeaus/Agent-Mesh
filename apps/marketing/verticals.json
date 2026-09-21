@@ -1,0 +1,35 @@
+{
+  "brand": "Titan Zero",
+  "destination": "https://titanzero.io",
+  "sites": [
+    {
+      "id": "cleaning",
+      "name": "Titan Zero Cleaning",
+      "source": "fieldcrew-marketing",
+      "appPath": "/app",
+      "assessmentPath": "/assessment",
+      "positioning": "Managed Advanced Intelligence workforce for cleaning businesses."
+    },
+    {
+      "id": "automotive-service",
+      "name": "Titan Zero Automotive Service",
+      "source": "fieldops-marketing",
+      "appPath": "/app",
+      "positioning": "Service-operations intelligence for automotive service departments and dealerships."
+    },
+    {
+      "id": "trades",
+      "name": "Titan Zero Trades",
+      "source": "tradepilot-marketing",
+      "appPath": "/app",
+      "positioning": "Managed Advanced Intelligence workforce for plumbing, HVAC, electrical and related trade businesses."
+    }
+  ],
+  "rules": [
+    "Keep each donor site's visual structure and functional interactions intact.",
+    "Remove donor branding and route consequential product actions to the canonical Titan Zero application.",
+    "Use company_id as the canonical tenant boundary.",
+    "Marketing sites never become a runtime dependency of Titan Zero Base App.",
+    "Standalone marketing apps remain separate surfaces but share Titan Zero destination contracts."
+  ]
+}
