@@ -39,5 +39,6 @@ export function createInteractionPresentationIntent(input) {
     actions,
     render_hints: Object.freeze({ ...(input.render_hints ?? {}) }),
     authority_neutral: true,
+    execution_authority: false,
   });
 }
