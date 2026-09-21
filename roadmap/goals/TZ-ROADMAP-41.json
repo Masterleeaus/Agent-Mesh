@@ -3,7 +3,7 @@
   "priority": "P0",
   "title": "Embedded Workforce Architecture, Identity & Coverage Closure",
   "objective": "Make the Titan Zero workforce a first-class part of the system architecture rather than a layer added after features are built. Every roadmap goal/sub-goal that addresses a business, customer, workforce, operational, financial, growth, compliance, communication, decision or exception pain must explicitly identify the canonical agent(s) that own the outcome, reuse/extend an existing agent or create and register a new named agent as part of that same implementation. Goal 41 owns the workforce identity schema, hierarchy/delegation rules, pain/outcome design standard, cross-roadmap registration and anti-duplication controls, then performs an end-of-roadmap coverage scan to discover missing pain points and add new roadmap work until material pain/outcome gaps are closed. The 16 mandatory innovative pain-point capabilities are exemplars of the required design quality, not a separate innovation layer.",
-  "status": "PLANNED",
+  "status": "IN_PROGRESS",
   "subgoals": [
     {
       "subgoal": 1,
@@ -1575,7 +1575,7 @@
   "agent_tier_contract_required": true,
   "unified_architecture_contract_required": true,
   "last_canonical_revalidation": null,
-  "progress_percent": 0,
+  "progress_percent": 10,
   "goal_is_planning_container": true,
   "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
   "claimable": false,
