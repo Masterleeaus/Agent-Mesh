@@ -1,0 +1,31 @@
+name: Retire Superseded Titan Quick Book
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-titan-quick-book.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Keep richer Dovetails QuickBook and retire archived Titan copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Root QuickBook is a strict functional evolution: it retains booking,
+          # assignment and client creation while adding required property/house
+          # linkage and canonical business-timezone conversion/formatting.
+          git rm -f titan/apps/web/components/jobs/QuickBookModal.tsx
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Retire superseded Titan QuickBook component"
+          git push
