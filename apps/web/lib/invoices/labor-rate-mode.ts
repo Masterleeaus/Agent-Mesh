@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import { roundedQuarterHoursFromMinutes } from "./tracked-labor";
 import {
   createInvoiceLineItem,
@@ -68,7 +68,7 @@ export function laborLineInputForMode(args: {
 }
 
 async function upsertLaborLine(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   input: LaborLineInput,
 ): Promise<InvoiceLineItemRow> {
@@ -86,7 +86,7 @@ async function upsertLaborLine(
 }
 
 export async function applyLaborRateMode(
-  client: PoolClient,
+  client: DbClient,
   args: {
     invoiceId: string;
     accountId: string;
