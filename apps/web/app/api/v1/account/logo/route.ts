@@ -5,7 +5,7 @@ import { randomUUID } from "crypto";
 import { withRole } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
 import { getPool } from "@/lib/db";
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
 import { accountLogoDir, type CompanyProfileSettings } from "@/lib/company/branding";
@@ -19,7 +19,7 @@ function extForMime(mime: string): string {
   return mime === "image/png" ? "png" : "jpg";
 }
 
-async function loadSettings(client: PoolClient, accountId: string): Promise<CompanyProfileSettings> {
+async function loadSettings(client: DbClient, accountId: string): Promise<CompanyProfileSettings> {
   const { rows } = await client.query<{ settings: CompanyProfileSettings }>(
     `SELECT settings FROM accounts WHERE id = $1`,
     [accountId],
