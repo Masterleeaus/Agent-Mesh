@@ -1,0 +1,20 @@
+{
+  "schema": "titan-extension-lifecycle-v1",
+  "extension": "titan-apps-zero",
+  "install": {
+    "migrations": false,
+    "publishes": [
+      "titan-apps-zero"
+    ],
+    "health_gate": "TitanZeroInstallReadiness"
+  },
+  "disable": {
+    "workspace_data_retained": true
+  },
+  "uninstall": {
+    "destructive": false,
+    "retained_legacy_storage": [
+      "ext_chatbot_zero_workspace_contexts"
+    ]
+  }
+}
