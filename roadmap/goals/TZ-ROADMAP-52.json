@@ -34,8 +34,8 @@
       "PREPASS: resolve Manager role, latest canonical, BASELINE, ROUND-CONTROL, sync state, active claims, merge queue and conflicts",
       "EVERY_PASS: deep-scan relevant Agent Mesh state, revalidate the current canonical/base, inspect active Builder work and detect collisions, stale references, misplaced deltas and incomplete handoffs",
       "EVERY_PASS: reconcile eligible evidence against Goal 52 and update only the authoritative roadmap/control-plane records using version-bound CAS/rebase",
-      "EVERY_5TH_PASS: perform a formal DELTA_QUEUE_CONVERGENCE checkpoint \u2014 deep-scan the authoritative Manager delta queue plus legacy/misplaced delta locations, validate receipts/lineage/base compatibility, merge all eligible final cumulative deltas, resolve conflicts, run reconstruction/verification, update merge receipts and canonical promotion state as appropriate, and clear only consumed/validated queue entries",
-      "EVERY_6TH_PASS: perform a Manager corrective/maintenance pass \u2014 address any control-plane defect, roadmap inconsistency, stale canonical pointer, misplaced artifact, failed verification, unresolved collision, missing traceability, security/privacy issue, regression or other Manager-owned task discovered during the preceding five-pass cycle",
+      "EVERY_5TH_PASS: perform a formal DELTA_QUEUE_CONVERGENCE checkpoint — deep-scan the authoritative Manager delta queue plus legacy/misplaced delta locations, validate receipts/lineage/base compatibility, merge all eligible final cumulative deltas, resolve conflicts, run reconstruction/verification, update merge receipts and canonical promotion state as appropriate, and clear only consumed/validated queue entries",
+      "EVERY_6TH_PASS: perform a Manager corrective/maintenance pass — address any control-plane defect, roadmap inconsistency, stale canonical pointer, misplaced artifact, failed verification, unresolved collision, missing traceability, security/privacy issue, regression or other Manager-owned task discovered during the preceding five-pass cycle",
       "ON_CANONICAL_CHANGE: refresh Manager BASELINE, canonical pointers, integrity/hash evidence, dependency/feature traceability and affected Builder guidance before allowing subsequent convergence",
       "ON_SUBGOAL_COMPLETION: verify acceptance evidence, confirm no missing feature/function remains unexplained, reconcile final delta, update roadmap state, and only then mark the subgoal COMPLETE",
       "ON_NO_QUEUE_WORK: do not manufacture merges; use the pass for deep audit, repair, verification, roadmap hygiene, reference-library reconciliation or another concrete Manager-owned task",
@@ -78,7 +78,7 @@
   "mvp_p0_subgoal_count": 28,
   "library_reuse_refs": [
     "CURRENT canonical",
-    "Merge83 recovered staging donor",
+    "Merge83 recovered staging donor (historical provenance only; GitHub main is canonical)",
     "Interaction Engine",
     "Interface Runtime",
     "Visual Runtime",
@@ -98,7 +98,7 @@
     {
       "subgoal": "TZ-ROADMAP-52-SG-01",
       "subgoal_id": "TZ-ROADMAP-52-SG-01",
-      "title": "Merge83 base-app inventory, dead/duplicate/legacy tree cleanup and canonical package-boundary audit",
+      "title": "GitHub main base-app inventory, dead/duplicate/legacy tree cleanup and canonical package-boundary audit",
       "status": "TODO",
       "subgoal_order": 1,
       "priority": "P0",
