@@ -1596,7 +1596,12 @@
         "titan-zero-chat-content.compat.js",
         "side-panel/assets/index-C8c-GDqp.js"
       ],
-      "current_source_verification": "required"
+      "current_source_verification": "verified-current",
+      "current_sources": [
+        "apps/browser/src/ai/model-registry.js",
+        "apps/browser/src/ai/ai-provider-registry.js",
+        "apps/browser/src/ai/ai-router.js"
+      ]
     },
     {
       "tool_id": "prompts_skills",
@@ -1649,7 +1654,11 @@
         "side-panel/assets/skillStorageService-LGvOYmp_.js",
         "retriever-capability-catalog.json"
       ],
-      "current_source_verification": "required"
+      "current_source_verification": "verified-current",
+      "current_sources": [
+        "apps/browser/src/catalog/repository-prompts.js",
+        "apps/browser/src/catalog/repository-skills.js"
+      ]
     },
     {
       "tool_id": "browser_actions",
@@ -1701,7 +1710,12 @@
       "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "current_source_verification": "required"
+      "current_source_verification": "verified-current",
+      "current_sources": [
+        "apps/browser/src/browser/browser-interaction.js",
+        "apps/browser/src/browser/browser-navigation.js",
+        "apps/browser/src/integration/host-capabilities.js"
+      ]
     },
     {
       "tool_id": "crawl_extract",
@@ -2139,6 +2153,7 @@
     "historical_cleaning_programme_metadata_removed": true,
     "historical_evidence_is_runtime_dependency": false,
     "active_dependency_paths_verified_against_repository": true,
-    "unresolved_active_dependency_paths": 0
+    "unresolved_active_dependency_paths": 0,
+    "current_source_verification_method": "repository-tree plus explicit capability mapping"
   }
 }
