@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/rebase-dovetails.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -23,12 +24,18 @@ jobs:
           set -euo pipefail
           shopt -s dotglob nullglob
           mkdir -p titan
-          for item in *; do
-            case "$item" in
+
+          # Move all tracked root entries except GitHub control files,
+          # the archive itself, and the destination folder.
+          while IFS= read -r -d '' item; do
+            base="${item#./}"
+            case "$base" in
               .git|.github|titan|AI-FSM-Dovetails.zip) continue ;;
             esac
-            git mv "$item" titan/
-          done
+            if git ls-files --error-unmatch -- "$base" >/dev/null 2>&1 || git ls-files -- "$base/" | grep -q .; then
+              git mv "$base" titan/
+            fi
+          done < <(find . -mindepth 1 -maxdepth 1 -print0)
 
           tmp="$(mktemp -d)"
           unzip -q AI-FSM-Dovetails.zip -d "$tmp"
@@ -40,6 +47,8 @@ jobs:
             src="$tmp"
           fi
 
+          # Keep repo automation under .github; Dovetails becomes the application root.
+          rm -rf "$src/.github"
           cp -a "$src"/. ./
           rm -rf "$tmp"
 
