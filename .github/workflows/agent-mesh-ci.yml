@@ -38,6 +38,7 @@ jobs:
             exit 1
           fi
           python3 .github/scripts/validate-agent-claim.py --self-test
+          python3 .github/scripts/claim-next-subgoal.py --self-test
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
