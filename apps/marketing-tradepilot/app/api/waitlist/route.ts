@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     // Notify Adeel
     await resend.emails.send({
-      from: 'Titan Zero Waitlist <waitlist@fldwrk.ai>',
+      from: 'Titan Zero Waitlist <waitlist@titanzero.io>',
       to: 'info@gatedenterprise.com',
       subject: `🔧 New Titan Zero Waitlist Signup — ${fullName} (${trade})`,
       html: `
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
             <div style="background: #E8352A; width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center;">
               <span style="font-weight: 900; font-size: 16px; color: #fff;">F</span>
             </div>
-            <span style="font-weight: 900; font-size: 18px; color: #0A0A0A; letter-spacing: -0.5px;">FLDWRK</span>
+            <span style="font-weight: 900; font-size: 18px; color: #0A0A0A; letter-spacing: -0.5px;">TITAN ZERO</span>
           </div>
           <h2 style="color: #1A1A1A; margin: 0 0 8px; font-size: 22px; font-weight: 900;">New Founding Member 🎉</h2>
           <p style="color: #6B7280; font-size: 14px; margin: 0 0 24px;">Someone just joined the waitlist.</p>
@@ -35,14 +35,14 @@ export async function POST(req: NextRequest) {
               <tr><td style="padding: 8px 0; color: #9CA3AF; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Team Size</td><td style="padding: 8px 0; color: #1A1A1A; font-weight: 700; font-size: 15px;">${teamSize}</td></tr>
             </table>
           </div>
-          <p style="color: #9CA3AF; font-size: 12px; margin: 0;">fldwrk.ai waitlist</p>
+          <p style="color: #9CA3AF; font-size: 12px; margin: 0;">titanzero.io waitlist</p>
         </div>
       `,
     })
 
     // Confirm to lead
     await resend.emails.send({
-      from: 'FLDWRK <waitlist@fldwrk.ai>',
+      from: 'Titan Zero <waitlist@titanzero.io>',
       to: email,
       subject: `You're on the Titan Zero founding list 🔧`,
       html: `
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
             <div style="background: #E8352A; width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center;">
               <span style="font-weight: 900; font-size: 16px; color: #fff;">F</span>
             </div>
-            <span style="font-weight: 900; font-size: 18px; color: #0A0A0A; letter-spacing: -0.5px;">FLDWRK</span>
+            <span style="font-weight: 900; font-size: 18px; color: #0A0A0A; letter-spacing: -0.5px;">TITAN ZERO</span>
           </div>
 
           <h1 style="font-size: 32px; font-weight: 900; margin: 0 0 12px; color: #1A1A1A;">You're in, ${firstName}. 🎉</h1>
@@ -65,22 +65,22 @@ export async function POST(req: NextRequest) {
             <p style="margin: 0; color: #991B1B; font-size: 14px; font-weight: 600;">🔗 Your founding member perks</p>
             <ul style="margin: 12px 0 0; padding-left: 20px; color: #7F1D1D; font-size: 14px; line-height: 1.8;">
               <li>40% off your plan — locked in forever</li>
-              <li>Access before public launch in June 2026</li>
+              <li>Early access to Titan Zero</li>
               <li>Direct line to the founders</li>
               <li>Help shape what we build next</li>
             </ul>
           </div>
 
           <p style="color: #6B7280; line-height: 1.7; margin: 0 0 32px; font-size: 15px;">
-            We're building FLDWRK for the plumber in a truck at 7am — not the office manager behind a desk.
+            We're building Titan Zero to put an Advanced Intelligence workforce behind service businesses without forcing owners to become AI experts.
             Voice-first. No laptop. No paperwork. Just your phone and your skills.
           </p>
 
-          <a href="https://fldwrk.ai" style="display: inline-block; background: #E8352A; color: #fff; font-weight: 900; font-size: 15px; padding: 14px 28px; border-radius: 12px; text-decoration: none;">See the App Preview →</a>
+          <a href="https://titanzero.io" style="display: inline-block; background: #E8352A; color: #fff; font-weight: 900; font-size: 15px; padding: 14px 28px; border-radius: 12px; text-decoration: none;">See the App Preview →</a>
 
           <p style="margin-top: 40px; color: #9CA3AF; font-size: 13px; border-top: 1px solid #E8E5E0; padding-top: 20px;">
             — The Titan Zero team<br />
-            <a href="https://fldwrk.ai" style="color: #E8352A;">fldwrk.ai</a> &nbsp;·&nbsp; Launching June 2026
+            <a href="https://titanzero.io" style="color: #E8352A;">titanzero.io</a> 
           </p>
         </div>
       `,
