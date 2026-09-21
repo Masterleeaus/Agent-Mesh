@@ -1,0 +1,19 @@
+{
+  "schema": "titan-zero-roadmap-goal/v3",
+  "goal_id": "TZ-ROADMAP-07",
+  "title": "Workforce Agent Suite",
+  "status": "SUPERSEDED",
+  "migration": {
+    "restored_to_github_v3": true,
+    "restored_at": "2026-09-21",
+    "historical_only": true
+  },
+  "supersession": {
+    "reason": "Superseded by the canonical embedded Workforce Architecture and registry-driven workforce model.",
+    "execution_rule": "Do not create claimable implementation Issues from this goal. Preserve it only for lineage. Active remaining work belongs in current canonical workforce/autonomy/capability roadmap goals and GitHub Issues.",
+    "workforce_architecture_ref": "canonical workforce architecture / registry",
+    "duplicate_specification_forbidden": true
+  },
+  "subgoals": [],
+  "historical_subgoal_count": 10
+}
