@@ -10,6 +10,6 @@
     "./promise-capture": "./src/promise-capture.ts"
   },
   "dependencies": {
-    "@ai-fsm/domain": "workspace:*"
+    "@titan-zero/domain": "workspace:*"
   }
 }
