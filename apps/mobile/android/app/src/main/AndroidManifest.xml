@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.home_hub">
+    package="io.titanzero.mobile">
    <application
-        android:label="Home Service"
+        android:label="Titan Zero"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

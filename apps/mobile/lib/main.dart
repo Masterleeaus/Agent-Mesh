@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:titan_mobile_mvp/components/my_scroll_behaviour.dart';
-import 'package:titan_mobile_mvp/screens/splash_screen.dart';
-import 'package:titan_mobile_mvp/utils/colors.dart';
-import 'package:titan_mobile_mvp/utils/constant.dart';
+import 'package:titan_zero_mobile/components/my_scroll_behaviour.dart';
+import 'package:titan_zero_mobile/screens/splash_screen.dart';
+import 'package:titan_zero_mobile/utils/colors.dart';
+import 'package:titan_zero_mobile/utils/constant.dart';
 
 import 'store/appData.dart';
 
