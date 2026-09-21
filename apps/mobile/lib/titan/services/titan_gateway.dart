@@ -61,6 +61,30 @@ class SurfaceSdkTitanGateway implements TitanGateway {
         projection['cached_state_grants_authority'] != false) {
       throw StateError('surface-projection-authority-invalid');
     }
+    final rawCapabilities = projection['capabilities'];
+    if (rawCapabilities is! List) {
+      throw StateError('surface-projection-capabilities-invalid');
+    }
+    final capabilityIds = <String>{};
+    for (final rawCapability in rawCapabilities) {
+      if (rawCapability is! Map) {
+        throw StateError('surface-projection-capabilities-invalid');
+      }
+      final entry = Map<String, dynamic>.from(rawCapability);
+      final capabilityId = entry['capability_id']?.toString().trim() ?? '';
+      final operations = entry['operations'];
+      if (capabilityId.isEmpty || operations is! List || operations.isEmpty) {
+        throw StateError('surface-projection-capabilities-invalid');
+      }
+      if (!capabilityIds.add(capabilityId)) {
+        throw StateError('surface-capability-id-duplicate');
+      }
+      for (final operation in operations) {
+        if (operation is! String || operation.trim().isEmpty) {
+          throw StateError('surface-projection-capabilities-invalid');
+        }
+      }
+    }
     _projection = Map<String, dynamic>.unmodifiable(projection);
     return _projection!;
   }
