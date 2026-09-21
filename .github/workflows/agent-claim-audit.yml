@@ -1,0 +1,29 @@
+name: Agent Claim Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "work/agents.json"
+      - ".github/scripts/audit-agent-claims.py"
+      - ".github/workflows/agent-claim-audit.yml"
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v4
+
+      - name: Audit live claim branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/audit-agent-claims.py --stale-hours 24 --strict
