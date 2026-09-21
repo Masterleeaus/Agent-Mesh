@@ -17,11 +17,10 @@ Do not determine current state from chat memory, ZIP filenames, timestamps, old 
 ## Current roadmap migration state
 
 - The current roadmap index contains **55 goals**.
-- Canonical goal JSON files are present for `TZ-G00` and `TZ-ROADMAP-01` through `TZ-ROADMAP-52`.
-- Goals `TZ-ROADMAP-53` and `TZ-ROADMAP-54` already have their 20 GitHub subgoal issues, but their standalone goal JSON files still require restoration from authoritative source material.
+- Canonical goal JSON files are present for **all 55 goals**: `TZ-G00` and `TZ-ROADMAP-01` through `TZ-ROADMAP-54`.
 - `roadmap/SUBGOAL-ISSUE-MANIFEST.json` is the issue-sync manifest and currently covers **568 subgoals**.
 
-If a goal JSON is missing, treat that as a migration gap. Do not invent the missing goal body from an issue title.
+If a future goal is referenced without a matching goal JSON, treat that as a migration gap. Do not invent missing goal bodies from issue titles.
 
 ## Builder loop
 
