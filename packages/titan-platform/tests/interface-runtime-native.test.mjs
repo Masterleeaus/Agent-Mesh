@@ -19,3 +19,13 @@ test('runtime registry rejects duplicate contribution keys',()=>{
  const runtime=createTitanInterfaceRuntime(); runtime.contributions.register({key:'jobs.card',kind:'component'});
  assert.throws(()=>runtime.contributions.register({key:'jobs.card',kind:'component'}),/duplicate-interface-contribution/);
 });
+
+
+test('interface runtime canonicalizes all public surface aliases and rejects unknown surfaces',()=>{
+ const runtime=createTitanInterfaceRuntime();
+ const base={company_id:'company-1',user_id:'user-1',domain:'jobs'};
+ for (const alias of ['bos','command','owner','manager','business']) assert.equal(runtime.createContext({...base,product_surface:alias}).product_surface,'zero');
+ for (const alias of ['field','worker']) assert.equal(runtime.createContext({...base,product_surface:alias}).product_surface,'go');
+ assert.equal(runtime.createContext({...base,product_surface:'customer'}).product_surface,'hub');
+ assert.throws(()=>runtime.createContext({...base,product_surface:'admin'}),/zero, go or hub/);
+});
