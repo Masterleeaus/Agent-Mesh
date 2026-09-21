@@ -52,7 +52,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>1. Acceptance of Terms</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              By accessing or using FLDWRK (&quot;the Service&quot;), operated by FLDWRK, Inc. (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.
+              By accessing or using Titan Zero (&quot;the Service&quot;) (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.
             </p>
           </section>
 
@@ -128,7 +128,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>8. Voice Data & AI Processing</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              By using VoiceLog™ and other AI-powered features, you consent to the processing of voice recordings and text inputs by our AI systems, including OpenAI&apos;s API. Audio is processed to generate structured output and is not retained beyond what is operationally necessary. You are responsible for obtaining any required consent from third parties whose voices may be captured.
+              Where voice or Advanced Intelligence features are enabled, processing providers, retention, and consent requirements depend on the configured deployment and applicable service agreement.
             </p>
           </section>
 

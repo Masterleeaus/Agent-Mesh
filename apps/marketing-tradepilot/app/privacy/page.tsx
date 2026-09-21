@@ -52,7 +52,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>1. Who We Are</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              FLDWRK, Inc. (&quot;FLDWRK,&quot; &quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) operates the website at{' '}
+              Titan Zero (&quot;Titan Zero,&quot; &quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) operates the website at{' '}
               <a href="https://titanzero.io" style={{ color: '#E8352A' }} className="hover:underline">titanzero.io</a> and the Titan Zero service. We are committed to protecting your personal information and being transparent about how we use it.
             </p>
           </section>
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>5. AI-Powered Features & OpenAI</h2>
             <p className="leading-relaxed text-sm mb-4" style={{ color: '#888' }}>
-              FLDWRK uses OpenAI&apos;s API to power features such as VoiceLog™ (voice-to-job-note transcription), AI-generated quotes, and business intelligence. When you use these features, relevant data (such as voice transcripts and job details) is transmitted to OpenAI for processing.
+              Titan Zero can use configured Advanced Intelligence providers to process enabled features. Provider, retention, and processing details depend on the customer deployment and selected integrations.
             </p>
             <ul className="space-y-3">
               {[
@@ -131,12 +131,12 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>5a. Subscription Services &amp; Refund Processing</h2>
             <p className="leading-relaxed text-sm mb-4" style={{ color: '#888' }}>
-              FLDWRK uses RevenueCat, Inc. to manage in-app subscription purchases, renewals, and entitlement verification.
+              Payment and entitlement providers depend on the configured Titan Zero deployment.
               RevenueCat processes subscription transaction data on our behalf as a service provider.
             </p>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              When you have an active FLDWRK subscription and a refund is requested through Apple&apos;s App Store,
-              Apple may send FLDWRK a request for subscription usage information to help evaluate that refund request.
+              When an applicable subscription is active and a refund is requested through Apple&apos;s App Store,
+              Apple may send the service provider a request for subscription usage information to help evaluate that refund request.
               In that event, subscription usage data — such as your account creation date, subscription tenure, purchase
               history, and delivery status — may be shared with Apple via RevenueCat to assist in their refund determination.
               By purchasing a subscription, you consent to this data sharing for the purpose of refund processing.
