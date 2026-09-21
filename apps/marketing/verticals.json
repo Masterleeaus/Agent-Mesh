@@ -30,24 +30,25 @@
     "Remove donor branding and route consequential product actions to the canonical Titan Zero application.",
     "Use company_id as the canonical tenant boundary.",
     "Marketing sites never become a runtime dependency of Titan Zero Base App.",
-    "Standalone marketing apps remain separate surfaces but share Titan Zero destination contracts."
+    "Standalone marketing apps remain separate surfaces but share Titan Zero destination contracts.",
+    "Do not carry donor pricing, testimonials, savings figures, feature counts, trial claims, or named integration claims into Titan Zero unless verified against the canonical product."
   ],
   "pendingArchiveSites": [
     {
       "id": "nexjob",
-      "name": "NexJob",
+      "name": "Titan Zero Field Service",
       "sourceArchive": "archive/marketing-sites-extracted/marketing-sites-extracted/nexjob-marketing-main.zip",
       "targetApp": "apps/marketing-nexjob",
-      "status": "pending-extraction-and-content-scan",
-      "vertical": "unassigned"
+      "status": "extracted-scanned-awaiting-install",
+      "vertical": "field-service"
     },
     {
       "id": "trydrafted",
-      "name": "TryDrafted",
+      "name": "Titan Zero Contractors",
       "sourceArchive": "archive/marketing-sites-extracted/marketing-sites-extracted/trydrafted-landing-main.zip",
       "targetApp": "apps/marketing-trydrafted",
-      "status": "pending-extraction-and-content-scan",
-      "vertical": "unassigned"
+      "status": "extracted-scanned-awaiting-install",
+      "vertical": "contractors"
     }
   ],
   "excludedArchiveSites": [
