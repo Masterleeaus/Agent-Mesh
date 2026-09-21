@@ -135,6 +135,40 @@ for issue in issue_list():
     if sid and sid not in final:
         final[sid] = issue
 
+# Keep issue state aligned with roadmap state without deleting audit history.
+closed_superseded = 0
+closed_complete = 0
+for item in manifest:
+    sid = item["subgoal_id"]
+    issue = final.get(sid)
+    if not issue or issue.get("state") != "OPEN":
+        continue
+
+    if item["status"] == "SUPERSEDED_BY_ARCHITECTURE":
+        run([
+            "gh", "api", "--method", "PATCH",
+            f"repos/{REPO}/issues/{issue['number']}",
+            "-f", "state=closed",
+            "-f", "state_reason=not_planned",
+        ])
+        closed_superseded += 1
+        time.sleep(0.8)
+    elif item["status"] == "COMPLETE":
+        run([
+            "gh", "api", "--method", "PATCH",
+            f"repos/{REPO}/issues/{issue['number']}",
+            "-f", "state=closed",
+            "-f", "state_reason=completed",
+        ])
+        closed_complete += 1
+        time.sleep(0.8)
+
+final = {}
+for issue in issue_list():
+    sid = id_from_title(issue.get("title"))
+    if sid and sid not in final:
+        final[sid] = issue
+
 missing = [item["subgoal_id"] for item in manifest if item["subgoal_id"] not in final]
 
 print(json.dumps({
@@ -144,6 +178,8 @@ print(json.dumps({
     "verified_present": len(manifest) - len(missing),
     "missing": missing,
     "preexisting_duplicates": sorted(duplicates),
+    "closed_superseded": closed_superseded,
+    "closed_complete": closed_complete,
 }, indent=2))
 
 if missing:
