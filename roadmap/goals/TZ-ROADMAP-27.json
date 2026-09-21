@@ -1,0 +1,2243 @@
+{
+  "goal_id": "TZ-ROADMAP-27",
+  "priority": "P1",
+  "title": "Analytics, Decision Intelligence & Business Briefing",
+  "objective": "Build one governed Worker→Specialist→Manager→Orchestrator analytical workforce that converts authoritative operational state into metric truth, insights, forecasts, decision briefs and cross-domain synthesis without granting analytics operational authority.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define the canonical Analytics, Decision Intelligence & Business Briefing workforce, semantic/evidence boundaries and non-duplication map across operational domains and Titan Prime",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Wisdom Engine",
+        "Titan Signal Engine",
+        "Titan Rewind",
+        "Titan Foresight Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-27-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "created_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "Metric Provenance & Compilation Worker",
+          "Requested Report & Query Worker",
+          "Anomaly Evidence Worker",
+          "Forecast & Scenario Computation Worker",
+          "Business Brief Assembly Worker",
+          "Decision & Goal Tracking Worker",
+          "Metric Integrity & Semantic Governance Specialist",
+          "Anomaly & Insight Specialist",
+          "Forecasting & Scenario Specialist",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision Intelligence Manager",
+          "Decision Intelligence Synthesis Orchestrator"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH -> TZAG-INTEL-DECISION-INTELLIGENCE-MGR -> TZAG-INTEL-METRIC-INTEGRITY-SPC/TZAG-INTEL-ANOMALY-INSIGHT-SPC/TZAG-INTEL-FORECAST-SCENARIO-SPC/TZAG-INTEL-BUSINESS-BRIEFING-SPC -> bounded analytical Workers"
+        ],
+        "pain_point_ids": [
+          "PAIN-INTEL-ALERT-NOISE",
+          "PAIN-INTEL-ANOMALY-EVIDENCE-NOT-ASSEMBLED",
+          "PAIN-INTEL-BRIEF-ASSEMBLY-MANUAL",
+          "PAIN-INTEL-CROSS-DOMAIN-TRADEOFFS-UNSYNTHESISED",
+          "PAIN-INTEL-DECISION-FOLLOWTHROUGH-LOST",
+          "PAIN-INTEL-DECISION-OUTCOME-NOT-TRACKED",
+          "PAIN-INTEL-DECISION-SUPPORT-NO-ACCOUNTABILITY",
+          "PAIN-INTEL-FRAGMENTED-ANALYTICAL-PRIORITIES",
+          "PAIN-INTEL-FUTURE-UNCERTAINTY-NOT-MODELLED",
+          "PAIN-INTEL-MEANINGFUL-CHANGE-MISSED",
+          "PAIN-INTEL-METRIC-DISAGREEMENT",
+          "PAIN-INTEL-METRIC-PROVENANCE-MISSING",
+          "PAIN-INTEL-OWNER-INFORMATION-OVERLOAD",
+          "PAIN-INTEL-REQUESTED-REPORT-NOT-DELIVERED",
+          "PAIN-INTEL-SCENARIO-COMPUTATION-NOT-REPRODUCIBLE",
+          "PAIN-INTEL-SCENARIOS-CONFUSED-WITH-PREDICTIONS",
+          "PAIN-INTEL-SEMANTIC-DRIFT"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "OUTCOME-TZAG-INTEL-REPORT-QUERY-WRK",
+          "OUTCOME-TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "OUTCOME-TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "OUTCOME-TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "OUTCOME-TZAG-INTEL-DECISION-TRACKING-WRK",
+          "OUTCOME-TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "OUTCOME-TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "OUTCOME-TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "OUTCOME-TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "OUTCOME-TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "OUTCOME-TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "recommendations": [
+          "Recommend clearly bounded decision options and trade-offs to authorised humans/Titan Prime, with no implied right to execute them.",
+          "Recommend investigation or attention priority with evidence, confidence and plausible competing explanations; do not assert unsupported causality.",
+          "Recommend the analytical priorities and decision questions with the highest supported business relevance, clearly separating evidence, inference and recommendation.",
+          "Recommend the canonical metric definition, scope and caveats supported by current authoritative evidence.",
+          "Recommend the small set of decisions/questions that deserve attention, with evidence, confidence, alternatives and explicit unresolved uncertainty.",
+          "Recommend which scenarios/trade-offs deserve attention based on evidence and sensitivity, while keeping forecast and decision separate."
+        ],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+            "TZAG-INTEL-REPORT-QUERY-WRK",
+            "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+            "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+            "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+            "TZAG-INTEL-DECISION-TRACKING-WRK",
+            "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+            "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+            "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+          ],
+          "definition_home": "TZ-ROADMAP-27-SG-01"
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "analytical-vs-operational authority boundary review",
+          "Titan Prime non-duplication review",
+          "provenance/uncertainty contract review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical definitions appear exactly once here. Analytical engines/models/dashboards are tools, not workforce identities.",
+          "Decision Intelligence is advisory/analytical: operational authority remains with domain Managers; strategic orchestration remains with authorised humans/Titan Prime."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Signal Engine",
+          "Titan Rewind",
+          "Titan Foresight Engine"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Evidence/EvidenceReference.php",
+              "System/Services/WisdomPredictionEngine.php",
+              "System/Services/WisdomRecommendationEngine.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php",
+              "System/Services/ContinuousIntelligence/LearningConfidenceAdapter.php",
+              "System/Governance/GovernanceDecision.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Existing engines already separate analytical evidence/outcomes/anomalies/recovery from execution authority; define the canonical workforce roster over these engines rather than inventing parallel analytics agents."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/AnomalyDetectionService.php",
+              "System/Data/AnomalyDecisionAudit.php",
+              "System/Data/SignalCertificationReport.php",
+              "System/Services/SignalHostCertificationService.php",
+              "System/Models/SignalPulseTraceMetric.php",
+              "RELEASE-CANDIDATE-CERTIFICATION.json"
+            ],
+            "finding": "Existing engines already separate analytical evidence/outcomes/anomalies/recovery from execution authority; define the canonical workforce roster over these engines rather than inventing parallel analytics agents."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RewindEvidenceAssembler.php",
+              "System/Certification/RewindFaultMatrix.php",
+              "System/Certification/RewindPerformanceBudget.php",
+              "System/Certification/RewindDisasterRecoveryContract.php",
+              "System/Services/RewindEvidencePackageService.php",
+              "System/Console/RunRewindCertificationCommand.php"
+            ],
+            "finding": "Existing engines already separate analytical evidence/outcomes/anomalies/recovery from execution authority; define the canonical workforce roster over these engines rather than inventing parallel analytics agents."
+          },
+          {
+            "source_ref": "Titan Foresight Engine",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc",
+            "verification": "HANDOFF_INDEX_VERIFIED_PHYSICAL_BUNDLE_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Predictive donor provenance is verified, but executable payload is unresolved; do not recreate from memory."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:11:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Existing engines already separate analytical evidence/outcomes/anomalies/recovery from execution authority; define the canonical workforce roster over these engines rather than inventing parallel analytics agents. Foresight remains a recovery dependency, not an executable source."
+      }
+    },
+    {
+      "subgoal": 2,
+      "title": "Complete the governed metric, semantic, provenance, evidence-quality and analytical artifact layer used by the canonical decision-intelligence roster",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Wisdom Engine",
+        "Titan Signal Engine",
+        "Titan Rewind",
+        "Titan Foresight Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-27-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Metric Provenance & Compilation Worker",
+          "Requested Report & Query Worker",
+          "Anomaly Evidence Worker",
+          "Forecast & Scenario Computation Worker",
+          "Business Brief Assembly Worker",
+          "Decision & Goal Tracking Worker",
+          "Metric Integrity & Semantic Governance Specialist",
+          "Anomaly & Insight Specialist",
+          "Forecasting & Scenario Specialist",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision Intelligence Manager",
+          "Decision Intelligence Synthesis Orchestrator"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH -> TZAG-INTEL-DECISION-INTELLIGENCE-MGR -> TZAG-INTEL-METRIC-INTEGRITY-SPC/TZAG-INTEL-ANOMALY-INSIGHT-SPC/TZAG-INTEL-FORECAST-SCENARIO-SPC/TZAG-INTEL-BUSINESS-BRIEFING-SPC -> bounded analytical Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "OUTCOME-TZAG-INTEL-REPORT-QUERY-WRK",
+          "OUTCOME-TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "OUTCOME-TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "OUTCOME-TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "OUTCOME-TZAG-INTEL-DECISION-TRACKING-WRK",
+          "OUTCOME-TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "OUTCOME-TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "OUTCOME-TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "OUTCOME-TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "OUTCOME-TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "OUTCOME-TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+            "TZAG-INTEL-REPORT-QUERY-WRK",
+            "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+            "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+            "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+            "TZAG-INTEL-DECISION-TRACKING-WRK",
+            "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+            "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+            "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-27-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "analytical-vs-operational authority boundary review",
+          "Titan Prime non-duplication review",
+          "provenance/uncertainty contract review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Metric semantics, provenance, freshness, uncertainty and artifact versioning are shared infrastructure used by the same canonical identities; no data-source-specific agents are created."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Signal Engine",
+          "Titan Rewind",
+          "Titan Foresight Engine"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Evidence/EvidenceReference.php",
+              "System/Services/WisdomPredictionEngine.php",
+              "System/Services/WisdomRecommendationEngine.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php",
+              "System/Services/ContinuousIntelligence/LearningConfidenceAdapter.php",
+              "System/Governance/GovernanceDecision.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Evidence references, anomaly audit, signed evidence packages and outcome learning provide reusable provenance/evidence primitives; a unified governed metric/semantic artifact contract is still needed."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/AnomalyDetectionService.php",
+              "System/Data/AnomalyDecisionAudit.php",
+              "System/Data/SignalCertificationReport.php",
+              "System/Services/SignalHostCertificationService.php",
+              "System/Models/SignalPulseTraceMetric.php",
+              "RELEASE-CANDIDATE-CERTIFICATION.json"
+            ],
+            "finding": "Evidence references, anomaly audit, signed evidence packages and outcome learning provide reusable provenance/evidence primitives; a unified governed metric/semantic artifact contract is still needed."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RewindEvidenceAssembler.php",
+              "System/Certification/RewindFaultMatrix.php",
+              "System/Certification/RewindPerformanceBudget.php",
+              "System/Certification/RewindDisasterRecoveryContract.php",
+              "System/Services/RewindEvidencePackageService.php",
+              "System/Console/RunRewindCertificationCommand.php"
+            ],
+            "finding": "Evidence references, anomaly audit, signed evidence packages and outcome learning provide reusable provenance/evidence primitives; a unified governed metric/semantic artifact contract is still needed."
+          },
+          {
+            "source_ref": "Titan Foresight Engine",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc",
+            "verification": "HANDOFF_INDEX_VERIFIED_PHYSICAL_BUNDLE_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Predictive donor provenance is verified, but executable payload is unresolved; do not recreate from memory."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:11:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Evidence references, anomaly audit, signed evidence packages and outcome learning provide reusable provenance/evidence primitives; a unified governed metric/semantic artifact contract is still needed. Foresight remains a recovery dependency, not an executable source."
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Implement bounded Workers for metric/provenance compilation, requested reports, anomaly evidence, scenario computation, brief assembly and decision/goal tracking",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Wisdom Engine",
+        "Titan Signal Engine",
+        "Titan Rewind",
+        "Titan Foresight Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-27-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC"
+        ],
+        "canonical_agent_names": [
+          "Metric Provenance & Compilation Worker",
+          "Requested Report & Query Worker",
+          "Anomaly Evidence Worker",
+          "Forecast & Scenario Computation Worker",
+          "Business Brief Assembly Worker",
+          "Decision & Goal Tracking Worker",
+          "Metric Integrity & Semantic Governance Specialist",
+          "Anomaly & Insight Specialist",
+          "Forecasting & Scenario Specialist",
+          "Business Briefing & Goal Intelligence Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH -> TZAG-INTEL-DECISION-INTELLIGENCE-MGR -> TZAG-INTEL-METRIC-INTEGRITY-SPC/TZAG-INTEL-ANOMALY-INSIGHT-SPC/TZAG-INTEL-FORECAST-SCENARIO-SPC/TZAG-INTEL-BUSINESS-BRIEFING-SPC -> bounded analytical Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "OUTCOME-TZAG-INTEL-REPORT-QUERY-WRK",
+          "OUTCOME-TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "OUTCOME-TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "OUTCOME-TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "OUTCOME-TZAG-INTEL-DECISION-TRACKING-WRK",
+          "OUTCOME-TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "OUTCOME-TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "OUTCOME-TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "OUTCOME-TZAG-INTEL-BUSINESS-BRIEFING-SPC"
+        ],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+            "TZAG-INTEL-REPORT-QUERY-WRK",
+            "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+            "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+            "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+            "TZAG-INTEL-DECISION-TRACKING-WRK",
+            "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+            "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+            "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-27-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "analytical-vs-operational authority boundary review",
+          "Titan Prime non-duplication review",
+          "provenance/uncertainty contract review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Workers perform bounded analytical computation/artifact tasks only and cannot transform an insight into an operational mutation."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Signal Engine",
+          "Titan Rewind",
+          "Titan Foresight Engine"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Evidence/EvidenceReference.php",
+              "System/Services/WisdomPredictionEngine.php",
+              "System/Services/WisdomRecommendationEngine.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php",
+              "System/Services/ContinuousIntelligence/LearningConfidenceAdapter.php",
+              "System/Governance/GovernanceDecision.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Prediction/recommendation, anomaly detection, evidence assembly and outcome learning provide bounded worker primitives; requested report/brief assembly and goal-tracking need a shared worker contract."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/AnomalyDetectionService.php",
+              "System/Data/AnomalyDecisionAudit.php",
+              "System/Data/SignalCertificationReport.php",
+              "System/Services/SignalHostCertificationService.php",
+              "System/Models/SignalPulseTraceMetric.php",
+              "RELEASE-CANDIDATE-CERTIFICATION.json"
+            ],
+            "finding": "Prediction/recommendation, anomaly detection, evidence assembly and outcome learning provide bounded worker primitives; requested report/brief assembly and goal-tracking need a shared worker contract."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RewindEvidenceAssembler.php",
+              "System/Certification/RewindFaultMatrix.php",
+              "System/Certification/RewindPerformanceBudget.php",
+              "System/Certification/RewindDisasterRecoveryContract.php",
+              "System/Services/RewindEvidencePackageService.php",
+              "System/Console/RunRewindCertificationCommand.php"
+            ],
+            "finding": "Prediction/recommendation, anomaly detection, evidence assembly and outcome learning provide bounded worker primitives; requested report/brief assembly and goal-tracking need a shared worker contract."
+          },
+          {
+            "source_ref": "Titan Foresight Engine",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc",
+            "verification": "HANDOFF_INDEX_VERIFIED_PHYSICAL_BUNDLE_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Predictive donor provenance is verified, but executable payload is unresolved; do not recreate from memory."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:11:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Prediction/recommendation, anomaly detection, evidence assembly and outcome learning provide bounded worker primitives; requested report/brief assembly and goal-tracking need a shared worker contract. Foresight remains a recovery dependency, not an executable source."
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Implement Specialist layer for metric integrity, anomaly/insight detection, forecasting/scenarios and business briefing/goal intelligence",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Wisdom Engine",
+        "Titan Signal Engine",
+        "Titan Rewind",
+        "Titan Foresight Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-27-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "canonical_agent_names": [
+          "Metric Integrity & Semantic Governance Specialist",
+          "Anomaly & Insight Specialist",
+          "Forecasting & Scenario Specialist",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Metric Provenance & Compilation Worker",
+          "Requested Report & Query Worker",
+          "Anomaly Evidence Worker",
+          "Forecast & Scenario Computation Worker",
+          "Business Brief Assembly Worker",
+          "Decision & Goal Tracking Worker"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH -> TZAG-INTEL-DECISION-INTELLIGENCE-MGR -> TZAG-INTEL-METRIC-INTEGRITY-SPC/TZAG-INTEL-ANOMALY-INSIGHT-SPC/TZAG-INTEL-FORECAST-SCENARIO-SPC/TZAG-INTEL-BUSINESS-BRIEFING-SPC -> bounded analytical Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "OUTCOME-TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "OUTCOME-TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "OUTCOME-TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "OUTCOME-TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "OUTCOME-TZAG-INTEL-REPORT-QUERY-WRK",
+          "OUTCOME-TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "OUTCOME-TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "OUTCOME-TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "OUTCOME-TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+            "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+            "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+            "TZAG-INTEL-REPORT-QUERY-WRK",
+            "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+            "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+            "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+            "TZAG-INTEL-DECISION-TRACKING-WRK"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-27-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "analytical-vs-operational authority boundary review",
+          "Titan Prime non-duplication review",
+          "provenance/uncertainty contract review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Specialists discover/interpret analytical questions and delegate computation while preserving alternative explanations and uncertainty."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Signal Engine",
+          "Titan Rewind",
+          "Titan Foresight Engine"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Evidence/EvidenceReference.php",
+              "System/Services/WisdomPredictionEngine.php",
+              "System/Services/WisdomRecommendationEngine.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php",
+              "System/Services/ContinuousIntelligence/LearningConfidenceAdapter.php",
+              "System/Governance/GovernanceDecision.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Signal anomaly detection plus Wisdom prediction/recommendation support specialist analytics; forecast/scenario semantics and calibration should be normalized rather than reimplemented."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/AnomalyDetectionService.php",
+              "System/Data/AnomalyDecisionAudit.php",
+              "System/Data/SignalCertificationReport.php",
+              "System/Services/SignalHostCertificationService.php",
+              "System/Models/SignalPulseTraceMetric.php",
+              "RELEASE-CANDIDATE-CERTIFICATION.json"
+            ],
+            "finding": "Signal anomaly detection plus Wisdom prediction/recommendation support specialist analytics; forecast/scenario semantics and calibration should be normalized rather than reimplemented."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RewindEvidenceAssembler.php",
+              "System/Certification/RewindFaultMatrix.php",
+              "System/Certification/RewindPerformanceBudget.php",
+              "System/Certification/RewindDisasterRecoveryContract.php",
+              "System/Services/RewindEvidencePackageService.php",
+              "System/Console/RunRewindCertificationCommand.php"
+            ],
+            "finding": "Signal anomaly detection plus Wisdom prediction/recommendation support specialist analytics; forecast/scenario semantics and calibration should be normalized rather than reimplemented."
+          },
+          {
+            "source_ref": "Titan Foresight Engine",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc",
+            "verification": "HANDOFF_INDEX_VERIFIED_PHYSICAL_BUNDLE_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Predictive donor provenance is verified, but executable payload is unresolved; do not recreate from memory."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:11:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Signal anomaly detection plus Wisdom prediction/recommendation support specialist analytics; forecast/scenario semantics and calibration should be normalized rather than reimplemented. Foresight remains a recovery dependency, not an executable source."
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Implement Decision Intelligence Manager ownership of analytical priorities, recurring decision briefs, evidence quality and decision/goal follow-through",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Wisdom Engine",
+        "Titan Signal Engine",
+        "Titan Rewind",
+        "Titan Foresight Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-27-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Manager",
+          "Metric Integrity & Semantic Governance Specialist",
+          "Anomaly & Insight Specialist",
+          "Forecasting & Scenario Specialist",
+          "Business Briefing & Goal Intelligence Specialist"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH -> TZAG-INTEL-DECISION-INTELLIGENCE-MGR -> TZAG-INTEL-METRIC-INTEGRITY-SPC/TZAG-INTEL-ANOMALY-INSIGHT-SPC/TZAG-INTEL-FORECAST-SCENARIO-SPC/TZAG-INTEL-BUSINESS-BRIEFING-SPC -> bounded analytical Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "OUTCOME-TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "OUTCOME-TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "OUTCOME-TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "OUTCOME-TZAG-INTEL-BUSINESS-BRIEFING-SPC"
+        ],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+            "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+            "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-27-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "analytical-vs-operational authority boundary review",
+          "Titan Prime non-duplication review",
+          "provenance/uncertainty contract review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Decision Intelligence Manager owns decision-support quality/cadence, not Sales/Finance/Operations/Customer/Supply outcome execution."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Signal Engine",
+          "Titan Rewind",
+          "Titan Foresight Engine"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Evidence/EvidenceReference.php",
+              "System/Services/WisdomPredictionEngine.php",
+              "System/Services/WisdomRecommendationEngine.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php",
+              "System/Services/ContinuousIntelligence/LearningConfidenceAdapter.php",
+              "System/Governance/GovernanceDecision.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Existing governance decisions, outcome learning and certification support manager oversight; recurring decision-brief ownership and follow-through state remain convergence work."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/AnomalyDetectionService.php",
+              "System/Data/AnomalyDecisionAudit.php",
+              "System/Data/SignalCertificationReport.php",
+              "System/Services/SignalHostCertificationService.php",
+              "System/Models/SignalPulseTraceMetric.php",
+              "RELEASE-CANDIDATE-CERTIFICATION.json"
+            ],
+            "finding": "Existing governance decisions, outcome learning and certification support manager oversight; recurring decision-brief ownership and follow-through state remain convergence work."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RewindEvidenceAssembler.php",
+              "System/Certification/RewindFaultMatrix.php",
+              "System/Certification/RewindPerformanceBudget.php",
+              "System/Certification/RewindDisasterRecoveryContract.php",
+              "System/Services/RewindEvidencePackageService.php",
+              "System/Console/RunRewindCertificationCommand.php"
+            ],
+            "finding": "Existing governance decisions, outcome learning and certification support manager oversight; recurring decision-brief ownership and follow-through state remain convergence work."
+          },
+          {
+            "source_ref": "Titan Foresight Engine",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc",
+            "verification": "HANDOFF_INDEX_VERIFIED_PHYSICAL_BUNDLE_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Predictive donor provenance is verified, but executable payload is unresolved; do not recreate from memory."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:11:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Existing governance decisions, outcome learning and certification support manager oversight; recurring decision-brief ownership and follow-through state remain convergence work. Foresight remains a recovery dependency, not an executable source."
+      }
+    },
+    {
+      "subgoal": 6,
+      "title": "Implement Decision Intelligence Synthesis Orchestrator cross-domain evidence synthesis for authorised humans and Titan Prime without operational authority",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Wisdom Engine",
+        "Titan Signal Engine",
+        "Titan Rewind",
+        "Titan Foresight Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-27-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Synthesis Orchestrator",
+          "Decision Intelligence Manager"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH -> TZAG-INTEL-DECISION-INTELLIGENCE-MGR -> TZAG-INTEL-METRIC-INTEGRITY-SPC/TZAG-INTEL-ANOMALY-INSIGHT-SPC/TZAG-INTEL-FORECAST-SCENARIO-SPC/TZAG-INTEL-BUSINESS-BRIEFING-SPC -> bounded analytical Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "OUTCOME-TZAG-INTEL-DECISION-INTELLIGENCE-MGR"
+        ],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-27-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "analytical-vs-operational authority boundary review",
+          "Titan Prime non-duplication review",
+          "provenance/uncertainty contract review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Decision Intelligence Synthesis Orchestrator produces cross-domain decision options for authorised humans/Titan Prime; it does not duplicate Titan Prime or issue operational commands."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Signal Engine",
+          "Titan Rewind",
+          "Titan Foresight Engine"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Evidence/EvidenceReference.php",
+              "System/Services/WisdomPredictionEngine.php",
+              "System/Services/WisdomRecommendationEngine.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php",
+              "System/Services/ContinuousIntelligence/LearningConfidenceAdapter.php",
+              "System/Governance/GovernanceDecision.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Evidence and recommendation primitives can feed a synthesis orchestrator, but no single cross-domain synthesis runtime should gain operational authority; Titan Prime consumes governed outputs only."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/AnomalyDetectionService.php",
+              "System/Data/AnomalyDecisionAudit.php",
+              "System/Data/SignalCertificationReport.php",
+              "System/Services/SignalHostCertificationService.php",
+              "System/Models/SignalPulseTraceMetric.php",
+              "RELEASE-CANDIDATE-CERTIFICATION.json"
+            ],
+            "finding": "Evidence and recommendation primitives can feed a synthesis orchestrator, but no single cross-domain synthesis runtime should gain operational authority; Titan Prime consumes governed outputs only."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RewindEvidenceAssembler.php",
+              "System/Certification/RewindFaultMatrix.php",
+              "System/Certification/RewindPerformanceBudget.php",
+              "System/Certification/RewindDisasterRecoveryContract.php",
+              "System/Services/RewindEvidencePackageService.php",
+              "System/Console/RunRewindCertificationCommand.php"
+            ],
+            "finding": "Evidence and recommendation primitives can feed a synthesis orchestrator, but no single cross-domain synthesis runtime should gain operational authority; Titan Prime consumes governed outputs only."
+          },
+          {
+            "source_ref": "Titan Foresight Engine",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc",
+            "verification": "HANDOFF_INDEX_VERIFIED_PHYSICAL_BUNDLE_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Predictive donor provenance is verified, but executable payload is unresolved; do not recreate from memory."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:11:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Evidence and recommendation primitives can feed a synthesis orchestrator, but no single cross-domain synthesis runtime should gain operational authority; Titan Prime consumes governed outputs only. Foresight remains a recovery dependency, not an executable source."
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Implement earned proactive and predictive analytics, anomaly discovery, forecasting and scenario behaviours across the existing hierarchy; no fifth Pro agent identity",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Wisdom Engine",
+        "Titan Signal Engine",
+        "Titan Rewind",
+        "Titan Foresight Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-27-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Metric Provenance & Compilation Worker",
+          "Requested Report & Query Worker",
+          "Anomaly Evidence Worker",
+          "Forecast & Scenario Computation Worker",
+          "Business Brief Assembly Worker",
+          "Decision & Goal Tracking Worker",
+          "Metric Integrity & Semantic Governance Specialist",
+          "Anomaly & Insight Specialist",
+          "Forecasting & Scenario Specialist",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision Intelligence Manager",
+          "Decision Intelligence Synthesis Orchestrator"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH -> TZAG-INTEL-DECISION-INTELLIGENCE-MGR -> TZAG-INTEL-METRIC-INTEGRITY-SPC/TZAG-INTEL-ANOMALY-INSIGHT-SPC/TZAG-INTEL-FORECAST-SCENARIO-SPC/TZAG-INTEL-BUSINESS-BRIEFING-SPC -> bounded analytical Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "OUTCOME-TZAG-INTEL-REPORT-QUERY-WRK",
+          "OUTCOME-TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "OUTCOME-TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "OUTCOME-TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "OUTCOME-TZAG-INTEL-DECISION-TRACKING-WRK",
+          "OUTCOME-TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "OUTCOME-TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "OUTCOME-TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "OUTCOME-TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "OUTCOME-TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "OUTCOME-TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+            "TZAG-INTEL-REPORT-QUERY-WRK",
+            "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+            "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+            "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+            "TZAG-INTEL-DECISION-TRACKING-WRK",
+            "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+            "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+            "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-27-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "analytical-vs-operational authority boundary review",
+          "Titan Prime non-duplication review",
+          "provenance/uncertainty contract review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Prediction is an earned operating envelope, not a separate Pro identity; forecasts/scenarios remain conditional analytical artifacts rather than facts or self-executing plans."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Signal Engine",
+          "Titan Rewind",
+          "Titan Foresight Engine"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Evidence/EvidenceReference.php",
+              "System/Services/WisdomPredictionEngine.php",
+              "System/Services/WisdomRecommendationEngine.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php",
+              "System/Services/ContinuousIntelligence/LearningConfidenceAdapter.php",
+              "System/Governance/GovernanceDecision.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Wisdom prediction/confidence adaptation and Signal anomaly detection support earned proactive/predictive behavior; Foresight payload remains unresolved and must be recovered before duplicating predictive logic."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/AnomalyDetectionService.php",
+              "System/Data/AnomalyDecisionAudit.php",
+              "System/Data/SignalCertificationReport.php",
+              "System/Services/SignalHostCertificationService.php",
+              "System/Models/SignalPulseTraceMetric.php",
+              "RELEASE-CANDIDATE-CERTIFICATION.json"
+            ],
+            "finding": "Wisdom prediction/confidence adaptation and Signal anomaly detection support earned proactive/predictive behavior; Foresight payload remains unresolved and must be recovered before duplicating predictive logic."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RewindEvidenceAssembler.php",
+              "System/Certification/RewindFaultMatrix.php",
+              "System/Certification/RewindPerformanceBudget.php",
+              "System/Certification/RewindDisasterRecoveryContract.php",
+              "System/Services/RewindEvidencePackageService.php",
+              "System/Console/RunRewindCertificationCommand.php"
+            ],
+            "finding": "Wisdom prediction/confidence adaptation and Signal anomaly detection support earned proactive/predictive behavior; Foresight payload remains unresolved and must be recovered before duplicating predictive logic."
+          },
+          {
+            "source_ref": "Titan Foresight Engine",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc",
+            "verification": "HANDOFF_INDEX_VERIFIED_PHYSICAL_BUNDLE_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Predictive donor provenance is verified, but executable payload is unresolved; do not recreate from memory."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:11:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Wisdom prediction/confidence adaptation and Signal anomaly detection support earned proactive/predictive behavior; Foresight payload remains unresolved and must be recovered before duplicating predictive logic. Foresight remains a recovery dependency, not an executable source."
+      }
+    },
+    {
+      "subgoal": 8,
+      "title": "Implement analytical authority, surface, explanation, provenance, uncertainty, escalation and correction matrices across Command/Hub/Go/plugins/extensions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Wisdom Engine",
+        "Titan Signal Engine",
+        "Titan Rewind",
+        "Titan Foresight Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-27-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Metric Provenance & Compilation Worker",
+          "Requested Report & Query Worker",
+          "Anomaly Evidence Worker",
+          "Forecast & Scenario Computation Worker",
+          "Business Brief Assembly Worker",
+          "Decision & Goal Tracking Worker",
+          "Metric Integrity & Semantic Governance Specialist",
+          "Anomaly & Insight Specialist",
+          "Forecasting & Scenario Specialist",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision Intelligence Manager",
+          "Decision Intelligence Synthesis Orchestrator"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH -> TZAG-INTEL-DECISION-INTELLIGENCE-MGR -> TZAG-INTEL-METRIC-INTEGRITY-SPC/TZAG-INTEL-ANOMALY-INSIGHT-SPC/TZAG-INTEL-FORECAST-SCENARIO-SPC/TZAG-INTEL-BUSINESS-BRIEFING-SPC -> bounded analytical Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "OUTCOME-TZAG-INTEL-REPORT-QUERY-WRK",
+          "OUTCOME-TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "OUTCOME-TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "OUTCOME-TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "OUTCOME-TZAG-INTEL-DECISION-TRACKING-WRK",
+          "OUTCOME-TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "OUTCOME-TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "OUTCOME-TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "OUTCOME-TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "OUTCOME-TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "OUTCOME-TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+            "TZAG-INTEL-REPORT-QUERY-WRK",
+            "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+            "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+            "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+            "TZAG-INTEL-DECISION-TRACKING-WRK",
+            "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+            "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+            "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-27-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "analytical-vs-operational authority boundary review",
+          "Titan Prime non-duplication review",
+          "provenance/uncertainty contract review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Authority matrices must explicitly block analytical authority from implying operational write authority and require explanation/provenance/uncertainty for consequential recommendations."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Signal Engine",
+          "Titan Rewind",
+          "Titan Foresight Engine"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Evidence/EvidenceReference.php",
+              "System/Services/WisdomPredictionEngine.php",
+              "System/Services/WisdomRecommendationEngine.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php",
+              "System/Services/ContinuousIntelligence/LearningConfidenceAdapter.php",
+              "System/Governance/GovernanceDecision.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Governance decisions, evidence references, anomaly audits and Rewind evidence packages support explanation/provenance/correction; a cross-surface analytical presentation/authority matrix remains to be standardized."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/AnomalyDetectionService.php",
+              "System/Data/AnomalyDecisionAudit.php",
+              "System/Data/SignalCertificationReport.php",
+              "System/Services/SignalHostCertificationService.php",
+              "System/Models/SignalPulseTraceMetric.php",
+              "RELEASE-CANDIDATE-CERTIFICATION.json"
+            ],
+            "finding": "Governance decisions, evidence references, anomaly audits and Rewind evidence packages support explanation/provenance/correction; a cross-surface analytical presentation/authority matrix remains to be standardized."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RewindEvidenceAssembler.php",
+              "System/Certification/RewindFaultMatrix.php",
+              "System/Certification/RewindPerformanceBudget.php",
+              "System/Certification/RewindDisasterRecoveryContract.php",
+              "System/Services/RewindEvidencePackageService.php",
+              "System/Console/RunRewindCertificationCommand.php"
+            ],
+            "finding": "Governance decisions, evidence references, anomaly audits and Rewind evidence packages support explanation/provenance/correction; a cross-surface analytical presentation/authority matrix remains to be standardized."
+          },
+          {
+            "source_ref": "Titan Foresight Engine",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc",
+            "verification": "HANDOFF_INDEX_VERIFIED_PHYSICAL_BUNDLE_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Predictive donor provenance is verified, but executable payload is unresolved; do not recreate from memory."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:11:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Governance decisions, evidence references, anomaly audits and Rewind evidence packages support explanation/provenance/correction; a cross-surface analytical presentation/authority matrix remains to be standardized. Foresight remains a recovery dependency, not an executable source."
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Measure decision-support latency, anomaly quality, forecast calibration, briefing usefulness, decision follow-through and verified business impact by canonical agent_id",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Wisdom Engine",
+        "Titan Signal Engine",
+        "Titan Rewind",
+        "Titan Foresight Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-27-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Metric Provenance & Compilation Worker",
+          "Requested Report & Query Worker",
+          "Anomaly Evidence Worker",
+          "Forecast & Scenario Computation Worker",
+          "Business Brief Assembly Worker",
+          "Decision & Goal Tracking Worker",
+          "Metric Integrity & Semantic Governance Specialist",
+          "Anomaly & Insight Specialist",
+          "Forecasting & Scenario Specialist",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision Intelligence Manager",
+          "Decision Intelligence Synthesis Orchestrator"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH -> TZAG-INTEL-DECISION-INTELLIGENCE-MGR -> TZAG-INTEL-METRIC-INTEGRITY-SPC/TZAG-INTEL-ANOMALY-INSIGHT-SPC/TZAG-INTEL-FORECAST-SCENARIO-SPC/TZAG-INTEL-BUSINESS-BRIEFING-SPC -> bounded analytical Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "OUTCOME-TZAG-INTEL-REPORT-QUERY-WRK",
+          "OUTCOME-TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "OUTCOME-TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "OUTCOME-TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "OUTCOME-TZAG-INTEL-DECISION-TRACKING-WRK",
+          "OUTCOME-TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "OUTCOME-TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "OUTCOME-TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "OUTCOME-TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "OUTCOME-TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "OUTCOME-TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+            "TZAG-INTEL-REPORT-QUERY-WRK",
+            "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+            "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+            "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+            "TZAG-INTEL-DECISION-TRACKING-WRK",
+            "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+            "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+            "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-27-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "analytical-vs-operational authority boundary review",
+          "Titan Prime non-duplication review",
+          "provenance/uncertainty contract review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Business impact attribution must link recommendations/decisions to verified outcomes and avoid claiming causality when only correlation or temporal association is supported."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Signal Engine",
+          "Titan Rewind",
+          "Titan Foresight Engine"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Evidence/EvidenceReference.php",
+              "System/Services/WisdomPredictionEngine.php",
+              "System/Services/WisdomRecommendationEngine.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php",
+              "System/Services/ContinuousIntelligence/LearningConfidenceAdapter.php",
+              "System/Governance/GovernanceDecision.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Signal already records latency metrics and Wisdom measures outcome learning/confidence; decision-support latency, forecast calibration, briefing usefulness and canonical agent_id business-impact metrics need one analytics measurement contract."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/AnomalyDetectionService.php",
+              "System/Data/AnomalyDecisionAudit.php",
+              "System/Data/SignalCertificationReport.php",
+              "System/Services/SignalHostCertificationService.php",
+              "System/Models/SignalPulseTraceMetric.php",
+              "RELEASE-CANDIDATE-CERTIFICATION.json"
+            ],
+            "finding": "Signal already records latency metrics and Wisdom measures outcome learning/confidence; decision-support latency, forecast calibration, briefing usefulness and canonical agent_id business-impact metrics need one analytics measurement contract."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RewindEvidenceAssembler.php",
+              "System/Certification/RewindFaultMatrix.php",
+              "System/Certification/RewindPerformanceBudget.php",
+              "System/Certification/RewindDisasterRecoveryContract.php",
+              "System/Services/RewindEvidencePackageService.php",
+              "System/Console/RunRewindCertificationCommand.php"
+            ],
+            "finding": "Signal already records latency metrics and Wisdom measures outcome learning/confidence; decision-support latency, forecast calibration, briefing usefulness and canonical agent_id business-impact metrics need one analytics measurement contract."
+          },
+          {
+            "source_ref": "Titan Foresight Engine",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc",
+            "verification": "HANDOFF_INDEX_VERIFIED_PHYSICAL_BUNDLE_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Predictive donor provenance is verified, but executable payload is unresolved; do not recreate from memory."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:11:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Signal already records latency metrics and Wisdom measures outcome learning/confidence; decision-support latency, forecast calibration, briefing usefulness and canonical agent_id business-impact metrics need one analytics measurement contract. Foresight remains a recovery dependency, not an executable source."
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Run Worker→Specialist→Manager→Orchestrator analytical acceptance and certify provenance, uncertainty, trust progression, correction/recovery and non-duplication",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Wisdom Engine",
+        "Titan Signal Engine",
+        "Titan Rewind",
+        "Titan Foresight Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-27-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "TZAG-INTEL-REPORT-QUERY-WRK",
+          "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "TZAG-INTEL-DECISION-TRACKING-WRK",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Metric Provenance & Compilation Worker",
+          "Requested Report & Query Worker",
+          "Anomaly Evidence Worker",
+          "Forecast & Scenario Computation Worker",
+          "Business Brief Assembly Worker",
+          "Decision & Goal Tracking Worker",
+          "Metric Integrity & Semantic Governance Specialist",
+          "Anomaly & Insight Specialist",
+          "Forecasting & Scenario Specialist",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision Intelligence Manager",
+          "Decision Intelligence Synthesis Orchestrator"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH -> TZAG-INTEL-DECISION-INTELLIGENCE-MGR -> TZAG-INTEL-METRIC-INTEGRITY-SPC/TZAG-INTEL-ANOMALY-INSIGHT-SPC/TZAG-INTEL-FORECAST-SCENARIO-SPC/TZAG-INTEL-BUSINESS-BRIEFING-SPC -> bounded analytical Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [
+          "OUTCOME-TZAG-INTEL-METRIC-PROVENANCE-WRK",
+          "OUTCOME-TZAG-INTEL-REPORT-QUERY-WRK",
+          "OUTCOME-TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+          "OUTCOME-TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+          "OUTCOME-TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+          "OUTCOME-TZAG-INTEL-DECISION-TRACKING-WRK",
+          "OUTCOME-TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "OUTCOME-TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+          "OUTCOME-TZAG-INTEL-FORECAST-SCENARIO-SPC",
+          "OUTCOME-TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "OUTCOME-TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "OUTCOME-TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+        ],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+            "TZAG-INTEL-REPORT-QUERY-WRK",
+            "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+            "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+            "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+            "TZAG-INTEL-DECISION-TRACKING-WRK",
+            "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+            "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+            "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-27-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "analytical-vs-operational authority boundary review",
+          "Titan Prime non-duplication review",
+          "provenance/uncertainty contract review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Acceptance covers metric-definition conflict, stale provenance, anomaly false positives, forecast miscalibration, contradictory evidence, brief correction, cross-domain trade-off synthesis and strict no-operational-mutation enforcement."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Wisdom Engine",
+          "Titan Signal Engine",
+          "Titan Rewind",
+          "Titan Foresight Engine"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Wisdom Engine",
+            "file_id": "file_000000007f8c81faaf9d8a7747374cd2",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Wisdom Engine/Titan Wisdom Engine Master v0.3.2.zip",
+            "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Evidence/EvidenceReference.php",
+              "System/Services/WisdomPredictionEngine.php",
+              "System/Services/WisdomRecommendationEngine.php",
+              "System/Services/ContinuousIntelligence/OutcomeLearningService.php",
+              "System/Services/ContinuousIntelligence/LearningConfidenceAdapter.php",
+              "System/Governance/GovernanceDecision.php",
+              "System/Commands/CertifyExtensionCommand.php"
+            ],
+            "finding": "Signal and Rewind include certification frameworks and Wisdom includes extension/outcome certification; cross-tier analytical acceptance, uncertainty, trust progression and non-duplication need one combined certification matrix."
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/AnomalyDetectionService.php",
+              "System/Data/AnomalyDecisionAudit.php",
+              "System/Data/SignalCertificationReport.php",
+              "System/Services/SignalHostCertificationService.php",
+              "System/Models/SignalPulseTraceMetric.php",
+              "RELEASE-CANDIDATE-CERTIFICATION.json"
+            ],
+            "finding": "Signal and Rewind include certification frameworks and Wisdom includes extension/outcome certification; cross-tier analytical acceptance, uncertainty, trust progression and non-duplication need one combined certification matrix."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RewindEvidenceAssembler.php",
+              "System/Certification/RewindFaultMatrix.php",
+              "System/Certification/RewindPerformanceBudget.php",
+              "System/Certification/RewindDisasterRecoveryContract.php",
+              "System/Services/RewindEvidencePackageService.php",
+              "System/Console/RunRewindCertificationCommand.php"
+            ],
+            "finding": "Signal and Rewind include certification frameworks and Wisdom includes extension/outcome certification; cross-tier analytical acceptance, uncertainty, trust progression and non-duplication need one combined certification matrix."
+          },
+          {
+            "source_ref": "Titan Foresight Engine",
+            "file_id": "file_00000000e5ec81fabf0fd0d1ba1c2949",
+            "library_path": "CRM-Autonomy-Deownership-Handoff-INDEX.md",
+            "sha256": "242e098d1676bb01b6649fdbf6edadda256cc32d70a78832418c1062f8a63ddc",
+            "verification": "HANDOFF_INDEX_VERIFIED_PHYSICAL_BUNDLE_UNRESOLVED",
+            "internal_paths": [],
+            "finding": "Predictive donor provenance is verified, but executable payload is unresolved; do not recreate from memory."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:11:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Signal and Rewind include certification frameworks and Wisdom includes extension/outcome certification; cross-tier analytical acceptance, uncertainty, trust progression and non-duplication need one combined certification matrix. Foresight remains a recovery dependency, not an executable source."
+      }
+    }
+  ],
+  "affinity_tags": [
+    "agents",
+    "analytics",
+    "business-operations"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan Wisdom Engine",
+    "Titan Signal Engine",
+    "Titan Rewind",
+    "Titan Foresight Engine",
+    "Titan Prime",
+    "Titan Knowledge Authority",
+    "Titan ROI/Value Ledger"
+  ],
+  "reuse_first": true,
+  "canonical_workforce_roster": {
+    "status": "DEFINED_PLANNED_IMPLEMENTATION",
+    "canonical_definition_home": "TZ-ROADMAP-27-SG-01",
+    "orchestrator_ids": [
+      "TZAG-INTEL-DECISION-SYNTHESIS-ORCH"
+    ],
+    "manager_ids": [
+      "TZAG-INTEL-DECISION-INTELLIGENCE-MGR"
+    ],
+    "specialist_ids": [
+      "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+      "TZAG-INTEL-ANOMALY-INSIGHT-SPC",
+      "TZAG-INTEL-FORECAST-SCENARIO-SPC",
+      "TZAG-INTEL-BUSINESS-BRIEFING-SPC"
+    ],
+    "worker_ids": [
+      "TZAG-INTEL-METRIC-PROVENANCE-WRK",
+      "TZAG-INTEL-REPORT-QUERY-WRK",
+      "TZAG-INTEL-ANOMALY-EVIDENCE-WRK",
+      "TZAG-INTEL-SCENARIO-COMPUTATION-WRK",
+      "TZAG-INTEL-BRIEF-ASSEMBLY-WRK",
+      "TZAG-INTEL-DECISION-TRACKING-WRK"
+    ],
+    "new_agent_count": 12,
+    "total_domain_roster_count": 12,
+    "boundary_rules": [
+      "Decision Intelligence owns governed metric meaning/provenance, analytical detection/interpretation, uncertainty-aware forecasts/scenarios, recurring business briefs and decision/outcome tracking.",
+      "Operational domain Managers retain authority and accountability for Sales, Finance, Customer Experience, Service Delivery, Supply, Field and other business outcomes; analytical agents do not mutate those domains solely because an insight exists.",
+      "Decision Intelligence Synthesis Orchestrator prepares cross-domain evidence/trade-offs for authorised humans and Titan Prime; Titan Prime remains strategic orchestrator and is not duplicated here.",
+      "Signal Engine, Wisdom Engine, Foresight Engine, Rewind, dashboards, BI stores and models are engines/tools/evidence systems, not separate workforce identities.",
+      "Every analytical output must separate observed facts, derived metrics, interpretations, forecasts/scenarios and recommendations, with source/version/freshness/uncertainty evidence."
+    ]
+  },
+  "agent_goal_classification": "DOMAIN_WORKFORCE_ELIGIBLE",
+  "agent_goal_rule": "This goal owns durable business/domain outcomes and may reuse, extend or create canonical workforce identities subject to non-duplication and outcome-owner tests.",
+  "workforce_goal_classification": "DOMAIN_OUTCOME_AGENT_ELIGIBLE",
+  "workforce_goal_rule": "Agents are permitted only for durable business/operational outcomes with a distinct ownership boundary. Reuse or extend canonical identities before creating new ones."
+}
