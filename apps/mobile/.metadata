@@ -1,15 +1,13 @@
-version:
-  revision: "titan-zero-canonical"
-  channel: "stable"
+# Flutter tool metadata.
+#
+# This repository intentionally does not fabricate Flutter framework revisions.
+# Regenerate this file with the pinned Flutter SDK when the canonical mobile
+# build pipeline/toolchain is established.
+
 project_type: app
+
 migration:
   platforms:
     - platform: root
-      create_revision: titan-zero-canonical
-      base_revision: titan-zero-canonical
     - platform: android
-      create_revision: titan-zero-canonical
-      base_revision: titan-zero-canonical
     - platform: ios
-      create_revision: titan-zero-canonical
-      base_revision: titan-zero-canonical
