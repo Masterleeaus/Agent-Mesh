@@ -2,10 +2,6 @@
   "schema": "titan-tool-launch-map/v1",
   "packet_id": "TZ-TOOLS-ABSORB-001",
   "pass": 9,
-  "manager_rebase": {
-    "merge": 21,
-    "canonical_sha256": "bf39506c0f3c849b1496d77c6dd9b079cf5ab999746c1e9cfb64b10be38fbe5c"
-  },
   "rules": {
     "owner": "titan-zero",
     "donor_page_navigation": false,
@@ -599,5 +595,10 @@
       "screenshots"
     ],
     "live_chrome_certification": "PENDING_PASS10_OR_MANAGER_LIVE_GATE"
+  },
+  "provenance": {
+    "canonical_owner": "packages/tools",
+    "generated_projection": true,
+    "historical_merge_metadata_is_authority": false
   }
 }
