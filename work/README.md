@@ -220,3 +220,35 @@ Behavior:
 - generic verification placeholders are allowed for initial draft handoff, but Manager must require targeted evidence before merge where CI is insufficient.
 
 Use `--draft` for an intentionally incomplete review handoff and `--dry-run --json` to inspect the generated metadata/body without creating a PR.
+
+
+## Merged-subgoal roadmap reconciliation
+
+Closing an issue is not the canonical roadmap mutation by itself. After Manager merge of the one canonical agent PR, `finalize-merged-agent-subgoal.yml` updates the durable roadmap and issue manifest.
+
+The finalizer is derivative automation:
+
+```text
+Manager reviews PR
+      ↓
+Manager merges to main
+      ↓
+merged PR = completion decision
+      ↓
+finalizer marks roadmap subgoal COMPLETE
+      ↓
+issue-sync / safe claim-release workflows observe the completed state
+```
+
+Safety rules:
+
+- only merged PRs targeting `main`;
+- only exact `agent/<subgoal-id>` heads;
+- PR must identify the subgoal and contain `Closes/Fixes/Resolves #<issue>`;
+- subgoal must exist exactly once in both the manifest and matching goal file;
+- superseded work cannot be finalized as complete;
+- duplicate workflow delivery is idempotent;
+- multiple merge finalizations are serialized;
+- concurrent `main` movement causes a fresh retry rather than force-push.
+
+The completion receipt is retained in the goal JSON so later agents can prove why the status changed without relying on chat history.
