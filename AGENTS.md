@@ -14,6 +14,20 @@ This repository is the live Titan Zero Agent Mesh code and work system.
 
 Do not determine current state from chat memory, ZIP filenames, timestamps, old CANONICAL labels, archived control-plane files, or an agent's statement about what is latest.
 
+## Full Dovetails FSM restoration and Titan Zero identity
+
+The complete Dovetails FSM application present in this repository is the functional baseline for Titan Zero. It is **not** a donor, reference implementation, sample, compatibility source, or collection of features to selectively port.
+
+Execution rules:
+
+- Preserve and reinstate the full FSM product surface: web application, domain model, database/migrations/seeds, worker/services, estimating, quoting, booking, scheduling, dispatch, projects/jobs/work orders, field workflows, customers/CRM, invoicing/payments, communications, settings, documents, reporting, offline/desktop behavior, tests and operational tooling wherever present in repository history/current source.
+- Rebrand that complete system as **Titan Zero**. Rebranding must not remove working Dovetails FSM capability.
+- Titan Zero engines (Interaction Engine, Decision Engine, Interface Runtime, Visual Runtime, Workforce, governance, autonomy, knowledge, local AI and related platform capabilities) extend and integrate with the FSM baseline; they do not replace it with a smaller partial shell.
+- `packages/titan-platform/src/ported/` is an implementation location, not evidence that the original FSM is merely a donor. Agents must compare the runnable Titan Zero system against the complete FSM capability surface and restore missing behavior.
+- Business-specific Dovetails defaults may remain as migration/compatibility data until converted into tenant/company configuration. Runtime tenancy and authorization still normalize to canonical `company_id`.
+- Do not delete a Dovetails capability merely because its old brand/name is being retired. Rename/adapt it, preserve behavior, verify it, then remove obsolete branding only when references are no longer required for compatibility or provenance.
+- Completion means functional parity with the full FSM baseline plus Titan Zero additions, not a selected-feature migration.
+
 ## Current roadmap migration state
 
 - The current roadmap index contains **55 goals**.
