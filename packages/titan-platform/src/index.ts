@@ -9,3 +9,5 @@ export * from "./offline/index.js";
 export * from "./ported/marketplace-commercial-lifecycle.js";
 
 export * from "./titan-builder/index.js";
+
+export * from "./workforce-native/index.js";
