@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../titan/core/titan_session.dart';
-import '../titan/services/offline_command_queue.dart';
 import '../titan/services/titan_gateway.dart';
 import '../titan/models/generative_item.dart';
 import '../titan/widgets/generative_cards.dart';
@@ -15,17 +13,15 @@ import '../titan/screens/titan_customer_screen.dart';
 import '../titan/models/customer_record.dart';
 
 class TitanShellScreen extends StatefulWidget {
-  const TitanShellScreen({super.key});
+  final TitanGateway gateway;
+  const TitanShellScreen({super.key, required this.gateway});
   @override State<TitanShellScreen> createState() => _TitanShellScreenState();
 }
 
 class _TitanShellScreenState extends State<TitanShellScreen> {
   final _composer = TextEditingController();
   final List<_Turn> _turns = [];
-  late final TitanGateway _gateway = LocalMvpTitanGateway(
-    const TitanSession(companyId: 'demo-company', actorId: 'demo-actor', deviceId: 'demo-device'),
-    OfflineCommandQueue(),
-  );
+  TitanGateway get _gateway => widget.gateway;
   @override void dispose() { _composer.dispose(); super.dispose(); }
 
   Future<void> _send() async {
