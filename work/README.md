@@ -196,3 +196,27 @@ The readiness evaluator checks:
 It publishes `Agent Mesh / Manager Review Readiness` as success/pending/failure.
 
 This is a review-readiness signal only. It must never be treated as permission for automatic merge.
+
+
+## Automated PR handoff
+
+When a builder has useful commits ahead of `main`, create/update the canonical PR with:
+
+```bash
+python3 .github/scripts/open-agent-pr.py \
+  --verification "<targeted check and result>" \
+  --completion "<verified completion or only remaining work>" \
+  --risk "<rollback / compatibility / security / privacy / cost impact>"
+```
+
+Behavior:
+
+- current branch must be exactly `agent/<subgoal-id>`;
+- matching roadmap issue must still be open;
+- branch must contain at least one commit ahead of `main`;
+- existing open PR for that branch is updated instead of duplicated;
+- issue linkage is emitted as `Closes #<issue>`;
+- changed files and branch comparison are derived from GitHub;
+- generic verification placeholders are allowed for initial draft handoff, but Manager must require targeted evidence before merge where CI is insufficient.
+
+Use `--draft` for an intentionally incomplete review handoff and `--dry-run --json` to inspect the generated metadata/body without creating a PR.
