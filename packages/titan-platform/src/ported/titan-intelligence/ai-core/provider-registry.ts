@@ -20,6 +20,7 @@ export class AiProviderRegistry {
   register(input: AiProviderRegistration) {
     if(!ID.test(input.id)) throw new Error("Invalid AI provider id.");
     if(!LOCALITY.has(input.locality)) throw new Error("Invalid AI provider locality.");
+    if(Object.prototype.hasOwnProperty.call(input as object,'tenant_id') || Object.prototype.hasOwnProperty.call(input as object,'tenant_company_id')) throw new Error("legacy-tenant-authority-rejected");
     const company=input.company_id==null?null:String(input.company_id).trim();
     if(input.company_id!=null&&!company) throw new Error("company_id-required");
     const key=`${company??"*"}|${input.id}`;
