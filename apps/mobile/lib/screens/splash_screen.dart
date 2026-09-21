@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:titan_mobile_mvp/screens/titan_shell_screen.dart';
+import 'package:titan_zero_mobile/screens/titan_shell_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
