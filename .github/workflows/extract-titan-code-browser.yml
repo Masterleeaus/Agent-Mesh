@@ -15,41 +15,62 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Restore Pass 18 ZIP from prior commit
+      - name: Restore and validate Pass 18 ZIP
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p /tmp/titan-code
+          rm -rf /tmp/titan-code
+          mkdir -p /tmp/titan-code/extracted
           git show 1e6dac160067499a0310af375142b75c76c9549e^:apps/browser/Titan-Code-v2.11.9-Browser-AI-Convergence-Pass18-CUMULATIVE.zip > /tmp/titan-code/pass18.zip
           test -s /tmp/titan-code/pass18.zip
           unzip -t /tmp/titan-code/pass18.zip
-
-      - name: Extract into apps/browser
-        shell: bash
-        run: |
-          set -euo pipefail
-          find apps/browser -mindepth 1 -maxdepth 1 ! -name 'readme.txt' -exec rm -rf {} +
           unzip -q /tmp/titan-code/pass18.zip -d /tmp/titan-code/extracted
 
-          ROOT="/tmp/titan-code/extracted"
-          TOP_COUNT=$(find "$ROOT" -mindepth 1 -maxdepth 1 | wc -l | tr -d ' ')
-          if [ "$TOP_COUNT" = "1" ]; then
-            ONLY=$(find "$ROOT" -mindepth 1 -maxdepth 1 -type d | head -n 1 || true)
-            if [ -n "$ONLY" ]; then
-              ROOT="$ONLY"
-            fi
-          fi
-
-          cp -a "$ROOT"/. apps/browser/
-          rm -f apps/browser/Titan-Code-v2.11.9-Browser-AI-Convergence-Pass18-CUMULATIVE.zip
-
-      - name: Verify extension tree
+      - name: Resolve extension root
+        id: root
         shell: bash
         run: |
           set -euo pipefail
+          ROOT="/tmp/titan-code/extracted"
+          if [ ! -f "$ROOT/manifest.json" ]; then
+            CANDIDATE=$(find "$ROOT" -mindepth 1 -maxdepth 3 -type f -name manifest.json -print -quit || true)
+            if [ -z "$CANDIDATE" ]; then
+              echo "manifest.json not found in extracted archive"
+              find "$ROOT" -maxdepth 3 -type f | sort | head -200
+              exit 1
+            fi
+            ROOT=$(dirname "$CANDIDATE")
+          fi
+          test -f "$ROOT/manifest.json"
+          test -d "$ROOT/src"
+          echo "root=$ROOT" >> "$GITHUB_OUTPUT"
+          echo "Validated extension root: $ROOT"
+          echo "Validated file count: $(find "$ROOT" -type f | wc -l)"
+
+      - name: Stage extracted extension safely
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="${{ steps.root.outputs.root }}"
+          rm -rf /tmp/titan-code/staged-browser
+          mkdir -p /tmp/titan-code/staged-browser
+          cp -a "$ROOT"/. /tmp/titan-code/staged-browser/
+          test -f /tmp/titan-code/staged-browser/manifest.json
+          test -d /tmp/titan-code/staged-browser/src
+
+      - name: Replace apps/browser only after validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p apps/browser
+          find apps/browser -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+          cp -a /tmp/titan-code/staged-browser/. apps/browser/
           test -f apps/browser/manifest.json
           test -d apps/browser/src
-          echo "Extracted file count: $(find apps/browser -type f | wc -l)"
+          if find apps/browser -maxdepth 1 -type f -name '*.zip' | grep -q .; then
+            echo "Unexpected ZIP remains in apps/browser"
+            exit 1
+          fi
 
       - name: Commit extracted extension
         shell: bash
@@ -57,7 +78,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/browser
+          git add -A apps/browser
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0
