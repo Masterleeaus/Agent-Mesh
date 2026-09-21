@@ -39,6 +39,10 @@ class SurfaceSdkTitanGateway implements TitanGateway {
     if (projection['surface'] != session.surface) {
       throw StateError('surface-projection-role-mismatch');
     }
+    final expiresAt = DateTime.tryParse(projection['expires_at']?.toString() ?? '');
+    if (expiresAt == null || !expiresAt.isAfter(DateTime.now().toUtc())) {
+      throw StateError('surface-projection-expired');
+    }
     if (projection['authority_neutral'] != true ||
         projection['identity_grants_authority'] != false ||
         projection['cached_state_grants_authority'] != false) {
@@ -60,10 +64,20 @@ class SurfaceSdkTitanGateway implements TitanGateway {
         .whereType<Map>()
         .map((e) => Map<String, dynamic>.from(e))
         .toList(growable: false);
-    final granted = capabilities.any((entry) =>
-        entry['capability_id'] == capability &&
-        (entry['operations'] as List? ?? const []).isNotEmpty);
-    if (!granted) throw StateError('surface-capability-not-authorised');
+    Map<String, dynamic>? grant;
+    for (final entry in capabilities) {
+      final operations = (entry['operations'] as List? ?? const []).map((e) => e.toString());
+      if (entry['capability_id'] == capability && operations.contains(capability)) {
+        grant = entry;
+        break;
+      }
+    }
+    if (grant == null) throw StateError('surface-capability-not-authorised');
+    final expiresAt = DateTime.tryParse(projection['expires_at']?.toString() ?? '');
+    if (expiresAt == null || !expiresAt.isAfter(DateTime.now().toUtc())) {
+      _projection = null;
+      throw StateError('surface-projection-expired');
+    }
 
     final now = DateTime.now().toUtc();
     final commandId = '${session.deviceId}-${now.microsecondsSinceEpoch}';
@@ -83,12 +97,15 @@ class SurfaceSdkTitanGateway implements TitanGateway {
       'transport': 'titan-command-bus',
       'execution_authorised': false,
       'requires_server_acceptance': true,
-      'requires_receipt': true,
+      'requires_receipt': grant['requires_receipt'] ?? grant['mutation'] == true,
     };
     final receipt = await transport.submitCommand(intent);
+    const validStatuses = {'accepted', 'rejected', 'completed', 'failed'};
     if (receipt['company_id'] != session.companyId ||
         receipt['command_id'] != commandId ||
-        receipt['correlation_id'] != correlationId) {
+        receipt['correlation_id'] != correlationId ||
+        !validStatuses.contains(receipt['status']) ||
+        (receipt['receipt_id']?.toString().isEmpty ?? true)) {
       throw StateError('surface-receipt-mismatch');
     }
   }
