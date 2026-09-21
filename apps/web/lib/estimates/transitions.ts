@@ -1,5 +1,5 @@
-import { estimateTransitions } from "@ai-fsm/domain";
-import type { EstimateStatus } from "@ai-fsm/domain";
+import { estimateTransitions } from "@titan-zero/domain";
+import type { EstimateStatus } from "@titan-zero/domain";
 
 /**
  * Statuses a user may set via the manual "Transition Status" control.
