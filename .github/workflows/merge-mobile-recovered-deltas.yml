@@ -1,64 +1,45 @@
-name: Merge Titan Mobile Recovered Deltas
+name: Unzip Titan Mobile Recovered Deltas
+
 on:
   push:
     paths:
       - '.github/workflows/merge-mobile-recovered-deltas.yml'
   workflow_dispatch:
+
 permissions:
   contents: write
+
 jobs:
-  merge:
+  unzip:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Extract recovered delta bundle and overlay deltas
+
+      - name: Unzip recovery bundle
         shell: bash
         run: |
           set -euo pipefail
-          bundle="apps/mobile/Titan-Mobile-Recovered-Deltas.zip"
-          test -f "$bundle"
-          work="$(mktemp -d)"
-          unzip -q "$bundle" -d "$work/bundle"
-          echo "Recovered bundle contents:"
-          find "$work/bundle" -maxdepth 3 -type f -print | sort
-          mapfile -t zips < <(find "$work/bundle" -type f -iname '*.zip' | sort -V)
-          if [ "${#zips[@]}" -eq 0 ]; then
-            echo "No nested delta ZIPs found" >&2
-            exit 1
-          fi
-          for z in "${zips[@]}"; do
-            echo "=== APPLYING $z ==="
-            d="$work/delta"
-            rm -rf "$d"; mkdir -p "$d"
-            unzip -q -o "$z" -d "$d"
-            root="$d"
-            entries=( "$d"/* )
-            if [ "${#entries[@]}" -eq 1 ] && [ -d "${entries[0]}" ]; then root="${entries[0]}"; fi
-            if [ -d "$root/apps/mobile" ]; then root="$root/apps/mobile"; fi
-            rsync -a --exclude='.git' --exclude='*.zip' "$root/" apps/mobile/
-          done
-          rm -f apps/mobile/Titan-Mobile-Recovered-Deltas.zip
-          cat > apps/mobile/MERGE_RECOVERY.md <<'EOF'
-# Titan Mobile recovered delta merge
+          ZIP="apps/mobile/Titan-Mobile-Recovered-Deltas.zip"
+          test -f "$ZIP"
+          mkdir -p apps/mobile/recovered-deltas
+          unzip -o "$ZIP" -d apps/mobile/recovered-deltas
+          rm -f "$ZIP"
+          echo "Extracted files:"
+          find apps/mobile/recovered-deltas -type f | sort
 
-The Pass10 Flutter source was recovered first, then every nested ZIP from
-`Titan-Mobile-Recovered-Deltas.zip` was overlaid in version-sorted order.
-The source under `apps/mobile/` is the merged working tree; the recovery bundle
-was removed after successful extraction to avoid retaining a second opaque source.
-EOF
-          git status --short
-      - name: Commit merged mobile source
+      - name: Commit extracted deltas
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/mobile
+          git add -A apps/mobile
           if git diff --cached --quiet; then
-            echo "No mobile delta changes to commit."
-          else
-            git commit -m "Merge recovered Titan mobile deltas into Flutter app"
-            git push
+            echo "Nothing to commit"
+            exit 0
           fi
+          git commit -m "Unzip recovered Titan mobile deltas"
+          git push origin HEAD:main
