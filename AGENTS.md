@@ -208,3 +208,27 @@ The helper refuses:
 - empty branches with no commits ahead of `main`.
 
 It resolves the matching issue, fills the canonical PR metadata/evidence structure, links `Closes #<issue>`, records changed files and current merge-base, and reuses the one existing PR for the claim branch rather than opening duplicates.
+
+
+## Post-merge roadmap finalization
+
+Manager merge is the completion decision for a canonical agent subgoal PR. Automation must not decide completion before that merge.
+
+After a Manager merges an `agent/<subgoal-id>` PR into `main`, the repository automatically runs:
+
+- `.github/workflows/finalize-merged-agent-subgoal.yml`
+- `.github/scripts/finalize-merged-subgoal.py`
+
+The finalizer reconciles the already-established merge fact into roadmap state:
+
+- matching subgoal status → `COMPLETE`;
+- `claimable` → `false`;
+- execution state → `COMPLETE`;
+- completion receipt records PR number, issue number, merge SHA, claim branch and merged timestamp;
+- `roadmap/SUBGOAL-ISSUE-MANIFEST.json` entry → `COMPLETE`;
+- goal progress is recomputed;
+- fully terminal goals may become `COMPLETE`.
+
+This workflow is serialized to prevent two simultaneous Manager merges from racing on the roadmap manifest. It retries from fresh `main` if another canonical update lands first.
+
+Do not manually mark a builder subgoal complete before Manager merge merely because a builder says the work is finished.
