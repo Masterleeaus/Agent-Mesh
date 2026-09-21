@@ -18,6 +18,8 @@ class TitanGeneratedUiRuntimeBridge {
     if(envelope.interfaceRuntimeId.trim().isEmpty)throw StateError('Interface Runtime provenance required');
     if(envelope.visualRuntimeId.trim().isEmpty)throw StateError('Visual Runtime provenance required');
     if(envelope.governanceEvidence.containsKey('tenant_company_id')||envelope.governanceEvidence.containsKey('tenant_id'))throw StateError('generated UI legacy tenant boundary forbidden');
+    if(envelope.governanceEvidence['authority_neutral']!=true)throw StateError('generated UI authority neutrality required');
+    if(envelope.governanceEvidence['business_mutation_requires_command_bus']!=true)throw StateError('generated UI Command Bus boundary required');
     final projected=envelope.items.where((item){
       if(item.title.trim().isEmpty)throw StateError('generated UI item title required');
       if(item.context.containsKey('tenant_company_id')||item.context.containsKey('tenant_id'))throw StateError('generated UI legacy tenant boundary forbidden');
