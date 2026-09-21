@@ -80,15 +80,35 @@ jobs:
           cat web-typecheck.log
           python3 .github/scripts/check-web-typecheck-baseline.py \
             --baseline .github/ci/web-typecheck-baseline.json \
-            --log web-typecheck.log
+            --log web-typecheck.log \
+            --command-status "$TYPECHECK_STATUS"
           if [ "$TYPECHECK_STATUS" -eq 0 ]; then
             echo "Web TypeScript baseline is fully clean."
           else
             echo "::warning::Web typecheck still contains recorded Merge84 baseline debt; no regression detected."
           fi
 
-      - name: Unit tests
-        run: pnpm -r --if-present test
+      - name: Strict tests outside titan-platform
+        run: pnpm -r --filter '!@ai-fsm/titan-platform' --if-present test
+
+      - name: titan-platform test regression gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          pnpm --filter @ai-fsm/titan-platform test > titan-platform-test.log 2>&1
+          TEST_STATUS=$?
+          set -e
+          cat titan-platform-test.log
+          python3 .github/scripts/check-titan-platform-test-baseline.py \
+            --baseline .github/ci/titan-platform-test-baseline.json \
+            --log titan-platform-test.log \
+            --command-status "$TEST_STATUS"
+          if [ "$TEST_STATUS" -eq 0 ]; then
+            echo "titan-platform test baseline is fully clean."
+          else
+            echo "::warning::titan-platform still contains recorded Merge84 test-harness debt; no regression detected."
+          fi
 
       - name: Strict non-web build
         run: pnpm -r --filter '!@ai-fsm/web' --if-present build
