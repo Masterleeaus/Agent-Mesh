@@ -1,0 +1,40 @@
+name: Extract new Titan Zero marketing sites
+
+on:
+  push:
+    paths:
+      - "archive/marketing-sites-extracted/marketing-sites-extracted/nexjob-marketing-main.zip"
+      - "archive/marketing-sites-extracted/marketing-sites-extracted/trydrafted-landing-main.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract NexJob and TryDrafted
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf apps/marketing-nexjob apps/marketing-trydrafted
+          mkdir -p apps/marketing-nexjob apps/marketing-trydrafted
+          unzip -q "archive/marketing-sites-extracted/marketing-sites-extracted/nexjob-marketing-main.zip" -d /tmp/nexjob
+          unzip -q "archive/marketing-sites-extracted/marketing-sites-extracted/trydrafted-landing-main.zip" -d /tmp/trydrafted
+          shopt -s dotglob nullglob
+          n=(/tmp/nexjob/*)
+          if [ "${#n[@]}" -eq 1 ] && [ -d "${n[0]}" ]; then cp -a "${n[0]}"/. apps/marketing-nexjob/; else cp -a /tmp/nexjob/. apps/marketing-nexjob/; fi
+          t=(/tmp/trydrafted/*)
+          if [ "${#t[@]}" -eq 1 ] && [ -d "${t[0]}" ]; then cp -a "${t[0]}"/. apps/marketing-trydrafted/; else cp -a /tmp/trydrafted/. apps/marketing-trydrafted/; fi
+          find apps/marketing-nexjob apps/marketing-trydrafted -name .git -type d -prune -exec rm -rf {} +
+      - name: Commit extracted sites
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/marketing-nexjob apps/marketing-trydrafted
+          git diff --cached --quiet && exit 0
+          git commit -m "marketing: extract NexJob and TryDrafted into marketing network"
+          git push
