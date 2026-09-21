@@ -28,5 +28,12 @@
     "src/notification/dispatch.test.ts > notification delivery leasing > retries a failed provider delivery and preserves attempt history": 1,
     "src/notification/dispatch.test.ts > notification delivery leasing > dead-letters a delivery after its configured maximum attempts": 1,
     "src/notification/dispatch.test.ts > notification delivery leasing > releases a governor-delayed row without consuming a provider attempt": 1
+  },
+  "roadmap_owner": {
+    "subgoal_id": "TZ-ROADMAP-52-SG-14",
+    "issue_number": 64,
+    "issue_url": "https://github.com/Masterleeaus/Agent-Mesh/issues/64",
+    "debt": "Worker test-suite baseline repair",
+    "exit_rule": "Reduce or delete this baseline only when current CI evidence proves the corresponding errors/failures are fixed. New/increased failures remain forbidden."
   }
 }
