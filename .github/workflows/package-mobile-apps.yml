@@ -1,0 +1,21 @@
+name: Package Titan Mobile Apps
+on:
+  push:
+    paths:
+      - '.github/workflows/package-mobile-apps.yml'
+  workflow_dispatch:
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package apps/mobile
+        run: |
+          test -d apps/mobile
+          cd apps
+          zip -r ../Titan-Zero-PWA-Apps-current.zip mobile -x "*/node_modules/*" "*/.git/*"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Titan-Zero-PWA-Apps-current
+          path: Titan-Zero-PWA-Apps-current.zip
+          retention-days: 7
