@@ -1,0 +1,92 @@
+name: Finalize Merged Agent Subgoal
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: roadmap-merge-finalization
+  cancel-in-progress: false
+
+jobs:
+  finalize:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.pull_request.merged == true &&
+        startsWith(github.event.pull_request.head.ref, 'agent/')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure Git identity
+        run: |
+          git config user.name "Titan Zero Manager Finalizer"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: Reconcile merged subgoal into roadmap
+        id: finalize
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual dispatch is validation-only because there is no merged-PR event payload."
+            python3 .github/scripts/finalize-merged-subgoal.py --self-test
+            exit 0
+          fi
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+
+            python3 .github/scripts/finalize-merged-subgoal.py               --event "$GITHUB_EVENT_PATH" --json
+
+            if git diff --quiet -- roadmap/SUBGOAL-ISSUE-MANIFEST.json roadmap/goals; then
+              echo "Roadmap already reconciled for this merge."
+              exit 0
+            fi
+
+            SUBGOAL_ID="$(python3 - <<'PY'
+import json, os, re
+event=json.load(open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8"))
+head=event["pull_request"]["head"]["ref"]
+m=re.match(r"^agent/(TZ-(?:G00|ROADMAP-\d+)-SG-\d+)$", head)
+print(m.group(1) if m else "")
+PY
+)"
+            PR_NUMBER="$(python3 - <<'PY'
+import json, os
+event=json.load(open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8"))
+print(event["pull_request"]["number"])
+PY
+)"
+
+            git add roadmap/SUBGOAL-ISSUE-MANIFEST.json roadmap/goals
+            git commit -m "roadmap: finalize ${SUBGOAL_ID} from PR #${PR_NUMBER}"
+
+            if git push origin HEAD:main; then
+              echo "Finalized ${SUBGOAL_ID} on canonical main."
+              exit 0
+            fi
+
+            echo "Concurrent main update detected; retrying from fresh main (attempt ${attempt}/3)."
+            sleep $((attempt * 2))
+          done
+
+          echo "Unable to publish roadmap finalization after 3 serialized retries."
+          exit 1
