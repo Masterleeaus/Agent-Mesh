@@ -92,3 +92,24 @@ describe("sendSmsViaGateway", () => {
     }
   });
 });
+
+it("accepts an explicit tenant gateway configuration", async () => {
+  const fetchMock = vi.fn().mockResolvedValue({
+    ok: true,
+    status: 200,
+    text: async () => JSON.stringify({ id: "tenant-msg" }),
+  });
+  vi.stubGlobal("fetch", fetchMock);
+
+  const config = {
+    url: "https://tenant-gateway.example/messages",
+    username: "tenant-user",
+    password: "tenant-pass",
+    simNumber: 2,
+  };
+  expect(isSmsGatewayConfigured(config)).toBe(true);
+  const result = await sendSmsViaGateway({ phone: "+16035551212", message: "tenant", config });
+  expect(result.ok).toBe(true);
+  const [, options] = fetchMock.mock.calls[0] as [string, RequestInit];
+  expect(JSON.parse(String(options.body)).simNumber).toBe(2);
+});

@@ -1,4 +1,5 @@
 import type { InvoiceStatus } from "@ai-fsm/domain";
+import type { DbClient } from "@/lib/db-contract";
 
 /**
  * Pure payment math for invoices.
@@ -88,4 +89,43 @@ export function validatePaymentAmount(
     return `Payment amount ($${(amountCents / 100).toFixed(2)}) exceeds remaining balance ($${(remaining / 100).toFixed(2)})`;
   }
   return null;
+}
+
+
+/**
+ * Recalculate paid_cents, status and balance from completed payment rows.
+ * Cross-dialect equivalent of the legacy PostgreSQL payment trigger.
+ */
+export async function synchronizeInvoicePaymentState(
+  client: DbClient,
+  accountId: string,
+  invoiceId: string,
+  paidAt: string = new Date().toISOString(),
+): Promise<{ status: InvoiceStatus; paid_cents: number; total_cents: number; deposit_cents: number; invoice_number: string }> {
+  const invResult = await client.query<{
+    status: InvoiceStatus; total_cents: number; paid_cents: number; deposit_cents: number; invoice_number: string;
+  }>(
+    `SELECT status, total_cents, paid_cents, deposit_cents, invoice_number
+     FROM invoices WHERE id = $1 AND account_id = $2 FOR UPDATE`,
+    [invoiceId, accountId],
+  );
+  if (invResult.rowCount === 0) throw new Error("Invoice not found while synchronizing payment state");
+  const inv = invResult.rows[0];
+  const paidResult = await client.query<{ paid_cents: number | string }>(
+    `SELECT COALESCE(SUM(amount_cents), 0) AS paid_cents
+     FROM payments WHERE invoice_id = $1 AND account_id = $2 AND status = 'paid'`,
+    [invoiceId, accountId],
+  );
+  const paidCents = Number(paidResult.rows[0]?.paid_cents ?? 0);
+  const status = deriveInvoiceStatus(inv.total_cents, paidCents, inv.deposit_cents);
+  await client.query(
+    `UPDATE invoices
+     SET paid_cents = $1, status = $2,
+         paid_at = CASE WHEN $2 = 'paid' THEN COALESCE(paid_at, $3) ELSE paid_at END,
+         balance_cents = GREATEST(total_cents - $1 - deposit_cents, 0),
+         updated_at = now()
+     WHERE id = $4 AND account_id = $5`,
+    [paidCents, status, paidAt, invoiceId, accountId],
+  );
+  return { ...inv, status, paid_cents: paidCents };
 }

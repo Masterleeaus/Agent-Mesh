@@ -204,3 +204,23 @@ describe("learnMaterialsFromLineItems", () => {
     expect(result.learned).toBe(1);
   });
 });
+
+// Pass 3 portability contract: the materials price store must emit dialect-safe SQL.
+describe("materials catalog SQL portability", () => {
+  it("uses MySQL-safe placeholders and functions without PostgreSQL casts/RETURNING", async () => {
+    const { buildMaterialCatalogSql } = await import("../catalog-sql");
+    const sql = buildMaterialCatalogSql("mysql");
+    expect(sql.findBySku).toContain("TRIM(sku)");
+    expect(sql.findBySku).toContain("?");
+    expect(sql.findBySku).not.toContain("btrim(");
+    expect(sql.update).not.toContain("RETURNING");
+    expect(sql.insert).not.toContain("::date");
+  });
+
+  it("preserves PostgreSQL placeholders for the existing runtime", async () => {
+    const { buildMaterialCatalogSql } = await import("../catalog-sql");
+    const sql = buildMaterialCatalogSql("postgres");
+    expect(sql.findBySku).toContain("$1");
+    expect(sql.update).toContain("RETURNING");
+  });
+});
