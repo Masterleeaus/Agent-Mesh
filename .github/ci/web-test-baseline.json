@@ -93,5 +93,12 @@
     "app/api/v1/visits/__tests__/visits.unit.test.ts > POST /api/v1/visits/[id]/transition > membership completion without a sent summary → 422 PRECONDITION_FAILED": 1,
     "app/api/v1/visits/__tests__/visits.unit.test.ts > POST /api/v1/visits/[id]/transition > visit not found → 404": 1,
     "app/api/v1/visits/[id]/sub-status/__tests__/sub-status.unit.test.ts > PATCH /api/v1/visits/[id]/sub-status > updates a visit sub-status": 1
+  },
+  "roadmap_owner": {
+    "subgoal_id": "TZ-ROADMAP-52-SG-14",
+    "issue_number": 64,
+    "issue_url": "https://github.com/Masterleeaus/Agent-Mesh/issues/64",
+    "debt": "Web test-suite baseline repair",
+    "exit_rule": "Reduce or delete this baseline only when current CI evidence proves the corresponding errors/failures are fixed. New/increased failures remain forbidden."
   }
 }
