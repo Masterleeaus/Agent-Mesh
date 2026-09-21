@@ -1,0 +1,616 @@
+{
+  "goal_id": "TZ-ROADMAP-54",
+  "priority": "P0",
+  "title": "Managed Workforce Implementation Lifecycle & Existing-Business Augmentation",
+  "objective": "Make business investigation, pain/outcome modelling, solution engineering, capability mapping, workforce design, installation, shadow/prove/commission and ongoing improvement the official Titan Zero customer implementation lifecycle.",
+  "status": "PLANNED",
+  "affinity_tags": [
+    "managed-workforce",
+    "implementation",
+    "existing-business",
+    "pain-points",
+    "outcomes"
+  ],
+  "preferred_predecessors": [
+    "TZ-ROADMAP-53"
+  ],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "unified_architecture_contract_required": true,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "claimable": true,
+  "reuse_first": true,
+  "library_reuse_refs": [
+    "Titan Investigation Workforce",
+    "Titan Solution Engineering Workforce",
+    "Titan Installation Workforce",
+    "Titan Installed Client AI Workforce",
+    "Titan Zero Merge83"
+  ],
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "subgoal_id": "TZ-ROADMAP-54-SG-01",
+      "title": "Formalize customer lifecycle: DISCOVER → INVESTIGATE → MODEL → PAIN → DESIGN → MAP → CONNECT → INSTALL → SHADOW → PROVE → COMMISSION → OPERATE → MEASURE → IMPROVE",
+      "status": "TODO",
+      "subgoal_order": 1,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "claimable": true,
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; implementation-heavy; cumulative checkpoints normally every 4-6 passes",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan current Merge83, Agent Mesh reference mappings and verified Laravel/master donors first; converge rather than duplicate.",
+      "library_reuse_refs": [
+        "Titan Investigation Workforce",
+        "Titan Solution Engineering Workforce",
+        "Titan Installation Workforce",
+        "Titan Installed Client AI Workforce"
+      ],
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "PENDING_ASSESSMENT",
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "capability_ids": []
+      },
+      "target_architecture_audit": {
+        "status": "NO_STATIC_CONTRADICTION_DETECTED",
+        "preserve_completed_evidence": true
+      },
+      "architecture_ref": "ARCHREF::TZ-ROADMAP-54-SG-01",
+      "capability_refs": [
+        "customer.manage",
+        "document.manage",
+        "intelligence.route",
+        "workforce.coordinate",
+        "authority.evaluate",
+        "command.execute",
+        "signal.emit",
+        "evidence.record",
+        "recovery.rewind"
+      ]
+    },
+    {
+      "subgoal": 2,
+      "subgoal_id": "TZ-ROADMAP-54-SG-02",
+      "title": "Implement business-system and capability discovery with KEEP → CONNECT → AUGMENT → BUILD → REPLACE → RETIRE decisions",
+      "status": "TODO",
+      "subgoal_order": 2,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "claimable": true,
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; implementation-heavy; cumulative checkpoints normally every 4-6 passes",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan current Merge83, Agent Mesh reference mappings and verified Laravel/master donors first; converge rather than duplicate.",
+      "library_reuse_refs": [
+        "Titan Investigation Workforce",
+        "Titan Migration Engine",
+        "Titan Connect"
+      ],
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "PENDING_ASSESSMENT",
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "capability_ids": []
+      },
+      "target_architecture_audit": {
+        "status": "NO_STATIC_CONTRADICTION_DETECTED",
+        "preserve_completed_evidence": true
+      },
+      "architecture_ref": "ARCHREF::TZ-ROADMAP-54-SG-02",
+      "capability_refs": [
+        "workforce.coordinate"
+      ]
+    },
+    {
+      "subgoal": 3,
+      "subgoal_id": "TZ-ROADMAP-54-SG-03",
+      "title": "Bind pain_point_id and outcome_id to canonical agent_id and required capability_id without embedding workforce specs in the roadmap",
+      "status": "TODO",
+      "subgoal_order": 3,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "claimable": true,
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; implementation-heavy; cumulative checkpoints normally every 4-6 passes",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan current Merge83, Agent Mesh reference mappings and verified Laravel/master donors first; converge rather than duplicate.",
+      "library_reuse_refs": [
+        "WORKFORCE-ARCHITECTURE",
+        "Titan AI Workforce",
+        "Titan Zero Merge83"
+      ],
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "PENDING_ASSESSMENT",
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "capability_ids": []
+      },
+      "target_architecture_audit": {
+        "status": "NO_STATIC_CONTRADICTION_DETECTED",
+        "preserve_completed_evidence": true
+      },
+      "architecture_ref": "ARCHREF::TZ-ROADMAP-54-SG-03",
+      "capability_refs": [
+        "workforce.coordinate",
+        "operator.develop"
+      ]
+    },
+    {
+      "subgoal": 4,
+      "subgoal_id": "TZ-ROADMAP-54-SG-04",
+      "title": "Compose workforce and hierarchy from canonical workforce architecture using capability availability and business evidence",
+      "status": "TODO",
+      "subgoal_order": 4,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "claimable": true,
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; implementation-heavy; cumulative checkpoints normally every 4-6 passes",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan current Merge83, Agent Mesh reference mappings and verified Laravel/master donors first; converge rather than duplicate.",
+      "library_reuse_refs": [
+        "Titan Solution Engineering Workforce",
+        "Titan AI Workforce"
+      ],
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "PENDING_ASSESSMENT",
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "capability_ids": []
+      },
+      "target_architecture_audit": {
+        "status": "NO_STATIC_CONTRADICTION_DETECTED",
+        "preserve_completed_evidence": true
+      },
+      "architecture_ref": "ARCHREF::TZ-ROADMAP-54-SG-04",
+      "capability_refs": [
+        "workforce.coordinate",
+        "operator.develop"
+      ]
+    },
+    {
+      "subgoal": 5,
+      "subgoal_id": "TZ-ROADMAP-54-SG-05",
+      "title": "Generate implementation plan covering providers, permissions, authority ceilings, data/storage placement, AI funding and cost sovereignty",
+      "status": "TODO",
+      "subgoal_order": 5,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "claimable": true,
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; implementation-heavy; cumulative checkpoints normally every 4-6 passes",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan current Merge83, Agent Mesh reference mappings and verified Laravel/master donors first; converge rather than duplicate.",
+      "library_reuse_refs": [
+        "Titan Solution Engineering Workforce",
+        "Titan Storage Fabric",
+        "Titan Intelligence Runtime"
+      ],
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "PENDING_ASSESSMENT",
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "capability_ids": []
+      },
+      "target_architecture_audit": {
+        "status": "NO_STATIC_CONTRADICTION_DETECTED",
+        "preserve_completed_evidence": true
+      },
+      "architecture_ref": "ARCHREF::TZ-ROADMAP-54-SG-05",
+      "capability_refs": [
+        "storage.route",
+        "intelligence.route",
+        "workforce.coordinate",
+        "authority.evaluate"
+      ]
+    },
+    {
+      "subgoal": 6,
+      "subgoal_id": "TZ-ROADMAP-54-SG-06",
+      "title": "Install connectors/providers and workforce bindings using Installation Workforce with reversible staged deployment",
+      "status": "TODO",
+      "subgoal_order": 6,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "claimable": true,
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; implementation-heavy; cumulative checkpoints normally every 4-6 passes",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan current Merge83, Agent Mesh reference mappings and verified Laravel/master donors first; converge rather than duplicate.",
+      "library_reuse_refs": [
+        "Titan Installation Workforce",
+        "Titan Connect",
+        "Titan Rewind"
+      ],
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "PENDING_ASSESSMENT",
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "capability_ids": []
+      },
+      "target_architecture_audit": {
+        "status": "NO_STATIC_CONTRADICTION_DETECTED",
+        "preserve_completed_evidence": true
+      },
+      "architecture_ref": "ARCHREF::TZ-ROADMAP-54-SG-06",
+      "capability_refs": [
+        "integration.connect",
+        "intelligence.route",
+        "workforce.coordinate"
+      ]
+    },
+    {
+      "subgoal": 7,
+      "subgoal_id": "TZ-ROADMAP-54-SG-07",
+      "title": "Run shadow mode and evidence-backed prove cycles before requesting higher authority or automation",
+      "status": "TODO",
+      "subgoal_order": 7,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "claimable": true,
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; implementation-heavy; cumulative checkpoints normally every 4-6 passes",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan current Merge83, Agent Mesh reference mappings and verified Laravel/master donors first; converge rather than duplicate.",
+      "library_reuse_refs": [
+        "Titan Trust",
+        "Titan Autonomy",
+        "Titan Assurance",
+        "Titan Installed Client AI Workforce"
+      ],
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "PENDING_ASSESSMENT",
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "capability_ids": []
+      },
+      "target_architecture_audit": {
+        "status": "NO_STATIC_CONTRADICTION_DETECTED",
+        "preserve_completed_evidence": true
+      },
+      "architecture_ref": "ARCHREF::TZ-ROADMAP-54-SG-07",
+      "capability_refs": [
+        "workforce.coordinate",
+        "authority.evaluate"
+      ]
+    },
+    {
+      "subgoal": 8,
+      "subgoal_id": "TZ-ROADMAP-54-SG-08",
+      "title": "Commission Installed Client Workforce with explicit user approval, worker acceptance and bounded authority",
+      "status": "TODO",
+      "subgoal_order": 8,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "claimable": true,
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; implementation-heavy; cumulative checkpoints normally every 4-6 passes",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan current Merge83, Agent Mesh reference mappings and verified Laravel/master donors first; converge rather than duplicate.",
+      "library_reuse_refs": [
+        "Titan Installed Client AI Workforce",
+        "Titan Trust",
+        "Titan Autonomy"
+      ],
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "PENDING_ASSESSMENT",
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "capability_ids": []
+      },
+      "target_architecture_audit": {
+        "status": "NO_STATIC_CONTRADICTION_DETECTED",
+        "preserve_completed_evidence": true
+      },
+      "architecture_ref": "ARCHREF::TZ-ROADMAP-54-SG-08",
+      "capability_refs": [
+        "workforce.coordinate",
+        "authority.evaluate"
+      ]
+    },
+    {
+      "subgoal": 9,
+      "subgoal_id": "TZ-ROADMAP-54-SG-09",
+      "title": "Measure verified business outcomes, ROI, recovered/accelerated/saved value and feed continuous improvement",
+      "status": "TODO",
+      "subgoal_order": 9,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "claimable": true,
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; implementation-heavy; cumulative checkpoints normally every 4-6 passes",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan current Merge83, Agent Mesh reference mappings and verified Laravel/master donors first; converge rather than duplicate.",
+      "library_reuse_refs": [
+        "Titan Installed Client AI Workforce",
+        "Titan Signal",
+        "Titan Assurance"
+      ],
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "PENDING_ASSESSMENT",
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "capability_ids": []
+      },
+      "target_architecture_audit": {
+        "status": "NO_STATIC_CONTRADICTION_DETECTED",
+        "preserve_completed_evidence": true
+      },
+      "architecture_ref": "ARCHREF::TZ-ROADMAP-54-SG-09",
+      "capability_refs": [
+        "workforce.coordinate"
+      ]
+    },
+    {
+      "subgoal": 10,
+      "subgoal_id": "TZ-ROADMAP-54-SG-10",
+      "title": "Certify multi-vertical reuse: workforce/capability composition changes without forking Titan Core",
+      "status": "TODO",
+      "subgoal_order": 10,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "claimable": true,
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; implementation-heavy; cumulative checkpoints normally every 4-6 passes",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan current Merge83, Agent Mesh reference mappings and verified Laravel/master donors first; converge rather than duplicate.",
+      "library_reuse_refs": [
+        "Titan Zero Merge83",
+        "WORKFORCE-ARCHITECTURE",
+        "Titan Vertical Engine"
+      ],
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "PENDING_ASSESSMENT",
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "capability_ids": []
+      },
+      "target_architecture_audit": {
+        "status": "NO_STATIC_CONTRADICTION_DETECTED",
+        "preserve_completed_evidence": true
+      },
+      "architecture_ref": "ARCHREF::TZ-ROADMAP-54-SG-10",
+      "capability_refs": [
+        "workforce.coordinate"
+      ]
+    }
+  ],
+  "programme_ids": [
+    "F",
+    "E",
+    "C"
+  ],
+  "programme_primary": "F",
+  "architecture_disposition": "TARGET_ARCHITECTURE",
+  "target_architecture_alignment": "Owns managed workforce implementation lifecycle and existing-business augmentation.",
+  "target_architecture_contradiction_summary": {
+    "status": "NO_STATIC_CONTRADICTION_DETECTED",
+    "finding_codes": [],
+    "subgoal_findings_count": 0
+  },
+  "target_execution_lane": "F",
+  "target_execution_gate": "IMPLEMENTATION_LIFECYCLE"
+}
