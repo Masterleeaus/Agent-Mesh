@@ -1,0 +1,44 @@
+name: Migrate Titan Core Runtime Folders
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/migrate-titan-core-folders.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Move unique Titan runtime subsystems into workspace packages
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          move_unique () {
+            src="$1"
+            dst="$2"
+            test -d "$src"
+            test ! -e "$dst"
+            git mv "$src" "$dst"
+          }
+
+          move_unique titan/titan-runtime packages/runtime
+          move_unique titan/titan-workforce packages/workforce
+          move_unique titan/titan-observability packages/observability
+          move_unique titan/titan-provenance packages/provenance
+          move_unique titan/titan-offline packages/offline
+          move_unique titan/titan-onboarding packages/onboarding
+
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Migrate Titan core runtime subsystems into workspace packages"
+          git push
