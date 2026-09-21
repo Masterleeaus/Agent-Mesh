@@ -9,9 +9,9 @@ import {
 } from "@/lib/sms/consent";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — Dovetails",
+  title: "Terms of Service — Titan Zero",
   description:
-    "Terms of Service for Dovetails Services LLC, including website use and SMS program terms.",
+    "Terms covering the Titan Zero website, platform access, and related services.",
 };
 
 export default function TermsPage() {
@@ -19,7 +19,7 @@ export default function TermsPage() {
     <LegalPageShell title="Terms of Service" effectiveDate="August 1, 2026">
       <p>
         These Terms of Service (“Terms”) govern your use of websites, booking forms, customer
-        portals, and related services operated by {BUSINESS_LEGAL_NAME} (“Dovetails,” “we,” “us”).
+        portals, and related services operated by {BUSINESS_LEGAL_NAME} (“Titan Zero,” “we,” “us”).
         By using our services or submitting a service request, you agree to these Terms.
       </p>
 
@@ -105,7 +105,7 @@ export default function TermsPage() {
 
       <h2>6. Intellectual property</h2>
       <p>
-        Site content, branding, and software interfaces are owned by Dovetails or our licensors.
+        Site content, Titan Zero branding, and software interfaces are owned by the applicable operator or its licensors.
         You may not copy or reuse them except as needed to use our services.
       </p>
 

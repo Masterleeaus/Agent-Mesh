@@ -9,16 +9,16 @@ import {
 } from "@/lib/sms/consent";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Dovetails",
+  title: "Privacy Policy — Titan Zero",
   description:
-    "Privacy Policy for Dovetails Services LLC, including how we handle SMS/text messaging and personal information.",
+    "Privacy information for the Titan Zero website and platform.",
 };
 
 export default function PrivacyPage() {
   return (
     <LegalPageShell title="Privacy Policy" effectiveDate="August 1, 2026">
       <p>
-        {BUSINESS_LEGAL_NAME} (“Dovetails,” “we,” “us,” or “our”) respects your privacy. This
+        {BUSINESS_LEGAL_NAME} (“Titan Zero,” “we,” “us,” or “our”) respects your privacy. This
         Privacy Policy explains what information we collect, how we use it, and your choices —
         including choices about text messages (SMS).
       </p>
