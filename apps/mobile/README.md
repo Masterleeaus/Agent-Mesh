@@ -17,3 +17,21 @@ Production mobile contracts mirror the canonical Surface SDK in `packages/titan-
 
 ## Build
 Standard Flutter metadata is kept at this root so both `android/` and `ios/` build from this same source. Release signing/store work remains tracked separately in Goal 47 SG09.
+
+
+## Production Surface SDK bootstrap
+
+The canonical mobile shell does not grant itself business authority. Production builds inject a server-backed Surface SDK gateway at bootstrap.
+
+Required Dart defines:
+- `TITAN_COMPANY_ID`
+- `TITAN_ACTOR_ID`
+- `TITAN_DEVICE_ID`
+- `TITAN_SURFACE` — canonical `zero`, `go`, or `hub` (defaults to `zero`)
+- `TITAN_SURFACE_PROJECTION_URL`
+- `TITAN_SURFACE_COMMAND_URL`
+
+Optional:
+- `TITAN_AUTH_TOKEN`
+
+Missing production configuration fails closed. `LocalMvpTitanGateway` is development/offline compatibility only and is not wired into the production shell. Core projections remain authority-neutral and consequential commands require server acceptance/receipts.
