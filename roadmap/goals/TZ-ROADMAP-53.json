@@ -24,7 +24,7 @@
   "claimable": true,
   "reuse_first": true,
   "library_reuse_refs": [
-    "Titan Zero Merge83",
+    "Titan Zero Merge83 (historical donor/provenance only; GitHub main is canonical)",
     "MagicAI WorkCore",
     "MASTER-PRODUCT-REGISTRY",
     "SUBGOAL-CODE-MAP",
@@ -34,7 +34,7 @@
     {
       "subgoal": 1,
       "subgoal_id": "TZ-ROADMAP-53-SG-01",
-      "title": "Freeze and verify the Target Architecture Contract against Merge83 and all active Agent Mesh authorities",
+      "title": "Freeze and verify the Target Architecture Contract against GitHub main and all active Agent Mesh coordination records",
       "status": "TODO",
       "subgoal_order": 1,
       "priority": "P0",
