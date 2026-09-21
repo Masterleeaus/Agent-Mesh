@@ -59,6 +59,12 @@ The helper only considers `TODO` subgoals whose GitHub issue is open. It skips e
 
 Do not wait for Manager approval merely to begin another eligible unclaimed subgoal. Manager review is required for integration, not for staying productive.
 
+## Manager review queue
+
+Use the live `Manager Review Queue` GitHub Actions summary rather than manually searching PRs. It ranks READY agent PRs first, surfaces BLOCKED work next, keeps WAITING work visible, and also shows active claims that have not produced a PR yet.
+
+The queue is advisory/read-only. Manager still decides whether to merge.
+
 ## Manager loop
 
 1. Review against current `main`, roadmap intent, architecture contracts, and verified evidence.
