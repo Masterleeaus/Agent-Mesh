@@ -176,3 +176,23 @@ Safety behavior:
 - Agent Claim Gate and Titan Zero CI remain the enforcement boundary.
 
 A builder should not create an empty PR just to mark activity. The issue claim comment and claim branch already provide that coordination signal.
+
+
+## Manager review readiness
+
+After a builder opens the canonical agent PR, the repository continuously evaluates whether it is ready for Manager review.
+
+The readiness evaluator checks:
+
+1. canonical `agent/<subgoal-id>` branch;
+2. matching open roadmap issue linked with `Closes #<issue>`;
+3. populated Objective, Files changed, Verification, Completion/remaining work, and Evidence/risk/rollback sections;
+4. targeted verification evidence rather than template-only text;
+5. no merge conflicts;
+6. exact-head **Titan Zero CI** success;
+7. exact-head **Agent Claim Gate** success;
+8. PR is no longer draft.
+
+It publishes `Agent Mesh / Manager Review Readiness` as success/pending/failure.
+
+This is a review-readiness signal only. It must never be treated as permission for automatic merge.
