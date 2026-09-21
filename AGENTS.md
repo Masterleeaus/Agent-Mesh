@@ -1,72 +1,81 @@
-# AGENTS.md - Execution Contract
+# AGENTS.md — Titan Zero Agent Mesh V3 Execution Contract
 
-This repository uses AI-assisted development, but product direction is defined only by the canonical documentation set.
+This repository is the live Titan Zero Agent Mesh code and work system.
 
-## Documentation Hierarchy
+## Authority order
 
-Use documentation in this order:
+1. GitHub `main` is canonical code.
+2. Git commit SHA identifies the exact canonical code version.
+3. `roadmap/INDEX.json` + `roadmap/goals/*.json` define roadmap intent and remaining work.
+4. GitHub Issues are the claimable execution surface for subgoals.
+5. Pull Requests are the integration boundary.
+6. GitHub Actions provide automated verification.
+7. Architecture/workforce documents are referenced authorities; do not duplicate their full bodies into roadmap/issues.
 
-1. Code and database migrations are the implemented truth.
-2. `docs/canonical/` is the authoritative product, domain, and architecture truth.
-3. `docs/contracts/` and `docs/working/` contain supporting implementation notes.
-4. `ai/` is only a compact AI-agent quick-reference layer.
-5. `docs/archive/` and `docs/generated/` are historical/evidence only, not active instruction sources.
+Do not determine current state from chat memory, ZIP filenames, timestamps, old CANONICAL labels, archived control-plane files, or an agent's statement about what is latest.
 
-## Read This First
+## Current roadmap migration state
 
-Product direction:
+- The current roadmap index contains **55 goals**.
+- Canonical goal JSON files are present for `TZ-G00` and `TZ-ROADMAP-01` through `TZ-ROADMAP-52`.
+- Goals `TZ-ROADMAP-53` and `TZ-ROADMAP-54` already have their 20 GitHub subgoal issues, but their standalone goal JSON files still require restoration from authoritative source material.
+- `roadmap/SUBGOAL-ISSUE-MANIFEST.json` is the issue-sync manifest and currently covers **568 subgoals**.
 
-- `docs/canonical/PRODUCT_VISION.md`
-- `docs/canonical/DOMAIN_MODEL.md`
-- `docs/canonical/WORKFLOW.md`
-- `docs/canonical/ARCHITECTURE.md`
-- `docs/canonical/ROADMAP.md`
-- `docs/canonical/PRODUCTION_INTELLIGENCE.md`
-- `docs/canonical/OPERATIONS.md`
+If a goal JSON is missing, treat that as a migration gap. Do not invent the missing goal body from an issue title.
 
-Archived, generated, and working documents may provide evidence, implementation notes, or historical context. They do not override canonical docs.
+## Builder loop
 
-Active implementation backlog: docs/backlog/README.md
+1. Pull/read current `main`.
+2. Read this file, `work/README.md`, the relevant roadmap goal JSON, linked GitHub issue, and applicable architecture contracts.
+3. Confirm the issue is still remaining work against current code/evidence.
+4. Claim **one** eligible subgoal.
+5. Create a dedicated branch: `agent/<subgoal-id>-<short-name>`.
+6. Complete one full development pass: implementation + verification + evidence.
+7. Commit/push the branch.
+8. Open/update a PR linked to the issue.
+9. If blocked, document the blocker and select another eligible issue rather than waiting idle.
+10. Never redo work already proven on current `main`.
 
-## Prime Directive
+Do not wait for Manager approval merely to begin another eligible unclaimed subgoal. Manager review is required for integration, not for staying productive.
 
-Complete requested tasks end-to-end while preserving reliability, traceability, and canonical product scope.
+## Manager loop
 
-## Non-Negotiable Rules
+1. Review against current `main`, roadmap intent, architecture contracts, and verified evidence.
+2. Reject duplicate implementation, stale-base work, authority drift, or unproven replacement of existing capabilities.
+3. Require relevant CI/tests/evidence.
+4. Merge accepted work to `main`.
+5. Update/close the linked issue and compact roadmap state so later agents see only remaining work.
 
-1. Never skip relevant quality gates for code changes.
-2. Any failed gate requires fix attempts before asking for help.
-3. Never store secrets in code; use `.env`.
-4. Migrations must be additive and reversible unless a migration plan is explicit.
-5. Business logic changes must include tests or an explicit documented test gap.
-6. Production runs on garonhome.local using `infra/compose.garonhome.yml`.
-7. Do not use archived or generated planning documents as product instructions.
-8. Do not start new work unless it maps to an existing `docs/backlog/` task, or a new task is added to `docs/backlog/` first.
+## Collision rule
 
-## Decision Policy
+One claimable subgoal = one active implementation branch/PR.
 
-If multiple options exist, choose the one with:
+If another agent already owns a subgoal, choose another eligible issue. Never create competing implementations for the same work item.
 
-1. Lower operational complexity.
-2. Lower total maintenance burden.
-3. Better alignment with canonical product direction.
-4. Better compatibility with garonhome.local.
+## Titan Zero non-negotiables
 
-## Required Deliverable Format Per Task
+- `company_id` is the only canonical company boundary.
+- Canonical product surfaces are `zero`, `go`, and `hub`; legacy aliases normalize before authorization/data access/execution.
+- Shared business logic belongs in Titan Core/shared runtimes, not duplicated across surfaces/adapters.
+- Command Bus and governed execution remain mutation/authority boundaries where applicable.
+- Preserve device-first, privacy-first and Cost Sovereignty behavior: on-device → local/customer-hosted → BYO → customer service → Titan-managed entitled → explicit metered add-on.
+- AI/model/provider/device identity does not grant authority.
+- Reuse/converge verified existing implementations before rebuilding.
+- Workforce architecture is referenced by IDs/contracts; do not embed duplicate workforce specifications into roadmap/issues.
+- Titan Code is private development tooling only and must never become a Titan Zero production runtime dependency.
 
-1. Objective
-2. Files changed
-3. Commands executed
-4. Gate results
-5. Risks and follow-up tasks
+## Required PR evidence
 
-## Collision-safe claims
+Every implementation PR must state:
 
-GitHub Issues are the live claim authority. Before coding, an agent must:
-1. Confirm the issue is open and has no active linked implementation PR/claim comment.
-2. Add a claim comment containing `CLAIM: <subgoal> | actor=<agent-name> | branch=<branch>`.
-3. Create/use that dedicated branch and link the PR to the issue.
-4. If another active claim exists, do not compete for the same subgoal; choose another eligible issue.
-5. A stale claim may be superseded only by a Manager comment explicitly releasing/superseding it.
+1. Linked issue/subgoal ID.
+2. Objective.
+3. Files changed.
+4. Commands/tests/checks executed and results.
+5. Architecture/authority impact.
+6. Remaining work or explicit completion basis.
+7. Any migration, compatibility, rollback, privacy, cost or security implications.
 
-`work/claims.json` is a compatibility/index projection only; it is not a second lock database and must never override GitHub issue/PR state.
+## Historical material
+
+Files under archive/history paths are evidence and recovery material only unless explicitly promoted by current roadmap/architecture authority.
