@@ -1,0 +1,1481 @@
+{
+  "goal_id": "TZ-ROADMAP-04",
+  "priority": "P1",
+  "title": "Planning & Goal Management",
+  "objective": "Give Titan Zero persistent goals, projects, milestones and adaptive execution plans.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "title": "Inventory tasks/projects/plans/roadmaps",
+      "status": "TODO",
+      "subgoal_order": 1,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Core",
+        "Titan AI Workforce",
+        "Titan Decision Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-04-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Synthesis Orchestrator",
+          "Decision Intelligence Manager",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision & Goal Tracking Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-TRACKING-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Planning/goal-management capability belongs to the existing Decision Intelligence hierarchy: synthesize goals, track decisions/milestones, surface dependencies and re-plan from verified evidence."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Models/WorkforceGoal.php",
+              "System/Models/WorkforceGoalPlan.php",
+              "System/Models/WorkforceTask.php",
+              "System/Models/WorkforceSchedule.php",
+              "resources/workforce/business-goal-planning-engine.json"
+            ],
+            "finding": "Existing goals/plans/tasks/schedules form the operational planning inventory."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/PlanEnvelope.php",
+              "System/DTO/PlanStep.php",
+              "System/Repositories/DatabasePlanRepository.php",
+              "schemas/plan-envelope.v1.schema.json"
+            ],
+            "finding": "Typed plan envelope/step persistence provides canonical plan-contract donor."
+          },
+          {
+            "source_ref": "Titan Decision Engine",
+            "file_id": "file_000000007b9881fa8029f640a3818749",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Decision Engine/Titan Decision Engine Master Step 25.zip",
+            "sha256": "3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; RESEARCH_DONOR_NOT_RUNTIME_AUTHORITY",
+            "internal_paths": [
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/08-canonical-decision-model/CANONICAL-DECISION-MODEL.json",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/24-decision-history/DECISION-HISTORY.schema.json"
+            ],
+            "finding": "Decision model/history are reusable analytical donors, not operational plan authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan AI Core",
+          "Titan Decision Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Operational goal/task/plan state already exists in AI Workforce; AI Core carries typed plan contracts. Inventory and converge rather than add another task/project database.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Define goal hierarchy and lifecycle",
+      "status": "TODO",
+      "subgoal_order": 2,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Core",
+        "Titan AI Workforce",
+        "Titan Decision Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-04-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Synthesis Orchestrator",
+          "Decision Intelligence Manager",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision & Goal Tracking Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-TRACKING-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Planning/goal-management capability belongs to the existing Decision Intelligence hierarchy: synthesize goals, track decisions/milestones, surface dependencies and re-plan from verified evidence."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Models/WorkforceGoal.php",
+              "System/Models/WorkforceGoalPlan.php",
+              "System/Enums/WorkforceGoalStatus.php",
+              "System/Services/WorkforceGoalService.php",
+              "resources/workforce/goal-work-item-engine.schema.json"
+            ],
+            "finding": "Goal lifecycle has PROPOSED/ACTIVE/AT_RISK/ACHIEVED/FAILED/CANCELLED and goal-to-work-item relationships."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/PlanEnvelope.php",
+              "System/DTO/PlanStep.php",
+              "System/DTO/PlanDependency.php"
+            ],
+            "finding": "Plan/step/dependency hierarchy donor."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan AI Core"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Goal lifecycle exists. Preserve distinction between product business goals and Agent Mesh roadmap Goals/Sub-goals; do not reuse planning IDs as execution authority. Multi-level goal/subgoal semantics beyond goal→work-item require explicit contract if needed.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Implement goal decomposition into milestones/actions",
+      "status": "TODO",
+      "subgoal_order": 3,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Core",
+        "Titan AI Workforce",
+        "Titan Decision Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-04-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Synthesis Orchestrator",
+          "Decision Intelligence Manager",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision & Goal Tracking Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-TRACKING-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Planning/goal-management capability belongs to the existing Decision Intelligence hierarchy: synthesize goals, track decisions/milestones, surface dependencies and re-plan from verified evidence."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/WorkforceBusinessGoalPlanningService.php",
+              "System/Services/WorkforceWorkItemOrchestrationGraphService.php",
+              "System/Zero/Planning/Services/ZeroPlanCompiler.php",
+              "tests/Architecture/business_goal_planning_engine_pass5_test.php"
+            ],
+            "finding": "Business goal planner decomposes objective into bounded work items/dependencies, validates DAG, commits goal/tasks and records critical path."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/PlanStep.php",
+              "System/DTO/PlanDependency.php",
+              "System/Services/PlanValidator.php",
+              "tests/Standalone/PlanValidatorDeterministicDagTest.php"
+            ],
+            "finding": "Typed deterministic DAG plan validation."
+          },
+          {
+            "source_ref": "Titan Decision Engine",
+            "file_id": "file_000000007b9881fa8029f640a3818749",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Decision Engine/Titan Decision Engine Master Step 25.zip",
+            "sha256": "3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; RESEARCH_DONOR_NOT_RUNTIME_AUTHORITY",
+            "internal_paths": [
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/15-objective-model/runtime/objectiveModel.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/16-constraint-engine/runtime/constraintEngine.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/14-option-discovery-engine/runtime/optionDiscoveryEngine.ts"
+            ],
+            "finding": "Objective, constraint and option decomposition patterns are reusable TypeScript donors."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan AI Core",
+          "Titan Decision Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Decomposition is substantially implemented. Converge Workforce business-goal planning with AI Core plan envelopes and Decision Engine analytical donors; planning never grants execution authority.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Connect goals to agents, CRM entities and schedules",
+      "status": "TODO",
+      "subgoal_order": 4,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Core",
+        "Titan AI Workforce",
+        "Titan Decision Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-04-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Synthesis Orchestrator",
+          "Decision Intelligence Manager",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision & Goal Tracking Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-TRACKING-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Planning/goal-management capability belongs to the existing Decision Intelligence hierarchy: synthesize goals, track decisions/milestones, surface dependencies and re-plan from verified evidence."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/WorkforceBusinessGoalPlanningService.php",
+              "System/Models/WorkforceGoal.php",
+              "System/Models/WorkforceSchedule.php",
+              "resources/workforce/control-plane-integration-registry.json"
+            ],
+            "finding": "Goals already bind planner/owner/manager members, context_refs, origin_type/origin_id and schedules."
+          },
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "resources/workforce/customer-revenue-operations-workflows.json",
+              "resources/workforce/field-scheduling-resource-operations-workflows.json"
+            ],
+            "finding": "Domain workflow donors provide CRM/scheduling linkage patterns."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Agent and schedule linkage exists. CRM linkage is currently generic via origin/context/workflow references; add typed canonical CRM entity references rather than embedding CRM state into planning tables.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add progress/evidence aggregation",
+      "status": "TODO",
+      "subgoal_order": 5,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Core",
+        "Titan AI Workforce",
+        "Titan Decision Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-04-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Synthesis Orchestrator",
+          "Decision Intelligence Manager",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision & Goal Tracking Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-TRACKING-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Planning/goal-management capability belongs to the existing Decision Intelligence hierarchy: synthesize goals, track decisions/milestones, surface dependencies and re-plan from verified evidence."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/WorkforceGoalService.php",
+              "System/Services/WorkforceExecutionEvidenceExplorerService.php",
+              "System/Models/WorkforceTaskHistory.php",
+              "System/Models/WorkforceEvidence.php"
+            ],
+            "finding": "Goal reconciliation derives achieved/at-risk state from verified work items; evidence explorer aggregates execution evidence/outcomes."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/OutcomeRecord.php"
+            ],
+            "finding": "Plan-versus-actual outcome record can contribute progress evidence."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan AI Core"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Progress/evidence aggregation is already implemented. Reuse verification/outcome evidence rather than adding mutable percentage-only progress as source of truth.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add dependency and critical-path reasoning",
+      "status": "TODO",
+      "subgoal_order": 6,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Core",
+        "Titan AI Workforce",
+        "Titan Decision Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-04-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Synthesis Orchestrator",
+          "Decision Intelligence Manager",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision & Goal Tracking Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-TRACKING-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Planning/goal-management capability belongs to the existing Decision Intelligence hierarchy: synthesize goals, track decisions/milestones, surface dependencies and re-plan from verified evidence."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/WorkforceDependencyService.php",
+              "System/Services/WorkforceWorkItemOrchestrationGraphService.php",
+              "System/Services/WorkforceBusinessGoalPlanningService.php"
+            ],
+            "finding": "Dependency DAG, cycle prevention, readiness semantics and critical_path_task_ids are already implemented."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/PlanDependency.php",
+              "System/Services/PlanValidator.php",
+              "tests/Standalone/PlanValidatorDeterministicDagTest.php"
+            ],
+            "finding": "AI Core validates deterministic plan DAG/dependency structure."
+          },
+          {
+            "source_ref": "Titan Decision Engine",
+            "file_id": "file_000000007b9881fa8029f640a3818749",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Decision Engine/Titan Decision Engine Master Step 25.zip",
+            "sha256": "3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; RESEARCH_DONOR_NOT_RUNTIME_AUTHORITY",
+            "internal_paths": [
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/16-constraint-engine/runtime/constraintEngine.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/20-ranking-engine/runtime/rankingEngine.ts"
+            ],
+            "finding": "Constraint/ranking donors can help reason over critical-path alternatives."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan AI Core",
+          "Titan Decision Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Critical-path/dependency primitives exist; retain Workforce graph as operational source and use Decision Engine only for analytical option ranking.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add re-planning on exceptions and changed constraints",
+      "status": "TODO",
+      "subgoal_order": 7,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Core",
+        "Titan AI Workforce",
+        "Titan Decision Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-04-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Synthesis Orchestrator",
+          "Decision Intelligence Manager",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision & Goal Tracking Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-TRACKING-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Planning/goal-management capability belongs to the existing Decision Intelligence hierarchy: synthesize goals, track decisions/milestones, surface dependencies and re-plan from verified evidence."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/WorkforceRecoveryDecisionService.php",
+              "System/Services/WorkforcePlanningIntelligenceService.php",
+              "System/Services/WorkforceBusinessGoalPlanningService.php"
+            ],
+            "finding": "Failure classification/capacity planning/goal planning provide inputs for replanning."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/PlanConstraint.php",
+              "System/DTO/PlanEnvelope.php",
+              "System/Services/PlanValidator.php"
+            ],
+            "finding": "Typed constraints support revalidation after changed conditions."
+          },
+          {
+            "source_ref": "Titan Decision Engine",
+            "file_id": "file_000000007b9881fa8029f640a3818749",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Decision Engine/Titan Decision Engine Master Step 25.zip",
+            "sha256": "3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; RESEARCH_DONOR_NOT_RUNTIME_AUTHORITY",
+            "internal_paths": [
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/16-constraint-engine/runtime/constraintEngine.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/19-outcome-prediction-engine/runtime/outcomePredictionEngine.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/20-ranking-engine/runtime/rankingEngine.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/21-best-action-engine/runtime/bestActionEngine.ts"
+            ],
+            "finding": "Decision donors can evaluate changed constraints and rerank options."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan AI Core",
+          "Titan Decision Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "No single governed plan-revision/replanning state machine was found. Implement revision/version semantics over existing goal plans; never silently mutate committed plans or retry uncertain side effects.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add user conversational plan editing",
+      "status": "TODO",
+      "subgoal_order": 8,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Core",
+        "Titan AI Workforce",
+        "Titan Decision Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-04-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Synthesis Orchestrator",
+          "Decision Intelligence Manager",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision & Goal Tracking Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-TRACKING-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Planning/goal-management capability belongs to the existing Decision Intelligence hierarchy: synthesize goals, track decisions/milestones, surface dependencies and re-plan from verified evidence."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Zero/Interaction/Services/ZeroGenerativeInteractionRuntime.php",
+              "System/Zero/Planning/Services/ZeroPlanCompiler.php",
+              "System/Services/WorkforceBusinessGoalPlanningService.php"
+            ],
+            "finding": "Zero already converts governed plan/preflight state into generative interactions and compiles plans."
+          },
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/PlanEnvelope.php",
+              "System/Services/CanonicalPlanHasher.php"
+            ],
+            "finding": "Canonical plan envelope/hash can anchor conversational diffs."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan AI Core"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Conversational presentation/compilation exists, but no explicit conversational plan-diff/edit contract was found. Add prepare→diff→validate→confirm semantics; chat must not directly mutate a committed plan.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Run long-horizon goal simulations",
+      "status": "TODO",
+      "subgoal_order": 9,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Core",
+        "Titan AI Workforce",
+        "Titan Decision Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-04-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Synthesis Orchestrator",
+          "Decision Intelligence Manager",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision & Goal Tracking Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-TRACKING-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Planning/goal-management capability belongs to the existing Decision Intelligence hierarchy: synthesize goals, track decisions/milestones, surface dependencies and re-plan from verified evidence."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/DTO/SimulationResult.php",
+              "System/DTO/PlanConstraint.php"
+            ],
+            "finding": "Simulation result/constraint DTOs exist but not a long-horizon simulator."
+          },
+          {
+            "source_ref": "Titan Decision Engine",
+            "file_id": "file_000000007b9881fa8029f640a3818749",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Decision Engine/Titan Decision Engine Master Step 25.zip",
+            "sha256": "3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; RESEARCH_DONOR_NOT_RUNTIME_AUTHORITY",
+            "internal_paths": [
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/19-outcome-prediction-engine/runtime/outcomePredictionEngine.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/20-ranking-engine/runtime/rankingEngine.ts",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/23-confidence-engine/runtime/confidenceEngine.ts"
+            ],
+            "finding": "Outcome prediction/ranking/confidence engines provide analytical simulation components."
+          },
+          {
+            "source_ref": "Titan Rewind",
+            "file_id": "file_00000000820881faba0c8f0eecd71cf3",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip",
+            "sha256": "af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; NEW_RELEVANT_SOURCE_FOR_SIMULATION",
+            "internal_paths": [
+              "System/Jobs/RunReplaySimulationJob.php",
+              "System/Replay/RewindReplayRequest.php",
+              "tests/standalone/verify_comparative_replay.php"
+            ],
+            "finding": "Rewind adds deterministic mutation-denied replay/counterfactual simulation and is newly relevant for safe plan simulation."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Core",
+          "Titan Decision Engine",
+          "Titan Rewind"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "No true long-horizon planning simulator was found. Compose Decision prediction/confidence with Rewind mutation-denied replay and explicit scenario assumptions; do not simulate by executing production mutations.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Certify planning runtime and dashboards",
+      "status": "TODO",
+      "subgoal_order": 10,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Core",
+        "Titan AI Workforce",
+        "Titan Decision Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-04-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+          "TZAG-INTEL-DECISION-TRACKING-WRK"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Synthesis Orchestrator",
+          "Decision Intelligence Manager",
+          "Business Briefing & Goal Intelligence Specialist",
+          "Decision & Goal Tracking Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-SYNTHESIS-ORCH",
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-BUSINESS-BRIEFING-SPC",
+            "TZAG-INTEL-DECISION-TRACKING-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Planning/goal-management capability belongs to the existing Decision Intelligence hierarchy: synthesize goals, track decisions/milestones, surface dependencies and re-plan from verified evidence."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Core",
+            "file_id": "file_000000002c3481f8a54d238acd9d6c42",
+            "library_path": "/MASTER Software/Masters/Platform/Titan AI Core/Titan AI Core Master v0.5.0.zip",
+            "sha256": "e47b09932b6aa71d3b87ef497a12e18673b0cb1ee9794b056eb9b5c0d0bbc406",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Commands/CertifyExtensionCommand.php",
+              "tests/Standalone/Pass4CertificationContractTest.php",
+              "tests/Standalone/PlanValidatorDeterministicDagTest.php"
+            ],
+            "finding": "AI Core certification and deterministic planning tests."
+          },
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/WorkforceCommandDashboardService.php",
+              "resources/views/workforce/planning/index.blade.php",
+              "tests/Architecture/workforce_command_dashboard_contract_test.php",
+              "tests/Architecture/business_goal_planning_engine_pass5_test.php"
+            ],
+            "finding": "Planning/dashboard/runtime contract tests and read-only operational dashboard already exist."
+          },
+          {
+            "source_ref": "Titan Decision Engine",
+            "file_id": "file_000000007b9881fa8029f640a3818749",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Decision Engine/Titan Decision Engine Master Step 25.zip",
+            "sha256": "3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; RESEARCH_DONOR_NOT_RUNTIME_AUTHORITY",
+            "internal_paths": [
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/15-objective-model/STEP-15-ACCEPTANCE.json",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/16-constraint-engine/STEP-16-ACCEPTANCE.json",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/20-ranking-engine/STEP-20-ACCEPTANCE.json",
+              "Titan-Decision-Engine-Research-Step25-Learning-Loop/25-learning-loop/STEP-25-ACCEPTANCE.json"
+            ],
+            "finding": "Decision donor components carry step-level validation evidence."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Core",
+          "Titan AI Workforce",
+          "Titan Decision Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
+        "scan_notes": "Package-level certification exists. Create one planning-runtime certification matrix covering company isolation, DAG validity, evidence reconciliation, plan revision, conversational edit safety, simulation non-mutation and dashboard read-only guarantees.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "planning"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan AI Core",
+    "Titan AI Workforce",
+    "Titan Decision Engine"
+  ],
+  "reuse_first": true,
+  "agent_goal_classification": "MIXED_CASE_BY_CASE",
+  "agent_goal_rule": "Classify each subgoal by durable outcome ownership. Measurement/planning machinery does not itself justify an agent; reuse existing agents for attributable outcomes.",
+  "workforce_goal_classification": "DOMAIN_OUTCOME_AGENT_ELIGIBLE",
+  "workforce_goal_rule": "Agents are permitted only for durable business/operational outcomes with a distinct ownership boundary. Reuse or extend canonical identities before creating new ones."
+}
