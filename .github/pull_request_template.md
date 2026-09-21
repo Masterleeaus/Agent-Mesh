@@ -1,5 +1,7 @@
 ## Agent Mesh PR
 
+> Preferred creation path: `python3 .github/scripts/open-agent-pr.py` from the canonical `agent/<subgoal-id>` branch.
+
 **Linked issue:** Closes #
 **Subgoal ID:** `TZ-...`
 **Goal ID:** `TZ-...`
