@@ -22,6 +22,28 @@ Do not determine current state from chat memory, ZIP filenames, timestamps, old 
 
 If a future goal is referenced without a matching goal JSON, treat that as a migration gap. Do not invent missing goal bodies from issue titles.
 
+## Automated next-work selection
+
+Agents should use the repository helper rather than manually guessing the next issue:
+
+```bash
+AGENT_MESH_ACTOR=builder-1 python3 .github/scripts/claim-next-subgoal.py --order asc
+```
+
+For a worker intentionally starting from the highest roadmap end:
+
+```bash
+AGENT_MESH_ACTOR=builder-5 python3 .github/scripts/claim-next-subgoal.py --order desc
+```
+
+To inspect without claiming:
+
+```bash
+python3 .github/scripts/claim-next-subgoal.py --actor audit --order asc --dry-run
+```
+
+The helper only considers `TODO` subgoals whose GitHub issue is open. It skips existing canonical claim branches and open PR ownership. Concurrent workers may race on the same first candidate; exact Git ref creation is atomic, so only one wins and the others continue to the next eligible subgoal.
+
 ## Builder loop
 
 1. Pull/read current `main`.
