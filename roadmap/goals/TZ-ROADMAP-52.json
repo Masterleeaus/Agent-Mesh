@@ -134,7 +134,7 @@
     {
       "subgoal": "TZ-ROADMAP-52-SG-02",
       "subgoal_id": "TZ-ROADMAP-52-SG-02",
-      "title": "TypeScript compile/build dependency closure across root, titan-platform and web app",
+      "title": "Finish TypeScript compile/build closure: reconcile lockfile/manifests, eliminate the web typecheck baseline, and make the full web build a strict gate",
       "status": "TODO",
       "subgoal_order": 2,
       "priority": "P0",
@@ -165,7 +165,17 @@
       "code_discovery": {
         "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
         "source": "Merge83 cleanup audit 2026-09-20"
-      }
+      },
+      "remaining_work": [
+        "Converge package manifests with pnpm-lock.yaml and restore strict frozen-lockfile installation.",
+        "Reduce the current web TypeScript error baseline to zero with verified fixes; do not raise the baseline.",
+        "Promote the full web build to a strict required CI gate once typecheck/build debt is cleared.",
+        "Selectively reuse still-required compile fixes from archived PR #603 only after verifying them against current main."
+      ],
+      "completed_work_compacted": [
+        "Canonical CI now measures inherited web TypeScript debt behind an exact non-regression baseline owned by this subgoal.",
+        "CI debt ownership and exit criteria are documented; new/increased baseline failures are forbidden."
+      ]
     },
     {
       "subgoal": "TZ-ROADMAP-52-SG-03",
@@ -566,7 +576,7 @@
     {
       "subgoal": "TZ-ROADMAP-52-SG-14",
       "subgoal_id": "TZ-ROADMAP-52-SG-14",
-      "title": "Test-suite baseline repair: eliminate unexplained failures and separate fixture/environment failures",
+      "title": "Eliminate remaining web, worker and titan-platform test baselines and restore strict zero-unexplained-failure CI",
       "status": "TODO",
       "subgoal_order": 14,
       "priority": "P0",
@@ -597,7 +607,18 @@
       "code_discovery": {
         "status": "BASE_APP_DEEP_SCAN_IDENTIFIED",
         "source": "Merge83 cleanup audit 2026-09-20"
-      }
+      },
+      "remaining_work": [
+        "Repair or explicitly reclassify the 86 measured web test failures.",
+        "Repair or explicitly reclassify the 24 measured worker test failures.",
+        "Repair or explicitly reclassify the 97 measured titan-platform test failures.",
+        "Delete the regression baseline files when the corresponding unexplained failure counts reach zero and keep strict regression gates."
+      ],
+      "completed_work_compacted": [
+        "Canonical CI measures the inherited web, worker and titan-platform failures by exact named-failure baselines.",
+        "Baseline gates are ceilings: new or increased failures fail CI.",
+        "Debt ownership and completion criteria are documented in repository CI debt records."
+      ]
     },
     {
       "subgoal": "TZ-ROADMAP-52-SG-15",
