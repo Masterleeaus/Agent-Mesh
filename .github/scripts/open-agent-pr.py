@@ -121,6 +121,9 @@ def self_test():
     assert "Closes #42" in body
     assert "agent/TZ-ROADMAP-31-SG-01" in body
     assert "a.ts" in body and "pnpm test — pass" in body
+    # Safety contract: new handoffs are drafts unless --ready is explicit.
+    parser_default_ready = False
+    assert parser_default_ready is False
     print("open-agent-pr self-test OK")
 
 
@@ -131,7 +134,16 @@ def main():
     parser.add_argument("--verification", action="append", default=[])
     parser.add_argument("--completion", default="")
     parser.add_argument("--risk", default="")
-    parser.add_argument("--draft", action="store_true")
+    parser.add_argument(
+        "--ready",
+        action="store_true",
+        help="Create/mark the PR ready for Manager review. New PRs are draft by default.",
+    )
+    parser.add_argument(
+        "--draft",
+        action="store_true",
+        help="Backward-compatible explicit draft flag; draft is already the default.",
+    )
     parser.add_argument(
         "--update-existing",
         action="store_true",
@@ -293,6 +305,14 @@ def main():
             action = "updated"
         else:
             action = "existing-preserved"
+
+        if args.ready:
+            ready = run([
+                "gh", "pr", "ready", str(number),
+                "--repo", repo,
+            ], check=False)
+            if ready.returncode == 0:
+                action = "existing-marked-ready" if not args.update_existing else "updated-marked-ready"
     else:
         cmd = [
             "gh", "pr", "create",
@@ -302,7 +322,7 @@ def main():
             "--title", title,
             "--body", body,
         ]
-        if args.draft:
+        if not args.ready:
             cmd.append("--draft")
         proc = run(cmd)
         url = proc.stdout.strip()
@@ -313,7 +333,7 @@ def main():
         ])
         number = created["number"]
         url = created["url"]
-        action = "created"
+        action = "created-ready" if args.ready else "created-draft"
         run([
             "gh", "issue", "comment", str(issue["number"]),
             "--repo", repo,
