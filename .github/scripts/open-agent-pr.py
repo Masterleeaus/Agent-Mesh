@@ -289,6 +289,19 @@ def main():
         number = created["number"]
         url = created["url"]
         action = "created"
+        run([
+            "gh", "issue", "comment", str(issue["number"]),
+            "--repo", repo,
+            "--body",
+            (
+                "### Agent Mesh PR handoff\n\n"
+                f"- **Subgoal:** {sid}\n"
+                f"- **PR:** #{number} — {url}\n"
+                f"- **Claim branch:** {branch}\n"
+                f"- **Commits ahead of main:** {ahead_by}\n\n"
+                "Manager review and CI now own the integration decision."
+            ),
+        ])
 
     result = {
         **{k: v for k, v in payload.items() if k != "body"},
