@@ -187,6 +187,13 @@ try {
 try {
   const workerPath = path.join(root, manifest?.background?.service_worker || 'src/lib/service-worker.js');
   const worker = fs.readFileSync(workerPath, 'utf8');
+  // Module workers may bootstrap ESM sidecars with static imports while legacy
+  // Titan Code authorities continue to load through importScripts.
+  const moduleImports = [...worker.matchAll(/^\s*import\s+(?:[^'"]+?\s+from\s+)?['"]([^'"]+\.js)['"];?/gm)]
+    .map(match => match[1]);
+  const missingModuleImports = moduleImports.filter(ref => !fs.existsSync(path.resolve(workerDir, ref)));
+  if (missingModuleImports.length) fail(`module worker imports missing: ${missingModuleImports.join(', ')}`);
+  else if (moduleImports.length) pass(`${moduleImports.length} module worker imports`);
   const importBlockMatches = [...worker.matchAll(/importScripts\(([^;]+?)\);/gs)];
   const workerDir = path.dirname(workerPath);
   const imports = [];
