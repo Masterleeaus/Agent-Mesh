@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { roleSchema, type Role } from "@ai-fsm/domain";
+import { roleSchema, type Role } from "@titan-zero/domain";
 import { portableQueryOne } from "../db/portable";
 import { getEnv } from "../env";
 

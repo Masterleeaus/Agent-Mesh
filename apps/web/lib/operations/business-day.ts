@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import type { DbClient } from "@/lib/db-contract";
-import type { BusinessDayStatus } from "@ai-fsm/domain";
+import type { BusinessDayStatus } from "@titan-zero/domain";
 
 /**
  * The business operates in one local timezone (a single NH business). "Today" is
@@ -38,7 +38,7 @@ export function businessMinutesNow(tz: string = BUSINESS_TIMEZONE): number {
  * The Business Day is a pure aggregate (see docs/canonical/OPERATIONS.md): these
  * helpers only create the container and move its own lifecycle status. They never
  * touch the records the day summarizes — closing a trip/activity/job is not a day
- * transition. The lifecycle rules live in `@ai-fsm/domain` (business-day.ts);
+ * transition. The lifecycle rules live in `@titan-zero/domain` (business-day.ts);
  * callers validate with `checkBusinessDayTransition` before calling
  * `setBusinessDayStatus`.
  *
