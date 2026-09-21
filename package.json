@@ -5,8 +5,8 @@
   "description": "Titan Zero — AI-native field service business operating system",
   "packageManager": "pnpm@9.12.0",
   "scripts": {
-    "dev": "pnpm -r --parallel --filter @ai-fsm/web --filter @ai-fsm/worker dev",
-    "dev:web": "pnpm --filter @ai-fsm/web dev",
+    "dev": "pnpm -r --parallel --filter @titan-zero/web --filter @ai-fsm/worker dev",
+    "dev:web": "pnpm --filter @titan-zero/web dev",
     "dev:worker": "pnpm --filter @ai-fsm/worker dev",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
@@ -22,7 +22,7 @@
     "db:seed": "bash scripts/db-seed.sh",
     "db:portability": "node scripts/db-portability-report.mjs",
     "db:portability:strict": "node scripts/db-portability-report.mjs --strict",
-    "desktop:prepare": "pnpm --filter @ai-fsm/web build && node scripts/prepare-windows-runtime.mjs",
+    "desktop:prepare": "pnpm --filter @titan-zero/web build && node scripts/prepare-windows-runtime.mjs",
     "desktop:dist:win": "pnpm desktop:prepare && electron-builder --win nsis --x64"
   },
   "engines": {
