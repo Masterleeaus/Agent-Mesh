@@ -113,7 +113,7 @@ export function buildBookingJobCommercialOriginEvidence(input: Readonly<Record<s
     commercial_origin: Object.freeze({ ...origin, source_of_truth: true as const }),
     booking: Object.freeze({
       booking_id: lifecycle.booking_id,
-      event: lifecycle.booking_event,
+      event: String(lifecycle.booking_event),
       source_domain: bookingSourceDomain,
       source_ref: bookingSourceRef,
       canonical_owner: bookingOwner.canonicalOwner,
