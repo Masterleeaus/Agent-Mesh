@@ -21,6 +21,21 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@ai-fsm/domain": [
+        "../../packages/domain/src/index.ts"
+      ],
+      "@ai-fsm/domain/*": [
+        "../../packages/domain/src/*"
+      ],
+      "@ai-fsm/money": [
+        "../../packages/money/src/index.ts"
+      ],
+      "@ai-fsm/log": [
+        "../../packages/log/src/index.ts"
+      ],
+      "@ai-fsm/titan-platform/*": [
+        "../../packages/titan-platform/src/*"
       ]
     },
     "types": [
