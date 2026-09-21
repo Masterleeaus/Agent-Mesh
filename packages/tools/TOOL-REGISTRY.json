@@ -616,13 +616,11 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
-        "monica-content.js"
-      ],
       "retained_status": "runtime_evidence",
       "historical_evidence": [
         "titan-zero-chat-content.compat.js",
-        "content.css"
+        "content.css",
+        "monica-content.js"
       ],
       "current_source_verification": "required"
     },
@@ -733,10 +731,11 @@
         "suitable": false,
         "requires_queue_for_effects": true
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "youtube_assistant",
@@ -1645,12 +1644,10 @@
         "suitable": true,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
-        "retriever-capability-catalog.json"
-      ],
       "retained_status": "runtime_evidence",
       "historical_evidence": [
-        "side-panel/assets/skillStorageService-LGvOYmp_.js"
+        "side-panel/assets/skillStorageService-LGvOYmp_.js",
+        "retriever-capability-catalog.json"
       ],
       "current_source_verification": "required"
     },
@@ -1700,10 +1697,11 @@
         "suitable": false,
         "requires_queue_for_effects": true
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "crawl_extract",
@@ -1752,10 +1750,11 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "structured_data",
@@ -1804,10 +1803,11 @@
         "suitable": false,
         "requires_queue_for_effects": false
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "sheets",
@@ -1857,12 +1857,10 @@
         "suitable": false,
         "requires_queue_for_effects": true
       },
-      "dependencies": [
-        "retriever-capability-catalog.json"
-      ],
       "retained_status": "runtime_evidence",
       "historical_evidence": [
-        "titan-zero-chat-content.compat.js"
+        "titan-zero-chat-content.compat.js",
+        "retriever-capability-catalog.json"
       ],
       "current_source_verification": "required"
     },
@@ -1914,10 +1912,11 @@
         "suitable": false,
         "requires_queue_for_effects": true
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "custom_tools",
@@ -1964,10 +1963,11 @@
         "suitable": false,
         "requires_queue_for_effects": true
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "multi_tool",
@@ -2014,10 +2014,11 @@
         "suitable": false,
         "requires_queue_for_effects": true
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "schedules",
@@ -2066,10 +2067,11 @@
         "suitable": false,
         "requires_queue_for_effects": true
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     },
     {
       "tool_id": "triggers",
@@ -2116,10 +2118,11 @@
         "suitable": false,
         "requires_queue_for_effects": true
       },
-      "dependencies": [
+      "retained_status": "runtime_evidence",
+      "historical_evidence": [
         "retriever-capability-catalog.json"
       ],
-      "retained_status": "runtime_evidence"
+      "current_source_verification": "required"
     }
   ],
   "phase3_retirement_migration": {
@@ -2134,6 +2137,8 @@
     "historical_programme_metadata_is_authority": false,
     "versioning": "repository-source-and-schema",
     "historical_cleaning_programme_metadata_removed": true,
-    "historical_evidence_is_runtime_dependency": false
+    "historical_evidence_is_runtime_dependency": false,
+    "active_dependency_paths_verified_against_repository": true,
+    "unresolved_active_dependency_paths": 0
   }
 }
