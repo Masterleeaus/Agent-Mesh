@@ -59,3 +59,14 @@ If multiple options exist, choose the one with:
 3. Commands executed
 4. Gate results
 5. Risks and follow-up tasks
+
+## Collision-safe claims
+
+GitHub Issues are the live claim authority. Before coding, an agent must:
+1. Confirm the issue is open and has no active linked implementation PR/claim comment.
+2. Add a claim comment containing `CLAIM: <subgoal> | actor=<agent-name> | branch=<branch>`.
+3. Create/use that dedicated branch and link the PR to the issue.
+4. If another active claim exists, do not compete for the same subgoal; choose another eligible issue.
+5. A stale claim may be superseded only by a Manager comment explicitly releasing/superseding it.
+
+`work/claims.json` is a compatibility/index projection only; it is not a second lock database and must never override GitHub issue/PR state.
