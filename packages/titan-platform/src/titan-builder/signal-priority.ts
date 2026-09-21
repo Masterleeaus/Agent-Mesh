@@ -29,7 +29,7 @@ function freshness(observedAt:string,now:string){
   return Math.round(30*(1-age/MAX_AGE_MS));
 }
 function validSignal(signal:BuilderPresentationSignal,context:BuilderSignalPriorityContext,surface:BuilderSurface){
-  return Boolean(signal.id&&signal.company_id===context.company_id&&signal.surface===surface&&Number.isFinite(Date.parse(signal.observed_at)));
+  return Boolean(signal.id&&String(signal.company_id??"").trim()===String(context.company_id??"").trim()&&signal.surface===surface&&Number.isFinite(Date.parse(signal.observed_at)));
 }
 function score(signal:BuilderPresentationSignal,now:string){return SEVERITY[signal.severity]+freshness(signal.observed_at,now)+clamp(Number(signal.impact??0),0,30);}
 function bestByIntent(signals:readonly BuilderPresentationSignal[],now:string){
@@ -44,6 +44,8 @@ function decorate(section:BuilderWorkspaceSection,entry:{signal:BuilderPresentat
 }
 /** Presentation-only reprioritisation. Signals never add capabilities/actions or cross company/surface boundaries. */
 export function prioritizeBuilderWorkspace(plan:BuilderWorkspacePlan,context:BuilderSignalPriorityContext):BuilderWorkspacePlan{
+  const company_id=String(context.company_id??"").trim();
+  if(!company_id)throw new Error("company_id-required");
   const now=context.now??new Date().toISOString();
   const signals=(context.signals??[]).filter(signal=>validSignal(signal,context,plan.surface));
   if(!signals.length)return plan;
