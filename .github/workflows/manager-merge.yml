@@ -1,0 +1,50 @@
+name: Manager Merge
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Canonical agent PR number to merge"
+        required: true
+        type: string
+      expected_head_sha:
+        description: "Exact reviewed PR head SHA; merge is refused if the head moved"
+        required: true
+        type: string
+      merge_method:
+        description: "Merge method"
+        required: true
+        default: "squash"
+        type: choice
+        options:
+          - squash
+          - merge
+          - rebase
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+  actions: read
+  statuses: read
+
+concurrency:
+  group: manager-merge
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v4
+
+      - name: Guarded Manager merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 .github/scripts/manager-merge.py \
+            --pr "${{ inputs.pr_number }}" \
+            --expected-head-sha "${{ inputs.expected_head_sha }}" \
+            --merge-method "${{ inputs.merge_method }}" \
+            --apply
