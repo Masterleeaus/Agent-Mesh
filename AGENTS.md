@@ -251,3 +251,40 @@ The repository currently has no writable GitHub ruleset/branch-protection admini
 - this workflow is not equivalent to server-side branch protection and must not be described as such.
 
 If repository-admin access becomes available, replace the fallback with a GitHub ruleset requiring PR integration and the canonical status checks.
+
+
+## Guarded Manager merge
+
+Manager merge is explicit and manual. A READY status never authorizes automatic integration.
+
+Before merging an agent PR:
+
+1. read the PR, linked roadmap issue, changed files and verification evidence;
+2. confirm `Agent Mesh / Manager Review Readiness` is READY for the **current head SHA**;
+3. confirm Titan Zero CI and Agent Claim Gate succeeded for that same SHA;
+4. copy/pin the reviewed head SHA;
+5. merge only through the guarded helper/workflow.
+
+Dry-run from a Manager shell:
+
+```bash
+python3 .github/scripts/manager-merge.py --pr <number>
+```
+
+After review, pin the exact SHA:
+
+```bash
+python3 .github/scripts/manager-merge.py \
+  --pr <number> \
+  --expected-head-sha <reviewed-sha> \
+  --merge-method squash \
+  --apply
+```
+
+GitHub UI automation is available only as the manually dispatched workflow:
+
+`.github/workflows/manager-merge.yml`
+
+It requires both PR number and the exact reviewed head SHA. If the builder pushes another commit after review, the merge is refused and Manager must review the new head.
+
+The helper also refuses draft PRs, non-`main` bases, non-canonical agent branches, closed/mismatched issues, merge conflicts, missing/failed readiness, or missing/failed canonical workflows. It never selects a PR automatically and never enables auto-merge.
