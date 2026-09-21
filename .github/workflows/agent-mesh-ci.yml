@@ -1,0 +1,39 @@
+name: Agent Mesh CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-mesh-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Validate repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e "JSON.parse(require('fs').readFileSync('roadmap/INDEX.json','utf8')); JSON.parse(require('fs').readFileSync('work/claims.json','utf8')); JSON.parse(require('fs').readFileSync('work/agents.json','utf8'))"
+          if pnpm run | grep -qE '^  (typecheck|check-types)'; then
+            pnpm typecheck || pnpm check-types
+          fi
+          if pnpm run | grep -qE '^  lint'; then pnpm lint; fi
+          if pnpm run | grep -qE '^  test'; then pnpm test; fi
