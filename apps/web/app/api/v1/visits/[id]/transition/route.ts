@@ -6,8 +6,8 @@ import { withPortableTransaction } from "../../../../../../lib/db/portable";
 import { appendAuditLog } from "../../../../../../lib/db/audit";
 import { logger } from "../../../../../../lib/logger";
 import { checkCompletionPacket, isQuickJobPacketExempt } from "../../../../../../lib/completion-guard";
-import { visitTransitions, visitStatusSchema } from "@ai-fsm/domain";
-import type { VisitStatus } from "@ai-fsm/domain";
+import { visitTransitions, visitStatusSchema } from "@titan-zero/domain";
+import type { VisitStatus } from "@titan-zero/domain";
 interface VisitRow {
   id: string;
   account_id: string;
