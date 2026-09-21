@@ -20,7 +20,7 @@ export default function TermsPage() {
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/app_icon.png"
-              alt="FLDWRK"
+              alt="Titan Zero"
               width={112}
               height={28}
               className="h-7 w-auto"
@@ -66,7 +66,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>3. Waitlist & Early Access</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              Joining the FLDWRK waitlist does not guarantee access to the Service. Early access and founding member pricing are offered at our discretion. We reserve the right to modify or cancel founding member offers prior to the public launch.
+              Joining the Titan Zero waitlist does not guarantee access to the Service. Early access and founding member pricing are offered at our discretion. We reserve the right to modify or cancel founding member offers prior to the public launch.
             </p>
           </section>
 
@@ -100,7 +100,7 @@ export default function TermsPage() {
                 'Upload or transmit viruses, malicious code, or harmful content',
                 'Scrape, crawl, or systematically extract data from the Service',
                 'Reverse engineer or attempt to extract the source code of our software',
-                'Use the Service to compete with FLDWRK or build a competing product',
+                'Use the Service to infringe Titan Zero intellectual property',
               ].map(item => (
                 <li key={item} className="flex items-start gap-2" style={{ color: '#888' }}>
                   <span className="font-bold shrink-0" style={{ color: '#E8352A' }}>✕</span>
@@ -120,7 +120,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>7. Your Data</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              You retain ownership of all data you enter into FLDWRK. By using the Service, you grant us a limited license to process and store your data solely to provide the Service. We will not use your business data for purposes other than operating and improving the Service. See our{' '}
+              You retain ownership of the data you provide through Titan Zero. By using the Service, you grant us a limited license to process and store your data solely to provide the Service. We will not use your business data for purposes other than operating and improving the Service. See our{' '}
               <Link href="/privacy" style={{ color: '#E8352A' }} className="hover:underline">Privacy Policy</Link> for full details.
             </p>
           </section>
@@ -135,7 +135,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>9. Intellectual Property</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              The FLDWRK name, logo, software, features, and content are owned by FLDWRK, Inc. and protected by intellectual property laws. Nothing in these Terms grants you a right to use FLDWRK&apos;s trademarks or intellectual property beyond what is necessary to use the Service.
+              The Titan Zero name, logo, software, features, and content are protected by applicable intellectual property laws. and protected by intellectual property laws. Nothing in these Terms grants you a right to use Titan Zero trademarks or intellectual property beyond what is necessary to use the Service.
             </p>
           </section>
 
@@ -178,9 +178,9 @@ export default function TermsPage() {
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>15. Contact</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
               Questions about these Terms? Contact us at:<br />
-              <a href="mailto:legal@fldwrk.ai" style={{ color: '#E8352A' }} className="hover:underline font-medium">legal@fldwrk.ai</a>
+              <a href="mailto:legal@titanzero.io" style={{ color: '#E8352A' }} className="hover:underline font-medium">legal@titanzero.io</a>
               <br />
-              FLDWRK, Inc. · fldwrk.ai
+              Titan Zero · titanzero.io
             </p>
           </section>
 
@@ -192,7 +192,7 @@ export default function TermsPage() {
         <div className="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <Image
             src="/app_icon.png"
-            alt="FLDWRK"
+            alt="Titan Zero"
             width={80}
             height={22}
             className="h-5 w-auto"
@@ -202,7 +202,7 @@ export default function TermsPage() {
             <Link href="/privacy" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Privacy</Link>
             <Link href="/terms" style={{ color: '#E8352A' }} className="font-medium">Terms</Link>
             <Link href="/support" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Support</Link>
-            <a href="mailto:hello@fldwrk.ai" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Contact</a>
+            <a href="mailto:hello@titanzero.io" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Contact</a>
           </div>
         </div>
       </footer>

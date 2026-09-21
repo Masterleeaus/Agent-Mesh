@@ -20,7 +20,7 @@ export default function PrivacyPage() {
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/app_icon.png"
-              alt="FLDWRK"
+              alt="Titan Zero"
               width={112}
               height={28}
               className="h-7 w-auto"
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>1. Who We Are</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
               FLDWRK, Inc. (&quot;FLDWRK,&quot; &quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) operates the website at{' '}
-              <a href="https://fldwrk.ai" style={{ color: '#E8352A' }} className="hover:underline">fldwrk.ai</a> and the FLDWRK mobile application. We are committed to protecting your personal information and being transparent about how we use it.
+              <a href="https://titanzero.io" style={{ color: '#E8352A' }} className="hover:underline">titanzero.io</a> and the Titan Zero service. We are committed to protecting your personal information and being transparent about how we use it.
             </p>
           </section>
 
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
                 { title: 'Waitlist Information', desc: 'When you join our waitlist, we collect your first name, last name, email address, trade type, and team size.' },
                 { title: 'Usage Data', desc: 'We may collect information about how you interact with our website, including pages visited, time spent, and browser type.' },
                 { title: 'Voice Data (App)', desc: 'When you use VoiceLog™ in the app, audio recordings are processed to generate structured job notes. Recordings are not stored longer than necessary for processing.' },
-                { title: 'Job & Business Data', desc: 'Information you enter about jobs, customers, quotes, and inventory in the FLDWRK app.' },
+                { title: 'Job & Business Data', desc: 'Information you provide through Titan Zero services.' },
               ].map(item => (
                 <li key={item.title} className="flex gap-3 rounded-2xl px-5 py-4" style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <span className="text-xs font-bold mt-0.5 shrink-0" style={{ color: '#E8352A' }}>→</span>
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
               {[
                 'Send you waitlist updates and early access notifications',
                 'Personalize your onboarding experience',
-                'Provide and improve the FLDWRK platform',
+                'Provide and improve the Titan Zero service',
                 'Send you product updates, tips, and relevant communications',
                 'Analyze usage patterns to improve our features',
                 'Comply with legal obligations',
@@ -151,7 +151,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>6. Data Retention</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              Waitlist data is retained until you request removal or until FLDWRK launches and you either convert to a customer or opt out. App data is retained for as long as your account is active. You may request deletion of your data at any time by contacting us.
+              Waitlist data is retained until you request removal or until the waitlist is closed and you either become a customer or opt out. App data is retained for as long as your account is active. You may request deletion of your data at any time by contacting us.
             </p>
           </section>
 
@@ -174,7 +174,7 @@ export default function PrivacyPage() {
             </ul>
             <p className="text-sm mt-4" style={{ color: '#888' }}>
               To exercise these rights, contact us at{' '}
-              <a href="mailto:privacy@fldwrk.ai" style={{ color: '#E8352A' }} className="hover:underline font-medium">privacy@fldwrk.ai</a>.
+              <a href="mailto:privacy@titanzero.io" style={{ color: '#E8352A' }} className="hover:underline font-medium">privacy@titanzero.io</a>.
             </p>
           </section>
 
@@ -195,14 +195,14 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>10. Children&apos;s Privacy</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              FLDWRK is not directed at children under 13. We do not knowingly collect personal information from children under 13. If you believe we have inadvertently collected such information, please contact us immediately.
+              Titan Zero is not directed at children under 13. We do not knowingly collect personal information from children under 13. If you believe we have inadvertently collected such information, please contact us immediately.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>11. Changes to This Policy</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
-              We may update this Privacy Policy from time to time. We will notify you of material changes via email or a prominent notice on our website. Continued use of FLDWRK after changes constitutes acceptance of the updated policy.
+              We may update this Privacy Policy from time to time. We will notify you of material changes via email or a prominent notice on our website. Continued use of Titan Zero after changes constitutes acceptance of the updated policy.
             </p>
           </section>
 
@@ -210,9 +210,9 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-black mb-3" style={{ color: '#F2F2F2' }}>12. Contact Us</h2>
             <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
               Questions about this Privacy Policy? Reach us at:<br />
-              <a href="mailto:privacy@fldwrk.ai" style={{ color: '#E8352A' }} className="hover:underline font-medium">privacy@fldwrk.ai</a>
+              <a href="mailto:privacy@titanzero.io" style={{ color: '#E8352A' }} className="hover:underline font-medium">privacy@titanzero.io</a>
               <br />
-              FLDWRK, Inc. · fldwrk.ai
+              Titan Zero · titanzero.io
             </p>
           </section>
 
@@ -224,7 +224,7 @@ export default function PrivacyPage() {
         <div className="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <Image
             src="/app_icon.png"
-            alt="FLDWRK"
+            alt="Titan Zero"
             width={80}
             height={22}
             className="h-5 w-auto"
@@ -234,7 +234,7 @@ export default function PrivacyPage() {
             <Link href="/privacy" style={{ color: '#E8352A' }} className="font-medium">Privacy</Link>
             <Link href="/terms" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Terms</Link>
             <Link href="/support" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Support</Link>
-            <a href="mailto:hello@fldwrk.ai" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Contact</a>
+            <a href="mailto:hello@titanzero.io" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Contact</a>
           </div>
         </div>
       </footer>
