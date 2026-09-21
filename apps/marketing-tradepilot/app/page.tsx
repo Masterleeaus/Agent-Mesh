@@ -31,7 +31,7 @@ function useCountdown(target: Date) {
 }
 
 /* ─── VoiceLog Phone Mockup (dark) ───────────────────── */
-function PhoneVoiceLog() {
+function PhoneVoiceCapture() {
   return (
     <div className="w-full h-full flex flex-col" style={{ background: '#0C0C0C' }}>
       <div className="flex justify-between px-4 pt-3 pb-2 text-[9px] font-semibold" style={{ color: '#FFFFFF' }}>
@@ -39,7 +39,7 @@ function PhoneVoiceLog() {
         <span style={{ color: '#AAAAAA', fontSize: '8px' }}>●●● WiFi</span>
       </div>
       <div className="flex items-center gap-2 px-4 pb-3" style={{ borderBottom: '1px solid #2A2A2A' }}>
-        <span className="font-bold text-[12px]" style={{ color: '#E8352A' }}>VoiceLogTM</span>
+        <span className="font-bold text-[12px]" style={{ color: '#E8352A' }}>Voice Capture</span>
         <div className="ml-auto flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full block" style={{ background: '#E8352A' }} />
           <span className="text-[8px] font-bold" style={{ color: '#E8352A' }}>LIVE</span>
@@ -74,7 +74,7 @@ function PhoneVoiceLog() {
 }
 
 /* ─── Dashboard Phone Mockup (dark) ─────────────────── */
-function PhoneFieldIQ() {
+function PhoneOperations() {
   return (
     <div className="w-full h-full flex flex-col" style={{ background: '#0C0C0C' }}>
       <div className="flex justify-between px-4 pt-3 pb-2 text-[9px] font-semibold" style={{ color: '#FFFFFF' }}>
@@ -350,7 +350,7 @@ export default function Home() {
                     <circle cx="316" cy="214" r="16" fill="#E8352A"/>
                   </svg>
                 ),
-                name: 'VoiceLogTM',
+                name: 'Voice Capture',
                 tagline: 'Speak it. Done.',
                 desc: 'Dictate job notes hands-free on-site. AI cleans, structures, and saves them instantly - gloves on or off.',
               },
@@ -360,7 +360,7 @@ export default function Home() {
                     <path d="M315.27 33L96 304h176l-31.91 175L432 208H256l59.27-175z" stroke="#E8352A" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 ),
-                name: 'QuickQuoteTM',
+                name: 'Smart Quote',
                 tagline: 'Quote in 30 seconds.',
                 desc: 'Describe the job out loud. Titan Zero generates a full quote with parts, labor, and margin - right on your phone.',
               },
@@ -413,16 +413,16 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12">
             <div className="flex flex-col items-center gap-5">
               <DarkPhone tilt={-4}>
-                <PhoneVoiceLog />
+                <PhoneVoiceCapture />
               </DarkPhone>
               <div className="text-center">
-                <div className="font-black" style={{ color: '#FFFFFF', fontSize: 14 }}>VoiceLogTM</div>
+                <div className="font-black" style={{ color: '#FFFFFF', fontSize: 14 }}>Voice Capture</div>
                 <div style={{ fontSize: 12, color: '#AAAAAA', marginTop: 2 }}>Hands-free job notes</div>
               </div>
             </div>
             <div className="flex flex-col items-center gap-5">
               <DarkPhone tilt={4}>
-                <PhoneFieldIQ />
+                <PhoneOperations />
               </DarkPhone>
               <div className="text-center">
                 <div className="font-black" style={{ color: '#FFFFFF', fontSize: 14 }}>Dashboard</div>
@@ -446,12 +446,12 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Feature 1 - VoiceLog (dark) */}
+        {/* Feature 1 - Voice Capture (dark) */}
         <div style={{ background: '#0C0C0C', borderTop: '1px solid #2A2A2A', borderBottom: '1px solid #2A2A2A' }}>
           <div className="max-w-6xl mx-auto px-6 py-20">
             <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
-                <div style={{ fontSize: 11, color: '#E8352A', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: 12 }}>VoiceLogTM</div>
+                <div style={{ fontSize: 11, color: '#E8352A', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: 12 }}>Voice Capture</div>
                 <h3 className="font-black" style={{ fontSize: 36, color: '#FFFFFF', marginBottom: 16, lineHeight: 1.15 }}>Notes without typing.</h3>
                 <p style={{ fontSize: 16, color: '#AAAAAA', lineHeight: 1.7, marginBottom: 24 }}>
                   Open Titan Zero and speak. Job notes, site conditions, parts used - AI cleans it up and saves it instantly. Works with your gloves on, hands covered, or driving between jobs.
@@ -472,7 +472,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Feature 2 - QuickQuote (light) */}
+        {/* Feature 2 - Smart Quote (light) */}
         <div style={{ background: '#FFFFFF', borderBottom: '1px solid #E8E5E0' }}>
           <div className="max-w-6xl mx-auto px-6 py-20">
             <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -480,7 +480,7 @@ export default function Home() {
                 <img src="/images/problem.jpg" alt="Contractor generating quote on phone" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <div>
-                <div style={{ fontSize: 11, color: '#E8352A', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: 12 }}>QuickQuoteTM</div>
+                <div style={{ fontSize: 11, color: '#E8352A', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: 12 }}>Smart Quote</div>
                 <h3 className="font-black" style={{ fontSize: 36, color: '#0A0A0A', marginBottom: 16, lineHeight: 1.15 }}>A quote in 30 seconds.</h3>
                 <p style={{ fontSize: 16, color: '#555555', lineHeight: 1.7, marginBottom: 24 }}>
                   Describe the job out loud. Titan Zero generates a professional quote with parts, labor, and margin - right on your phone, in front of the customer. No spreadsheet. No laptop.
@@ -578,7 +578,7 @@ export default function Home() {
                 price: '$49',
                 founding: '$29',
                 desc: 'The one-man operation',
-                features: ['VoiceLogTM (unlimited)', 'QuickQuoteTM', 'Unlimited jobs', 'iOS + Android app', 'Email support'],
+                features: ['Voice Capture (unlimited)', 'Smart Quote', 'Unlimited jobs', 'iOS + Android app', 'Email support'],
                 cta: 'Start Solo',
                 featured: false,
               },
