@@ -21,9 +21,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          shopt -s nullglob
           found=0
-          for zip in archive/*.zip archive/**/*.zip; do
+          while IFS= read -r -d '' zip; do
             found=1
             base="$(basename "$zip" .zip)"
             dest="$(dirname "$zip")/$base"
@@ -31,7 +30,7 @@ jobs:
             rm -rf "$dest"
             mkdir -p "$dest"
             unzip -q -o "$zip" -d "$dest"
-          done
+          done < <(find archive -type f -name '*.zip' -print0)
           if [ "$found" -eq 0 ]; then
             echo "No ZIP files found under archive/"
           fi
