@@ -1,0 +1,11 @@
+{
+  "schema": "titan-agent-mesh-agents/v3",
+  "execution_modes": [
+    "CHATGPT_SUBSCRIPTION",
+    "LOCAL_MODEL",
+    "BYO_API",
+    "TITAN_MANAGED",
+    "HUMAN"
+  ],
+  "note": "Agents are disposable workers. Durable code state lives in GitHub."
+}
