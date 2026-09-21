@@ -104,71 +104,34 @@ Every implementation PR must state:
 Files under archive/history paths are evidence and recovery material only unless explicitly promoted by current roadmap/architecture authority.
 
 
-## Canonical PR handoff
+## Automatic claim-to-PR handoff
 
-After implementation commits are pushed to the canonical claim branch, create or refresh the PR with:
+After a builder pushes real implementation commits to its canonical claim branch, GitHub automatically creates or refreshes the single PR for that subgoal through:
+
+`.github/workflows/agent-pr-handoff.yml`
+
+The workflow uses:
+
+`.github/scripts/open-agent-pr.py`
+
+It:
+
+- accepts only exact `agent/<subgoal-id>` branches;
+- skips empty claim branches with zero commits ahead of `main`;
+- resolves the matching open roadmap issue;
+- derives changed files, claim base and current merge base;
+- creates or updates one PR targeting canonical `main`;
+- inserts `Closes #<issue>`, subgoal/goal IDs and the required evidence structure;
+- comments the PR handoff back onto the roadmap issue;
+- never auto-merges.
+
+Builders may run the helper manually to enrich targeted evidence:
 
 ```bash
 python3 .github/scripts/open-agent-pr.py \
   --verification "pnpm <targeted-check> — pass" \
   --completion "State verified completion or only remaining work." \
-  --risk "State rollback/security/privacy/cost implications."
+  --risk "State rollback / compatibility / privacy / cost impact."
 ```
 
-The helper:
-
-- only accepts exact `agent/<subgoal-id>` claim branches;
-- resolves the matching roadmap issue automatically;
-- refuses a closed issue;
-- refuses an empty branch with zero commits ahead of `main`;
-- derives the current merge base and changed-file list;
-- creates one PR to `main`, or updates the existing PR for that branch;
-- writes the required `Closes #<issue>`, subgoal ID and claim metadata into the PR body.
-
-Builders must still provide truthful targeted verification and completion evidence. The helper standardizes the handoff; it does not invent proof.
-
-
-## Automated PR handoff
-
-Once a claim branch contains verified commits, create or update its canonical PR with:
-
-```bash
-python3 .github/scripts/open-agent-pr.py \
-  --objective "Describe the completed pass" \
-  --verification "pnpm <targeted-check> — pass" \
-  --completion "State completion basis or remaining work" \
-  --risk "State rollback / compatibility / privacy / cost impact"
-```
-
-The helper:
-
-- only accepts the exact branch `agent/<subgoal-id>`;
-- resolves the matching open roadmap issue automatically;
-- refuses an empty branch with zero commits ahead of `main`;
-- calculates the current merge base and changed files;
-- preserves the original claim base SHA when present in the issue claim comment;
-- creates or updates the one canonical PR for the claim branch;
-- inserts `Closes #<issue>` and all Agent Mesh evidence fields;
-- posts the created PR back to the roadmap issue.
-
-Do not hand-author a second competing PR for the same claim branch.
-
-
-## Automatic PR handoff
-
-After a builder commits and pushes work to its canonical claim branch, GitHub automatically creates or refreshes the one PR for that subgoal through:
-
-`.github/workflows/agent-pr-handoff.yml`
-
-The workflow:
-
-1. ignores an empty claim branch with zero commits ahead of `main`;
-2. resolves the matching roadmap issue from the subgoal ID;
-3. refuses a closed/missing roadmap issue;
-4. refuses non-canonical claim branch names;
-5. refuses an empty PR;
-6. records the changed files, claim base, merge base and issue linkage;
-7. creates or updates the one PR targeting `main`;
-8. never auto-merges.
-
-Builders may run `.github/scripts/open-agent-pr.py` manually when they need to add richer targeted verification/completion/risk text, but manual PR assembly is no longer required.
+Do not hand-author a second competing PR for the same claim branch. The Agent Claim Gate rejects malformed agent PR structure, missing issue linkage, invalid claim branches, duplicate ownership and completed/superseded work.
