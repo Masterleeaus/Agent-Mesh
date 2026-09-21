@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Client } from "pg";
-import { extractFirmCommitments } from "@ai-fsm/domain/promise-capture";
+import { extractFirmCommitments } from "@titan-zero/domain/promise-capture";
 import {
   processCaptures,
   transcribeCaptureAudio,
