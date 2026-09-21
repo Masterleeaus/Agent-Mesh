@@ -1,0 +1,32 @@
+name: Retire Superseded Titan Expense API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-titan-expense-api.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retire expense API copies superseded by richer root implementations
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Verified root implementations are later evolutions:
+          # - expenses route adds duplicate/fingerprint merge semantics + external_ref
+          # - scan receipt adds transaction_id extraction
+          # - import preview adds fingerprint matching across receipt/import sources
+          git rm -f             titan/apps/web/app/api/v1/expenses/route.ts             titan/apps/web/app/api/v1/expenses/scan-receipt/route.ts             titan/apps/web/app/api/v1/expenses/import/preview/route.ts
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Retire superseded Titan expense API routes"
+          git push
