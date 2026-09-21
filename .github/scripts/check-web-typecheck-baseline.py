@@ -13,6 +13,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline", required=True)
     parser.add_argument("--log", required=True)
+    parser.add_argument("--command-status", required=True, type=int)
     args = parser.parse_args()
 
     baseline_path = Path(args.baseline)
@@ -29,6 +30,14 @@ def main() -> int:
             continue
         path, _line, _col, code = match.groups()
         current[f"{path}::{code}"] += 1
+
+    if args.command_status != 0 and not current:
+        print(
+            "Web typecheck command failed but no TypeScript errors were parsed; "
+            "treating this as a new harness failure.",
+            file=sys.stderr,
+        )
+        return 1
 
     regressions = []
     for key, count in sorted(current.items()):
