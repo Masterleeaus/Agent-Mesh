@@ -77,14 +77,14 @@ jobs:
           fi
 
       - name: Strict non-web typecheck
-        run: pnpm -r --filter '!@ai-fsm/web' --if-present typecheck
+        run: pnpm -r --filter '!@titan-zero/web' --if-present typecheck
 
       - name: Web typecheck regression gate
         shell: bash
         run: |
           set -euo pipefail
           set +e
-          pnpm --filter @ai-fsm/web typecheck > web-typecheck.log 2>&1
+          pnpm --filter @titan-zero/web typecheck > web-typecheck.log 2>&1
           TYPECHECK_STATUS=$?
           set -e
           cat web-typecheck.log
@@ -99,14 +99,14 @@ jobs:
           fi
 
       - name: Strict tests for clean packages
-        run: pnpm -r --filter '!@ai-fsm/titan-platform' --filter '!@ai-fsm/worker' --filter '!@ai-fsm/web' --if-present test
+        run: pnpm -r --filter '!@titan-zero/titan-platform' --filter '!@titan-zero/worker' --filter '!@titan-zero/web' --if-present test
 
       - name: Worker test regression gate
         shell: bash
         run: |
           set -euo pipefail
           set +e
-          pnpm --filter @ai-fsm/worker test > worker-test.log 2>&1
+          pnpm --filter @titan-zero/worker test > worker-test.log 2>&1
           WORKER_TEST_STATUS=$?
           set -e
           cat worker-test.log
@@ -125,7 +125,7 @@ jobs:
         run: |
           set -euo pipefail
           set +e
-          pnpm --filter @ai-fsm/web test > web-test.log 2>&1
+          pnpm --filter @titan-zero/web test > web-test.log 2>&1
           WEB_TEST_STATUS=$?
           set -e
           cat web-test.log
@@ -144,7 +144,7 @@ jobs:
         run: |
           set -euo pipefail
           set +e
-          pnpm --filter @ai-fsm/titan-platform test > titan-platform-test.log 2>&1
+          pnpm --filter @titan-zero/titan-platform test > titan-platform-test.log 2>&1
           TEST_STATUS=$?
           set -e
           cat titan-platform-test.log
@@ -159,7 +159,7 @@ jobs:
           fi
 
       - name: Strict non-web build
-        run: pnpm -r --filter '!@ai-fsm/web' --if-present build
+        run: pnpm -r --filter '!@titan-zero/web' --if-present build
 
       - name: Web build status
         shell: bash
