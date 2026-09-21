@@ -1,0 +1,1920 @@
+{
+  "goal_id": "TZ-ROADMAP-26",
+  "priority": "P1",
+  "title": "Inventory, Procurement, Supply & Asset Continuity Agents",
+  "objective": "Build one governed Worker→Specialist→Manager→Orchestrator resource-continuity workforce covering inventory integrity, replenishment/procurement, critical supply continuity and asset/equipment lifecycle without duplicating Field, Finance or Service Delivery ownership.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define the canonical Inventory, Procurement, Supply & Asset Continuity workforce, pain boundaries and cross-domain collaboration without duplicating Field, Finance or provider-specific agents",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-26-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+        ],
+        "created_agent_ids": [
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH"
+        ],
+        "modified_agent_ids": [
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+        ],
+        "canonical_agent_names": [
+          "Supply & Asset Continuity Orchestrator",
+          "Supply Continuity Manager",
+          "Inventory Integrity Specialist",
+          "Replenishment & Procurement Specialist",
+          "Supply Continuity Specialist",
+          "Asset & Equipment Lifecycle Specialist",
+          "Stock Count & Adjustment Worker",
+          "Stock Movement & Reservation Worker",
+          "Purchase Order Execution Worker",
+          "Supplier Order Tracking Worker",
+          "Supply Continuity Recovery Worker",
+          "Asset Custody & Readiness Worker",
+          "Asset Maintenance Execution Worker",
+          "First-Time-Fix Preparation Specialist"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH -> TZAG-SUPPLY-CONTINUITY-MGR -> TZAG-INV-INVENTORY-INTEGRITY-SPC/TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC/TZAG-SUPPLY-SUPPLY-CONTINUITY/TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC -> bounded Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+            "TZAG-SUPPLY-CONTINUITY-MGR",
+            "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+            "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+            "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+            "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+            "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+            "TZAG-PROC-PURCHASE-ORDER-WRK",
+            "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+            "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+            "TZAG-ASSET-CUSTODY-READINESS-WRK",
+            "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+            "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+          ],
+          "definition_home": "TZ-ROADMAP-26-SG-01"
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "non-duplication boundary review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Supply Continuity Manager and Supply Continuity Specialist are reused by immutable agent_id; First-Time-Fix Preparation remains a Field specialist/collaborator and is not re-parented.",
+          "Suppliers, marketplaces, catalogues, payment rails, inventory stores and asset registries are tools/state, not separate agent identities.",
+          "Finance retains supplier-payment/cash authority; Supply owns procurement operational decisions and order execution within approved financial boundaries.",
+          "No Supervisor or fifth Pro identity is created; predictive behaviour is earned within Worker→Specialist→Manager→Orchestrator."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/equipment-register.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/consumable-stock.mjs",
+              "tests/inventory-assets/pass10-certification.test.mjs"
+            ],
+            "finding": "Merge80 already has canonical inventory runtime and Titan Assets has lifecycle/custody/maintenance. Define workforce identities over these authorities; do not create inventory-vs-asset duplicate agents or provider-specific procurement agents."
+          },
+          {
+            "source_ref": "Titan Assets",
+            "file_id": "file_00000000d504820b87551e230c0c8886",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Assets/Titan Assets Master v0.2.0-alpha.8.zip",
+            "sha256": "8778605b40a250c7979f28fbe8d3273bd692c945abadd62761606d7e3bab6a1a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/Assets/ToolCustodyService.php",
+              "System/Domains/Assets/MaintenanceService.php",
+              "System/Domains/Assets/EquipmentCheckService.php"
+            ],
+            "finding": "Asset lifecycle/custody/maintenance donor."
+          },
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/RoleRegistry.php",
+              "System/Services/DelegationService.php"
+            ],
+            "finding": "Canonical workforce hierarchy/delegation infrastructure."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Assets",
+          "Titan AI Workforce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:53:00+10:00",
+        "scan_notes": "Merge80 already has canonical inventory runtime and Titan Assets has lifecycle/custody/maintenance. Define workforce identities over these authorities; do not create inventory-vs-asset duplicate agents or provider-specific procurement agents.",
+        "exhaustion_evidence": null
+      },
+      "library_reuse_refs": [
+        "Titan Assets",
+        "Titan Locker",
+        "Titan Field",
+        "Titan Ledger",
+        "Titan AI Workforce"
+      ]
+    },
+    {
+      "subgoal": 2,
+      "title": "Complete shared inventory, procurement, supplier, asset, maintenance and continuity tools/state used by the canonical resource-continuity roster",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-26-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK"
+        ],
+        "canonical_agent_names": [
+          "Supply & Asset Continuity Orchestrator",
+          "Supply Continuity Manager",
+          "Inventory Integrity Specialist",
+          "Replenishment & Procurement Specialist",
+          "Supply Continuity Specialist",
+          "Asset & Equipment Lifecycle Specialist",
+          "Stock Count & Adjustment Worker",
+          "Stock Movement & Reservation Worker",
+          "Purchase Order Execution Worker",
+          "Supplier Order Tracking Worker",
+          "Supply Continuity Recovery Worker",
+          "Asset Custody & Readiness Worker",
+          "Asset Maintenance Execution Worker"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH -> TZAG-SUPPLY-CONTINUITY-MGR -> TZAG-INV-INVENTORY-INTEGRITY-SPC/TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC/TZAG-SUPPLY-SUPPLY-CONTINUITY/TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC -> bounded Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+            "TZAG-SUPPLY-CONTINUITY-MGR",
+            "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+            "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+            "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+            "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+            "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+            "TZAG-PROC-PURCHASE-ORDER-WRK",
+            "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+            "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+            "TZAG-ASSET-CUSTODY-READINESS-WRK",
+            "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK"
+          ],
+          "canonical_definition_homes": [
+            "ROADMAP.canonical_domain_manager_definitions",
+            "TZ-ROADMAP-26-SG-01",
+            "TZ-ROADMAP-39-SG-08"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "non-duplication boundary review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Shared inventory/asset/procurement state and integrations are capabilities beneath the canonical workforce, not new agent identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/equipment-register.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/consumable-stock.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/product-safety-registry.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/job-inventory-evidence.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/stocktake-asset-exceptions.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/reorder-recommendations.mjs",
+              "apps/web/app/api/v1/materials/supplier-preferences/route.ts",
+              "apps/web/lib/invoices/receipt-po.ts",
+              "packages/titan-zero-migration-source/portable-core/titan-intelligence/tests/receiving-domain-acceptance.test.mjs",
+              "packages/titan-platform/src/ported/titan-builder/pagestudio-donor/templates/supplier-replenishment.json",
+              "packages/titan-platform/src/ported/titan-builder/pagestudio-donor/templates/supplier-receiving-discrepancy.json"
+            ],
+            "finding": "Shared stock, equipment, safety, job evidence, reorder, stocktake/exception and asset lifecycle primitives exist. Procurement is only partial: supplier preferences/receipt-PO/receiving templates/tests exist, but no complete canonical PO/supplier/receiving lifecycle was found."
+          },
+          {
+            "source_ref": "Titan Assets",
+            "file_id": "file_00000000d504820b87551e230c0c8886",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Assets/Titan Assets Master v0.2.0-alpha.8.zip",
+            "sha256": "8778605b40a250c7979f28fbe8d3273bd692c945abadd62761606d7e3bab6a1a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/Assets/ToolCustodyService.php",
+              "System/Domains/Assets/MaintenanceService.php",
+              "System/Domains/Assets/EquipmentCheckService.php",
+              "System/Domains/Assets/AssetAllocationService.php",
+              "System/Domains/Assets/RepairService.php",
+              "System/Domains/Assets/WarrantyService.php"
+            ],
+            "finding": "Asset lifecycle tools/state."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Assets"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:53:00+10:00",
+        "scan_notes": "Shared stock, equipment, safety, job evidence, reorder, stocktake/exception and asset lifecycle primitives exist. Procurement is only partial: supplier preferences/receipt-PO/receiving templates/tests exist, but no complete canonical PO/supplier/receiving lifecycle was found.",
+        "exhaustion_evidence": null
+      },
+      "library_reuse_refs": [
+        "Titan Assets",
+        "Titan Locker",
+        "Titan Field",
+        "Titan Ledger",
+        "Titan AI Workforce"
+      ]
+    },
+    {
+      "subgoal": 3,
+      "title": "Implement bounded Workers for stock count/adjustment, movement/reservation, purchase orders, supplier tracking/receipt, continuity recovery, asset custody/readiness and maintenance execution",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-26-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+          "TZAG-SUPPLY-CONTINUITY-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+          "TZAG-SUPPLY-CONTINUITY-MGR"
+        ],
+        "canonical_agent_names": [
+          "Inventory Integrity Specialist",
+          "Replenishment & Procurement Specialist",
+          "Supply Continuity Specialist",
+          "Asset & Equipment Lifecycle Specialist",
+          "Stock Count & Adjustment Worker",
+          "Stock Movement & Reservation Worker",
+          "Purchase Order Execution Worker",
+          "Supplier Order Tracking Worker",
+          "Supply Continuity Recovery Worker",
+          "Asset Custody & Readiness Worker",
+          "Asset Maintenance Execution Worker",
+          "Supply Continuity Manager"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+            "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+            "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+            "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+            "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+            "TZAG-PROC-PURCHASE-ORDER-WRK",
+            "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+            "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+            "TZAG-ASSET-CUSTODY-READINESS-WRK",
+            "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+            "TZAG-SUPPLY-CONTINUITY-MGR"
+          ],
+          "canonical_definition_homes": [
+            "ROADMAP.canonical_domain_manager_definitions",
+            "TZ-ROADMAP-26-SG-01",
+            "TZ-ROADMAP-39-SG-08"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "non-duplication boundary review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Workers execute only upstream-selected bounded mutations; supplier payment, replacement spend and unsafe asset return-to-service remain approval-governed."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/consumable-stock.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/stocktake-asset-exceptions.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/reorder-recommendations.mjs",
+              "apps/web/app/api/v1/materials/supplier-preferences/route.ts",
+              "apps/web/lib/invoices/receipt-po.ts",
+              "packages/titan-zero-migration-source/portable-core/titan-intelligence/tests/receiving-domain-acceptance.test.mjs",
+              "packages/titan-platform/src/ported/titan-builder/pagestudio-donor/templates/supplier-replenishment.json",
+              "packages/titan-platform/src/ported/titan-builder/pagestudio-donor/templates/supplier-receiving-discrepancy.json"
+            ],
+            "finding": "Bounded stock count/adjustment/movement/reservation and asset custody/readiness/maintenance execution are reusable now. Purchase-order/supplier receipt Workers require a canonical procurement capability before activation."
+          },
+          {
+            "source_ref": "Titan Assets",
+            "file_id": "file_00000000d504820b87551e230c0c8886",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Assets/Titan Assets Master v0.2.0-alpha.8.zip",
+            "sha256": "8778605b40a250c7979f28fbe8d3273bd692c945abadd62761606d7e3bab6a1a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/Assets/ToolCustodyService.php",
+              "System/Domains/Assets/MaintenanceService.php",
+              "System/Domains/Assets/EquipmentCheckService.php",
+              "System/Domains/Assets/AssetAllocationService.php",
+              "System/Domains/Assets/RepairService.php"
+            ],
+            "finding": "Custody/allocation/check/maintenance/repair execution."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Assets"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:53:00+10:00",
+        "scan_notes": "Bounded stock count/adjustment/movement/reservation and asset custody/readiness/maintenance execution are reusable now. Purchase-order/supplier receipt Workers require a canonical procurement capability before activation.",
+        "exhaustion_evidence": null
+      },
+      "library_reuse_refs": [
+        "Titan Assets",
+        "Titan Locker",
+        "Titan Field",
+        "Titan Ledger",
+        "Titan AI Workforce"
+      ]
+    },
+    {
+      "subgoal": 4,
+      "title": "Implement Specialist layer for inventory integrity, replenishment/procurement, critical supply continuity and asset/equipment lifecycle with First-Time-Fix collaboration",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-26-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC"
+        ],
+        "canonical_agent_names": [
+          "Supply Continuity Manager",
+          "Inventory Integrity Specialist",
+          "Replenishment & Procurement Specialist",
+          "Supply Continuity Specialist",
+          "Asset & Equipment Lifecycle Specialist",
+          "First-Time-Fix Preparation Specialist"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-SUPPLY-CONTINUITY-MGR",
+            "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+            "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+            "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+            "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+          ],
+          "canonical_definition_homes": [
+            "ROADMAP.canonical_domain_manager_definitions",
+            "TZ-ROADMAP-26-SG-01",
+            "TZ-ROADMAP-39-SG-05",
+            "TZ-ROADMAP-39-SG-08"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "non-duplication boundary review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "First-Time-Fix Preparation remains parented to Field Quality & Readiness Manager; it collaborates by publishing job-readiness demand/evidence.",
+          "Supply Continuity owns critical input continuity; Procurement owns routine replenishment/purchasing; Inventory Integrity owns stock truth; Asset Lifecycle owns equipment readiness."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/equipment-register.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/consumable-stock.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/product-safety-registry.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/job-inventory-evidence.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/stocktake-asset-exceptions.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/reorder-recommendations.mjs"
+            ],
+            "finding": "Inventory integrity/replenishment and asset lifecycle can reuse current runtimes; Critical Supply Continuity should consume reorder/exception/job-readiness evidence and collaborate with First-Time-Fix rather than owning field state."
+          },
+          {
+            "source_ref": "Titan Assets",
+            "file_id": "file_00000000d504820b87551e230c0c8886",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Assets/Titan Assets Master v0.2.0-alpha.8.zip",
+            "sha256": "8778605b40a250c7979f28fbe8d3273bd692c945abadd62761606d7e3bab6a1a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/Assets/ToolCustodyService.php",
+              "System/Domains/Assets/MaintenanceService.php",
+              "System/Domains/Assets/EquipmentCheckService.php",
+              "System/Domains/Assets/AssetAllocationService.php",
+              "System/Domains/Assets/RepairService.php",
+              "System/Domains/Assets/WarrantyService.php"
+            ],
+            "finding": "Asset/equipment lifecycle."
+          },
+          {
+            "source_ref": "Titan Field",
+            "file_id": "file_00000000e2e481faa8bf9aa44d7c99f3",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Field/Titan Field Master v1.0.12.zip",
+            "sha256": "64ad7c55e5a6de854058c341b6dc0cbeceb97f87937dcbf6b81f6bce6455e1f2",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/WorkOrderService.php",
+              "System/Services/DispatchService.php"
+            ],
+            "finding": "First-Time-Fix/field readiness collaboration only."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Assets",
+          "Titan Field"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:53:00+10:00",
+        "scan_notes": "Inventory integrity/replenishment and asset lifecycle can reuse current runtimes; Critical Supply Continuity should consume reorder/exception/job-readiness evidence and collaborate with First-Time-Fix rather than owning field state.",
+        "exhaustion_evidence": null
+      },
+      "library_reuse_refs": [
+        "Titan Assets",
+        "Titan Locker",
+        "Titan Field",
+        "Titan Ledger",
+        "Titan AI Workforce"
+      ]
+    },
+    {
+      "subgoal": 5,
+      "title": "Implement Supply Continuity Manager outcome ownership across inventory integrity, procurement, critical input continuity and asset/equipment readiness",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-26-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC"
+        ],
+        "canonical_agent_names": [
+          "Supply Continuity Manager",
+          "Inventory Integrity Specialist",
+          "Replenishment & Procurement Specialist",
+          "Supply Continuity Specialist",
+          "Asset & Equipment Lifecycle Specialist"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-SUPPLY-CONTINUITY-MGR",
+            "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+            "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+            "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC"
+          ],
+          "canonical_definition_homes": [
+            "ROADMAP.canonical_domain_manager_definitions",
+            "TZ-ROADMAP-26-SG-01",
+            "TZ-ROADMAP-39-SG-08"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "non-duplication boundary review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "The existing canonical Supply Continuity Manager is extended rather than duplicated and is accountable for combined resource-continuity outcomes."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/equipment-register.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/consumable-stock.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/product-safety-registry.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/job-inventory-evidence.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/stocktake-asset-exceptions.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/reorder-recommendations.mjs"
+            ],
+            "finding": "Supply Continuity Manager should own outcomes across inventory/replenishment/procurement/asset readiness while Inventory, Assets, Finance and Field retain domain state authority."
+          },
+          {
+            "source_ref": "Titan Assets",
+            "file_id": "file_00000000d504820b87551e230c0c8886",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Assets/Titan Assets Master v0.2.0-alpha.8.zip",
+            "sha256": "8778605b40a250c7979f28fbe8d3273bd692c945abadd62761606d7e3bab6a1a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/Assets/ToolCustodyService.php",
+              "System/Domains/Assets/MaintenanceService.php",
+              "System/Domains/Assets/EquipmentCheckService.php",
+              "System/Domains/Assets/AssetAllocationService.php",
+              "System/Domains/Assets/RepairService.php",
+              "System/Domains/Assets/WarrantyService.php"
+            ],
+            "finding": "Asset readiness state authority."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/EstimatePricingEngine.php"
+            ],
+            "finding": "Financial spend/margin authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Assets",
+          "Titan Financial Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:53:00+10:00",
+        "scan_notes": "Supply Continuity Manager should own outcomes across inventory/replenishment/procurement/asset readiness while Inventory, Assets, Finance and Field retain domain state authority.",
+        "exhaustion_evidence": null
+      },
+      "library_reuse_refs": [
+        "Titan Assets",
+        "Titan Locker",
+        "Titan Field",
+        "Titan Ledger",
+        "Titan AI Workforce"
+      ]
+    },
+    {
+      "subgoal": 6,
+      "title": "Implement Supply & Asset Continuity Orchestrator coordination across Supply, Field Readiness, Service Delivery and Finance",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-26-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+        ],
+        "canonical_agent_names": [
+          "Supply & Asset Continuity Orchestrator",
+          "Supply Continuity Manager",
+          "First-Time-Fix Preparation Specialist"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH -> TZAG-SUPPLY-CONTINUITY-MGR -> TZAG-INV-INVENTORY-INTEGRITY-SPC/TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC/TZAG-SUPPLY-SUPPLY-CONTINUITY/TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC -> bounded Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+            "TZAG-SUPPLY-CONTINUITY-MGR",
+            "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+          ],
+          "canonical_definition_homes": [
+            "ROADMAP.canonical_domain_manager_definitions",
+            "TZ-ROADMAP-26-SG-01",
+            "TZ-ROADMAP-39-SG-05"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "non-duplication boundary review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "The Orchestrator coordinates domain Managers and constraints; it does not absorb Supply Manager, Field Manager, Cash Control Manager or Service Delivery ownership."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/DelegationService.php",
+              "System/Services/OutcomeSupervisor.php"
+            ],
+            "finding": "Orchestrator coordinates Supply, Field Readiness, Service Delivery and Finance via evidence/capabilities; it must not mutate Field scheduling or financial ledgers directly."
+          },
+          {
+            "source_ref": "Titan Field",
+            "file_id": "file_00000000e2e481faa8bf9aa44d7c99f3",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Field/Titan Field Master v1.0.12.zip",
+            "sha256": "64ad7c55e5a6de854058c341b6dc0cbeceb97f87937dcbf6b81f6bce6455e1f2",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/WorkOrderService.php"
+            ],
+            "finding": "Field service delivery authority."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/EstimatePricingEngine.php"
+            ],
+            "finding": "Finance authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Field",
+          "Titan Financial Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:53:00+10:00",
+        "scan_notes": "Orchestrator coordinates Supply, Field Readiness, Service Delivery and Finance via evidence/capabilities; it must not mutate Field scheduling or financial ledgers directly.",
+        "exhaustion_evidence": null
+      },
+      "library_reuse_refs": [
+        "Titan Assets",
+        "Titan Locker",
+        "Titan Field",
+        "Titan Ledger",
+        "Titan AI Workforce"
+      ]
+    },
+    {
+      "subgoal": 7,
+      "title": "Implement earned proactive, autonomous and predictive demand, replenishment and asset-failure behaviours across the existing hierarchy; no fifth Pro agent identity",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-26-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK"
+        ],
+        "canonical_agent_names": [
+          "Supply & Asset Continuity Orchestrator",
+          "Supply Continuity Manager",
+          "Inventory Integrity Specialist",
+          "Replenishment & Procurement Specialist",
+          "Supply Continuity Specialist",
+          "Asset & Equipment Lifecycle Specialist",
+          "Stock Count & Adjustment Worker",
+          "Stock Movement & Reservation Worker",
+          "Purchase Order Execution Worker",
+          "Supplier Order Tracking Worker",
+          "Supply Continuity Recovery Worker",
+          "Asset Custody & Readiness Worker",
+          "Asset Maintenance Execution Worker"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH -> TZAG-SUPPLY-CONTINUITY-MGR -> TZAG-INV-INVENTORY-INTEGRITY-SPC/TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC/TZAG-SUPPLY-SUPPLY-CONTINUITY/TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC -> bounded Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+            "TZAG-SUPPLY-CONTINUITY-MGR",
+            "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+            "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+            "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+            "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+            "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+            "TZAG-PROC-PURCHASE-ORDER-WRK",
+            "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+            "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+            "TZAG-ASSET-CUSTODY-READINESS-WRK",
+            "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK"
+          ],
+          "canonical_definition_homes": [
+            "ROADMAP.canonical_domain_manager_definitions",
+            "TZ-ROADMAP-26-SG-01",
+            "TZ-ROADMAP-39-SG-08"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "non-duplication boundary review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Prediction is an earned operating envelope, not a new identity: forecast demand, reorder risk, supplier delay, maintenance need and asset failure risk remain governed through the same hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/reorder-recommendations.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/stocktake-asset-exceptions.mjs"
+            ],
+            "finding": "Reorder recommendations, stock exceptions and maintenance due state provide predictive inputs, but earned proactive/autonomous/predictive action must use Goal 42 authority/trust gates and Finance spend gates."
+          },
+          {
+            "source_ref": "Titan Assets",
+            "file_id": "file_00000000d504820b87551e230c0c8886",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Assets/Titan Assets Master v0.2.0-alpha.8.zip",
+            "sha256": "8778605b40a250c7979f28fbe8d3273bd692c945abadd62761606d7e3bab6a1a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/Assets/MaintenanceService.php",
+              "System/Domains/Assets/RepairService.php"
+            ],
+            "finding": "Maintenance/repair predictive inputs."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Assets"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:53:00+10:00",
+        "scan_notes": "Reorder recommendations, stock exceptions and maintenance due state provide predictive inputs, but earned proactive/autonomous/predictive action must use Goal 42 authority/trust gates and Finance spend gates.",
+        "exhaustion_evidence": null
+      },
+      "library_reuse_refs": [
+        "Titan Assets",
+        "Titan Locker",
+        "Titan Field",
+        "Titan Ledger",
+        "Titan AI Workforce"
+      ]
+    },
+    {
+      "subgoal": 8,
+      "title": "Implement inventory/procurement/asset authority, surface, spend-approval, escalation and recovery matrices across Command/Go/Hub/plugins/extensions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-26-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK"
+        ],
+        "canonical_agent_names": [
+          "Supply & Asset Continuity Orchestrator",
+          "Supply Continuity Manager",
+          "Inventory Integrity Specialist",
+          "Replenishment & Procurement Specialist",
+          "Supply Continuity Specialist",
+          "Asset & Equipment Lifecycle Specialist",
+          "Stock Count & Adjustment Worker",
+          "Stock Movement & Reservation Worker",
+          "Purchase Order Execution Worker",
+          "Supplier Order Tracking Worker",
+          "Supply Continuity Recovery Worker",
+          "Asset Custody & Readiness Worker",
+          "Asset Maintenance Execution Worker"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH -> TZAG-SUPPLY-CONTINUITY-MGR -> TZAG-INV-INVENTORY-INTEGRITY-SPC/TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC/TZAG-SUPPLY-SUPPLY-CONTINUITY/TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC -> bounded Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+            "TZAG-SUPPLY-CONTINUITY-MGR",
+            "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+            "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+            "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+            "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+            "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+            "TZAG-PROC-PURCHASE-ORDER-WRK",
+            "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+            "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+            "TZAG-ASSET-CUSTODY-READINESS-WRK",
+            "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK"
+          ],
+          "canonical_definition_homes": [
+            "ROADMAP.canonical_domain_manager_definitions",
+            "TZ-ROADMAP-26-SG-01",
+            "TZ-ROADMAP-39-SG-08"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "non-duplication boundary review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Authority matrices must separate operational procurement from financial payment authority, and asset maintenance from capital replacement approval."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/consumable-stock.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/stocktake-asset-exceptions.mjs",
+              "apps/web/app/api/v1/materials/supplier-preferences/route.ts",
+              "apps/web/lib/invoices/receipt-po.ts",
+              "packages/titan-zero-migration-source/portable-core/titan-intelligence/tests/receiving-domain-acceptance.test.mjs",
+              "packages/titan-platform/src/ported/titan-builder/pagestudio-donor/templates/supplier-replenishment.json",
+              "packages/titan-platform/src/ported/titan-builder/pagestudio-donor/templates/supplier-receiving-discrepancy.json"
+            ],
+            "finding": "Stock/asset mutations and supplier spend need one authority matrix. Current inventory code is company_id/idempotency strong; legacy materials supplier-preference route still uses account_id and must not define canonical authority."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/EstimatePricingEngine.php"
+            ],
+            "finding": "Spend approval boundary."
+          },
+          {
+            "source_ref": "Titan Assets",
+            "file_id": "file_00000000d504820b87551e230c0c8886",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Assets/Titan Assets Master v0.2.0-alpha.8.zip",
+            "sha256": "8778605b40a250c7979f28fbe8d3273bd692c945abadd62761606d7e3bab6a1a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/Assets/AssetCompanyContext.php",
+              "System/Domains/Assets/AssetAllocationService.php"
+            ],
+            "finding": "Company-scoped asset mutation authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Financial Engine",
+          "Titan Assets"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:53:00+10:00",
+        "scan_notes": "Stock/asset mutations and supplier spend need one authority matrix. Current inventory code is company_id/idempotency strong; legacy materials supplier-preference route still uses account_id and must not define canonical authority.",
+        "exhaustion_evidence": null
+      },
+      "library_reuse_refs": [
+        "Titan Assets",
+        "Titan Locker",
+        "Titan Field",
+        "Titan Ledger",
+        "Titan AI Workforce"
+      ]
+    },
+    {
+      "subgoal": 9,
+      "title": "Measure inventory accuracy, stockouts, emergency purchasing, carrying cost, supplier performance, asset downtime, job readiness and verified business value by canonical agent_id",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-26-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+        ],
+        "canonical_agent_names": [
+          "Supply & Asset Continuity Orchestrator",
+          "Supply Continuity Manager",
+          "Inventory Integrity Specialist",
+          "Replenishment & Procurement Specialist",
+          "Supply Continuity Specialist",
+          "Asset & Equipment Lifecycle Specialist",
+          "Stock Count & Adjustment Worker",
+          "Stock Movement & Reservation Worker",
+          "Purchase Order Execution Worker",
+          "Supplier Order Tracking Worker",
+          "Supply Continuity Recovery Worker",
+          "Asset Custody & Readiness Worker",
+          "Asset Maintenance Execution Worker",
+          "First-Time-Fix Preparation Specialist"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH -> TZAG-SUPPLY-CONTINUITY-MGR -> TZAG-INV-INVENTORY-INTEGRITY-SPC/TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC/TZAG-SUPPLY-SUPPLY-CONTINUITY/TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC -> bounded Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+            "TZAG-SUPPLY-CONTINUITY-MGR",
+            "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+            "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+            "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+            "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+            "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+            "TZAG-PROC-PURCHASE-ORDER-WRK",
+            "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+            "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+            "TZAG-ASSET-CUSTODY-READINESS-WRK",
+            "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+            "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+          ],
+          "canonical_definition_homes": [
+            "ROADMAP.canonical_domain_manager_definitions",
+            "TZ-ROADMAP-26-SG-01",
+            "TZ-ROADMAP-39-SG-05",
+            "TZ-ROADMAP-39-SG-08"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "non-duplication boundary review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Value attribution must use verified stock/order/asset/job outcomes and avoid double-counting value shared with Field, Finance or Service Delivery."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/consumable-stock.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/reorder-recommendations.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-inventory/runtime/job-inventory-evidence.mjs",
+              "tests/inventory-assets/pass10-certification.test.mjs"
+            ],
+            "finding": "Inventory tests/stock ledger, reorder evidence and asset maintenance/custody can feed accuracy/stockout/readiness/downtime metrics. Verified business value must bind Goal 40 attribution and supplier-performance requires procurement lifecycle data not yet canonical."
+          },
+          {
+            "source_ref": "Titan Assets",
+            "file_id": "file_00000000d504820b87551e230c0c8886",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Assets/Titan Assets Master v0.2.0-alpha.8.zip",
+            "sha256": "8778605b40a250c7979f28fbe8d3273bd692c945abadd62761606d7e3bab6a1a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domains/Assets/MaintenanceService.php",
+              "System/Domains/Assets/AssetHistoryService.php",
+              "System/Domains/Assets/AssetValuationService.php"
+            ],
+            "finding": "Downtime/history/value evidence."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Assets"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:53:00+10:00",
+        "scan_notes": "Inventory tests/stock ledger, reorder evidence and asset maintenance/custody can feed accuracy/stockout/readiness/downtime metrics. Verified business value must bind Goal 40 attribution and supplier-performance requires procurement lifecycle data not yet canonical.",
+        "exhaustion_evidence": null
+      },
+      "library_reuse_refs": [
+        "Titan Assets",
+        "Titan Locker",
+        "Titan Field",
+        "Titan Ledger",
+        "Titan AI Workforce"
+      ]
+    },
+    {
+      "subgoal": 10,
+      "title": "Run Worker→Specialist→Manager→Orchestrator inventory/procurement/asset acceptance and certify trust progression, financial separation, failure/recovery and non-duplication",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-26-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+          "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+          "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+          "TZAG-PROC-PURCHASE-ORDER-WRK",
+          "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+          "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+          "TZAG-ASSET-CUSTODY-READINESS-WRK",
+          "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+        ],
+        "canonical_agent_names": [
+          "Supply & Asset Continuity Orchestrator",
+          "Supply Continuity Manager",
+          "Inventory Integrity Specialist",
+          "Replenishment & Procurement Specialist",
+          "Supply Continuity Specialist",
+          "Asset & Equipment Lifecycle Specialist",
+          "Stock Count & Adjustment Worker",
+          "Stock Movement & Reservation Worker",
+          "Purchase Order Execution Worker",
+          "Supplier Order Tracking Worker",
+          "Supply Continuity Recovery Worker",
+          "Asset Custody & Readiness Worker",
+          "Asset Maintenance Execution Worker",
+          "First-Time-Fix Preparation Specialist"
+        ],
+        "workforce_positions": [
+          "Orchestrator",
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH -> TZAG-SUPPLY-CONTINUITY-MGR -> TZAG-INV-INVENTORY-INTEGRITY-SPC/TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC/TZAG-SUPPLY-SUPPLY-CONTINUITY/TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC -> bounded Workers"
+        ],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH",
+            "TZAG-SUPPLY-CONTINUITY-MGR",
+            "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+            "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+            "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC",
+            "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+            "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+            "TZAG-PROC-PURCHASE-ORDER-WRK",
+            "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+            "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+            "TZAG-ASSET-CUSTODY-READINESS-WRK",
+            "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK",
+            "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+          ],
+          "canonical_definition_homes": [
+            "ROADMAP.canonical_domain_manager_definitions",
+            "TZ-ROADMAP-26-SG-01",
+            "TZ-ROADMAP-39-SG-05",
+            "TZ-ROADMAP-39-SG-08"
+          ]
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "hierarchy reference validation",
+          "non-duplication boundary review"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Acceptance includes duplicate order prevention, stale stock, partial receipt, substitute/transfer recovery, asset hold/return-to-service, payment-authority separation and cross-domain handoff."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "AUTHORITATIVE_CURRENT_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/inventory-assets/pass09-adversarial.test.mjs",
+              "tests/inventory-assets/pass10-certification.test.mjs"
+            ],
+            "finding": "Inventory runtime already has contracts, adversarial tests and end-to-end certification; Titan Assets has release verification. Remaining certification is full hierarchy plus Finance-separated procurement and failure/recovery."
+          },
+          {
+            "source_ref": "Titan Assets",
+            "file_id": "file_00000000d504820b87551e230c0c8886",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Assets/Titan Assets Master v0.2.0-alpha.8.zip",
+            "sha256": "8778605b40a250c7979f28fbe8d3273bd692c945abadd62761606d7e3bab6a1a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/standalone/verify_titan_assets_release.py"
+            ],
+            "finding": "Asset release verification."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PREVIOUSLY_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/EstimatePricingEngine.php"
+            ],
+            "finding": "Financial separation authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Assets",
+          "Titan Financial Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T03:53:00+10:00",
+        "scan_notes": "Inventory runtime already has contracts, adversarial tests and end-to-end certification; Titan Assets has release verification. Remaining certification is full hierarchy plus Finance-separated procurement and failure/recovery.",
+        "exhaustion_evidence": null
+      },
+      "library_reuse_refs": [
+        "Titan Assets",
+        "Titan Locker",
+        "Titan Field",
+        "Titan Ledger",
+        "Titan AI Workforce"
+      ]
+    }
+  ],
+  "affinity_tags": [
+    "agent",
+    "agents",
+    "business-operations",
+    "inventory"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan Assets",
+    "Titan Locker",
+    "Titan Field",
+    "Titan Ledger",
+    "Titan AI Workforce"
+  ],
+  "reuse_first": true,
+  "canonical_workforce_roster": {
+    "status": "DEFINED_PLANNED_IMPLEMENTATION",
+    "canonical_definition_home": "TZ-ROADMAP-26-SG-01",
+    "orchestrator_ids": [
+      "TZAG-SUPPLY-RESOURCE-CONTINUITY-ORCH"
+    ],
+    "manager_ids": [
+      "TZAG-SUPPLY-CONTINUITY-MGR"
+    ],
+    "specialist_ids": [
+      "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+      "TZAG-PROC-REPLENISHMENT-PROCUREMENT-SPC",
+      "TZAG-SUPPLY-SUPPLY-CONTINUITY",
+      "TZAG-ASSET-EQUIPMENT-LIFECYCLE-SPC"
+    ],
+    "worker_ids": [
+      "TZAG-INV-STOCK-COUNT-ADJUSTMENT-WRK",
+      "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK",
+      "TZAG-PROC-PURCHASE-ORDER-WRK",
+      "TZAG-PROC-SUPPLIER-ORDER-TRACKING-WRK",
+      "TZAG-SUPPLY-CONTINUITY-RECOVERY-WRK",
+      "TZAG-ASSET-CUSTODY-READINESS-WRK",
+      "TZAG-ASSET-MAINTENANCE-EXECUTION-WRK"
+    ],
+    "reused_innovation_agent_ids": [
+      "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+    ],
+    "reused_canonical_manager_ids": [
+      "TZAG-SUPPLY-CONTINUITY-MGR"
+    ],
+    "cross_domain_collaborator_ids": [
+      "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION"
+    ],
+    "new_agent_count": 11,
+    "core_domain_roster_count": 13,
+    "participating_roster_count": 14,
+    "boundary_rules": [
+      "Supply & Resource Operations owns inventory integrity, routine replenishment/procurement, critical material continuity and asset/equipment lifecycle/readiness.",
+      "Field Quality & Readiness owns job diagnostic/readiness outcomes; First-Time-Fix Preparation publishes demand/readiness needs but is not re-parented into Supply.",
+      "Finance owns payment execution, cash controls and outgoing-obligation truth; Supply may create/track approved procurement but cannot invent or autonomously pay supplier liabilities.",
+      "Scheduling/Service Delivery owns job/capacity allocation; Supply consumes scheduled demand and protects resource availability without reassigning field work.",
+      "Suppliers, marketplaces, catalogues, barcodes, warehouses, payment rails, asset registries and maintenance systems are tools/state, not separate agent identities."
+    ]
+  },
+  "agent_goal_classification": "DOMAIN_WORKFORCE_ELIGIBLE",
+  "agent_goal_rule": "This goal owns durable business/domain outcomes and may reuse, extend or create canonical workforce identities subject to non-duplication and outcome-owner tests.",
+  "workforce_goal_classification": "DOMAIN_OUTCOME_AGENT_ELIGIBLE",
+  "workforce_goal_rule": "Agents are permitted only for durable business/operational outcomes with a distinct ownership boundary. Reuse or extend canonical identities before creating new ones."
+}
