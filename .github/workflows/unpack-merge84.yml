@@ -6,80 +6,9 @@ on:
     paths:
       - ".github/workflows/unpack-merge84.yml"
 
-permissions:
-  contents: write
-
 jobs:
-  unpack:
+  smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Clone, verify, unpack and commit
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-
-          git clone "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" repo
-          cd repo
-
-          PARTS=(
-            "Titan-Zero-MERGE84-Part1-of-3.zip"
-            "Titan-Zero-MERGE84-Part2-of-3.zip"
-            "Titan-Zero-MERGE84-Part3-of-3.zip"
-          )
-
-          for part in "${PARTS[@]}"; do
-            test -s "$part"
-            unzip -t "$part" >/dev/null
-          done
-
-          python3 - <<'PY'
-          import zipfile
-          parts = [
-              "Titan-Zero-MERGE84-Part1-of-3.zip",
-              "Titan-Zero-MERGE84-Part2-of-3.zip",
-              "Titan-Zero-MERGE84-Part3-of-3.zip",
-          ]
-          names = []
-          for part in parts:
-              with zipfile.ZipFile(part) as z:
-                  names.extend(i.filename for i in z.infolist() if not i.is_dir())
-          if len(names) != 4746:
-              raise SystemExit(f"Expected 4746 files, found {len(names)}")
-          if len(set(names)) != len(names):
-              raise SystemExit("Duplicate paths exist across split ZIPs")
-          print("Verified 4746 unique paths")
-          PY
-
-          for part in "${PARTS[@]}"; do
-            unzip -oq "$part" -d .
-          done
-
-          python3 - <<'PY'
-          import os, zipfile
-          parts = [
-              "Titan-Zero-MERGE84-Part1-of-3.zip",
-              "Titan-Zero-MERGE84-Part2-of-3.zip",
-              "Titan-Zero-MERGE84-Part3-of-3.zip",
-          ]
-          missing = []
-          for part in parts:
-              with zipfile.ZipFile(part) as z:
-                  for i in z.infolist():
-                      if not i.is_dir() and not os.path.exists(i.filename):
-                          missing.append(i.filename)
-          if missing:
-              raise SystemExit(f"Missing extracted paths: {missing[:20]}")
-          print("All archive paths extracted successfully")
-          PY
-
-          rm -f "${PARTS[@]}"
-          rm -f .github/workflows/unpack-merge84.yml
-
-          git config user.name "Titan Zero Agent Mesh"
-          git config user.email "actions@users.noreply.github.com"
-          git add -A
-          git commit -m "Unpack canonical Titan Zero Merge84 source"
-          git push origin HEAD:main
+      - name: Runner smoke test
+        run: echo "runner-ok"
