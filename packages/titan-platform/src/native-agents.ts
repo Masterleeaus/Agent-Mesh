@@ -338,6 +338,25 @@ export function planNativeCrm(input: {
   return { commands: [{ agentKey: "crm", commandId: "clients.create", body: input.client ?? {}, reason: "Create a customer through the native Business Ops CRM API.", requiresHumanApproval: true }] };
 }
 
+export type TitanBusinessOpsAgentProfile = Readonly<{
+  agentKey: TitanBusinessOpsAgentKey;
+  commandIds: readonly TitanBusinessOpsAgentCommandId[];
+  executionPermitted: false;
+  grantsAuthority: false;
+}>;
+
+const TITAN_BUSINESS_OPS_AGENT_PROFILES: Readonly<Record<TitanBusinessOpsAgentKey, TitanBusinessOpsAgentProfile>> = Object.freeze({
+  dispatch: Object.freeze({ agentKey: "dispatch", commandIds: Object.freeze(["work_orders.list", "work_orders.create"]), executionPermitted: false, grantsAuthority: false }),
+  invoicing: Object.freeze({ agentKey: "invoicing", commandIds: Object.freeze(["invoices.list", "invoices.get", "invoices.create", "invoices.transition", "invoices.send"]), executionPermitted: false, grantsAuthority: false }),
+  rebooking: Object.freeze({ agentKey: "rebooking", commandIds: Object.freeze(["booking_requests.create"]), executionPermitted: false, grantsAuthority: false }),
+  quote: Object.freeze({ agentKey: "quote", commandIds: Object.freeze(["estimates.list", "estimates.get", "estimates.create", "estimates.transition", "estimates.create_project"]), executionPermitted: false, grantsAuthority: false }),
+  crm: Object.freeze({ agentKey: "crm", commandIds: Object.freeze(["clients.list", "clients.create"]), executionPermitted: false, grantsAuthority: false }),
+});
+
+export function getTitanBusinessOpsAgentProfile(agentKey: TitanBusinessOpsAgentKey): TitanBusinessOpsAgentProfile {
+  return TITAN_BUSINESS_OPS_AGENT_PROFILES[agentKey];
+}
+
 export type TitanNativeAgentPlanInput =
   | Readonly<{ agentKey: "dispatch"; payload: Parameters<typeof planNativeDispatch>[0] }>
   | Readonly<{ agentKey: "invoicing"; payload: Parameters<typeof planNativeInvoice>[0] }>
