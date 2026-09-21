@@ -13,7 +13,7 @@ export default function HomePage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <Link href="/" className={styles.brand}><span>T0</span><strong>TITAN ZERO<small>ADVANCED INTELLIGENCE FOR BUSINESS</small></strong></Link>
-        <nav><a href="#workforce">Workforce</a><a href="#system">System</a><a href="#how">How it works</a><Link href="/app" className={styles.cta}>Open Command →</Link></nav>
+        <nav><Link href="/workforce">Workforce</Link><Link href="/assessment">Assessment</Link><a href="#how">How it works</a><Link href="/app" className={styles.cta}>Open Command →</Link></nav>
       </header>
 
       <section className={styles.hero}>
@@ -21,7 +21,7 @@ export default function HomePage() {
           <p className={styles.kicker}>MANAGED ADVANCED INTELLIGENCE</p>
           <h1>You don’t need to understand AI to employ an AI workforce.</h1>
           <p className={styles.lede}>Titan Zero installs and manages an intelligent workforce inside your existing business architecture—so you get more capacity, less admin and better operations without replacing the systems that already work.</p>
-          <div className={styles.actions}><Link href="/app">Meet your workforce</Link><a href="#how">See how Titan Zero works</a></div>
+          <div className={styles.actions}><Link href="/workforce">Meet your workforce</Link><Link href="/assessment">Assess your business</Link></div>
           <div className={styles.proof}><span>Existing systems first</span><span>Company-controlled data</span><span>Governed automation</span></div>
         </div>
         <div className={styles.command}>
@@ -37,7 +37,7 @@ export default function HomePage() {
       <section className={styles.section} id="workforce">
         <p className={styles.kicker}>YOUR TEAM, NOT ANOTHER DASHBOARD</p>
         <h2>An AI workforce that operates the business with you.</h2>
-        <div className={styles.grid}>{capabilities.map(([title,body])=><article key={title}><span>0{capabilities.findIndex(x=>x[0]===title)+1}</span><h3>{title}</h3><p>{body}</p></article>)}</div>
+        <div className={styles.grid}>{capabilities.map(([title,body])=><article key={title}><span>0{capabilities.findIndex(x=>x[0]===title)+1}</span><h3>{title}</h3><p>{body}</p></article>)}</div><div className={styles.actions}><Link href="/workforce">Explore the AI workforce →</Link></div>
       </section>
 
       <section className={styles.dark} id="system">
