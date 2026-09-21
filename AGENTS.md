@@ -288,3 +288,20 @@ GitHub UI automation is available only as the manually dispatched workflow:
 It requires both PR number and the exact reviewed head SHA. If the builder pushes another commit after review, the merge is refused and Manager must review the new head.
 
 The helper also refuses draft PRs, non-`main` bases, non-canonical agent branches, closed/mismatched issues, merge conflicts, missing/failed readiness, or missing/failed canonical workflows. It never selects a PR automatically and never enables auto-merge.
+
+
+## GitHub Actions PR-creation fallback
+
+The repository currently blocks `GITHUB_TOKEN` from creating pull requests through GitHub Actions.
+
+Therefore `.github/workflows/agent-pr-handoff.yml` behaves as follows:
+
+1. attempt the canonical draft PR handoff;
+2. if and only if GitHub returns the specific Actions PR-creation policy denial, record a durable **Agent PR handoff pending** comment on the matching roadmap issue;
+3. preserve the same canonical claim branch;
+4. allow an authenticated Agent/Manager GitHub context to create the draft PR from that branch;
+5. continue normal Claim Gate → CI → Readiness → Manager review.
+
+All other handoff errors still fail the workflow.
+
+If repository Actions settings are later changed to allow GitHub Actions to create pull requests, the same workflow resumes direct PR creation without changing the Agent Mesh branch/issue contract.
