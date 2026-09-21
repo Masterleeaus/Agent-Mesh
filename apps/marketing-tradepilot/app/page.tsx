@@ -181,7 +181,7 @@ export default function Home() {
         borderBottom: '1px solid #2A2A2A',
       }}>
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between" style={{ height: 64 }}>
-          <Image src="/fldwrk-logo-dark.png" alt="FLDWRK" width={128} height={32} style={{ height: 32, width: 'auto' }} priority />
+          <Image src="/app_icon.png" alt="Titan Zero" width={40} height={40} style={{ height: 32, width: 'auto' }} priority />
           <div className="hidden md:flex items-center gap-7">
             {['App', 'How It Works', 'Features', 'Pricing'].map(link => (
               <a key={link} href={`#${link.toLowerCase().replace(/[TM\s]/g, '-').replace('how-it-works', 'features')}`}
@@ -229,7 +229,7 @@ export default function Home() {
                 You built this city.<br />Now run it smarter.
               </h1>
               <p style={{ fontSize: 18, color: '#AAAAAA', maxWidth: 520, lineHeight: 1.65, marginBottom: 32 }}>
-                FLDWRK is the only AI-native platform built exclusively for tradespeople. Voice-first. No laptop. No paperwork. Just your phone and your skills.
+                Titan Zero is the only AI-native platform built exclusively for tradespeople. Voice-first. No laptop. No paperwork. Just your phone and your skills.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 mb-12">
                 <a href="#waitlist" style={{
@@ -301,7 +301,7 @@ export default function Home() {
                 </div>
               ))}
               <div style={{ marginTop: 24, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#555555', marginBottom: 12 }}>
-                With FLDWRK:
+                With Titan Zero:
               </div>
               {[
                 'Dictate job notes hands-free in 30 seconds, on-site',
@@ -362,7 +362,7 @@ export default function Home() {
                 ),
                 name: 'QuickQuoteTM',
                 tagline: 'Quote in 30 seconds.',
-                desc: 'Describe the job out loud. FLDWRK generates a full quote with parts, labor, and margin - right on your phone.',
+                desc: 'Describe the job out loud. Titan Zero generates a full quote with parts, labor, and margin - right on your phone.',
               },
               {
                 iconNode: (
@@ -454,7 +454,7 @@ export default function Home() {
                 <div style={{ fontSize: 11, color: '#E8352A', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: 12 }}>VoiceLogTM</div>
                 <h3 className="font-black" style={{ fontSize: 36, color: '#FFFFFF', marginBottom: 16, lineHeight: 1.15 }}>Notes without typing.</h3>
                 <p style={{ fontSize: 16, color: '#AAAAAA', lineHeight: 1.7, marginBottom: 24 }}>
-                  Open FLDWRK and speak. Job notes, site conditions, parts used - AI cleans it up and saves it instantly. Works with your gloves on, hands covered, or driving between jobs.
+                  Open Titan Zero and speak. Job notes, site conditions, parts used - AI cleans it up and saves it instantly. Works with your gloves on, hands covered, or driving between jobs.
                 </p>
                 <div className="space-y-3">
                   {['Voice-to-text in any noise environment', 'Auto-structured job reports', 'Synced across your whole crew'].map(f => (
@@ -466,7 +466,7 @@ export default function Home() {
                 </div>
               </div>
               <div style={{ background: '#181818', borderRadius: '4px', overflow: 'hidden', border: '1px solid #2A2A2A', aspectRatio: '4/3' }}>
-                <img src="/images/solution.jpg" alt="Worker using FLDWRK on job site" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
+                <img src="/images/solution.jpg" alt="Worker using Titan Zero on job site" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
               </div>
             </div>
           </div>
@@ -483,7 +483,7 @@ export default function Home() {
                 <div style={{ fontSize: 11, color: '#E8352A', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: 12 }}>QuickQuoteTM</div>
                 <h3 className="font-black" style={{ fontSize: 36, color: '#0A0A0A', marginBottom: 16, lineHeight: 1.15 }}>A quote in 30 seconds.</h3>
                 <p style={{ fontSize: 16, color: '#555555', lineHeight: 1.7, marginBottom: 24 }}>
-                  Describe the job out loud. FLDWRK generates a professional quote with parts, labor, and margin - right on your phone, in front of the customer. No spreadsheet. No laptop.
+                  Describe the job out loud. Titan Zero generates a professional quote with parts, labor, and margin - right on your phone, in front of the customer. No spreadsheet. No laptop.
                 </p>
                 <div className="space-y-3">
                   {['Voice-driven quote generation', 'Auto-includes common parts + labor', 'Email quote directly from the truck'].map(f => (
@@ -518,7 +518,7 @@ export default function Home() {
                 </div>
               </div>
               <div style={{ background: '#181818', borderRadius: '4px', overflow: 'hidden', border: '1px solid #2A2A2A', aspectRatio: '4/3' }}>
-                <img src="/images/fieldiq.jpg" alt="FLDWRK Dashboard" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
+                <img src="/images/fieldiq.jpg" alt="Titan Zero Dashboard" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
               </div>
             </div>
           </div>
@@ -535,7 +535,7 @@ export default function Home() {
                 <div style={{ fontSize: 11, color: '#E8352A', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: 12 }}>AI Actions</div>
                 <h3 className="font-black" style={{ fontSize: 36, color: '#0A0A0A', marginBottom: 16, lineHeight: 1.15 }}>Just talk. AI does the rest.</h3>
                 <p style={{ fontSize: 16, color: '#555555', lineHeight: 1.7, marginBottom: 24 }}>
-                  Tell FLDWRK what you need. Schedule a follow-up, send an invoice, look up a customer&apos;s job history - all without touching a menu. Built for people who work with their hands.
+                  Tell Titan Zero what you need. Schedule a follow-up, send an invoice, look up a customer&apos;s job history - all without touching a menu. Built for people who work with their hands.
                 </p>
                 <div className="space-y-3">
                   {['Voice commands for every action', 'Smart scheduling and follow-ups', 'Instant customer history lookup'].map(f => (
@@ -683,12 +683,12 @@ export default function Home() {
               </p>
               <div className="flex gap-3 justify-center">
                 <a
-                  href="https://twitter.com/intent/tweet?text=Just%20joined%20the%20FLDWRK%20waitlist%20%E2%80%94%20AI-native%20field%20service%20management%20built%20for%20the%20trades.%20fldwrk.ai"
+                  href="https://twitter.com/intent/tweet?text=Just%20joined%20the%20Titan Zero%20waitlist%20%E2%80%94%20AI-native%20field%20service%20management%20built%20for%20the%20trades.%20titanzero.io"
                   target="_blank"
                   style={{ background: '#FFFFFF', color: '#0A0A0A', fontSize: 13, fontWeight: 700, padding: '10px 20px', borderRadius: '4px', textDecoration: 'none' }}
                 >Share on X</a>
                 <button
-                  onClick={() => navigator.clipboard.writeText('https://fldwrk.ai')}
+                  onClick={() => navigator.clipboard.writeText('https://titanzero.io')}
                   style={{ background: '#222222', color: '#AAAAAA', fontSize: 13, fontWeight: 600, padding: '10px 20px', borderRadius: '4px', border: '1px solid #2A2A2A', cursor: 'pointer' }}
                 >Copy Link</button>
               </div>
@@ -769,12 +769,12 @@ export default function Home() {
       <footer style={{ background: '#0A0A0A', borderTop: '1px solid #2A2A2A', padding: '48px 24px' }}>
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6" style={{ marginBottom: 32 }}>
-            <Image src="/fldwrk-logo-dark.png" alt="FLDWRK" width={112} height={28} style={{ height: 28, width: 'auto' }} />
+            <Image src="/app_icon.png" alt="Titan Zero" width={36} height={36} style={{ height: 28, width: 'auto' }} />
             <p style={{ fontSize: 13, color: '#AAAAAA', textAlign: 'center' }}>
               The AI-native field service platform. Built exclusively for the trades.
             </p>
             <div className="flex gap-6">
-              {[['Privacy', '/privacy'], ['Terms', '/terms'], ['Contact', 'mailto:hello@fldwrk.ai']].map(([label, href]) => (
+              {[['Privacy', '/privacy'], ['Terms', '/terms'], ['Contact', 'mailto:hello@titanzero.io']].map(([label, href]) => (
                 <a key={label} href={href} style={{ fontSize: 13, color: '#555555', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.color = '#AAAAAA')}
                   onMouseLeave={e => (e.currentTarget.style.color = '#555555')}
@@ -783,7 +783,7 @@ export default function Home() {
             </div>
           </div>
           <div style={{ textAlign: 'center', fontSize: 12, color: '#555555', borderTop: '1px solid #2A2A2A', paddingTop: 24 }}>
-            &copy; 2026 FLDWRK, Inc. &middot; Built for the truck.
+            &copy; 2026 Titan Zero, Inc. &middot; Built for the truck.
           </div>
         </div>
       </footer>
