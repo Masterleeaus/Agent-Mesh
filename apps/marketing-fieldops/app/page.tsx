@@ -7,14 +7,14 @@ import styles from "./landing.module.css";
 
 export const metadata: Metadata = {
   title: "Titan Zero | Protect Every Service Promise",
-  description: "An AI-orchestrated dealership service operations system that recovers repair orders from capacity disruptions with human approval and auditable execution.",
+  description: "Automotive service operations intelligence that recovers repair orders from capacity disruptions with human approval and auditable execution.",
 };
 
 export default function LandingPage() {
   return <main className={styles.page}>
     <header className={styles.header}>
       <Link href="/" className={styles.brand} aria-label="Titan Zero home"><span><Route/></span><strong>TITAN <span>ZERO</span><small>Service operations intelligence</small></strong></Link>
-      <nav aria-label="Landing navigation"><a href="#recovery">Recovery</a><a href="#system">System</a><Link href="/control-room" className={styles.headerCta}>Launch workspace <ArrowUpRight/></Link></nav>
+      <nav aria-label="Landing navigation"><a href="#recovery">Recovery</a><a href="#system">System</a><Link href="https://titanzero.io/app" className={styles.headerCta}>Launch workspace <ArrowUpRight/></Link></nav>
     </header>
 
     <section className={styles.hero}>
@@ -22,7 +22,7 @@ export default function LandingPage() {
         <span className={styles.kicker}><i/> AI-ORCHESTRATED SERVICE OPERATIONS</span>
         <h1>Protect every customer promise when the shop plan breaks.</h1>
         <p>Titan Zero converts technician callouts and capacity gaps into feasible repair-order recovery plans that managers can inspect, approve, and audit.</p>
-        <div className={styles.heroActions}><Link href="#recovery" className={styles.primaryAction}><Sparkles/> See the recovery</Link><Link href="/control-room" className={styles.secondaryAction}>Open live system <ArrowRight/></Link></div>
+        <div className={styles.heroActions}><Link href="#recovery" className={styles.primaryAction}><Sparkles/> See the recovery</Link><Link href="https://titanzero.io/app" className={styles.secondaryAction}>Open live system <ArrowRight/></Link></div>
         <div className={styles.proofRail}><span><Check/> Constraint checked</span><span><Check/> Manager controlled</span><span><Check/> Fully auditable</span></div>
       </div>
 
@@ -58,10 +58,10 @@ export default function LandingPage() {
 
     <section className={styles.finalCta}>
       <span>PRODUCTION-GRADE PORTFOLIO SYSTEM</span>
-      <h2>Enter the live service command center.</h2>
-      <Link href="/control-room">Launch workspace <ArrowUpRight/></Link>
+      <h2>Enter Titan Zero Command.</h2>
+      <Link href="https://titanzero.io/app">Launch workspace <ArrowUpRight/></Link>
     </section>
 
-    <footer className={styles.footer}><span>TITAN ZERO</span><p>Dealership service operations intelligence</p><Link href="/control-room">Live system</Link></footer>
+    <footer className={styles.footer}><span>TITAN ZERO</span><p>Dealership service operations intelligence</p><Link href="https://titanzero.io/app">Live system</Link></footer>
   </main>;
 }
