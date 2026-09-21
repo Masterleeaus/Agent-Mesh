@@ -10,7 +10,8 @@
     "company_id",
     "surface",
     "kind",
-    "payload"
+    "payload",
+    "authority_neutral"
   ],
   "properties": {
     "schema_version": {
