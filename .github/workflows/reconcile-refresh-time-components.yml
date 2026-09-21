@@ -1,0 +1,38 @@
+name: Reconcile Titan Refresh And Time Components
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reconcile-refresh-time-components.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Promote refresh runtime and retain newer business-time components
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Titan LiveRefresh adds operational mutation events, cross-tab
+          # BroadcastChannel/storage invalidation, online recovery and coalescing.
+          cp titan/apps/web/components/LiveRefresh.tsx apps/web/components/LiveRefresh.tsx
+          git add apps/web/components/LiveRefresh.tsx
+          git rm -f titan/apps/web/components/LiveRefresh.tsx
+
+          # Dovetails versions explicitly use the canonical business timezone;
+          # archived Titan versions fall back to browser-local time.
+          git rm -f titan/apps/web/components/ui/LocalTime.tsx
+          git rm -f titan/apps/web/components/ui/Timeline.tsx
+
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Reconcile Titan operational refresh and business-time components"
+          git push
