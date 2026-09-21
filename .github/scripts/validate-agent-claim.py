@@ -158,6 +158,35 @@ def validate_pull_request():
     if sid not in title and sid not in body:
         fail(f"PR must name its claimed subgoal ID {sid}")
 
+    required_sections = [
+        "## Agent Mesh PR",
+        "### Objective",
+        "### Files changed",
+        "### Verification",
+        "### Architecture / authority check",
+        "### Completion / remaining work",
+        "### Evidence / risk / rollback",
+    ]
+    missing_sections = [section for section in required_sections if section not in body]
+    if missing_sections:
+        fail(
+            "agent PR body is missing required Agent Mesh evidence section(s): "
+            + ", ".join(missing_sections)
+        )
+
+    required_metadata = [
+        "**Linked issue:**",
+        "**Subgoal ID:**",
+        "**Goal ID:**",
+        "**Claim branch:**",
+    ]
+    missing_metadata = [field for field in required_metadata if field not in body]
+    if missing_metadata:
+        fail(
+            "agent PR body is missing required Agent Mesh metadata: "
+            + ", ".join(missing_metadata)
+        )
+
     issue_match = re.search(
         r"(?im)\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)\b", body
     )
