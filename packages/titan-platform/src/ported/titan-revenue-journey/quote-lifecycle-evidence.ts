@@ -123,7 +123,7 @@ export function buildQuoteLifecycleEvidence(input: Readonly<Record<string, any>>
   return Object.freeze({
     schema: REVENUE_QUOTE_EVIDENCE_SCHEMA,
     company_id: companyId,
-    revenue_journey_id: lifecycleEvent.revenue_journey_id,
+    revenue_journey_id: String(lifecycleEvent.revenue_journey_id),
     correlation_id: clean(lifecycleEvent.correlation?.correlation_id),
     quote_id: lifecycleEvent.quote_id,
     journey_transition: Object.freeze({
