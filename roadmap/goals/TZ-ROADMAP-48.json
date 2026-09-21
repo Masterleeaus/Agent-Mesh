@@ -1015,7 +1015,7 @@
   "preferred_successors": [],
   "agent_tier_contract_required": true,
   "last_canonical_revalidation": null,
-  "progress_percent": 0,
+  "progress_percent": 20,
   "goal_is_planning_container": true,
   "goal_claim_rule": "Goals are not claimable; Builders claim subgoals only and proceed immediately under lease.",
   "unified_architecture_contract_required": true,
