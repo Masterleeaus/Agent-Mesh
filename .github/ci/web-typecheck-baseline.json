@@ -61,5 +61,12 @@
     "../../packages/titan-platform/src/ported/titan-revenue-journey/booking-job-origin-evidence.ts::TS2322": 1,
     "../../packages/titan-platform/src/ported/titan-revenue-journey/invoice-payment-evidence.ts::TS2322": 1,
     "../../packages/titan-platform/src/ported/titan-revenue-journey/quote-lifecycle-evidence.ts::TS2322": 1
+  },
+  "roadmap_owner": {
+    "subgoal_id": "TZ-ROADMAP-52-SG-02",
+    "issue_number": 78,
+    "issue_url": "https://github.com/Masterleeaus/Agent-Mesh/issues/78",
+    "debt": "TypeScript compile/build dependency closure",
+    "exit_rule": "Reduce or delete this baseline only when current CI evidence proves the corresponding errors/failures are fixed. New/increased failures remain forbidden."
   }
 }
