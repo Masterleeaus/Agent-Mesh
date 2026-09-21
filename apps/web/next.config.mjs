@@ -3,10 +3,10 @@ import { fileURLToPath } from "node:url";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: [
-    "@ai-fsm/domain",
-    "@ai-fsm/log",
-    "@ai-fsm/money",
-    "@ai-fsm/email-templates",
+    "@titan-zero/domain",
+    "@titan-zero/log",
+    "@titan-zero/money",
+    "@titan-zero/email-templates",
   ],
   webpack: (config) => {
     config.resolve.extensionAlias = {
