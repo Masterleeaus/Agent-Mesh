@@ -93,3 +93,9 @@ export interface RecurringInspectionEmailData {
   planName: string;
   propertyAddress: string | null;
 }
+
+export interface AttentionOwnerEmailData {
+  title: string;
+  summary?: string | null;
+  href: string;
+}
