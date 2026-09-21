@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-touched-files/v1",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 4,
+  "added": [
+    "titan-runtime/analytics/cleaning-kpi-definitions.mjs",
+    "titan-runtime/analytics/pass04/CLEANING-KPI-REGISTRY.json",
+    "titan-runtime/analytics/pass04/CLEANING-KPI-NOTES.md",
+    "tests/analytics_kpi_pass04_cleaning_metrics.test.mjs"
+  ],
+  "modified": [],
+  "deleted": [],
+  "shared_hotspots_touched": []
+}

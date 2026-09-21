@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {resolveCallerIdentity,planCallerRevenueCapture,planOpportunityReview,dedupeCallerCapture} from '../../titan-workforce/hierarchy/caller-identity-lead-capture-runtime.mjs';
+const base={company_id:'company-1',call_ref:'call-9',caller_ref:'phone:+61400000000',idempotency_key:'call-9-capture'};
+const known=resolveCallerIdentity({...base,customer_matches:[{company_id:'company-1',customer_id:'cust-7',confidence:1,match_basis:'verified_phone'}]});
+assert.equal(known.resolution,'known_customer'); assert.equal(known.customer_ref,'cust-7');
+const kp=planCallerRevenueCapture({...base,customer_matches:[{company_id:'company-1',customer_id:'cust-7',confidence:1,match_basis:'verified_phone'}],evidence_ref:'evidence:9'});
+assert.equal(kp.status,'KNOWN_CUSTOMER_ENQUIRY_PROPOSED'); assert.equal(kp.handoffs[0].target_worker,'titan.worker.create_follow_up_agent'); assert.equal(kp.duplicate_customer_creation_permitted,false);
+const unknown=planCallerRevenueCapture({...base,idempotency_key:'unknown-9',customer_matches:[],service_interest:'end of lease clean',evidence_ref:'evidence:9'});
+assert.equal(unknown.status,'UNKNOWN_CALLER_LEAD_PROPOSED'); assert.equal(unknown.handoffs[0].target_worker,'titan.worker.create_lead_agent'); assert.equal(unknown.customer_creation_permitted,false); assert.equal(unknown.execution_permitted,false);
+const ambiguous=planCallerRevenueCapture({...base,idempotency_key:'amb-9',customer_matches:[{company_id:'company-1',customer_id:'c1',confidence:.9,match_basis:'phone'},{company_id:'company-1',customer_id:'c2',confidence:.8,match_basis:'phone'}]});
+assert.equal(ambiguous.status,'IDENTITY_REVIEW_REQUIRED'); assert.equal(ambiguous.lead_creation_permitted,false); assert.equal(ambiguous.customer_link_permitted,false);
+const cross=resolveCallerIdentity({...base,idempotency_key:'cross-9',customer_matches:[{company_id:'company-2',customer_id:'other',confidence:1,match_basis:'verified_phone'}]}); assert.equal(cross.resolution,'unknown');
+assert.throws(()=>planOpportunityReview({...base,idempotency_key:'opp-x'}),/canonical-lead-ref/);
+const opp=planOpportunityReview({...base,idempotency_key:'opp-9',lead_ref:'lead-9',qualification_ref:'qualification:9'}); assert.equal(opp.opportunity_creation_performed,false); assert.equal(opp.persistence_request_only,true);
+const d1=dedupeCallerCapture({},unknown); assert.equal(d1.apply,true); const d2=dedupeCallerCapture({company_id:'company-1',processed_idempotency_keys:d1.processed_idempotency_keys},unknown); assert.equal(d2.duplicate,true);
+console.log('PASS caller identity + lead capture: 8/8');

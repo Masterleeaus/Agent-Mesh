@@ -1,0 +1,9 @@
+{
+  "schema": "titan-zero-analytics-pass/v1",
+  "packet_id": "TZ-NEXT-012",
+  "builder": "Builder 3",
+  "pass": 7,
+  "status": "COMPLETE",
+  "live_manager_merge": 42,
+  "summary": "Added provenance-backed KPI drill-down descriptors and integrated them into the analytics UI surface without breaking legacy summary-only provenance."
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "titan-zero-verification/v1",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 7,
+  "status": "PASS",
+  "focused_tests": "7/7 PASS",
+  "runtime_syntax": "6/6 PASS",
+  "known_source_validation": "PASS",
+  "deterministic_dedupe": "PASS",
+  "legacy_summary_provenance_compatibility": "PASS",
+  "ui_projection_drilldown": "PASS",
+  "authority_neutrality": "PASS"
+}

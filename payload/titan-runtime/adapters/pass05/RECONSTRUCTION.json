@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-reconstruction-verification/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 5,
+  "frozen_base_merge": 39,
+  "base_files": 2844,
+  "live_manager_merge": 41,
+  "live_manager_forward_port": "CLEAN; Merge41 adapter-owned paths untouched",
+  "payload_files": 54,
+  "reconstructed_files": 2898,
+  "base_path_collisions": [],
+  "hash_differences": [],
+  "exact_additive_reconstruction": true
+}

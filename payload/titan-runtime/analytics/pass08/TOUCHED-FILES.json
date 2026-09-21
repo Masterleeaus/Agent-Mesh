@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-touched-files/v1",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 8,
+  "added": [
+    "titan-runtime/analytics/analytics-summary-snapshots.mjs",
+    "titan-runtime/analytics/pass08/SUMMARY-SNAPSHOT-CONTRACT.json",
+    "titan-runtime/analytics/pass08/SUMMARY-SNAPSHOT-NOTES.md",
+    "tests/analytics_kpi_pass08_summary_snapshots.test.mjs"
+  ],
+  "modified": [],
+  "deleted": [],
+  "shared_hotspots_touched": []
+}

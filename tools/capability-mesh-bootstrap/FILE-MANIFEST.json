@@ -1,0 +1,125 @@
+{
+  "schema": "titan-zero-capability-mesh-package-manifest/v1",
+  "files": [
+    {
+      "path": "CAPABILITY-MESH-PROTOCOL.md",
+      "sha256": "0a43f5ef4484059ed511065b153dadf0478065e7dd514f5a21a1e24a4a8381c1",
+      "bytes": 1648
+    },
+    {
+      "path": "HANDOFF.json",
+      "sha256": "16d471135a7d04fbef130778001c0fc8a863e1777305b56a18497fc6a6d81805",
+      "bytes": 1015
+    },
+    {
+      "path": "README.md",
+      "sha256": "127da7bba0d5c0ad878371092a5d60a9cf5ef690579f15a3a220cbe0d03395c9",
+      "bytes": 1505
+    },
+    {
+      "path": "TASK-PACKET.example.json",
+      "sha256": "999800dc4b888fb0e58862438727a98f8873dce90bab40138e4bd4c661d2e9f8",
+      "bytes": 601
+    },
+    {
+      "path": "VERIFICATION.txt",
+      "sha256": "3f302f470f624a802e1da3ba7bd1607b6704cae89247a71684f9b98f206c82b7",
+      "bytes": 1250
+    },
+    {
+      "path": "schemas/capability.schema.json",
+      "sha256": "6d6ae7667fa47cbac86d93529c726d7f2f10bf2381543ef9140cd6d2f4939767",
+      "bytes": 1201
+    },
+    {
+      "path": "schemas/dependency-graph.schema.json",
+      "sha256": "b2749f35cb62fbf88206241a05bbf337c4161f4963d6cea5c540bb9ccb9e8460",
+      "bytes": 1215
+    },
+    {
+      "path": "schemas/evidence.schema.json",
+      "sha256": "7867c6ebeb515d263a86ccacfbab61bb61924872a195ee4f724fb3c64c545c64",
+      "bytes": 1023
+    },
+    {
+      "path": "schemas/task-packet.schema.json",
+      "sha256": "2144e399f5dbb12dfdfa2dccb9d5dfa617f36d1ae8a0b061a86c0a39e91f0cf4",
+      "bytes": 2039
+    },
+    {
+      "path": "state/CAPABILITIES.json",
+      "sha256": "ec91e4ca65272f642cb39cd884f3befe1a150377d575f1578da48b3a07667601",
+      "bytes": 2049
+    },
+    {
+      "path": "state/CONTRACTS.json",
+      "sha256": "fc3ea508754410b13af1d8bdb3a6c55eb22aabc0361912b5eb37591e5bc38e6a",
+      "bytes": 462
+    },
+    {
+      "path": "state/CURRENT_BASELINE.json",
+      "sha256": "3169e23d68c1c281f6fceef7e830aae8819eb822565ff39223685c39404ad767",
+      "bytes": 350
+    },
+    {
+      "path": "state/DEPENDENCIES.json",
+      "sha256": "7a86462b89e2c1f14733b226da9d874c9467262196a2054c0c69cc3bb350bcd9",
+      "bytes": 522
+    },
+    {
+      "path": "state/HOTSPOTS.json",
+      "sha256": "072fd17b417a28d4a9ae90399ba956d8c826dad9bcc6fb9e0d53351ed7ab9741",
+      "bytes": 338
+    },
+    {
+      "path": "state/OWNERSHIP.json",
+      "sha256": "792e91927631c33e6f7d7b86f5f4f2a219bf4ce99f0889459b3c9745590cd001",
+      "bytes": 430
+    },
+    {
+      "path": "state/TEST_INDEX.json",
+      "sha256": "c62bd0ab18361fef43185b10d9021247d2e2698e2902ca7d85b40204edd75ebf",
+      "bytes": 665
+    },
+    {
+      "path": "tests/.pytest_cache/.gitignore",
+      "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd",
+      "bytes": 37
+    },
+    {
+      "path": "tests/.pytest_cache/CACHEDIR.TAG",
+      "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4",
+      "bytes": 191
+    },
+    {
+      "path": "tests/.pytest_cache/README.md",
+      "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad",
+      "bytes": 302
+    },
+    {
+      "path": "tests/.pytest_cache/v/cache/nodeids",
+      "sha256": "7892e961e06548e80e4c14eff686329b5aafcadbf227a0aae4540e8ccce4863a",
+      "bytes": 258
+    },
+    {
+      "path": "tests/__pycache__/test_capability_mesh.cpython-313-pytest-9.0.2.pyc",
+      "sha256": "bd4b7680bc4ba2bb93065cfb028c74a14e784f093aa995070ad14bba3f6a9fbc",
+      "bytes": 6914
+    },
+    {
+      "path": "tests/test_capability_mesh.py",
+      "sha256": "01a453c36028ffe8034ad1da6e22ad98bcb85386fcbc92d8b5f5dfb17d7ce3a5",
+      "bytes": 1303
+    },
+    {
+      "path": "tools/__pycache__/capability_mesh.cpython-313.pyc",
+      "sha256": "36fc35587bfc6062e49dcdd321e2a2b22d3d452a12d4068f7d666219dbfde8f1",
+      "bytes": 5719
+    },
+    {
+      "path": "tools/capability_mesh.py",
+      "sha256": "e45e654a3d69736f41efb2acb89267833e0b3a4c0e0292717f43c48c90559e37",
+      "bytes": 2150
+    }
+  ]
+}

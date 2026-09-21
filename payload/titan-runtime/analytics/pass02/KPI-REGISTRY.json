@@ -1,0 +1,281 @@
+{
+  "schema": "titan-zero-kpi-registry/v1",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 2,
+  "company_boundary": "company_id",
+  "authority": {
+    "analytics_is_source_of_truth": false,
+    "analytics_grants_authority": false,
+    "identity_not_authority": true,
+    "source_modules_remain_canonical": true
+  },
+  "value_contract": {
+    "required": [
+      "metric_id",
+      "company_id",
+      "window",
+      "status",
+      "provenance"
+    ],
+    "status_values": [
+      "available",
+      "missing",
+      "partial",
+      "stale",
+      "invalid"
+    ],
+    "missing_value_rule": "Never synthesize a numeric value when required source data is absent.",
+    "provenance_required": true,
+    "time_window_required": true
+  },
+  "metrics": [
+    {
+      "metric_id": "revenue.gross_invoiced",
+      "domain": "revenue",
+      "label": "Gross invoiced revenue",
+      "unit": "currency",
+      "aggregation": "sum",
+      "source_ids": [
+        "invoice-workflow",
+        "business-services"
+      ],
+      "source_fields": [
+        "invoice.total",
+        "invoice.currency",
+        "invoice.status",
+        "invoice.issued_at"
+      ],
+      "filters": [
+        "invoice.status != void"
+      ],
+      "notes": "Derived from canonical invoice workflow records; analytics never mutates invoices."
+    },
+    {
+      "metric_id": "revenue.quote_pipeline_value",
+      "domain": "revenue",
+      "label": "Quote pipeline value",
+      "unit": "currency",
+      "aggregation": "sum",
+      "source_ids": [
+        "sales-contract",
+        "sales-lead-response"
+      ],
+      "source_fields": [
+        "quote.amount",
+        "quote.status",
+        "lead.stage",
+        "updated_at"
+      ],
+      "filters": [
+        "quote.status in open,pending,accepted"
+      ],
+      "notes": "Projection only; no quote authority."
+    },
+    {
+      "metric_id": "jobs.completed_count",
+      "domain": "jobs",
+      "label": "Jobs completed",
+      "unit": "count",
+      "aggregation": "count",
+      "source_ids": [
+        "jobs-runtime",
+        "jobs-context-bridge"
+      ],
+      "source_fields": [
+        "job.id",
+        "job.status",
+        "job.completed_at"
+      ],
+      "filters": [
+        "job.status == completed"
+      ]
+    },
+    {
+      "metric_id": "jobs.completion_rate",
+      "domain": "jobs",
+      "label": "Job completion rate",
+      "unit": "ratio",
+      "aggregation": "ratio",
+      "numerator_metric": "jobs.completed_count",
+      "source_ids": [
+        "jobs-runtime"
+      ],
+      "source_fields": [
+        "job.id",
+        "job.status",
+        "window"
+      ],
+      "notes": "Pass 3 aggregation runtime computes denominator deterministically."
+    },
+    {
+      "metric_id": "workforce.active_workers",
+      "domain": "workforce",
+      "label": "Active workers",
+      "unit": "count",
+      "aggregation": "distinct_count",
+      "source_ids": [
+        "workforce-runtime",
+        "workforce-graph"
+      ],
+      "source_fields": [
+        "worker.id",
+        "worker.status",
+        "assignment.window"
+      ]
+    },
+    {
+      "metric_id": "workforce.utilisation",
+      "domain": "workforce",
+      "label": "Labour utilisation",
+      "unit": "ratio",
+      "aggregation": "ratio",
+      "source_ids": [
+        "workforce-runtime",
+        "workforce-graph"
+      ],
+      "source_fields": [
+        "worked_minutes",
+        "available_minutes",
+        "worker.id",
+        "window"
+      ],
+      "notes": "No estimate allowed when available_minutes is unavailable."
+    },
+    {
+      "metric_id": "quality.exception_count",
+      "domain": "quality",
+      "label": "Quality exceptions",
+      "unit": "count",
+      "aggregation": "count",
+      "source_ids": [
+        "supervisor-runtime",
+        "evidence-quality"
+      ],
+      "source_fields": [
+        "exception.id",
+        "exception.severity",
+        "exception.created_at"
+      ]
+    },
+    {
+      "metric_id": "quality.evidence_score_average",
+      "domain": "quality",
+      "label": "Average evidence quality",
+      "unit": "score",
+      "aggregation": "average",
+      "source_ids": [
+        "evidence-quality"
+      ],
+      "source_fields": [
+        "evidence.score",
+        "evidence.id",
+        "evaluated_at"
+      ]
+    },
+    {
+      "metric_id": "customer.active_accounts",
+      "domain": "customer",
+      "label": "Active customers",
+      "unit": "count",
+      "aggregation": "distinct_count",
+      "source_ids": [
+        "client-workforce",
+        "jobs-context-bridge"
+      ],
+      "source_fields": [
+        "customer.id",
+        "job.customer_id",
+        "activity_at"
+      ]
+    },
+    {
+      "metric_id": "customer.repeat_job_rate",
+      "domain": "customer",
+      "label": "Repeat job rate",
+      "unit": "ratio",
+      "aggregation": "ratio",
+      "source_ids": [
+        "jobs-runtime",
+        "jobs-context-bridge"
+      ],
+      "source_fields": [
+        "customer_id",
+        "job.id",
+        "job.completed_at"
+      ],
+      "notes": "Calculated only from explicit customer/job relationships."
+    },
+    {
+      "metric_id": "cash.invoice_outstanding",
+      "domain": "cash",
+      "label": "Outstanding invoiced amount",
+      "unit": "currency",
+      "aggregation": "sum",
+      "source_ids": [
+        "invoice-workflow",
+        "business-services"
+      ],
+      "source_fields": [
+        "invoice.total",
+        "invoice.amount_paid",
+        "invoice.status",
+        "invoice.due_at"
+      ],
+      "filters": [
+        "invoice.status in issued,part_paid,overdue"
+      ]
+    },
+    {
+      "metric_id": "cash.overdue_invoice_count",
+      "domain": "cash",
+      "label": "Overdue invoices",
+      "unit": "count",
+      "aggregation": "count",
+      "source_ids": [
+        "invoice-workflow",
+        "business-services"
+      ],
+      "source_fields": [
+        "invoice.id",
+        "invoice.due_at",
+        "invoice.status"
+      ],
+      "filters": [
+        "invoice.status == overdue"
+      ]
+    },
+    {
+      "metric_id": "operational_health.event_error_rate",
+      "domain": "operational_health",
+      "label": "Operational error-event rate",
+      "unit": "ratio",
+      "aggregation": "ratio",
+      "source_ids": [
+        "event-ledger",
+        "feed-causality"
+      ],
+      "source_fields": [
+        "event.id",
+        "event.type",
+        "event.status",
+        "occurred_at"
+      ],
+      "notes": "Observation-only operational health projection."
+    },
+    {
+      "metric_id": "operational_health.data_freshness",
+      "domain": "operational_health",
+      "label": "Data freshness",
+      "unit": "duration_ms",
+      "aggregation": "age",
+      "source_ids": [
+        "event-ledger",
+        "feed-causality"
+      ],
+      "source_fields": [
+        "event.occurred_at",
+        "event.ingested_at"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "titan-zero-builder-handoff/v1",
+  "builder": "Builder 3",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 5,
+  "status": "PASS05_COMPLETE_CONTINUE_PASS06",
+  "next_pass": 6,
+  "next_pass_scope": "Wire analytics projections into existing rich UI contribution points without replacing current pages.",
+  "recommended_convergence_class": "CLEAN_ADDITIVE_FORWARD_PORT"
+}

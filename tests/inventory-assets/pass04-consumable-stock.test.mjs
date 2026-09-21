@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { ConsumableStockLedger } from '../../titan-inventory/runtime/consumable-stock.mjs';
+const p=(key)=>({source:'test',recorded_at:'2026-09-09T01:10:00.000Z',idempotency_key:key});
+const base=(o={})=>({company_id:'co-a',consumable_id:'chem-1',stock_location_id:'van-1',quantity:10,provenance:p('e1'),...o});
+
+test('stock-in increases company/location scoped balance',()=>{const l=new ConsumableStockLedger(); const r=l.stockIn(base()); assert.equal(r.balance,10); assert.equal(l.getBalance('co-a','chem-1','van-1'),10); assert.equal(l.getBalance('co-b','chem-1','van-1'),0);});
+test('use decreases balance and stays authority neutral',()=>{const l=new ConsumableStockLedger(); l.stockIn(base()); const r=l.use(base({quantity:3,provenance:p('u1'),job_id:'job-1'})); assert.equal(r.balance,7); assert.deepEqual(r.event.authority,{job_authority_granted:false,purchase_authority_granted:false});});
+test('waste decreases balance with audit reason',()=>{const l=new ConsumableStockLedger(); l.stockIn(base()); const r=l.waste(base({quantity:2,provenance:p('w1'),reason:'spill'})); assert.equal(r.balance,8); assert.equal(r.event.reason,'spill');});
+test('adjustment accepts signed deltas',()=>{const l=new ConsumableStockLedger(); l.stockIn(base()); assert.equal(l.adjust(base({quantity:-2,provenance:p('a1')})).balance,8); assert.equal(l.adjust(base({quantity:1.5,provenance:p('a2')})).balance,9.5);});
+test('duplicate idempotency key replays without double mutation',()=>{const l=new ConsumableStockLedger(); l.stockIn(base()); const one=l.use(base({quantity:2,provenance:p('dup')})); const two=l.use(base({quantity:99,provenance:p('dup')})); assert.equal(one.balance,8); assert.equal(two.replayed,true); assert.equal(l.getBalance('co-a','chem-1','van-1'),8);});
+test('negative stock is rejected without ledger mutation',()=>{const l=new ConsumableStockLedger(); l.stockIn(base({quantity:1})); assert.throws(()=>l.use(base({quantity:2,provenance:p('u2')})),/negative stock/); assert.equal(l.getBalance('co-a','chem-1','van-1'),1); assert.equal(l.listEvents('co-a').length,1);});
+test('same consumable is independently scoped by location and company',()=>{const l=new ConsumableStockLedger(); l.stockIn(base()); l.stockIn(base({stock_location_id:'store-1',quantity:4,provenance:p('s2')})); l.stockIn(base({company_id:'co-b',quantity:6,provenance:p('b1')})); assert.equal(l.getBalance('co-a','chem-1','van-1'),10); assert.equal(l.getBalance('co-a','chem-1','store-1'),4); assert.equal(l.getBalance('co-b','chem-1','van-1'),6);});
+test('legacy company boundary aliases fail closed',()=>{const l=new ConsumableStockLedger(); assert.throws(()=>l.stockIn(base({tenant_id:'old'})),/legacy boundary/);});
+test('event history is immutable to callers',()=>{const l=new ConsumableStockLedger(); l.stockIn(base()); const events=l.listEvents('co-a'); events[0].authority.purchase_authority_granted=true; assert.equal(l.listEvents('co-a')[0].authority.purchase_authority_granted,false);});

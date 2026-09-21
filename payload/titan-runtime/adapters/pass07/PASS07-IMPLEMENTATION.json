@@ -1,0 +1,19 @@
+{
+  "schema": "titan-zero-runtime-adapters-pass/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "builder": "Builder 3",
+  "pass": 7,
+  "status": "COMPLETE",
+  "frozen_base_merge": 39,
+  "live_manager_observed_merge": 42,
+  "implemented": [
+    "adapter session model",
+    "navigation/reload/restart recovery classification",
+    "stale-session detection",
+    "epoch rollover",
+    "fresh negotiation requirement",
+    "fresh authority evaluation requirement"
+  ],
+  "authority_snapshot_reused_after_navigation": false,
+  "auto_execute_after_reconnect": false
+}

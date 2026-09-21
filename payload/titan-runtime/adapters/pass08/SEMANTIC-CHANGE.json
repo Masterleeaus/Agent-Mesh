@@ -1,0 +1,9 @@
+{
+  "schema": "titan-zero-semantic-change/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 8,
+  "summary": "Adds end-to-end verification across typed runtime, legacy fallback, failure handling, company isolation, session recovery and authority neutrality without modifying production runtime behavior.",
+  "production_behavior_change": false,
+  "company_boundary": "company_id",
+  "authority_changes": []
+}

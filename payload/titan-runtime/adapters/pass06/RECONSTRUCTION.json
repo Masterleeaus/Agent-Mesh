@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-reconstruction-verification/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 6,
+  "frozen_base_merge": 39,
+  "base_files": 2844,
+  "live_manager_merge": 42,
+  "live_manager_forward_port": "CLEAN; Merge40 Sales additive, Merge41 runtime change outside adapters, Merge42 only monicaOptions.html/sidePanel.html modified",
+  "payload_files_before_sidecars": 66,
+  "base_path_collisions": [],
+  "exact_additive_reconstruction": true,
+  "payload_files": 68,
+  "reconstructed_files": 2912
+}

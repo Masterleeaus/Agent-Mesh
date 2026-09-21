@@ -1,0 +1,18 @@
+{
+  "schema": "titan-zero-runtime-adapters-pass/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "builder": "Builder 3",
+  "pass": 4,
+  "status": "COMPLETE",
+  "frozen_base_merge": 39,
+  "live_manager_observed_merge": 41,
+  "implemented": [
+    "runtime feature detection",
+    "major/minor compatibility negotiation",
+    "required capability gate",
+    "typed/legacy/unavailable path selection"
+  ],
+  "permission_inference": false,
+  "authority_inference": false,
+  "authority_granted": false
+}

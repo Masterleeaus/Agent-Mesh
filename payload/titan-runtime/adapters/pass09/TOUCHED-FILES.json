@@ -1,0 +1,15 @@
+{
+  "schema": "titan-zero-touched-files/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 9,
+  "added": [
+    "tests/runtime_adapter_pass09_performance.test.mjs",
+    "tests/runtime_adapter_pass09_regression.test.mjs",
+    "titan-runtime/adapters/pass09/LEGACY-RUNTIME-SNAPSHOT.json",
+    "titan-runtime/adapters/pass09/CAPABILITY-PARITY-MATRIX.json",
+    "titan-runtime/adapters/pass09/PERFORMANCE-REGRESSION.md"
+  ],
+  "modified": [],
+  "deleted": [],
+  "shared_hotspots_touched": []
+}

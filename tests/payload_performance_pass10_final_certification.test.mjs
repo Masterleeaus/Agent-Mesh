@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const cert=JSON.parse(fs.readFileSync('titan-runtime/performance/pass10-final-certification.json','utf8'));
+const protectedHashes=JSON.parse(fs.readFileSync('titan-regression/monica-retriever/PROTECTED-RUNTIME-HASHES.json','utf8'));
+const retiredHashes=JSON.parse(fs.readFileSync('titan-regression/monica-retriever/RETIRED-RUNTIME-HASHES.json','utf8'));
+test('Pass10 certifies substantial payload reduction within budgets',()=>{ assert.ok(cert.improvement.compressed_reduction_percent>45); assert.ok(cert.improvement.unpacked_reduction_percent>45); assert.ok(cert.after_runtime.compressed_bytes<40500000); assert.ok(cert.after_runtime.unpacked_bytes<100000000); });
+test('Pass10 retains locale and protected compatibility contracts',()=>{ assert.equal(cert.retention.titan_locale_packs,55); assert.equal(cert.retention.retriever_background_retained,true); assert.equal(cert.retention.content_css_retained,true); assert.equal(protectedHashes.entries.length,437); assert.equal(retiredHashes.entries.length,105); });
+test('Pass10 remains company scoped and authority neutral',()=>{ assert.equal(cert.constraints.company_id_only,true); assert.equal(cert.constraints.identity_not_authority,true); });
+test('Pass10 does not preempt Manager convergence of Runtime Adapters',()=>{ assert.equal(cert.runtime_adapters.manager_converged,false); assert.equal(cert.runtime_adapters.no_post_convergence_retriever_or_content_css_retirement_in_this_packet,true); });

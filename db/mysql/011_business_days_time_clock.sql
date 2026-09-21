@@ -1,0 +1,47 @@
+-- Agent 2 Pass 10: MySQL/MariaDB parity for business-day payroll clock facts.
+CREATE TABLE IF NOT EXISTS business_days (
+  id CHAR(36) PRIMARY KEY,
+  account_id CHAR(36) NOT NULL,
+  user_id CHAR(36) NOT NULL,
+  business_date DATE NOT NULL,
+  status ENUM('OPEN','ACTIVE','PAUSED','READY_TO_CLOSE','CLOSED','REOPENED') NOT NULL DEFAULT 'OPEN',
+  opened_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  closed_at DATETIME(3) NULL,
+  reopened_reason TEXT NULL,
+  notes TEXT NULL,
+  created_by CHAR(36) NOT NULL,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+  UNIQUE KEY uq_business_days_user_date (account_id, user_id, business_date),
+  KEY idx_business_days_account_status (account_id, status),
+  CONSTRAINT fk_business_days_account FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE,
+  CONSTRAINT fk_business_days_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_business_days_creator FOREIGN KEY (created_by) REFERENCES users(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS time_clock_sessions (
+  id CHAR(36) PRIMARY KEY,
+  account_id CHAR(36) NOT NULL,
+  user_id CHAR(36) NOT NULL,
+  business_day_id CHAR(36) NULL,
+  clock_in_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  clock_out_at DATETIME(3) NULL,
+  status ENUM('open','closed') NOT NULL DEFAULT 'open',
+  pay_type ENUM('hourly','salary','piecework','subcontractor','owner_draw') NOT NULL DEFAULT 'hourly',
+  hourly_rate_snapshot_cents INT NULL,
+  break_policy VARCHAR(255) NULL,
+  notes TEXT NULL,
+  voided_at DATETIME(3) NULL,
+  correction_reason TEXT NULL,
+  created_by CHAR(36) NOT NULL,
+  created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+  KEY idx_time_clock_user_in (account_id, user_id, clock_in_at),
+  KEY idx_time_clock_business_day (business_day_id),
+  CONSTRAINT fk_time_clock_account FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE,
+  CONSTRAINT fk_time_clock_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_time_clock_day FOREIGN KEY (business_day_id) REFERENCES business_days(id) ON DELETE SET NULL,
+  CONSTRAINT fk_time_clock_creator FOREIGN KEY (created_by) REFERENCES users(id),
+  CONSTRAINT chk_time_clock_rate CHECK (hourly_rate_snapshot_cents IS NULL OR hourly_rate_snapshot_cents >= 0),
+  CONSTRAINT chk_time_clock_order CHECK (clock_out_at IS NULL OR clock_out_at > clock_in_at)
+) ENGINE=InnoDB;

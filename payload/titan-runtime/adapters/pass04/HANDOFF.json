@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-builder-handoff/v1",
+  "builder": "Builder 3",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 4,
+  "status": "PASS04_COMPLETE_CONTINUE_PASS05",
+  "frozen_base_merge": 39,
+  "live_manager_merge": 41,
+  "summary": "Feature detection and typed adapter negotiation implemented; capability/version compatibility remains non-authoritative and permission-neutral.",
+  "next_pass": 5,
+  "next_pass_scope": "Add legacy DOM discovery wrapper as fallback only, with explicit deprecation telemetry.",
+  "claim_status": "ACTIVE",
+  "recommended_convergence_class": "CLEAN_ADDITIVE_FORWARD_PORT"
+}

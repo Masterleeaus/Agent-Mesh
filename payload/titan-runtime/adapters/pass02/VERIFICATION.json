@@ -1,0 +1,27 @@
+{
+  "schema": "titan-zero-verification/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 2,
+  "status": "PASS",
+  "runtime_adapter_layers": 2,
+  "tests": [
+    {
+      "file": "tests/runtime_adapter_pass01_inventory.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass01 inventory invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass02_protocol.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass02 typed protocol invariants",
+      "stderr": ""
+    }
+  ],
+  "syntax": "PASS",
+  "json_parse": "PASS",
+  "company_id_audit": "PASS",
+  "authority_audit": "PASS_NO_AUTHORITY_GRANTED",
+  "existing_compatibility_paths_untouched": true,
+  "protected_hotspots_touched": []
+}

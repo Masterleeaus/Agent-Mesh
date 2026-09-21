@@ -1,0 +1,9 @@
+{
+  "schema": "titan-zero-semantic-change/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 6,
+  "summary": "Adds deterministic typed work lifecycle handling for accepted/progress/completion/error/timeout/cancellation while preserving company and authority boundaries.",
+  "company_boundary": "company_id",
+  "authority_changes": [],
+  "execution_authority": false
+}

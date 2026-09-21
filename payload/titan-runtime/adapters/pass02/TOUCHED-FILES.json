@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-touched-files/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 2,
+  "added": [
+    "titan-runtime/adapters/execution-adapter-protocol.mjs",
+    "titan-runtime/adapters/ExecutionAdapterEnvelope.schema.json",
+    "titan-runtime/adapters/pass02/TITAN-EXECUTION-ADAPTER-v1.md",
+    "tests/runtime_adapter_pass02_protocol.test.mjs"
+  ],
+  "modified": [],
+  "deleted": [],
+  "protected_hotspots_touched": []
+}

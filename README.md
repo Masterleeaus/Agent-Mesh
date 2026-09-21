@@ -1,27 +1,63 @@
-# Titan Zero Agent Mesh V3
+# Dovetails FSM
 
-Agent Mesh V3 is deliberately small.
+Dovetails FSM is a residential handyman and home maintenance operating system focused on preserving property history, managing client relationships, creating accurate estimates, executing work efficiently, and maintaining a permanent service record for every property.
 
-## Authority
-- GitHub `main` is the canonical code/version-control authority.
-- Git commit SHA is the exact version identity.
-- GitHub branches and pull requests replace custom Mesh branches, commits, CAS, reflogs, ZIP checkpoints and promotion machinery.
-- Agent Mesh coordinates roadmap work; it does not reimplement Git.
-- Conversation memory, filenames and timestamps are never authority.
+## Documentation Hierarchy
 
-## Worker flow
-1. Read `AGENTS.md` and the relevant roadmap goal/subgoal.
-2. Claim one eligible subgoal in `work/claims.json`.
-3. Create/use a GitHub branch named `goal<goal>/sg<subgoal>-<actor>`.
-4. Implement one complete development pass.
-5. Commit and push.
-6. Open/update a pull request.
-7. CI verifies the PR.
-8. Manager reviews and merges.
-9. Merged `main` is canonical.
+Use documentation in this order:
 
-## Roles
-Builders build on branches. Manager integrates through pull requests. No Builder self-merges.
+1. Code and database migrations are the implemented truth.
+2. `docs/canonical/` is the authoritative product, domain, and architecture truth.
+3. `docs/contracts/` and `docs/working/` contain supporting implementation notes.
+4. `ai/` is only a compact AI-agent quick-reference layer.
+5. `docs/archive/` and `docs/generated/` are historical/evidence only, not active instruction sources.
 
-## Releases
-Human-friendly Merge numbers may be Git tags/releases. The Git commit SHA remains the exact identity.
+## Canonical Product Docs
+
+Product direction comes only from:
+
+- [Product Vision](docs/canonical/PRODUCT_VISION.md)
+- [Domain Model](docs/canonical/DOMAIN_MODEL.md)
+- [Workflow](docs/canonical/WORKFLOW.md)
+- [Architecture](docs/canonical/ARCHITECTURE.md)
+- [Roadmap](docs/canonical/ROADMAP.md)
+
+Historical plans, generated reports, archived agent docs, and working notes are supporting material only.
+
+## Quick Start
+
+```bash
+cp .env.example .env
+pnpm install
+docker compose -f infra/compose.dev.yml up -d postgres redis
+pnpm db:migrate
+pnpm dev:web
+```
+
+## Project Layout
+
+- `apps/web`: Next.js web app for owner/admin/tech workflows.
+- `services/worker`: background worker for queued notifications and automation support.
+- `packages/domain`: shared schemas, labels, constants, and domain helpers.
+- `db/migrations`: SQL schema and migration history.
+- `infra`: Docker Compose profiles.
+- `docs/canonical`: source-of-truth product direction.
+- `docs/working`: implementation and operations support.
+- `docs/archive`: historical planning material.
+- `docs/generated`: generated reports, audits, and migration records.
+
+## Quality Gate
+
+```bash
+pnpm gate
+```
+
+For faster local static/unit feedback:
+
+```bash
+pnpm gate:fast
+```
+
+## Production Target
+
+Production runs on garonhome.local using `infra/compose.garonhome.yml` and deploy root `/opt/business/ai-fsm`.

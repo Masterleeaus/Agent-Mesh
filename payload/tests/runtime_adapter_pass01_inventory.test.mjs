@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const inv=JSON.parse(fs.readFileSync(new URL('../titan-runtime/adapters/pass01/PASS01-INVENTORY.json', import.meta.url),'utf8'));
+assert.equal(inv.packet_id,'TZ-FIX-RUNTIME-ADAPTERS-001');
+assert.equal(inv.manager_baseline.merge,39);
+assert.equal(inv.current_seams.retriever_bridge.company_boundary,'company_id');
+assert.equal(inv.current_seams.retriever_bridge.cross_company_request_rebind_rejected,true);
+assert(inv.current_seams.retriever_bridge.dom_discovery.some(x=>x.includes('querySelectorAll')));
+assert(inv.current_seams.retriever_bridge.dom_discovery.some(x=>x.includes('MutationObserver')));
+for(const t of ['TITAN_EXECUTE_OUTCOME / TITAN_RETRIEVER_EXECUTE','TITAN_OUTCOME_ACCEPTED','TITAN_OUTCOME_PROGRESS','TITAN_OUTCOME_RESULT','TITAN_OUTCOME_ERROR']) assert(inv.current_seams.retriever_bridge.typed_or_message_transports_already_present.includes(t));
+assert.equal(inv.current_seams.monica_background_boundary.grants_authority,false);
+assert.equal(inv.current_seams.governed_handoff_contract.handoff_grants_execution_authority,false);
+assert.equal(inv.current_seams.interface_runtime.authority_conferred_by_activation,false);
+assert.equal(inv.production_code_modified,false);
+assert.deepEqual(inv.protected_hotspots_touched,[]);
+console.log('PASS runtime adapter Pass01 inventory invariants');

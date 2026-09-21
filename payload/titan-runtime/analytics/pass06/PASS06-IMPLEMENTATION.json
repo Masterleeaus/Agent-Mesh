@@ -1,0 +1,9 @@
+{
+  "schema": "titan-zero-analytics-pass/v1",
+  "packet_id": "TZ-NEXT-012",
+  "builder": "Builder 3",
+  "pass": 6,
+  "status": "COMPLETE",
+  "live_manager_merge": 42,
+  "summary": "Wired analytics into existing ContributionRegistry using projection and presentation contributions; no existing pages or shared hotspots replaced."
+}

@@ -1,0 +1,657 @@
+{
+  "schema": "titan.zero.e2e.critical-path-matrix.v1",
+  "packet_id": "TZ-FINISH-E2E-CERTIFICATION-001",
+  "pass": 1,
+  "manager_base": {
+    "merge": 64,
+    "artifact": "Titan-Zero-CANONICAL-2026-09-13-MERGE64-ALL-CURRENT-DELTAS-CONVERGED.zip",
+    "sha256": "27edee1839ed3044cefc82ee2adaf7715c7661c1412d5607bc20df908de73cef"
+  },
+  "dependency_state": [
+    {
+      "packet_id": "TZ-FINISH-RETRIEVER-NATIVE-001",
+      "status": "READY",
+      "passes_completed": 10,
+      "canonicality": "completed_prerequisite_not_asserted_canonical"
+    },
+    {
+      "packet_id": "TZ-FINISH-STORAGE-DATA-AUTHORITY-001",
+      "status": "READY_FOR_MANAGER_MERGE",
+      "passes_completed": 10,
+      "canonicality": "completed_prerequisite_not_asserted_canonical"
+    },
+    {
+      "packet_id": "TZ-FINISH-UI-RUNTIME-WIRING-001",
+      "status": "READY_FOR_MANAGER_MERGE",
+      "passes_completed": 10,
+      "canonicality": "completed_prerequisite_not_asserted_canonical"
+    }
+  ],
+  "existing_e2e_spec_count": 14,
+  "existing_e2e_specs": [
+    "admin-smoke.spec.ts",
+    "automations-smoke.spec.ts",
+    "clients-properties-smoke.spec.ts",
+    "core-flow.spec.ts",
+    "day-review.spec.ts",
+    "estimates-smoke.spec.ts",
+    "invoice-convert-smoke.spec.ts",
+    "invoice-followup-smoke.spec.ts",
+    "jobs-visits-p7-smoke.spec.ts",
+    "my-day-mobile.spec.ts",
+    "payment-smoke.spec.ts",
+    "store-run-mobile.spec.ts",
+    "tech-smoke.spec.ts",
+    "visit-reminder-smoke.spec.ts"
+  ],
+  "stages": [
+    {
+      "id": "onboarding",
+      "title": "Onboarding / commissioning",
+      "surface_routes": [],
+      "api_routes": [],
+      "existing_e2e": [],
+      "coverage": "MISSING",
+      "notes": "No dedicated standalone onboarding page or E2E spec is present in Merge62; commissioning must be certified through setup/settings flows in later passes.",
+      "surface_route_evidence": [],
+      "api_route_evidence": [],
+      "e2e_evidence": []
+    },
+    {
+      "id": "lead_intake",
+      "title": "Lead / intake / request capture",
+      "surface_routes": [
+        "/app/requests",
+        "/app/requests/[id]"
+      ],
+      "api_routes": [
+        "/api/booking",
+        "/api/v1/booking-requests",
+        "/api/v1/booking-requests/[id]",
+        "/api/v1/booking-requests/[id]/convert"
+      ],
+      "existing_e2e": [],
+      "coverage": "PARTIAL",
+      "notes": "Native request/booking APIs and request UI exist, but no dedicated E2E spec currently drives intake through conversion.",
+      "surface_route_evidence": [
+        {
+          "route": "/app/requests",
+          "exists": true
+        },
+        {
+          "route": "/app/requests/[id]",
+          "exists": true
+        }
+      ],
+      "api_route_evidence": [
+        {
+          "route": "/api/booking",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/booking-requests",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/booking-requests/[id]",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/booking-requests/[id]/convert",
+          "exists": true
+        }
+      ],
+      "e2e_evidence": []
+    },
+    {
+      "id": "customer_property",
+      "title": "Customer and service location",
+      "surface_routes": [
+        "/app/clients",
+        "/app/clients/[id]",
+        "/app/clients/new"
+      ],
+      "api_routes": [
+        "/api/v1/clients",
+        "/api/v1/clients/[id]"
+      ],
+      "existing_e2e": [
+        "clients-properties-smoke.spec.ts",
+        "core-flow.spec.ts"
+      ],
+      "coverage": "COVERED",
+      "notes": "Client creation and property-context job creation are exercised.",
+      "surface_route_evidence": [
+        {
+          "route": "/app/clients",
+          "exists": true
+        },
+        {
+          "route": "/app/clients/[id]",
+          "exists": true
+        },
+        {
+          "route": "/app/clients/new",
+          "exists": true
+        }
+      ],
+      "api_route_evidence": [
+        {
+          "route": "/api/v1/clients",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/clients/[id]",
+          "exists": true
+        }
+      ],
+      "e2e_evidence": [
+        {
+          "spec": "clients-properties-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "core-flow.spec.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "quote_estimate",
+      "title": "Quote / estimate",
+      "surface_routes": [
+        "/app/estimates",
+        "/app/estimates/[id]",
+        "/app/estimates/new"
+      ],
+      "api_routes": [
+        "/api/v1/estimates",
+        "/api/v1/estimates/[id]",
+        "/api/v1/estimates/[id]/transition",
+        "/api/v1/estimates/[id]/convert"
+      ],
+      "existing_e2e": [
+        "estimates-smoke.spec.ts",
+        "invoice-convert-smoke.spec.ts",
+        "core-flow.spec.ts"
+      ],
+      "coverage": "COVERED",
+      "notes": "Create, transition, approve and conversion paths have existing E2E coverage.",
+      "surface_route_evidence": [
+        {
+          "route": "/app/estimates",
+          "exists": true
+        },
+        {
+          "route": "/app/estimates/[id]",
+          "exists": true
+        },
+        {
+          "route": "/app/estimates/new",
+          "exists": true
+        }
+      ],
+      "api_route_evidence": [
+        {
+          "route": "/api/v1/estimates",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/estimates/[id]",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/estimates/[id]/transition",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/estimates/[id]/convert",
+          "exists": true
+        }
+      ],
+      "e2e_evidence": [
+        {
+          "spec": "estimates-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "invoice-convert-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "core-flow.spec.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "booking",
+      "title": "Booking conversion / appointment creation",
+      "surface_routes": [
+        "/app/requests",
+        "/app/jobs/[id]/visits/new"
+      ],
+      "api_routes": [
+        "/api/v1/booking-requests/[id]/convert",
+        "/api/v1/quick-book",
+        "/api/v1/titan/workforce/native/booking"
+      ],
+      "existing_e2e": [
+        "core-flow.spec.ts",
+        "jobs-visits-p7-smoke.spec.ts"
+      ],
+      "coverage": "PARTIAL",
+      "notes": "Visit creation is covered, but booking-request conversion and native booking workforce paths lack direct E2E coverage.",
+      "surface_route_evidence": [
+        {
+          "route": "/app/requests",
+          "exists": true
+        },
+        {
+          "route": "/app/jobs/[id]/visits/new",
+          "exists": true
+        }
+      ],
+      "api_route_evidence": [
+        {
+          "route": "/api/v1/booking-requests/[id]/convert",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/quick-book",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/titan/workforce/native/booking",
+          "exists": true
+        }
+      ],
+      "e2e_evidence": [
+        {
+          "spec": "core-flow.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "jobs-visits-p7-smoke.spec.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "schedule_dispatch",
+      "title": "Scheduling / dispatch",
+      "surface_routes": [
+        "/app/schedule",
+        "/app/dispatch",
+        "/app/visits"
+      ],
+      "api_routes": [
+        "/api/v1/dispatch/workforce",
+        "/api/v1/visit-candidates"
+      ],
+      "existing_e2e": [
+        "core-flow.spec.ts",
+        "admin-smoke.spec.ts",
+        "tech-smoke.spec.ts"
+      ],
+      "coverage": "PARTIAL",
+      "notes": "Visit scheduling and role views are covered; dispatcher assignment/reassignment and concurrency need dedicated certification.",
+      "surface_route_evidence": [
+        {
+          "route": "/app/schedule",
+          "exists": true
+        },
+        {
+          "route": "/app/dispatch",
+          "exists": true
+        },
+        {
+          "route": "/app/visits",
+          "exists": true
+        }
+      ],
+      "api_route_evidence": [
+        {
+          "route": "/api/v1/dispatch/workforce",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/visit-candidates",
+          "exists": true
+        }
+      ],
+      "e2e_evidence": [
+        {
+          "spec": "core-flow.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "admin-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "tech-smoke.spec.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "job_visit",
+      "title": "Job / visit execution",
+      "surface_routes": [
+        "/app/jobs",
+        "/app/jobs/[id]",
+        "/app/visits",
+        "/app/visits/[id]",
+        "/app/my-work"
+      ],
+      "api_routes": [
+        "/api/v1/jobs",
+        "/api/v1/jobs/[id]",
+        "/api/v1/jobs/[id]/visits",
+        "/api/v1/visits/[id]/transition"
+      ],
+      "existing_e2e": [
+        "core-flow.spec.ts",
+        "jobs-visits-p7-smoke.spec.ts",
+        "admin-smoke.spec.ts",
+        "tech-smoke.spec.ts",
+        "my-day-mobile.spec.ts"
+      ],
+      "coverage": "COVERED",
+      "notes": "Creation, scheduling, field visibility and visit mutation paths have broad smoke coverage.",
+      "surface_route_evidence": [
+        {
+          "route": "/app/jobs",
+          "exists": true
+        },
+        {
+          "route": "/app/jobs/[id]",
+          "exists": true
+        },
+        {
+          "route": "/app/visits",
+          "exists": true
+        },
+        {
+          "route": "/app/visits/[id]",
+          "exists": true
+        },
+        {
+          "route": "/app/my-work",
+          "exists": true
+        }
+      ],
+      "api_route_evidence": [
+        {
+          "route": "/api/v1/jobs",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/jobs/[id]",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/jobs/[id]/visits",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/visits/[id]/transition",
+          "exists": true
+        }
+      ],
+      "e2e_evidence": [
+        {
+          "spec": "core-flow.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "jobs-visits-p7-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "admin-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "tech-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "my-day-mobile.spec.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "invoice",
+      "title": "Invoice / receivables",
+      "surface_routes": [
+        "/app/invoices",
+        "/app/invoices/[id]"
+      ],
+      "api_routes": [
+        "/api/v1/invoices",
+        "/api/v1/invoices/[id]",
+        "/api/v1/invoices/[id]/transition"
+      ],
+      "existing_e2e": [
+        "core-flow.spec.ts",
+        "invoice-convert-smoke.spec.ts",
+        "invoice-followup-smoke.spec.ts"
+      ],
+      "coverage": "COVERED",
+      "notes": "Estimate conversion, invoice lifecycle and follow-up surfaces are exercised.",
+      "surface_route_evidence": [
+        {
+          "route": "/app/invoices",
+          "exists": true
+        },
+        {
+          "route": "/app/invoices/[id]",
+          "exists": true
+        }
+      ],
+      "api_route_evidence": [
+        {
+          "route": "/api/v1/invoices",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/invoices/[id]",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/invoices/[id]/transition",
+          "exists": true
+        }
+      ],
+      "e2e_evidence": [
+        {
+          "spec": "core-flow.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "invoice-convert-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "invoice-followup-smoke.spec.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "payment",
+      "title": "Payment",
+      "surface_routes": [
+        "/app/invoices/[id]"
+      ],
+      "api_routes": [
+        "/api/v1/invoices/[id]/payments"
+      ],
+      "existing_e2e": [
+        "core-flow.spec.ts",
+        "payment-smoke.spec.ts"
+      ],
+      "coverage": "COVERED",
+      "notes": "Payment recording and paid-state verification are directly covered.",
+      "surface_route_evidence": [
+        {
+          "route": "/app/invoices/[id]",
+          "exists": true
+        }
+      ],
+      "api_route_evidence": [
+        {
+          "route": "/api/v1/invoices/[id]/payments",
+          "exists": true
+        }
+      ],
+      "e2e_evidence": [
+        {
+          "spec": "core-flow.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "payment-smoke.spec.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "rebooking",
+      "title": "Rebooking / repeat work",
+      "surface_routes": [],
+      "api_routes": [],
+      "existing_e2e": [],
+      "coverage": "MISSING",
+      "notes": "Rebooking capability exists elsewhere in the codebase, but no dedicated standalone E2E route/spec closes paid-job to repeat-booking continuity.",
+      "surface_route_evidence": [],
+      "api_route_evidence": [],
+      "e2e_evidence": []
+    },
+    {
+      "id": "workforce_governance",
+      "title": "Workforce governance",
+      "surface_routes": [
+        "/app/settings",
+        "/app/my-work"
+      ],
+      "api_routes": [
+        "/api/v1/titan/workforce/commands",
+        "/api/v1/titan/workforce/agents/plan",
+        "/api/v1/titan/workforce/native/booking",
+        "/api/v1/titan/workforce/native/jobs",
+        "/api/v1/titan/workforce/native/scheduling"
+      ],
+      "existing_e2e": [
+        "tech-smoke.spec.ts",
+        "admin-smoke.spec.ts"
+      ],
+      "coverage": "PARTIAL",
+      "notes": "Role restrictions are exercised, but Manager\u2192Supervisor\u2192Agent\u2192Worker delegation/escalation/approval/cancellation still needs dedicated E2E certification.",
+      "surface_route_evidence": [
+        {
+          "route": "/app/settings",
+          "exists": true
+        },
+        {
+          "route": "/app/my-work",
+          "exists": true
+        }
+      ],
+      "api_route_evidence": [
+        {
+          "route": "/api/v1/titan/workforce/commands",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/titan/workforce/agents/plan",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/titan/workforce/native/booking",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/titan/workforce/native/jobs",
+          "exists": true
+        },
+        {
+          "route": "/api/v1/titan/workforce/native/scheduling",
+          "exists": true
+        }
+      ],
+      "e2e_evidence": [
+        {
+          "spec": "tech-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "admin-smoke.spec.ts",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "company_security",
+      "title": "Company isolation / identity / permissions",
+      "surface_routes": [
+        "/app/jobs",
+        "/app/estimates",
+        "/app/invoices"
+      ],
+      "api_routes": [],
+      "existing_e2e": [
+        "admin-smoke.spec.ts",
+        "tech-smoke.spec.ts",
+        "automations-smoke.spec.ts",
+        "payment-smoke.spec.ts"
+      ],
+      "coverage": "PARTIAL",
+      "notes": "Unauthenticated and role-level restrictions exist; deliberate cross-company access/IDOR and no-implicit-authority abuse cases remain for later certification passes.",
+      "surface_route_evidence": [
+        {
+          "route": "/app/jobs",
+          "exists": true
+        },
+        {
+          "route": "/app/estimates",
+          "exists": true
+        },
+        {
+          "route": "/app/invoices",
+          "exists": true
+        }
+      ],
+      "api_route_evidence": [],
+      "e2e_evidence": [
+        {
+          "spec": "admin-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "tech-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "automations-smoke.spec.ts",
+          "exists": true
+        },
+        {
+          "spec": "payment-smoke.spec.ts",
+          "exists": true
+        }
+      ]
+    }
+  ],
+  "coverage_summary": {
+    "COVERED": 5,
+    "PARTIAL": 5,
+    "MISSING": 2
+  },
+  "certification_rule": "Coverage status records current evidence only. PARTIAL/MISSING rows are requirements for Passes 2-10 and do not imply feature absence.",
+  "authority_invariant": "Identity, test fixture, or hierarchy membership must never be treated as execution authority.",
+  "company_boundary": "company_id"
+}

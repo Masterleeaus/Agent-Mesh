@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Titan Verification Evidence",
+  "type": "object",
+  "required": [
+    "evidence_id",
+    "subject_id",
+    "result",
+    "producer_role",
+    "producer_id"
+  ],
+  "properties": {
+    "evidence_id": {
+      "type": "string"
+    },
+    "subject_id": {
+      "type": "string"
+    },
+    "result": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED"
+      ]
+    },
+    "producer_role": {
+      "enum": [
+        "BUILDER",
+        "AUDITOR",
+        "VERIFIER",
+        "INTEGRATOR",
+        "MANAGER"
+      ]
+    },
+    "producer_id": {
+      "type": "string"
+    },
+    "builder_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifact_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "titan-zero-runtime-adapters-pass/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "builder": "Builder 3",
+  "pass": 2,
+  "status": "COMPLETE",
+  "manager_observed_merge": 39,
+  "implemented": [
+    "typed adapter envelope",
+    "major.minor version negotiation",
+    "capability intersection negotiation",
+    "fail-closed error contract",
+    "JSON schema",
+    "protocol documentation"
+  ],
+  "existing_compatibility_messages_modified": false,
+  "authority_granted": false
+}

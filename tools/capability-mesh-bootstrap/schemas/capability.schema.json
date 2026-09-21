@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Titan Capability Record",
+  "type": "object",
+  "required": [
+    "capability_id",
+    "status",
+    "dependencies",
+    "contracts",
+    "implementations",
+    "tests",
+    "evidence_ids"
+  ],
+  "properties": {
+    "capability_id": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "PROPOSED",
+        "PARTIAL",
+        "IMPLEMENTED",
+        "VERIFIED",
+        "BLOCKED",
+        "SUPERSEDED"
+      ]
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contracts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "implementations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "provenance": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "owner_role": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

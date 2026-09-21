@@ -1,0 +1,8 @@
+{
+  "schema": "titan-zero-semantic-change/v1",
+  "packet_id": "TZ-NEXT-004",
+  "pass": 10,
+  "summary": "Final certification only. No production runtime semantics changed. Certified full scheduling/capacity behavior and reconstruction for Manager merge.",
+  "authority_change": false,
+  "company_boundary": "company_id only"
+}

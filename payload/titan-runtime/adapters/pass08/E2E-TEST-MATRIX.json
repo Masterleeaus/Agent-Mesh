@@ -1,0 +1,67 @@
+{
+  "schema": "titan-zero-runtime-adapter-e2e-matrix/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 8,
+  "scenarios": [
+    {
+      "id": "E2E-01",
+      "name": "typed happy path",
+      "expected": "PASS"
+    },
+    {
+      "id": "E2E-02",
+      "name": "typed provider failure fail closed",
+      "expected": "PASS"
+    },
+    {
+      "id": "E2E-03",
+      "name": "typed timeout",
+      "expected": "PASS"
+    },
+    {
+      "id": "E2E-04",
+      "name": "explicit fallback on typed incompatibility",
+      "expected": "PASS"
+    },
+    {
+      "id": "E2E-05",
+      "name": "fallback prohibited when typed ready",
+      "expected": "PASS"
+    },
+    {
+      "id": "E2E-06",
+      "name": "execution gate company isolation",
+      "expected": "PASS"
+    },
+    {
+      "id": "E2E-07",
+      "name": "Retriever compatibility identifier preservation",
+      "expected": "PASS"
+    },
+    {
+      "id": "E2E-08",
+      "name": "navigation reconnection fresh authority requirement",
+      "expected": "PASS"
+    },
+    {
+      "id": "E2E-09",
+      "name": "cross-company session rejection",
+      "expected": "PASS"
+    },
+    {
+      "id": "E2E-10",
+      "name": "cancellation capability enforcement",
+      "expected": "PASS"
+    },
+    {
+      "id": "E2E-11",
+      "name": "legacy tenant alias rejection",
+      "expected": "PASS"
+    },
+    {
+      "id": "E2E-12",
+      "name": "serialized authority neutrality audit",
+      "expected": "PASS"
+    }
+  ]
+}

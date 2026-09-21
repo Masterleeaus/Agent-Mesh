@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true
+  },
+  "files": [
+    "src/index.ts",
+    "src/descriptor.ts",
+    "src/runtime.ts",
+    "src/workforce.ts",
+    "src/intelligence.ts",
+    "src/business-ops.ts",
+    "src/storage/index.ts",
+    "src/interface-runtime.ts",
+    "src/interface-registry.ts",
+    "src/interface-discovery.ts",
+    "src/interface-catalog.ts",
+    "src/interface-workspace.ts",
+    "src/interface-shell.ts",
+    "src/interface-local-state.ts",
+    "src/interface-storage.ts",
+    "src/interface-semantics.ts",
+    "src/interface-integrity.ts",
+    "src/interface-interaction-handoff.ts",
+    "src/interface-boundary-hardening.ts"
+  ]
+}

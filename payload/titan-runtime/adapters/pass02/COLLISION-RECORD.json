@@ -1,0 +1,13 @@
+{
+  "schema": "titan-zero-collision-record/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 2,
+  "manager_merge": 39,
+  "collision": "NONE",
+  "exclusive_hotspots_used": [
+    "titan-runtime/adapters/**",
+    "tests/runtime_adapter_*"
+  ],
+  "shared_hotspots_touched": [],
+  "builder1_load_stability_pass09_overlap": "NONE_OBSERVED"
+}

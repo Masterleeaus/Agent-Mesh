@@ -1,0 +1,48 @@
+{
+  "schema": "titan-zero-registry-delta/v1",
+  "goal_id": "TZ-ROADMAP-28",
+  "subgoal_id": "TZ-ROADMAP-28-SG-01",
+  "operation": "UPDATE_EXISTING_TITAN_CONNECT_REGISTRY_METADATA",
+  "target": "Titan Connect",
+  "source_artifact": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+  "source_sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+  "changes": {
+    "capability_bundle.version": {
+      "from": "0.10.6",
+      "to": "0.10.7"
+    },
+    "capability_bundle.capability_count": {
+      "from": 0,
+      "to": 14,
+      "basis": "7 authority-neutral read capabilities + 7 governed mutating commands in workforce-integration.json"
+    },
+    "capability_bundle.read_capability_count": 7,
+    "capability_bundle.command_capability_count": 7,
+    "capability_bundle.signal_count": 7,
+    "capability_bundle.work_type_count": 5,
+    "provider_count": 7,
+    "providers": [
+      "whatsapp",
+      "messenger",
+      "instagram",
+      "telegram",
+      "sms",
+      "push",
+      "voice"
+    ],
+    "plan_feature_count": 3,
+    "admin_permission_count": 9,
+    "test_file_count": 31,
+    "model_count": 20,
+    "migration_count": 8,
+    "tenancy_key": "company_id",
+    "verified_sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+    "verification_state": "DEEP_SCAN_CONTENT_AND_LINEAGE_VERIFIED_RUNTIME_SUITE_NOT_EXECUTED",
+    "reuse_rule": "PREFER_AS_VERIFIED_CONTENT_DONOR; RUN HOST/RUNTIME CERTIFICATION BEFORE PRODUCTION PROMOTION"
+  },
+  "notes": [
+    "Do not mark full runtime certification complete from static deep scan alone.",
+    "Titan Connect is currently communications-centric, not yet a universal SaaS/API connector fabric.",
+    "Goal 28 should extend this foundation rather than create a parallel connector system."
+  ]
+}

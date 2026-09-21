@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-builder-handoff/v1",
+  "builder": "Builder 3",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 3,
+  "status": "PASS03_COMPLETE_CONTINUE_PASS04",
+  "frozen_base_merge": 39,
+  "live_manager_merge": 40,
+  "summary": "Work-runtime interface and Retriever adapter implemented behind explicit external company-scoped execution gate; existing Retriever bridge remains untouched.",
+  "next_pass": 4,
+  "next_pass_scope": "Implement adapter negotiation, feature detection and version compatibility without auto-granting authority.",
+  "claim_status": "ACTIVE",
+  "recommended_convergence_class": "CLEAN_ADDITIVE_FORWARD_PORT"
+}

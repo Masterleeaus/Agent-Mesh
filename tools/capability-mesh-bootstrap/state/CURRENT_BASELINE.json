@@ -1,0 +1,8 @@
+{
+  "schema": "titan-zero-capability-mesh-baseline-pointer/v1",
+  "artifact": "Titan-Zero-CANONICAL-MASTER-2026-09-08-MERGE-39-CHROME-REPAIR10-CONVERGED.zip",
+  "sha256": "c5c5bc321913dfd9f2d56847c43fa9cad3652907be94f163cbeacef9672c23c7",
+  "files": 2844,
+  "manager_merge": "39",
+  "authority": "REFERENCE_ONLY_MANAGER_BASELINE_REMAINS_CANONICAL"
+}

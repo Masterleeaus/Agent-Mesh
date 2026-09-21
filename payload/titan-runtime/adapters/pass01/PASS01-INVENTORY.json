@@ -1,0 +1,135 @@
+{
+  "schema": "titan-zero-runtime-adapters-pass01-inventory/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "builder": "Builder 3",
+  "pass": 1,
+  "status": "COMPLETE",
+  "manager_baseline": {
+    "merge": 39,
+    "artifact": "Titan-Zero-CANONICAL-MASTER-2026-09-08-MERGE-39-CHROME-REPAIR10-CONVERGED.zip",
+    "sha256": "c5c5bc321913dfd9f2d56847c43fa9cad3652907be94f163cbeacef9672c23c7",
+    "files": 2844
+  },
+  "current_seams": {
+    "retriever_bridge": {
+      "path": "side-panel/titan-retriever-bridge.js",
+      "dom_discovery": [
+        "composer candidates via textarea/contenteditable/input querySelectorAll",
+        "submit candidates via button/[role=button] querySelectorAll",
+        "progress inference via document.body text MutationObserver"
+      ],
+      "typed_or_message_transports_already_present": [
+        "TITAN_RETRIEVER_PING -> TITAN_RETRIEVER_READY",
+        "TITAN_EXECUTE_OUTCOME / TITAN_RETRIEVER_EXECUTE",
+        "TITAN_OUTCOME_ACCEPTED",
+        "TITAN_OUTCOME_PROGRESS",
+        "TITAN_OUTCOME_RESULT",
+        "TITAN_OUTCOME_ERROR"
+      ],
+      "runtime_event_bridge": [
+        "status-update",
+        "task-completed",
+        "task-failed"
+      ],
+      "company_boundary": "company_id",
+      "cross_company_request_rebind_rejected": true,
+      "current_state_storage": [
+        "titanRetrieverBridgeState",
+        "titanRetrieverRuntimeEvents"
+      ]
+    },
+    "monica_background_boundary": {
+      "path": "compatibility/monica/background-runtime-boundary.mjs",
+      "loads": [
+        "titan-zero-chat-background.compat.js",
+        "retriever-background.iife.js"
+      ],
+      "purpose": "retained compatibility import boundary",
+      "grants_authority": false,
+      "company_boundary": "company_id"
+    },
+    "governed_handoff_contract": {
+      "path": "titan-regression/monica-retriever/CONVERSATION-RETRIEVER-HANDOFF-CONTRACT.json",
+      "schema": "titan-conversation-retriever-handoff-contract/v1",
+      "required_fields": [
+        "operation_id",
+        "correlation_id",
+        "idempotency_key",
+        "company_id",
+        "source",
+        "context",
+        "approval",
+        "authority",
+        "worker_route",
+        "return_channel"
+      ],
+      "handoff_grants_execution_authority": false,
+      "transport": {
+        "execution": "TITAN_EXECUTE_OUTCOME",
+        "accepted": "TITAN_OUTCOME_ACCEPTED",
+        "progress": "TITAN_OUTCOME_PROGRESS",
+        "result": "TITAN_OUTCOME_RESULT",
+        "error": "TITAN_OUTCOME_ERROR",
+        "conversation_return_event": "titan:conversation-execution-result",
+        "conversation_return_message": "TITAN_CONVERSATION_EXECUTION_RESULT"
+      }
+    },
+    "interface_runtime": {
+      "paths": [
+        "titan-runtime/interface-runtime/index.mjs",
+        "titan-runtime/interface-runtime/context.mjs"
+      ],
+      "purpose": "presentation composition only; not action authority",
+      "protected_context_fields": [
+        "company_id",
+        "user_id",
+        "roles",
+        "capabilities",
+        "product_surface",
+        "trace_id",
+        "correlation_id"
+      ],
+      "authority_conferred_by_activation": false
+    }
+  },
+  "migration_decisions": [
+    "Pass2 must define a typed adapter envelope that preserves existing governed transport semantics rather than replacing them.",
+    "Pass3 should adapt the current Retriever bridge behind existing company/authority gates.",
+    "DOM composer/submit/progress discovery remains intact until typed adapter path is proven and becomes fallback-only in Pass5.",
+    "Monica compatibility background remains a compatibility boundary; loading it must never imply authority.",
+    "Existing TITAN_OUTCOME_* message names and conversation return semantics are compatibility contracts to preserve unless versioned negotiation explicitly maps them.",
+    "Do not edit shared titan-zero-chat-background.compat.js or interface-runtime paths in Pass1."
+  ],
+  "evidence": {
+    "side-panel/titan-retriever-bridge.js": {
+      "sha256": "9d23a44e1322053c8b5d4383fb412c1739ca4dd1469db334ee69769d380fb24f",
+      "bytes": 9413
+    },
+    "compatibility/monica/background-runtime-boundary.mjs": {
+      "sha256": "241aa3a08237a12c97c832d69a8328dae55d0a682117cdc1ae32b3251b104cbd",
+      "bytes": 1061
+    },
+    "titan-regression/monica-retriever/CONVERSATION-RETRIEVER-HANDOFF-CONTRACT.json": {
+      "sha256": "907489c132c3bd31ab4122c2b120c0faaca5d42ae7604e9b3837eb72f5446d56",
+      "bytes": 1234
+    },
+    "titan-runtime/interface-runtime/index.mjs": {
+      "sha256": "2d77870e1b5c6992ee102f1af06941f71539569f330cb8c64e6833ec8ac8cd36",
+      "bytes": 1337
+    },
+    "titan-runtime/interface-runtime/context.mjs": {
+      "sha256": "886584d6e6f42dac2c10b370caf9fa7ec3b2579df935d5d18213c7893642d8d2",
+      "bytes": 4284
+    },
+    "tests/retriever_company_boundary.test.mjs": {
+      "sha256": "77cee6073e7f457cca9c1576e03648947a1134868ec5489a1214db3853cb5ee4",
+      "bytes": 1292
+    },
+    "titan-regression/monica-retriever/tests/pass08-conversation-retriever-handoff.test.mjs": {
+      "sha256": "9511845c44fb9c3260869241573e43f32cd498eed60daf92b45ba1d5b50944ab",
+      "bytes": 1295
+    }
+  },
+  "protected_hotspots_touched": [],
+  "production_code_modified": false
+}

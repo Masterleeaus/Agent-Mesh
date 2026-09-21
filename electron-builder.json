@@ -1,0 +1,39 @@
+{
+  "appId": "io.titanzero.desktop",
+  "productName": "Titan Zero",
+  "asar": true,
+  "directories": {
+    "output": "dist/windows"
+  },
+  "files": [
+    "electron/main.cjs"
+  ],
+  "extraResources": [
+    {
+      "from": "apps/web/.next/standalone",
+      "to": "app",
+      "filter": [
+        "**/*"
+      ]
+    }
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "artifactName": "Titan-Zero-Setup-${version}-${arch}.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Titan Zero",
+    "deleteAppDataOnUninstall": false
+  }
+}

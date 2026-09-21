@@ -1,0 +1,33 @@
+{
+  "schema": "titan-zero-test-index/v1",
+  "tests": [
+    {
+      "id": "capmesh.next",
+      "path": "tests/test_capability_mesh.py",
+      "covers": [
+        "mesh.task.claim"
+      ]
+    },
+    {
+      "id": "capmesh.impact",
+      "path": "tests/test_capability_mesh.py",
+      "covers": [
+        "mesh.impact.reverse-dependency"
+      ]
+    },
+    {
+      "id": "capmesh.evidence",
+      "path": "tests/test_capability_mesh.py",
+      "covers": [
+        "mesh.completion.evidence"
+      ]
+    },
+    {
+      "id": "capmesh.summary",
+      "path": "tests/test_capability_mesh.py",
+      "covers": [
+        "mesh.working-memory.compact"
+      ]
+    }
+  ]
+}

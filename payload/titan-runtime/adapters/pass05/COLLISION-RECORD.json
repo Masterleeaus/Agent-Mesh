@@ -1,0 +1,12 @@
+{
+  "schema": "titan-zero-collision-record/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 5,
+  "frozen_base_merge": 39,
+  "live_manager_merge": 41,
+  "collision": "NONE",
+  "merge41_modified_path": "titan-runtime/page-context-rehydration.mjs",
+  "adapter_path_overlap": false,
+  "permission_hardening_pass09_overlap": "NONE_OBSERVED",
+  "shared_hotspots_touched": []
+}

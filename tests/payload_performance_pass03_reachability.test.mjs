@@ -1,0 +1,16 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {auditDuplicateGroup} from '../titan-runtime/performance/reachability-audit.mjs';
+const root=path.resolve(import.meta.dirname,'..');
+const report=JSON.parse(fs.readFileSync(path.join(root,'titan-runtime/performance/dead-asset-reachability-merge42.json'),'utf8'));
+const read=(p)=>fs.readFileSync(path.join(root,p),'utf8');
+test('Pass03 remains pinned to live Manager Merge42 evidence',()=>{assert.equal(report.baseline.manager_merge,42);assert.equal(report.baseline.sha256,'1c4b6f471ba16f44d7b27db546ba41db18032ce9967b1d725dc0926cd73cc930')});
+test('Pass02 authorized retirements remain absent',()=>{for(const p of report.pass2_retirements) assert.equal(fs.existsSync(path.join(root,p)),false,p)});
+test('content css remains byte-equivalent to Titan compat css',()=>{const d=auditDuplicateGroup(root,['content.css','titan-zero-chat-content.compat.css']);assert.equal(d.exact_duplicate,true);assert.equal(d.grants_authority,false)});
+test('Manager Phase2 retires Monica popup duplicate and rewires retained runtime compat',()=>{assert.equal(fs.existsSync(path.join(root,'monica-popup.css')),false);assert.match(read('monicaPopup.html'),/titan-zero-chat-runtime\.compat\.css/);assert.match(read('monicaPopup.html'),/titan-zero-chat-runtime\.compat\.js/)});
+test('Manager Phase2 retires content.js from legacy pages in favor of Titan compat',()=>{assert.equal(fs.existsSync(path.join(root,'content.js')),false);assert.match(read('chatTab.html'),/titan-zero-chat-content\.compat\.js/);assert.match(read('monicaOptions.html'),/titan-zero-chat-content\.compat\.js/)});
+test('Retriever remains a live compatibility-boundary import',()=>{assert.equal(fs.existsSync(path.join(root,'retriever-background.iife.js')),true);assert.match(read('compatibility/monica/background-runtime-boundary.mjs'),/retriever-background\.iife\.js/)});
+test('Pass03 historical reachability report is retained as provenance, not live presence gate',()=>{assert.ok(report.phase2_reachability.length>0);assert.equal(report.gate.manager_converged,false)});
+test('reachability scanner remains authority-neutral',()=>{const d=auditDuplicateGroup(root,['content.css','titan-zero-chat-content.compat.css']);assert.equal(d.authority_effect,false);assert.equal(d.grants_authority,false);assert.equal(d.identity_not_authority,true);assert.equal(report.invariants.company_id_only,true)});

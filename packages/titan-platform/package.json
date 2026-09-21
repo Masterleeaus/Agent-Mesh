@@ -1,0 +1,26 @@
+{
+  "name": "@ai-fsm/titan-platform",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Standalone-safe Titan Zero runtime, workforce and intelligence capabilities migrated into Business Ops.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./runtime": "./src/runtime.ts",
+    "./workforce": "./src/workforce.ts",
+    "./intelligence": "./src/intelligence.ts",
+    "./business-ops": "./src/business-ops.ts",
+    "./workforce-native": "./src/workforce-native/index.ts",
+    "./workforce-delegation": "./src/workforce-delegation/index.ts",
+    "./workforce-capacity": "./src/workforce-capacity/index.ts",
+    "./interface-runtime": "./src/interface-runtime.ts",
+    "./visual-runtime": "./src/visual-runtime.ts",
+    "./titan-builder": "./src/titan-builder/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "rm -rf .test-dist && tsc -p tsconfig.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false && node --test ./tests/*.test.mjs",
+    "test:unit": "rm -rf .test-dist && tsc -p tsconfig.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false && node --test ./tests/*.test.mjs",
+    "build": "tsc -p tsconfig.json --noEmit false --outDir dist --module NodeNext --moduleResolution NodeNext --isolatedModules false"
+  }
+}

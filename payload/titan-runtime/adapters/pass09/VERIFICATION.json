@@ -1,0 +1,113 @@
+{
+  "schema": "titan-zero-verification/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 9,
+  "status": "PASS",
+  "formal_passes_covered": 9,
+  "focused_test_files": 10,
+  "tests": [
+    {
+      "file": "tests/runtime_adapter_pass01_inventory.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass01 inventory invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass02_protocol.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass02 typed protocol invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass03_retriever.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass03 work-runtime + Retriever adapter invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass04_negotiation.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass04 negotiation + feature detection invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass05_legacy_fallback.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass05 legacy DOM fallback + deprecation telemetry invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass06_lifecycle.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass06 typed lifecycle invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass07_session_recovery.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass07 session recovery invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass08_e2e.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass08 end-to-end typed/fallback/failure/company/authority invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass09_performance.test.mjs",
+      "exit": 0,
+      "stdout": "{\"schema\":\"titan-zero-runtime-adapter-performance/v1\",\"iterations\":10000,\"rows\":[{\"name\":\"negotiate\",\"iterations\":10000,\"total_ms\":48.414252,\"avg_us\":4.8414252,\"ops_per_sec\":206550.74873407112},{\"name\":\"prepare_typed_submission\",\"iterations\":10000,\"total_ms\":22.249708,\"avg_us\":2.2249708,\"ops_per_sec\":449444.1005697693},{\"name\":\"prepare_retriever_compat\",\"iterations\":10000,\"total_ms\":26.866468999999995,\"avg_us\":2.6866468999999995,\"ops_per_sec\":372211.1752013263},{\"name\":\"create_lifecycle\",\"iterations\":10000,\"total_ms\":3.7788019999999847,\"avg_us\":0.37788019999999845,\"ops_per_sec\":2646341.353688296}],\"threshold_avg_us\":5000,\"status\":\"PASS\"}",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass09_regression.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass09 donor capability parity invariants",
+      "stderr": ""
+    }
+  ],
+  "performance": {
+    "schema": "titan-zero-runtime-adapter-performance/v1",
+    "iterations": 10000,
+    "rows": [
+      {
+        "name": "negotiate",
+        "iterations": 10000,
+        "total_ms": 48.414252,
+        "avg_us": 4.8414252,
+        "ops_per_sec": 206550.74873407112
+      },
+      {
+        "name": "prepare_typed_submission",
+        "iterations": 10000,
+        "total_ms": 22.249708,
+        "avg_us": 2.2249708,
+        "ops_per_sec": 449444.1005697693
+      },
+      {
+        "name": "prepare_retriever_compat",
+        "iterations": 10000,
+        "total_ms": 26.866468999999995,
+        "avg_us": 2.6866468999999995,
+        "ops_per_sec": 372211.1752013263
+      },
+      {
+        "name": "create_lifecycle",
+        "iterations": 10000,
+        "total_ms": 3.7788019999999847,
+        "avg_us": 0.37788019999999845,
+        "ops_per_sec": 2646341.353688296
+      }
+    ],
+    "threshold_avg_us": 5000,
+    "status": "PASS"
+  },
+  "donor_capability_loss_detected": false,
+  "company_id_audit": "PASS",
+  "authority_audit": "PASS_NO_AUTHORITY_ESCALATION",
+  "legacy_bridge_preserved": "PASS",
+  "retriever_background_retirement_authorized": false,
+  "shared_hotspots_touched": [],
+  "protected_retriever_bridge_modified": false
+}

@@ -1,0 +1,74 @@
+{
+  "schema": "titan-zero-runtime-adapter-legacy-snapshot/v1",
+  "frozen_base_merge": 39,
+  "files": {
+    "side-panel/titan-retriever-bridge.js": {
+      "bytes": 9413,
+      "sha256": "9d23a44e1322053c8b5d4383fb412c1739ca4dd1469db334ee69769d380fb24f",
+      "tokens": {
+        "TITAN_RETRIEVER_PING": true,
+        "TITAN_EXECUTE_OUTCOME": true,
+        "TITAN_RETRIEVER_EXECUTE": true,
+        "TITAN_OUTCOME_PROGRESS": true,
+        "TITAN_OUTCOME_RESULT": true,
+        "TITAN_OUTCOME_ERROR": true,
+        "TITAN_RETRIEVER_READY": true,
+        "textarea": true,
+        "contenteditable": true,
+        "requestId": true,
+        "company_id": true
+      }
+    },
+    "retriever-background.iife.js": {
+      "bytes": 2731404,
+      "sha256": "080267be826d81fc9ff1061b24fc2ee92cff37fe4d08dfe5d6d5eba2f2d14ce9",
+      "tokens": {
+        "TITAN_RETRIEVER_PING": false,
+        "TITAN_EXECUTE_OUTCOME": false,
+        "TITAN_RETRIEVER_EXECUTE": false,
+        "TITAN_OUTCOME_PROGRESS": false,
+        "TITAN_OUTCOME_RESULT": false,
+        "TITAN_OUTCOME_ERROR": false,
+        "TITAN_RETRIEVER_READY": false,
+        "textarea": true,
+        "contenteditable": false,
+        "requestId": true,
+        "company_id": false
+      }
+    },
+    "compatibility/monica/background-runtime-boundary.mjs": {
+      "bytes": 1061,
+      "sha256": "241aa3a08237a12c97c832d69a8328dae55d0a682117cdc1ae32b3251b104cbd",
+      "tokens": {
+        "TITAN_RETRIEVER_PING": false,
+        "TITAN_EXECUTE_OUTCOME": false,
+        "TITAN_RETRIEVER_EXECUTE": false,
+        "TITAN_OUTCOME_PROGRESS": false,
+        "TITAN_OUTCOME_RESULT": false,
+        "TITAN_OUTCOME_ERROR": false,
+        "TITAN_RETRIEVER_READY": false,
+        "textarea": false,
+        "contenteditable": false,
+        "requestId": false,
+        "company_id": true
+      }
+    },
+    "titan-regression/monica-retriever/CONVERSATION-RETRIEVER-HANDOFF-CONTRACT.json": {
+      "bytes": 1234,
+      "sha256": "907489c132c3bd31ab4122c2b120c0faaca5d42ae7604e9b3837eb72f5446d56",
+      "tokens": {
+        "TITAN_RETRIEVER_PING": false,
+        "TITAN_EXECUTE_OUTCOME": true,
+        "TITAN_RETRIEVER_EXECUTE": false,
+        "TITAN_OUTCOME_PROGRESS": true,
+        "TITAN_OUTCOME_RESULT": true,
+        "TITAN_OUTCOME_ERROR": true,
+        "TITAN_RETRIEVER_READY": false,
+        "textarea": false,
+        "contenteditable": false,
+        "requestId": false,
+        "company_id": true
+      }
+    }
+  }
+}

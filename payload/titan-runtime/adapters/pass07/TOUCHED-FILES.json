@@ -1,0 +1,13 @@
+{
+  "schema": "titan-zero-touched-files/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 7,
+  "added": [
+    "titan-runtime/adapters/adapter-session-recovery.mjs",
+    "titan-runtime/adapters/pass07/ADAPTER-SESSION-RECOVERY.md",
+    "tests/runtime_adapter_pass07_session_recovery.test.mjs"
+  ],
+  "modified": [],
+  "deleted": [],
+  "shared_hotspots_touched": []
+}

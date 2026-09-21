@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-touched-files/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 10,
+  "added": [
+    "titan-runtime/adapters/pass10/RUNTIME-ADAPTER-PROTOCOL-v1.md",
+    "titan-runtime/adapters/pass10/MIGRATION-GUIDE.md",
+    "titan-runtime/adapters/pass10/MANAGER-HANDOFF.json",
+    "tests/runtime_adapter_pass10_certification.test.mjs"
+  ],
+  "modified": [],
+  "deleted": [],
+  "shared_hotspots_touched": []
+}

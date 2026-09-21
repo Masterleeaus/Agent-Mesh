@@ -1,0 +1,24 @@
+{
+  "schema": "titan.zero.e2e.identity-authority-certification.v1",
+  "manager_base": 67,
+  "packet": "TZ-FINISH-E2E-CERTIFICATION-001",
+  "pass": 3,
+  "invariants": [
+    {"id":"identity-company-binding","status":"COVERED","evidence":"authenticateAs asserts email, role and account_id for every seeded actor"},
+    {"id":"cross-company-read-isolation","status":"COVERED","evidence":"foreign client id returns 404 after switching to primary-company owner"},
+    {"id":"tech-office-permissions","status":"COVERED","evidence":"tech receives 403 from users, estimates and invoices APIs"},
+    {"id":"admin-no-owner-escalation","status":"COVERED","evidence":"admin owner-creation attempt receives FORBIDDEN before mutation"},
+    {"id":"workforce-role-filter","status":"COVERED","evidence":"tech denied estimates.create and permitted projects.list dry-run only"},
+    {"id":"approval-no-implicit-authority","status":"COVERED","evidence":"risky delegation approval requires manager+human and still grants_authority=false, authority_effect=false, execution_permitted=false"}
+  ],
+  "authority_model": {
+    "company_boundary": "company_id/account_id session binding",
+    "identity_confers_authority": false,
+    "approval_confers_execution": false,
+    "business_ops_route_remains_authoritative": true
+  },
+  "environment": {
+    "playwright_runtime": "NOT_EXECUTED_DEPENDENCIES_ABSENT_IN_RECONSTRUCTED_CANONICAL",
+    "source_and_contract_verification": "PASS"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "titan-zero-touched-files/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 6,
+  "added": [
+    "titan-runtime/adapters/typed-work-lifecycle.mjs",
+    "titan-runtime/adapters/pass06/TYPED-WORK-LIFECYCLE.md",
+    "tests/runtime_adapter_pass06_lifecycle.test.mjs"
+  ],
+  "modified": [],
+  "deleted": [],
+  "shared_hotspots_touched": []
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-collision-record/v1",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 2,
+  "live_manager_merge": 42,
+  "collision": "NONE",
+  "shared_hotspots_touched": [],
+  "neighbor_lanes": [
+    "Builder1 TZ-NEXT-002 Pass10",
+    "Builder2 Payload Performance Pass08",
+    "Builder5 Cleaning Workforce Sync Pass03"
+  ],
+  "overlap": "NONE in titan-runtime/analytics/**"
+}

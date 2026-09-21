@@ -1,0 +1,82 @@
+{
+  "schema": "titan-zero-capabilities/v1",
+  "generated_from_manager_merge": "39",
+  "capabilities": [
+    {
+      "capability_id": "mesh.task.claim",
+      "status": "IMPLEMENTED",
+      "dependencies": [],
+      "contracts": [
+        "schema:task-packet/v1"
+      ],
+      "implementations": [
+        "tools/capability_mesh.py"
+      ],
+      "tests": [
+        "tests/test_capability_mesh.py::test_next_requires_unclaimed_and_dependencies"
+      ],
+      "evidence_ids": [],
+      "provenance": [
+        "TZ-CAPABILITY-MESH-BOOTSTRAP-001"
+      ],
+      "owner_role": "MANAGER"
+    },
+    {
+      "capability_id": "mesh.impact.reverse-dependency",
+      "status": "IMPLEMENTED",
+      "dependencies": [
+        "mesh.task.claim"
+      ],
+      "contracts": [
+        "schema:dependency-graph/v1"
+      ],
+      "implementations": [
+        "tools/capability_mesh.py"
+      ],
+      "tests": [
+        "tests/test_capability_mesh.py::test_impacted_reverse_dependency"
+      ],
+      "evidence_ids": [],
+      "provenance": [
+        "TZ-CAPABILITY-MESH-BOOTSTRAP-001"
+      ],
+      "owner_role": "INTEGRATOR"
+    },
+    {
+      "capability_id": "mesh.completion.evidence",
+      "status": "IMPLEMENTED",
+      "dependencies": [],
+      "contracts": [
+        "schema:evidence/v1"
+      ],
+      "implementations": [
+        "tools/capability_mesh.py"
+      ],
+      "tests": [
+        "tests/test_capability_mesh.py::test_verified_requires_independent_verifier"
+      ],
+      "evidence_ids": [],
+      "provenance": [
+        "TZ-CAPABILITY-MESH-BOOTSTRAP-001"
+      ],
+      "owner_role": "VERIFIER"
+    },
+    {
+      "capability_id": "mesh.working-memory.compact",
+      "status": "IMPLEMENTED",
+      "dependencies": [],
+      "contracts": [],
+      "implementations": [
+        "tools/capability_mesh.py"
+      ],
+      "tests": [
+        "tests/test_capability_mesh.py::test_summary"
+      ],
+      "evidence_ids": [],
+      "provenance": [
+        "TZ-CAPABILITY-MESH-BOOTSTRAP-001"
+      ],
+      "owner_role": "MANAGER"
+    }
+  ]
+}

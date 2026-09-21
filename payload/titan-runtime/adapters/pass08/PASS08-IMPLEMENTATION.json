@@ -1,0 +1,19 @@
+{
+  "schema": "titan-zero-runtime-adapters-pass/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "builder": "Builder 3",
+  "pass": 8,
+  "status": "COMPLETE",
+  "frozen_base_merge": 39,
+  "live_manager_observed_merge": 42,
+  "implemented": [
+    "end-to-end typed path test",
+    "fallback integration test",
+    "failure/timeout integration test",
+    "company isolation integration test",
+    "reconnection integration test",
+    "authority-neutrality serialization audit"
+  ],
+  "production_runtime_modified_this_pass": false,
+  "authority_granted": false
+}

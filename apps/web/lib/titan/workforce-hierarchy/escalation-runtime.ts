@@ -1,0 +1,15 @@
+export {
+  TITAN_WORKFORCE_ESCALATION_TIERS,
+  TITAN_WORKFORCE_HIERARCHY_APPROVAL_GATE_SCHEMA,
+  TITAN_WORKFORCE_HIERARCHY_ESCALATION_SCHEMA,
+  createTitanWorkforceHierarchyApprovalGate,
+  createTitanWorkforceHierarchyEscalation,
+  deEscalateTitanWorkforceHierarchyCase,
+  decideTitanWorkforceHierarchyApprovalGate,
+  escalateTitanWorkforceHierarchyCase,
+  evaluateTitanWorkforceHierarchyApprovalChain,
+  setTitanWorkforceHierarchyEscalationState,
+  type TitanWorkforceEscalationTier,
+  type TitanWorkforceHierarchyApprovalGate,
+  type TitanWorkforceHierarchyEscalation,
+} from "@ai-fsm/titan-platform/workforce";

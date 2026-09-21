@@ -1,0 +1,15 @@
+{
+  "schema": "titan-zero-hotspots/v1",
+  "bootstrap_owned": [
+    "titan-agent/capability-mesh/**"
+  ],
+  "bootstrap_shared": [],
+  "forbidden_without_separate_claim": [
+    "manifest.json",
+    "background-bootstrap.js",
+    "sidePanel.html",
+    "titan-observability/**",
+    "titan-runtime/authority/**",
+    "titan-offline/**"
+  ]
+}

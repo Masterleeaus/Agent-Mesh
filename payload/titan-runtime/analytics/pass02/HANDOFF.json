@@ -1,0 +1,10 @@
+{
+  "schema": "titan-zero-builder-handoff/v1",
+  "builder": "Builder 3",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 2,
+  "status": "PASS02_COMPLETE_CONTINUE_PASS03",
+  "next_pass": 3,
+  "next_pass_scope": "Implement deterministic aggregation runtime scoped by company_id with provenance and time-window semantics.",
+  "recommended_convergence_class": "CLEAN_ADDITIVE_FORWARD_PORT"
+}

@@ -1,0 +1,9 @@
+{
+  "schema": "titan-zero-semantic-change/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 9,
+  "summary": "Adds performance and donor-regression evidence proving known Retriever/Monica handoff capabilities are preserved/hardened while retaining guarded legacy runtime until Manager convergence.",
+  "production_behavior_change": false,
+  "company_boundary": "company_id",
+  "authority_changes": []
+}

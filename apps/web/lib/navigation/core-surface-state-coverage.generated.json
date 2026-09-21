@@ -1,0 +1,69 @@
+{
+  "schema": "titan.ui.surface-state-coverage.v1",
+  "surfaces": [
+    {
+      "surface": "clients",
+      "loading_boundary": true,
+      "error_boundary": "apps/web/app/app/error.tsx",
+      "offline_indicator": "apps/web/components/ConnectionStatus.tsx",
+      "permission_state": false,
+      "empty_state": true
+    },
+    {
+      "surface": "jobs",
+      "loading_boundary": true,
+      "error_boundary": "apps/web/app/app/error.tsx",
+      "offline_indicator": "apps/web/components/ConnectionStatus.tsx",
+      "permission_state": false,
+      "empty_state": true
+    },
+    {
+      "surface": "estimates",
+      "loading_boundary": true,
+      "error_boundary": "apps/web/app/app/error.tsx",
+      "offline_indicator": "apps/web/components/ConnectionStatus.tsx",
+      "permission_state": true,
+      "empty_state": true
+    },
+    {
+      "surface": "schedule",
+      "loading_boundary": true,
+      "error_boundary": "apps/web/app/app/error.tsx",
+      "offline_indicator": "apps/web/components/ConnectionStatus.tsx",
+      "permission_state": false,
+      "empty_state": true
+    },
+    {
+      "surface": "invoices",
+      "loading_boundary": true,
+      "error_boundary": "apps/web/app/app/error.tsx",
+      "offline_indicator": "apps/web/components/ConnectionStatus.tsx",
+      "permission_state": true,
+      "empty_state": true
+    },
+    {
+      "surface": "settings",
+      "loading_boundary": true,
+      "error_boundary": "apps/web/app/app/error.tsx",
+      "offline_indicator": "apps/web/components/ConnectionStatus.tsx",
+      "permission_state": false,
+      "empty_state": true
+    },
+    {
+      "surface": "dispatch",
+      "loading_boundary": true,
+      "error_boundary": "apps/web/app/app/error.tsx",
+      "offline_indicator": "apps/web/components/ConnectionStatus.tsx",
+      "permission_state": false,
+      "empty_state": true
+    },
+    {
+      "surface": "work-orders",
+      "loading_boundary": true,
+      "error_boundary": "apps/web/app/app/error.tsx",
+      "offline_indicator": "apps/web/components/ConnectionStatus.tsx",
+      "permission_state": false,
+      "empty_state": true
+    }
+  ]
+}

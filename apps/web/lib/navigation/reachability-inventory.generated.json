@@ -1,0 +1,1761 @@
+{
+  "schema": "titan.zero.ui.reachability-inventory.v1",
+  "generatedAgainst": {
+    "managerMerge": "62",
+    "artifact": "Titan-Zero-CANONICAL-2026-09-13-MERGE62-LIVE-LANES-CONVERGED.zip",
+    "sha256": "806ae84bee5c9b5911ef33c76581d222615abc4cb8fee1188aac60ade22603bb"
+  },
+  "scope": {
+    "roots": [
+      "apps/web/app",
+      "apps/web/components",
+      "apps/web/lib/navigation"
+    ],
+    "staticNavigationPatterns": [
+      "Link href literal",
+      "router.push/replace literal",
+      "redirect literal"
+    ],
+    "limitations": [
+      "runtime-computed and template-string destinations require interaction/E2E coverage",
+      "Pass 9 regression harness supplements static literal reachability with source-level interaction/accessibility/offline contracts"
+    ]
+  },
+  "counts": {
+    "pageRoutes": 75,
+    "routeHandlers": 227,
+    "layouts": 7,
+    "loadingBoundaries": 20,
+    "errorBoundaries": 1,
+    "notFoundBoundaries": 1,
+    "staticNavigationTargets": 41,
+    "unresolvedStaticNavigationTargets": 0
+  },
+  "surfaceBuckets": {
+    "api": 227,
+    "app:action-queue": 1,
+    "app:automations": 1,
+    "app:capture": 1,
+    "app:clients": 4,
+    "app:day-review": 1,
+    "app:dispatch": 1,
+    "app:estimates": 6,
+    "app:expenses": 5,
+    "app:home": 1,
+    "app:intake": 1,
+    "app:invoices": 4,
+    "app:jobs": 5,
+    "app:materials": 2,
+    "app:mileage": 4,
+    "app:my-day": 1,
+    "app:my-work": 2,
+    "app:price-book": 1,
+    "app:properties": 3,
+    "app:reports": 3,
+    "app:requests": 2,
+    "app:schedule": 1,
+    "app:settings": 2,
+    "app:timeline": 1,
+    "app:visits": 4,
+    "app:work-orders": 3,
+    "portal": 7,
+    "public": 8
+  },
+  "pageRoutes": [
+    {
+      "route": "/login",
+      "file": "apps/web/app/(auth)/login/page.tsx"
+    },
+    {
+      "route": "/app/action-queue",
+      "file": "apps/web/app/app/action-queue/page.tsx"
+    },
+    {
+      "route": "/app/automations",
+      "file": "apps/web/app/app/automations/page.tsx"
+    },
+    {
+      "route": "/app/capture",
+      "file": "apps/web/app/app/capture/page.tsx"
+    },
+    {
+      "route": "/app/clients/[id]",
+      "file": "apps/web/app/app/clients/[id]/page.tsx"
+    },
+    {
+      "route": "/app/clients/import",
+      "file": "apps/web/app/app/clients/import/page.tsx"
+    },
+    {
+      "route": "/app/clients/new",
+      "file": "apps/web/app/app/clients/new/page.tsx"
+    },
+    {
+      "route": "/app/clients",
+      "file": "apps/web/app/app/clients/page.tsx"
+    },
+    {
+      "route": "/app/day-review",
+      "file": "apps/web/app/app/day-review/page.tsx"
+    },
+    {
+      "route": "/app/dispatch",
+      "file": "apps/web/app/app/dispatch/page.tsx"
+    },
+    {
+      "route": "/app/estimates/[id]",
+      "file": "apps/web/app/app/estimates/[id]/page.tsx"
+    },
+    {
+      "route": "/app/estimates/[id]/print",
+      "file": "apps/web/app/app/estimates/[id]/print/page.tsx"
+    },
+    {
+      "route": "/app/estimates/[id]/shopping-list",
+      "file": "apps/web/app/app/estimates/[id]/shopping-list/page.tsx"
+    },
+    {
+      "route": "/app/estimates/new",
+      "file": "apps/web/app/app/estimates/new/page.tsx"
+    },
+    {
+      "route": "/app/estimates",
+      "file": "apps/web/app/app/estimates/page.tsx"
+    },
+    {
+      "route": "/app/estimates/quick",
+      "file": "apps/web/app/app/estimates/quick/page.tsx"
+    },
+    {
+      "route": "/app/expenses/[id]",
+      "file": "apps/web/app/app/expenses/[id]/page.tsx"
+    },
+    {
+      "route": "/app/expenses/import",
+      "file": "apps/web/app/app/expenses/import/page.tsx"
+    },
+    {
+      "route": "/app/expenses/new",
+      "file": "apps/web/app/app/expenses/new/page.tsx"
+    },
+    {
+      "route": "/app/expenses",
+      "file": "apps/web/app/app/expenses/page.tsx"
+    },
+    {
+      "route": "/app/expenses/receipt-review",
+      "file": "apps/web/app/app/expenses/receipt-review/page.tsx"
+    },
+    {
+      "route": "/app/intake/new",
+      "file": "apps/web/app/app/intake/new/page.tsx"
+    },
+    {
+      "route": "/app/invoices/[id]",
+      "file": "apps/web/app/app/invoices/[id]/page.tsx"
+    },
+    {
+      "route": "/app/invoices/[id]/print",
+      "file": "apps/web/app/app/invoices/[id]/print/page.tsx"
+    },
+    {
+      "route": "/app/invoices/new",
+      "file": "apps/web/app/app/invoices/new/page.tsx"
+    },
+    {
+      "route": "/app/invoices",
+      "file": "apps/web/app/app/invoices/page.tsx"
+    },
+    {
+      "route": "/app/jobs/[id]/materials",
+      "file": "apps/web/app/app/jobs/[id]/materials/page.tsx"
+    },
+    {
+      "route": "/app/jobs/[id]",
+      "file": "apps/web/app/app/jobs/[id]/page.tsx"
+    },
+    {
+      "route": "/app/jobs/[id]/visits/new",
+      "file": "apps/web/app/app/jobs/[id]/visits/new/page.tsx"
+    },
+    {
+      "route": "/app/jobs/new",
+      "file": "apps/web/app/app/jobs/new/page.tsx"
+    },
+    {
+      "route": "/app/jobs",
+      "file": "apps/web/app/app/jobs/page.tsx"
+    },
+    {
+      "route": "/app/materials",
+      "file": "apps/web/app/app/materials/page.tsx"
+    },
+    {
+      "route": "/app/materials/quick",
+      "file": "apps/web/app/app/materials/quick/page.tsx"
+    },
+    {
+      "route": "/app/mileage/new",
+      "file": "apps/web/app/app/mileage/new/page.tsx"
+    },
+    {
+      "route": "/app/mileage",
+      "file": "apps/web/app/app/mileage/page.tsx"
+    },
+    {
+      "route": "/app/mileage/vehicles/[id]",
+      "file": "apps/web/app/app/mileage/vehicles/[id]/page.tsx"
+    },
+    {
+      "route": "/app/mileage/vehicles",
+      "file": "apps/web/app/app/mileage/vehicles/page.tsx"
+    },
+    {
+      "route": "/app/my-day",
+      "file": "apps/web/app/app/my-day/page.tsx"
+    },
+    {
+      "route": "/app/my-work/[workOrderId]",
+      "file": "apps/web/app/app/my-work/[workOrderId]/page.tsx"
+    },
+    {
+      "route": "/app/my-work",
+      "file": "apps/web/app/app/my-work/page.tsx"
+    },
+    {
+      "route": "/app",
+      "file": "apps/web/app/app/page.tsx"
+    },
+    {
+      "route": "/app/price-book",
+      "file": "apps/web/app/app/price-book/page.tsx"
+    },
+    {
+      "route": "/app/properties/[id]",
+      "file": "apps/web/app/app/properties/[id]/page.tsx"
+    },
+    {
+      "route": "/app/properties/new",
+      "file": "apps/web/app/app/properties/new/page.tsx"
+    },
+    {
+      "route": "/app/properties",
+      "file": "apps/web/app/app/properties/page.tsx"
+    },
+    {
+      "route": "/app/reports/close",
+      "file": "apps/web/app/app/reports/close/page.tsx"
+    },
+    {
+      "route": "/app/reports",
+      "file": "apps/web/app/app/reports/page.tsx"
+    },
+    {
+      "route": "/app/reports/referrals",
+      "file": "apps/web/app/app/reports/referrals/page.tsx"
+    },
+    {
+      "route": "/app/requests/[id]",
+      "file": "apps/web/app/app/requests/[id]/page.tsx"
+    },
+    {
+      "route": "/app/requests",
+      "file": "apps/web/app/app/requests/page.tsx"
+    },
+    {
+      "route": "/app/schedule",
+      "file": "apps/web/app/app/schedule/page.tsx"
+    },
+    {
+      "route": "/app/settings",
+      "file": "apps/web/app/app/settings/page.tsx"
+    },
+    {
+      "route": "/app/settings/system-health",
+      "file": "apps/web/app/app/settings/system-health/page.tsx"
+    },
+    {
+      "route": "/app/timeline",
+      "file": "apps/web/app/app/timeline/page.tsx"
+    },
+    {
+      "route": "/app/visits/[id]/assessment",
+      "file": "apps/web/app/app/visits/[id]/assessment/page.tsx"
+    },
+    {
+      "route": "/app/visits/[id]",
+      "file": "apps/web/app/app/visits/[id]/page.tsx"
+    },
+    {
+      "route": "/app/visits/[id]/print",
+      "file": "apps/web/app/app/visits/[id]/print/page.tsx"
+    },
+    {
+      "route": "/app/visits",
+      "file": "apps/web/app/app/visits/page.tsx"
+    },
+    {
+      "route": "/app/work-orders/[id]",
+      "file": "apps/web/app/app/work-orders/[id]/page.tsx"
+    },
+    {
+      "route": "/app/work-orders/new",
+      "file": "apps/web/app/app/work-orders/new/page.tsx"
+    },
+    {
+      "route": "/app/work-orders",
+      "file": "apps/web/app/app/work-orders/page.tsx"
+    },
+    {
+      "route": "/booking",
+      "file": "apps/web/app/booking/page.tsx"
+    },
+    {
+      "route": "/estimate/respond",
+      "file": "apps/web/app/estimate/respond/page.tsx"
+    },
+    {
+      "route": "/estimate/thanks",
+      "file": "apps/web/app/estimate/thanks/page.tsx"
+    },
+    {
+      "route": "/intake/[token]",
+      "file": "apps/web/app/intake/[token]/page.tsx"
+    },
+    {
+      "route": "/",
+      "file": "apps/web/app/page.tsx"
+    },
+    {
+      "route": "/portal/[clientToken]",
+      "file": "apps/web/app/portal/[clientToken]/page.tsx"
+    },
+    {
+      "route": "/portal/[clientToken]/property/[propertyId]",
+      "file": "apps/web/app/portal/[clientToken]/property/[propertyId]/page.tsx"
+    },
+    {
+      "route": "/portal/auth/confirm",
+      "file": "apps/web/app/portal/auth/confirm/page.tsx"
+    },
+    {
+      "route": "/portal/estimates/[token]",
+      "file": "apps/web/app/portal/estimates/[token]/page.tsx"
+    },
+    {
+      "route": "/portal/invoices/[token]",
+      "file": "apps/web/app/portal/invoices/[token]/page.tsx"
+    },
+    {
+      "route": "/portal/login",
+      "file": "apps/web/app/portal/login/page.tsx"
+    },
+    {
+      "route": "/portal/service-reports/[token]",
+      "file": "apps/web/app/portal/service-reports/[token]/page.tsx"
+    },
+    {
+      "route": "/privacy",
+      "file": "apps/web/app/privacy/page.tsx"
+    },
+    {
+      "route": "/terms",
+      "file": "apps/web/app/terms/page.tsx"
+    }
+  ],
+  "routeHandlers": [
+    {
+      "route": "/api/booking",
+      "file": "apps/web/app/api/booking/route.ts"
+    },
+    {
+      "route": "/api/health",
+      "file": "apps/web/app/api/health/route.ts"
+    },
+    {
+      "route": "/api/intake/[token]",
+      "file": "apps/web/app/api/intake/[token]/route.ts"
+    },
+    {
+      "route": "/api/internal/arrival-prompt",
+      "file": "apps/web/app/api/internal/arrival-prompt/route.ts"
+    },
+    {
+      "route": "/api/internal/day-review-prompt",
+      "file": "apps/web/app/api/internal/day-review-prompt/route.ts"
+    },
+    {
+      "route": "/api/internal/location",
+      "file": "apps/web/app/api/internal/location/route.ts"
+    },
+    {
+      "route": "/api/internal/push/day-review-reminder",
+      "file": "apps/web/app/api/internal/push/day-review-reminder/route.ts"
+    },
+    {
+      "route": "/api/internal/sms/outbound",
+      "file": "apps/web/app/api/internal/sms/outbound/route.ts"
+    },
+    {
+      "route": "/api/internal/sms",
+      "file": "apps/web/app/api/internal/sms/route.ts"
+    },
+    {
+      "route": "/api/internal/start-day-prompt",
+      "file": "apps/web/app/api/internal/start-day-prompt/route.ts"
+    },
+    {
+      "route": "/api/portal/[clientToken]/sms-opt-out",
+      "file": "apps/web/app/api/portal/[clientToken]/sms-opt-out/route.ts"
+    },
+    {
+      "route": "/api/portal/clients/[token]",
+      "file": "apps/web/app/api/portal/clients/[token]/route.ts"
+    },
+    {
+      "route": "/api/portal/estimates/[token]",
+      "file": "apps/web/app/api/portal/estimates/[token]/route.ts"
+    },
+    {
+      "route": "/api/portal/invoices/[token]/logo",
+      "file": "apps/web/app/api/portal/invoices/[token]/logo/route.ts"
+    },
+    {
+      "route": "/api/portal/invoices/[token]",
+      "file": "apps/web/app/api/portal/invoices/[token]/route.ts"
+    },
+    {
+      "route": "/api/v1/account/logo",
+      "file": "apps/web/app/api/v1/account/logo/route.ts"
+    },
+    {
+      "route": "/api/v1/account",
+      "file": "apps/web/app/api/v1/account/route.ts"
+    },
+    {
+      "route": "/api/v1/action-items/[id]/resolve",
+      "file": "apps/web/app/api/v1/action-items/[id]/resolve/route.ts"
+    },
+    {
+      "route": "/api/v1/activities/[id]",
+      "file": "apps/web/app/api/v1/activities/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/activities/[id]/split",
+      "file": "apps/web/app/api/v1/activities/[id]/split/route.ts"
+    },
+    {
+      "route": "/api/v1/activities/insert",
+      "file": "apps/web/app/api/v1/activities/insert/route.ts"
+    },
+    {
+      "route": "/api/v1/activities/log",
+      "file": "apps/web/app/api/v1/activities/log/route.ts"
+    },
+    {
+      "route": "/api/v1/activities/segments/[id]",
+      "file": "apps/web/app/api/v1/activities/segments/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/activities/segments/geometry",
+      "file": "apps/web/app/api/v1/activities/segments/geometry/route.ts"
+    },
+    {
+      "route": "/api/v1/activities/segments",
+      "file": "apps/web/app/api/v1/activities/segments/route.ts"
+    },
+    {
+      "route": "/api/v1/activities/stop",
+      "file": "apps/web/app/api/v1/activities/stop/route.ts"
+    },
+    {
+      "route": "/api/v1/activities/switch",
+      "file": "apps/web/app/api/v1/activities/switch/route.ts"
+    },
+    {
+      "route": "/api/v1/assets/[id]",
+      "file": "apps/web/app/api/v1/assets/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/assets/homebox",
+      "file": "apps/web/app/api/v1/assets/homebox/route.ts"
+    },
+    {
+      "route": "/api/v1/assets",
+      "file": "apps/web/app/api/v1/assets/route.ts"
+    },
+    {
+      "route": "/api/v1/attention/entity-read",
+      "file": "apps/web/app/api/v1/attention/entity-read/route.ts"
+    },
+    {
+      "route": "/api/v1/attention/events/[id]/read",
+      "file": "apps/web/app/api/v1/attention/events/[id]/read/route.ts"
+    },
+    {
+      "route": "/api/v1/attention/events/read-all",
+      "file": "apps/web/app/api/v1/attention/events/read-all/route.ts"
+    },
+    {
+      "route": "/api/v1/attention/events",
+      "file": "apps/web/app/api/v1/attention/events/route.ts"
+    },
+    {
+      "route": "/api/v1/attention/summary",
+      "file": "apps/web/app/api/v1/attention/summary/route.ts"
+    },
+    {
+      "route": "/api/v1/auth/login",
+      "file": "apps/web/app/api/v1/auth/login/route.ts"
+    },
+    {
+      "route": "/api/v1/auth/logout",
+      "file": "apps/web/app/api/v1/auth/logout/route.ts"
+    },
+    {
+      "route": "/api/v1/automations/[id]",
+      "file": "apps/web/app/api/v1/automations/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/automations/[id]/run",
+      "file": "apps/web/app/api/v1/automations/[id]/run/route.ts"
+    },
+    {
+      "route": "/api/v1/automations",
+      "file": "apps/web/app/api/v1/automations/route.ts"
+    },
+    {
+      "route": "/api/v1/booking-requests/[id]/convert",
+      "file": "apps/web/app/api/v1/booking-requests/[id]/convert/route.ts"
+    },
+    {
+      "route": "/api/v1/booking-requests/[id]/repair",
+      "file": "apps/web/app/api/v1/booking-requests/[id]/repair/route.ts"
+    },
+    {
+      "route": "/api/v1/booking-requests/[id]",
+      "file": "apps/web/app/api/v1/booking-requests/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/booking-requests/[id]/send-intake",
+      "file": "apps/web/app/api/v1/booking-requests/[id]/send-intake/route.ts"
+    },
+    {
+      "route": "/api/v1/booking-requests/[id]/summary",
+      "file": "apps/web/app/api/v1/booking-requests/[id]/summary/route.ts"
+    },
+    {
+      "route": "/api/v1/booking-requests",
+      "file": "apps/web/app/api/v1/booking-requests/route.ts"
+    },
+    {
+      "route": "/api/v1/bootstrap",
+      "file": "apps/web/app/api/v1/bootstrap/route.ts"
+    },
+    {
+      "route": "/api/v1/business-day/transition",
+      "file": "apps/web/app/api/v1/business-day/transition/route.ts"
+    },
+    {
+      "route": "/api/v1/captures/[id]/audio",
+      "file": "apps/web/app/api/v1/captures/[id]/audio/route.ts"
+    },
+    {
+      "route": "/api/v1/captures/[id]/photo",
+      "file": "apps/web/app/api/v1/captures/[id]/photo/route.ts"
+    },
+    {
+      "route": "/api/v1/captures/[id]/review",
+      "file": "apps/web/app/api/v1/captures/[id]/review/route.ts"
+    },
+    {
+      "route": "/api/v1/captures",
+      "file": "apps/web/app/api/v1/captures/route.ts"
+    },
+    {
+      "route": "/api/v1/change-orders/[id]",
+      "file": "apps/web/app/api/v1/change-orders/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/change-orders",
+      "file": "apps/web/app/api/v1/change-orders/route.ts"
+    },
+    {
+      "route": "/api/v1/clients/[id]",
+      "file": "apps/web/app/api/v1/clients/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/clients/[id]/sms",
+      "file": "apps/web/app/api/v1/clients/[id]/sms/route.ts"
+    },
+    {
+      "route": "/api/v1/clients/import",
+      "file": "apps/web/app/api/v1/clients/import/route.ts"
+    },
+    {
+      "route": "/api/v1/clients",
+      "file": "apps/web/app/api/v1/clients/route.ts"
+    },
+    {
+      "route": "/api/v1/day-review/[date]/draft",
+      "file": "apps/web/app/api/v1/day-review/[date]/draft/route.ts"
+    },
+    {
+      "route": "/api/v1/day-review/close",
+      "file": "apps/web/app/api/v1/day-review/close/route.ts"
+    },
+    {
+      "route": "/api/v1/dispatch/assign",
+      "file": "apps/web/app/api/v1/dispatch/assign/route.ts"
+    },
+    {
+      "route": "/api/v1/dispatch/attendance",
+      "file": "apps/web/app/api/v1/dispatch/attendance/route.ts"
+    },
+    {
+      "route": "/api/v1/dispatch/route-preview",
+      "file": "apps/web/app/api/v1/dispatch/route-preview/route.ts"
+    },
+    {
+      "route": "/api/v1/dispatch/vehicle-assignment",
+      "file": "apps/web/app/api/v1/dispatch/vehicle-assignment/route.ts"
+    },
+    {
+      "route": "/api/v1/dispatch/workforce",
+      "file": "apps/web/app/api/v1/dispatch/workforce/route.ts"
+    },
+    {
+      "route": "/api/v1/documents/[id]",
+      "file": "apps/web/app/api/v1/documents/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/documents/paperless",
+      "file": "apps/web/app/api/v1/documents/paperless/route.ts"
+    },
+    {
+      "route": "/api/v1/documents",
+      "file": "apps/web/app/api/v1/documents/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/convert",
+      "file": "apps/web/app/api/v1/estimates/[id]/convert/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/create-job",
+      "file": "apps/web/app/api/v1/estimates/[id]/create-job/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/decompose/apply",
+      "file": "apps/web/app/api/v1/estimates/[id]/decompose/apply/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/decompose",
+      "file": "apps/web/app/api/v1/estimates/[id]/decompose/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/document-links",
+      "file": "apps/web/app/api/v1/estimates/[id]/document-links/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/pdf",
+      "file": "apps/web/app/api/v1/estimates/[id]/pdf/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/respond",
+      "file": "apps/web/app/api/v1/estimates/[id]/respond/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/review",
+      "file": "apps/web/app/api/v1/estimates/[id]/review/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]",
+      "file": "apps/web/app/api/v1/estimates/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/send",
+      "file": "apps/web/app/api/v1/estimates/[id]/send/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/transition",
+      "file": "apps/web/app/api/v1/estimates/[id]/transition/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/travel",
+      "file": "apps/web/app/api/v1/estimates/[id]/travel/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/ai-draft",
+      "file": "apps/web/app/api/v1/estimates/ai-draft/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/ai-interview",
+      "file": "apps/web/app/api/v1/estimates/ai-interview/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/ai-items",
+      "file": "apps/web/app/api/v1/estimates/ai-items/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/ai-materials",
+      "file": "apps/web/app/api/v1/estimates/ai-materials/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/ai-scope",
+      "file": "apps/web/app/api/v1/estimates/ai-scope/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates/ai-tm-briefing",
+      "file": "apps/web/app/api/v1/estimates/ai-tm-briefing/route.ts"
+    },
+    {
+      "route": "/api/v1/estimates",
+      "file": "apps/web/app/api/v1/estimates/route.ts"
+    },
+    {
+      "route": "/api/v1/expenses/[id]/line-items",
+      "file": "apps/web/app/api/v1/expenses/[id]/line-items/route.ts"
+    },
+    {
+      "route": "/api/v1/expenses/[id]/parse-line-items",
+      "file": "apps/web/app/api/v1/expenses/[id]/parse-line-items/route.ts"
+    },
+    {
+      "route": "/api/v1/expenses/[id]/receipt",
+      "file": "apps/web/app/api/v1/expenses/[id]/receipt/route.ts"
+    },
+    {
+      "route": "/api/v1/expenses/[id]",
+      "file": "apps/web/app/api/v1/expenses/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/expenses/import/commit",
+      "file": "apps/web/app/api/v1/expenses/import/commit/route.ts"
+    },
+    {
+      "route": "/api/v1/expenses/import/preview",
+      "file": "apps/web/app/api/v1/expenses/import/preview/route.ts"
+    },
+    {
+      "route": "/api/v1/expenses/receipt-review",
+      "file": "apps/web/app/api/v1/expenses/receipt-review/route.ts"
+    },
+    {
+      "route": "/api/v1/expenses",
+      "file": "apps/web/app/api/v1/expenses/route.ts"
+    },
+    {
+      "route": "/api/v1/expenses/scan-receipt",
+      "file": "apps/web/app/api/v1/expenses/scan-receipt/route.ts"
+    },
+    {
+      "route": "/api/v1/field/end-site-timer",
+      "file": "apps/web/app/api/v1/field/end-site-timer/route.ts"
+    },
+    {
+      "route": "/api/v1/field/site-context",
+      "file": "apps/web/app/api/v1/field/site-context/route.ts"
+    },
+    {
+      "route": "/api/v1/field-job-templates",
+      "file": "apps/web/app/api/v1/field-job-templates/route.ts"
+    },
+    {
+      "route": "/api/v1/intake",
+      "file": "apps/web/app/api/v1/intake/route.ts"
+    },
+    {
+      "route": "/api/v1/integrations/square",
+      "file": "apps/web/app/api/v1/integrations/square/route.ts"
+    },
+    {
+      "route": "/api/v1/integrations/square/test",
+      "file": "apps/web/app/api/v1/integrations/square/test/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/document-links",
+      "file": "apps/web/app/api/v1/invoices/[id]/document-links/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/labor-from-time",
+      "file": "apps/web/app/api/v1/invoices/[id]/labor-from-time/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/labor-rate",
+      "file": "apps/web/app/api/v1/invoices/[id]/labor-rate/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/line-items/[lineItemId]",
+      "file": "apps/web/app/api/v1/invoices/[id]/line-items/[lineItemId]/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/line-items",
+      "file": "apps/web/app/api/v1/invoices/[id]/line-items/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/link-expenses",
+      "file": "apps/web/app/api/v1/invoices/[id]/link-expenses/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/linkable-expenses",
+      "file": "apps/web/app/api/v1/invoices/[id]/linkable-expenses/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/materials-from-expenses",
+      "file": "apps/web/app/api/v1/invoices/[id]/materials-from-expenses/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/payments",
+      "file": "apps/web/app/api/v1/invoices/[id]/payments/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/pdf",
+      "file": "apps/web/app/api/v1/invoices/[id]/pdf/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]",
+      "file": "apps/web/app/api/v1/invoices/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/send",
+      "file": "apps/web/app/api/v1/invoices/[id]/send/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/square-link",
+      "file": "apps/web/app/api/v1/invoices/[id]/square-link/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/transition",
+      "file": "apps/web/app/api/v1/invoices/[id]/transition/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/travel",
+      "file": "apps/web/app/api/v1/invoices/[id]/travel/route.ts"
+    },
+    {
+      "route": "/api/v1/invoices",
+      "file": "apps/web/app/api/v1/invoices/route.ts"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/link-expenses",
+      "file": "apps/web/app/api/v1/jobs/[id]/link-expenses/route.ts"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/linkable-expenses",
+      "file": "apps/web/app/api/v1/jobs/[id]/linkable-expenses/route.ts"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/materials/[lineId]",
+      "file": "apps/web/app/api/v1/jobs/[id]/materials/[lineId]/route.ts"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/materials/build",
+      "file": "apps/web/app/api/v1/jobs/[id]/materials/build/route.ts"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/materials",
+      "file": "apps/web/app/api/v1/jobs/[id]/materials/route.ts"
+    },
+    {
+      "route": "/api/v1/jobs/[id]",
+      "file": "apps/web/app/api/v1/jobs/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/sub-status",
+      "file": "apps/web/app/api/v1/jobs/[id]/sub-status/route.ts"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/transition",
+      "file": "apps/web/app/api/v1/jobs/[id]/transition/route.ts"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/visits/bulk",
+      "file": "apps/web/app/api/v1/jobs/[id]/visits/bulk/route.ts"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/visits",
+      "file": "apps/web/app/api/v1/jobs/[id]/visits/route.ts"
+    },
+    {
+      "route": "/api/v1/jobs",
+      "file": "apps/web/app/api/v1/jobs/route.ts"
+    },
+    {
+      "route": "/api/v1/location-settings",
+      "file": "apps/web/app/api/v1/location-settings/route.ts"
+    },
+    {
+      "route": "/api/v1/materials/[id]",
+      "file": "apps/web/app/api/v1/materials/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/materials/import",
+      "file": "apps/web/app/api/v1/materials/import/route.ts"
+    },
+    {
+      "route": "/api/v1/materials/quick",
+      "file": "apps/web/app/api/v1/materials/quick/route.ts"
+    },
+    {
+      "route": "/api/v1/materials",
+      "file": "apps/web/app/api/v1/materials/route.ts"
+    },
+    {
+      "route": "/api/v1/materials/supplier-preferences",
+      "file": "apps/web/app/api/v1/materials/supplier-preferences/route.ts"
+    },
+    {
+      "route": "/api/v1/navigation/capabilities",
+      "file": "apps/web/app/api/v1/navigation/capabilities/route.ts"
+    },
+    {
+      "route": "/api/v1/navigation/commands",
+      "file": "apps/web/app/api/v1/navigation/commands/route.ts"
+    },
+    {
+      "route": "/api/v1/operations/current",
+      "file": "apps/web/app/api/v1/operations/current/route.ts"
+    },
+    {
+      "route": "/api/v1/payments/[id]",
+      "file": "apps/web/app/api/v1/payments/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/portal/auth/confirm",
+      "file": "apps/web/app/api/v1/portal/auth/confirm/route.ts"
+    },
+    {
+      "route": "/api/v1/portal/auth/verify",
+      "file": "apps/web/app/api/v1/portal/auth/verify/route.ts"
+    },
+    {
+      "route": "/api/v1/portal/logout",
+      "file": "apps/web/app/api/v1/portal/logout/route.ts"
+    },
+    {
+      "route": "/api/v1/portal/request-access",
+      "file": "apps/web/app/api/v1/portal/request-access/route.ts"
+    },
+    {
+      "route": "/api/v1/price-book/material-templates",
+      "file": "apps/web/app/api/v1/price-book/material-templates/route.ts"
+    },
+    {
+      "route": "/api/v1/price-book",
+      "file": "apps/web/app/api/v1/price-book/route.ts"
+    },
+    {
+      "route": "/api/v1/pricing/settings",
+      "file": "apps/web/app/api/v1/pricing/settings/route.ts"
+    },
+    {
+      "route": "/api/v1/properties/[id]/issues/[issueId]",
+      "file": "apps/web/app/api/v1/properties/[id]/issues/[issueId]/route.ts"
+    },
+    {
+      "route": "/api/v1/properties/[id]/issues",
+      "file": "apps/web/app/api/v1/properties/[id]/issues/route.ts"
+    },
+    {
+      "route": "/api/v1/properties/[id]/notes",
+      "file": "apps/web/app/api/v1/properties/[id]/notes/route.ts"
+    },
+    {
+      "route": "/api/v1/properties/[id]",
+      "file": "apps/web/app/api/v1/properties/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/properties/[id]/vault-items",
+      "file": "apps/web/app/api/v1/properties/[id]/vault-items/route.ts"
+    },
+    {
+      "route": "/api/v1/properties",
+      "file": "apps/web/app/api/v1/properties/route.ts"
+    },
+    {
+      "route": "/api/v1/push/public-key",
+      "file": "apps/web/app/api/v1/push/public-key/route.ts"
+    },
+    {
+      "route": "/api/v1/push/subscribe",
+      "file": "apps/web/app/api/v1/push/subscribe/route.ts"
+    },
+    {
+      "route": "/api/v1/push/test",
+      "file": "apps/web/app/api/v1/push/test/route.ts"
+    },
+    {
+      "route": "/api/v1/push/unsubscribe",
+      "file": "apps/web/app/api/v1/push/unsubscribe/route.ts"
+    },
+    {
+      "route": "/api/v1/quick-book",
+      "file": "apps/web/app/api/v1/quick-book/route.ts"
+    },
+    {
+      "route": "/api/v1/reports/mileage-export",
+      "file": "apps/web/app/api/v1/reports/mileage-export/route.ts"
+    },
+    {
+      "route": "/api/v1/reports/month-end-export",
+      "file": "apps/web/app/api/v1/reports/month-end-export/route.ts"
+    },
+    {
+      "route": "/api/v1/reports/period-closes",
+      "file": "apps/web/app/api/v1/reports/period-closes/route.ts"
+    },
+    {
+      "route": "/api/v1/scope-templates",
+      "file": "apps/web/app/api/v1/scope-templates/route.ts"
+    },
+    {
+      "route": "/api/v1/search",
+      "file": "apps/web/app/api/v1/search/route.ts"
+    },
+    {
+      "route": "/api/v1/sessions/[id]/activities",
+      "file": "apps/web/app/api/v1/sessions/[id]/activities/route.ts"
+    },
+    {
+      "route": "/api/v1/sessions/[id]/checkpoint",
+      "file": "apps/web/app/api/v1/sessions/[id]/checkpoint/route.ts"
+    },
+    {
+      "route": "/api/v1/sessions/[id]",
+      "file": "apps/web/app/api/v1/sessions/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/sessions/open",
+      "file": "apps/web/app/api/v1/sessions/open/route.ts"
+    },
+    {
+      "route": "/api/v1/sessions",
+      "file": "apps/web/app/api/v1/sessions/route.ts"
+    },
+    {
+      "route": "/api/v1/sessions/start",
+      "file": "apps/web/app/api/v1/sessions/start/route.ts"
+    },
+    {
+      "route": "/api/v1/sessions/suggestions",
+      "file": "apps/web/app/api/v1/sessions/suggestions/route.ts"
+    },
+    {
+      "route": "/api/v1/sessions/switch",
+      "file": "apps/web/app/api/v1/sessions/switch/route.ts"
+    },
+    {
+      "route": "/api/v1/time-clock/[id]/correct",
+      "file": "apps/web/app/api/v1/time-clock/[id]/correct/route.ts"
+    },
+    {
+      "route": "/api/v1/time-clock/[id]/void",
+      "file": "apps/web/app/api/v1/time-clock/[id]/void/route.ts"
+    },
+    {
+      "route": "/api/v1/time-clock/clock-in",
+      "file": "apps/web/app/api/v1/time-clock/clock-in/route.ts"
+    },
+    {
+      "route": "/api/v1/time-clock/clock-out",
+      "file": "apps/web/app/api/v1/time-clock/clock-out/route.ts"
+    },
+    {
+      "route": "/api/v1/time-clock/current",
+      "file": "apps/web/app/api/v1/time-clock/current/route.ts"
+    },
+    {
+      "route": "/api/v1/time-clock/today",
+      "file": "apps/web/app/api/v1/time-clock/today/route.ts"
+    },
+    {
+      "route": "/api/v1/titan/workforce/agents/plan",
+      "file": "apps/web/app/api/v1/titan/workforce/agents/plan/route.ts"
+    },
+    {
+      "route": "/api/v1/titan/workforce/commands",
+      "file": "apps/web/app/api/v1/titan/workforce/commands/route.ts"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/booking",
+      "file": "apps/web/app/api/v1/titan/workforce/native/booking/route.ts"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/customer-care",
+      "file": "apps/web/app/api/v1/titan/workforce/native/customer-care/route.ts"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/jobs",
+      "file": "apps/web/app/api/v1/titan/workforce/native/jobs/route.ts"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/reception",
+      "file": "apps/web/app/api/v1/titan/workforce/native/reception/route.ts"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/sales",
+      "file": "apps/web/app/api/v1/titan/workforce/native/sales/route.ts"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/scheduling",
+      "file": "apps/web/app/api/v1/titan/workforce/native/scheduling/route.ts"
+    },
+    {
+      "route": "/api/v1/travel/calculate",
+      "file": "apps/web/app/api/v1/travel/calculate/route.ts"
+    },
+    {
+      "route": "/api/v1/travel/rates",
+      "file": "apps/web/app/api/v1/travel/rates/route.ts"
+    },
+    {
+      "route": "/api/v1/travel/settings",
+      "file": "apps/web/app/api/v1/travel/settings/route.ts"
+    },
+    {
+      "route": "/api/v1/users/[id]/password",
+      "file": "apps/web/app/api/v1/users/[id]/password/route.ts"
+    },
+    {
+      "route": "/api/v1/users/[id]",
+      "file": "apps/web/app/api/v1/users/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/users",
+      "file": "apps/web/app/api/v1/users/route.ts"
+    },
+    {
+      "route": "/api/v1/vault-items/[itemId]/media/[mediaId]/image",
+      "file": "apps/web/app/api/v1/vault-items/[itemId]/media/[mediaId]/image/route.ts"
+    },
+    {
+      "route": "/api/v1/vault-items/[itemId]/media/[mediaId]",
+      "file": "apps/web/app/api/v1/vault-items/[itemId]/media/[mediaId]/route.ts"
+    },
+    {
+      "route": "/api/v1/vault-items/[itemId]/media",
+      "file": "apps/web/app/api/v1/vault-items/[itemId]/media/route.ts"
+    },
+    {
+      "route": "/api/v1/vault-items/[itemId]",
+      "file": "apps/web/app/api/v1/vault-items/[itemId]/route.ts"
+    },
+    {
+      "route": "/api/v1/vehicles/[id]/fuel",
+      "file": "apps/web/app/api/v1/vehicles/[id]/fuel/route.ts"
+    },
+    {
+      "route": "/api/v1/vehicles/[id]/overview",
+      "file": "apps/web/app/api/v1/vehicles/[id]/overview/route.ts"
+    },
+    {
+      "route": "/api/v1/vehicles/[id]",
+      "file": "apps/web/app/api/v1/vehicles/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/vehicles/[id]/service",
+      "file": "apps/web/app/api/v1/vehicles/[id]/service/route.ts"
+    },
+    {
+      "route": "/api/v1/vehicles",
+      "file": "apps/web/app/api/v1/vehicles/route.ts"
+    },
+    {
+      "route": "/api/v1/visit-candidates/[id]",
+      "file": "apps/web/app/api/v1/visit-candidates/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/visit-candidates",
+      "file": "apps/web/app/api/v1/visit-candidates/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/acknowledgement",
+      "file": "apps/web/app/api/v1/visits/[id]/acknowledgement/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/assessment",
+      "file": "apps/web/app/api/v1/visits/[id]/assessment/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/checklist/[itemId]",
+      "file": "apps/web/app/api/v1/visits/[id]/checklist/[itemId]/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/checklist",
+      "file": "apps/web/app/api/v1/visits/[id]/checklist/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/completion-packet",
+      "file": "apps/web/app/api/v1/visits/[id]/completion-packet/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/media/[mediaId]/image",
+      "file": "apps/web/app/api/v1/visits/[id]/media/[mediaId]/image/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/media/[mediaId]",
+      "file": "apps/web/app/api/v1/visits/[id]/media/[mediaId]/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/media",
+      "file": "apps/web/app/api/v1/visits/[id]/media/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/on-my-way",
+      "file": "apps/web/app/api/v1/visits/[id]/on-my-way/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/parts/[partId]",
+      "file": "apps/web/app/api/v1/visits/[id]/parts/[partId]/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/parts",
+      "file": "apps/web/app/api/v1/visits/[id]/parts/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/report-delivery",
+      "file": "apps/web/app/api/v1/visits/[id]/report-delivery/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]",
+      "file": "apps/web/app/api/v1/visits/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/sub-status",
+      "file": "apps/web/app/api/v1/visits/[id]/sub-status/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/tasks",
+      "file": "apps/web/app/api/v1/visits/[id]/tasks/route.ts"
+    },
+    {
+      "route": "/api/v1/visits/[id]/transition",
+      "file": "apps/web/app/api/v1/visits/[id]/transition/route.ts"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/apply-template",
+      "file": "apps/web/app/api/v1/work-orders/[id]/apply-template/route.ts"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/complete",
+      "file": "apps/web/app/api/v1/work-orders/[id]/complete/route.ts"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/completion-criteria",
+      "file": "apps/web/app/api/v1/work-orders/[id]/completion-criteria/route.ts"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/open-tasks",
+      "file": "apps/web/app/api/v1/work-orders/[id]/open-tasks/route.ts"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]",
+      "file": "apps/web/app/api/v1/work-orders/[id]/route.ts"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/split",
+      "file": "apps/web/app/api/v1/work-orders/[id]/split/route.ts"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/start-visit",
+      "file": "apps/web/app/api/v1/work-orders/[id]/start-visit/route.ts"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/travel",
+      "file": "apps/web/app/api/v1/work-orders/[id]/travel/route.ts"
+    },
+    {
+      "route": "/api/v1/work-orders",
+      "file": "apps/web/app/api/v1/work-orders/route.ts"
+    },
+    {
+      "route": "/api/webhooks/square",
+      "file": "apps/web/app/api/webhooks/square/route.ts"
+    }
+  ],
+  "layouts": [
+    "apps/web/app/(auth)/layout.tsx",
+    "apps/web/app/app/estimates/layout.tsx",
+    "apps/web/app/app/invoices/layout.tsx",
+    "apps/web/app/app/layout.tsx",
+    "apps/web/app/app/settings/layout.tsx",
+    "apps/web/app/layout.tsx",
+    "apps/web/app/portal/layout.tsx"
+  ],
+  "loadingBoundaries": [
+    "apps/web/app/app/clients/[id]/loading.tsx",
+    "apps/web/app/app/clients/loading.tsx",
+    "apps/web/app/app/dispatch/loading.tsx",
+    "apps/web/app/app/estimates/loading.tsx",
+    "apps/web/app/app/expenses/[id]/loading.tsx",
+    "apps/web/app/app/expenses/loading.tsx",
+    "apps/web/app/app/invoices/[id]/loading.tsx",
+    "apps/web/app/app/invoices/loading.tsx",
+    "apps/web/app/app/jobs/[id]/loading.tsx",
+    "apps/web/app/app/jobs/loading.tsx",
+    "apps/web/app/app/loading.tsx",
+    "apps/web/app/app/properties/[id]/loading.tsx",
+    "apps/web/app/app/properties/loading.tsx",
+    "apps/web/app/app/reports/close/loading.tsx",
+    "apps/web/app/app/reports/loading.tsx",
+    "apps/web/app/app/schedule/loading.tsx",
+    "apps/web/app/app/settings/loading.tsx",
+    "apps/web/app/app/visits/[id]/loading.tsx",
+    "apps/web/app/app/visits/loading.tsx",
+    "apps/web/app/app/work-orders/loading.tsx"
+  ],
+  "errorBoundaries": [
+    "apps/web/app/app/error.tsx"
+  ],
+  "notFoundBoundaries": [
+    "apps/web/app/not-found.tsx"
+  ],
+  "navigationTargets": [
+    {
+      "target": "/",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/booking/BookingClient.tsx",
+        "apps/web/app/not-found.tsx"
+      ]
+    },
+    {
+      "target": "/app",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/clients/[id]/page.tsx",
+        "apps/web/app/app/clients/new/page.tsx",
+        "apps/web/app/app/clients/page.tsx",
+        "apps/web/app/app/expenses/import/page.tsx",
+        "apps/web/app/app/expenses/new/ExpenseForm.tsx",
+        "apps/web/app/app/intake/new/page.tsx",
+        "apps/web/app/app/my-work/[workOrderId]/page.tsx",
+        "apps/web/app/app/my-work/page.tsx",
+        "apps/web/app/app/properties/[id]/page.tsx",
+        "apps/web/app/app/properties/new/page.tsx",
+        "apps/web/app/app/properties/page.tsx",
+        "apps/web/app/app/reports/close/page.tsx",
+        "apps/web/app/app/reports/page.tsx",
+        "apps/web/app/app/reports/referrals/page.tsx",
+        "apps/web/app/app/requests/[id]/page.tsx",
+        "apps/web/app/app/requests/page.tsx",
+        "apps/web/app/app/settings/WorkspaceModeSetting.tsx",
+        "apps/web/app/app/work-orders/page.tsx",
+        "apps/web/app/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/action-queue",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/my-work/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/clients",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/clients/import/ClientImportForm.tsx",
+        "apps/web/app/app/clients/import/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/clients/import",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/clients/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/clients/new",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/clients/page.tsx",
+        "apps/web/app/app/estimates/quick/QuickEstimateWizard.tsx",
+        "apps/web/app/app/jobs/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/day-review",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/my-day/MyDayMobileLayout.tsx"
+      ]
+    },
+    {
+      "target": "/app/estimates",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/AttentionCard.tsx",
+        "apps/web/app/app/estimates/[id]/DeleteEstimateButton.tsx",
+        "apps/web/app/app/estimates/new/NewEstimateForm.tsx",
+        "apps/web/app/app/estimates/new/page.tsx",
+        "apps/web/app/app/estimates/page.tsx",
+        "apps/web/app/app/estimates/quick/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/estimates/new",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/estimates/page.tsx",
+        "apps/web/app/app/visits/[id]/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/estimates/quick",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/estimates/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/expenses",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/day-close/DayCloseChecklist.tsx",
+        "apps/web/app/app/expenses/[id]/ExpenseEditForm.tsx",
+        "apps/web/app/app/expenses/[id]/page.tsx",
+        "apps/web/app/app/expenses/import/ImportExpensesClient.tsx",
+        "apps/web/app/app/expenses/new/page.tsx",
+        "apps/web/app/app/expenses/receipt-review/page.tsx",
+        "apps/web/app/app/materials/MaterialsCatalogClient.tsx",
+        "apps/web/app/app/reports/sections/FinancialSection.tsx"
+      ]
+    },
+    {
+      "target": "/app/expenses/import",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/expenses/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/expenses/new",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/DashboardWidgets.tsx",
+        "apps/web/app/app/OwnerDashboard.tsx",
+        "apps/web/app/app/day-close/DayCloseChecklist.tsx",
+        "apps/web/app/app/expenses/page.tsx",
+        "apps/web/app/app/expenses/receipt-review/page.tsx",
+        "apps/web/app/app/materials/MaterialsCatalogClient.tsx",
+        "apps/web/app/app/reports/page.tsx",
+        "apps/web/app/app/reports/sections/FinancialSection.tsx"
+      ]
+    },
+    {
+      "target": "/app/expenses/receipt-review",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/expenses/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/intake/new",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/page.tsx",
+        "apps/web/app/app/requests/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/invoices",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/AttentionCard.tsx",
+        "apps/web/app/app/invoices/[id]/DeleteInvoiceButton.tsx",
+        "apps/web/app/app/invoices/new/NewInvoiceForm.tsx",
+        "apps/web/app/app/invoices/new/page.tsx",
+        "apps/web/app/app/invoices/page.tsx",
+        "apps/web/app/app/reports/sections/FinancialSection.tsx"
+      ]
+    },
+    {
+      "target": "/app/invoices/new",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/invoices/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/jobs",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/DashboardWidgets.tsx",
+        "apps/web/app/app/jobs/[id]/DeleteJobButton.tsx",
+        "apps/web/app/app/jobs/new/JobCreateForm.tsx",
+        "apps/web/app/app/jobs/new/page.tsx",
+        "apps/web/app/app/jobs/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/jobs/new",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/jobs/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/materials/quick",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/visits/[id]/assessment/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/mileage",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/OwnerDashboard.tsx",
+        "apps/web/app/app/expenses/page.tsx",
+        "apps/web/app/app/mileage/new/page.tsx",
+        "apps/web/app/app/my-work/VehicleRow.tsx",
+        "apps/web/app/app/timeline/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/mileage/new",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/mileage/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/mileage/vehicles",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/mileage/new/page.tsx",
+        "apps/web/app/app/mileage/page.tsx",
+        "apps/web/app/app/mileage/vehicles/[id]/page.tsx",
+        "apps/web/app/app/timeline/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/my-work",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/OwnerDashboard.tsx",
+        "apps/web/app/app/action-queue/page.tsx",
+        "apps/web/app/app/estimates/layout.tsx",
+        "apps/web/app/app/estimates/page.tsx",
+        "apps/web/app/app/invoices/layout.tsx",
+        "apps/web/app/app/invoices/page.tsx",
+        "apps/web/app/app/materials/page.tsx",
+        "apps/web/app/app/my-day/page.tsx",
+        "apps/web/app/app/my-work/FieldCloseout.tsx",
+        "apps/web/app/app/page.tsx",
+        "apps/web/app/app/price-book/page.tsx",
+        "apps/web/app/app/settings/WorkspaceModeSetting.tsx",
+        "apps/web/app/app/timeline/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/price-book",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/estimates/components/LineItemsTable.tsx",
+        "apps/web/app/app/materials/MaterialsCatalogClient.tsx"
+      ]
+    },
+    {
+      "target": "/app/properties/new",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/properties/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/reports",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/reports/close/page.tsx",
+        "apps/web/app/app/reports/referrals/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/reports/close",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/reports/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/reports/referrals",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/reports/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/requests",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/AttentionCard.tsx",
+        "apps/web/app/app/intake/new/IntakeForm.tsx",
+        "apps/web/app/app/requests/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/schedule",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/dispatch/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/settings",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/settings/system-health/page.tsx",
+        "apps/web/components/AppShell.tsx"
+      ]
+    },
+    {
+      "target": "/app/settings/system-health",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/settings/SettingsTabsClient.tsx"
+      ]
+    },
+    {
+      "target": "/app/timeline",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/LocationCaptureControl.tsx",
+        "apps/web/app/app/OwnerDashboard.tsx",
+        "apps/web/app/app/mileage/page.tsx",
+        "apps/web/app/app/mileage/vehicles/page.tsx",
+        "apps/web/app/app/my-work/page.tsx",
+        "apps/web/app/app/reports/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/visits",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/day-close/DayCloseChecklist.tsx",
+        "apps/web/app/app/my-work/page.tsx"
+      ]
+    },
+    {
+      "target": "/app/work-orders",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/work-orders/[id]/page.tsx",
+        "apps/web/app/app/work-orders/new/page.tsx"
+      ]
+    },
+    {
+      "target": "/booking",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/not-found.tsx",
+        "apps/web/app/privacy/page.tsx",
+        "apps/web/components/legal/LegalPageShell.tsx"
+      ]
+    },
+    {
+      "target": "/login",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/app/action-queue/page.tsx",
+        "apps/web/app/app/automations/page.tsx",
+        "apps/web/app/app/clients/[id]/page.tsx",
+        "apps/web/app/app/clients/import/page.tsx",
+        "apps/web/app/app/clients/new/page.tsx",
+        "apps/web/app/app/clients/page.tsx",
+        "apps/web/app/app/day-review/page.tsx",
+        "apps/web/app/app/dispatch/page.tsx",
+        "apps/web/app/app/estimates/[id]/page.tsx",
+        "apps/web/app/app/estimates/[id]/print/page.tsx",
+        "apps/web/app/app/estimates/[id]/shopping-list/page.tsx",
+        "apps/web/app/app/estimates/layout.tsx",
+        "apps/web/app/app/estimates/new/page.tsx",
+        "apps/web/app/app/estimates/page.tsx",
+        "apps/web/app/app/estimates/quick/page.tsx",
+        "apps/web/app/app/expenses/[id]/page.tsx",
+        "apps/web/app/app/expenses/import/page.tsx",
+        "apps/web/app/app/expenses/new/page.tsx",
+        "apps/web/app/app/expenses/page.tsx",
+        "apps/web/app/app/expenses/receipt-review/page.tsx",
+        "apps/web/app/app/intake/new/page.tsx",
+        "apps/web/app/app/invoices/[id]/page.tsx",
+        "apps/web/app/app/invoices/[id]/print/page.tsx",
+        "apps/web/app/app/invoices/layout.tsx",
+        "apps/web/app/app/invoices/new/page.tsx",
+        "apps/web/app/app/invoices/page.tsx",
+        "apps/web/app/app/jobs/[id]/materials/page.tsx",
+        "apps/web/app/app/jobs/[id]/page.tsx",
+        "apps/web/app/app/jobs/[id]/visits/new/page.tsx",
+        "apps/web/app/app/jobs/new/page.tsx",
+        "apps/web/app/app/jobs/page.tsx",
+        "apps/web/app/app/materials/page.tsx",
+        "apps/web/app/app/materials/quick/page.tsx",
+        "apps/web/app/app/mileage/page.tsx",
+        "apps/web/app/app/my-work/[workOrderId]/page.tsx",
+        "apps/web/app/app/my-work/page.tsx",
+        "apps/web/app/app/page.tsx",
+        "apps/web/app/app/price-book/page.tsx",
+        "apps/web/app/app/properties/[id]/page.tsx",
+        "apps/web/app/app/properties/new/page.tsx",
+        "apps/web/app/app/properties/page.tsx",
+        "apps/web/app/app/reports/close/page.tsx",
+        "apps/web/app/app/reports/page.tsx",
+        "apps/web/app/app/reports/referrals/page.tsx",
+        "apps/web/app/app/requests/[id]/page.tsx",
+        "apps/web/app/app/requests/page.tsx",
+        "apps/web/app/app/schedule/page.tsx",
+        "apps/web/app/app/settings/layout.tsx",
+        "apps/web/app/app/settings/page.tsx",
+        "apps/web/app/app/settings/system-health/page.tsx",
+        "apps/web/app/app/timeline/page.tsx",
+        "apps/web/app/app/visits/[id]/assessment/page.tsx",
+        "apps/web/app/app/visits/[id]/page.tsx",
+        "apps/web/app/app/visits/[id]/print/page.tsx",
+        "apps/web/app/app/visits/page.tsx",
+        "apps/web/app/app/work-orders/[id]/page.tsx",
+        "apps/web/app/app/work-orders/new/page.tsx",
+        "apps/web/app/app/work-orders/page.tsx",
+        "apps/web/components/AppShell.tsx"
+      ]
+    },
+    {
+      "target": "/portal/login",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/portal/[clientToken]/PortalLogoutButton.tsx",
+        "apps/web/app/portal/auth/confirm/page.tsx"
+      ]
+    },
+    {
+      "target": "/privacy",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/booking/BookingClient.tsx",
+        "apps/web/app/terms/page.tsx",
+        "apps/web/components/legal/LegalPageShell.tsx",
+        "apps/web/components/sms/SmsConsentLabel.tsx"
+      ]
+    },
+    {
+      "target": "/terms",
+      "resolved": true,
+      "sources": [
+        "apps/web/app/booking/BookingClient.tsx",
+        "apps/web/app/privacy/page.tsx",
+        "apps/web/components/legal/LegalPageShell.tsx",
+        "apps/web/components/sms/SmsConsentLabel.tsx"
+      ]
+    }
+  ],
+  "gaps": {
+    "unresolvedStaticNavigationTargets": [],
+    "knownDeadPaths": [],
+    "notes": [
+      "Final Pass 10 inventory is generated against Merge62 plus cumulative Builder 2 UI/runtime work.",
+      "No unresolved literal internal navigation destinations or known dead page paths were found.",
+      "Runtime-computed/template-string destinations are covered by Pass 9 source-level interaction contracts; browser E2E remains dependency-environment limited."
+    ]
+  }
+}

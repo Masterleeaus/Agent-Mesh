@@ -1,0 +1,10 @@
+import test from "node:test";import assert from "node:assert/strict";import{buildRebookingOpportunity as b,proposeRebookingOutreach as p,buildBookingHandoff as h}from"../titan-workforce/starter-agents/rebooking/rebooking-contract.mjs";
+const x=()=>({company_id:"c1",customer_id:"u1",service_id:"s1",source_type:"PAID_INVOICE",source_event_id:"paid:1",consent:{known:true,permitted:true,evidence_id:"e1",opted_out:false},recurrence:{frequency:"MONTHLY"}});
+test("deterministic authority-neutral opportunity",()=>{const a=b(x()),z=b(x());assert.equal(a.opportunity_id,z.opportunity_id);assert.equal(a.state,"ELIGIBLE");assert.equal(a.authority.grants_authority,false);assert.equal(a.recurrence.canonical_engine,"titan.workforce.schedule-recurrence.v1");assert.equal(a.recurrence.creates_schedule,false)});
+test("unknown consent suppresses",()=>assert.equal(b({...x(),consent:{known:false,permitted:false}}).state,"SUPPRESSED"));
+test("opt out suppresses",()=>assert.ok(b({...x(),consent:{known:true,permitted:false,opted_out:true}}).suppression.reasons.includes("OPTED_OUT")));
+test("unsafe customer states suppress",()=>assert.deepEqual(b({...x(),active_booking_exists:true,open_complaint:true,service_recovery_active:true}).suppression.reasons,["ACTIVE_BOOKING_EXISTS","OPEN_COMPLAINT","SERVICE_RECOVERY_ACTIVE"]));
+test("outreach remains proposal only",()=>{const a=p(b(x()),{company_id:"c1",channel:"sms"});assert.equal(a.outreach.send_permitted,false);assert.equal(a.outreach.requires_fresh_authority_evaluation,true)});
+test("booking uses canonical governed workflow",()=>{const a=h(b(x()),{company_id:"c1"});assert.equal(a.workflow,"titan-business-services/workflows/service_booking.json");assert.equal(a.execution_permitted,false);assert.equal(a.requires_authoritative_duplicate_booking_check,true)});
+test("cross company fails closed",()=>assert.throws(()=>p(b(x()),{company_id:"c2",channel:"sms"}),/cross-company/));
+test("legacy boundary fails closed",()=>assert.throws(()=>b({...x(),tenant_company_id:"bad"}),/legacy company boundary/));

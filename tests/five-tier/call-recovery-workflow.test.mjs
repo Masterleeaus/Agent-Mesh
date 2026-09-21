@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {detectCallRecoveryNeed,buildCallEvidenceEnvelope,planCallbackRecovery,planVoicemailHandoff,planHumanEscalation,dedupeRecoveryAction} from '../../titan-workforce/hierarchy/call-recovery-workflow-runtime.mjs';
+const base={company_id:'company-1',call_ref:'call-1',idempotency_key:'idem-1'};
+let n=0;
+const missed=detectCallRecoveryNeed({...base,state:'ended',connected:false}); assert.equal(missed.recovery_required,true); assert.equal(missed.recovery_reason,'missed'); n++;
+const plan=planCallbackRecovery({...base,state:'ended',connected:false,customer_ref:'customer-1',caller_ref:'caller-1',callback_window_ref:'window-1'}); assert.equal(plan.handoffs.length,2); assert.equal(plan.handoffs[0].specialist,'titan.customer.booking_coordinator'); assert.equal(plan.handoffs[0].execution_permitted,false); n++;
+const vm=planVoicemailHandoff({...base,voicemail_ref:'evidence://voicemail/1',transcript_ref:'evidence://transcript/1'}); assert.equal(vm.specialist,'titan.customer.customer_care_coordinator'); assert.equal(vm.execution_permitted,false); n++;
+const ev=buildCallEvidenceEnvelope({...base,transcript_ref:'evidence://transcript/1',provider_receipt_ref:'receipt://1'}); assert.equal(ev.immutable,true); assert.equal(ev.data_policy,'REFERENCES_ONLY_NO_PROVIDER_SECRETS'); n++;
+const esc=planHumanEscalation({...base,reason:'agent_unresolved',evidence_ref:'evidence://bundle/1'}); assert.equal(esc.requires_human_acceptance,true); assert.equal(esc.execution_permitted,false); n++;
+const first=dedupeRecoveryAction({company_id:'company-1',processed_idempotency_keys:[]},base); assert.equal(first.apply,true); const dup=dedupeRecoveryAction({company_id:'company-1',processed_idempotency_keys:first.processed_idempotency_keys},base); assert.equal(dup.duplicate,true); n++;
+assert.throws(()=>planHumanEscalation({...base,reason:'made_up'}),/reason-invalid/); n++;
+assert.throws(()=>buildCallEvidenceEnvelope(base),/evidence-reference-required/); n++;
+console.log(`PASS call recovery workflow: ${n}/${n}`);

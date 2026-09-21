@@ -1,0 +1,13 @@
+{
+  "schema": "titan-zero-touched-files/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 8,
+  "added": [
+    "tests/runtime_adapter_pass08_e2e.test.mjs",
+    "titan-runtime/adapters/pass08/E2E-TEST-MATRIX.json",
+    "titan-runtime/adapters/pass08/E2E-TESTING.md"
+  ],
+  "modified": [],
+  "deleted": [],
+  "shared_hotspots_touched": []
+}

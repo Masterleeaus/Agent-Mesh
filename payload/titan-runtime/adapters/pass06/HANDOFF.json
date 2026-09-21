@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-builder-handoff/v1",
+  "builder": "Builder 3",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 6,
+  "status": "PASS06_COMPLETE_CONTINUE_PASS07",
+  "frozen_base_merge": 39,
+  "live_manager_merge": 42,
+  "summary": "Typed work lifecycle now covers accepted/progress/complete/error/timeout/cancellation with terminal replay prevention and immutable company scope.",
+  "next_pass": 7,
+  "next_pass_scope": "Harden navigation/reload/restart reconnection and stale adapter-session recovery.",
+  "claim_status": "ACTIVE",
+  "recommended_convergence_class": "CLEAN_ADDITIVE_FORWARD_PORT"
+}

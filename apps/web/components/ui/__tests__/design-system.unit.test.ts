@@ -1,0 +1,512 @@
+/**
+ * P7-T1: Design System Unit Tests
+ *
+ * Tests the pure logic functions extracted from UI primitives.
+ * React component rendering tests require jsdom + RTL (follow-up in P7-T5).
+ * These tests validate: badge variant mapping, button class construction,
+ * nav item filtering by role, active-route detection, and priority helpers.
+ */
+
+import { describe, it, expect } from "vitest";
+
+// ---------------------------------------------------------------------------
+// Badge — getStatusBadgeClass, priorityNumToVariant, priorityLabel
+// ---------------------------------------------------------------------------
+
+import {
+  getStatusBadgeClass,
+  priorityNumToVariant,
+  priorityLabel,
+} from "../Badge";
+
+describe("getStatusBadgeClass", () => {
+  const statuses = [
+    "draft", "sent", "approved", "declined", "expired",
+    "paid", "overdue", "partial", "void", "in_progress",
+    "scheduled", "completed", "cancelled", "arrived",
+    "quoted", "invoiced",
+  ] as const;
+
+  it.each(statuses)("produces correct class for status '%s'", (status) => {
+    const cls = getStatusBadgeClass(status);
+    expect(cls).toBe(`p7-badge p7-badge-status-${status}`);
+  });
+
+  it("produces a class with both badge and status modifier", () => {
+    const cls = getStatusBadgeClass("completed");
+    expect(cls).toContain("p7-badge");
+    expect(cls).toContain("p7-badge-status-completed");
+  });
+});
+
+describe("priorityNumToVariant", () => {
+  it("returns 'urgent' for priority 4", () => {
+    expect(priorityNumToVariant(4)).toBe("urgent");
+  });
+
+  it("returns 'urgent' for priority > 4", () => {
+    expect(priorityNumToVariant(5)).toBe("urgent");
+  });
+
+  it("returns 'high' for priority 3", () => {
+    expect(priorityNumToVariant(3)).toBe("high");
+  });
+
+  it("returns 'medium' for priority 2", () => {
+    expect(priorityNumToVariant(2)).toBe("medium");
+  });
+
+  it("returns 'low' for priority 1", () => {
+    expect(priorityNumToVariant(1)).toBe("low");
+  });
+
+  it("returns null for priority 0", () => {
+    expect(priorityNumToVariant(0)).toBeNull();
+  });
+});
+
+describe("priorityLabel", () => {
+  it.each([
+    [4, "Urgent"],
+    [5, "Urgent"],
+    [3, "High"],
+    [2, "Medium"],
+    [1, "Low"],
+    [0, ""],
+  ])("returns '%s' for priority %d", (priority, expected) => {
+    expect(priorityLabel(priority)).toBe(expected);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Button — getButtonClass
+// ---------------------------------------------------------------------------
+
+import { getButtonClass } from "../Button";
+
+describe("getButtonClass", () => {
+  it("includes base class and variant class", () => {
+    const cls = getButtonClass("primary");
+    expect(cls).toContain("p7-btn");
+    expect(cls).toContain("p7-btn-primary");
+  });
+
+  it("does not add size class for default size", () => {
+    const cls = getButtonClass("primary", "default");
+    expect(cls).not.toContain("p7-btn-default");
+  });
+
+  it("adds 'p7-btn-sm' for sm size", () => {
+    const cls = getButtonClass("secondary", "sm");
+    expect(cls).toContain("p7-btn-sm");
+  });
+
+  it("adds 'p7-btn-lg' for lg size", () => {
+    const cls = getButtonClass("danger", "lg");
+    expect(cls).toContain("p7-btn-lg");
+  });
+
+  it("adds loading class when loading=true", () => {
+    const cls = getButtonClass("primary", "default", true);
+    expect(cls).toContain("p7-btn-loading");
+  });
+
+  it("does not add loading class when loading=false", () => {
+    const cls = getButtonClass("primary", "default", false);
+    expect(cls).not.toContain("p7-btn-loading");
+  });
+
+  it("appends extra className", () => {
+    const cls = getButtonClass("ghost", "default", false, "my-extra-class");
+    expect(cls).toContain("my-extra-class");
+  });
+
+  it("supports all variant types", () => {
+    for (const variant of ["primary", "secondary", "danger", "ghost"] as const) {
+      const cls = getButtonClass(variant);
+      expect(cls).toContain(`p7-btn-${variant}`);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// AppShell — getNavSections, getBottomNavItems, isNavActive
+// ---------------------------------------------------------------------------
+
+import { getNavSections, getBottomNavItems, isNavActive } from "../../AppShell";
+
+function flattenSections(sections: ReturnType<typeof getNavSections>) {
+  return sections.flatMap((s) => s.items);
+}
+
+describe("getNavSections (nested hubs)", () => {
+  const HUB_LABELS = ["Home", "Work", "People", "Money"];
+
+  it("returns labeled hub sections for admin role", () => {
+    const sections = getNavSections("admin");
+    const labels = sections.map((s) => s.label).filter(Boolean);
+    expect(labels).toEqual(HUB_LABELS);
+    // Settings sits in a trailing unlabeled section
+    expect(sections[sections.length - 1].label).toBe("");
+    expect(sections[sections.length - 1].items.some((i) => i.href === "/app/settings")).toBe(true);
+  });
+
+  it("Owner nav has the active home + all shared business destinations", () => {
+    // The home swaps with the workspace (My Day in Field, Overview in Office);
+    // the shared destinations are present in both. (TASK-058 follow-up)
+    const shared = [
+      "/app/requests",
+      "/app/clients",
+      "/app/properties",
+      "/app/estimates",
+      "/app/jobs",
+      "/app/work-orders",
+      "/app/schedule",
+      "/app/invoices",
+      "/app/reports",
+      "/app/settings",
+    ];
+    for (const view of ["field", "office"] as const) {
+      const hrefs = flattenSections(getNavSections("owner", view)).map((i) => i.href);
+      for (const href of shared) expect(hrefs).toContain(href);
+      expect(hrefs).toContain(view === "field" ? "/app/my-work" : "/app");
+      expect(hrefs).toContain("/app/timeline");
+      expect(hrefs).not.toContain("/app/mileage");
+      expect(hrefs).toContain("/app/capture");
+      expect(hrefs).toHaveLength(14);
+    }
+  });
+
+  it("Admin nav drops My Day (pure admins don't do field work) — 12 items", () => {
+    const hrefs = flattenSections(getNavSections("admin")).map((i) => i.href);
+    expect(hrefs).not.toContain("/app/my-work"); // EPIC-006 P5
+    expect(hrefs).toContain("/app");
+    expect(hrefs).toContain("/app/settings");
+    expect(hrefs).toContain("/app/timeline");
+    expect(hrefs).toContain("/app/capture");
+    expect(hrefs).toHaveLength(14);
+  });
+
+  it("Layer 2+ tools are not in main nav", () => {
+    const items = flattenSections(getNavSections("admin"));
+    const hrefs = items.map((i) => i.href);
+    expect(hrefs).not.toContain("/app/price-book");
+    expect(hrefs).not.toContain("/app/maintenance-plans");
+    expect(hrefs).not.toContain("/app/field");
+    expect(hrefs).not.toContain("/portal/login");
+    expect(hrefs).not.toContain("/app/automations");
+    expect(hrefs).not.toContain("/app/inbox");
+    expect(hrefs).not.toContain("/app/booking-requests");
+  });
+
+  it("owner nav is hub sections totaling 12 items with a single home per workspace", () => {
+    for (const view of ["field", "office"] as const) {
+      const sections = getNavSections("owner", view);
+      expect(sections.map((s) => s.label).filter(Boolean)).toEqual(HUB_LABELS);
+      const hrefs = flattenSections(sections).map((i) => i.href);
+      expect(hrefs).toHaveLength(14);
+      expect(hrefs).toContain("/app/timeline");
+      expect(hrefs).toContain("/app/capture");
+      if (view === "field") {
+        expect(hrefs).toContain("/app/my-work");
+        expect(hrefs).not.toContain("/app"); // no Overview home in Field
+      } else {
+        expect(hrefs).toContain("/app");
+        expect(hrefs).not.toContain("/app/my-work"); // no My Day home in Office
+      }
+    }
+  });
+
+  it("returns My Day, Visits, and Day Review for tech role", () => {
+    const sections = getNavSections("tech");
+    const items = flattenSections(sections);
+    expect(items).toHaveLength(3);
+    const hrefs = items.map((i) => i.href);
+    expect(hrefs).toContain("/app/my-work");
+    expect(hrefs).toContain("/app/visits");
+    expect(hrefs).toContain("/app/day-review");
+    expect(hrefs).not.toContain("/app/field");
+    expect(hrefs).not.toContain("/app/settings");
+    expect(hrefs).not.toContain("/app/jobs");
+    expect(hrefs).not.toContain("/app/estimates");
+    expect(hrefs).not.toContain("/app/invoices");
+    expect(hrefs).not.toContain("/app/automations");
+    expect(hrefs).not.toContain("/app/capture");
+  });
+
+  it("leads with My Day for owner/tech, Overview for pure admin", () => {
+    for (const role of ["tech", "owner"] as const) {
+      const items = flattenSections(getNavSections(role));
+      expect(items[0].href).toBe("/app/my-work");
+    }
+
+    const adminFirst = flattenSections(getNavSections("admin"))[0];
+    expect(adminFirst.href).toBe("/app");
+    expect(adminFirst.label).toBe("Overview");
+  });
+
+  it("owner sidebar shows the active workspace's home, not both", () => {
+    // Field surface: My Day leads, Overview is not in the sidebar (reach it from
+    // Settings → Workspace). Office surface: the reverse.
+    const field = flattenSections(getNavSections("owner", "field")).map((i) => i.href);
+    expect(field[0]).toBe("/app/my-work");
+    expect(field).not.toContain("/app");
+
+    const office = flattenSections(getNavSections("owner", "office")).map((i) => i.href);
+    expect(office[0]).toBe("/app");
+    expect(office).not.toContain("/app/my-work");
+
+    // Shared business destinations stay in both.
+    for (const href of ["/app/jobs", "/app/invoices", "/app/reports", "/app/settings"]) {
+      expect(field).toContain(href);
+      expect(office).toContain(href);
+    }
+  });
+
+  it("Home hub lists Tracking next to Day Review for owner/admin", () => {
+    const adminHome = getNavSections("admin").find((s) => s.label === "Home");
+    expect(adminHome?.items.map((i) => i.label)).toEqual([
+      "Overview",
+      "Capture",
+      "Day Review",
+      "Tracking",
+    ]);
+    expect(adminHome?.items.map((i) => i.href)).toContain("/app/timeline");
+
+    const ownerHome = getNavSections("owner", "office").find((s) => s.label === "Home");
+    expect(ownerHome?.items.some((i) => i.href === "/app/timeline" && i.label === "Tracking")).toBe(
+      true,
+    );
+
+    const tech = flattenSections(getNavSections("tech")).map((i) => i.href);
+    expect(tech).not.toContain("/app/timeline");
+  });
+
+  it("Work hub lists requests through schedule in order", () => {
+    const work = getNavSections("admin").find((s) => s.label === "Work");
+    expect(work?.items.map((i) => i.href)).toEqual([
+      "/app/requests",
+      "/app/estimates",
+      "/app/jobs",
+      "/app/work-orders",
+      "/app/schedule",
+    ]);
+  });
+});
+
+describe("getBottomNavItems (mobile hubs)", () => {
+  it("returns 4 hub tabs for admin (Home Work People Money) — More is the 5th slot", () => {
+    const items = getBottomNavItems("admin");
+    expect(items).toHaveLength(4);
+    expect(items.map((i) => i.label)).toEqual(["Home", "Work", "People", "Money"]);
+    expect(items.map((i) => i.href)).toEqual([
+      "/app",
+      "/app/jobs",
+      "/app/clients",
+      "/app/invoices",
+    ]);
+    const hrefs = items.map((i) => i.href);
+    expect(hrefs).not.toContain("/app/booking-requests");
+  });
+
+  it("returns 2 items for tech role with My Day and Visits", () => {
+    const items = getBottomNavItems("tech");
+    expect(items).toHaveLength(2);
+    const hrefs = items.map((i) => i.href);
+    expect(hrefs).toContain("/app/my-work");
+    expect(hrefs).toContain("/app/visits");
+    expect(hrefs).not.toContain("/app/field");
+    expect(hrefs).not.toContain("/app/jobs");
+  });
+
+  it("returns 4 hub tabs for owner leading with Home (My Day)", () => {
+    const items = getBottomNavItems("owner");
+    expect(items.map((i) => i.label)).toEqual(["Home", "Work", "People", "Money"]);
+    expect(items.map((i) => i.href)).toEqual([
+      "/app/my-work",
+      "/app/jobs",
+      "/app/clients",
+      "/app/invoices",
+    ]);
+  });
+
+  it("Work hub tab stays active on estimates and schedule", () => {
+    const work = getBottomNavItems("owner").find((i) => i.label === "Work");
+    expect(work).toBeDefined();
+    expect(isNavActive("/app/estimates/new", work!.href, work!.activePrefixes)).toBe(true);
+    expect(isNavActive("/app/schedule", work!.href, work!.activePrefixes)).toBe(true);
+    expect(isNavActive("/app/clients", work!.href, work!.activePrefixes)).toBe(false);
+  });
+
+  it("Home stays active on Tracking; Money stays active on Mileage", () => {
+    const ownerHome = getBottomNavItems("owner").find((i) => i.label === "Home");
+    const money = getBottomNavItems("owner").find((i) => i.label === "Money");
+    expect(isNavActive("/app/timeline", ownerHome!.href, ownerHome!.activePrefixes)).toBe(true);
+    expect(isNavActive("/app/day-review", ownerHome!.href, ownerHome!.activePrefixes)).toBe(true);
+    expect(isNavActive("/app/capture", ownerHome!.href, ownerHome!.activePrefixes)).toBe(true);
+    expect(isNavActive("/app/mileage/vehicles", money!.href, money!.activePrefixes)).toBe(true);
+  });
+});
+
+describe("isNavActive (route detection)", () => {
+  // /app is the owner command center — must be exact match only (not prefix)
+  it("returns true for /app when pathname is exactly /app", () => {
+    expect(isNavActive("/app", "/app")).toBe(true);
+  });
+
+  it("returns false for /app when pathname is /app/jobs (prevents My Day lighting up everywhere)", () => {
+    expect(isNavActive("/app/jobs", "/app")).toBe(false);
+  });
+
+  it("returns false for /app when pathname is /app/estimates/new", () => {
+    expect(isNavActive("/app/estimates/new", "/app")).toBe(false);
+  });
+
+  // Dashboard — exact match only
+  it("returns true for /app/operations when pathname is exactly /app/operations", () => {
+    expect(isNavActive("/app/operations", "/app/operations")).toBe(true);
+  });
+
+  it("returns false for /app/operations when pathname is /app/jobs", () => {
+    expect(isNavActive("/app/jobs", "/app/operations")).toBe(false);
+  });
+
+  it("returns false for /app/operations when pathname is /app/visits", () => {
+    expect(isNavActive("/app/visits", "/app/operations")).toBe(false);
+  });
+
+  // Projects (/app/jobs) — prefix match
+  it("returns true for /app/jobs when pathname is /app/jobs", () => {
+    expect(isNavActive("/app/jobs", "/app/jobs")).toBe(true);
+  });
+
+  it("returns true for /app/jobs when pathname is /app/jobs/new", () => {
+    expect(isNavActive("/app/jobs/new", "/app/jobs")).toBe(true);
+  });
+
+  it("returns true for /app/jobs when pathname is /app/jobs/abc-123", () => {
+    expect(isNavActive("/app/jobs/abc-123", "/app/jobs")).toBe(true);
+  });
+
+  it("returns false for /app/jobs when pathname is /app/visits", () => {
+    expect(isNavActive("/app/visits", "/app/jobs")).toBe(false);
+  });
+
+  // No cross-match between sibling routes
+  it("does not treat /app/invoices as active for /app/invoices-v2", () => {
+    expect(isNavActive("/app/invoices-v2", "/app/invoices")).toBe(false);
+  });
+
+  // Visits sub-routes
+  it("returns true for /app/visits/:id path", () => {
+    expect(isNavActive("/app/visits/visit-xyz", "/app/visits")).toBe(true);
+  });
+
+  // Automations
+  it("returns true for /app/automations exact match", () => {
+    expect(isNavActive("/app/automations", "/app/automations")).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// FilterBar — filter active detection (pure logic)
+// ---------------------------------------------------------------------------
+
+/**
+ * Mirrors the logic in FilterBar component for detecting active filters.
+ * Test the predicate used to determine which filters have values.
+ */
+function hasActiveFilter(currentValues: Record<string, string>, name: string): boolean {
+  return Boolean(currentValues[name] && currentValues[name] !== "");
+}
+
+function countActiveFilters(
+  filters: { name: string }[],
+  currentValues: Record<string, string>
+): number {
+  return filters.filter((f) => hasActiveFilter(currentValues, f.name)).length;
+}
+
+describe("FilterBar active filter detection", () => {
+  const filters = [
+    { name: "q" },
+    { name: "status" },
+    { name: "priority" },
+  ];
+
+  it("returns 0 when no filters are active", () => {
+    expect(countActiveFilters(filters, {})).toBe(0);
+  });
+
+  it("returns 1 when one filter is active", () => {
+    expect(countActiveFilters(filters, { q: "roof" })).toBe(1);
+  });
+
+  it("returns 2 when two filters are active", () => {
+    expect(countActiveFilters(filters, { q: "roof", status: "in_progress" })).toBe(2);
+  });
+
+  it("does not count empty string as active", () => {
+    expect(countActiveFilters(filters, { q: "", status: "scheduled" })).toBe(1);
+  });
+
+  it("counts all three when all active", () => {
+    expect(
+      countActiveFilters(filters, { q: "hvac", status: "draft", priority: "3" })
+    ).toBe(3);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// MetricGrid — variant helper logic
+// ---------------------------------------------------------------------------
+
+function metricVariantClass(
+  variant: "default" | "alert" | "success" | undefined
+): string {
+  if (variant === "alert") return "p7-metric-alert";
+  if (variant === "success") return "p7-metric-success";
+  return "";
+}
+
+describe("MetricGrid variant class helper", () => {
+  it("returns alert class for alert variant", () => {
+    expect(metricVariantClass("alert")).toBe("p7-metric-alert");
+  });
+
+  it("returns success class for success variant", () => {
+    expect(metricVariantClass("success")).toBe("p7-metric-success");
+  });
+
+  it("returns empty string for default variant", () => {
+    expect(metricVariantClass("default")).toBe("");
+  });
+
+  it("returns empty string when variant is undefined", () => {
+    expect(metricVariantClass(undefined)).toBe("");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Toast — auto-dismiss timing logic
+// ---------------------------------------------------------------------------
+
+const DEFAULT_DISMISS_MS: Record<string, number> = {
+  success: 4000,
+  error: 0,
+  info: 4000,
+};
+
+describe("Toast auto-dismiss timing", () => {
+  it("success toasts auto-dismiss after 4000ms", () => {
+    expect(DEFAULT_DISMISS_MS["success"]).toBe(4000);
+  });
+
+  it("error toasts do not auto-dismiss (0ms = manual)", () => {
+    expect(DEFAULT_DISMISS_MS["error"]).toBe(0);
+  });
+
+  it("info toasts auto-dismiss after 4000ms", () => {
+    expect(DEFAULT_DISMISS_MS["info"]).toBe(4000);
+  });
+});

@@ -1,0 +1,18 @@
+{
+  "schema": "titan-zero-runtime-adapters-pass/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "builder": "Builder 3",
+  "pass": 5,
+  "status": "COMPLETE",
+  "frozen_base_merge": 39,
+  "live_manager_observed_merge": 41,
+  "implemented": [
+    "fallback-only legacy DOM wrapper",
+    "typed-path preference guard",
+    "deprecation telemetry",
+    "telemetry-safe no-customer-content contract"
+  ],
+  "protected_retriever_bridge_modified": false,
+  "legacy_dom_removed": false,
+  "authority_granted": false
+}

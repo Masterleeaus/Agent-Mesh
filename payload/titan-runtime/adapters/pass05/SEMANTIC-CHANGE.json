@@ -1,0 +1,10 @@
+{
+  "schema": "titan-zero-semantic-change/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 5,
+  "summary": "Wraps existing Retriever DOM transport as fallback-only and emits explicit deprecation telemetry; typed path is preferred and working compatibility remains intact.",
+  "company_boundary": "company_id",
+  "legacy_path_deleted": false,
+  "authority_changes": [],
+  "execution_permitted_by_wrapper": false
+}

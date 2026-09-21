@@ -1,0 +1,34 @@
+{
+  "schema": "titan-zero-evidence-drilldown-contract/v1",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 7,
+  "company_boundary": "company_id",
+  "source_ref_policy": "opaque; no invented routes",
+  "legacy_provenance_policy": "provenance entries lacking source_ref remain valid summary provenance but produce no drill-down link",
+  "link_action": "inspect_source",
+  "locator_kind": "source_ref",
+  "dedupe_key": "source_id + source_ref",
+  "ordering": "source_id then source_ref",
+  "authority": {
+    "read_only": true,
+    "source_of_truth": false,
+    "execution_authority": false,
+    "analytics_grants_authority": false
+  },
+  "known_source_ids": [
+    "event-ledger",
+    "feed-causality",
+    "workforce-runtime",
+    "workforce-graph",
+    "supervisor-runtime",
+    "jobs-runtime",
+    "jobs-context-bridge",
+    "sales-contract",
+    "sales-lead-response",
+    "invoice-workflow",
+    "business-services",
+    "client-workforce",
+    "evidence-quality",
+    "cleaning-workforce"
+  ]
+}

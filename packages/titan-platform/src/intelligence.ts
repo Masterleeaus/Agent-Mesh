@@ -1,0 +1,38 @@
+import {
+  classifyRisk as classifyRiskRaw,
+  riskRequiresElevatedAuthorisation as riskRequiresElevatedAuthorisationRaw,
+} from "./ported/titan-intelligence/core/risk-classification.js";
+
+export type TitanRiskLevel = "low" | "medium" | "high" | "exceptional";
+
+export type TitanRiskInput = {
+  company_id: string;
+  item_id?: string;
+  revision_id?: string;
+  classified_at?: number;
+  evidence?: Record<string, unknown>;
+  [key: string]: unknown;
+};
+
+export type TitanRiskAssessment = Readonly<{
+  company_id: string;
+  item_id: string | null;
+  revision_id: string | null;
+  level: TitanRiskLevel;
+  score: number;
+  deterministic: true;
+  model_used: false;
+  evidence: Record<string, unknown>;
+  factors: Array<Record<string, unknown>>;
+  exceptional_reasons: string[];
+  topology_constraints: Record<string, unknown>;
+  classified_at: number;
+}>;
+
+export const classifyRisk = classifyRiskRaw as (input: TitanRiskInput) => TitanRiskAssessment;
+export const riskRequiresElevatedAuthorisation = riskRequiresElevatedAuthorisationRaw as (
+  assessment: Pick<TitanRiskAssessment, "level">,
+) => boolean;
+
+
+export * from "./intelligence-runtime/index.js";

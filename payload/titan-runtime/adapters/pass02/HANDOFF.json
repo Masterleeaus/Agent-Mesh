@@ -1,0 +1,13 @@
+{
+  "schema": "titan-zero-builder-handoff/v1",
+  "builder": "Builder 3",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 2,
+  "status": "PASS02_COMPLETE_CONTINUE_PASS03",
+  "manager_merge": 39,
+  "summary": "Typed v1 adapter protocol, version/capability negotiation and fail-closed error semantics implemented without changing Retriever/Monica compatibility paths.",
+  "next_pass": 3,
+  "next_pass_scope": "Implement work-runtime adapter interface and Retriever adapter behind existing authority/company gates.",
+  "claim_status": "ACTIVE",
+  "recommended_convergence_class": "CLEAN_ADDITIVE"
+}

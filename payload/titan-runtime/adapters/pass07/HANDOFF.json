@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-builder-handoff/v1",
+  "builder": "Builder 3",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 7,
+  "status": "PASS07_COMPLETE_CONTINUE_PASS08",
+  "frozen_base_merge": 39,
+  "live_manager_merge": 42,
+  "summary": "Navigation/reload/restart recovery now invalidates stale authority snapshots, rolls session epoch, and requires renegotiation plus fresh authority evaluation.",
+  "next_pass": 8,
+  "next_pass_scope": "Add end-to-end adapter tests covering typed path, fallback path, failures, company isolation and authority neutrality.",
+  "claim_status": "ACTIVE",
+  "recommended_convergence_class": "CLEAN_ADDITIVE_FORWARD_PORT"
+}

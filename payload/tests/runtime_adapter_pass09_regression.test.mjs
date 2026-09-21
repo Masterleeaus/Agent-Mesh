@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+const root=path.resolve(import.meta.dirname,'..');
+const snapshot=JSON.parse(fs.readFileSync(path.join(root,'titan-runtime/adapters/pass09/LEGACY-RUNTIME-SNAPSHOT.json'),'utf8'));
+const parity=JSON.parse(fs.readFileSync(path.join(root,'titan-runtime/adapters/pass09/CAPABILITY-PARITY-MATRIX.json'),'utf8'));
+const bridge=snapshot.files['side-panel/titan-retriever-bridge.js'];
+for(const token of ['TITAN_RETRIEVER_PING','TITAN_EXECUTE_OUTCOME','TITAN_RETRIEVER_EXECUTE','TITAN_OUTCOME_PROGRESS','TITAN_OUTCOME_RESULT','TITAN_OUTCOME_ERROR','TITAN_RETRIEVER_READY','textarea','contenteditable','requestId','company_id']) assert.equal(bridge.tokens[token],true,token);
+assert.equal(parity.donor_capability_loss_detected,false);
+assert.equal(parity.retriever_background_retirement_authorized_by_builder,false);
+for(const cap of parity.capabilities) assert.notEqual(cap.status,'LOST',cap.capability);
+const prodFiles=['execution-adapter-protocol.mjs','work-runtime-adapter.mjs','retriever-adapter.mjs','adapter-negotiation.mjs','legacy-dom-discovery.mjs','typed-work-lifecycle.mjs','adapter-session-recovery.mjs'];
+for(const f of prodFiles) assert.equal(fs.existsSync(path.join(root,'titan-runtime/adapters',f)),true,f);
+const serialized=JSON.stringify(parity);
+assert.equal(serialized.includes('execution_authority":true'),false);
+console.log('PASS runtime adapter Pass09 donor capability parity invariants');

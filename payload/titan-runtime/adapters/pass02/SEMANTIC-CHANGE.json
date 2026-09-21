@@ -1,0 +1,9 @@
+{
+  "schema": "titan-zero-semantic-change/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 2,
+  "summary": "Adds an additive typed TITAN execution adapter protocol contract; existing Retriever TITAN_EXECUTE_OUTCOME/TITAN_OUTCOME_* compatibility paths remain untouched.",
+  "company_boundary": "company_id",
+  "authority_changes": [],
+  "execution_permitted": false
+}

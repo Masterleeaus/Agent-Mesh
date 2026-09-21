@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {extractCallLeadQualification,planQualifiedLeadHandoff,dedupeQualification} from '../../titan-workforce/hierarchy/call-lead-qualification-runtime.mjs';
+const base={company_id:'co_1',call_ref:'call_1',evidence_ref:'transcript:1',idempotency_key:'idem_1',lead_ref:'lead_1'};
+let q=extractCallLeadQualification({...base,transcript_text:'Hi, I need carpet cleaning in Thornbury tomorrow. Can I get a quote?'});
+assert.equal(q.qualification.requested_action,'quote'); assert.equal(q.qualification.timing.toLowerCase(),'tomorrow'); assert.equal(q.execution_permitted,false);
+let p=planQualifiedLeadHandoff({...base,service_need:'carpet cleaning',location_text:'Thornbury VIC',timing:'tomorrow',requested_action:'quote'});
+assert.equal(p.status,'QUOTE_HANDOFF_RECOMMENDED'); assert.equal(p.handoffs.at(-1).target_worker,'titan.worker.create_quote_agent'); assert.equal(p.handoffs.at(-1).execution_permitted,false);
+p=planQualifiedLeadHandoff({...base,idempotency_key:'idem_2',service_need:'window cleaning',location_text:'Preston VIC',timing:'Friday morning',requested_action:'booking'});
+assert.equal(p.status,'BOOKING_HANDOFF_RECOMMENDED'); assert.equal(p.handoffs.at(-1).specialist,'titan.customer.booking_coordinator');
+p=planQualifiedLeadHandoff({...base,idempotency_key:'idem_3',transcript_text:'Please call me back about cleaning.'});
+assert.equal(p.status,'QUALIFICATION_INCOMPLETE'); assert.ok(p.missing_fields.includes('location')); assert.equal(p.recommended_orchestrator,null);
+q=extractCallLeadQualification({...base,idempotency_key:'idem_4',service_need:'plumbing',location_text:'Coburg VIC',timing:'today',urgency:'urgent'});
+assert.equal(q.evidence_provenance.service_need.source,'structured_evidence'); assert.equal(q.transcript_is_evidence_not_truth,true);
+assert.throws(()=>extractCallLeadQualification({...base,company_id:'x'}),/company_id/);
+assert.throws(()=>extractCallLeadQualification({...base,evidence_ref:''}),/evidence-ref/);
+let d=dedupeQualification({company_id:'co_1',processed_idempotency_keys:['same']},{company_id:'co_1',idempotency_key:'same'}); assert.equal(d.duplicate,true);
+d=dedupeQualification({company_id:'co_1',processed_idempotency_keys:[]},{company_id:'co_1',idempotency_key:'new'}); assert.equal(d.apply,true);
+console.log('call lead qualification: 8/8 PASS');
