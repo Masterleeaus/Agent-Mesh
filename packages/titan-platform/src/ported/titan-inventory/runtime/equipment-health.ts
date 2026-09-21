@@ -61,7 +61,7 @@ export function evaluateEquipmentTelemetryHealth(
   input: EquipmentTelemetryReading,
   rules: readonly EquipmentHealthRule[] = DEFAULT_RULES,
 ) {
-  const company_id = requiredText(input.company_id, "equipment-health-company-id-required");
+  for (const legacyKey of ["tenant_id", "tenant_company_id", "business_id", "account_id", "workspace_id"]) {\n    if (Object.prototype.hasOwnProperty.call(input, legacyKey)) throw new Error(`equipment-health-legacy-boundary-forbidden:${legacyKey}`);\n  }\n  const company_id = requiredText(input.company_id, "equipment-health-company-id-required");
   const asset_id = requiredText(input.asset_id, "equipment-health-asset-id-required");
   const recorded_at = requiredText(input.recorded_at, "equipment-health-recorded-at-required");
   if (!Number.isFinite(Date.parse(recorded_at))) throw new Error("equipment-health-recorded-at-invalid");
