@@ -31,6 +31,10 @@ export class AiProviderRegistry {
       authority_neutral:true as const,
       execution_authority:false as const,
     });
+    const existing=this.#providers.get(key);
+    if(existing && (existing.locality!==provider.locality || existing.company_id!==provider.company_id)) {
+      throw new Error("AI provider registration conflict.");
+    }
     this.#providers.set(key,provider);
     return provider;
   }
