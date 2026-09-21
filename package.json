@@ -5,9 +5,9 @@
   "description": "Titan Zero — AI-native field service business operating system",
   "packageManager": "pnpm@9.12.0",
   "scripts": {
-    "dev": "pnpm -r --parallel --filter @titan-zero/web --filter @ai-fsm/worker dev",
+    "dev": "pnpm -r --parallel --filter @titan-zero/web --filter @titan-zero/worker dev",
     "dev:web": "pnpm --filter @titan-zero/web dev",
-    "dev:worker": "pnpm --filter @ai-fsm/worker dev",
+    "dev:worker": "pnpm --filter @titan-zero/worker dev",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
