@@ -1,0 +1,15 @@
+{
+  "name": "list_disputes",
+  "description": "Lists dispute records with optional filters by status, customer_id, appointment_id, and ticket_id. Returns paginated results with dispute details.",
+  "type": "API",
+  "input_type_name": "ListDisputesInput",
+  "output_type_name": "ListDisputesOutput",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "visibility": "POD",
+  "permissions": {
+    "grants": [
+      { "resource_type": "datastore_table", "resource_name": "disputes", "permission_ids": ["datastore.record.read", "datastore.table.read"] }
+    ]
+  }
+}

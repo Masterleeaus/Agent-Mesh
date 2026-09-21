@@ -1,0 +1,17 @@
+{
+  "name": "search_tickets",
+  "description": "Searches tickets with optional filters by status, urgency, assigned_to, customer_name, and channel. Returns paginated results.",
+  "type": "API",
+  "visibility": "POD",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "tickets_v2",
+        "permission_ids": ["datastore.record.read", "datastore.table.read"]
+      }
+    ]
+  }
+}

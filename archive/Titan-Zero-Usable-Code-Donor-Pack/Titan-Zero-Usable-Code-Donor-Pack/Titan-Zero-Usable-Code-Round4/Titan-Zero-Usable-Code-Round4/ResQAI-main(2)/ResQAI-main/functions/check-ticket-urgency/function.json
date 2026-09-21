@@ -1,0 +1,12 @@
+{
+  "name": "check_ticket_urgency",
+  "description": "Routing function for the ticket-intake workflow. Evaluates the urgency value from request-classifier and returns a routing signal: 'urgent' (high/urgent tickets skip ops coordination) or 'normal' (tickets proceed through ops coordination).",
+  "type": "API",
+  "input_type_name": "CheckTicketUrgencyInput",
+  "output_type_name": "CheckTicketUrgencyOutput",
+  "python_packages": [],
+  "visibility": "POD",
+  "permissions": {
+    "grants": []
+  }
+}

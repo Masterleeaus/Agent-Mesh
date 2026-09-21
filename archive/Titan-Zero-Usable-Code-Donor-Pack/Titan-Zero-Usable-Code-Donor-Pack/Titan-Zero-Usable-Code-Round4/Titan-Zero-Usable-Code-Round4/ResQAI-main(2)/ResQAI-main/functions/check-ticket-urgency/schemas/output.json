@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "title": "CheckTicketUrgencyOutput",
+  "required": ["routing", "ticket_id", "is_urgent"],
+  "properties": {
+    "routing": {
+      "type": "string",
+      "enum": ["urgent", "high", "normal", "low"],
+      "description": "Routing signal for the workflow DECISION node. 'urgent' or 'high' causes the workflow to skip ops-coordination and go directly to human approval. 'normal' or 'low' proceeds through ops-coordination."
+    },
+    "ticket_id": {
+      "type": "string",
+      "description": "Echoed ticket_id for downstream nodes."
+    },
+    "is_urgent": {
+      "type": "boolean",
+      "description": "True if urgency is 'high' or 'urgent'."
+    }
+  }
+}

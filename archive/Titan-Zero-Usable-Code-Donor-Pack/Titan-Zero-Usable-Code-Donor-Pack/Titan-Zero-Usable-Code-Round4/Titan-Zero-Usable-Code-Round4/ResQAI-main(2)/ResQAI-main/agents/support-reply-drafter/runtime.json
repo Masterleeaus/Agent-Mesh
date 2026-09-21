@@ -1,0 +1,5 @@
+{
+  "harness": "agents/harness/run.ts",
+  "type": "lemma-agent",
+  "command": "npx tsx agents/harness/run.ts support-reply-drafter <input-file>"
+}

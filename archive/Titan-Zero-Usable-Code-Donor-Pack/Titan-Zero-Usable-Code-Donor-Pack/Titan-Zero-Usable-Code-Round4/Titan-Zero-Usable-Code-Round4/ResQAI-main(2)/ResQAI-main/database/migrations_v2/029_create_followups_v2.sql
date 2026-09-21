@@ -1,0 +1,45 @@
+-- ResQAI V2 Migration 029
+-- Date:    2026-06-29
+-- Purpose: Create followups_v2 table
+--
+-- Applied to: ResQAI V2 Pod
+-- Schema: v2
+
+-- ============================================================
+-- Step 1: Create followups_v2 table
+-- ============================================================
+-- lemma table create followups_v2
+--   id --type UUID --pk
+--   account_id --type UUID --nullable                -- FK -> accounts_v2(id) ON DELETE CASCADE
+--   customer_id --type UUID --nullable                -- FK -> customers_v2(id) ON DELETE SET NULL
+--   type --type TEXT --nullable
+--   subject --type TEXT --nullable
+--   status --type TEXT --nullable --default "pending"
+--   priority --type TEXT --nullable --default "normal"
+--   due_date --type TIMESTAMPTZ --nullable
+--   completed_at --type TIMESTAMPTZ --nullable
+--   assigned_to --type TEXT --nullable
+--   related_ticket_id --type UUID --nullable
+--   related_appointment_id --type UUID --nullable
+--   related_dispute_id --type UUID --nullable
+--   notes --type TEXT --nullable
+--   created_by --type UUID --nullable                -- FK -> users_v2(id)
+--   updated_by --type UUID --nullable                -- FK -> users_v2(id)
+--   created_at --type TIMESTAMPTZ --nullable
+--   updated_at --type TIMESTAMPTZ --nullable
+--   deleted_at --type TIMESTAMPTZ --nullable
+--   version --type INTEGER --nullable --default 1
+
+-- Verify: lemma table describe followups_v2
+
+-- ============================================================
+-- Step 2: Add indexes
+-- ============================================================
+-- lemma table add-index followups_v2 account_id
+-- lemma table add-index followups_v2 customer_id
+-- lemma table add-index followups_v2 status
+-- lemma table add-index followups_v2 due_date
+-- lemma table add-index followups_v2 assigned_to
+-- lemma table add-index followups_v2 status_due_date_priority --type INDEX --expression "(status, due_date, priority)"
+
+-- Verify: lemma table list-indexes followups_v2

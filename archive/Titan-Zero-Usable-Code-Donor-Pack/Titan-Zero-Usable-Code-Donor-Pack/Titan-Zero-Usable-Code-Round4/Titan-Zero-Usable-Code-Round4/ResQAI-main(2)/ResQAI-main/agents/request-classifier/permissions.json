@@ -1,0 +1,27 @@
+{
+  "source": "Extracted from Lemma pod agent definition",
+  "agent_id": "019efbc9-be4f-7643-b910-ea56fd4d3390",
+  "agent_name": "request-classifier",
+  "grants": [
+    {
+      "resource_name": "technicians",
+      "resource_type": "datastore_table",
+      "permission_ids": ["datastore.record.read", "datastore.table.read"]
+    },
+    {
+      "resource_name": "tickets",
+      "resource_type": "datastore_table",
+      "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+    },
+    {
+      "resource_name": "facebook",
+      "resource_type": "connector",
+      "permission_ids": ["connector.use"]
+    },
+    {
+      "resource_name": "instagram",
+      "resource_type": "connector",
+      "permission_ids": ["connector.use"]
+    }
+  ]
+}

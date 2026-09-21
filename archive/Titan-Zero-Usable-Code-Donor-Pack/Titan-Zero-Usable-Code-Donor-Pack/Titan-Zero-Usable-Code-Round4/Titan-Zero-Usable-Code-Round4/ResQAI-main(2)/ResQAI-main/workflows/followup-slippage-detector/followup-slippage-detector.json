@@ -1,0 +1,210 @@
+{
+  "name": "followup-slippage-detector",
+  "description": "Scans for slipping followups every 30 minutes, routes flagged items through the operations-coordinator for human review and approval.",
+  "version": "1.0.0",
+  "status": "active",
+  "retry_policy": {
+    "max_retries": 3,
+    "initial_delay_ms": 2000,
+    "backoff_multiplier": 2,
+    "max_delay_ms": 30000,
+    "retryable_errors": ["timeout", "transient", "workload_error"]
+  },
+  "idempotency": {
+    "key_source": "start.metadata.time",
+    "ttl_seconds": 1800
+  },
+  "start": {
+    "type": "SCHEDULED",
+    "config": {
+      "cron": "*/30 * * * *",
+      "schedule_type": "CRON"
+    }
+  },
+  "nodes": [
+    {
+      "id": "flag_followups",
+      "type": "FUNCTION",
+      "label": "Flag Slipping Followups",
+      "config": {
+        "function_name": "flag_slipping_followups",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "today": { "type": "expression", "value": "start.metadata.time", "optional": true },
+          "top_n": { "type": "literal", "value": 50 },
+          "days_ahead": { "type": "literal", "value": 7 },
+          "include_statuses": { "type": "literal", "value": ["pending", "in_progress"] }
+        }
+      }
+    },
+    {
+      "id": "check_slippage",
+      "type": "DECISION",
+      "label": "Any Slipped Followups?",
+      "config": {
+        "rules": [
+          {
+            "condition": "flag_followups.counts.slipping > `0`",
+            "next_node_id": "coordinate_review"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coordinate_review",
+      "type": "AGENT",
+      "label": "Review with Operations Coordinator",
+      "config": {
+        "agent_name": "operations-coordinator",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "scope": { "type": "literal", "value": "daily" },
+          "today": { "type": "expression", "value": "start.metadata.time", "optional": true },
+          "max_actions": { "type": "literal", "value": 10 },
+          "create_tasks": { "type": "literal", "value": false }
+        }
+      }
+    },
+    {
+      "id": "human_review",
+      "type": "FORM",
+      "label": "Review Slipped Followups",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "title": "Review Slipped Followups",
+          "properties": {
+            "approve": {
+              "type": "boolean",
+              "description": "Approve sending reminders for slipped followups"
+            },
+            "reject": {
+              "type": "boolean",
+              "description": "Reject reminder dispatch for slipped followups"
+            },
+            "notes": {
+              "type": "string",
+              "description": "Additional notes or instructions"
+            }
+          }
+        },
+        "prefill": {
+          "slippage_summary": { "type": "expression", "value": "flag_followups.counts" },
+          "coordinator_summary": { "type": "expression", "value": "coordinate_review.summary" }
+        }
+      }
+    },
+    {
+      "id": "check_approval",
+      "type": "DECISION",
+      "label": "Approve Reminder?",
+      "config": {
+        "rules": [
+          {
+            "condition": "human_review.approve == `true`",
+            "next_node_id": "finalize"
+          }
+        ]
+      }
+    },
+    {
+      "id": "finalize",
+      "type": "FUNCTION",
+      "label": "Finalize",
+      "config": {
+        "function_name": "finalize_slippage_review",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "slippage_counts": { "type": "expression", "value": "flag_followups.counts" },
+          "slipping_followups": { "type": "expression", "value": "flag_followups.top" },
+          "coordinator_summary": { "type": "expression", "value": "coordinate_review.summary" },
+          "coordinator_recommendations": { "type": "expression", "value": "coordinate_review.recommendations" },
+          "human_notes": { "type": "expression", "value": "human_review.notes" },
+          "approved": { "type": "expression", "value": "human_review.approve" },
+          "workflow_run_time": { "type": "expression", "value": "start.metadata.time" }
+        }
+      }
+    },
+    {
+      "id": "end_no_slippage",
+      "type": "END",
+      "label": "No Slippage"
+    },
+    {
+      "id": "end_approved",
+      "type": "END",
+      "label": "Reminders Approved"
+    },
+    {
+      "id": "end_rejected",
+      "type": "END",
+      "label": "Reminders Rejected"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-flag-to-check",
+      "source": "flag_followups",
+      "target": "check_slippage"
+    },
+    {
+      "id": "e-slippage-yes",
+      "source": "check_slippage",
+      "target": "coordinate_review",
+      "label": "slipping > 0"
+    },
+    {
+      "id": "e-slippage-no",
+      "source": "check_slippage",
+      "target": "end_no_slippage",
+      "label": "default"
+    },
+    {
+      "id": "e-coordinate-to-review",
+      "source": "coordinate_review",
+      "target": "human_review"
+    },
+    {
+      "id": "e-review-to-decision",
+      "source": "human_review",
+      "target": "check_approval"
+    },
+    {
+      "id": "e-approve-yes",
+      "source": "check_approval",
+      "target": "finalize",
+      "label": "approved"
+    },
+    {
+      "id": "e-approve-no",
+      "source": "check_approval",
+      "target": "end_rejected",
+      "label": "default"
+    },
+    {
+      "id": "e-finalize-to-end",
+      "source": "finalize",
+      "target": "end_approved"
+    }
+  ],
+  "timeout_ms": 300000,
+  "visibility": "POD"
+}

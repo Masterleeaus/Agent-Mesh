@@ -1,0 +1,15 @@
+{
+  "name": "list_followups",
+  "description": "Lists followup records with optional filters by account_id, customer_id, status, assigned_to, and due date range. Returns paginated results.",
+  "type": "API",
+  "input_type_name": "ListFollowupsInput",
+  "output_type_name": "ListFollowupsOutput",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "visibility": "POD",
+  "permissions": {
+    "grants": [
+      { "resource_type": "datastore_table", "resource_name": "followups_v2", "permission_ids": ["datastore.record.read", "datastore.table.read"] }
+    ]
+  }
+}

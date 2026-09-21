@@ -1,0 +1,32 @@
+{
+  "name": "escalate_ticket",
+  "description": "Escalates a ticket with reason and updated urgency. Logs the escalation and optionally sends a Discord alert.",
+  "type": "API",
+  "visibility": "POD",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "tickets_v2",
+        "permission_ids": ["datastore.record.read", "datastore.record.write"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "operations_log",
+        "permission_ids": ["datastore.record.read", "datastore.record.write"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "events_v2",
+        "permission_ids": ["datastore.record.read", "datastore.record.write"]
+      },
+      {
+        "resource_type": "connector",
+        "resource_name": "resqai-discord",
+        "permission_ids": ["connector.use"]
+      }
+    ]
+  }
+}

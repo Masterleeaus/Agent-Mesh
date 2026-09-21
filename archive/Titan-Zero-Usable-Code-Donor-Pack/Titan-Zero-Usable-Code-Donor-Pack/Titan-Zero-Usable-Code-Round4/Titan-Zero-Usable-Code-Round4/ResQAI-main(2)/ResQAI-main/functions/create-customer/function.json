@@ -1,0 +1,17 @@
+{
+  "name": "create_customer",
+  "description": "Creates a new customer record and a corresponding account record with default health 'healthy'. Validates that name is provided. Writes an audit entry to the operations log.",
+  "type": "API",
+  "input_type_name": "CreateCustomerInput",
+  "output_type_name": "CreateCustomerOutput",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "visibility": "POD",
+  "permissions": {
+    "grants": [
+      { "resource_type": "datastore_table", "resource_name": "customers_v2", "permission_ids": ["datastore.record.create", "datastore.table.read"] },
+      { "resource_type": "datastore_table", "resource_name": "accounts_v2", "permission_ids": ["datastore.record.create", "datastore.table.read"] },
+      { "resource_type": "datastore_table", "resource_name": "operations_log", "permission_ids": ["datastore.record.create"] }
+    ]
+  }
+}

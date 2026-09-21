@@ -1,0 +1,161 @@
+﻿{
+  "items": [
+    {
+      "id": "0068416b-49c2-4fcb-add0-b485fb4d642d",
+      "created_at": "2026-06-24T22:40:01.648667Z",
+      "updated_at": "2026-06-24T22:40:01.648667Z",
+      "name": "Marcus Patel",
+      "phone": "(415) 555-0524",
+      "email": "marcus.p@example.com",
+      "address": "2301 Folsom St, San Francisco CA",
+      "status": "active",
+      "notes": "EV charger install ù Level 2."
+    },
+    {
+      "id": "889138f7-9dc2-46b3-8b6c-38b6e94cdbdd",
+      "created_at": "2026-06-24T22:40:00.689291Z",
+      "updated_at": "2026-06-24T22:40:00.689291Z",
+      "name": "Yuki Tanaka",
+      "phone": "(415) 555-0188",
+      "email": "yuki.t@example.com",
+      "address": "812 Highland Pl, San Rafael CA",
+      "status": "in_dispute",
+      "notes": "Third visit in 4 months for the same bathroom leak. Dispute filed."
+    },
+    {
+      "id": "254d1ee7-3453-4254-bfc1-512c66d98255",
+      "created_at": "2026-06-24T22:39:58.942310Z",
+      "updated_at": "2026-06-24T22:39:58.942310Z",
+      "name": "Daniel Cooper",
+      "phone": "(650) 555-0357",
+      "email": "d.cooper@example.com",
+      "address": "1441 Spruce Ave, San Mateo CA",
+      "status": "dormant",
+      "notes": "Outdoor outlet replacement. Customer was out of pocket last spring; needs follow-up."
+    },
+    {
+      "id": "c86248cd-7923-4305-8139-51c9443f28a3",
+      "created_at": "2026-06-24T22:39:57.885620Z",
+      "updated_at": "2026-06-24T22:39:57.885620Z",
+      "name": "Angela Martinez",
+      "phone": "(408) 555-0318",
+      "email": "angela.m@example.com",
+      "address": "66 Oak Meadow Ln, Sunnyvale CA",
+      "status": "active",
+      "notes": "Two remote-controlled ceiling fans to install."
+    },
+    {
+      "id": "32a5c992-cbf3-4410-b20e-95961986a778",
+      "created_at": "2026-06-24T22:39:56.917931Z",
+      "updated_at": "2026-06-24T22:39:56.917931Z",
+      "name": "Christopher Lee",
+      "phone": "(510) 555-0499",
+      "email": "c.lee@example.com",
+      "address": "2105 Magnolia Ave, Berkeley CA",
+      "status": "active",
+      "notes": "Bosch dishwasher, 3 yrs old."
+    },
+    {
+      "id": "782b89bd-9925-4ad8-b1ab-5b5c6903f573",
+      "created_at": "2026-06-24T22:39:55.968836Z",
+      "updated_at": "2026-06-24T22:39:55.968836Z",
+      "name": "Patricia Garcia",
+      "phone": "(415) 555-0411",
+      "email": "pgarcia@example.com",
+      "address": "9 Sunset way, Daly City CA",
+      "status": "active",
+      "notes": "Mid-century furnace. Backup heat strips ù sensitive to cold snaps."
+    },
+    {
+      "id": "82b49097-373b-44c7-a179-1941db6facff",
+      "created_at": "2026-06-24T22:39:55.016272Z",
+      "updated_at": "2026-06-24T22:39:55.016272Z",
+      "name": "Michael Brown",
+      "phone": "(650) 555-0263",
+      "email": "m.brown@example.com",
+      "address": "318 Cedar St, Redwood City CA",
+      "status": "active",
+      "notes": "Remodeled kitchen last year."
+    },
+    {
+      "id": "cb41c02d-b716-4b8f-8c19-7d7fdc61f9cc",
+      "created_at": "2026-06-24T22:39:53.957203Z",
+      "updated_at": "2026-06-24T22:39:53.957203Z",
+      "name": "Jennifer Davis",
+      "phone": "(415) 555-0322",
+      "email": "jen.davis@example.com",
+      "address": "440 Lakeshore Ave, Oakland CA",
+      "status": "service_due",
+      "notes": "Garbage disposal has been making noises ù customer postponed twice."
+    },
+    {
+      "id": "ead738ed-c514-41ab-a264-083c62d8ef96",
+      "created_at": "2026-06-24T22:39:52.979423Z",
+      "updated_at": "2026-06-24T22:39:52.979423Z",
+      "name": "Robert williams",
+      "phone": "(510) 555-0156",
+      "email": "r.williams@example.com",
+      "address": "78 Hilltop Pl, Berkeley CA",
+      "status": "active",
+      "notes": "Older home, original plumbing."
+    },
+    {
+      "id": "b7d3815c-61ba-40fc-b0f6-542cb9376b4e",
+      "created_at": "2026-06-24T22:39:51.965343Z",
+      "updated_at": "2026-06-24T22:39:51.965343Z",
+      "name": "Lisa Park",
+      "phone": "(415) 555-0481",
+      "email": "lisa.park@example.com",
+      "address": "12 Marina Blvd, San Francisco CA",
+      "status": "active",
+      "notes": "Annual AC maintenance contract ù April and October service visits."
+    },
+    {
+      "id": "cfa38a5c-2e27-46b5-aa14-b4cb0edd9480",
+      "created_at": "2026-06-24T22:39:51.016437Z",
+      "updated_at": "2026-06-24T22:39:51.016437Z",
+      "name": "David Thompson",
+      "phone": "(408) 555-0388",
+      "email": "david.t@example.com",
+      "address": "201 Pine Hill Rd, San Jose CA",
+      "status": "service_due",
+      "notes": "Original panel from 1998. wants quote for 200A upgrade when convenient."
+    },
+    {
+      "id": "663ec617-05c4-41fb-8d39-4e73cc1b0204",
+      "created_at": "2026-06-24T22:39:50.104757Z",
+      "updated_at": "2026-06-24T22:39:50.104757Z",
+      "name": "Maria Chen",
+      "phone": "(650) 555-0179",
+      "email": "maria.chen@example.com",
+      "address": "55 Birchwood Ct, Palo Alto CA",
+      "status": "at_risk",
+      "notes": "Reported repeat water-heater issues twice in past 12 months. worth a check-in."
+    },
+    {
+      "id": "4033a343-4b18-4b8b-883a-04b4d87b1778",
+      "created_at": "2026-06-24T22:39:49.040472Z",
+      "updated_at": "2026-06-24T22:39:49.040472Z",
+      "name": "James Rodriguez",
+      "phone": "(510) 555-0287",
+      "email": "j.rodriguez@example.com",
+      "address": "22 Glenview Dr, Oakland CA",
+      "status": "active",
+      "notes": "Side-by-side fridge, ~6 yrs old."
+    },
+    {
+      "id": "7f63db44-e292-4148-af8c-339c2c417107",
+      "created_at": "2026-06-24T22:39:47.916684Z",
+      "updated_at": "2026-06-24T22:39:47.916684Z",
+      "name": "Sarah Mitchell",
+      "phone": "(415) 555-0142",
+      "email": "sarah.m@example.com",
+      "address": "1840 Oak Ridge Ln, San Rafael CA",
+      "status": "active",
+      "notes": "Premium AC customer since 2019. Two-story home, central AC + ducted heat pump."
+    }
+  ],
+  "limit": 14,
+  "next_page_token": null,
+  "total": 14
+}

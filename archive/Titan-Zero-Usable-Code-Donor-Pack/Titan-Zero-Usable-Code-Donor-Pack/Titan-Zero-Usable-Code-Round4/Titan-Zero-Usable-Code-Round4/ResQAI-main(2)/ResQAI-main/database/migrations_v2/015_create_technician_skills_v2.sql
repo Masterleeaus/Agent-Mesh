@@ -1,0 +1,35 @@
+-- ResQAI V2 Migration 015
+-- Date:    2026-06-29
+-- Purpose: Create technician_skills_v2 table for skill/certification mapping
+--
+-- Applied to: ResQAI V2 Pod
+-- Schema: v2
+
+-- ============================================================
+-- Step 1: Create technician_skills_v2 table
+-- ============================================================
+-- lemma table create technician_skills_v2 \
+--   id:UUID --pk \
+--   technician_id:UUID \
+--   skill:TEXT \
+--   proficiency:TEXT --default 'intermediate' \
+--   certification_ref:TEXT \
+--   expires_at:DATE \
+--   created_at:TIMESTAMPTZ \
+--   updated_at:TIMESTAMPTZ
+
+-- ============================================================
+-- Step 2: Add foreign key, unique constraint, and indexes
+-- ============================================================
+-- lemma table add-foreign-key technician_skills_v2 fk_tskill_technician \
+--   --from technician_id --to technicians_v2(id) --on-delete CASCADE
+-- lemma table add-unique technician_skills_v2 uq_tskill_tech_skill \
+--   --fields technician_id,skill
+-- lemma table add-index technician_skills_v2 idx_tskill_tech_id --using btree --fields technician_id
+-- lemma table add-index technician_skills_v2 idx_tskill_skill --using btree --fields skill
+
+-- Verify: lemma table describe technician_skills_v2
+-- Verify: lemma table indexes technician_skills_v2
+-- Expected: idx_tskill_tech_id, idx_tskill_skill
+-- Expected: uq_tskill_tech_skill (unique on technician_id + skill)
+-- Expected: fk_tskill_technician (technician_id -> technicians_v2(id) ON DELETE CASCADE)

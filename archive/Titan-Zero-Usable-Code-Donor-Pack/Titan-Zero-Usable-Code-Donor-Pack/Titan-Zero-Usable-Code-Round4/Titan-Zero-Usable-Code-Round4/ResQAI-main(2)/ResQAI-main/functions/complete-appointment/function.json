@@ -1,0 +1,27 @@
+{
+  "name": "complete_appointment",
+  "description": "Marks an appointment as completed. Validates appointment exists and is not already completed, updates status, records completion time, optionally creates inventory transactions, and writes an audit log entry.",
+  "type": "API",
+  "visibility": "POD",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "appointment_v2",
+        "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "inventory_transactions",
+        "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "operations_log",
+        "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+      }
+    ]
+  }
+}

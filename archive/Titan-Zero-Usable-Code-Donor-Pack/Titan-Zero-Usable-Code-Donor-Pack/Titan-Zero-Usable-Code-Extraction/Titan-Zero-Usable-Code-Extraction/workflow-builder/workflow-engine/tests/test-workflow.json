@@ -1,0 +1,76 @@
+{
+  "id": "test-transform-workflow",
+  "name": "Simple Transform Test Workflow",
+  "description": "Test workflow that transforms data using the transform node",
+  "version": "1.0.0",
+  "trigger": {
+    "type": "manual",
+    "config": {
+      "requiresConfirmation": false
+    }
+  },
+  "nodes": {
+    "transform-1": {
+      "type": "transform",
+      "position": { "x": 100, "y": 100 },
+      "inputs": {
+        "input_data": {
+          "name": "John Doe",
+          "age": 30,
+          "email": "john@example.com",
+          "department": "Engineering"
+        },
+        "transformation_type": "extract",
+        "transformation_config": {
+          "fields": ["name", "email"]
+        }
+      },
+      "config": {}
+    },
+    "conditional-1": {
+      "type": "conditional",
+      "position": { "x": 300, "y": 100 },
+      "inputs": {
+        "condition": "data.name",
+        "data": "{{transform-1.transformed_data}}",
+        "true_value": { "message": "User has name" },
+        "false_value": { "message": "User has no name" }
+      },
+      "config": {}
+    }
+  },
+  "connections": [
+    {
+      "source": "transform-1",
+      "target": "conditional-1",
+      "sourceOutput": "transformed_data",
+      "targetInput": "data"
+    }
+  ],
+  "settings": {
+    "timeout": 60000,
+    "retryPolicy": {
+      "maxRetries": 2,
+      "backoffStrategy": "linear",
+      "baseDelay": 1000,
+      "maxDelay": 5000,
+      "retryableErrors": ["TIMEOUT_ERROR", "NETWORK_ERROR"]
+    },
+    "errorHandling": {
+      "retryPolicy": {
+        "maxRetries": 2,
+        "backoffStrategy": "linear",
+        "baseDelay": 1000,
+        "maxDelay": 5000,
+        "retryableErrors": ["TIMEOUT_ERROR"]
+      },
+      "fallbackBehavior": {
+        "continueOnError": false
+      },
+      "notifications": {
+        "onError": [],
+        "onFailure": []
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "harness": "agents/harness/run.ts",
+  "type": "ai-runtime",
+  "version": "2.0.0",
+  "runtime": "@resqai/runtime",
+  "provider": "lemma",
+  "model": null,
+  "execution": {
+    "mode": "semi-auto",
+    "maxConcurrency": 1
+  },
+  "retry": {
+    "maxAttempts": 3,
+    "baseDelayMs": 1500,
+    "backoffFactor": 2
+  },
+  "timeout": {
+    "defaultMs": 180000,
+    "hardLimitMs": 300000
+  },
+  "confidence": {
+    "autoExecute": 0.8,
+    "requireReview": 0.5,
+    "escalate": 0.3
+  },
+  "context": {
+    "maxTokens": 96000,
+    "windowStrategy": "hybrid",
+    "compressionEnabled": true
+  },
+  "memory": {
+    "enabled": true,
+    "type": "hybrid",
+    "maxMessages": 60
+  },
+  "cost": {
+    "budgetCents": 8000,
+    "alertThreshold": 0.8
+  },
+  "command": "npx tsx agents/harness/run.ts account-health-monitor <input-file>"
+}

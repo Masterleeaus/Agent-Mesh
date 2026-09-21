@@ -1,0 +1,26 @@
+export const PERMISSIONS = {
+  ADMIN_VIEW_DASHBOARD: 'admin:view_dashboard',
+  ADMIN_MANAGE_USERS: 'admin:manage_users',
+  ADMIN_MANAGE_ROLES: 'admin:manage_roles',
+  ADMIN_VIEW_AUDIT: 'admin:view_audit',
+  ADMIN_MANAGE_SETTINGS: 'admin:manage_settings',
+  ADMIN_MANAGE_CONNECTORS: 'admin:manage_connectors',
+  ADMIN_VIEW_EVENTS: 'admin:view_events',
+  ADMIN_EXPORT_AUDIT: 'admin:export_audit',
+  ADMIN_MANAGE_APPLICATIONS: 'admin:manage_applications',
+  ADMIN_MANAGE_WORKFLOWS: 'admin:manage_workflows',
+  ADMIN_MANAGE_FUNCTIONS: 'admin:manage_functions',
+  ADMIN_MANAGE_AGENTS: 'admin:manage_agents',
+  ADMIN_VIEW_MONITORING: 'admin:view_monitoring',
+  ADMIN_MANAGE_INTEGRATIONS: 'admin:manage_integrations',
+  ADMIN_MANAGE_NOTIFICATIONS: 'admin:manage_notifications',
+  ADMIN_MANAGE_FEATURE_FLAGS: 'admin:manage_feature_flags',
+  ADMIN_MANAGE_SECURITY: 'admin:manage_security',
+  ADMIN_MANAGE_API_KEYS: 'admin:manage_api_keys',
+  ADMIN_MANAGE_ORGANIZATIONS: 'admin:manage_organizations',
+  ADMIN_MANAGE_TEAMS: 'admin:manage_teams',
+  ADMIN_VIEW_ERRORS: 'admin:view_errors',
+  ADMIN_MANAGE_DATABASE: 'admin:manage_database',
+} as const;
+
+export type PermissionKey = typeof PERMISSIONS[keyof typeof PERMISSIONS];

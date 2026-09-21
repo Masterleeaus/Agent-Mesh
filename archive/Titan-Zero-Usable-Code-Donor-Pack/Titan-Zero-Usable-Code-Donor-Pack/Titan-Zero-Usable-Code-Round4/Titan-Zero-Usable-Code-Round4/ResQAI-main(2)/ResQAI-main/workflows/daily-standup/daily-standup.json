@@ -1,0 +1,125 @@
+{
+  "name": "daily-standup",
+  "description": "Daily operations standup: operations-coordinator assesses scope, generates recommendations, and creates tasks for the team. V2 conversion with full edge graph, retry policy, timeout, audit, and notification support.",
+  "status": "active",
+  "version": "2.0.0",
+  "retry_policy": {
+    "max_retries": 3,
+    "initial_delay_ms": 2000,
+    "backoff_multiplier": 2,
+    "max_delay_ms": 30000,
+    "retryable_errors": ["timeout", "transient", "workload_error"]
+  },
+  "timeout_ms": 300000,
+  "idempotency": {
+    "key_source": "start.metadata.time",
+    "ttl_seconds": 86400
+  },
+  "start": {
+    "type": "SCHEDULED",
+    "config": {
+      "cron": "0 8 * * 1-5",
+      "schedule_type": "CRON"
+    }
+  },
+  "nodes": [
+    {
+      "id": "coordinate_ops",
+      "type": "AGENT",
+      "label": "Coordinate Operations",
+      "config": {
+        "agent_name": "operations-coordinator",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "scope": { "type": "literal", "value": "daily" },
+          "today": { "type": "expression", "value": "start.metadata.time", "optional": true },
+          "max_actions": { "type": "literal", "value": 8 },
+          "create_tasks": { "type": "literal", "value": true }
+        }
+      }
+    },
+    {
+      "id": "route_status",
+      "type": "DECISION",
+      "label": "Route by Status",
+      "config": {
+        "rules": [
+          {
+            "condition": "coordinate_ops.coordination_status == `crisis` || coordinate_ops.coordination_status == `unavailable_data`",
+            "next_node_id": "notify_manager"
+          },
+          {
+            "condition": "coordinate_ops.coordination_status == `attention_needed` || coordinate_ops.coordination_status == `ok`",
+            "next_node_id": "create_tasks"
+          }
+        ]
+      }
+    },
+    {
+      "id": "create_tasks",
+      "type": "FUNCTION",
+      "label": "Create Tasks",
+      "config": {
+        "function_name": "create_operations_tasks",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "recommendations": { "type": "expression", "value": "coordinate_ops.recommendations", "optional": true },
+          "today": { "type": "expression", "value": "coordinate_ops.scan_date", "optional": true },
+          "scope": { "type": "expression", "value": "coordinate_ops.scope", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "notify_manager",
+      "type": "FORM",
+      "label": "Notify Ops Manager",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "acknowledged": {
+              "type": "boolean",
+              "description": "Acknowledge receipt of ops status alert"
+            },
+            "action_taken": {
+              "type": "string",
+              "description": "Actions taken in response"
+            }
+          },
+          "required": ["acknowledged"]
+        },
+        "prefill": {
+          "status": { "type": "expression", "value": "coordinate_ops.coordination_status" },
+          "summary": { "type": "expression", "value": "coordinate_ops.summary", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "end_complete",
+      "type": "END",
+      "label": "Standup Complete"
+    }
+  ],
+  "edges": [
+    { "id": "e-ops-to-route", "source": "coordinate_ops", "target": "route_status" },
+    { "id": "e-route-tasks", "source": "route_status", "target": "create_tasks", "label": "attention_needed / ok" },
+    { "id": "e-route-manager", "source": "route_status", "target": "notify_manager", "label": "crisis / unavailable_data" },
+    { "id": "e-route-end", "source": "route_status", "target": "end_complete", "label": "default" },
+    { "id": "e-tasks-to-end", "source": "create_tasks", "target": "end_complete" },
+    { "id": "e-manager-to-end", "source": "notify_manager", "target": "end_complete" }
+  ],
+  "visibility": "POD",
+  "enabled": true
+}

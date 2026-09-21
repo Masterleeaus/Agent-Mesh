@@ -1,0 +1,172 @@
+﻿{
+  "items": [
+    {
+      "id": "1c8769fc-dd77-43be-840c-6a14dd2e4676",
+      "created_at": "2026-06-24T22:40:24.752140Z",
+      "updated_at": "2026-06-24T22:40:24.752140Z",
+      "customer_id": "b7d3815c-61ba-40fc-b0f6-542cb9376b4e",
+      "service_type": "ac_maintenance",
+      "date": "2026-07-01T22:39:46Z",
+      "status": "scheduled",
+      "technician_id": "c000f9c1-feeb-4b44-a555-b39eb57bad93",
+      "notes": "Fall maintenance scheduled"
+    },
+    {
+      "id": "69766795-7032-4e4e-8855-4c6a15da4a43",
+      "created_at": "2026-06-24T22:40:23.827718Z",
+      "updated_at": "2026-06-24T22:40:23.827718Z",
+      "customer_id": "82b49097-373b-44c7-a179-1941db6facff",
+      "service_type": "electrical_repair",
+      "date": "2026-06-04T09:00:46Z",
+      "status": "completed",
+      "technician_id": "895a7fc6-2d16-4bc5-8967-c237ec6427bc",
+      "notes": "Replaced breaker; verified other circuits"
+    },
+    {
+      "id": "67cfb437-f1c7-453c-8f6c-a9f2345c01f8",
+      "created_at": "2026-06-24T22:40:22.914601Z",
+      "updated_at": "2026-06-24T22:40:22.914601Z",
+      "customer_id": "889138f7-9dc2-46b3-8b6c-38b6e94cdbdd",
+      "service_type": "plumbing_repair",
+      "date": "2026-06-09T09:00:46Z",
+      "status": "completed",
+      "technician_id": "c123930c-6b7a-4a15-aa54-4b50c12411d3",
+      "notes": "Replaced supply line; customer reported new leak 2 days later"
+    },
+    {
+      "id": "fdaa7978-cdea-4687-9071-59171378720e",
+      "created_at": "2026-06-24T22:40:21.987135Z",
+      "updated_at": "2026-06-24T22:40:21.987135Z",
+      "customer_id": "889138f7-9dc2-46b3-8b6c-38b6e94cdbdd",
+      "service_type": "plumbing_repair",
+      "date": "2026-06-19T09:00:46Z",
+      "status": "completed",
+      "technician_id": "c123930c-6b7a-4a15-aa54-4b50c12411d3",
+      "notes": "Replaced wax ring; tested 24h OK"
+    },
+    {
+      "id": "49173dc4-d1f6-4ccc-8553-76dd5be6a1eb",
+      "created_at": "2026-06-24T22:40:21.030493Z",
+      "updated_at": "2026-06-24T22:40:21.030493Z",
+      "customer_id": "0068416b-49c2-4fcb-add0-b485fb4d642d",
+      "service_type": "electrical_repair",
+      "date": "2026-06-29T22:39:46Z",
+      "status": "scheduled",
+      "technician_id": null,
+      "notes": "Need to assign; quote approved"
+    },
+    {
+      "id": "24e8f53a-1c3b-41dc-87de-c3cab19640a5",
+      "created_at": "2026-06-24T22:40:19.959866Z",
+      "updated_at": "2026-06-24T22:40:19.959866Z",
+      "customer_id": "c86248cd-7923-4305-8139-51c9443f28a3",
+      "service_type": "installation",
+      "date": "2026-06-28T22:39:46Z",
+      "status": "scheduled",
+      "technician_id": "c000f9c1-feeb-4b44-a555-b39eb57bad93",
+      "notes": "Two bedroom ceiling fans, remote-controlled"
+    },
+    {
+      "id": "919fb106-6d89-4931-ab42-d0aabcf8ec33",
+      "created_at": "2026-06-24T22:40:19.030294Z",
+      "updated_at": "2026-06-24T22:40:19.030294Z",
+      "customer_id": "32a5c992-cbf3-4410-b20e-95961986a778",
+      "service_type": "appliance_repair",
+      "date": "2026-06-26T02:39:46Z",
+      "status": "scheduled",
+      "technician_id": "ec1a998e-e528-41cb-808d-12a17843182d",
+      "notes": "Drain pump failure suspected"
+    },
+    {
+      "id": "9dd1d483-869e-4037-9c39-fd177dbcb37b",
+      "created_at": "2026-06-24T22:40:18.098623Z",
+      "updated_at": "2026-06-24T22:40:18.098623Z",
+      "customer_id": "782b89bd-9925-4ad8-b1ab-5b5c6903f573",
+      "service_type": "ac_repair",
+      "date": "2026-06-23T09:00:46Z",
+      "status": "needs_followup",
+      "technician_id": "34a02561-32e0-4f37-8f98-b91bf96f84de",
+      "notes": "Furnace intermittent; ordered igniter; needs follow-up visit"
+    },
+    {
+      "id": "99c63480-f72e-4542-9ea7-61af49b6618c",
+      "created_at": "2026-06-24T22:40:17.099606Z",
+      "updated_at": "2026-06-24T22:40:17.099606Z",
+      "customer_id": "cb41c02d-b716-4b8f-8c19-7d7fdc61f9cc",
+      "service_type": "appliance_repair",
+      "date": "2026-06-27T22:39:46Z",
+      "status": "scheduled",
+      "technician_id": "ec1a998e-e528-41cb-808d-12a17843182d",
+      "notes": "Garbage disposal humming but not grinding"
+    },
+    {
+      "id": "c44ec3b7-db7b-41b8-9c73-e0fad946a7a8",
+      "created_at": "2026-06-24T22:40:16.187657Z",
+      "updated_at": "2026-06-24T22:40:16.187657Z",
+      "customer_id": "ead738ed-c514-41ab-a264-083c62d8ef96",
+      "service_type": "plumbing_repair",
+      "date": "2026-06-26T22:39:46Z",
+      "status": "scheduled",
+      "technician_id": "bb01971c-1c77-41bd-af98-d2b63fced024",
+      "notes": "Replace fill valve and flapper"
+    },
+    {
+      "id": "c009acae-2b24-4afc-8436-2dc6fd845491",
+      "created_at": "2026-06-24T22:40:15.247905Z",
+      "updated_at": "2026-06-24T22:40:15.247905Z",
+      "customer_id": "b7d3815c-61ba-40fc-b0f6-542cb9376b4e",
+      "service_type": "ac_maintenance",
+      "date": "2026-06-17T09:00:46Z",
+      "status": "completed",
+      "technician_id": "c000f9c1-feeb-4b44-a555-b39eb57bad93",
+      "notes": "Quarterly maintenance; coil clean; filter replaced"
+    },
+    {
+      "id": "1fa5bb9e-be04-4237-93df-103575cd3dde",
+      "created_at": "2026-06-24T22:40:14.290112Z",
+      "updated_at": "2026-06-24T22:40:14.290112Z",
+      "customer_id": "cfa38a5c-2e27-46b5-aa14-b4cb0edd9480",
+      "service_type": "electrical_repair",
+      "date": "2026-06-24T09:00:46Z",
+      "status": "in_progress",
+      "technician_id": "895a7fc6-2d16-4bc5-8967-c237ec6427bc",
+      "notes": "Main panel inspection ù loose neutral suspected"
+    },
+    {
+      "id": "a29a9ca6-5d22-41ee-b759-02b3c6b75b4e",
+      "created_at": "2026-06-24T22:40:13.141323Z",
+      "updated_at": "2026-06-24T22:40:13.141323Z",
+      "customer_id": "663ec617-05c4-41fb-8d39-4e73cc1b0204",
+      "service_type": "plumbing_repair",
+      "date": "2026-06-22T09:00:46Z",
+      "status": "completed",
+      "technician_id": "c123930c-6b7a-4a15-aa54-4b50c12411d3",
+      "notes": "Replaced heating element; tested OK"
+    },
+    {
+      "id": "7bcdb61c-4057-4c10-8fd5-6bed419df256",
+      "created_at": "2026-06-24T22:40:12.072785Z",
+      "updated_at": "2026-06-24T22:40:12.072785Z",
+      "customer_id": "4033a343-4b18-4b8b-883a-04b4d87b1778",
+      "service_type": "appliance_repair",
+      "date": "2026-06-25T18:39:46Z",
+      "status": "scheduled",
+      "technician_id": "ec1a998e-e528-41cb-808d-12a17843182d",
+      "notes": "Side-by-side Samsung, water pump suspected"
+    },
+    {
+      "id": "50f0eb96-69bf-403e-adf5-1f663c254717",
+      "created_at": "2026-06-24T22:40:11.104955Z",
+      "updated_at": "2026-06-24T22:40:11.104955Z",
+      "customer_id": "7f63db44-e292-4148-af8c-339c2c417107",
+      "service_type": "ac_repair",
+      "date": "2026-06-25T02:39:46Z",
+      "status": "scheduled",
+      "technician_id": "f1ed9d86-fc90-4a6e-9038-780dd594cb96",
+      "notes": "Diagnostic + refrigerant top-up; 2nd floor unit"
+    }
+  ],
+  "limit": 15,
+  "next_page_token": null,
+  "total": 15
+}

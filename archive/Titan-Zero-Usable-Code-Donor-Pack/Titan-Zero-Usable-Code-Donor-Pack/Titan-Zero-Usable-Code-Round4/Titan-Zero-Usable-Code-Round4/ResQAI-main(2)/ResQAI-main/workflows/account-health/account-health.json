@@ -1,0 +1,187 @@
+{
+  "name": "account-health",
+  "description": "Account health monitoring pipeline: flags slipping followups, runs health scans, then account-health-monitor generates recommendations and creates tasks. V2 conversion with full edge graph, retry policy, timeout, audit, and notification support.",
+  "status": "active",
+  "version": "2.0.0",
+  "retry_policy": {
+    "max_retries": 3,
+    "initial_delay_ms": 2000,
+    "backoff_multiplier": 2,
+    "max_delay_ms": 30000,
+    "retryable_errors": ["timeout", "transient", "workload_error"]
+  },
+  "timeout_ms": 900000,
+  "idempotency": {
+    "key_source": "start.metadata.time",
+    "ttl_seconds": 86400
+  },
+  "start": {
+    "type": "SCHEDULED",
+    "config": {
+      "cron": "0 2 * * *",
+      "schedule_type": "CRON"
+    }
+  },
+  "nodes": [
+    {
+      "id": "flag_slipping",
+      "type": "FUNCTION",
+      "label": "Flag Slipping Followups",
+      "config": {
+        "function_name": "flag_slipping_followups",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "today": { "type": "expression", "value": "start.metadata.time", "optional": true },
+          "top_n": { "type": "literal", "value": 20 },
+          "days_ahead": { "type": "literal", "value": 7 },
+          "include_statuses": { "type": "literal", "value": ["pending", "in_progress"] }
+        }
+      }
+    },
+    {
+      "id": "check_slippage",
+      "type": "DECISION",
+      "label": "Any Slipping?",
+      "config": {
+        "rules": [
+          {
+            "condition": "flag_slipping.counts.slipping > `0`",
+            "next_node_id": "health_scan"
+          }
+        ]
+      }
+    },
+    {
+      "id": "health_scan",
+      "type": "FUNCTION",
+      "label": "Account Health Scan",
+      "config": {
+        "function_name": "account_health_scan",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "today": { "type": "expression", "value": "start.metadata.time", "optional": true },
+          "lookback_days": { "type": "literal", "value": 45 },
+          "write_back": { "type": "literal", "value": true },
+          "top_n_riskiest": { "type": "literal", "value": 10 }
+        }
+      }
+    },
+    {
+      "id": "analyze_health",
+      "type": "AGENT",
+      "label": "Analyze Account Health",
+      "config": {
+        "agent_name": "account_health_monitor",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "today": { "type": "expression", "value": "start.metadata.time", "optional": true },
+          "days_ahead": { "type": "literal", "value": 7 },
+          "lookback_days": { "type": "literal", "value": 45 },
+          "max_recommendations": { "type": "literal", "value": 8 },
+          "create_followup_tasks": { "type": "literal", "value": true },
+          "slipping_followups": { "type": "expression", "value": "flag_slipping.top", "optional": true },
+          "health_scan_results": { "type": "expression", "value": "health_scan", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "route_health",
+      "type": "DECISION",
+      "label": "Route by Health Status",
+      "config": {
+        "rules": [
+          {
+            "condition": "analyze_health.coordination_status == `crisis`",
+            "next_node_id": "notify_manager"
+          },
+          {
+            "condition": "analyze_health.coordination_status == `attention_needed` || analyze_health.coordination_status == `ok`",
+            "next_node_id": "create_tasks"
+          }
+        ]
+      }
+    },
+    {
+      "id": "create_tasks",
+      "type": "FUNCTION",
+      "label": "Create Followup Tasks",
+      "config": {
+        "function_name": "create_followup_tasks",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "recommendations": { "type": "expression", "value": "analyze_health.recommendations", "optional": true },
+          "today": { "type": "expression", "value": "analyze_health.scan_date", "optional": true },
+          "category": { "type": "literal", "value": "account_health" }
+        }
+      }
+    },
+    {
+      "id": "notify_manager",
+      "type": "FORM",
+      "label": "Notify Ops Manager",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "acknowledged": {
+              "type": "boolean",
+              "description": "Acknowledge receipt of health alert"
+            },
+            "action_taken": {
+              "type": "string",
+              "description": "Actions taken in response to alert"
+            }
+          },
+          "required": ["acknowledged"]
+        },
+        "prefill": {
+          "status": { "type": "expression", "value": "analyze_health.coordination_status" },
+          "summary": { "type": "expression", "value": "analyze_health.summary", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "end_complete",
+      "type": "END",
+      "label": "Completed"
+    }
+  ],
+  "edges": [
+    { "id": "e-flag-to-check", "source": "flag_slipping", "target": "check_slippage" },
+    { "id": "e-no-slippage", "source": "check_slippage", "target": "end_complete", "label": "default" },
+    { "id": "e-slippage-found", "source": "check_slippage", "target": "health_scan", "label": "slipping > 0" },
+    { "id": "e-scan-to-analyze", "source": "health_scan", "target": "analyze_health" },
+    { "id": "e-analyze-to-route", "source": "analyze_health", "target": "route_health" },
+    { "id": "e-route-tasks", "source": "route_health", "target": "create_tasks", "label": "attention_needed / ok" },
+    { "id": "e-route-manager", "source": "route_health", "target": "notify_manager", "label": "crisis" },
+    { "id": "e-route-end", "source": "route_health", "target": "end_complete", "label": "default (no_action_needed)" },
+    { "id": "e-tasks-to-end", "source": "create_tasks", "target": "end_complete" },
+    { "id": "e-manager-to-end", "source": "notify_manager", "target": "end_complete" }
+  ],
+  "visibility": "POD",
+  "enabled": true
+}

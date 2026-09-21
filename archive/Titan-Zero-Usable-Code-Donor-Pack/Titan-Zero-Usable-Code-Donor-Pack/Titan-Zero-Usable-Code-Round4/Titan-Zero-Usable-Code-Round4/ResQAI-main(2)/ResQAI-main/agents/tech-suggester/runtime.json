@@ -1,0 +1,41 @@
+{
+  "harness": "agents/harness/run.ts",
+  "type": "ai-runtime",
+  "version": "2.0.0",
+  "runtime": "@resqai/runtime",
+  "provider": "lemma",
+  "model": null,
+  "execution": {
+    "mode": "auto",
+    "maxConcurrency": 1
+  },
+  "retry": {
+    "maxAttempts": 2,
+    "baseDelayMs": 1000,
+    "backoffFactor": 2
+  },
+  "timeout": {
+    "defaultMs": 90000,
+    "hardLimitMs": 180000
+  },
+  "confidence": {
+    "autoExecute": 0.8,
+    "requireReview": 0.55,
+    "escalate": 0.3
+  },
+  "context": {
+    "maxTokens": 32000,
+    "windowStrategy": "sliding",
+    "compressionEnabled": true
+  },
+  "memory": {
+    "enabled": false,
+    "type": "none",
+    "maxMessages": 10
+  },
+  "cost": {
+    "budgetCents": 3000,
+    "alertThreshold": 0.8
+  },
+  "command": "npx tsx agents/harness/run.ts tech-suggester <input-file>"
+}

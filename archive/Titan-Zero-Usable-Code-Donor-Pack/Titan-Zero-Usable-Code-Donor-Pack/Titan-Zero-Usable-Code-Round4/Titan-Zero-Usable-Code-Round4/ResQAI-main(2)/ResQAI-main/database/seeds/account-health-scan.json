@@ -1,0 +1,315 @@
+﻿{
+  "created_at": "2026-06-25T05:13:13.022533Z",
+  "id": "019efd32-4e3e-7380-a57c-a4469e5779f7",
+  "input_schema": {
+    "type": "object",
+    "title": "AccountHealthScanInput",
+    "properties": {
+      "today": {
+        "anyOf": [
+          {
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "Today",
+        "default": null,
+        "description": "Override 'now'. Defaults to system date."
+      },
+      "write_back": {
+        "type": "boolean",
+        "title": "write Back",
+        "default": true,
+        "description": "If true, update accounts.health, health_score, open_followups, overdue_followups, open_disputes. Defaults true so the CRM Tracker app stays fresh."
+      },
+      "lookback_days": {
+        "type": "integer",
+        "title": "Lookback Days",
+        "default": 120,
+        "description": "How many days back define 'recent engagement'."
+      },
+      "top_n_riskiest": {
+        "type": "integer",
+        "title": "Top N Riskiest",
+        "default": 10,
+        "description": "How many riskiest accounts to return."
+      },
+      "relationship_overrides": {
+        "type": "object",
+        "title": "Relationship Overrides",
+        "description": "Map of account_id -> relationship_status to enforce (treat as authoritative for this scan only).",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    },
+    "description": "Inputs for the account health scan.\n\nAll thresholds are explicit so a human can tune them without editing code.\nReturns and persists per-account health for the lookback window."
+  },
+  "name": "account_health_scan",
+  "output_schema": {
+    "type": "object",
+    "$defs": {
+      "AccountHealthRow": {
+        "type": "object",
+        "title": "AccountHealthRow",
+        "required": [
+          "account_id",
+          "customer_id",
+          "name",
+          "relationship_status",
+          "prior_health",
+          "new_health",
+          "new_score",
+          "score_delta",
+          "open_followups",
+          "overdue_followups",
+          "open_disputes",
+          "signposts",
+          "summary"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "new_score": {
+            "type": "number",
+            "title": "New Score"
+          },
+          "signposts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/AccountRiskSignal"
+            },
+            "title": "Signposts"
+          },
+          "account_id": {
+            "type": "string",
+            "title": "Account Id"
+          },
+          "new_health": {
+            "type": "string",
+            "title": "New Health"
+          },
+          "customer_id": {
+            "type": "string",
+            "title": "Customer Id"
+          },
+          "prior_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prior Score",
+            "default": null
+          },
+          "score_delta": {
+            "type": "number",
+            "title": "Score Delta"
+          },
+          "prior_health": {
+            "type": "string",
+            "title": "Prior Health"
+          },
+          "open_disputes": {
+            "type": "integer",
+            "title": "Open Disputes"
+          },
+          "open_followups": {
+            "type": "integer",
+            "title": "Open Followups"
+          },
+          "overdue_followups": {
+            "type": "integer",
+            "title": "Overdue Followups"
+          },
+          "relationship_status": {
+            "type": "string",
+            "title": "Relationship Status"
+          },
+          "days_since_last_contact": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Since Last Contact",
+            "default": null
+          },
+          "days_since_last_service": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Since Last Service",
+            "default": null
+          }
+        }
+      },
+      "AccountRiskSignal": {
+        "type": "object",
+        "title": "AccountRiskSignal",
+        "required": [
+          "label",
+          "weight"
+        ],
+        "properties": {
+          "label": {
+            "enum": [
+              "no_contact",
+              "no_service",
+              "high_overdue_followups",
+              "open_dispute",
+              "critical_dispute",
+              "single_service_relationship",
+              "stale_relationship_status"
+            ],
+            "type": "string",
+            "title": "Label"
+          },
+          "weight": {
+            "type": "number",
+            "title": "weight"
+          }
+        }
+      }
+    },
+    "title": "AccountHealthScanResult",
+    "required": [
+      "today",
+      "scan_params",
+      "totals",
+      "by_health",
+      "top_risk",
+      "all_rows"
+    ],
+    "properties": {
+      "today": {
+        "type": "string",
+        "title": "Today"
+      },
+      "totals": {
+        "type": "object",
+        "title": "Totals",
+        "additionalProperties": true
+      },
+      "all_rows": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/AccountHealthRow"
+        },
+        "title": "All Rows"
+      },
+      "top_risk": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/AccountHealthRow"
+        },
+        "title": "Top Risk"
+      },
+      "by_health": {
+        "type": "object",
+        "title": "By Health",
+        "additionalProperties": true
+      },
+      "scan_params": {
+        "type": "object",
+        "title": "Scan Params",
+        "additionalProperties": true
+      }
+    }
+  },
+  "permissions": {
+    "function_id": "019efd32-4e3e-7380-a57c-a4469e5779f7",
+    "function_name": "account_health_scan",
+    "grants": [
+      {
+        "resource_name": "customers",
+        "resource_type": "datastore_table",
+        "permission_ids": [
+          "datastore.record.read",
+          "datastore.table.read"
+        ]
+      },
+      {
+        "resource_name": "operations_log",
+        "resource_type": "datastore_table",
+        "permission_ids": [
+          "datastore.record.write",
+          "datastore.table.read"
+        ]
+      },
+      {
+        "resource_name": "appointments",
+        "resource_type": "datastore_table",
+        "permission_ids": [
+          "datastore.record.read",
+          "datastore.table.read"
+        ]
+      },
+      {
+        "resource_name": "disputes",
+        "resource_type": "datastore_table",
+        "permission_ids": [
+          "datastore.record.read",
+          "datastore.table.read"
+        ]
+      },
+      {
+        "resource_name": "accounts",
+        "resource_type": "datastore_table",
+        "permission_ids": [
+          "datastore.record.read",
+          "datastore.record.write",
+          "datastore.table.read"
+        ]
+      },
+      {
+        "resource_name": "followups",
+        "resource_type": "datastore_table",
+        "permission_ids": [
+          "datastore.record.read",
+          "datastore.table.read"
+        ]
+      }
+    ]
+  },
+  "pod_id": "your_pod_id",
+  "status": "READY",
+  "type": "API",
+  "updated_at": "2026-06-25T05:13:44.142736Z",
+  "user_id": "8df27f40-8d35-4a99-85ee-b7971e597cbf",
+  "allowed_actions": [
+    "function.read",
+    "function.execute",
+    "function.update",
+    "function.delete"
+  ],
+  "code": "#input_type_name: AccountHealthScanInput\n#output_type_name: AccountHealthScanResult\n#function_name: account_health_scan\n\nfrom datetime import date, datetime\nfrom typing import Literal, Optional\n\nfrom pydantic import BaseModel, Field\nfrom lemma_sdk import FunctionContext, Pod\n\n\nclass AccountHealthScanInput(BaseModel):\n    \"\"\"Inputs for the account health scan.\n\n    All thresholds are explicit so a human can tune them without editing code.\n    Returns and persists per-account health for the lookback window.\n    \"\"\"\n    today: Optional[date] = Field(default=None, description=\"Override 'now'. Defaults to system date.\")\n    lookback_days: int = Field(default=120, description=\"How many days back define 'recent engagement'.\")\n    write_back: bool = Field(\n        default=True,\n        description=\"If true, update accounts.health, health_score, open_followups, overdue_followups, open_disputes. Defaults true so the CRM Tracker app stays fresh.\",\n    )\n    top_n_riskiest: int = Field(default=10, description=\"How many riskiest accounts to return.\")\n    relationship_overrides: dict[str, str] = Field(\n        default_factory=dict,\n        description=\"Map of account_id -> relationship_status to enforce (treat as authoritative for this scan only).\",\n    )\n\n\nclass AccountRiskSignal(BaseModel):\n    label: Literal[\n        \"no_contact\", \"no_service\", \"high_overdue_followups\",\n        \"open_dispute\", \"critical_dispute\", \"single_service_relationship\",\n        \"stale_relationship_status\"\n    ]\n    weight: float  # contribution to score reduction in 0..1 range\n\n\nclass AccountHealthRow(BaseModel):\n    account_id: str\n    customer_id: str\n    name: str\n    relationship_status: str\n    prior_health: str\n    new_health: str\n    prior_score: Optional[float] = None\n    new_score: float\n    score_delta: float\n    open_followups: int\n    overdue_followups: int\n    open_disputes: int\n    days_since_last_contact: Optional[int] = None\n    days_since_last_service: Optional[int] = None\n    signposts: list[AccountRiskSignal]\n    summary: str\n\n\nclass AccountHealthScanResult(BaseModel):\n    today: str\n    scan_params: dict\n    totals: dict\n    by_health: dict\n    top_risk: list[AccountHealthRow]\n    all_rows: list[AccountHealthRow]\n\n\nRELATIONSHIP_PENALTY = {\n    \"new\": 0.0, \"active\": 0.0, \"watch\": 0.05,\n    \"at_risk\": 0.25, \"in_dispute\": 0.35,\n    \"dormant\": 0.30, \"won_back\": 0.05, \"churned\": 0.40,\n}\n\n\ndef _add_months(dt: date, days: int) -> date:\n    return date.fromordinal(dt.toordinal() + days)\n\n\ndef _classify(score: float) -> str:\n    if score >= 0.80:\n        return \"healthy\"\n    if score >= 0.60:\n        return \"watch\"\n    if score >= 0.35:\n        return \"slipping\"\n    return \"critical\"\n\n\ndef _reset_signposts() -> list[AccountRiskSignal]:\n    return []\n\n\nasync def account_health_scan(\n    ctx: FunctionContext, data: AccountHealthScanInput\n) -> AccountHealthScanResult:\n    \"\"\"Scan every account, compute a 0..1 health score, persist, and return ranked rows.\"\"\"\n    pod = Pod.from_env()\n    today = data.today or date.today()\n\n    # Pull every account, customer, followup, dispute ù paginated lists; bounded payloads\n    # because ResQAI volumes are small enough that 500/page covers everything.\n    accounts = pod.records.list(\"accounts\", limit=500).to_dict()[\"items\"]\n    customers = pod.records.list(\"customers\", limit=500).to_dict()[\"items\"]\n    customers_by_id = {c[\"id\"]: c for c in customers}\n\n    # Pull followups; filter client-side because the 'in' filter operator\n    # isn't supported on the datastore list() endpoint. Volume is small.\n    OPEN_FOLLOwUP_STATUSES = {\"pending\", \"in_progress\", \"missed\"}\n    followups_all = pod.records.list(\"followups\", limit=500).to_dict()[\"items\"]\n    followups = [f for f in followups_all if f.get(\"status\") in OPEN_FOLLOwUP_STATUSES]\n    followups_by_account: dict[str, list[dict]] = {}\n    for f in followups:\n        followups_by_account.setdefault(f[\"account_id\"], []).append(f)\n\n    OPEN_DISPUTE_STATUSES = {\"open\", \"investigating\"}\n    disputes_all = pod.records.list(\"disputes\", limit=500).to_dict()[\"items\"]\n    disputes = [d for d in disputes_all if d.get(\"status\") in OPEN_DISPUTE_STATUSES]\n    disputes_by_customer: dict[str, list[dict]] = {}\n    for d in disputes:\n        disputes_by_customer.setdefault(d[\"appointment_id\"], []).append(d)  # appointment_id; customer ref comes from appointments\n\n    # Open disputes per customer ù join via appointments to avoid two-step DJ.\n    appts = pod.records.list(\"appointments\", limit=500).to_dict()[\"items\"]\n    appts_by_customer: dict[str, list[dict]] = {}\n    for a in appts:\n        appts_by_customer.setdefault(a[\"customer_id\"], []).append(a)\n\n    rows: list[AccountHealthRow] = []\n    write_back_rows: dict[str, dict] = {}\n\n    by_health = {\"healthy\": 0, \"watch\": 0, \"slipping\": 0, \"critical\": 0}\n    signpost_totals: dict[str, int] = {}\n\n    for acc in accounts:\n        rel_status = data.relationship_overrides.get(acc[\"id\"], acc.get(\"relationship_status\", \"active\"))\n        customer = customers_by_id.get(acc[\"customer_id\"]) or {}\n        acct_followups = followups_by_account.get(acc[\"id\"], [])\n        open_followups = sum(1 for f in acct_followups if f.get(\"status\") in {\"pending\", \"in_progress\"})\n        overdue_followups = sum(\n            1 for f in acct_followups\n            if f.get(\"status\") in {\"pending\", \"in_progress\"}\n            and f.get(\"due_date\") and (today - _parse_date(f[\"due_date\"])).days > 0\n        )\n\n        # Open disputes per customer\n        cust_appts = appts_by_customer.get(acc[\"customer_id\"], [])\n        appt_ids = {a[\"id\"] for a in cust_appts}\n        open_dispute_count = sum(1 for d in disputes if d[\"appointment_id\"] in appt_ids)\n        critical_dispute_count = sum(\n            1 for d in disputes\n            if d[\"appointment_id\"] in appt_ids\n            and (\n                d.get(\"recommended_resolution\") in {\"refund\", \"redo_service\"}\n                or d.get(\"status\") == \"investigating\"\n            )\n        )\n\n        # Date math\n        last_contact_days = _days_since(today, acc.get(\"last_contact_date\"))\n        last_service_days = _days_since(today, acc.get(\"last_service_date\"))\n\n        # Score: start at 1.0, subtract weighted risks.\n        score = 1.0\n        signposts: list[AccountRiskSignal] = []\n        # No contact in a while\n        if last_contact_days is not None and last_contact_days > data.lookback_days:\n            penalty = min(0.40, (last_contact_days - data.lookback_days) / 365.0 * 0.6 + 0.15)\n            score -= penalty\n            signposts.append(AccountRiskSignal(label=\"no_contact\", weight=round(penalty, 3)))\n        # No service ever (no last_service_date + low lifetime jobs)\n        if last_service_days is None and (acc.get(\"lifetime_jobs\") or 0) == 0:\n            penalty = 0.15\n            score -= penalty\n            signposts.append(AccountRiskSignal(label=\"no_service\", weight=penalty))\n        elif last_service_days is not None and last_service_days > data.lookback_days * 1.5:\n            penalty = 0.20\n            score -= penalty\n            signposts.append(AccountRiskSignal(label=\"no_service\", weight=penalty))\n        # High overdue followups\n        if overdue_followups >= 6 or overdue_followups * 10 > max(1, open_followups) * 4:\n            penalty = 0.20\n            score -= penalty\n            signposts.append(AccountRiskSignal(label=\"high_overdue_followups\", weight=penalty))\n        elif overdue_followups > 0:\n            penalty = min(0.15, 0.04 * overdue_followups)\n            score -= penalty\n            signposts.append(AccountRiskSignal(label=\"high_overdue_followups\", weight=round(penalty, 3)))\n        # Open dispute\n        if open_dispute_count > 0:\n            penalty = 0.15\n            score -= penalty\n            signposts.append(AccountRiskSignal(label=\"open_dispute\", weight=penalty))\n        if critical_dispute_count > 0:\n            penalty = 0.25\n            score -= penalty\n            signposts.append(AccountRiskSignal(label=\"critical_dispute\", weight=penalty))\n        # Single-service relationship: long tenure, only one trade\n        if (acc.get(\"lifetime_jobs\") or 0) <= 2 and rel_status in {\"active\", \"watch\"}:\n            penalty = 0.05\n            score -= penalty\n            signposts.append(AccountRiskSignal(label=\"single_service_relationship\", weight=penalty))\n        # Stale manual relationship state\n        stale = rel_status in {\"dormant\", \"at_risk\", \"in_dispute\"} and last_contact_days is not None and last_contact_days > data.lookback_days\n        if stale:\n            penalty = RELATIONSHIP_PENALTY.get(rel_status, 0.0)\n            score -= penalty\n            if penalty > 0:\n                signposts.append(AccountRiskSignal(label=\"stale_relationship_status\", weight=round(penalty, 3)))\n\n        # Clamp\n        score = max(0.0, min(1.0, score))\n        new_health = _classify(score)\n        prior_score = acc.get(\"health_score\")\n        prior_health = acc.get(\"health\", \"healthy\")\n        score_delta = (score - (prior_score or score))\n\n        # Build human summary line (still deterministic ù no LLM).\n        bits = []\n        if last_contact_days is not None:\n            bits.append(f\"last contact {last_contact_days}d ago\")\n        else:\n            bits.append(\"no contact recorded\")\n        if overdue_followups:\n            bits.append(f\"{overdue_followups} overdue follow-ups\")\n        if open_dispute_count:\n            bits.append(f\"{open_dispute_count} open dispute(s)\")\n        summary = \"; \".join(bits) or \"no risk signals\"\n\n        rows.append(AccountHealthRow(\n            account_id=acc[\"id\"],\n            customer_id=acc[\"customer_id\"],\n            name=acc.get(\"name\") or customer.get(\"name\") or \"Unknown\",\n            relationship_status=rel_status,\n            prior_health=prior_health,\n            new_health=new_health,\n            prior_score=prior_score,\n            new_score=round(score, 3),\n            score_delta=round(score_delta, 3),\n            open_followups=open_followups,\n            overdue_followups=overdue_followups,\n            open_disputes=open_dispute_count,\n            days_since_last_contact=last_contact_days,\n            days_since_last_service=last_service_days,\n            signposts=signposts,\n            summary=summary,\n        ))\n        by_health[new_health] += 1\n        for s in signposts:\n            signpost_totals[s.label] = signpost_totals.get(s.label, 0) + 1\n\n        write_back_rows[acc[\"id\"]] = {\n            \"health\": new_health,\n            \"health_score\": round(score, 3),\n            \"open_followups\": open_followups,\n            \"overdue_followups\": overdue_followups,\n            \"open_disputes\": open_dispute_count,\n        }\n\n    if data.write_back and write_back_rows:\n        # Bulk update is one round-trip; payload is flat with primary key.\n        bulk_payload = [{\"id\": aid, **fields} for aid, fields in write_back_rows.items()]\n        pod.records.bulk_update(\"accounts\", bulk_payload)\n\n    # Sort rows riskiest first (lowest score; then by open_disputes desc).\n    rows.sort(key=lambda r: (r.new_score, -r.open_disputes, -r.overdue_followups))\n\n    # Audit-log entry ù does NOT carry PII.\n    pod.records.create(\"operations_log\", {\n        \"action\": \"account_health_scan\",\n        \"result\": (\n            f\"scanned {len(rows)} accounts; healthy={by_health['healthy']} \"\n            f\"watch={by_health['watch']} slipping={by_health['slipping']} \"\n            f\"critical={by_health['critical']}\"\n        ),\n        \"actor\": \"account_health_scan\",\n    })\n\n    totals = {\n        \"scanned\": len(rows),\n        \"wrote_back\": len(write_back_rows) if data.write_back else 0,\n        \"signpost_totals\": signpost_totals,\n    }\n\n    return AccountHealthScanResult(\n        today=today.isoformat(),\n        scan_params={\n            \"lookback_days\": data.lookback_days,\n            \"write_back\": data.write_back,\n            \"top_n_riskiest\": data.top_n_riskiest,\n        },\n        totals=totals,\n        by_health=by_health,\n        top_risk=rows[: data.top_n_riskiest],\n        all_rows=rows,\n    )\n\n\ndef _parse_date(raw) -> date:\n    if isinstance(raw, str) and len(raw) >= 10:\n        return date.fromisoformat(raw[:10])\n    if isinstance(raw, date):\n        return raw\n    raise ValueError(f\"unexpected date payload: {raw!r}\")\n\n\ndef _days_since(today: date, raw) -> Optional[int]:\n    if not raw:\n        return None\n    try:\n        d = _parse_date(raw)\n    except Exception:\n        return None\n    return (today - d).days\n",
+  "code_hash": "40c174400e2c16fda0973a456891b73df36a285aa64017831578ecf8a4204f6c",
+  "code_path": "account_health_scan.py",
+  "config": null,
+  "config_schema": null,
+  "description": "Deterministic per-account health scan. Combines recency, slip risk, dispute load, and journey depth into a 0..1 score + bucket. writes back to accounts.health, accounts.health_score, and the cached followup counts.",
+  "icon_url": null,
+  "python_packages": [],
+  "visibility": "POD"
+}

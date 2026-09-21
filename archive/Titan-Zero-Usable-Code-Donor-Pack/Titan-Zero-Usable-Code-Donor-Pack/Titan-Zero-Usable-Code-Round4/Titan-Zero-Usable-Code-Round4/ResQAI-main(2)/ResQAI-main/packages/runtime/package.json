@@ -1,0 +1,33 @@
+{
+  "name": "@resqai/runtime",
+  "version": "2.0.0",
+  "private": true,
+  "description": "ResQAI V2 AI Runtime — model providers, agent execution, context, memory, observability, cost control, fallback, confidence routing",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./config": "./src/config/index.ts",
+    "./providers": "./src/providers/index.ts",
+    "./engine": "./src/engine/index.ts",
+    "./context": "./src/context/index.ts",
+    "./memory": "./src/memory/index.ts",
+    "./observability": "./src/observability/index.ts",
+    "./logger": "./src/logger/index.ts",
+    "./cost": "./src/cost/index.ts",
+    "./fallback": "./src/fallback/index.ts",
+    "./routing": "./src/routing/index.ts"
+  },
+  "dependencies": {
+    "lemma-sdk": "^0.5.2"
+  },
+  "peerDependencies": {
+    "@resqai/foundation": "2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.1",
+    "typescript": "^5.5.3",
+    "vitest": "^4.1.9"
+  }
+}

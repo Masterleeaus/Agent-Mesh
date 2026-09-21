@@ -1,0 +1,127 @@
+﻿{
+  "items": [
+    {
+      "id": "afaecea3-eb44-4692-9e07-7bf432e0a88a",
+      "created_at": "2026-06-25T05:42:55.438129Z",
+      "updated_at": "2026-06-25T05:42:55.438129Z",
+      "title": "Confirm dishwasher repair resolved for James Rodriguez (rec #3 - 2d overdue)",
+      "owner": "technician_lead",
+      "priority": "high",
+      "status": "open",
+      "due_date": "2026-06-26"
+    },
+    {
+      "id": "745e9860-91f1-4b70-83d9-6e951c0def2a",
+      "created_at": "2026-06-25T05:41:35.520758Z",
+      "updated_at": "2026-06-25T05:41:35.520758Z",
+      "title": "Call Daniel Cooper (dormant) û urgent re-engagement, last contact 430d ago (rec #1)",
+      "owner": "ops_manager",
+      "priority": "urgent",
+      "status": "open",
+      "due_date": "2026-06-26"
+    },
+    {
+      "id": "79b6bd18-dba1-4eb7-b24d-1ecf3e621695",
+      "created_at": "2026-06-24T22:40:48.890723Z",
+      "updated_at": "2026-06-24T22:40:48.890723Z",
+      "title": "Pull invoice history for Maria Chen for resolution",
+      "owner": "Zoe (billing)",
+      "priority": "high",
+      "status": "open",
+      "due_date": "2026-06-24"
+    },
+    {
+      "id": "3f99aa8d-35da-4e45-b7fc-d8ea17ffd48f",
+      "created_at": "2026-06-24T22:40:47.950687Z",
+      "updated_at": "2026-06-24T22:40:47.950687Z",
+      "title": "Review Yuki Tanaka dispute evidence",
+      "owner": "Marcus (manager)",
+      "priority": "urgent",
+      "status": "open",
+      "due_date": "2026-06-24"
+    },
+    {
+      "id": "18001513-6ee5-4751-85d8-2ef68f7a277f",
+      "created_at": "2026-06-24T22:40:46.987706Z",
+      "updated_at": "2026-06-24T22:40:46.987706Z",
+      "title": "Compliance: file quarterly refrigerant log",
+      "owner": "office",
+      "priority": "high",
+      "status": "open",
+      "due_date": "2026-06-23"
+    },
+    {
+      "id": "22988516-624c-4461-ad4e-297448bd9ab4",
+      "created_at": "2026-06-24T22:40:46.070431Z",
+      "updated_at": "2026-06-24T22:40:46.070431Z",
+      "title": "Confirm Daniel Cooper outdoor outlet appt",
+      "owner": "Sofia (dispatch)",
+      "priority": "normal",
+      "status": "open",
+      "due_date": "2026-06-25"
+    },
+    {
+      "id": "4fa8a7c1-beba-4886-8886-640a3c600200",
+      "created_at": "2026-06-24T22:40:45.176551Z",
+      "updated_at": "2026-06-24T22:40:45.176551Z",
+      "title": "Update CRM after EV charger quote approval",
+      "owner": "Sofia (dispatch)",
+      "priority": "normal",
+      "status": "open",
+      "due_date": "2026-06-22"
+    },
+    {
+      "id": "d020dad7-8a02-46e3-817c-0e3f16c05028",
+      "created_at": "2026-06-24T22:40:44.206433Z",
+      "updated_at": "2026-06-24T22:40:44.206433Z",
+      "title": "Call Mark Reilly about tankless service area",
+      "owner": "Sofia (dispatch)",
+      "priority": "low",
+      "status": "open",
+      "due_date": "2026-06-27"
+    },
+    {
+      "id": "0c3ddeb4-32af-44f5-a4c7-9b3a832f4f7c",
+      "created_at": "2026-06-24T22:40:43.280366Z",
+      "updated_at": "2026-06-24T22:40:43.280366Z",
+      "title": "Order replacement igniter for Garcia furnace",
+      "owner": "warehouse",
+      "priority": "high",
+      "status": "in_progress",
+      "due_date": "2026-06-24"
+    },
+    {
+      "id": "2954340a-9559-4887-a755-95ccd2bdab0b",
+      "created_at": "2026-06-24T22:40:42.353781Z",
+      "updated_at": "2026-06-24T22:40:42.353781Z",
+      "title": "Send AC maintenance quote to David Thompson",
+      "owner": "Zoe (billing)",
+      "priority": "normal",
+      "status": "open",
+      "due_date": "2026-06-26"
+    },
+    {
+      "id": "b477b828-d7c2-479b-8c38-be0b8ebe439b",
+      "created_at": "2026-06-24T22:40:41.401237Z",
+      "updated_at": "2026-06-24T22:40:41.401237Z",
+      "title": "Follow up with Maria Chen on repeat water heater",
+      "owner": "Alex Rivera",
+      "priority": "high",
+      "status": "open",
+      "due_date": "2026-06-25"
+    },
+    {
+      "id": "24bfe742-dce2-4f80-8b94-58ab6526e39c",
+      "created_at": "2026-06-24T22:40:40.240686Z",
+      "updated_at": "2026-06-24T22:40:40.240686Z",
+      "title": "Verify invoice 2024-1142 paid",
+      "owner": "Zoe (billing)",
+      "priority": "normal",
+      "status": "open",
+      "due_date": "2026-06-24"
+    }
+  ],
+  "limit": 12,
+  "next_page_token": null,
+  "total": 12
+}

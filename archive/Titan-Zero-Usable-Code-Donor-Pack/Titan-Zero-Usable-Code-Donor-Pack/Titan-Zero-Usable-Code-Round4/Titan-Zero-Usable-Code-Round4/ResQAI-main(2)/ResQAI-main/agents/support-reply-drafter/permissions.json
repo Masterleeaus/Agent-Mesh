@@ -1,0 +1,32 @@
+{
+  "source": "Extracted from Lemma pod agent definition",
+  "agent_id": "019efbc9-bf53-76ec-9603-bd32144e9e02",
+  "agent_name": "support-reply-drafter",
+  "grants": [
+    {
+      "resource_name": "customers",
+      "resource_type": "datastore_table",
+      "permission_ids": ["datastore.record.read", "datastore.table.read"]
+    },
+    {
+      "resource_name": "technicians",
+      "resource_type": "datastore_table",
+      "permission_ids": ["datastore.record.read", "datastore.table.read"]
+    },
+    {
+      "resource_name": "tickets",
+      "resource_type": "datastore_table",
+      "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+    },
+    {
+      "resource_name": "gmail",
+      "resource_type": "connector",
+      "permission_ids": ["connector.use"]
+    },
+    {
+      "resource_name": "reddit",
+      "resource_type": "connector",
+      "permission_ids": ["connector.use"]
+    }
+  ]
+}

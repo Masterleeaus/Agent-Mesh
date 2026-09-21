@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* ── FLDWRK Brand Token Overrides (Tailwind v4) ─────────────────────
+   Remaps Tailwind's red scale to exact Signal Red #E8352A so all
+   bg-red-* / text-red-* / border-red-* classes use the official brand color.
+──────────────────────────────────────────────────────────────── */
+@theme {
+  --color-red-50:  #FFF1F0;
+  --color-red-100: #FFE0DE;
+  --color-red-200: #FFBAB6;
+  --color-red-300: #FF8A84;
+  --color-red-400: #F55550;
+  --color-red-500: #F04A3F;
+  --color-red-600: #E8352A;  /* signal_red — THE brand accent */
+  --color-red-700: #C42D22;  /* signal_red dark */
+  --color-red-800: #9E2319;
+  --color-red-900: #7A1C13;
+  --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --bg: #F8F8F8;
+  --surface: #FFFFFF;
+  --border: #EBEBEB;
+  --text: #0A0A0A;
+  --text-secondary: #555555;
+  --text-muted: #AAAAAA;
+  --red: #E8352A;
+  --red-light: #FFF1F0;
+  --red-mid: #FECACA;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  /* FLDWRK brand font: Space Grotesk */
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #C42D22, #E8352A, #FF4438);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-gradient {
+  background: radial-gradient(ellipse 80% 50% at 50% -10%, #fff1f0 0%, transparent 70%);
+}
+
+.card-shadow {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.card-shadow-hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.06);
+}
+
+.red-glow {
+  box-shadow: 0 0 0 1px rgba(232,53,42,0.2), 0 8px 32px rgba(232,53,42,0.15);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.9); }
+}
+
+.float { animation: float 4s ease-in-out infinite; }
+.pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+.device-screen { border-radius: inherit; overflow: hidden; }

@@ -1,0 +1,62 @@
+{
+  "type": "object",
+  "required": ["summary", "scan", "recommendations"],
+  "properties": {
+    "scan": {
+      "type": "object",
+      "properties": {
+        "today": { "type": "string" },
+        "totals": { "type": "object" },
+        "by_health": { "type": "object" },
+        "slipping_counts": { "type": "object" }
+      }
+    },
+    "summary": {
+      "type": "string"
+    },
+    "overdue_count": {
+      "type": "integer"
+    },
+    "tasks_created": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "critical_count": {
+      "type": "integer"
+    },
+    "slipping_count": {
+      "type": "integer"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "summary", "priority"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["schedule_followup", "escalate_dispute", "win_back", "reactivate_dormant", "protect_critical_account", "balance_response_load", "no_action"]
+          },
+          "summary": { "type": "string" },
+          "task_id": { "type": "string" },
+          "priority": {
+            "type": "string",
+            "enum": ["urgent", "high", "normal", "low"]
+          },
+          "rationale": { "type": "string" },
+          "account_id": { "type": "string" },
+          "owner_role": {
+            "type": "string",
+            "enum": ["csr", "ops_manager", "technician_lead", "owner_of_account"]
+          },
+          "due_in_days": { "type": "integer" },
+          "linked_followup_id": { "type": "string" }
+        }
+      }
+    },
+    "coordination_status": {
+      "type": "string",
+      "enum": ["ok", "attention_needed", "crisis", "no_action_needed"]
+    }
+  }
+}

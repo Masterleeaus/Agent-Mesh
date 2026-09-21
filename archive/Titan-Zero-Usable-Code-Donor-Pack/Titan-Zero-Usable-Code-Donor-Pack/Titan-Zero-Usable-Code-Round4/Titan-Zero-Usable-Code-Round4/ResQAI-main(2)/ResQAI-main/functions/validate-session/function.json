@@ -1,0 +1,19 @@
+{
+  "name": "validate_session",
+  "description": "Validates whether a session token is still active, not expired, and not invalidated.",
+  "type": "API",
+  "input_type_name": "ValidateSessionInput",
+  "output_type_name": "ValidateSessionOutput",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "visibility": "POD",
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "user_sessions_v2",
+        "permission_ids": ["datastore.record.read", "datastore.table.read"]
+      }
+    ]
+  }
+}

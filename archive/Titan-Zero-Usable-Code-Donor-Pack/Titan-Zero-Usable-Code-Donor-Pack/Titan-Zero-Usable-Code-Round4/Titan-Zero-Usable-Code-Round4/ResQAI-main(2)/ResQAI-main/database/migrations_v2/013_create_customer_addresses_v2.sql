@@ -1,0 +1,39 @@
+-- ResQAI V2 Migration 013
+-- Date:    2026-06-29
+-- Purpose: Create customer_addresses_v2 table for service address management
+--
+-- Applied to: ResQAI V2 Pod
+-- Schema: v2
+
+-- ============================================================
+-- Step 1: Create customer_addresses_v2 table
+-- ============================================================
+-- lemma table create customer_addresses_v2 \
+--   id:UUID --pk \
+--   customer_id:UUID \
+--   address_type:TEXT --default 'service' \
+--   address_line1:TEXT \
+--   address_line2:TEXT \
+--   city:TEXT \
+--   state:TEXT \
+--   postal_code:TEXT \
+--   country:TEXT --default 'US' \
+--   is_primary:BOOLEAN --default false \
+--   latitude:DOUBLE --precision \
+--   longitude:DOUBLE --precision \
+--   created_at:TIMESTAMPTZ \
+--   updated_at:TIMESTAMPTZ
+
+-- ============================================================
+-- Step 2: Add foreign key and indexes
+-- ============================================================
+-- lemma table add-foreign-key customer_addresses_v2 fk_caddr_customer \
+--   --from customer_id --to customers_v2(id) --on-delete CASCADE
+-- lemma table add-index customer_addresses_v2 idx_caddr_customer_id --using btree --fields customer_id
+-- lemma table add-index customer_addresses_v2 idx_caddr_is_primary --using btree --fields is_primary
+-- lemma table add-index customer_addresses_v2 idx_caddr_cust_primary --using btree --fields customer_id,is_primary --where 'is_primary = true'
+
+-- Verify: lemma table describe customer_addresses_v2
+-- Verify: lemma table indexes customer_addresses_v2
+-- Expected: idx_caddr_customer_id, idx_caddr_is_primary, idx_caddr_cust_primary (partial)
+-- Expected: fk_caddr_customer (customer_id -> customers_v2(id) ON DELETE CASCADE)

@@ -1,0 +1,19 @@
+{
+  "name": "list_work_orders",
+  "description": "Lists work orders with optional filters for technician, status, or appointment.",
+  "type": "API",
+  "input_type_name": "ListWorkOrdersInput",
+  "output_type_name": "ListWorkOrdersOutput",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "visibility": "POD",
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "work_orders_v2",
+        "permission_ids": ["datastore.table.read", "datastore.record.read"]
+      }
+    ]
+  }
+}

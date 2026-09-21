@@ -1,0 +1,18 @@
+{
+  "source": "ResQAI Customer Support Pod",
+  "extracted_at": "2026-07-01",
+  "agent": {
+    "id": "019f1a5b-0000-7000-8000-000000000001",
+    "name": "tech-suggester",
+    "description": "Suggests the best technician for a service ticket based on skill match, current workload, and availability. Produces a ranked suggestion for human or workflow to act on. First-class workflow node for the dispatch and appointment pipelines.",
+    "created_at": "2026-06-25T00:00:00.000000+00:00",
+    "updated_at": "2026-07-01T00:00:00.000000+00:00",
+    "user_id": "8df27f40-8d35-4a99-85ee-b7971e597cbf",
+    "agent_runtime": null,
+    "icon_url": null,
+    "metadata": null,
+    "toolsets": ["POD"],
+    "visibility": "POD",
+    "allowed_actions": ["agent.read", "agent.execute", "agent.update", "agent.delete"]
+  }
+}

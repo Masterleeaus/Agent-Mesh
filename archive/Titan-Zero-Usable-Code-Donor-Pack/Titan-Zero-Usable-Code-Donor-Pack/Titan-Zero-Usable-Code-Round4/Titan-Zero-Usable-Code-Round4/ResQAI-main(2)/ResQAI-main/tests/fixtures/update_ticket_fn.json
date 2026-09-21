@@ -1,0 +1,21 @@
+{
+  "name": "update_ticket_record",
+  "description": "Finalizes the ticket record after intake workflow completes. Sets status, stamps assigned owner and resolution data, logs operation.",
+  "type": "API",
+  "visibility": "POD",
+  "code": "#input_type_name: UpdateTicketRecordInput\n#output_type_name: UpdateTicketRecordOutput\n#function_name: update_ticket_record\n\nfrom typing import Optional\nfrom pydantic import BaseModel, Field\nfrom lemma_sdk import FunctionContext, Pod\n\n\nclass UpdateTicketRecordInput(BaseModel):\n    ticket_id: str = Field(description=\"The ticket UUID to update.\")\n    status: str = Field(description=\"New status for the ticket.\")\n    approved_to_send: Optional[bool] = Field(default=None, description=\"Approval flag.\")\n    assigned_to: Optional[str] = Field(default=None, description=\"Owner assigned by human reviewer.\")\n    human_notes: Optional[str] = Field(default=None, description=\"Notes from human approval step.\")\n    resolution_summary: Optional[str] = Field(default=None, description=\"Recommended resolution.\")\n    resolution_reasoning: Optional[str] = Field(default=None, description=\"Full reasoning from advisor.\")\n    analysis_status: Optional[str] = Field(default=None, description=\"Analysis status for audit trail.\")\n\n\nclass UpdateTicketRecordOutput(BaseModel):\n    status: str = Field(description=\"Operation result: success, not_found, or error.\")\n    ticket_id: str = Field(description=\"Echoed ticket_id for workflow tracking.\")\n    error: Optional[str] = Field(default=None, description=\"Error detail if update failed.\")\n\n\nasync def update_ticket_record(ctx: FunctionContext, data: UpdateTicketRecordInput) -> UpdateTicketRecordOutput:\n    pod = Pod.from_env()\n\n    ticket = pod.records.get(\"tickets\", data.ticket_id)\n    if not ticket:\n        return UpdateTicketRecordOutput(\n            status=\"not_found\",\n            ticket_id=data.ticket_id,\n            error=f\"Ticket {data.ticket_id} not found\",\n        )\n\n    updates = {\"status\": data.status}\n    if data.approved_to_send is not None:\n        updates[\"approved_to_send\"] = data.approved_to_send\n    if data.assigned_to:\n        updates[\"owner\"] = data.assigned_to\n    if data.human_notes:\n        updates[\"human_notes\"] = data.human_notes\n    if data.resolution_summary:\n        updates[\"draft_reply\"] = data.resolution_summary\n\n    pod.records.update(\"tickets\", data.ticket_id, updates)\n\n    pod.records.create(\"operations_log\", {\n        \"action\": \"ticket_intake_workflow_complete\",\n        \"result\": f\"status={data.status}, assigned_to={data.assigned_to or 'unassigned'}\",\n        \"actor\": \"workflow:ticket_intake_workflow\",\n    })\n\n    return UpdateTicketRecordOutput(\n        status=\"success\",\n        ticket_id=data.ticket_id,\n    )\n",
+  "permissions": {
+    "grants": [
+      {
+        "resource_name": "tickets",
+        "resource_type": "datastore_table",
+        "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+      },
+      {
+        "resource_name": "operations_log",
+        "resource_type": "datastore_table",
+        "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+      }
+    ]
+  }
+}

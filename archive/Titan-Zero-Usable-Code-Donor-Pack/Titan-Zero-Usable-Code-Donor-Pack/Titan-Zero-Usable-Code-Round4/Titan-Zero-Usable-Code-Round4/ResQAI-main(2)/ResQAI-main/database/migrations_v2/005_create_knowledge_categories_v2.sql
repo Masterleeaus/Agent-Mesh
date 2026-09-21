@@ -1,0 +1,32 @@
+-- ResQAI V2 Migration 005
+-- Date:    2026-06-29
+-- Purpose: Create knowledge_categories_v2 table for hierarchical knowledge base
+--
+-- Applied to: ResQAI V2 Pod
+-- Schema: v2
+
+-- ============================================================
+-- Step 1: Create knowledge_categories_v2 table
+-- ============================================================
+-- lemma table create knowledge_categories_v2 \
+--   id:UUID --pk \
+--   name:TEXT \
+--   description:TEXT \
+--   parent_id:UUID \
+--   sort_order:INTEGER --default 0 \
+--   created_at:TIMESTAMPTZ \
+--   updated_at:TIMESTAMPTZ \
+--   deleted_at:TIMESTAMPTZ
+
+-- ============================================================
+-- Step 2: Add foreign key and indexes
+-- ============================================================
+-- lemma table add-foreign-key knowledge_categories_v2 fk_kcat_parent \
+--   --from parent_id --to knowledge_categories_v2(id) --on-delete SET NULL
+-- lemma table add-index knowledge_categories_v2 idx_kcat_parent_id --using btree --fields parent_id
+-- lemma table add-index knowledge_categories_v2 idx_kcat_sort_order --using btree --fields sort_order
+
+-- Verify: lemma table describe knowledge_categories_v2
+-- Verify: lemma table indexes knowledge_categories_v2
+-- Expected: idx_kcat_parent_id, idx_kcat_sort_order
+-- Expected: fk_kcat_parent (parent_id -> knowledge_categories_v2(id) ON DELETE SET NULL)

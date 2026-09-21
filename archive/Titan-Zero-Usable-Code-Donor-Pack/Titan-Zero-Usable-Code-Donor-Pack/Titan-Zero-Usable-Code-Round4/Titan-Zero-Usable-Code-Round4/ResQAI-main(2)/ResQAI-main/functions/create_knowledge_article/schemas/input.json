@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Create Knowledge ArticleInput",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "object",
+      "description": "Knowledge Article data"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Creator user ID"
+    },
+    "correlation_id": {
+      "type": "string",
+      "description": "Correlation ID for tracing"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "description": "Idempotency key"
+    }
+  },
+  "required": [
+    "data"
+  ]
+}

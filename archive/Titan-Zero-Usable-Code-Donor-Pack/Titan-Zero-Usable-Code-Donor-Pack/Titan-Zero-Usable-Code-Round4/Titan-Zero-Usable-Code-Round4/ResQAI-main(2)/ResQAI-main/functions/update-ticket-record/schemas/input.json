@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "title": "UpdateTicketRecordInput",
+  "required": ["ticket_id", "status"],
+  "properties": {
+    "ticket_id": {
+      "type": "string",
+      "description": "The ticket UUID to update."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["new", "classified", "drafted", "approved_to_send", "sent", "closed"],
+      "description": "New status for the ticket."
+    },
+    "approved_to_send": {
+      "type": "boolean",
+      "description": "Sets the approved_to_send flag when human approved."
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Owner assigned by the human reviewer."
+    },
+    "human_notes": {
+      "type": "string",
+      "description": "Notes from the human approval step."
+    },
+    "resolution_summary": {
+      "type": "string",
+      "description": "Recommended resolution from resolution-advisor."
+    },
+    "resolution_reasoning": {
+      "type": "string",
+      "description": "Full reasoning from resolution-advisor."
+    },
+    "analysis_status": {
+      "type": "string",
+      "description": "Analysis status from resolution-advisor for audit trail."
+    }
+  }
+}

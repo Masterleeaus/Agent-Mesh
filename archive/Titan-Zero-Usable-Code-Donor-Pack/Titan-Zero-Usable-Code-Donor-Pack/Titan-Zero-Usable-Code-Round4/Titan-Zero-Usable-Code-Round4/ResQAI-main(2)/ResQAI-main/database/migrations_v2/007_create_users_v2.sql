@@ -1,0 +1,48 @@
+-- ResQAI V2 Migration 007
+-- Date:    2026-06-29
+-- Purpose: Create users_v2 table for system user accounts
+--
+-- Applied to: ResQAI V2 Pod
+-- Schema: v2
+
+-- ============================================================
+-- Step 1: Create users_v2 table
+-- ============================================================
+-- lemma table create users_v2 \
+--   id:UUID --pk \
+--   email:TEXT --not-null \
+--   name:TEXT --not-null \
+--   role_id:UUID \
+--   status:TEXT --default 'active' \
+--   auth_provider:TEXT \
+--   auth_provider_id:TEXT \
+--   avatar_url:TEXT \
+--   last_login_at:TIMESTAMPTZ \
+--   preferences_config:JSONB --default '{}' \
+--   created_at:TIMESTAMPTZ \
+--   updated_at:TIMESTAMPTZ \
+--   deleted_at:TIMESTAMPTZ
+
+-- ============================================================
+-- Step 2: Add foreign key and constraints
+-- ============================================================
+-- lemma table add-foreign-key users_v2 fk_users_role \
+--   --from role_id --to user_roles_v2(id)
+-- lemma table add-unique users_v2 uq_users_email_active \
+--   --fields email --where 'deleted_at IS NULL'
+-- lemma table add-unique users_v2 uq_users_auth_provider \
+--   --fields auth_provider,auth_provider_id
+
+-- ============================================================
+-- Step 3: Add indexes
+-- ============================================================
+-- lemma table add-index users_v2 idx_users_role_id --using btree --fields role_id
+-- lemma table add-index users_v2 idx_users_status --using btree --fields status
+-- lemma table add-index users_v2 idx_users_last_login --using btree --fields last_login_at
+
+-- Verify: lemma table describe users_v2
+-- Verify: lemma table indexes users_v2
+-- Expected: idx_users_role_id, idx_users_status, idx_users_last_login
+-- Expected: uq_users_email_active (unique email WHERE deleted_at IS NULL)
+-- Expected: uq_users_auth_provider (unique on auth_provider + auth_provider_id)
+-- Expected: fk_users_role (role_id -> user_roles_v2(id))

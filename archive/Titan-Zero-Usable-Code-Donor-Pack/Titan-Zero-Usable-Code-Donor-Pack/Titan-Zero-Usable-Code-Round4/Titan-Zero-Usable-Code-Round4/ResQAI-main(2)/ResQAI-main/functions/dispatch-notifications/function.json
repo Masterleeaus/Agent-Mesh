@@ -1,0 +1,29 @@
+{
+  "name": "dispatch_notifications",
+  "description": "Dispatches appointment reminder notifications to technicians and customers via email or SMS using configured connectors.",
+  "type": "API",
+  "input_type_name": "DispatchNotificationsInput",
+  "output_type_name": "DispatchNotificationsOutput",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "visibility": "POD",
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "connector",
+        "resource_name": "resqai-gmail",
+        "permission_ids": ["connector.use"]
+      },
+      {
+        "resource_type": "connector",
+        "resource_name": "resqai-twilio",
+        "permission_ids": ["connector.use"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "operations_log",
+        "permission_ids": ["datastore.record.create"]
+      }
+    ]
+  }
+}

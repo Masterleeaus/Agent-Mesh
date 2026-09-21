@@ -1,0 +1,22 @@
+{
+  "name": "collect_resolved_tickets",
+  "description": "Queries tickets closed within the given window. Returns structured list for satisfaction monitoring workflow.",
+  "type": "API",
+  "visibility": "POD",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "tickets",
+        "permission_ids": ["datastore.record.read", "datastore.table.read"]
+      },
+      {
+        "resource_type": "connector",
+        "resource_name": "discord",
+        "permission_ids": ["connector.use"]
+      }
+    ]
+  }
+}

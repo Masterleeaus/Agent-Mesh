@@ -1,0 +1,681 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "FieldFlow AI Connector",
+    "description": "Connects Power Apps, Power Automate, and Copilot Studio to FieldFlow equipment, telemetry, service case, automation, and AI agent operations.",
+    "version": "1.0"
+  },
+  "host": "fieldflow-api.example.com",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "Equipment"
+    },
+    {
+      "name": "Service Cases"
+    },
+    {
+      "name": "Automations"
+    },
+    {
+      "name": "Service Agent"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Equipment"
+        ],
+        "summary": "Check API health",
+        "description": "Verifies that the FieldFlow API is available.",
+        "operationId": "CheckApiHealth",
+        "x-ms-summary": "Check API health",
+        "x-ms-visibility": "important",
+        "responses": {
+          "200": {
+            "description": "API health information",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/equipment": {
+      "get": {
+        "tags": [
+          "Equipment"
+        ],
+        "summary": "Get all equipment",
+        "description": "Returns all equipment available to FieldFlow.",
+        "operationId": "GetAllEquipment",
+        "x-ms-summary": "Get all equipment",
+        "x-ms-visibility": "important",
+        "responses": {
+          "200": {
+            "description": "Equipment records",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Equipment"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/equipment/{equipment_id}": {
+      "get": {
+        "tags": [
+          "Equipment"
+        ],
+        "summary": "Get equipment",
+        "description": "Returns one equipment record.",
+        "operationId": "GetEquipment",
+        "x-ms-summary": "Get equipment",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "equipment_id",
+            "in": "path",
+            "description": "FieldFlow equipment identifier",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Equipment ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Equipment record",
+            "schema": {
+              "$ref": "#/definitions/Equipment"
+            }
+          },
+          "404": {
+            "description": "Equipment not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/equipment/{equipment_id}/telemetry": {
+      "get": {
+        "tags": [
+          "Equipment"
+        ],
+        "summary": "Get equipment telemetry",
+        "description": "Returns the latest simulated telemetry for an equipment record.",
+        "operationId": "GetEquipmentTelemetry",
+        "x-ms-summary": "Get equipment telemetry",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "equipment_id",
+            "in": "path",
+            "description": "FieldFlow equipment identifier",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Equipment ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Latest telemetry",
+            "schema": {
+              "$ref": "#/definitions/TelemetryReading"
+            }
+          },
+          "404": {
+            "description": "Equipment not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/service-cases": {
+      "get": {
+        "tags": [
+          "Service Cases"
+        ],
+        "summary": "Get service cases",
+        "description": "Returns FieldFlow service cases with an optional status filter.",
+        "operationId": "GetServiceCases",
+        "x-ms-summary": "Get service cases",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "case_status",
+            "in": "query",
+            "description": "Optional service case status",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "open",
+              "investigating",
+              "scheduled",
+              "resolved"
+            ],
+            "x-ms-summary": "Case status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Service case records",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ServiceCase"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Service Cases"
+        ],
+        "summary": "Create service case",
+        "description": "Creates a service case for an existing equipment record.",
+        "operationId": "CreateServiceCase",
+        "x-ms-summary": "Create service case",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Service case information",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ServiceCaseCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Service case created",
+            "schema": {
+              "$ref": "#/definitions/ServiceCase"
+            }
+          },
+          "404": {
+            "description": "Equipment not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Request validation failed",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/automations/evaluate/{equipment_id}": {
+      "post": {
+        "tags": [
+          "Automations"
+        ],
+        "summary": "Evaluate equipment automation",
+        "description": "Evaluates equipment telemetry, creates a critical service case when necessary, and prevents duplicate active cases.",
+        "operationId": "EvaluateEquipmentAutomation",
+        "x-ms-summary": "Evaluate equipment automation",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "equipment_id",
+            "in": "path",
+            "description": "Equipment to evaluate",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Equipment ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Automation evaluation result",
+            "schema": {
+              "$ref": "#/definitions/AutomationEvaluation"
+            }
+          },
+          "404": {
+            "description": "Equipment not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/chat": {
+      "post": {
+        "tags": [
+          "Service Agent"
+        ],
+        "summary": "Chat with Service Agent",
+        "description": "Sends a grounded request to the FieldFlow Service Agent. Write actions require explicit confirmation.",
+        "operationId": "ChatWithServiceAgent",
+        "x-ms-summary": "Chat with Service Agent",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Agent message and confirmation choice",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AgentChatRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Grounded agent response",
+            "schema": {
+              "$ref": "#/definitions/AgentChatResponse"
+            }
+          },
+          "422": {
+            "description": "Request validation failed",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "HealthResponse": {
+      "type": "object",
+      "required": [
+        "status",
+        "service"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "healthy"
+        },
+        "service": {
+          "type": "string",
+          "example": "fieldflow-api"
+        }
+      }
+    },
+    "Equipment": {
+      "type": "object",
+      "required": [
+        "equipment_id",
+        "model",
+        "category",
+        "serial_number",
+        "location",
+        "status"
+      ],
+      "properties": {
+        "equipment_id": {
+          "type": "string",
+          "example": "FF-TR-3018"
+        },
+        "model": {
+          "type": "string",
+          "example": "RTX1250"
+        },
+        "category": {
+          "type": "string",
+          "example": "Trencher"
+        },
+        "serial_number": {
+          "type": "string",
+          "example": "RTX1250-3018"
+        },
+        "location": {
+          "type": "string",
+          "example": "Des Moines, Iowa"
+        },
+        "assigned_dealer": {
+          "type": "string",
+          "example": "Heartland Machine Group"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "operational",
+            "warning",
+            "critical",
+            "offline",
+            "maintenance"
+          ],
+          "example": "critical"
+        },
+        "engine_hours": {
+          "type": "number",
+          "format": "double",
+          "example": 1287.4
+        },
+        "fuel_level": {
+          "type": "number",
+          "format": "double",
+          "example": 38
+        },
+        "health_score": {
+          "type": "integer",
+          "format": "int32",
+          "example": 61
+        },
+        "last_service_date": {
+          "type": "string",
+          "format": "date",
+          "example": "2026-08-15"
+        }
+      }
+    },
+    "TelemetryReading": {
+      "type": "object",
+      "properties": {
+        "equipment_id": {
+          "type": "string",
+          "example": "FF-TR-3018"
+        },
+        "recorded_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "engine_temperature_c": {
+          "type": "number",
+          "format": "double",
+          "example": 111.6
+        },
+        "hydraulic_pressure_psi": {
+          "type": "number",
+          "format": "double",
+          "example": 1614.5
+        },
+        "engine_rpm": {
+          "type": "integer",
+          "format": "int32",
+          "example": 2260
+        },
+        "battery_voltage": {
+          "type": "number",
+          "format": "double",
+          "example": 11.7
+        },
+        "fuel_level": {
+          "type": "number",
+          "format": "double",
+          "example": 38
+        },
+        "connectivity": {
+          "type": "string",
+          "enum": [
+            "online",
+            "degraded",
+            "offline"
+          ],
+          "example": "online"
+        },
+        "health_status": {
+          "type": "string",
+          "enum": [
+            "operational",
+            "warning",
+            "critical",
+            "offline",
+            "maintenance"
+          ],
+          "example": "critical"
+        },
+        "alerts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ServiceCaseCreate": {
+      "type": "object",
+      "required": [
+        "equipment_id",
+        "title",
+        "description",
+        "priority"
+      ],
+      "properties": {
+        "equipment_id": {
+          "type": "string",
+          "example": "FF-TR-3018"
+        },
+        "title": {
+          "type": "string",
+          "example": "Critical telemetry detected"
+        },
+        "description": {
+          "type": "string",
+          "example": "Engine temperature and hydraulic pressure require inspection."
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "example": "critical"
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "telemetry",
+            "automation",
+            "ai_agent"
+          ],
+          "default": "manual"
+        },
+        "assigned_to": {
+          "type": "string",
+          "example": "Heartland Machine Group"
+        }
+      }
+    },
+    "ServiceCase": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ServiceCaseCreate"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "case_id": {
+              "type": "integer",
+              "format": "int32",
+              "example": 1049
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "open",
+                "investigating",
+                "scheduled",
+                "resolved"
+              ],
+              "example": "open"
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      ]
+    },
+    "AutomationEvaluation": {
+      "type": "object",
+      "properties": {
+        "equipment_id": {
+          "type": "string",
+          "example": "FF-TR-3018"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "no_action_required",
+            "service_case_created",
+            "duplicate_prevented"
+          ],
+          "example": "duplicate_prevented"
+        },
+        "message": {
+          "type": "string",
+          "example": "An active automated case already exists."
+        },
+        "service_case_id": {
+          "type": "integer",
+          "format": "int32",
+          "example": 1049
+        },
+        "event_id": {
+          "type": "integer",
+          "format": "int32",
+          "example": 2
+        },
+        "evaluated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "telemetry": {
+          "$ref": "#/definitions/TelemetryReading"
+        }
+      }
+    },
+    "AgentChatRequest": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "What is happening with FF-TR-3018?"
+        },
+        "confirm_action": {
+          "type": "boolean",
+          "default": false,
+          "example": false
+        }
+      }
+    },
+    "AgentChatResponse": {
+      "type": "object",
+      "properties": {
+        "interaction_id": {
+          "type": "integer",
+          "format": "int32",
+          "example": 1
+        },
+        "reply": {
+          "type": "string",
+          "example": "FF-TR-3018 is currently critical."
+        },
+        "intent": {
+          "type": "string",
+          "enum": [
+            "equipment_status",
+            "create_case",
+            "fleet_summary",
+            "help",
+            "unknown"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "format": "double",
+          "example": 0.96
+        },
+        "equipment_id": {
+          "type": "string",
+          "example": "FF-TR-3018"
+        },
+        "requires_confirmation": {
+          "type": "boolean",
+          "example": false
+        },
+        "action_status": {
+          "type": "string",
+          "example": "not_requested"
+        },
+        "service_case_id": {
+          "type": "integer",
+          "format": "int32",
+          "example": 1050
+        },
+        "recommended_actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "detail": {
+          "type": "string",
+          "example": "The requested record was not found."
+        }
+      }
+    }
+  }
+}

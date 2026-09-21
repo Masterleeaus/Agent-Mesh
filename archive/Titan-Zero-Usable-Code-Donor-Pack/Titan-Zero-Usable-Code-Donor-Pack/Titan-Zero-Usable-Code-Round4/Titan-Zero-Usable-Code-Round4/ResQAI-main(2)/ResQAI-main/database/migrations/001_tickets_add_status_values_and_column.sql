@@ -1,0 +1,52 @@
+-- ResQAI Migration 001
+-- Date:    2026-06-26
+-- Ticket:  Issues A/B — Support Queue Validation Report
+--          tickets.status ENUM missing approved_to_send / sent / closed
+--          tickets table missing approved_to_send column
+--
+-- Applied to: ResQAI Customer Support Pod
+-- Schema ref: resqai-local/database/docs/SCHEMA.md
+-- Status:    ✅ APPLIED — schema now matches code requirements
+
+-- ============================================================
+-- Step 1: Add ENUM values for state machine transitions
+-- ============================================================
+-- The support-queue app transitions tickets through:
+--   new → classified → drafted → approved_to_send → sent → closed
+--
+-- These three values were missing from the original ENUM:
+-- lemma enum add-value tickets.status approved_to_send
+-- lemma enum add-value tickets.status sent
+-- lemma enum add-value tickets.status closed
+
+-- Verify: lemma enum list tickets.status
+-- Expected: new, classified, drafted, approved_to_send, sent, closed
+
+-- ============================================================
+-- Step 2: Add boolean column for approval tracking
+-- ============================================================
+-- lemma table add-column tickets approved_to_send --type BOOLEAN --nullable
+
+-- Verify: lemma table describe tickets
+-- Expected: approved_to_send | boolean | nullable
+
+-- ============================================================
+-- Final tickets table schema (post-migration)
+-- ============================================================
+-- | Column            | Type        | Notes        |
+-- |-------------------|-------------|--------------|
+-- | id                | uuid        | PK           |
+-- | customer_name     | text        |              |
+-- | channel           | enum        | email/chat/sms/phone/web |
+-- | subject           | text        |              |
+-- | message           | text        |              |
+-- | request_type      | enum        | new_booking/reschedule/cancellation/complaint/follow_up/general_inquiry |
+-- | urgency           | enum        | low/normal/high/urgent |
+-- | suggested_owner   | text        | nullable     |
+-- | owner             | text        | nullable     |
+-- | draft_reply       | text        | nullable     |
+-- | human_notes       | text        | nullable     |
+-- | approved_to_send  | boolean     | nullable     |
+-- | status            | enum        | new/classified/drafted/approved_to_send/sent/closed |
+-- | created_at        | timestamptz | system       |
+-- | updated_at        | timestamptz | system       |

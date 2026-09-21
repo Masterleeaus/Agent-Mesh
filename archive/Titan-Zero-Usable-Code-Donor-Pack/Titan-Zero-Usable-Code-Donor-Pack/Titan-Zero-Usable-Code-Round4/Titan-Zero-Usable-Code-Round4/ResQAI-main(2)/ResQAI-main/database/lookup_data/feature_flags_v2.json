@@ -1,0 +1,14 @@
+[
+  { "id": "00000000-0000-0000-0000-000000000701", "feature_group": "support-center-v2", "flag_name": "ai_classification", "enabled": true, "rollout_percentage": 100, "description": "AI-powered ticket classification and routing" },
+  { "id": "00000000-0000-0000-0000-000000000702", "feature_group": "support-center-v2", "flag_name": "ai_drafting", "enabled": true, "rollout_percentage": 50, "description": "AI-assisted response drafting for agents" },
+  { "id": "00000000-0000-0000-0000-000000000703", "feature_group": "support-center-v2", "flag_name": "ticket_attachments", "enabled": true, "rollout_percentage": 100, "description": "File attachments on support tickets" },
+  { "id": "00000000-0000-0000-0000-000000000704", "feature_group": "support-center-v2", "flag_name": "customer_portal", "enabled": true, "rollout_percentage": 100, "description": "Customer self-service portal" },
+  { "id": "00000000-0000-0000-0000-000000000705", "feature_group": "technician-portal-v2", "flag_name": "digital_signatures", "enabled": true, "rollout_percentage": 75, "description": "Digital signature capture on job completion" },
+  { "id": "00000000-0000-0000-0000-000000000706", "feature_group": "technician-portal-v2", "flag_name": "photo_upload", "enabled": true, "rollout_percentage": 100, "description": "Photo upload field for technicians" },
+  { "id": "00000000-0000-0000-0000-000000000707", "feature_group": "technician-portal-v2", "flag_name": "real_time_gps", "enabled": true, "rollout_percentage": 100, "description": "Real-time GPS tracking of field technicians" },
+  { "id": "00000000-0000-0000-0000-000000000708", "feature_group": "technician-portal-v2", "flag_name": "offline_mode", "enabled": false, "rollout_percentage": 0, "description": "Offline mode for technicians in remote areas" },
+  { "id": "00000000-0000-0000-0000-000000000709", "feature_group": "resolution-center-v2", "flag_name": "ai_analysis", "enabled": true, "rollout_percentage": 100, "description": "AI-powered dispute resolution analysis" },
+  { "id": "00000000-0000-0000-0000-000000000710", "feature_group": "resolution-center-v2", "flag_name": "auto_resolution", "enabled": false, "rollout_percentage": 10, "description": "Automated dispute resolution for low-complexity cases" },
+  { "id": "00000000-0000-0000-0000-000000000711", "feature_group": "admin-center-v2", "flag_name": "audit_viewer", "enabled": true, "rollout_percentage": 100, "description": "Audit log viewer for administrators" },
+  { "id": "00000000-0000-0000-0000-000000000712", "feature_group": "admin-center-v2", "flag_name": "bulk_operations", "enabled": true, "rollout_percentage": 50, "description": "Bulk operations on tickets and customers" }
+]

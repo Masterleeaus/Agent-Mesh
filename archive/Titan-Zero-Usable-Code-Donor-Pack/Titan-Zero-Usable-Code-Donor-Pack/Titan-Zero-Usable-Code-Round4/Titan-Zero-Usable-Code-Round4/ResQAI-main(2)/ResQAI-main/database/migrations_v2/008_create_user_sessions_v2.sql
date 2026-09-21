@@ -1,0 +1,35 @@
+-- ResQAI V2 Migration 008
+-- Date:    2026-06-29
+-- Purpose: Create user_sessions_v2 table for session management
+--
+-- Applied to: ResQAI V2 Pod
+-- Schema: v2
+
+-- ============================================================
+-- Step 1: Create user_sessions_v2 table
+-- ============================================================
+-- lemma table create user_sessions_v2 \
+--   id:UUID --pk \
+--   user_id:UUID \
+--   token_hash:TEXT --not-null \
+--   ip_address:TEXT \
+--   user_agent:TEXT \
+--   expires_at:TIMESTAMPTZ \
+--   last_activity_at:TIMESTAMPTZ \
+--   is_active:BOOLEAN --default true \
+--   created_at:TIMESTAMPTZ
+
+-- ============================================================
+-- Step 2: Add foreign key and indexes
+-- ============================================================
+-- lemma table add-foreign-key user_sessions_v2 fk_sessions_user \
+--   --from user_id --to users_v2(id) --on-delete CASCADE
+-- lemma table add-index user_sessions_v2 idx_sessions_user_id --using btree --fields user_id
+-- lemma table add-index user_sessions_v2 idx_sessions_token_hash --using btree --fields token_hash
+-- lemma table add-index user_sessions_v2 idx_sessions_expires --using btree --fields expires_at
+-- lemma table add-index user_sessions_v2 idx_sessions_active --using btree --fields is_active --where 'is_active = true'
+
+-- Verify: lemma table describe user_sessions_v2
+-- Verify: lemma table indexes user_sessions_v2
+-- Expected: idx_sessions_user_id, idx_sessions_token_hash, idx_sessions_expires, idx_sessions_active (partial)
+-- Expected: fk_sessions_user (user_id -> users_v2(id) ON DELETE CASCADE)

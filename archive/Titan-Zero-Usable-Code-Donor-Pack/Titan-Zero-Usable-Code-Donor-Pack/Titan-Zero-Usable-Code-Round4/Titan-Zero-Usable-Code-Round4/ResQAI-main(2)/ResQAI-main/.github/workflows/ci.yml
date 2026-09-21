@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  typecheck-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install Python test dependencies
+        run: |
+          pip install pytest
+          pip install pydantic
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: TypeScript type-check (root)
+        run: npx tsc --noEmit
+
+      - name: TypeScript type-check (apps)
+        run: |
+          npx tsc --noEmit --project apps/support-queue/tsconfig.json
+          npx tsc --noEmit --project apps/ops-dashboard/tsconfig.json
+          npx tsc --noEmit --project apps/resolution-center/tsconfig.json
+          npx tsc --noEmit --project apps/crm-tracker/tsconfig.json
+          npx tsc --noEmit --project apps/appointment-board/tsconfig.json
+
+      - name: Run frontend + function tests
+        run: npx tsx scripts/test.ts
+
+      - name: Build all apps
+        run: npx tsx scripts/build.ts

@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "title": "AccountHealthScanInput",
+  "properties": {
+    "today": { "anyOf": [{ "type": "string", "format": "date" }, { "type": "null" }], "title": "Today", "default": null, "description": "Override 'now'. Defaults to system date." },
+    "write_back": { "type": "boolean", "title": "write Back", "default": true, "description": "If true, update accounts.health, health_score, open_followups, overdue_followups, open_disputes." },
+    "lookback_days": { "type": "integer", "title": "Lookback Days", "default": 120, "description": "How many days back define 'recent engagement'." },
+    "top_n_riskiest": { "type": "integer", "title": "Top N Riskiest", "default": 10, "description": "How many riskiest accounts to return." },
+    "relationship_overrides": { "type": "object", "title": "Relationship Overrides", "description": "Map of account_id -> relationship_status to enforce.", "additionalProperties": { "type": "string" } }
+  }
+}

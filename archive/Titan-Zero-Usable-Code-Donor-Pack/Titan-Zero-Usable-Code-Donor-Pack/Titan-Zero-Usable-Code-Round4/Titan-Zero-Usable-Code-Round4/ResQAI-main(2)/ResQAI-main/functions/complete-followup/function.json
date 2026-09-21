@@ -1,0 +1,17 @@
+{
+  "name": "complete_followup",
+  "description": "Marks a followup as completed. Validates the followup exists and is not already completed. Updates status to 'completed', sets completed_at timestamp, and decrements the account's open_followups counter. Writes an audit entry to the operations log.",
+  "type": "API",
+  "input_type_name": "CompleteFollowupInput",
+  "output_type_name": "CompleteFollowupOutput",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "visibility": "POD",
+  "permissions": {
+    "grants": [
+      { "resource_type": "datastore_table", "resource_name": "followups_v2", "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"] },
+      { "resource_type": "datastore_table", "resource_name": "accounts_v2", "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"] },
+      { "resource_type": "datastore_table", "resource_name": "operations_log", "permission_ids": ["datastore.record.create"] }
+    ]
+  }
+}

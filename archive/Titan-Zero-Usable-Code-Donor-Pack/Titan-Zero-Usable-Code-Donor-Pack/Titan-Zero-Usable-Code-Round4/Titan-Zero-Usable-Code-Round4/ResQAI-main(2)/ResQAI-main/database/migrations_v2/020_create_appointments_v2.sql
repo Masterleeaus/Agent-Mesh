@@ -1,0 +1,43 @@
+-- ResQAI V2 Migration 020
+-- Date:    2026-06-29
+-- Purpose: Create appointments_v2 table
+--
+-- Applied to: ResQAI V2 Pod
+-- Schema: v2
+
+-- ============================================================
+-- Step 1: Create appointments_v2 table
+-- ============================================================
+-- lemma table create appointments_v2
+--   id --type UUID --pk
+--   customer_id --type UUID --nullable               -- FK -> customers_v2(id) ON DELETE RESTRICT
+--   technician_id --type UUID --nullable              -- FK -> technicians_v2(id) ON DELETE SET NULL
+--   service_type --type TEXT --nullable
+--   scheduled_date --type TIMESTAMPTZ --nullable
+--   duration_minutes --type INTEGER --nullable --default 60
+--   status --type TEXT --nullable --default "scheduled"
+--   arrival_window_start --type TIMESTAMPTZ --nullable
+--   arrival_window_end --type TIMESTAMPTZ --nullable
+--   notes --type TEXT --nullable
+--   completed_at --type TIMESTAMPTZ --nullable
+--   cancelled_at --type TIMESTAMPTZ --nullable
+--   cancellation_reason --type TEXT --nullable
+--   created_by --type UUID --nullable               -- FK -> users_v2(id)
+--   updated_by --type UUID --nullable               -- FK -> users_v2(id)
+--   created_at --type TIMESTAMPTZ --nullable
+--   updated_at --type TIMESTAMPTZ --nullable
+--   deleted_at --type TIMESTAMPTZ --nullable
+--   version --type INTEGER --nullable --default 1
+
+-- Verify: lemma table describe appointments_v2
+
+-- ============================================================
+-- Step 2: Add indexes
+-- ============================================================
+-- lemma table add-index appointments_v2 customer_id
+-- lemma table add-index appointments_v2 technician_id
+-- lemma table add-index appointments_v2 status_scheduled_date --type INDEX --expression "(status, scheduled_date)"
+-- lemma table add-index appointments_v2 scheduled_date
+-- lemma table add-index appointments_v2 status_active --type INDEX --expression "status" --where "deleted_at IS NULL"
+
+-- Verify: lemma table list-indexes appointments_v2

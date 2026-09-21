@@ -1,0 +1,24 @@
+{
+  "name": "create_role",
+  "description": "Creates a new user role with unique name check and logs the operation.",
+  "type": "API",
+  "input_type_name": "CreateRoleInput",
+  "output_type_name": "CreateRoleOutput",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "visibility": "POD",
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "user_roles_v2",
+        "permission_ids": ["datastore.record.read", "datastore.record.create", "datastore.table.read"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "operations_log",
+        "permission_ids": ["datastore.record.read", "datastore.record.create", "datastore.table.read"]
+      }
+    ]
+  }
+}

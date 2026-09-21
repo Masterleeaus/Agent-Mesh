@@ -1,0 +1,182 @@
+{
+  "name": "appointment-reminders",
+  "description": "Appointment reminders pipeline: checks upcoming appointments, generates reminder notifications via support-reply-drafter, and dispatches via appropriate channels. V2 conversion with full edge graph, retry policy, timeout, audit, and notification support.",
+  "status": "active",
+  "version": "2.0.0",
+  "retry_policy": {
+    "max_retries": 3,
+    "initial_delay_ms": 2000,
+    "backoff_multiplier": 2,
+    "max_delay_ms": 30000,
+    "retryable_errors": ["timeout", "transient", "workload_error"]
+  },
+  "timeout_ms": 300000,
+  "idempotency": {
+    "key_source": "start.metadata.time",
+    "ttl_seconds": 86400
+  },
+  "start": {
+    "type": "SCHEDULED",
+    "config": {
+      "cron": "0 7 * * *",
+      "schedule_type": "CRON"
+    }
+  },
+  "nodes": [
+    {
+      "id": "fetch_appointments",
+      "type": "FUNCTION",
+      "label": "Fetch Upcoming Appointments",
+      "config": {
+        "function_name": "fetch_upcoming_appointments",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "today": { "type": "expression", "value": "start.metadata.time", "optional": true },
+          "days_ahead": { "type": "literal", "value": 2 },
+          "statuses": { "type": "literal", "value": ["confirmed", "scheduled"] }
+        }
+      }
+    },
+    {
+      "id": "check_appointments",
+      "type": "DECISION",
+      "label": "Any Appointments?",
+      "config": {
+        "rules": [
+          {
+            "condition": "fetch_appointments.count > `0`",
+            "next_node_id": "generate_reminders"
+          }
+        ]
+      }
+    },
+    {
+      "id": "generate_reminders",
+      "type": "AGENT",
+      "label": "Generate Reminder Messages",
+      "config": {
+        "agent_name": "support-reply-drafter",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "appointments": { "type": "expression", "value": "fetch_appointments.appointments", "optional": true },
+          "reminder_type": { "type": "literal", "value": "appointment" }
+        }
+      }
+    },
+    {
+      "id": "check_reminders",
+      "type": "DECISION",
+      "label": "Reminders Generated?",
+      "config": {
+        "rules": [
+          {
+            "condition": "generate_reminders.suggestion_status == `blocked`",
+            "next_node_id": "human_review"
+          }
+        ]
+      }
+    },
+    {
+      "id": "dispatch_reminders",
+      "type": "FUNCTION",
+      "label": "Dispatch Reminders",
+      "config": {
+        "function_name": "dispatch_notifications",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "reminders": { "type": "expression", "value": "generate_reminders.reminders", "optional": true },
+          "channels": { "type": "literal", "value": ["email", "sms"] }
+        }
+      }
+    },
+    {
+      "id": "check_dispatch",
+      "type": "DECISION",
+      "label": "Dispatch OK?",
+      "config": {
+        "rules": [
+          {
+            "condition": "dispatch_reminders.failures != `` && dispatch_reminders.failures != `{}`",
+            "next_node_id": "human_review"
+          }
+        ]
+      }
+    },
+    {
+      "id": "human_review",
+      "type": "FORM",
+      "label": "Human Review",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "resolved": {
+              "type": "boolean",
+              "description": "Mark the issue as resolved"
+            },
+            "action_taken": {
+              "type": "string",
+              "description": "Action taken to resolve the issue"
+            },
+            "resolution_notes": {
+              "type": "string",
+              "description": "Detailed notes on the resolution"
+            }
+          },
+          "required": ["resolved"]
+        },
+        "prefill": {
+          "failures": { "type": "expression", "value": "dispatch_reminders.failures", "optional": true },
+          "blocked_reminders": { "type": "expression", "value": "generate_reminders.blocked_reason", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "end_no_appointments",
+      "type": "END",
+      "label": "No Appointments"
+    },
+    {
+      "id": "end_complete",
+      "type": "END",
+      "label": "Reminders Dispatched"
+    },
+    {
+      "id": "end_reviewed",
+      "type": "END",
+      "label": "Reviewed"
+    }
+  ],
+  "edges": [
+    { "id": "e-fetch-to-check", "source": "fetch_appointments", "target": "check_appointments" },
+    { "id": "e-has-appts", "source": "check_appointments", "target": "generate_reminders", "label": "has appointments" },
+    { "id": "e-no-appts", "source": "check_appointments", "target": "end_no_appointments", "label": "default" },
+    { "id": "e-gen-to-check", "source": "generate_reminders", "target": "check_reminders" },
+    { "id": "e-gen-ok", "source": "check_reminders", "target": "dispatch_reminders", "label": "default" },
+    { "id": "e-gen-blocked", "source": "check_reminders", "target": "human_review", "label": "blocked" },
+    { "id": "e-dispatch-to-check", "source": "dispatch_reminders", "target": "check_dispatch" },
+    { "id": "e-dispatch-ok", "source": "check_dispatch", "target": "end_complete", "label": "default" },
+    { "id": "e-dispatch-fail", "source": "check_dispatch", "target": "human_review", "label": "has failures" },
+    { "id": "e-review-to-end", "source": "human_review", "target": "end_reviewed" }
+  ],
+  "visibility": "POD",
+  "enabled": true
+}

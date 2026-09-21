@@ -1,0 +1,7 @@
+{
+  "today": "2026-06-28",
+  "days_ahead": 7,
+  "lookback_days": 45,
+  "max_recommendations": 8,
+  "create_followup_tasks": true
+}

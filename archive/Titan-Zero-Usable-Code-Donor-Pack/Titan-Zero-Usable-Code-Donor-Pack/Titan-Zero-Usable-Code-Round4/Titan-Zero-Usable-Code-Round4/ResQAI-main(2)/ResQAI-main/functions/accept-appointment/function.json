@@ -1,0 +1,22 @@
+{
+  "name": "accept_appointment",
+  "description": "Accepts an appointment by a technician. Validates the appointment exists and has a technician assigned, then updates status to 'accepted' and writes an audit log entry.",
+  "type": "API",
+  "visibility": "POD",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "appointment_v2",
+        "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "operations_log",
+        "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+      }
+    ]
+  }
+}

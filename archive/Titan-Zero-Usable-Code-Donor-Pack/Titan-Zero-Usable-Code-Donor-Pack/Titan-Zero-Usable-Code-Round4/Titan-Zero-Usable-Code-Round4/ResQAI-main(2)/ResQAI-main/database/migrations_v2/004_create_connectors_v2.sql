@@ -1,0 +1,33 @@
+-- ResQAI V2 Migration 004
+-- Date:    2026-06-29
+-- Purpose: Create connectors_v2 table for external integration connections
+--
+-- Applied to: ResQAI V2 Pod
+-- Schema: v2
+
+-- ============================================================
+-- Step 1: Create connectors_v2 table
+-- ============================================================
+-- lemma table create connectors_v2 \
+--   id:UUID --pk \
+--   connector_type:TEXT \
+--   name:TEXT \
+--   config:JSONB \
+--   enabled:BOOLEAN --default false \
+--   status:TEXT --default 'disconnected' \
+--   last_health_check:TIMESTAMPTZ \
+--   last_error:TEXT \
+--   created_at:TIMESTAMPTZ \
+--   updated_at:TIMESTAMPTZ \
+--   deleted_at:TIMESTAMPTZ
+
+-- ============================================================
+-- Step 2: Add indexes
+-- ============================================================
+-- lemma table add-index connectors_v2 idx_connectors_type --using btree --fields connector_type
+-- lemma table add-index connectors_v2 idx_connectors_status --using btree --fields status
+-- lemma table add-index connectors_v2 idx_connectors_enabled --using btree --fields enabled
+
+-- Verify: lemma table describe connectors_v2
+-- Verify: lemma table indexes connectors_v2
+-- Expected: idx_connectors_type, idx_connectors_status, idx_connectors_enabled

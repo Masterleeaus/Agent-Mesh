@@ -1,0 +1,19 @@
+{
+  "name": "fetch_upcoming_appointments",
+  "description": "Queries appointments from the database within a future date window and status filter. Returns a structured list for the appointment-reminders workflow.",
+  "type": "API",
+  "input_type_name": "FetchUpcomingAppointmentsInput",
+  "output_type_name": "FetchUpcomingAppointmentsOutput",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "visibility": "POD",
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "appointments",
+        "permission_ids": ["datastore.record.read", "datastore.table.read"]
+      }
+    ]
+  }
+}

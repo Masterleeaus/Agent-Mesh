@@ -1,0 +1,346 @@
+{
+  "name": "dispute-resolution",
+  "description": "Dispute resolution pipeline: resolution-advisor analyzes the dispute, routes high-confidence recommendations to auto-resolution, sends low-confidence recommendations to human approval, and finalizes with a full audit trail.",
+  "version": "2.0.0",
+  "status": "active",
+  "retry_policy": {
+    "max_retries": 3,
+    "initial_delay_ms": 2000,
+    "backoff_multiplier": 2,
+    "max_delay_ms": 30000,
+    "retryable_errors": ["timeout", "transient", "workload_error"]
+  },
+  "timeout_ms": 300000,
+  "idempotency": {
+    "key_source": "start.metadata.record_id",
+    "ttl_seconds": 86400
+  },
+  "start": {
+    "type": "DATASTORE_EVENT",
+    "config": {
+      "table_name": "disputes",
+      "operations": ["INSERT", "UPDATE"]
+    }
+  },
+  "nodes": [
+    {
+      "id": "analyze_dispute",
+      "type": "AGENT",
+      "label": "Analyze Dispute",
+      "config": {
+        "agent_name": "resolution-advisor",
+        "input_mapping": {
+          "dispute_id": {
+            "type": "expression",
+            "value": "start.metadata.record_id"
+          }
+        }
+      }
+    },
+    {
+      "id": "route_analysis",
+      "type": "DECISION",
+      "label": "Route by Analysis Status",
+      "config": {
+        "rules": [
+          {
+            "condition": "analyze_dispute.analysis_status == `ready_for_review`",
+            "next_node_id": "check_confidence"
+          },
+          {
+            "condition": "analyze_dispute.analysis_status == `safety_escalation`",
+            "next_node_id": "notify_ops_manager"
+          },
+          {
+            "condition": "analyze_dispute.analysis_status == `legal_escalation`",
+            "next_node_id": "notify_legal"
+          },
+          {
+            "condition": "analyze_dispute.analysis_status == `insufficient_evidence`",
+            "next_node_id": "human_escalation"
+          },
+          {
+            "condition": "analyze_dispute.analysis_status == `blocked`",
+            "next_node_id": "human_escalation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "check_confidence",
+      "type": "DECISION",
+      "label": "Check Confidence Threshold",
+      "config": {
+        "rules": [
+          {
+            "condition": "analyze_dispute.confidence >= `0.7`",
+            "next_node_id": "apply_resolution"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply_resolution",
+      "type": "FUNCTION",
+      "label": "Apply Dispute Resolution",
+      "config": {
+        "function_name": "resolve_dispute",
+        "input_mapping": {
+          "dispute_id": {
+            "type": "expression",
+            "value": "start.metadata.record_id"
+          },
+          "action": {
+            "type": "literal",
+            "value": "approve"
+          },
+          "recommended_resolution": {
+            "type": "expression",
+            "value": "analyze_dispute.recommended_resolution"
+          },
+          "resolution_reason": {
+            "type": "expression",
+            "value": "analyze_dispute.resolution_reason"
+          },
+          "confidence": {
+            "type": "expression",
+            "value": "analyze_dispute.confidence"
+          },
+          "analysis_status": {
+            "type": "expression",
+            "value": "analyze_dispute.analysis_status"
+          },
+          "human_notes": {
+            "type": "literal",
+            "value": "Auto-approved (confidence >= 0.7 threshold)"
+          }
+        }
+      }
+    },
+    {
+      "id": "human_approval",
+      "type": "FORM",
+      "label": "Human Review & Approval",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "approved": {
+              "type": "boolean",
+              "description": "Approve the recommended resolution"
+            },
+            "human_notes": {
+              "type": "string",
+              "description": "Notes or feedback on the decision"
+            },
+            "ticket_id": {
+              "type": "string",
+              "description": "Optional related ticket UUID to update on approval"
+            }
+          },
+          "required": ["approved"]
+        }
+      }
+    },
+    {
+      "id": "route_approval",
+      "type": "DECISION",
+      "label": "Route by Human Decision",
+      "config": {
+        "rules": [
+          {
+            "condition": "human_approval.approved == `true`",
+            "next_node_id": "apply_resolution"
+          }
+        ]
+      }
+    },
+    {
+      "id": "return_to_advisor",
+      "type": "FUNCTION",
+      "label": "Return to Advisor",
+      "config": {
+        "function_name": "resolve_dispute",
+        "input_mapping": {
+          "dispute_id": {
+            "type": "expression",
+            "value": "start.metadata.record_id"
+          },
+          "action": {
+            "type": "literal",
+            "value": "reject"
+          },
+          "human_notes": {
+            "type": "expression",
+            "value": "human_approval.human_notes",
+            "optional": true
+          }
+        }
+      }
+    },
+    {
+      "id": "notify_ops_manager",
+      "type": "FORM",
+      "label": "Notify Ops Manager",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "acknowledged": {
+              "type": "boolean",
+              "description": "Acknowledge receipt of safety escalation"
+            },
+            "action_taken": {
+              "type": "string",
+              "description": "Actions taken in response to safety concern"
+            }
+          },
+          "required": ["acknowledged"]
+        }
+      }
+    },
+    {
+      "id": "notify_legal",
+      "type": "FORM",
+      "label": "Notify Legal Counsel",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "acknowledged": {
+              "type": "boolean",
+              "description": "Acknowledge receipt of legal escalation"
+            },
+            "assigned_counsel": {
+              "type": "string",
+              "description": "Legal counsel assigned to this dispute"
+            }
+          },
+          "required": ["acknowledged"]
+        }
+      }
+    },
+    {
+      "id": "human_escalation",
+      "type": "FORM",
+      "label": "Human Escalation Review",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "resolved": {
+              "type": "boolean",
+              "description": "Mark the escalation as resolved"
+            },
+            "action_taken": {
+              "type": "string",
+              "description": "Action taken to resolve the escalation"
+            },
+            "resolution_notes": {
+              "type": "string",
+              "description": "Detailed notes on the resolution"
+            }
+          },
+          "required": ["resolved"]
+        }
+      }
+    },
+    {
+      "id": "end",
+      "type": "END",
+      "label": "Done"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-analyze-to-route",
+      "source": "analyze_dispute",
+      "target": "route_analysis"
+    },
+    {
+      "id": "e-route-end",
+      "source": "route_analysis",
+      "target": "end",
+      "label": "default (already_analyzed)"
+    },
+    {
+      "id": "e-route-confidence",
+      "source": "route_analysis",
+      "target": "check_confidence",
+      "label": "ready_for_review"
+    },
+    {
+      "id": "e-route-ops",
+      "source": "route_analysis",
+      "target": "notify_ops_manager",
+      "label": "safety_escalation"
+    },
+    {
+      "id": "e-route-legal",
+      "source": "route_analysis",
+      "target": "notify_legal",
+      "label": "legal_escalation"
+    },
+    {
+      "id": "e-route-escalation",
+      "source": "route_analysis",
+      "target": "human_escalation",
+      "label": "insufficient_evidence / blocked"
+    },
+    {
+      "id": "e-confidence-low",
+      "source": "check_confidence",
+      "target": "human_approval",
+      "label": "default (confidence < 0.7)"
+    },
+    {
+      "id": "e-confidence-high",
+      "source": "check_confidence",
+      "target": "apply_resolution",
+      "label": "confidence >= 0.7"
+    },
+    {
+      "id": "e-human-to-route",
+      "source": "human_approval",
+      "target": "route_approval"
+    },
+    {
+      "id": "e-approval-reject",
+      "source": "route_approval",
+      "target": "return_to_advisor",
+      "label": "default (rejected)"
+    },
+    {
+      "id": "e-approval-approve",
+      "source": "route_approval",
+      "target": "apply_resolution",
+      "label": "approved"
+    },
+    {
+      "id": "e-apply-end",
+      "source": "apply_resolution",
+      "target": "end"
+    },
+    {
+      "id": "e-return-end",
+      "source": "return_to_advisor",
+      "target": "end"
+    },
+    {
+      "id": "e-ops-end",
+      "source": "notify_ops_manager",
+      "target": "end"
+    },
+    {
+      "id": "e-legal-end",
+      "source": "notify_legal",
+      "target": "end"
+    },
+    {
+      "id": "e-escalation-end",
+      "source": "human_escalation",
+      "target": "end"
+    }
+  ],
+  "visibility": "POD"
+}

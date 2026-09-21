@@ -1,0 +1,27 @@
+{
+  "name": "update_ticket_v2",
+  "description": "Updates an existing ticket with full field support. Sets updated_at timestamp and optionally closes the ticket when status changes to closed.",
+  "type": "API",
+  "visibility": "POD",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "tickets_v2",
+        "permission_ids": ["datastore.record.read", "datastore.record.write"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "operations_log",
+        "permission_ids": ["datastore.record.read", "datastore.record.write"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "events_v2",
+        "permission_ids": ["datastore.record.read", "datastore.record.write"]
+      }
+    ]
+  }
+}

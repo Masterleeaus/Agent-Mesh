@@ -1,0 +1,24 @@
+{
+  "site": "fieldcrewai.com",
+  "repo": "Josh-Szepesi/fieldcrewai",
+  "published_posts": [
+    {
+      "slug": "2026-04-15-how-to-handle-seasonal-slowdowns-as-a-contractor",
+      "title": "How to Handle Seasonal Slowdowns as a Contractor",
+      "date": "2026-04-15",
+      "topic_index": 12,
+      "cloudflare_deploy_id": "b0a9ba88-64ae-42e3-af0b-dbf522e43a48",
+      "hero_photographer": "Jonathan Cooper",
+      "hero_profile": "https://unsplash.com/@theshuttervision"
+    },
+    {
+      "slug": "2026-04-17-how-to-hire-and-manage-subcontractors",
+      "title": "How to Hire and Manage Subcontractors",
+      "date": "2026-04-17",
+      "topic_index": 14,
+      "cloudflare_deploy_id": "13d721a7-86bf-42a4-9593-28d011f24df2",
+      "hero_photographer": "Craftsman Concrete Floors",
+      "hero_profile": "https://unsplash.com/@craftsmanconcrete_official"
+    }
+  ]
+}

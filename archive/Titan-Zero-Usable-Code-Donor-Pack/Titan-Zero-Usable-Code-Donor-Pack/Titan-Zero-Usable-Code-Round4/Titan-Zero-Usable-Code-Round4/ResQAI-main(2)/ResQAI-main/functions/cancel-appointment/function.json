@@ -1,0 +1,22 @@
+{
+  "name": "cancel_appointment",
+  "description": "Cancels an appointment. Validates existence, updates status to 'cancelled', records cancellation reason and time, and writes an audit log entry.",
+  "type": "API",
+  "visibility": "POD",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "appointment_v2",
+        "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "operations_log",
+        "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+      }
+    ]
+  }
+}

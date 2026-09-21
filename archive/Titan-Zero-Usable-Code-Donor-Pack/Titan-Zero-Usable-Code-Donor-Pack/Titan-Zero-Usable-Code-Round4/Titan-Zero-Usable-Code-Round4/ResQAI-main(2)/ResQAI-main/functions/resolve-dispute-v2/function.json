@@ -1,0 +1,19 @@
+{
+  "name": "resolve_dispute_v2",
+  "description": "Enhanced dispute resolution. Validates the dispute exists and is not already closed, applies the approved resolution type, updates status to 'closed', optionally notifies the customer via connector, updates any linked ticket status, and writes an audit entry to the operations log.",
+  "type": "API",
+  "input_type_name": "ResolveDisputeV2Input",
+  "output_type_name": "ResolveDisputeV2Output",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "visibility": "POD",
+  "permissions": {
+    "grants": [
+      { "resource_type": "datastore_table", "resource_name": "disputes", "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"] },
+      { "resource_type": "datastore_table", "resource_name": "tickets", "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"] },
+      { "resource_type": "datastore_table", "resource_name": "operations_log", "permission_ids": ["datastore.record.create"] },
+      { "resource_type": "connector", "resource_name": "discord", "permission_ids": ["connector.use"] },
+      { "resource_type": "connector", "resource_name": "gmail", "permission_ids": ["connector.use"] }
+    ]
+  }
+}

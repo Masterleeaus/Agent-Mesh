@@ -1,0 +1,172 @@
+{
+  "name": "followup-slippage",
+  "description": "Follow-up slippage detection pipeline: scans for overdue and at-risk followups, analyzes patterns via account-health-monitor, and creates remediation tasks. V2 conversion with full edge graph, retry policy, timeout, audit, and notification support.",
+  "status": "active",
+  "version": "2.0.0",
+  "retry_policy": {
+    "max_retries": 3,
+    "initial_delay_ms": 2000,
+    "backoff_multiplier": 2,
+    "max_delay_ms": 30000,
+    "retryable_errors": ["timeout", "transient", "workload_error"]
+  },
+  "timeout_ms": 300000,
+  "idempotency": {
+    "key_source": "start.metadata.time",
+    "ttl_seconds": 86400
+  },
+  "start": {
+    "type": "SCHEDULED",
+    "config": {
+      "cron": "0 6 * * 1-5",
+      "schedule_type": "CRON"
+    }
+  },
+  "nodes": [
+    {
+      "id": "scan_followups",
+      "type": "FUNCTION",
+      "label": "Scan Slipping Followups",
+      "config": {
+        "function_name": "flag_slipping_followups",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "today": { "type": "expression", "value": "start.metadata.time", "optional": true },
+          "top_n": { "type": "literal", "value": 50 },
+          "days_ahead": { "type": "literal", "value": 7 },
+          "include_statuses": { "type": "literal", "value": ["pending", "in_progress"] }
+        }
+      }
+    },
+    {
+      "id": "check_slippage",
+      "type": "DECISION",
+      "label": "Any Slipping?",
+      "config": {
+        "rules": [
+          {
+            "condition": "scan_followups.counts.slipping > `0`",
+            "next_node_id": "analyze_slippage"
+          }
+        ]
+      }
+    },
+    {
+      "id": "analyze_slippage",
+      "type": "AGENT",
+      "label": "Analyze Slippage Patterns",
+      "config": {
+        "agent_name": "account_health_monitor",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "today": { "type": "expression", "value": "start.metadata.time", "optional": true },
+          "days_ahead": { "type": "literal", "value": 7 },
+          "lookback_days": { "type": "literal", "value": 45 },
+          "max_recommendations": { "type": "literal", "value": 8 },
+          "create_followup_tasks": { "type": "literal", "value": true },
+          "focus_on_slippage": { "type": "literal", "value": true },
+          "slipping_followups": { "type": "expression", "value": "scan_followups.top", "optional": true },
+          "slippage_counts": { "type": "expression", "value": "scan_followups.counts", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "route_analysis",
+      "type": "DECISION",
+      "label": "Route by Analysis",
+      "config": {
+        "rules": [
+          {
+            "condition": "analyze_slippage.coordination_status == `crisis`",
+            "next_node_id": "notify_manager"
+          },
+          {
+            "condition": "analyze_slippage.coordination_status == `attention_needed` || analyze_slippage.coordination_status == `ok`",
+            "next_node_id": "create_tasks"
+          }
+        ]
+      }
+    },
+    {
+      "id": "create_tasks",
+      "type": "FUNCTION",
+      "label": "Create Remediation Tasks",
+      "config": {
+        "function_name": "create_followup_tasks",
+        "retry_policy": {
+          "max_retries": 3,
+          "initial_delay_ms": 2000,
+          "backoff_multiplier": 2,
+          "max_delay_ms": 30000,
+          "retryable_errors": ["timeout", "transient", "workload_error"]
+        },
+        "input_mapping": {
+          "recommendations": { "type": "expression", "value": "analyze_slippage.recommendations", "optional": true },
+          "today": { "type": "expression", "value": "analyze_slippage.scan_date", "optional": true },
+          "category": { "type": "literal", "value": "slippage_remediation" }
+        }
+      }
+    },
+    {
+      "id": "notify_manager",
+      "type": "FORM",
+      "label": "Notify Ops Manager",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "acknowledged": {
+              "type": "boolean",
+              "description": "Acknowledge receipt of slippage alert"
+            },
+            "action_taken": {
+              "type": "string",
+              "description": "Actions taken in response"
+            }
+          },
+          "required": ["acknowledged"]
+        },
+        "prefill": {
+          "status": { "type": "expression", "value": "analyze_slippage.coordination_status" },
+          "slippage_summary": { "type": "expression", "value": "scan_followups.counts", "optional": true },
+          "summary": { "type": "expression", "value": "analyze_slippage.summary", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "end_no_slippage",
+      "type": "END",
+      "label": "No Slippage"
+    },
+    {
+      "id": "end_complete",
+      "type": "END",
+      "label": "Completed"
+    }
+  ],
+  "edges": [
+    { "id": "e-scan-to-check", "source": "scan_followups", "target": "check_slippage" },
+    { "id": "e-no-slippage", "source": "check_slippage", "target": "end_no_slippage", "label": "default" },
+    { "id": "e-slippage-found", "source": "check_slippage", "target": "analyze_slippage", "label": "slipping > 0" },
+    { "id": "e-analyze-to-route", "source": "analyze_slippage", "target": "route_analysis" },
+    { "id": "e-route-tasks", "source": "route_analysis", "target": "create_tasks", "label": "attention_needed / ok" },
+    { "id": "e-route-manager", "source": "route_analysis", "target": "notify_manager", "label": "crisis" },
+    { "id": "e-route-end", "source": "route_analysis", "target": "end_complete", "label": "default (no_action_needed)" },
+    { "id": "e-tasks-to-end", "source": "create_tasks", "target": "end_complete" },
+    { "id": "e-manager-to-end", "source": "notify_manager", "target": "end_complete" }
+  ],
+  "visibility": "POD",
+  "enabled": true
+}

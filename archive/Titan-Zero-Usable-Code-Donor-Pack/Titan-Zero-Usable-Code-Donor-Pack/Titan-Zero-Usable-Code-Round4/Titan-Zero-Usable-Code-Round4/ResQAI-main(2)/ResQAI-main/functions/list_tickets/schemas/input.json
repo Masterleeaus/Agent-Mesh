@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "List TicketsInput",
+  "type": "object",
+  "properties": {
+    "filters": {
+      "type": "object",
+      "description": "Filter conditions"
+    },
+    "sort_by": {
+      "type": "string",
+      "description": "Sort field"
+    },
+    "sort_dir": {
+      "type": "string",
+      "enum": [
+        "asc",
+        "desc"
+      ],
+      "default": "desc"
+    },
+    "page": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1
+    },
+    "page_size": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 200,
+      "default": 20
+    },
+    "search": {
+      "type": "string",
+      "description": "Search query"
+    },
+    "search_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "correlation_id": {
+      "type": "string",
+      "description": "Correlation ID for tracing"
+    }
+  }
+}

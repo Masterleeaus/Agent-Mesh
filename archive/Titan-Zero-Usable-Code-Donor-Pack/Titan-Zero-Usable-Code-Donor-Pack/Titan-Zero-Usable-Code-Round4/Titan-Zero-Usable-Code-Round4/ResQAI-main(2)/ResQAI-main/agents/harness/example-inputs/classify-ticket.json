@@ -1,0 +1,7 @@
+{
+  "ticket_id": "123e4567-e89b-12d3-a456-426614174000",
+  "channel": "email",
+  "message": "My AC stopped cooling last night and it's 95 degrees today. Can someone come ASAP?",
+  "customer_name": "Jane Smith",
+  "force_reclassify": false
+}

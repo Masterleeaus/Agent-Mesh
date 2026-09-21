@@ -1,0 +1,19 @@
+{
+  "name": "list_users",
+  "description": "Lists users with optional role and status filters.",
+  "type": "API",
+  "input_type_name": "ListUsersInput",
+  "output_type_name": "ListUsersOutput",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "visibility": "POD",
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "users_v2",
+        "permission_ids": ["datastore.record.read", "datastore.table.read"]
+      }
+    ]
+  }
+}

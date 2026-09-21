@@ -1,0 +1,408 @@
+{
+  "name": "urgent-dispatch",
+  "description": "Urgent Dispatcher workflow: automatically dispatches high-priority tickets to the correct technician or operations team. Runs request-classifier, tech-suggester, and operations-coordinator with human-in-the-loop gates for no-match scenarios and error escalation.",
+  "version": "2.0.0",
+  "status": "active",
+  "retry_policy": {
+    "max_retries": 3,
+    "initial_delay_ms": 2000,
+    "backoff_multiplier": 2,
+    "max_delay_ms": 30000,
+    "retryable_errors": ["timeout", "transient", "workload_error"]
+  },
+  "idempotency": {
+    "key_source": "trigger.metadata.record_id",
+    "ttl_seconds": 86400
+  },
+  "start": {
+    "type": "DATASTORE_EVENT",
+    "config": {
+      "table_name": "tickets",
+      "operations": ["INSERT", "UPDATE"]
+    }
+  },
+  "nodes": [
+    {
+      "id": "classify_urgent",
+      "type": "AGENT",
+      "label": "Classify Urgent Ticket",
+      "config": {
+        "agent_name": "request-classifier",
+        "input_mapping": {
+          "ticket_id": {
+            "type": "expression",
+            "value": "start.metadata.record_id"
+          }
+        }
+      }
+    },
+    {
+      "id": "route_classification",
+      "type": "DECISION",
+      "label": "Classification OK?",
+      "config": {
+        "rules": [
+          {
+            "condition": "classify_urgent.classification_status == `unparseable`",
+            "next_node_id": "human_escalation"
+          },
+          {
+            "condition": "classify_urgent.classification_status == `needs_human_review`",
+            "next_node_id": "human_escalation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "check_urgency",
+      "type": "FUNCTION",
+      "label": "Check Ticket Urgency",
+      "config": {
+        "function_name": "check_ticket_urgency",
+        "input_mapping": {
+          "ticket_id": {
+            "type": "expression",
+            "value": "start.metadata.record_id"
+          },
+          "urgency": {
+            "type": "expression",
+            "value": "classify_urgent.urgency"
+          },
+          "classification_status": {
+            "type": "expression",
+            "value": "classify_urgent.classification_status"
+          }
+        }
+      }
+    },
+    {
+      "id": "route_urgency",
+      "type": "DECISION",
+      "label": "Actually Urgent?",
+      "config": {
+        "rules": [
+          {
+            "condition": "check_urgency.is_urgent == `true`",
+            "next_node_id": "suggest_tech"
+          }
+        ]
+      }
+    },
+    {
+      "id": "suggest_tech",
+      "type": "AGENT",
+      "label": "Suggest Technician",
+      "config": {
+        "agent_name": "tech-suggester",
+        "input_mapping": {
+          "ticket_id": {
+            "type": "expression",
+            "value": "start.metadata.record_id"
+          },
+          "urgency": {
+            "type": "expression",
+            "value": "classify_urgent.urgency"
+          },
+          "service_request": {
+            "type": "expression",
+            "value": "classify_urgent.request_type"
+          }
+        }
+      }
+    },
+    {
+      "id": "route_tech",
+      "type": "DECISION",
+      "label": "Technician Found?",
+      "config": {
+        "rules": [
+          {
+            "condition": "suggest_tech.pick_tech_name != ``",
+            "next_node_id": "coordinate_dispatch"
+          }
+        ]
+      }
+    },
+    {
+      "id": "manager_assignment",
+      "type": "FORM",
+      "label": "Manager Assignment",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "assigned_technician": {
+              "type": "string",
+              "description": "Technician name assigned by the operations manager"
+            },
+            "dispatch_notes": {
+              "type": "string",
+              "description": "Notes or instructions for the dispatch"
+            }
+          },
+          "required": ["assigned_technician"]
+        }
+      }
+    },
+    {
+      "id": "coordinate_dispatch",
+      "type": "AGENT",
+      "label": "Coordinate Dispatch",
+      "config": {
+        "agent_name": "operations-coordinator",
+        "input_mapping": {
+          "scope": {
+            "type": "literal",
+            "value": "urgent_only"
+          },
+          "today": {
+            "type": "expression",
+            "value": "start.metadata.time"
+          },
+          "max_actions": {
+            "type": "literal",
+            "value": 5
+          },
+          "create_tasks": {
+            "type": "literal",
+            "value": true
+          }
+        }
+      }
+    },
+    {
+      "id": "route_after_coordinate",
+      "type": "DECISION",
+      "label": "Route by Dispatch Source",
+      "config": {
+        "rules": [
+          {
+            "condition": "suggest_tech.pick_tech_name != ``",
+            "next_node_id": "finalize_dispatch_auto"
+          }
+        ]
+      }
+    },
+    {
+      "id": "finalize_dispatch_auto",
+      "type": "FUNCTION",
+      "label": "Finalize Auto Dispatch",
+      "config": {
+        "function_name": "finalize_dispatch",
+        "input_mapping": {
+          "ticket_id": {
+            "type": "expression",
+            "value": "start.metadata.record_id"
+          },
+          "assigned_technician": {
+            "type": "expression",
+            "value": "suggest_tech.pick_tech_name"
+          },
+          "dispatch_notes": {
+            "type": "expression",
+            "value": "suggest_tech.rationale",
+            "optional": true
+          },
+          "dispatcher": {
+            "type": "literal",
+            "value": "workflow:urgent-dispatch"
+          },
+          "status": {
+            "type": "literal",
+            "value": "dispatched"
+          }
+        }
+      }
+    },
+    {
+      "id": "finalize_dispatch_manual",
+      "type": "FUNCTION",
+      "label": "Finalize Manual Dispatch",
+      "config": {
+        "function_name": "finalize_dispatch",
+        "input_mapping": {
+          "ticket_id": {
+            "type": "expression",
+            "value": "start.metadata.record_id"
+          },
+          "assigned_technician": {
+            "type": "expression",
+            "value": "manager_assignment.assigned_technician"
+          },
+          "dispatch_notes": {
+            "type": "expression",
+            "value": "manager_assignment.dispatch_notes",
+            "optional": true
+          },
+          "dispatcher": {
+            "type": "literal",
+            "value": "human:manager"
+          },
+          "status": {
+            "type": "literal",
+            "value": "manual_assignment"
+          }
+        }
+      }
+    },
+    {
+      "id": "finalize_escalation",
+      "type": "FUNCTION",
+      "label": "Finalize Escalation",
+      "config": {
+        "function_name": "finalize_dispatch",
+        "input_mapping": {
+          "ticket_id": {
+            "type": "expression",
+            "value": "start.metadata.record_id"
+          },
+          "assigned_technician": {
+            "type": "literal",
+            "value": null
+          },
+          "dispatch_notes": {
+            "type": "expression",
+            "value": "human_escalation.resolution_notes",
+            "optional": true
+          },
+          "dispatcher": {
+            "type": "literal",
+            "value": "workflow:urgent-dispatch"
+          },
+          "status": {
+            "type": "literal",
+            "value": "escalation"
+          }
+        }
+      }
+    },
+    {
+      "id": "human_escalation",
+      "type": "FORM",
+      "label": "Human Escalation",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "resolved": {
+              "type": "boolean",
+              "description": "Mark the escalation as resolved"
+            },
+            "action_taken": {
+              "type": "string",
+              "description": "Action taken to resolve the escalation"
+            },
+            "resolution_notes": {
+              "type": "string",
+              "description": "Detailed notes on the resolution"
+            }
+          },
+          "required": ["resolved"]
+        }
+      }
+    },
+    {
+      "id": "end",
+      "type": "END",
+      "label": "Complete"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-classify-to-route",
+      "source": "classify_urgent",
+      "target": "route_classification"
+    },
+    {
+      "id": "e-route-to-urgency",
+      "source": "route_classification",
+      "target": "check_urgency",
+      "label": "classified"
+    },
+    {
+      "id": "e-route-to-escalation",
+      "source": "route_classification",
+      "target": "human_escalation",
+      "label": "unparseable / needs review"
+    },
+    {
+      "id": "e-urgency-check",
+      "source": "check_urgency",
+      "target": "route_urgency"
+    },
+    {
+      "id": "e-urgency-urgent",
+      "source": "route_urgency",
+      "target": "suggest_tech",
+      "label": "is_urgent"
+    },
+    {
+      "id": "e-urgency-not-urgent",
+      "source": "route_urgency",
+      "target": "end",
+      "label": "default (not urgent)"
+    },
+    {
+      "id": "e-tech-check",
+      "source": "suggest_tech",
+      "target": "route_tech"
+    },
+    {
+      "id": "e-tech-found",
+      "source": "route_tech",
+      "target": "coordinate_dispatch",
+      "label": "found"
+    },
+    {
+      "id": "e-tech-not-found",
+      "source": "route_tech",
+      "target": "manager_assignment",
+      "label": "default (not_found)"
+    },
+    {
+      "id": "e-manager-to-coordinate",
+      "source": "manager_assignment",
+      "target": "coordinate_dispatch",
+      "label": "continue"
+    },
+    {
+      "id": "e-coordinate-to-route",
+      "source": "coordinate_dispatch",
+      "target": "route_after_coordinate"
+    },
+    {
+      "id": "e-route-final-auto",
+      "source": "route_after_coordinate",
+      "target": "finalize_dispatch_auto",
+      "label": "auto dispatch"
+    },
+    {
+      "id": "e-route-final-manual",
+      "source": "route_after_coordinate",
+      "target": "finalize_dispatch_manual",
+      "label": "default (manual dispatch)"
+    },
+    {
+      "id": "e-final-auto-to-end",
+      "source": "finalize_dispatch_auto",
+      "target": "end"
+    },
+    {
+      "id": "e-final-manual-to-end",
+      "source": "finalize_dispatch_manual",
+      "target": "end"
+    },
+    {
+      "id": "e-escalation-to-final",
+      "source": "human_escalation",
+      "target": "finalize_escalation"
+    },
+    {
+      "id": "e-final-escalation-to-end",
+      "source": "finalize_escalation",
+      "target": "end"
+    }
+  ],
+  "timeout_ms": 120000,
+  "visibility": "POD"
+}

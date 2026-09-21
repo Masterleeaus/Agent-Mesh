@@ -1,0 +1,225 @@
+{
+  "name": "account-health-monitoring",
+  "description": "Account Health Monitoring workflow: runs the account_health_monitor agent nightly, branches by aggregate health score (healthy >= 80, warning 50-79, critical < 50), and handles each path with appropriate human-in-the-loop gates, deterministic state updates, and full audit trail. Also triggerable on customer record update for real-time re-evaluation.",
+  "version": "2.0.0",
+  "status": "active",
+  "retry_policy": {
+    "max_retries": 3,
+    "initial_delay_ms": 2000,
+    "backoff_multiplier": 2,
+    "max_delay_ms": 30000,
+    "retryable_errors": ["timeout", "transient", "workload_error"]
+  },
+  "timeout_ms": 900000,
+  "idempotency": {
+    "key_source": "start.metadata.time",
+    "ttl_seconds": 86400
+  },
+  "start": {
+    "type": "SCHEDULED",
+    "config": {
+      "cron": "0 2 * * *",
+      "schedule_type": "CRON"
+    }
+  },
+  "nodes": [
+    {
+      "id": "run_health_monitor",
+      "type": "AGENT",
+      "label": "Run Account Health Monitor",
+      "config": {
+        "agent_name": "account_health_monitor",
+        "input_mapping": {
+          "today": { "type": "expression", "value": "start.metadata.time" },
+          "days_ahead": { "type": "literal", "value": 7 },
+          "lookback_days": { "type": "literal", "value": 45 },
+          "max_recommendations": { "type": "literal", "value": 8 },
+          "create_followup_tasks": { "type": "literal", "value": true }
+        }
+      }
+    },
+    {
+      "id": "route_by_health",
+      "type": "DECISION",
+      "label": "Route by Health Score",
+      "config": {
+        "rules": [
+          {
+            "condition": "run_health_monitor.coordination_status == `ok`",
+            "next_node_id": "healthy_path"
+          },
+          {
+            "condition": "run_health_monitor.coordination_status == `no_action_needed`",
+            "next_node_id": "healthy_path"
+          },
+          {
+            "condition": "run_health_monitor.coordination_status == `attention_needed`",
+            "next_node_id": "warning_path"
+          }
+        ]
+      }
+    },
+    {
+      "id": "healthy_path",
+      "type": "FUNCTION",
+      "label": "Update Account Status",
+      "config": {
+        "function_name": "update_account_health_status",
+        "input_mapping": {
+          "health_category": { "type": "literal", "value": "healthy" },
+          "coordination_status": { "type": "expression", "value": "run_health_monitor.coordination_status" },
+          "today": { "type": "expression", "value": "start.metadata.time" },
+          "summary": { "type": "expression", "value": "run_health_monitor.summary" }
+        }
+      }
+    },
+    {
+      "id": "end_healthy",
+      "type": "END",
+      "label": "Completed"
+    },
+    {
+      "id": "warning_path",
+      "type": "FORM",
+      "label": "Notify Operations",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "acknowledged": {
+              "type": "boolean",
+              "description": "Acknowledge receipt of account health warning"
+            },
+            "action_taken": {
+              "type": "string",
+              "description": "Actions taken or planned in response to the warning"
+            },
+            "notes": {
+              "type": "string",
+              "description": "Additional notes or comments"
+            }
+          },
+          "required": ["acknowledged"]
+        },
+        "prefill": {
+          "summary": { "type": "expression", "value": "run_health_monitor.summary" },
+          "slipping_count": { "type": "expression", "value": "run_health_monitor.slipping_count" }
+        }
+      }
+    },
+    {
+      "id": "end_warning",
+      "type": "END",
+      "label": "Completed"
+    },
+    {
+      "id": "human_approval",
+      "type": "FORM",
+      "label": "Human Approval",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "approved": {
+              "type": "boolean",
+              "description": "Approve escalation and recovery plan for critical accounts"
+            },
+            "assigned_to": {
+              "type": "string",
+              "description": "Person responsible for managing the critical accounts"
+            },
+            "notes": {
+              "type": "string",
+              "description": "Additional context or instructions"
+            }
+          },
+          "required": ["approved"]
+        },
+        "prefill": {
+          "summary": { "type": "expression", "value": "run_health_monitor.summary" },
+          "critical_count": { "type": "expression", "value": "run_health_monitor.critical_count" }
+        }
+      }
+    },
+    {
+      "id": "route_approval",
+      "type": "DECISION",
+      "label": "Route by Approval",
+      "config": {
+        "rules": [
+          {
+            "condition": "human_approval.approved == `true`",
+            "next_node_id": "escalate_critical"
+          }
+        ]
+      }
+    },
+    {
+      "id": "escalate_critical",
+      "type": "FORM",
+      "label": "Escalate to Manager",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "acknowledged": {
+              "type": "boolean",
+              "description": "Acknowledge the escalation and recovery plan"
+            },
+            "assigned_to": {
+              "type": "string",
+              "description": "Manager or lead assigned to oversee recovery"
+            },
+            "recovery_plan": {
+              "type": "string",
+              "description": "Outline of the recovery plan for critical accounts"
+            },
+            "notes": {
+              "type": "string",
+              "description": "Additional escalation notes"
+            }
+          },
+          "required": ["acknowledged"]
+        },
+        "prefill": {
+          "summary": { "type": "expression", "value": "run_health_monitor.summary" },
+          "critical_count": { "type": "expression", "value": "run_health_monitor.critical_count" }
+        }
+      }
+    },
+    {
+      "id": "finalize_critical",
+      "type": "FUNCTION",
+      "label": "Finalize Critical Path",
+      "config": {
+        "function_name": "update_account_health_status",
+        "input_mapping": {
+          "health_category": { "type": "literal", "value": "critical" },
+          "coordination_status": { "type": "expression", "value": "run_health_monitor.coordination_status" },
+          "today": { "type": "expression", "value": "start.metadata.time" },
+          "summary": { "type": "expression", "value": "run_health_monitor.summary" },
+          "recovery_notes": { "type": "expression", "value": "escalate_critical.recovery_plan" }
+        }
+      }
+    },
+    {
+      "id": "end_critical",
+      "type": "END",
+      "label": "Completed"
+    }
+  ],
+  "edges": [
+    { "id": "e-run-to-route", "source": "run_health_monitor", "target": "route_by_health" },
+    { "id": "e-route-critical", "source": "route_by_health", "target": "human_approval", "label": "default (crisis)" },
+    { "id": "e-route-healthy", "source": "route_by_health", "target": "healthy_path", "label": "ok / no_action_needed" },
+    { "id": "e-route-warning", "source": "route_by_health", "target": "warning_path", "label": "attention_needed" },
+    { "id": "e-healthy-to-end", "source": "healthy_path", "target": "end_healthy" },
+    { "id": "e-warning-to-end", "source": "warning_path", "target": "end_warning" },
+    { "id": "e-approval-to-route", "source": "human_approval", "target": "route_approval" },
+    { "id": "e-route-reject", "source": "route_approval", "target": "human_approval", "label": "default (rejected / needs revision)" },
+    { "id": "e-route-escalate", "source": "route_approval", "target": "escalate_critical", "label": "approved" },
+    { "id": "e-escalate-to-finalize", "source": "escalate_critical", "target": "finalize_critical" },
+    { "id": "e-finalize-to-end", "source": "finalize_critical", "target": "end_critical" }
+  ],
+  "visibility": "POD"
+}

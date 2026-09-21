@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "required": ["request_type", "urgency", "recommended_next_action", "classification_status"],
+  "properties": {
+    "urgency": {
+      "type": "string",
+      "enum": ["low", "normal", "high", "urgent"]
+    },
+    "reasoning": {
+      "type": "string"
+    },
+    "request_type": {
+      "type": "string",
+      "enum": ["new_booking", "reschedule", "cancellation", "complaint", "follow_up", "general_inquiry"]
+    },
+    "owner_rationale": {
+      "type": "string"
+    },
+    "suggested_owner": {
+      "type": "string"
+    },
+    "escalation_reason": {
+      "type": "string"
+    },
+    "classification_status": {
+      "type": "string",
+      "enum": ["classified", "needs_human_review", "unparseable"]
+    },
+    "recommended_next_action": {
+      "type": "string"
+    }
+  }
+}

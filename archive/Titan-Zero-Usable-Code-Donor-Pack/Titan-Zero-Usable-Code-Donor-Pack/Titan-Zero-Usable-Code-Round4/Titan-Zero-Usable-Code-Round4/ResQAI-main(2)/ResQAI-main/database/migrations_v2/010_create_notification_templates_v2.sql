@@ -1,0 +1,33 @@
+-- ResQAI V2 Migration 010
+-- Date:    2026-06-29
+-- Purpose: Create notification_templates_v2 table for message templates
+--
+-- Applied to: ResQAI V2 Pod
+-- Schema: v2
+
+-- ============================================================
+-- Step 1: Create notification_templates_v2 table
+-- ============================================================
+-- lemma table create notification_templates_v2 \
+--   id:UUID --pk \
+--   name:TEXT \
+--   type:TEXT \
+--   channel:TEXT \
+--   subject_template:TEXT \
+--   body_template:TEXT \
+--   variables:TEXT[] \
+--   category:TEXT \
+--   is_active:BOOLEAN --default true \
+--   created_at:TIMESTAMPTZ \
+--   updated_at:TIMESTAMPTZ
+
+-- ============================================================
+-- Step 2: Add indexes
+-- ============================================================
+-- lemma table add-index notification_templates_v2 idx_ntemplates_type --using btree --fields type
+-- lemma table add-index notification_templates_v2 idx_ntemplates_channel --using btree --fields channel
+-- lemma table add-index notification_templates_v2 idx_ntemplates_active --using btree --fields is_active
+
+-- Verify: lemma table describe notification_templates_v2
+-- Verify: lemma table indexes notification_templates_v2
+-- Expected: idx_ntemplates_type, idx_ntemplates_channel, idx_ntemplates_active

@@ -1,0 +1,41 @@
+{
+  "name": "delete_appointment",
+  "description": "Soft-deletes an appointment record with audit logging.",
+  "type": "API",
+  "visibility": "POD",
+  "python_packages": [
+    "pydantic",
+    "lemma-sdk"
+  ],
+  "code": {
+    "$file": "src/handler.py"
+  },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "appointments_v2",
+        "permission_ids": [
+          "datastore.record.read",
+          "datastore.record.write"
+        ]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "audit_log_v2",
+        "permission_ids": [
+          "datastore.record.read",
+          "datastore.record.write"
+        ]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "events_v2",
+        "permission_ids": [
+          "datastore.record.read",
+          "datastore.record.write"
+        ]
+      }
+    ]
+  }
+}

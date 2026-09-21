@@ -1,0 +1,62 @@
+-- ResQAI V2 Migration 016
+-- Date:    2026-06-29
+-- Purpose: Create accounts_v2 table for customer account management
+--
+-- Applied to: ResQAI V2 Pod
+-- Schema: v2
+
+-- ============================================================
+-- Step 1: Create accounts_v2 table
+-- ============================================================
+-- lemma table create accounts_v2 \
+--   id:UUID --pk \
+--   customer_id:UUID \
+--   name:TEXT --not-null \
+--   relationship_status:TEXT --default 'active' \
+--   health:TEXT --default 'healthy' \
+--   health_score:DOUBLE --precision --default 1.0 \
+--   primary_service_type:TEXT \
+--   lifetime_jobs:INTEGER --default 0 \
+--   lifetime_revenue_cents:INTEGER --default 0 \
+--   open_disputes:INTEGER --default 0 \
+--   open_followups:INTEGER --default 0 \
+--   overdue_followups:INTEGER --default 0 \
+--   last_service_date:DATE \
+--   last_contact_date:DATE \
+--   account_owner:TEXT \
+--   notes:TEXT \
+--   created_by:UUID \
+--   updated_by:UUID \
+--   created_at:TIMESTAMPTZ \
+--   updated_at:TIMESTAMPTZ \
+--   deleted_at:TIMESTAMPTZ \
+--   version:INTEGER --default 1
+
+-- ============================================================
+-- Step 2: Add foreign keys
+-- ============================================================
+-- lemma table add-foreign-key accounts_v2 fk_accounts_customer \
+--   --from customer_id --to customers_v2(id) --on-delete CASCADE
+-- lemma table add-foreign-key accounts_v2 fk_accounts_created_by \
+--   --from created_by --to users_v2(id)
+-- lemma table add-foreign-key accounts_v2 fk_accounts_updated_by \
+--   --from updated_by --to users_v2(id)
+
+-- ============================================================
+-- Step 3: Add indexes
+-- ============================================================
+-- lemma table add-index accounts_v2 idx_accounts_customer_id --using btree --fields customer_id
+-- lemma table add-index accounts_v2 idx_accounts_health --using btree --fields health
+-- lemma table add-index accounts_v2 idx_accounts_health_score --using btree --fields health_score
+-- lemma table add-index accounts_v2 idx_accounts_owner --using btree --fields account_owner
+-- lemma table add-index accounts_v2 idx_accounts_health_health_score --using btree --fields health,health_score
+-- lemma table add-index accounts_v2 idx_accounts_health_active --using btree --fields health --where 'deleted_at IS NULL'
+-- lemma table add-index accounts_v2 idx_accounts_health_score_desc --using btree --fields health_score DESC
+
+-- Verify: lemma table describe accounts_v2
+-- Verify: lemma table indexes accounts_v2
+-- Expected: idx_accounts_customer_id, idx_accounts_health, idx_accounts_health_score
+-- Expected: idx_accounts_owner, idx_accounts_health_health_score
+-- Expected: idx_accounts_health_active (partial), idx_accounts_health_score_desc (DESC)
+-- Expected: fk_accounts_customer (customer_id -> customers_v2(id) ON DELETE CASCADE)
+-- Expected: fk_accounts_created_by, fk_accounts_updated_by

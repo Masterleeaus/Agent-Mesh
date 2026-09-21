@@ -1,0 +1,34 @@
+{
+  "name": "dispatch_notification_v2",
+  "description": "Creates a notification record and dispatches it via the specified channel (in_app, email, or SMS).",
+  "type": "API",
+  "input_type_name": "DispatchNotificationV2Input",
+  "output_type_name": "DispatchNotificationV2Output",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "visibility": "POD",
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "notifications_v2",
+        "permission_ids": ["datastore.record.create", "datastore.record.read", "datastore.record.write"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "operations_log",
+        "permission_ids": ["datastore.record.create"]
+      },
+      {
+        "resource_type": "connector",
+        "resource_name": "resqai-gmail",
+        "permission_ids": ["connector.use"]
+      },
+      {
+        "resource_type": "connector",
+        "resource_name": "resqai-twilio",
+        "permission_ids": ["connector.use"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "finalize_slippage_review",
+  "description": "Logs the result of a followup-slippage review cycle. writes an audit entry to operations_log. Does not send notifications.",
+  "type": "API",
+  "visibility": "POD",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "operations_log",
+        "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]
+      },
+      {
+        "resource_type": "connector",
+        "resource_name": "discord",
+        "permission_ids": ["connector.use"]
+      }
+    ]
+  }
+}

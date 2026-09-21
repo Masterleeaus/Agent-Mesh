@@ -1,0 +1,10 @@
+{
+  "name": "check_ticket_urgency",
+  "description": "Routing function for ticket-intake workflow. Maps urgency value to routing signal.",
+  "type": "API",
+  "visibility": "POD",
+  "code": "#input_type_name: CheckTicketUrgencyInput\n#output_type_name: CheckTicketUrgencyOutput\n#function_name: check_ticket_urgency\n\nfrom typing import Optional\nfrom pydantic import BaseModel, Field\nfrom lemma_sdk import FunctionContext\n\n\nclass CheckTicketUrgencyInput(BaseModel):\n    ticket_id: str = Field(description=\"The ticket UUID to check urgency for.\")\n    urgency: str = Field(description=\"Urgency value from request-classifier output.\")\n    classification_status: Optional[str] = Field(default=None, description=\"Classification status for context.\")\n\n\nclass CheckTicketUrgencyOutput(BaseModel):\n    routing: str = Field(description=\"Routing signal: urgent/high skips ops coordination, normal/low proceeds.\")\n    ticket_id: str = Field(description=\"Echoed ticket_id for downstream nodes.\")\n    is_urgent: bool = Field(description=\"True if urgency is high or urgent.\")\n\n\nasync def check_ticket_urgency(ctx: FunctionContext, data: CheckTicketUrgencyInput) -> CheckTicketUrgencyOutput:\n    is_urgent = data.urgency in (\"high\", \"urgent\")\n    return CheckTicketUrgencyOutput(\n        routing=data.urgency,\n        ticket_id=data.ticket_id,\n        is_urgent=is_urgent,\n    )\n",
+  "permissions": {
+    "grants": []
+  }
+}

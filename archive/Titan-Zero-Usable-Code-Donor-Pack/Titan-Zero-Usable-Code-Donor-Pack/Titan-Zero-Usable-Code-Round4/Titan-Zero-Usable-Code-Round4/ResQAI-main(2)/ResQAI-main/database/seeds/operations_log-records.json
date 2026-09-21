@@ -1,0 +1,124 @@
+﻿{
+  "items": [
+    {
+      "id": "524cf48e-59ee-4969-8dd7-b635b5ae3014",
+      "created_at": "2026-06-25T05:38:06.172443Z",
+      "updated_at": "2026-06-25T05:38:06.172443Z",
+      "action": "account_health_scan",
+      "result": "scanned 14 accounts; healthy=13 watch=0 slipping=0 critical=1",
+      "timestamp": "2026-06-24T22:39:20.671547Z",
+      "actor": "account_health_scan"
+    },
+    {
+      "id": "32b74c4b-9193-4299-b960-e2342f4c0dab",
+      "created_at": "2026-06-25T05:37:53.248412Z",
+      "updated_at": "2026-06-25T05:37:53.248412Z",
+      "action": "account_health_scan",
+      "result": "scanned 14 accounts; healthy=11 watch=2 slipping=0 critical=1",
+      "timestamp": "2026-06-24T22:39:20.671547Z",
+      "actor": "account_health_scan"
+    },
+    {
+      "id": "e31609f7-c1ff-4f35-bf65-0f264f612ff4",
+      "created_at": "2026-06-25T05:29:41.567233Z",
+      "updated_at": "2026-06-25T05:29:41.567233Z",
+      "action": "account_health_scan",
+      "result": "scanned 14 accounts; healthy=11 watch=2 slipping=0 critical=1",
+      "timestamp": "2026-06-24T22:39:20.671547Z",
+      "actor": "account_health_scan"
+    },
+    {
+      "id": "7b248fff-407d-4605-8460-6ba76d74a975",
+      "created_at": "2026-06-25T05:13:54.340137Z",
+      "updated_at": "2026-06-25T05:13:54.340137Z",
+      "action": "account_health_scan",
+      "result": "scanned 0 accounts; healthy=0 watch=0 slipping=0 critical=0",
+      "timestamp": "2026-06-24T22:39:20.671547Z",
+      "actor": "account_health_scan"
+    },
+    {
+      "id": "f44f8bc0-7b11-4ce0-a4b1-82b2fd2f4a45",
+      "created_at": "2026-06-24T22:41:01.947737Z",
+      "updated_at": "2026-06-24T22:41:01.947737Z",
+      "action": "support-reply-drafter ╖ drafted",
+      "result": "Drafted apology + 4-hour ETA for Sarah Mitchell.",
+      "timestamp": "2026-06-24T08:15:46Z",
+      "actor": "support-reply-drafter"
+    },
+    {
+      "id": "8717247f-f166-4bb6-98eb-ea4685cb19ee",
+      "created_at": "2026-06-24T22:41:00.969881Z",
+      "updated_at": "2026-06-24T22:41:00.969881Z",
+      "action": "request-classifier ╖ analysis",
+      "result": "Classified 'AC not cooling upstairs' as urgent / complaint. Suggested owner: Alex Rivera.",
+      "timestamp": "2026-06-24T08:00:46Z",
+      "actor": "request-classifier"
+    },
+    {
+      "id": "e7bfa281-3eeb-4f59-b463-1d0ad439d13d",
+      "created_at": "2026-06-24T22:40:59.436963Z",
+      "updated_at": "2026-06-24T22:40:59.436963Z",
+      "action": "manual ╖ dispatcher",
+      "result": "Triaged morning calls into the support queue.",
+      "timestamp": "2026-06-24T08:30:46Z",
+      "actor": "Sofia (dispatch)"
+    },
+    {
+      "id": "04b811d1-9493-4a97-9a45-8c933810ad9d",
+      "created_at": "2026-06-24T22:40:58.503082Z",
+      "updated_at": "2026-06-24T22:40:58.503082Z",
+      "action": "seed disputes loaded",
+      "result": "4 disputes seeded for the Resolution Center demo.",
+      "timestamp": "2026-06-22T09:09:46Z",
+      "actor": "system"
+    },
+    {
+      "id": "e3b9d799-2a52-44cd-afdb-cdd8cc9173b2",
+      "created_at": "2026-06-24T22:40:57.578720Z",
+      "updated_at": "2026-06-24T22:40:57.578720Z",
+      "action": "seed tickets loaded",
+      "result": "14 tickets in various states ù urgent, awaiting triage, classified.",
+      "timestamp": "2026-06-22T09:08:46Z",
+      "actor": "system"
+    },
+    {
+      "id": "05305dee-ec78-4bb2-a361-be76cadfd245",
+      "created_at": "2026-06-24T22:40:56.663511Z",
+      "updated_at": "2026-06-24T22:40:56.663511Z",
+      "action": "seed appointments loaded",
+      "result": "15 appointments across the next 7 days and recent past.",
+      "timestamp": "2026-06-22T09:07:46Z",
+      "actor": "system"
+    },
+    {
+      "id": "a0e890ff-ee10-4afb-9e88-2129b77d4327",
+      "created_at": "2026-06-24T22:40:55.732717Z",
+      "updated_at": "2026-06-24T22:40:55.732717Z",
+      "action": "seed technicians loaded",
+      "result": "8 technicians on the roster.",
+      "timestamp": "2026-06-22T09:06:46Z",
+      "actor": "system"
+    },
+    {
+      "id": "f1f5673b-ad12-4609-a048-2193f66ac8c5",
+      "created_at": "2026-06-24T22:40:54.697244Z",
+      "updated_at": "2026-06-24T22:40:54.697244Z",
+      "action": "seed customers loaded",
+      "result": "14 customer records created.",
+      "timestamp": "2026-06-22T09:05:46Z",
+      "actor": "system"
+    },
+    {
+      "id": "b6a91085-f26e-40b9-9ad2-a665d0ec9984",
+      "created_at": "2026-06-24T22:40:53.646280Z",
+      "updated_at": "2026-06-24T22:40:53.646280Z",
+      "action": "pod initialised",
+      "result": "ResQAI bundle imported; 7 tables, 4 agents, 5 apps.",
+      "timestamp": "2026-06-22T09:00:46Z",
+      "actor": "system"
+    }
+  ],
+  "limit": 13,
+  "next_page_token": null,
+  "total": 13
+}

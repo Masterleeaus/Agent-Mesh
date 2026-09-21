@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "anyOf": [
+    { "required": ["ticket_id"] },
+    { "required": ["message", "ticket_id"] }
+  ],
+  "properties": {
+    "channel": {
+      "type": "string",
+      "enum": ["email", "sms", "web", "phone", "chat"]
+    },
+    "message": {
+      "type": "string",
+      "description": "Raw inbound message text. Use when the workflow wants this agent to classify before a ticket is persisted."
+    },
+    "ticket_id": {
+      "type": "string",
+      "description": "Existing ticket id to read and write back to. Preferred mode."
+    },
+    "customer_name": {
+      "type": "string"
+    },
+    "force_reclassify": {
+      "type": "boolean",
+      "description": "If true, recompute even when status is already 'classified'. Default false."
+    }
+  }
+}

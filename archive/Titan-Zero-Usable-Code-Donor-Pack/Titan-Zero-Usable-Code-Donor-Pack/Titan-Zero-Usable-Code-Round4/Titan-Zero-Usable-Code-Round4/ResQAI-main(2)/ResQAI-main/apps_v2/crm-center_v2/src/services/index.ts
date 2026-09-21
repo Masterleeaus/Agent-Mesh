@@ -1,0 +1,16 @@
+export {
+  getDashboard, getCRMDashboard,
+  listAccounts, getAccount, updateAccount,
+  listCustomers, getCustomer, updateCustomer, mergeCustomers,
+  listFollowups, getFollowup, createFollowup, updateFollowup, closeFollowup,
+  listHealthScans, runHealthScan,
+  listRiskSignals,
+  listInteractions, createInteraction,
+  listNotes, createNote, updateNote,
+  listTasks, createTask, updateTask,
+  listFeedback, recordFeedback,
+  listSatisfaction, recordSatisfaction,
+  listOpportunities, createOpportunity, updateOpportunity,
+  getRetentionDashboard, getCommunicationCenter,
+  scheduleCall, globalSearch,
+} from '../../services/crm-service';

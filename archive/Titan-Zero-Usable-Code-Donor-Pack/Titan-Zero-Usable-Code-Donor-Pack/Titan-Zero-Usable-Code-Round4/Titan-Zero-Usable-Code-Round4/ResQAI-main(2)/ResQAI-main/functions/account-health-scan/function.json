@@ -1,0 +1,19 @@
+{
+  "name": "account_health_scan",
+  "description": "Deterministic per-account health scan. Combines recency, slip risk, dispute load, and journey depth into a 0..1 score + bucket. writes back to accounts.health, accounts.health_score, and the cached followup counts.",
+  "type": "API",
+  "input_type_name": "AccountHealthScanInput",
+  "output_type_name": "AccountHealthScanResult",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "visibility": "POD",
+  "permissions": {
+    "grants": [
+      { "resource_name": "customers", "resource_type": "datastore_table", "permission_ids": ["datastore.record.read", "datastore.table.read"] },
+      { "resource_name": "operations_log", "resource_type": "datastore_table", "permission_ids": ["datastore.record.write", "datastore.table.read"] },
+      { "resource_name": "appointments", "resource_type": "datastore_table", "permission_ids": ["datastore.record.read", "datastore.table.read"] },
+      { "resource_name": "disputes", "resource_type": "datastore_table", "permission_ids": ["datastore.record.read", "datastore.table.read"] },
+      { "resource_name": "accounts", "resource_type": "datastore_table", "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"] },
+      { "resource_name": "followups", "resource_type": "datastore_table", "permission_ids": ["datastore.record.read", "datastore.table.read"] }
+    ]
+  }
+}

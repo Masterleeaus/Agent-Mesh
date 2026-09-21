@@ -1,0 +1,24 @@
+{
+  "name": "manage_permission",
+  "description": "Grants or revokes a permission on a resource for a role.",
+  "type": "API",
+  "input_type_name": "ManagePermissionInput",
+  "output_type_name": "ManagePermissionOutput",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "visibility": "POD",
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "role_permissions_v2",
+        "permission_ids": ["datastore.record.read", "datastore.record.create", "datastore.record.write", "datastore.table.read"]
+      },
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "operations_log",
+        "permission_ids": ["datastore.record.read", "datastore.record.create", "datastore.table.read"]
+      }
+    ]
+  }
+}

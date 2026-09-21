@@ -1,0 +1,17 @@
+{
+  "name": "get_appointment",
+  "description": "Retrieves a single appointment by ID with full details.",
+  "type": "API",
+  "visibility": "POD",
+  "python_packages": ["pydantic", "lemma-sdk"],
+  "code": { "$file": "src/handler.py" },
+  "permissions": {
+    "grants": [
+      {
+        "resource_type": "datastore_table",
+        "resource_name": "appointment_v2",
+        "permission_ids": ["datastore.record.read", "datastore.table.read"]
+      }
+    ]
+  }
+}

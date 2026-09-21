@@ -1,0 +1,72 @@
+{
+  "type": "object",
+  "required": ["suggestion_status", "suggested_technician_id", "suggested_technician_name", "confidence"],
+  "properties": {
+    "suggestion_status": {
+      "type": "string",
+      "enum": ["suggested", "no_match", "already_assigned", "blocked"],
+      "description": "Status of the suggestion — routes workflow DECISION nodes"
+    },
+    "suggested_technician_id": {
+      "type": ["string", "null"],
+      "description": "Top candidate's technician id, null if no match"
+    },
+    "suggested_technician_name": {
+      "type": ["string", "null"],
+      "description": "Top candidate's display name, null if no match"
+    },
+    "alternatives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "technician_id": { "type": "string" },
+          "technician_name": { "type": "string" },
+          "reason_not_first": { "type": "string" }
+        },
+        "required": ["technician_id", "technician_name", "reason_not_first"]
+      },
+      "description": "Next 1-2 best candidates with reasons they are not ranked first"
+    },
+    "assignment_rationale": {
+      "type": "string",
+      "description": "2-4 sentences explaining why this tech is the best fit"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Honest confidence score: >=0.85 clear match, 0.6-0.84 moderate, <0.6 weak"
+    },
+    "no_available_tech": {
+      "type": "boolean",
+      "description": "True when no candidate passes pruning"
+    },
+    "fallback_suggestion": {
+      "type": "string",
+      "description": "Describes the coverage gap when no tech is available"
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "1-2 sentences about the decision logic"
+    },
+    "requires_human_review": {
+      "type": "boolean",
+      "description": "Set true when confidence < 0.6 or urgent ticket with no highly-rated tech"
+    },
+    "pick_tech_name": {
+      "type": ["string", "null"],
+      "description": "Workflow-compatible alias for suggested_technician_name"
+    },
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "Composite score for the top candidate"
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Workflow-compatible alias for assignment_rationale"
+    }
+  }
+}
