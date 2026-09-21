@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import { recordStatusChange } from "@/lib/status-history";
 
 /**
@@ -9,7 +9,7 @@ import { recordStatusChange } from "@/lib/status-history";
  * "converted" = fulfilled into the work system (project/visit), not "cancelled".
  */
 export async function markLinkedBookingRequestConverted(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     jobId: string;
