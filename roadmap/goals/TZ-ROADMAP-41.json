@@ -1,0 +1,1645 @@
+{
+  "goal_id": "TZ-ROADMAP-41",
+  "priority": "P0",
+  "title": "Embedded Workforce Architecture, Identity & Coverage Closure",
+  "objective": "Make the Titan Zero workforce a first-class part of the system architecture rather than a layer added after features are built. Every roadmap goal/sub-goal that addresses a business, customer, workforce, operational, financial, growth, compliance, communication, decision or exception pain must explicitly identify the canonical agent(s) that own the outcome, reuse/extend an existing agent or create and register a new named agent as part of that same implementation. Goal 41 owns the workforce identity schema, hierarchy/delegation rules, pain/outcome design standard, cross-roadmap registration and anti-duplication controls, then performs an end-of-roadmap coverage scan to discover missing pain points and add new roadmap work until material pain/outcome gaps are closed. The 16 mandatory innovative pain-point capabilities are exemplars of the required design quality, not a separate innovation layer.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define immutable canonical agent identity and registry schema: permanent agent_id, canonical name/aliases, lineage, domain/team, workforce position, parent/children, ownership boundary, surfaces and version history",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce",
+        "Titan Installation Workforce",
+        "Titan Investigation Workforce",
+        "Titan Solution Engineering Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-41-SG-01",
+      "execution_phase": "FOUNDATION_EARLY",
+      "acceptance_focus": "Agent identity is first-class system state and cannot vary by surface, model host, plan or vertical projection.",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND_WITH_CANONICAL_AGENT_ID_REGISTRY_GAP",
+        "last_scanned_at_utc": "2026-09-19T06:08:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED_LIVE_FOLDER",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72"
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0"
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967"
+          },
+          {
+            "source_ref": "Titan Installation Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "f5d6b3ac2b7a5b63d46d062a68b7b823e1d2b116031b69bb60c660a1b9a4038d"
+          },
+          {
+            "source_ref": "Titan Investigation Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_WITH_RUNTIME_TESTS_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "7b30d5cc46a1b027e5b74a5bd74bb2c5ce0051e6988380a89f15a593234f4185"
+          },
+          {
+            "source_ref": "Titan Solution Engineering Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "85c139aab41f6395f9d6dd3ff297fba7f0e6abf8367957d6dc52abdb7c810c75"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED_LIVE_FOLDER",
+            "internal_paths": [
+              "resources/workforce/role-definition.schema.json",
+              "resources/workforce/role-definitions.json",
+              "System/Models/WorkforceRoleDefinition.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Support/WorkforceProactiveIdentity.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/catalogue/installed-client-workforce-master.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/ClientWorkerInstance.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Installation Workforce",
+            "file_id": "file_00000000e6ac820eb3b0cd8286fc4c3a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installation Workforce/Titan Installation Workforce Master Step 27.zip",
+            "sha256": "f5d6b3ac2b7a5b63d46d062a68b7b823e1d2b116031b69bb60c660a1b9a4038d",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Master-Installation-Workforce-Step27/runtime/InstallationWorkforceRegistry.php",
+              "Titan-Master-Installation-Workforce-Step27/contracts/IdentitySetupPlan.schema.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Solution Engineering Workforce",
+            "file_id": "file_00000000ce4481fa9a02bc48eb3d8dfe",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Solution Engineering Workforce/Titan Solution Engineering Workforce Master Step 26.zip",
+            "sha256": "85c139aab41f6395f9d6dd3ff297fba7f0e6abf8367957d6dc52abdb7c810c75",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Master-Solution-Engineering-Workforce-Step26/runtime/SolutionEngineeringRegistry.php",
+              "Titan-Master-Solution-Engineering-Workforce-Step26/contracts/PermissionAuthorityModel.schema.json"
+            ]
+          }
+        ],
+        "scan_notes": "Strong stable role identity already exists through role_definition_id, aliases, definition_version/fingerprint snapshots, provider ownership and installed worker instances. However no single permanent canonical agent_id registry independent of role definitions, member/worker instances, display names, host/surface or provider binding was found. Goal 41 should add an append-only canonical agent registry with agent_id, aliases, lineage, ownership boundary, workforce position, parent/children, surfaces and version history while treating role_definition_id and worker/member IDs as related projections rather than substitutes.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 2,
+      "title": "Define and enforce the cross-roadmap workforce-impact contract so every sub-goal declares REUSE_EXISTING_AGENT, EXTEND_EXISTING_AGENT, CREATE_NEW_AGENT or justified NO_AGENT_INFRASTRUCTURE_ONLY, with owning agent IDs and registry deltas",
+      "status": "BUILDER_COMPLETE",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce",
+        "Titan Installation Workforce",
+        "Titan Investigation Workforce",
+        "Titan Solution Engineering Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-41-SG-02",
+      "execution_phase": "FOUNDATION_EARLY",
+      "acceptance_focus": "No business-pain-facing roadmap work can complete without an explicit canonical workforce owner and traceable agent impact.",
+      "execution": {
+        "state": "MERGE_PENDING",
+        "claimed_by": "builder-2",
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": {
+          "artifact_path": "/Titan Zero/Agent Mesh Manager/Manager/INBOX/DELTA QUEUE/TZ-ROADMAP-41-SG-02__BUILDER2__CUMULATIVE-SUBGOAL-FINAL.zip",
+          "file_id": "file_00000000d37081fdbe5dc97fe19d4daa",
+          "library_file_id": "libfile_1d55127eea10819189918695b92bc66d",
+          "artifact_sha256": "58627c2b84418b2c5e3bf50943495579525bdeafb785dc4cd9b0503cc85f83e2",
+          "created_at_utc": "2026-09-20T10:19:07Z"
+        },
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND_WITH_CROSS_ROADMAP_DECLARATION_ENFORCEMENT_GAP",
+        "last_scanned_at_utc": "2026-09-19T06:08:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED_LIVE_FOLDER",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72"
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0"
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967"
+          },
+          {
+            "source_ref": "Titan Installation Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "f5d6b3ac2b7a5b63d46d062a68b7b823e1d2b116031b69bb60c660a1b9a4038d"
+          },
+          {
+            "source_ref": "Titan Investigation Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_WITH_RUNTIME_TESTS_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "7b30d5cc46a1b027e5b74a5bd74bb2c5ce0051e6988380a89f15a593234f4185"
+          },
+          {
+            "source_ref": "Titan Solution Engineering Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "85c139aab41f6395f9d6dd3ff297fba7f0e6abf8367957d6dc52abdb7c810c75"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED_LIVE_FOLDER",
+            "internal_paths": [
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Support/WorkforceCapabilityBindingRegistry.php",
+              "resources/workforce/control-plane-integration-registry.json",
+              "resources/workforce/canonical-capability-binding-matrix.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/DependencyCoordinator.php",
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/contracts/AssignmentDecision.schema.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php"
+            ]
+          }
+        ],
+        "scan_notes": "Runtime registries and lifecycle services can consume role/manifest/capability deltas and safely activate projections, but no code-level enforcement was found requiring every roadmap subgoal to declare exactly REUSE_EXISTING_AGENT, EXTEND_EXISTING_AGENT, CREATE_NEW_AGENT or justified NO_AGENT_INFRASTRUCTURE_ONLY with owning canonical agent IDs and registry delta. Implement this as a control-plane/roadmap validation contract feeding the existing workforce registries; do not create a separate workforce planning database.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 3,
+      "title": "Define Worker → Specialist → Manager → Orchestrator responsibility, delegation, anti-role-leakage and upward evidence/outcome propagation rules, including when human actors participate without becoming substitute canonical agent definitions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce",
+        "Titan Installation Workforce",
+        "Titan Investigation Workforce",
+        "Titan Solution Engineering Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-41-SG-03",
+      "execution_phase": "FOUNDATION_EARLY",
+      "acceptance_focus": "Higher classes own broader outcomes and delegate subordinate execution; duplicate execution and responsibility leakage are rejected.",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND_WITH_ORCHESTRATOR_TIER_GAP",
+        "last_scanned_at_utc": "2026-09-19T06:08:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED_LIVE_FOLDER",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72"
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0"
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967"
+          },
+          {
+            "source_ref": "Titan Installation Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "f5d6b3ac2b7a5b63d46d062a68b7b823e1d2b116031b69bb60c660a1b9a4038d"
+          },
+          {
+            "source_ref": "Titan Investigation Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_WITH_RUNTIME_TESTS_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "7b30d5cc46a1b027e5b74a5bd74bb2c5ce0051e6988380a89f15a593234f4185"
+          },
+          {
+            "source_ref": "Titan Solution Engineering Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "85c139aab41f6395f9d6dd3ff297fba7f0e6abf8367957d6dc52abdb7c810c75"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED_LIVE_FOLDER",
+            "internal_paths": [
+              "System/Enums/WorkforceTier.php",
+              "System/Services/ChainOfCommandService.php",
+              "System/Services/WorkforceDelegationService.php",
+              "System/Services/WorkforceAuthorityGraphValidator.php",
+              "System/Services/WorkforceFinalAuthorityGateService.php",
+              "resources/workforce/executive-hierarchy.json",
+              "resources/workforce/manager-delegation-coordination.json",
+              "resources/workforce/business-role-responsibility-model.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/runtime/DependencyCoordinator.php",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json",
+              "Titan-Workforce-Manager-Step30/policies/workforce-manager-model.json"
+            ]
+          }
+        ],
+        "scan_notes": "Manager→Specialist→Action Worker responsibility is implemented with independent review, governed handoffs, acyclic delegation, company isolation, non-inherited authority and upward outcome/evidence propagation. The current WorkforceTier enum has Manager, Specialist and ActionWorker only; it does not expose the roadmap's explicit Orchestrator tier. Add Orchestrator as a constitutional organisational tier/coordination role without allowing title or delegation to grant execution authority. Human participants should remain actors/reviewers in the governed chain, not duplicate canonical agent identities.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 4,
+      "title": "Codify the universal pain-point agent design and certification standard using the 16 mandatory innovative capabilities as gold-standard exemplars: pain/failure pattern → signals → understanding/preparation → governed action → evidence → verified outcome → value → learning",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce",
+        "Titan Installation Workforce",
+        "Titan Investigation Workforce",
+        "Titan Solution Engineering Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-41-SG-04",
+      "execution_phase": "FOUNDATION_EARLY",
+      "acceptance_focus": "Conventional-title-only agents fail certification; every agent has a specific material pain/outcome reason to exist.",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-REV-MISSED-REVENUE-RECOVERY",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-FIN-EVIDENCE-TO-CASH",
+          "TZAG-FIN-CASHFLOW-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-REV-MISSED-REVENUE-RECOVERY",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-FIN-EVIDENCE-TO-CASH",
+          "TZAG-FIN-CASHFLOW-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+        ],
+        "canonical_agent_names": [
+          "Missed Revenue Recovery Specialist",
+          "Cancellation Gap Filling Specialist",
+          "Access Failure Prevention Specialist",
+          "Scope & Variation Guardian Specialist",
+          "Evidence-to-Cash Specialist",
+          "Cashflow Guardian Specialist",
+          "Route Compression Specialist",
+          "Workforce Load Balancing Specialist",
+          "First-Time-Fix Preparation Specialist",
+          "Callback Prevention Specialist",
+          "Customer Expectation Management Specialist",
+          "Exception Resolution Specialist",
+          "Rebooking & Churn Prevention Specialist",
+          "Review & Referral Optimisation Specialist",
+          "Weather Disruption Management Specialist",
+          "Supply Continuity Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-REV-MISSED-REVENUE-RECOVERY",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+            "TZAG-FIN-EVIDENCE-TO-CASH",
+            "TZAG-FIN-CASHFLOW-GUARDIAN",
+            "TZAG-OPS-ROUTE-COMPRESSION",
+            "TZAG-WF-LOAD-BALANCING",
+            "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+            "TZAG-CX-CALLBACK-PREVENTION",
+            "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+            "TZAG-OPS-EXCEPTION-RESOLUTION",
+            "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+            "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-39-SG-01",
+            "TZ-ROADMAP-39-SG-02",
+            "TZ-ROADMAP-39-SG-03",
+            "TZ-ROADMAP-39-SG-04",
+            "TZ-ROADMAP-39-SG-05",
+            "TZ-ROADMAP-39-SG-06",
+            "TZ-ROADMAP-39-SG-07",
+            "TZ-ROADMAP-39-SG-08"
+          ]
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding: do not redefine these agents here; implement/extend this sub-goal through the same canonical agent_id."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND_WITH_UNIVERSAL_AGENT_CERTIFICATION_SCHEMA_GAP",
+        "last_scanned_at_utc": "2026-09-19T06:08:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED_LIVE_FOLDER",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72"
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0"
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967"
+          },
+          {
+            "source_ref": "Titan Installation Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "f5d6b3ac2b7a5b63d46d062a68b7b823e1d2b116031b69bb60c660a1b9a4038d"
+          },
+          {
+            "source_ref": "Titan Investigation Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_WITH_RUNTIME_TESTS_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "7b30d5cc46a1b027e5b74a5bd74bb2c5ce0051e6988380a89f15a593234f4185"
+          },
+          {
+            "source_ref": "Titan Solution Engineering Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "85c139aab41f6395f9d6dd3ff297fba7f0e6abf8367957d6dc52abdb7c810c75"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED_LIVE_FOLDER",
+            "internal_paths": [
+              "System/Services/WorkforcePostActionVerificationService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "System/Services/WorkforceFinalAuthorityGateService.php",
+              "System/Services/WorkforceAutonomyService.php",
+              "resources/workforce/role-definition.schema.json",
+              "resources/workforce/business-role-responsibility-model.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Investigation Workforce",
+            "file_id": "file_00000000c2b8822fb53998ab9f9eaf1e",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Investigation Workforce/Titan Investigation Workforce Master Step 25.zip",
+            "sha256": "7b30d5cc46a1b027e5b74a5bd74bb2c5ce0051e6988380a89f15a593234f4185",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_WITH_RUNTIME_TESTS_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Business-Investigation-Mission-Model-Step25/contracts/EvidenceRecord.schema.json",
+              "Titan-Business-Investigation-Mission-Model-Step25/README.md"
+            ]
+          },
+          {
+            "source_ref": "Titan Solution Engineering Workforce",
+            "file_id": "file_00000000ce4481fa9a02bc48eb3d8dfe",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Solution Engineering Workforce/Titan Solution Engineering Workforce Master Step 26.zip",
+            "sha256": "85c139aab41f6395f9d6dd3ff297fba7f0e6abf8367957d6dc52abdb7c810c75",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Master-Solution-Engineering-Workforce-Step26/contracts/SoftwareArchitecturePlan.schema.json",
+              "Titan-Master-Solution-Engineering-Workforce-Step26/contracts/PermissionAuthorityModel.schema.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installation Workforce",
+            "file_id": "file_00000000e6ac820eb3b0cd8286fc4c3a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installation Workforce/Titan Installation Workforce Master Step 27.zip",
+            "sha256": "f5d6b3ac2b7a5b63d46d062a68b7b823e1d2b116031b69bb60c660a1b9a4038d",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Master-Installation-Workforce-Step27/contracts/InstallationPlan.schema.json",
+              "Titan-Master-Installation-Workforce-Step27/contracts/RollbackPlan.schema.json"
+            ]
+          }
+        ],
+        "scan_notes": "The existing workforce has the full execution spine needed for the pain-point standard: responsibilities/signals, governed capability execution, authority/risk/autonomy gates, post-action verification, evidence/receipts, outcomes, metrics and learning feedback. Investigation/Solution/Installation donors provide evidence, architecture, permissions, migration and rollback planning. What is missing is one certification schema/validator that requires every canonical agent definition to cover the roadmap's full minimum definition and explicitly proves uniqueness/non-duplication at the quality level set by the 16 exemplars.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 5,
+      "title": "Implement the embedded-agent creation/extension lifecycle used inside all other roadmap goals: discover ownership before/during capability design, prefer reuse, create and register new named agents immediately when a distinct pain/outcome boundary exists, and prohibit post-hoc agent wrappers",
+      "status": "IN_PROGRESS",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce",
+        "Titan Installation Workforce",
+        "Titan Investigation Workforce",
+        "Titan Solution Engineering Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-41-SG-05",
+      "execution_phase": "FOUNDATION_EARLY",
+      "acceptance_focus": "Representative P0 business capability proves agent identity, capability implementation, governed execution and outcome evidence are built together.",
+      "execution": {
+        "state": "CLAIMED",
+        "claimed_by": "builder-2",
+        "claimed_at": "2026-09-20T10:20:00Z",
+        "last_heartbeat_at": "2026-09-20T10:20:00Z",
+        "plan_path": "/Titan Zero/Agent Mesh Manager/Builders/Builder 2/WORK/TZ-ROADMAP-41-SG-05-PLAN.json",
+        "current_pass_id": "PREFLIGHT-01",
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND_WITH_ROADMAP_EMBEDDED_AGENT_LIFECYCLE_GAP",
+        "last_scanned_at_utc": "2026-09-19T06:08:30Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED_LIVE_FOLDER",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72"
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0"
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967"
+          },
+          {
+            "source_ref": "Titan Installation Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "f5d6b3ac2b7a5b63d46d062a68b7b823e1d2b116031b69bb60c660a1b9a4038d"
+          },
+          {
+            "source_ref": "Titan Investigation Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_WITH_RUNTIME_TESTS_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "7b30d5cc46a1b027e5b74a5bd74bb2c5ce0051e6988380a89f15a593234f4185"
+          },
+          {
+            "source_ref": "Titan Solution Engineering Workforce",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "85c139aab41f6395f9d6dd3ff297fba7f0e6abf8367957d6dc52abdb7c810c75"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED_LIVE_FOLDER",
+            "internal_paths": [
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Services/WorkforceDelegationService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Investigation Workforce",
+            "file_id": "file_00000000c2b8822fb53998ab9f9eaf1e",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Investigation Workforce/Titan Investigation Workforce Master Step 25.zip",
+            "sha256": "7b30d5cc46a1b027e5b74a5bd74bb2c5ce0051e6988380a89f15a593234f4185",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_WITH_RUNTIME_TESTS_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Business-Investigation-Mission-Model-Step25/README.md",
+              "Titan-Business-Investigation-Mission-Model-Step25/contracts/EvidenceRecord.schema.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Solution Engineering Workforce",
+            "file_id": "file_00000000ce4481fa9a02bc48eb3d8dfe",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Solution Engineering Workforce/Titan Solution Engineering Workforce Master Step 26.zip",
+            "sha256": "85c139aab41f6395f9d6dd3ff297fba7f0e6abf8367957d6dc52abdb7c810c75",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Master-Solution-Engineering-Workforce-Step26/runtime/SolutionEngineeringRegistry.php",
+              "Titan-Master-Solution-Engineering-Workforce-Step26/README.md"
+            ]
+          },
+          {
+            "source_ref": "Titan Installation Workforce",
+            "file_id": "file_00000000e6ac820eb3b0cd8286fc4c3a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installation Workforce/Titan Installation Workforce Master Step 27.zip",
+            "sha256": "f5d6b3ac2b7a5b63d46d062a68b7b823e1d2b116031b69bb60c660a1b9a4038d",
+            "verification": "MASTER_STATUS_CURRENT_MASTER_VERIFIED_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Master-Installation-Workforce-Step27/runtime/InstallationWorkforceRegistry.php",
+              "Titan-Master-Installation-Workforce-Step27/README.md"
+            ]
+          }
+        ],
+        "scan_notes": "Discovery→investigation→solution composition→installation→client workforce activation is already represented across the donor chain, while AI Workforce provides manifest lifecycle, role registry, capability binding, delegation and verified outcome loops. The missing piece is the roadmap-embedded ownership lifecycle that forces ownership discovery before/during feature design, reuse-first collision checking, immediate canonical agent registration for a distinct pain/outcome boundary, and an explicit rule rejecting post-hoc wrapper agents. Implement the lifecycle in the roadmap/control plane and compile its registry deltas into the existing runtime registries.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 6,
+      "title": "Reconcile legacy workforce donors and existing named agents into the canonical registry incrementally as roadmap goals touch them; preserve useful capabilities/lineage while eliminating generic placeholders, stale aliases, duplicates and conventional-role-only definitions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce",
+        "Titan Installation Workforce",
+        "Titan Investigation Workforce",
+        "Titan Solution Engineering Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-41-SG-06",
+      "execution_phase": "CONTINUOUS",
+      "acceptance_focus": "No wholesale rewrite is required before business work; migration occurs reuse-first with preserved provenance and explicit supersession.",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Support/IntrinsicRoleCatalog.php",
+              "System/Support/ExecutiveRoleCatalog.php",
+              "resources/workforce/role-definitions.json",
+              "resources/workforce/ecosystem-provider-aliases.json",
+              "resources/workforce/workforce-manifest-v1.1.schema.json"
+            ],
+            "finding": "Canonical role registry already resolves role_definition_id/key/aliases and treats extension role blocks as legacy hints only; three historical workforce lineages provide explicit registry/manifests/verification evidence for incremental reconciliation. Remaining work is permanent agent_id reconciliation and duplicate/stale-alias retirement evidence, not preservation of parallel registries."
+          },
+          {
+            "source_ref": "Titan Installation Workforce",
+            "file_id": "file_00000000e6ac820eb3b0cd8286fc4c3a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installation Workforce/Titan Installation Workforce Master Step 27.zip",
+            "sha256": "f5d6b3ac2b7a5b63d46d062a68b7b823e1d2b116031b69bb60c660a1b9a4038d",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "Titan-Master-Installation-Workforce-Step27/runtime/InstallationWorkforceRegistry.php",
+              "Titan-Master-Installation-Workforce-Step27/PACKAGE-MANIFEST.json",
+              "Titan-Master-Installation-Workforce-Step27/recovery/STEP27-VERIFICATION.json"
+            ],
+            "finding": "Canonical role registry already resolves role_definition_id/key/aliases and treats extension role blocks as legacy hints only; three historical workforce lineages provide explicit registry/manifests/verification evidence for incremental reconciliation. Remaining work is permanent agent_id reconciliation and duplicate/stale-alias retirement evidence, not preservation of parallel registries."
+          },
+          {
+            "source_ref": "Titan Investigation Workforce",
+            "file_id": "file_00000000c2b8822fb53998ab9f9eaf1e",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Investigation Workforce/Titan Investigation Workforce Master Step 25.zip",
+            "sha256": "7b30d5cc46a1b027e5b74a5bd74bb2c5ce0051e6988380a89f15a593234f4185",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "Titan-Business-Investigation-Mission-Model-Step25/mission-model/business-investigation-mission-model.json",
+              "Titan-Business-Investigation-Mission-Model-Step25/recovery/STEP25-VERIFICATION.json"
+            ],
+            "finding": "Canonical role registry already resolves role_definition_id/key/aliases and treats extension role blocks as legacy hints only; three historical workforce lineages provide explicit registry/manifests/verification evidence for incremental reconciliation. Remaining work is permanent agent_id reconciliation and duplicate/stale-alias retirement evidence, not preservation of parallel registries."
+          },
+          {
+            "source_ref": "Titan Solution Engineering Workforce",
+            "file_id": "file_00000000ce4481fa9a02bc48eb3d8dfe",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Solution Engineering Workforce/Titan Solution Engineering Workforce Master Step 26.zip",
+            "sha256": "85c139aab41f6395f9d6dd3ff297fba7f0e6abf8367957d6dc52abdb7c810c75",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "Titan-Master-Solution-Engineering-Workforce-Step26/runtime/SolutionEngineeringRegistry.php",
+              "Titan-Master-Solution-Engineering-Workforce-Step26/PACKAGE-MANIFEST.json",
+              "Titan-Master-Solution-Engineering-Workforce-Step26/recovery/STEP26-VERIFICATION.json"
+            ],
+            "finding": "Canonical role registry already resolves role_definition_id/key/aliases and treats extension role blocks as legacy hints only; three historical workforce lineages provide explicit registry/manifests/verification evidence for incremental reconciliation. Remaining work is permanent agent_id reconciliation and duplicate/stale-alias retirement evidence, not preservation of parallel registries."
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [],
+            "finding": "Canonical role registry already resolves role_definition_id/key/aliases and treats extension role blocks as legacy hints only; three historical workforce lineages provide explicit registry/manifests/verification evidence for incremental reconciliation. Remaining work is permanent agent_id reconciliation and duplicate/stale-alias retirement evidence, not preservation of parallel registries."
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [],
+            "finding": "Canonical role registry already resolves role_definition_id/key/aliases and treats extension role blocks as legacy hints only; three historical workforce lineages provide explicit registry/manifests/verification evidence for incremental reconciliation. Remaining work is permanent agent_id reconciliation and duplicate/stale-alias retirement evidence, not preservation of parallel registries."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Installation Workforce",
+          "Titan Investigation Workforce",
+          "Titan Solution Engineering Workforce",
+          "Titan Workforce Manager",
+          "Titan Installed Client Workforce"
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:55:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Canonical role registry already resolves role_definition_id/key/aliases and treats extension role blocks as legacy hints only; three historical workforce lineages provide explicit registry/manifests/verification evidence for incremental reconciliation. Remaining work is permanent agent_id reconciliation and duplicate/stale-alias retirement evidence, not preservation of parallel registries."
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Implement cross-goal agent ownership, collision and shared-capability resolution so multiple goals can extend one canonical agent without cloning it, and distinct agents can share engines/tools without overlapping outcome ownership",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce",
+        "Titan Installation Workforce",
+        "Titan Investigation Workforce",
+        "Titan Solution Engineering Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-41-SG-07",
+      "execution_phase": "CONTINUOUS",
+      "acceptance_focus": "Agent IDs remain stable across concurrent goals; conflicting edits, duplicate pain ownership and role leakage are detected and resolved.",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "System/Support/WorkforceCapabilityBindingRegistry.php",
+              "System/Support/WorkforceCanonicalCapabilityMatrix.php",
+              "System/Services/WorkforceAuthorityGraphValidator.php",
+              "System/Services/WorkforceGraphService.php",
+              "resources/workforce/canonical-capability-binding-matrix.json",
+              "resources/workforce/control-plane-integration-registry.json"
+            ],
+            "finding": "Role identity and provider capability ownership are already separated, provider contributions merge without redefining role identity, and authority graph validation is fail-closed. Add explicit roadmap-goal ownership/collision records and one outcome-owner invariant so shared engines/tools cannot imply duplicate outcome ownership."
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php"
+            ],
+            "finding": "Role identity and provider capability ownership are already separated, provider contributions merge without redefining role identity, and authority graph validation is fail-closed. Add explicit roadmap-goal ownership/collision records and one outcome-owner invariant so shared engines/tools cannot imply duplicate outcome ownership."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager"
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:55:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Role identity and provider capability ownership are already separated, provider contributions merge without redefining role identity, and authority graph validation is fail-closed. Add explicit roadmap-goal ownership/collision records and one outcome-owner invariant so shared engines/tools cannot imply duplicate outcome ownership."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 8,
+      "title": "Compile the canonical workforce registry into authorised Command/Go/Hub/plugin/extension projections and connect each agent to earned-trust, recursive-handshake, authority, risk/assurance, Rewind, Signal, Wisdom and ROI evidence without duplicating agent implementations per surface",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce",
+        "Titan Installation Workforce",
+        "Titan Investigation Workforce",
+        "Titan Solution Engineering Workforce",
+        "Titan Trust",
+        "Titan Autonomy",
+        "Titan Risk Engine",
+        "Titan AI Assurance Engine",
+        "Titan Rewind",
+        "Titan Signal Engine",
+        "Titan Wisdom Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-41-SG-08",
+      "execution_phase": "CONTINUOUS",
+      "acceptance_focus": "One agent identity/state is projected everywhere; surfaces never become private agent implementations.",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "System/Services/WorkforceUiCapabilityRegistryService.php",
+              "System/Support/WorkforceControlPlaneIntegrationRegistry.php",
+              "System/Services/WorkforceTrustHealthService.php",
+              "System/Services/WorkforceFinalAuthorityGateService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Zero/Proactive/Services/ZeroSignalWisdomActionLoop.php",
+              "resources/workforce/ui-capability-surface-policy.json"
+            ],
+            "finding": "Surface capability policy, control-plane integration, trust/final-authority gating, Signal/Wisdom feedback and client composition already exist. Compile one canonical agent definition into Command/Go/Hub/plugin/extension projections; do not duplicate agent implementations. Orchestrator-aware projection remains a schema/runtime gap."
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json"
+            ],
+            "finding": "Surface capability policy, control-plane integration, trust/final-authority gating, Signal/Wisdom feedback and client composition already exist. Compile one canonical agent definition into Command/Go/Hub/plugin/extension projections; do not duplicate agent implementations. Orchestrator-aware projection remains a schema/runtime gap."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Installed Client Workforce"
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:55:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Surface capability policy, control-plane integration, trust/final-authority gating, Signal/Wisdom feedback and client composition already exist. Compile one canonical agent definition into Command/Go/Hub/plugin/extension projections; do not duplicate agent implementations. Orchestrator-aware projection remains a schema/runtime gap."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 9,
+      "title": "After roadmap workforce creation has substantially converged, run a whole-business workforce coverage audit that enumerates every canonical agent and maps customer/worker journeys, lifecycle stages, exceptions, value leakage, risk, growth, supply and cross-team pains to an accountable agent/outcome",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce",
+        "Titan Installation Workforce",
+        "Titan Investigation Workforce",
+        "Titan Solution Engineering Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-41-SG-09",
+      "execution_phase": "LATE_COVERAGE_AUDIT",
+      "acceptance_focus": "Produce explicit covered, partially covered, uncovered, duplicated and non-agent pain-point sets with evidence and severity/value ranking.",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "System/Services/WorkforceAuditExportService.php",
+              "System/Services/WorkforceChainAuditReconstructionService.php",
+              "System/Services/WorkforceOutcomeHealthService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "System/Models/WorkforceChainAuditSnapshot.php",
+              "resources/workforce/canonical-capability-binding-matrix.json"
+            ],
+            "finding": "Workforce already exposes canonical role/capability coverage, chain-audit reconstruction, outcome health and performance evidence. Build the whole-business coverage audit as a projection over roadmap pain-point bindings + canonical registry + verified outcomes; missing journey/pain ownership must be emitted as closure findings, not filled with generic agents."
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json"
+            ],
+            "finding": "Workforce already exposes canonical role/capability coverage, chain-audit reconstruction, outcome health and performance evidence. Build the whole-business coverage audit as a projection over roadmap pain-point bindings + canonical registry + verified outcomes; missing journey/pain ownership must be emitted as closure findings, not filled with generic agents."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager"
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:55:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Workforce already exposes canonical role/capability coverage, chain-audit reconstruction, outcome health and performance evidence. Build the whole-business coverage audit as a projection over roadmap pain-point bindings + canonical registry + verified outcomes; missing journey/pain ownership must be emitted as closure findings, not filled with generic agents."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 10,
+      "title": "Convert every material uncovered pain point from the coverage audit into new or refined roadmap goals/sub-goals with named owning agent IDs, iterate coverage until closure criteria are met, then certify the final workforce graph, delegation chains, outcomes and cross-surface simulations",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce",
+        "Titan Installation Workforce",
+        "Titan Investigation Workforce",
+        "Titan Solution Engineering Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-41-SG-10",
+      "execution_phase": "FINAL_COVERAGE_CLOSURE",
+      "acceptance_focus": "No material pain-point gap is silently left outside the roadmap; uncovered pains become roadmap work or receive an explicit evidence-backed exclusion decision.",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical workforce registry/hierarchy/coverage governance defines and validates agents but is itself infrastructure; creating a workforce-registry agent would be circular and duplicative."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "System/Services/WorkforceAuthorityGraphValidator.php",
+              "System/Services/WorkforcePostActionVerificationService.php",
+              "System/Services/WorkforceChainAuditReconstructionService.php",
+              "System/Services/WorkforceGraphService.php",
+              "resources/workforce/work-item-orchestration-graph.json"
+            ],
+            "finding": "Graph validation, post-action verification, chain reconstruction and installation/manager verification packs provide the certification primitives. Add a closure loop that turns uncovered pains into named-agent roadmap deltas and reruns graph/delegation/outcome/cross-surface simulations until no material uncovered ownership remains."
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/recovery/STEP30-VERIFICATION.json",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php"
+            ],
+            "finding": "Graph validation, post-action verification, chain reconstruction and installation/manager verification packs provide the certification primitives. Add a closure loop that turns uncovered pains into named-agent roadmap deltas and reruns graph/delegation/outcome/cross-surface simulations until no material uncovered ownership remains."
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "P1_PHYSICAL_OR_PRIOR_VERIFIED_CONTENT_SCAN",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/recovery/STEP28-VERIFICATION.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php"
+            ],
+            "finding": "Graph validation, post-action verification, chain reconstruction and installation/manager verification packs provide the certification primitives. Add a closure loop that turns uncovered pains into named-agent roadmap deltas and reruns graph/delegation/outcome/cross-surface simulations until no material uncovered ownership remains."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager",
+          "Titan Installed Client Workforce"
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:55:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Graph validation, post-action verification, chain reconstruction and installation/manager verification packs provide the certification primitives. Add a closure loop that turns uncovered pains into named-agent roadmap deltas and reruns graph/delegation/outcome/cross-surface simulations until no material uncovered ownership remains."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    }
+  ],
+  "affinity_tags": [
+    "agents",
+    "workforce",
+    "embedded-workforce",
+    "agent-identity",
+    "hierarchy",
+    "pain-points",
+    "business-outcomes",
+    "cross-roadmap",
+    "registry",
+    "coverage-closure",
+    "innovation"
+  ],
+  "preferred_predecessors": [
+    "TZ-ROADMAP-01"
+  ],
+  "preferred_successors": [
+    "TZ-ROADMAP-42"
+  ],
+  "agent_tier_contract_required": true,
+  "unified_architecture_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 5,
+  "library_reuse_refs": [
+    "Titan AI Workforce",
+    "Titan Workforce Manager",
+    "Titan Installed Client Workforce",
+    "Titan Installation Workforce",
+    "Titan Investigation Workforce",
+    "Titan Solution Engineering Workforce"
+  ],
+  "reuse_first": true,
+  "architecture_role": "CROSS_ROADMAP_WORKFORCE_CONSTITUTION_REGISTRY_AND_COVERAGE_CLOSURE",
+  "embedded_workforce_rule": "Agents are built into the roadmap work that solves the pain they own. A feature, engine, workflow or domain capability that materially addresses business pain must not be completed first and later wrapped by an agent. The owning canonical agent identity and outcome boundary are defined/reused as part of the same sub-goal, and the agent uses the relevant engines/tools through governed execution.",
+  "workforce_impact_decision": {
+    "required_for": "every roadmap sub-goal",
+    "allowed_results": [
+      "REUSE_EXISTING_AGENT",
+      "EXTEND_EXISTING_AGENT",
+      "CREATE_NEW_AGENT",
+      "NO_AGENT_INFRASTRUCTURE_ONLY"
+    ],
+    "no_agent_rule": "NO_AGENT_INFRASTRUCTURE_ONLY is valid only where the work is genuinely infrastructure/control-plane/platform plumbing with no distinct business pain/outcome owner; a reason must be recorded.",
+    "required_metadata_when_agent_relevant": [
+      "owning_agent_ids[]",
+      "created_agent_ids[]",
+      "modified_agent_ids[]",
+      "pain_point_ids[]",
+      "outcome_ids[]",
+      "delegation_chain[]",
+      "registry_delta",
+      "verification_evidence"
+    ]
+  },
+  "agent_identity_rule": "Every canonical workforce agent has one permanent agent_id independent of display name, host, surface, plan or vertical projection. Names/aliases may evolve but agent_id, lineage, ownership boundary and registry history remain traceable.",
+  "agent_design_standard": {
+    "reference": "16 mandatory pain-point innovation capabilities",
+    "rule": "Every workforce agent must reach equivalent problem/outcome specificity and operational depth; it must not merely reproduce a conventional job title. The exemplars define quality, not identical function.",
+    "minimum_definition": [
+      "canonical agent_id and name",
+      "team/domain and workforce position",
+      "parent/children and delegation boundaries",
+      "pain points and failure patterns",
+      "signals/events monitored",
+      "unprompted noticing conditions where class permits",
+      "desired/owned outcomes",
+      "capabilities, tools and workflows",
+      "required evidence and decision basis",
+      "preparatory work and executable actions",
+      "authority ceiling and trust/autonomy path",
+      "approvals, safeguards and escalation destinations",
+      "failure containment, recovery and reversal",
+      "surface exposure and offline policy",
+      "success metrics and attributable business value",
+      "verified-outcome learning feedback",
+      "uniqueness/non-duplication justification"
+    ]
+  },
+  "coverage_closure_rule": "After agents have been created/extended throughout the roadmap, perform a whole-business pain-point coverage scan across customer journeys, worker journeys, operational lifecycles, financial/value leakage, exceptions, risk/compliance, growth, supply, communication and cross-team coordination. Every material uncovered pain point must be mapped to an existing agent or converted into new roadmap sub-goal/goal work with a named owning agent. Repeat until the remaining uncovered items are explicitly accepted as non-material, out-of-scope or human-only.",
+  "mvp_scope_note": "P0 establishes first-class agent identity, the mandatory workforce-impact declaration for roadmap work, hierarchy/delegation rules, the universal pain-point design standard and the embedded-agent lifecycle. Full donor convergence, surface compilation and end-of-roadmap missing-pain closure continue as P1.",
+  "agent_goal_classification": "DOMAIN_WORKFORCE_ELIGIBLE",
+  "agent_goal_rule": "This goal owns durable business/domain outcomes and may reuse, extend or create canonical workforce identities subject to non-duplication and outcome-owner tests.",
+  "workforce_goal_classification": "WORKFORCE_DEFINITION_OR_HIERARCHY",
+  "workforce_goal_rule": "Canonical workforce identities/hierarchy may be defined here, but identities must remain domain/outcome based and surface-neutral."
+}
