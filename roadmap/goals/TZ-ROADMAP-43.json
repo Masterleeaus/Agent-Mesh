@@ -1,0 +1,2645 @@
+{
+  "goal_id": "TZ-ROADMAP-43",
+  "priority": "P0",
+  "title": "Chat-First Go, Hub & Command PWA Surface Delivery",
+  "objective": "Turn the approved Titan Go, Titan Hub and Titan Command prototype into three separately installable, production-connected role projections of one canonical Titan Zero TypeScript runtime. Use /Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md as the canonical execution plan. Features required by more than one surface, including agents, autonomy, tier behaviour, capabilities, generative UI, workflows, contracts, events, receipts, offline rules and measurable outcomes, must be implemented once in the canonical base and exposed through governed surface permissions; PWA code may contain presentation, device adaptation and bounded offline behaviour only. The mandatory product experience is TEAM_IN_YOUR_POCKET: the user opens a role surface, speaks naturally to Titan Zero as the front door, the appropriate canonical managers and specialists assemble behind the conversation, and governed generative UI appears only when useful; dashboards and manual agent selection are secondary escape hatches rather than the primary operating model.",
+  "status": "IN_PROGRESS",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Reconcile the verified canonical baseline, audit existing PWA/TLS work and donor implementations, map every reusable engine and UI asset, and freeze the approved Go/Hub/Command product and navigation specification without silently choosing between conflicting canonical pointers",
+      "status": "IN_PROGRESS",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "full outcome, file, test and acceptance contracts in canonical Goal 43 plan",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY",
+        "full_plan_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+        "predeclared_goal_pass_ids": [
+          "PWA-01-CANONICAL-BASELINE",
+          "PWA-02-DONOR-INVENTORY",
+          "PWA-03-AUTHORITY-CONFLICT-MATRIX",
+          "PWA-04-PRODUCT-NAVIGATION-SPEC",
+          "PWA-05-CAPABILITY-REUSE-MAP",
+          "PWA-06-SPEC-FREEZE-CHECKPOINT"
+        ],
+        "predeclared_pass_count": 6,
+        "predeclared_state": "PLANNED",
+        "builder_instruction": "On claim, adopt the first incomplete predeclared pass immediately. Refine only remaining pass detail; preserve pass outcomes, canonical ownership, checkpoint cadence and no-wait execution.",
+        "checkpoint_policy": "ONE_CUMULATIVE_DELTA_AFTER_SIX_PASS_SUBGOAL; NO_PER_PASS_ARCHIVES"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Go",
+        "Titan Hub",
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Visual Runtime",
+        "Titan Command Bus",
+        "Titan Signal Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-43-SG-01",
+      "execution": {
+        "state": "IN_PROGRESS",
+        "claimed_by": "codex-pwa-baseline-builder",
+        "claimed_at": "2026-09-16T16:44:52Z",
+        "last_heartbeat_at": "2026-09-16T17:00:20Z",
+        "lease_until": "2026-09-16T21:00:20Z",
+        "plan_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+        "current_pass_id": "PWA-04-PRODUCT-NAVIGATION-SPEC",
+        "passes": [
+          {
+            "pass_id": "PWA-01-CANONICAL-BASELINE",
+            "title": "Reconcile the current canonical baseline and Site source",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T16:44:52Z",
+            "completed_at": "2026-09-16T16:50:21Z",
+            "summary": "Verified Manager-recorded Merge77, classified mirrored Merge78 as a strict additive but unpromoted candidate, and bound the tested Site source without manufacturing archive ancestry.",
+            "evidence_refs": [
+              "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-01-PWA-01-CANONICAL-BASELINE.md",
+              "site-commit:74c88153147f35801a73b0c1d2bcb43e70be21bd"
+            ],
+            "planned_work_units": 6,
+            "completed_work_units": 6,
+            "planned_scope_completion_ratio": 1,
+            "acceptance_gates_advanced": [
+              "exact canonical hash and lineage",
+              "current-slot candidate classification",
+              "Site source relationship",
+              "TypeScript/PWA authority boundary"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PWA-02-DONOR-INVENTORY",
+            "title": "Inventory reusable PWA and engine donors",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T16:50:21Z",
+            "completed_at": "2026-09-16T16:57:01Z",
+            "summary": "Materialised and inspected every named PWA/shared runtime donor, recorded exact bytes and incompatible assumptions, and assigned one reuse disposition without duplicating canonical TypeScript authority.",
+            "evidence_refs": [
+              "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-01-PWA-02-DONOR-INVENTORY.md",
+              "site-commit:23074a20d8c3ecfe91845ef8f6582ad0e3ffc0d2"
+            ],
+            "planned_work_units": 6,
+            "completed_work_units": 6,
+            "planned_scope_completion_ratio": 1,
+            "acceptance_gates_advanced": [
+              "physical donor inventory",
+              "archive integrity",
+              "reuse dispositions",
+              "incompatible assumption capture"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PWA-03-AUTHORITY-CONFLICT-MATRIX",
+            "title": "Resolve surface and engine authority boundaries",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T16:57:01Z",
+            "completed_at": "2026-09-16T17:00:20Z",
+            "summary": "Assigned one canonical owner to every business/runtime concern, resolved donor and topology conflicts, and explicitly superseded WorkCore authority without creating new write owners.",
+            "evidence_refs": [
+              "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-01-PWA-03-AUTHORITY-CONFLICT-MATRIX.md",
+              "site-commit:2aa127f3a22fab4ce4ea5de72ca527bb41bfee6b"
+            ],
+            "planned_work_units": 6,
+            "completed_work_units": 6,
+            "planned_scope_completion_ratio": 1,
+            "acceptance_gates_advanced": [
+              "canonical owner matrix",
+              "mutation receipt chain",
+              "offline contraction",
+              "WorkCore supersession"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PWA-04-PRODUCT-NAVIGATION-SPEC",
+            "title": "Freeze product navigation, wording and tone",
+            "status": "IN_PROGRESS",
+            "started_at": "2026-09-16T17:00:20Z",
+            "completed_at": null,
+            "summary": null,
+            "evidence_refs": [],
+            "planned_work_units": 5,
+            "completed_work_units": 0,
+            "planned_scope_completion_ratio": 0,
+            "acceptance_gates_advanced": [],
+            "output_gate_status": "PENDING",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PWA-05-CAPABILITY-REUSE-MAP",
+            "title": "Bind visible actions to canonical capabilities",
+            "status": "PLANNED",
+            "started_at": null,
+            "completed_at": null,
+            "summary": null,
+            "evidence_refs": [],
+            "planned_work_units": 7,
+            "completed_work_units": 0,
+            "planned_scope_completion_ratio": 0,
+            "acceptance_gates_advanced": [],
+            "output_gate_status": "PENDING",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PWA-06-SPEC-FREEZE-CHECKPOINT",
+            "title": "Verify and publish the SG-01 cumulative checkpoint",
+            "status": "PLANNED",
+            "started_at": null,
+            "completed_at": null,
+            "summary": null,
+            "evidence_refs": [],
+            "planned_work_units": 6,
+            "completed_work_units": 0,
+            "planned_scope_completion_ratio": 0,
+            "acceptance_gates_advanced": [],
+            "output_gate_status": "PENDING",
+            "underfill_exception": null
+          }
+        ],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 6
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Current canonical authority",
+            "file_id": "file_00000000335881fa95a3c03a1777002e",
+            "library_path": "/Titan Zero/Agent Mesh Manager/Manager/CANONICAL.json",
+            "verification": "SOLE_MUTABLE_CURRENT_CANONICAL_POINTER",
+            "finding": "Current authority resolves Merge80. Historical PWA baseline evidence referring to Merge77/Merge78 is provenance, not current authority."
+          },
+          {
+            "source_ref": "PWA-01 canonical baseline evidence",
+            "file_id": "file_00000000603c81f6a8ef8055a0763a8a",
+            "library_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-01-PWA-01-CANONICAL-BASELINE.md",
+            "verification": "HISTORICAL_ANALYSIS_COMPLETE; HASH/ARCHIVE RELATIONSHIP VERIFIED AT TIME OF PASS; CANONICAL POINTER NOW SUPERSEDED BY CURRENT",
+            "finding": "Explicitly separated runtime authority, additive candidate and Site presentation source rather than choosing by filename/folder."
+          },
+          {
+            "source_ref": "PWA-02 donor inventory",
+            "file_id": "file_00000000a64c822fb7b13d2fae32dd5d",
+            "library_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-01-PWA-02-DONOR-INVENTORY.md",
+            "verification": "ANALYSIS_COMPLETE; DONORS HASHED INTEGRITY_TESTED CODE_INSPECTED",
+            "finding": "Go/Hub adapted; historical Titan Command and Mobile Core superseded; Interaction/Interface adapted; Visual Runtime reused. Every donor has an explicit disposition."
+          },
+          {
+            "source_ref": "PWA-03 authority conflict matrix",
+            "file_id": "file_0000000008f081faa8ec44d4c089fa95",
+            "library_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-01-PWA-03-AUTHORITY-CONFLICT-MATRIX.md",
+            "verification": "DESIGN_READY; FOCUSED_AND_FULL_SITE_TESTS_PASS",
+            "finding": "Canonical owners and prohibited duplicate responsibilities are explicit; company_id is sole boundary and WorkCore authority wording is superseded."
+          },
+          {
+            "source_ref": "PWA 60-pass build plan",
+            "file_id": "file_00000000e87c81fa948ca4acbcdf0441",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+            "verification": "LIVE_DESIGN_PLAN_V4; SG01 PWA01-PWA03 COMPLETE; PWA04-PWA06 PLANNED",
+            "finding": "Contains frozen target navigation/experience contract, cross-goal ownership routing, exact shared file map and remaining SG01 implementation passes."
+          },
+          {
+            "source_ref": "PWA workspace state",
+            "file_id": "file_00000000f5a081f885027d74bae99358",
+            "library_path": "/Titan Zero/PWA Workspace/WORKSPACE-STATE.json",
+            "verification": "ACTIVE_GOVERNED_WORKSPACE_CANONICAL_REF_CURRENT",
+            "finding": "PWA remains presentation/source lane only and resolves current canonical through Manager/CANONICAL.json."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT",
+          "Titan Go",
+          "Titan Hub",
+          "Titan Interaction Engine",
+          "Titan Interface Runtime",
+          "Titan Visual Runtime",
+          "PWA Site source",
+          "PWA 60-pass plan"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:23:00Z",
+        "scan_notes": "Discovery is complete without changing implementation. PWA-01..03 provide baseline/donor/authority evidence; PWA-04 product/navigation freeze, PWA-05 capability reuse map, and PWA-06 spec-freeze checkpoint remain implementation work. Historical Merge77/Merge78 evidence must never override Manager/CANONICAL.json.",
+        "exhaustion_evidence": null,
+        "evidence_detail_status": "DEEP_SCANNED_RELEVANT_CODE_AND_EVIDENCE_VALIDATED_IMPLEMENTATION_CONTINUES",
+        "manager_enriched_at_utc": "2026-09-19T19:32:00Z"
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 2,
+      "title": "Implement or converge canonical TypeScript contracts, capability registry, events, signals, receipts, generated API client, Surface API and shared Surface SDK so all three PWAs consume server-authorised projections and never duplicate domain write authority",
+      "status": "MANAGER_VERIFYING",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "full outcome, file, test and acceptance contracts in canonical Goal 43 plan",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY",
+        "full_plan_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+        "predeclared_goal_pass_ids": [
+          "PWA-07-SURFACE-CONTEXT-CONTRACT",
+          "PWA-08-CAPABILITY-PROJECTION",
+          "PWA-09-EVENT-SIGNAL-RECEIPT-SCHEMAS",
+          "PWA-10-GENERATED-SURFACE-CLIENT",
+          "PWA-11-OFFLINE-AUTHORITY-CONTRACT",
+          "PWA-12-SDK-CERTIFICATION-CHECKPOINT"
+        ],
+        "predeclared_pass_count": 6,
+        "predeclared_state": "COMPLETE",
+        "builder_instruction": "On claim, adopt the first incomplete predeclared pass immediately. Refine only remaining pass detail; preserve pass outcomes, canonical ownership, checkpoint cadence and no-wait execution.",
+        "checkpoint_policy": "ONE_CUMULATIVE_DELTA_AFTER_SIX_PASS_SUBGOAL; NO_PER_PASS_ARCHIVES"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Command Bus",
+        "Titan Go",
+        "Titan Hub",
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Signal Engine",
+        "Titan Visual Runtime",
+        "Titan Zero"
+      ],
+      "subgoal_id": "TZ-ROADMAP-43-SG-02",
+      "execution": {
+        "state": "MANAGER_VERIFYING",
+        "claimed_by": "codex-pwa-surface-builder",
+        "claimed_at": "2026-09-16T04:11:47Z",
+        "last_heartbeat_at": "2026-09-16T04:30:49Z",
+        "lease_until": null,
+        "plan_path": "/Titan Zero/PWA Workspace/WORK/TZ-ROADMAP-43-SG-02-PLAN.md",
+        "current_pass_id": null,
+        "passes": [
+          {
+            "pass_id": "PASS-01-BASELINE-AND-DONOR-RECONCILIATION",
+            "title": "Reconcile Merge77, live Site and shared engine boundaries",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T04:11:47Z",
+            "completed_at": "2026-09-16T04:15:00Z",
+            "summary": "Rebased the PWA workspace from stale Merge76 metadata to verified Merge77, inspected the live Site and confirmed the Surface SDK must remain a thin authority-neutral boundary over existing engines.",
+            "evidence_refs": [
+              "/Titan Zero/PWA Workspace/WORK/TZ-ROADMAP-43-SG-02-PLAN.md"
+            ],
+            "planned_work_units": 4,
+            "completed_work_units": 4,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "latest canonical validated",
+              "reuse and collision boundary established"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PASS-02-FAIL-CLOSED-CONTRACT-TESTS",
+            "title": "Specify company isolation, capability and receipt invariants",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T04:15:00Z",
+            "completed_at": "2026-09-16T04:17:00Z",
+            "summary": "Added focused tests for company_id isolation, legacy tenant rejection, explicit capability projections, expiring authority, command intents and server receipt validation.",
+            "evidence_refs": [
+              "packages/titan-platform/tests/surface-sdk.test.mjs"
+            ],
+            "planned_work_units": 6,
+            "completed_work_units": 6,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "company boundary",
+              "fail-closed authority",
+              "receipt identity"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PASS-03-CANONICAL-SURFACE-SDK",
+            "title": "Implement the canonical TypeScript Surface SDK",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T04:17:00Z",
+            "completed_at": "2026-09-16T04:19:00Z",
+            "summary": "Implemented and exported shared projection, capability, command-intent, event, signal, receipt and transport contracts without adding domain write authority.",
+            "evidence_refs": [
+              "packages/titan-platform/src/surface/index.ts",
+              "packages/titan-platform/src/index.ts",
+              "packages/titan-platform/package.json"
+            ],
+            "planned_work_units": 7,
+            "completed_work_units": 7,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "shared SDK",
+              "Command Bus intent seam",
+              "events signals receipts"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PASS-04-PWA-SURFACE-ADAPTER",
+            "title": "Replace inline PWA role authority with contract projections",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T04:19:00Z",
+            "completed_at": "2026-09-16T04:21:00Z",
+            "summary": "Added a generated-client-compatible Site adapter, explicit Go/Hub/Command allowlists and contract-backed role presentation while keeping all actions simulated and server-acceptance dependent.",
+            "evidence_refs": [
+              "site-commit:90a2c424045d49f9c2d0d9fa24bbd43338f021fb"
+            ],
+            "planned_work_units": 6,
+            "completed_work_units": 6,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "surface allowlists",
+              "authority-neutral UI",
+              "cross-surface denial"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PASS-05-GO-LIVE-ROUTE",
+            "title": "Add field route projection and responsive map mode",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T04:21:00Z",
+            "completed_at": "2026-09-16T04:23:00Z",
+            "summary": "Added a responsive Job details/Live route switch to Go Active with travel, traffic, parking, arrival and offline guidance using existing visual assets.",
+            "evidence_refs": [
+              "site-commit:90a2c424045d49f9c2d0d9fa24bbd43338f021fb"
+            ],
+            "planned_work_units": 5,
+            "completed_work_units": 5,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "Go map navigation",
+              "responsive field workflow",
+              "offline context"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PASS-06-VERIFY-PUBLISH-AND-CHECKPOINT",
+            "title": "Verify, publish and package a merge-ready cumulative delta",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T04:23:00Z",
+            "completed_at": "2026-09-16T04:30:49Z",
+            "summary": "Passed canonical typecheck and six focused tests, passed the Site build, 79 tests and lint, published Site version 34, inspected its generated production render and persisted the final merge-ready delta and evidence.",
+            "evidence_refs": [
+              "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CHECKPOINT-01.md",
+              "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-DELTA-MANIFEST.json"
+            ],
+            "planned_work_units": 7,
+            "completed_work_units": 7,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "verification",
+              "production publish",
+              "merge-ready checkpoint"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          }
+        ],
+        "final_cumulative_delta": {
+          "artifact_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CUMULATIVE-DELTA.tar.gz",
+          "library_file_id": "libfile_be6c65ba7a08819197a61caa94a330e2",
+          "artifact_sha256": "af8a720580521bb3bff0241ca3f3d3b6aea8238231b18e5b76373c35728b5823",
+          "manifest_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-DELTA-MANIFEST.json",
+          "verification_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CHECKPOINT-01.md",
+          "base_sha256": "5d72062d5249dd683908823146b402edcadf90d43a779e7b76ce4351f0b38090",
+          "created_at_utc": "2026-09-16T04:30:49Z"
+        },
+        "checkpoint_counter": 1,
+        "checkpoint_history": [
+          {
+            "checkpoint_id": "CHECKPOINT-01-FINAL",
+            "through_pass_id": "PASS-06-VERIFY-PUBLISH-AND-CHECKPOINT",
+            "artifact_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CUMULATIVE-DELTA.tar.gz",
+            "library_file_id": "libfile_be6c65ba7a08819197a61caa94a330e2",
+            "artifact_sha256": "af8a720580521bb3bff0241ca3f3d3b6aea8238231b18e5b76373c35728b5823",
+            "manifest_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-DELTA-MANIFEST.json",
+            "verification_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CHECKPOINT-01.md",
+            "base_sha256": "5d72062d5249dd683908823146b402edcadf90d43a779e7b76ce4351f0b38090",
+            "created_at_utc": "2026-09-16T04:30:49Z"
+          }
+        ],
+        "next_checkpoint_due_after_pass": null,
+        "manager_convergence_required": true,
+        "manager_convergence_receipt": null,
+        "queue_receipt": {
+          "receipt_id": "QUEUE-TZ-ROADMAP-43-SG-02-20260916T170541Z",
+          "receipt_path": "/Titan Zero/Agent Mesh Manager/Manager/INBOX/DELTA QUEUE/TZ-ROADMAP-43-SG-02__QUEUE-RECEIPT.json",
+          "artifact_path": "/Titan Zero/Agent Mesh Manager/Manager/INBOX/DELTA QUEUE/TZ-ROADMAP-43-SG-02__CUMULATIVE_SUBGOAL_FINAL.tar.gz",
+          "artifact_sha256": "af8a720580521bb3bff0241ca3f3d3b6aea8238231b18e5b76373c35728b5823"
+        },
+        "completion_guard": "Manager semantic rebase prepared and verified; final canonical merge representation plus final convergence receipt required before COMPLETE.",
+        "manager_convergence_classification": "SEMANTIC_REBASE",
+        "manager_convergence_review_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-02__MANAGER-CONVERGENCE-REVIEW.json",
+        "manager_rebase_artifact_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-02__MANAGER-SEMANTIC-REBASE-M80.zip",
+        "manager_rebase_manifest_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-02__MANAGER-SEMANTIC-REBASE-MANIFEST.json"
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [
+          "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CHECKPOINT-01.md"
+        ],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCAN_COMPLETE_EXISTING_DELTA_VERIFIED_REBASE_TO_MERGE80_REQUIRED",
+        "last_scanned_at_utc": "2026-09-19T06:16:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "MANAGER_PROMOTED_CANONICAL_THREE_COPY_SHA_ZIP_TYPECHECK_TEST_VERIFIED"
+          },
+          {
+            "source_ref": "PWA Workspace SG02 cumulative delta",
+            "file_id": "file_00000000189881fab5b8e24b80428677",
+            "library_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CUMULATIVE-DELTA.tar.gz",
+            "sha256": "af8a720580521bb3bff0241ca3f3d3b6aea8238231b18e5b76373c35728b5823",
+            "verification": "DELTA_MANIFEST_TYPECHECK_PASS_SURFACE_SDK_6_6_SITE_TESTS_79_79_SITE_LINT_PASS_DEPLOYMENT_SUCCEEDED_BASE_MERGE77_REBASE_REQUIRED"
+          },
+          {
+            "source_ref": "PWA Workspace SG03 checkpoint PWA16",
+            "file_id": "file_000000002d3c81fabdfb7125c213d874",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/CHECKPOINTS/TZ-ROADMAP-43-SG-03-CHECKPOINT-PWA16.tar.gz",
+            "sha256": "cf3377e9a9d17f52d700badcc8248f73341d63f29d1daaffdb3ddbaad5fe16cb",
+            "verification": "ACTIVE_BUILDER_CHECKPOINT_PWA13_TO_PWA16_FOCUSED_TESTS_15_15_PASS_NOT_MANAGER_FINAL_DELTA"
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Hub",
+            "file_id": "file_00000000955c81f98e06e237cfd46d78",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Hub/Titan Hub Master v1.0.0-alpha.8.zip",
+            "sha256": "13631ed5e0e661affcd86c66c7fd10e99434cf3656fcca95dcfbeefce3a77c5a",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Visual Runtime",
+            "file_id": "file_000000001fb081faaabd672d8e2d9be2",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Visual Runtime/Titan Visual Runtime Master v1.9.0.zip",
+            "sha256": "50ec413656feefdfea1b528789fd653976b552c5b8c77201cd7117d38f715907",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "PWA Workspace SG02 cumulative delta",
+            "file_id": "file_00000000189881fab5b8e24b80428677",
+            "library_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CUMULATIVE-DELTA.tar.gz",
+            "sha256": "af8a720580521bb3bff0241ca3f3d3b6aea8238231b18e5b76373c35728b5823",
+            "verification": "DELTA_MANIFEST_TYPECHECK_PASS_SURFACE_SDK_6_6_SITE_TESTS_79_79_SITE_LINT_PASS_DEPLOYMENT_SUCCEEDED_BASE_MERGE77_REBASE_REQUIRED",
+            "internal_paths": [
+              "packages/titan-platform/src/surface/index.ts",
+              "packages/titan-platform/src/index.ts",
+              "packages/titan-platform/tests/surface-sdk.test.mjs",
+              "TZ-ROADMAP-43-SG-02-DELTA-MANIFEST.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "MANAGER_PROMOTED_CANONICAL_THREE_COPY_SHA_ZIP_TYPECHECK_TEST_VERIFIED",
+            "internal_paths": [
+              "packages/titan-platform/src/index.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "System/Services/CommandBus.php",
+              "System/Contracts/CommandEnvelope.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "System/Data/SignalReceipt.php",
+              "System/Data/CommandReceiptPairing.php"
+            ]
+          }
+        ],
+        "scan_notes": "SG02 already has a verified cumulative delta implementing the authority-neutral Surface SDK: canonical go/hub/command surface IDs, company/actor/revision projections, capability allowlists, prepare-only command intents, server receipts/signals/events, legacy-tenant rejection and expiry fail-closed behavior. Its manifest records typecheck PASS, 6/6 SDK tests, 79/79 Site tests, lint PASS and deployment success. However the delta is based on Merge77 and the now-promoted canonical is Merge80; Merge80 does not contain packages/titan-platform/src/surface/index.ts. Manager must rebase/converge the delta onto Merge80 before treating SG02 code as canonical.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Implement persistent chat, streaming interaction, cross-surface continuation, canonical generative-UI envelopes and a shared accessible component catalogue with safe text fallback across Go, Hub and Command; make conversation the primary mobile operating surface and generate worker/task-specific workspaces in-context",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "full outcome, file, test and acceptance contracts in canonical Goal 43 plan",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY",
+        "full_plan_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+        "predeclared_goal_pass_ids": [
+          "PWA-13-INTERACTION-CLIENT",
+          "PWA-14-PERSISTENT-CONVERSATION",
+          "PWA-15-STREAMING-AND-INTERRUPTION",
+          "PWA-16-GENERATIVE-UI-ENVELOPE",
+          "PWA-17-ACCESSIBILITY-AND-MULTIMODAL",
+          "PWA-18-CHAT-CERTIFICATION-CHECKPOINT"
+        ],
+        "predeclared_pass_count": 6,
+        "predeclared_state": "PLANNED",
+        "builder_instruction": "On claim, adopt the first incomplete predeclared pass immediately. Refine only remaining pass detail; preserve pass outcomes, canonical ownership, checkpoint cadence and no-wait execution.",
+        "checkpoint_policy": "ONE_CUMULATIVE_DELTA_AFTER_SIX_PASS_SUBGOAL; NO_PER_PASS_ARCHIVES"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Command Bus",
+        "Titan Go",
+        "Titan Hub",
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Signal Engine",
+        "Titan Visual Runtime",
+        "Titan Zero"
+      ],
+      "subgoal_id": "TZ-ROADMAP-43-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_SURFACE_BINDING",
+        "workforce_impact": "SURFACE_BINDING_EXISTING_AGENTS",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Bind only canonical domain/workforce agents relevant to the user outcome; never create a host/surface-specific agent identity."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_ACTIVE_IMPLEMENTATION_FOUND_PWA16_NOT_FINAL",
+        "last_scanned_at_utc": "2026-09-19T06:16:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "MANAGER_PROMOTED_CANONICAL_THREE_COPY_SHA_ZIP_TYPECHECK_TEST_VERIFIED"
+          },
+          {
+            "source_ref": "PWA Workspace SG02 cumulative delta",
+            "file_id": "file_00000000189881fab5b8e24b80428677",
+            "library_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CUMULATIVE-DELTA.tar.gz",
+            "sha256": "af8a720580521bb3bff0241ca3f3d3b6aea8238231b18e5b76373c35728b5823",
+            "verification": "DELTA_MANIFEST_TYPECHECK_PASS_SURFACE_SDK_6_6_SITE_TESTS_79_79_SITE_LINT_PASS_DEPLOYMENT_SUCCEEDED_BASE_MERGE77_REBASE_REQUIRED"
+          },
+          {
+            "source_ref": "PWA Workspace SG03 checkpoint PWA16",
+            "file_id": "file_000000002d3c81fabdfb7125c213d874",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/CHECKPOINTS/TZ-ROADMAP-43-SG-03-CHECKPOINT-PWA16.tar.gz",
+            "sha256": "cf3377e9a9d17f52d700badcc8248f73341d63f29d1daaffdb3ddbaad5fe16cb",
+            "verification": "ACTIVE_BUILDER_CHECKPOINT_PWA13_TO_PWA16_FOCUSED_TESTS_15_15_PASS_NOT_MANAGER_FINAL_DELTA"
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Hub",
+            "file_id": "file_00000000955c81f98e06e237cfd46d78",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Hub/Titan Hub Master v1.0.0-alpha.8.zip",
+            "sha256": "13631ed5e0e661affcd86c66c7fd10e99434cf3656fcca95dcfbeefce3a77c5a",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Visual Runtime",
+            "file_id": "file_000000001fb081faaabd672d8e2d9be2",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Visual Runtime/Titan Visual Runtime Master v1.9.0.zip",
+            "sha256": "50ec413656feefdfea1b528789fd653976b552c5b8c77201cd7117d38f715907",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "PWA Workspace SG03 checkpoint PWA16",
+            "file_id": "file_000000002d3c81fabdfb7125c213d874",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/CHECKPOINTS/TZ-ROADMAP-43-SG-03-CHECKPOINT-PWA16.tar.gz",
+            "sha256": "cf3377e9a9d17f52d700badcc8248f73341d63f29d1daaffdb3ddbaad5fe16cb",
+            "verification": "ACTIVE_BUILDER_CHECKPOINT_PWA13_TO_PWA16_FOCUSED_TESTS_15_15_PASS_NOT_MANAGER_FINAL_DELTA",
+            "internal_paths": [
+              "app/titan/runtime/interaction-client.ts",
+              "app/titan/runtime/conversation-store.ts",
+              "app/titan/runtime/presentation-intent.ts",
+              "app/titan/components/role-chat.tsx",
+              "app/titan/components/generated-ui/generated-ui-envelope.tsx",
+              "tests/titan-interaction-client-static.test.mjs",
+              "tests/titan-persistent-conversation-static.test.mjs",
+              "tests/titan-streaming-interruption-static.test.mjs",
+              "tests/titan-generative-ui-envelope-static.test.mjs"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Presentation/PresentationIntent.php",
+              "System/Presentation/GeneratedUiPresenter.php",
+              "System/Wizard/UniversalWizardEngine.php",
+              "System/Engines/HumanInteraction/Implementations/TrustEngine.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Components/ComponentCatalog.php",
+              "System/Rendering/Renderer.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Visual Runtime",
+            "file_id": "file_000000001fb081faaabd672d8e2d9be2",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Visual Runtime/Titan Visual Runtime Master v1.9.0.zip",
+            "sha256": "50ec413656feefdfea1b528789fd653976b552c5b8c77201cd7117d38f715907",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Runtime/VisualRuntime.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH",
+            "internal_paths": []
+          },
+          {
+            "source_ref": "Titan Hub",
+            "file_id": "file_00000000955c81f98e06e237cfd46d78",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Hub/Titan Hub Master v1.0.0-alpha.8.zip",
+            "sha256": "13631ed5e0e661affcd86c66c7fd10e99434cf3656fcca95dcfbeefce3a77c5a",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH",
+            "internal_paths": []
+          }
+        ],
+        "scan_notes": "The active PWA16 checkpoint is substantial and newer than the older Go/Hub donors: one company-scoped conversation across Go/Hub/Command, worker join/leave/handoff events, direct requested-agent routing, persistent projected history plus optimistic drafts, interruption-safe streaming/resume, duplicate-chunk suppression, allowlisted PresentationIntent cards capped at three, accessible text fallback, and generated actions limited to navigate/prepare_intent. PWA16 verification reports 15/15 focused tests PASS. It remains a Builder checkpoint, not a Manager final delta; PWA17 accessibility/multimodal and PWA18 certification remain planned.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Project the governed execution chain, earned-trust autonomy, recursive handshake, plan entitlement, workforce hierarchy, five-tier behaviour, exception-only management and innovative pain-point capabilities into each authorised PWA without allowing UI, cached state or subscription level to grant authority; implement Zero-to-manager-to-specialist assembly, visible worker handoffs, direct worker conversation and governed proactive worker contact",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "full outcome, file, test and acceptance contracts in canonical Goal 43 plan",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY",
+        "full_plan_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+        "predeclared_goal_pass_ids": [
+          "PWA-19-WORKFORCE-PROJECTION",
+          "PWA-20-FIVE-TIER-BEHAVIOUR",
+          "PWA-21-TRUST-CYCLE-UI",
+          "PWA-22-RECURSIVE-HANDSHAKE",
+          "PWA-23-EXCEPTION-ONLY-MANAGEMENT",
+          "PWA-24-AUTONOMY-CERTIFICATION-CHECKPOINT"
+        ],
+        "predeclared_pass_count": 6,
+        "predeclared_state": "PLANNED",
+        "builder_instruction": "On claim, adopt the first incomplete predeclared pass immediately. Refine only remaining pass detail; preserve pass outcomes, canonical ownership, checkpoint cadence and no-wait execution.",
+        "checkpoint_policy": "ONE_CUMULATIVE_DELTA_AFTER_SIX_PASS_SUBGOAL; NO_PER_PASS_ARCHIVES"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Command Bus",
+        "Titan Go",
+        "Titan Hub",
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Signal Engine",
+        "Titan Visual Runtime",
+        "Titan Zero"
+      ],
+      "subgoal_id": "TZ-ROADMAP-43-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_SURFACE_BINDING",
+        "workforce_impact": "SURFACE_BINDING_EXISTING_AGENTS",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Bind only canonical domain/workforce agents relevant to the user outcome; never create a host/surface-specific agent identity."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_REUSE_PATH_VALIDATED_IMPLEMENTATION_BLOCKED_ON_G41_G42_CONVERGENCE",
+        "last_scanned_at_utc": "2026-09-19T06:16:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "MANAGER_PROMOTED_CANONICAL_THREE_COPY_SHA_ZIP_TYPECHECK_TEST_VERIFIED"
+          },
+          {
+            "source_ref": "PWA Workspace SG02 cumulative delta",
+            "file_id": "file_00000000189881fab5b8e24b80428677",
+            "library_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CUMULATIVE-DELTA.tar.gz",
+            "sha256": "af8a720580521bb3bff0241ca3f3d3b6aea8238231b18e5b76373c35728b5823",
+            "verification": "DELTA_MANIFEST_TYPECHECK_PASS_SURFACE_SDK_6_6_SITE_TESTS_79_79_SITE_LINT_PASS_DEPLOYMENT_SUCCEEDED_BASE_MERGE77_REBASE_REQUIRED"
+          },
+          {
+            "source_ref": "PWA Workspace SG03 checkpoint PWA16",
+            "file_id": "file_000000002d3c81fabdfb7125c213d874",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/CHECKPOINTS/TZ-ROADMAP-43-SG-03-CHECKPOINT-PWA16.tar.gz",
+            "sha256": "cf3377e9a9d17f52d700badcc8248f73341d63f29d1daaffdb3ddbaad5fe16cb",
+            "verification": "ACTIVE_BUILDER_CHECKPOINT_PWA13_TO_PWA16_FOCUSED_TESTS_15_15_PASS_NOT_MANAGER_FINAL_DELTA"
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Hub",
+            "file_id": "file_00000000955c81f98e06e237cfd46d78",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Hub/Titan Hub Master v1.0.0-alpha.8.zip",
+            "sha256": "13631ed5e0e661affcd86c66c7fd10e99434cf3656fcca95dcfbeefce3a77c5a",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Visual Runtime",
+            "file_id": "file_000000001fb081faaabd672d8e2d9be2",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Visual Runtime/Titan Visual Runtime Master v1.9.0.zip",
+            "sha256": "50ec413656feefdfea1b528789fd653976b552c5b8c77201cd7117d38f715907",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "PWA Workspace SG03 checkpoint PWA16",
+            "file_id": "file_000000002d3c81fabdfb7125c213d874",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/CHECKPOINTS/TZ-ROADMAP-43-SG-03-CHECKPOINT-PWA16.tar.gz",
+            "sha256": "cf3377e9a9d17f52d700badcc8248f73341d63f29d1daaffdb3ddbaad5fe16cb",
+            "verification": "ACTIVE_BUILDER_CHECKPOINT_PWA13_TO_PWA16_FOCUSED_TESTS_15_15_PASS_NOT_MANAGER_FINAL_DELTA",
+            "internal_paths": [
+              "app/titan/runtime/interaction-client.ts",
+              "app/titan/components/role-chat.tsx",
+              "app/titan/runtime/presentation-intent.ts"
+            ]
+          },
+          {
+            "source_ref": "PWA Workspace SG02 cumulative delta",
+            "file_id": "file_00000000189881fab5b8e24b80428677",
+            "library_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CUMULATIVE-DELTA.tar.gz",
+            "sha256": "af8a720580521bb3bff0241ca3f3d3b6aea8238231b18e5b76373c35728b5823",
+            "verification": "DELTA_MANIFEST_TYPECHECK_PASS_SURFACE_SDK_6_6_SITE_TESTS_79_79_SITE_LINT_PASS_DEPLOYMENT_SUCCEEDED_BASE_MERGE77_REBASE_REQUIRED",
+            "internal_paths": [
+              "packages/titan-platform/src/surface/index.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "MANAGER_PROMOTED_CANONICAL_THREE_COPY_SHA_ZIP_TYPECHECK_TEST_VERIFIED",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-workforce-surface-split.ts",
+              "packages/titan-platform/src/ported/titan-runtime/interaction-engine/presentation-intent.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Authority/CapabilityPolicy.php",
+              "System/Presentation/GeneratedUiPresenter.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED",
+            "internal_paths": []
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED",
+            "internal_paths": []
+          }
+        ],
+        "scan_notes": "The PWA now has the right authority-neutral projection/interaction seams and canonical agent_id in interaction events, but SG04's actual workforce/tier/trust/recursive-handshake behavior is deliberately not implemented in the current checkpoint. The 60-pass plan schedules PWA-19 through PWA-24 after Goals 41/42. Reuse Goal41 canonical agent registry and Goal42 scoped trust/handshake/entitlement outputs once merged; do not invent PWA-local trust, hierarchy or entitlement state. The UI must remain a projection only, with cached/subscription state unable to grant authority.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Deliver Titan Go as a chat-first field-staff PWA with Chat, Active, Schedule, Comms and Ready surfaces, current-job workflows, proactive day-risk forecasting, governed recovery, access prevention, route readiness, evidence capture, deterministic offline operation, reconnect revalidation and field-safe escalation",
+      "status": "MANAGER_VERIFYING",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "full outcome, file, test and acceptance contracts in canonical Goal 43 plan",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY",
+        "full_plan_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+        "predeclared_goal_pass_ids": [
+          "PWA-25-GO-FIELD-RUNTIME",
+          "PWA-26-GO-ACTIVE-JOB",
+          "PWA-27-GO-SCHEDULE-INTELLIGENCE",
+          "PWA-28-GO-COMMS-AND-READY",
+          "PWA-29-GO-CHAT-AND-VISUAL-PARITY",
+          "PWA-30-GO-CERTIFICATION-CHECKPOINT"
+        ],
+        "predeclared_pass_count": 6,
+        "predeclared_state": "COMPLETE",
+        "builder_instruction": "On claim, adopt the first incomplete predeclared pass immediately. Refine only remaining pass detail; preserve pass outcomes, canonical ownership, checkpoint cadence and no-wait execution.",
+        "checkpoint_policy": "ONE_CUMULATIVE_DELTA_AFTER_SIX_PASS_SUBGOAL; NO_PER_PASS_ARCHIVES"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Go",
+        "Titan Hub",
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Visual Runtime",
+        "Titan Command Bus",
+        "Titan Signal Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-43-SG-05",
+      "execution": {
+        "state": "MANAGER_VERIFYING",
+        "claimed_by": "codex-titan-go-builder",
+        "claimed_at": "2026-09-16T05:47:12Z",
+        "last_heartbeat_at": "2026-09-16T14:59:45Z",
+        "lease_until": null,
+        "plan_path": "/Titan Zero/PWA Workspace/WORK/TZ-ROADMAP-43-SG-05-PLAN.md",
+        "current_pass_id": null,
+        "passes": [
+          {
+            "pass_id": "PASS-01-RECONCILE-GO-DONORS-AND-GAPS",
+            "title": "Reconcile the Titan Go master and shared engine boundaries",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T05:47:12Z",
+            "completed_at": "2026-09-16T06:00:00Z",
+            "summary": "Deep-scanned Titan Go v1.10.0 and verified that Go owns worker UX, navigation, presentation and device-local offline envelopes while CRM, jobs, dispatch and evidence truth remain in canonical engines.",
+            "evidence_refs": [
+              "/Titan Zero/PWA Workspace/WORK/TZ-ROADMAP-43-SG-05-PLAN.md"
+            ],
+            "planned_work_units": 5,
+            "completed_work_units": 5,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "reuse-first donor reconciliation",
+              "authority boundary",
+              "offline policy"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PASS-02-FAIL-CLOSED-FIELD-RUNTIME-TESTS",
+            "title": "Specify field transition, receipt and offline invariants",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T06:00:00Z",
+            "completed_at": "2026-09-16T06:20:00Z",
+            "summary": "Added focused tests for route, equipment and access blockers, authority-neutral intents, matching receipts, company/actor/device-scoped offline queueing, reconnect conflicts, completion evidence and critical field signals.",
+            "evidence_refs": [
+              "tests/titan-go-field-runtime.test.mjs"
+            ],
+            "planned_work_units": 7,
+            "completed_work_units": 7,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "fail-closed transitions",
+              "offline revalidation",
+              "receipt identity"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PASS-03-GOVERNED-GO-FIELD-RUNTIME",
+            "title": "Implement governed visit progression and escalation",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T06:20:00Z",
+            "completed_at": "2026-09-16T07:00:00Z",
+            "summary": "Implemented a company-scoped field runtime that prepares Command Bus intents, advances only on matching receipts, queues authority-neutral offline envelopes, revalidates reconnect state and emits access/safety signals.",
+            "evidence_refs": [
+              "app/titan/runtime/go-field-runtime.mjs",
+              "app/titan/runtime/go-field-runtime.d.mts"
+            ],
+            "planned_work_units": 7,
+            "completed_work_units": 7,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "Command Bus integration",
+              "idempotency",
+              "signal emission",
+              "offline safety"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PASS-04-ACTIVE-COMMS-READY-SURFACES",
+            "title": "Turn Go surfaces into field-operational tools",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T07:00:00Z",
+            "completed_at": "2026-09-16T08:00:00Z",
+            "summary": "Built receipt-controlled Active progression, live route, access protection, evidence gates, blockers and offline queue; added context-rich Comms escalations and visible Ready projection/sync health.",
+            "evidence_refs": [
+              "site-commit:64a02ca83d7ee0ff2b3558d65e2bac73d21445dc"
+            ],
+            "planned_work_units": 8,
+            "completed_work_units": 8,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "responsive Active",
+              "field escalation",
+              "device readiness",
+              "access prevention"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PASS-05-VERIFY-GO-RUNTIME-AND-SURFACES",
+            "title": "Rebase onto the shared Surface API and verify",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T08:00:00Z",
+            "completed_at": "2026-09-16T11:38:00Z",
+            "summary": "Preserved concurrent Surface API work, moved Go presentation through the shared projection, resolved contract expectations and passed the full 91-test, build, lint and diff-check suite.",
+            "evidence_refs": [
+              "site-commit:64a02ca83d7ee0ff2b3558d65e2bac73d21445dc"
+            ],
+            "planned_work_units": 6,
+            "completed_work_units": 6,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "shared Surface API",
+              "regression verification",
+              "responsive assertions"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PASS-06-PUBLISH-AND-CHECKPOINT",
+            "title": "Publish owner-private Site and persist merge-ready evidence",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T11:38:00Z",
+            "completed_at": "2026-09-16T11:43:49Z",
+            "summary": "Published owner-private Site version 35, retained the canonical access-prevention agent binding and persisted the final verification report, manifest and cumulative delta.",
+            "evidence_refs": [
+              "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-CHECKPOINT-01.md",
+              "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-DELTA-MANIFEST.json"
+            ],
+            "planned_work_units": 6,
+            "completed_work_units": 6,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "production publish",
+              "agent binding",
+              "merge-ready checkpoint"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          },
+          {
+            "pass_id": "PASS-07-PROACTIVE-SCHEDULE-INTELLIGENCE",
+            "title": "Forecast field-day risks and prepare governed recovery",
+            "status": "COMPLETE",
+            "started_at": "2026-09-16T11:43:49Z",
+            "completed_at": "2026-09-16T14:59:45Z",
+            "summary": "Added company-scoped Schedule intelligence for unconfirmed access, missing supplies and constrained parking; exposed job-specific recovery actions that prepare Command Bus intents, remain receipt-controlled and require offline revalidation; published owner-private Site version 36 after all 97 tests passed.",
+            "evidence_refs": [
+              "site-commit:d808fc585c1587ac40df87adac28b5b59b28b78c",
+              "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-CHECKPOINT-02.md",
+              "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-DELTA-MANIFEST-02.json"
+            ],
+            "planned_work_units": 7,
+            "completed_work_units": 7,
+            "planned_scope_completion_ratio": 1.0,
+            "acceptance_gates_advanced": [
+              "proactive schedule risk detection",
+              "governed recovery intents",
+              "offline recovery revalidation",
+              "responsive Schedule surface",
+              "production publish"
+            ],
+            "output_gate_status": "MET",
+            "underfill_exception": null
+          }
+        ],
+        "final_cumulative_delta": {
+          "artifact_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-CUMULATIVE-DELTA-02.tar.gz",
+          "library_file_id": "libfile_f5ed308302b481918cab1ed349fa7895",
+          "artifact_sha256": "d9422bd99be6704aa6e48d2371e9de5b4a55ead339c335a7b4ce5ee55a4b2069",
+          "manifest_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-DELTA-MANIFEST-02.json",
+          "verification_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-CHECKPOINT-02.md",
+          "base_commit": "90a2c424045d49f9c2d0d9fa24bbd43338f021fb",
+          "site_commit": "d808fc585c1587ac40df87adac28b5b59b28b78c",
+          "site_version": 36,
+          "created_at_utc": "2026-09-16T14:59:45Z"
+        },
+        "checkpoint_counter": 2,
+        "checkpoint_history": [
+          {
+            "checkpoint_id": "CHECKPOINT-01-FINAL",
+            "through_pass_id": "PASS-06-PUBLISH-AND-CHECKPOINT",
+            "artifact_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-CUMULATIVE-DELTA.tar.gz",
+            "library_file_id": "libfile_15260623c564819190608f4f8d09becb",
+            "artifact_sha256": "767ef48831816062003ac3f470c846f4cf1e84ba48f8ba0558a27965b934faab",
+            "manifest_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-DELTA-MANIFEST.json",
+            "verification_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-CHECKPOINT-01.md",
+            "created_at_utc": "2026-09-16T11:43:49Z"
+          },
+          {
+            "checkpoint_id": "CHECKPOINT-02-PROACTIVE-SCHEDULE",
+            "through_pass_id": "PASS-07-PROACTIVE-SCHEDULE-INTELLIGENCE",
+            "artifact_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-CUMULATIVE-DELTA-02.tar.gz",
+            "library_file_id": "libfile_f5ed308302b481918cab1ed349fa7895",
+            "artifact_sha256": "d9422bd99be6704aa6e48d2371e9de5b4a55ead339c335a7b4ce5ee55a4b2069",
+            "manifest_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-DELTA-MANIFEST-02.json",
+            "verification_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-CHECKPOINT-02.md",
+            "created_at_utc": "2026-09-16T14:59:45Z"
+          }
+        ],
+        "next_checkpoint_due_after_pass": null,
+        "manager_convergence_required": true,
+        "manager_convergence_receipt": null,
+        "queue_receipt": {
+          "receipt_id": "QUEUE-TZ-ROADMAP-43-SG-05-20260916T170541Z",
+          "receipt_path": "/Titan Zero/Agent Mesh Manager/Manager/INBOX/DELTA QUEUE/TZ-ROADMAP-43-SG-05__QUEUE-RECEIPT.json",
+          "artifact_path": "/Titan Zero/Agent Mesh Manager/Manager/INBOX/DELTA QUEUE/TZ-ROADMAP-43-SG-05__CUMULATIVE_SUBGOAL_FINAL.tar.gz",
+          "artifact_sha256": "d9422bd99be6704aa6e48d2371e9de5b4a55ead339c335a7b4ce5ee55a4b2069"
+        },
+        "completion_guard": "Manager final semantic-rebase candidate now preserves the verified Go behavior in the canonical TypeScript topology and keeps unknown readiness data explicit rather than inferred. Package/focused/source-contract gates pass without new package failures. Final COMPLETE remains blocked only on a dependency-backed @ai-fsm/web unit/typecheck/build gate; this environment has no node_modules and no registry network.",
+        "manager_convergence_classification": "SEMANTIC_REBASE",
+        "manager_convergence_review_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-05__MANAGER-CONVERGENCE-REVIEW.json",
+        "manager_convergence_checkpoint": {
+          "checkpoint_id": "TZ-ROADMAP-43-SG-05-MANAGER-FINAL-CANDIDATE",
+          "artifact_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-05__MANAGER-SEMANTIC-REBASE-FINAL-CANDIDATE.zip",
+          "artifact_sha256": "618cffa7baa0a595c8779687f266b7bd95be72f8be5ec91c988b321d820da9cb",
+          "manifest_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-05__MANAGER-SEMANTIC-REBASE-FINAL-CANDIDATE.json",
+          "base_chain": "CURRENT Merge80 + SG02 Manager semantic-rebase fa9369d882d07efd898e977fe6cb453756e170794cac98b0003cc928f3d805d1",
+          "changed_files": 21,
+          "verification": {
+            "focused_surface_go": "19/19 PASS",
+            "package_wide": "305 total; 220 PASS / 83 known baseline FAIL / 2 SKIP",
+            "web_source_contract": "12/12 PASS",
+            "web_typescript_syntax": "PASS: no non-module-resolution diagnostics",
+            "full_web_build": "BLOCKED_ENVIRONMENT_DEPENDENCIES_ABSENT_OFFLINE_REGISTRY"
+          },
+          "state": "FINAL_CANDIDATE_PENDING_FULL_WEB_BUILD",
+          "created_at_utc": "2026-09-19T07:16:30Z"
+        }
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_SURFACE_BINDING",
+        "workforce_impact": "SURFACE_BINDING_EXISTING_AGENTS",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION"
+        ],
+        "canonical_agent_names": [
+          "Access Failure Prevention Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "preventable-site-access-failure",
+          "field-dead-zone-state-drift",
+          "incomplete-completion-evidence",
+          "late-field-escalation",
+          "preventable-day-plan-disruption"
+        ],
+        "outcome_ids": [
+          "first-time-access-success",
+          "receipt-backed-field-state",
+          "evidence-complete-visits",
+          "context-rich-escalation",
+          "proactive-day-risk-recovery"
+        ],
+        "recommendations": [
+          "verify access before travel",
+          "resolve projection conflict before replay",
+          "capture required evidence before completion",
+          "stage missing supplies and verify access before departure"
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-39-SG-02"
+          ]
+        },
+        "verification_evidence": [
+          "site-commit:64a02ca83d7ee0ff2b3558d65e2bac73d21445dc",
+          "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-CHECKPOINT-01.md",
+          "site-commit:d808fc585c1587ac40df87adac28b5b59b28b78c",
+          "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-05-CHECKPOINT-02.md"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding: do not redefine these agents here; implement/extend this sub-goal through the same canonical agent_id.",
+          "Bind only canonical domain/workforce agents relevant to the user outcome; never create a host/surface-specific agent identity."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCAN_COMPLETE_IMPLEMENTED",
+        "relevant_file_refs": [
+          "app/titan/runtime/go-field-runtime.mjs",
+          "app/titan/runtime/surface-contract.mjs",
+          "app/titan/components/role-details.tsx",
+          "app/titan/components/role-secondary-surfaces.tsx",
+          "tests/titan-go-field-runtime.test.mjs",
+          "app/titan/runtime/go-schedule-intelligence.mjs",
+          "app/titan/runtime/go-schedule-intelligence.d.mts",
+          "tests/titan-go-schedule-intelligence.test.mjs",
+          "tests/titan-go-schedule-ui.test.mjs"
+        ],
+        "relevant_source_refs": [
+          "MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+          "site-commit:90a2c424045d49f9c2d0d9fa24bbd43338f021fb",
+          "site-commit:d808fc585c1587ac40df87adac28b5b59b28b78c"
+        ],
+        "last_scanned_at_utc": "2026-09-16T14:59:45Z",
+        "scan_notes": "Extended the verified Go operational slice with company-scoped proactive Schedule risk analysis and governed recovery intents; preserved the shared Surface API, canonical ownership boundaries and receipt-controlled execution.",
+        "exhaustion_evidence": "Reviewed donor architecture, offline operation policy, offline replay policy, projection policy, action-intent contract, projection contract and existing live Site Go surfaces."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 6,
+      "title": "Deliver Titan Hub as a chat-first customer PWA with Chat, Service, Comms and Account surfaces, customer-safe service status, access updates, rescheduling, add-ons, pay-now intents, support resolution and strict customer-owned data projection; customer experience must feel like carrying the business customer-service team in their pocket",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "full outcome, file, test and acceptance contracts in canonical Goal 43 plan",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY",
+        "full_plan_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+        "predeclared_goal_pass_ids": [
+          "PWA-31-HUB-CUSTOMER-PROJECTION",
+          "PWA-32-HUB-SERVICE-CONTROL",
+          "PWA-33-HUB-COMMS-RESOLUTION",
+          "PWA-34-HUB-PAYMENT-AND-UPSELL",
+          "PWA-35-HUB-ACCOUNT-AND-TRUST",
+          "PWA-36-HUB-CERTIFICATION-CHECKPOINT"
+        ],
+        "predeclared_pass_count": 6,
+        "predeclared_state": "PLANNED",
+        "builder_instruction": "On claim, adopt the first incomplete predeclared pass immediately. Refine only remaining pass detail; preserve pass outcomes, canonical ownership, checkpoint cadence and no-wait execution.",
+        "checkpoint_policy": "ONE_CUMULATIVE_DELTA_AFTER_SIX_PASS_SUBGOAL; NO_PER_PASS_ARCHIVES"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Go",
+        "Titan Hub",
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Visual Runtime",
+        "Titan Command Bus",
+        "Titan Signal Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-43-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_SURFACE_BINDING",
+        "workforce_impact": "SURFACE_BINDING_EXISTING_AGENTS",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Bind only canonical domain/workforce agents relevant to the user outcome; never create a host/surface-specific agent identity."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Hub",
+            "file_id": "file_00000000955c81f98e06e237cfd46d78",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Hub/Titan Hub Master v1.0.0-alpha.8.zip",
+            "sha256": "13631ed5e0e661affcd86c66c7fd10e99434cf3656fcca95dcfbeefce3a77c5a",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Context/RequestTrustedCustomerContextResolver.php",
+              "System/Http/Middleware/ResolveHubCustomerContext.php",
+              "System/Security/HubProjectionGuard.php",
+              "System/Operations/AggregatingCustomerOperationsGateway.php",
+              "System/Integration/BookingsQuotes/BookingsQuotesHubContributor.php",
+              "resources/contracts/hub-customer-projection.v1.json",
+              "tests/HubProjectionGuardTest.php",
+              "tests/CompanyBoundaryArchitectureTest.php",
+              "tests/HubOfflinePolicyTest.php"
+            ],
+            "finding": "Hub already provides trusted customer context, strict projection guards and customer-safe contribution gateway; PWA17 provides the shared chat/generative shell. Implement Hub as a projection over these authorities. Add-ons/pay-now/support actions must prepare governed intents and never expose non-customer-owned state."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Hub already provides trusted customer context, strict projection guards and customer-safe contribution gateway; PWA17 provides the shared chat/generative shell. Implement Hub as a projection over these authorities. Add-ons/pay-now/support actions must prepare governed intents and never expose non-customer-owned state."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Hub already provides trusted customer context, strict projection guards and customer-safe contribution gateway; PWA17 provides the shared chat/generative shell. Implement Hub as a projection over these authorities. Add-ons/pay-now/support actions must prepare governed intents and never expose non-customer-owned state."
+          },
+          {
+            "source_ref": "PWA SG03 PWA17 checkpoint",
+            "file_id": "file_000000006a3881f8a54ef8bec8e44047",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/CHECKPOINTS/TZ-ROADMAP-43-SG-03-CHECKPOINT-PWA17.tar.gz",
+            "sha256": "2ea29c4c15410beee3e1e660393543ce65af2fe7d2b9b2886233a61883db49b8",
+            "verification": "MERGE_PENDING_CHECKPOINT_PHYSICAL_SHA_SCANNED",
+            "internal_paths": [
+              "app/titan/components/role-chat.tsx",
+              "app/titan/runtime/conversation-store.ts",
+              "app/titan/runtime/interaction-client.ts",
+              "app/titan/components/generated-ui/generated-ui-envelope.tsx"
+            ],
+            "finding": "Hub already provides trusted customer context, strict projection guards and customer-safe contribution gateway; PWA17 provides the shared chat/generative shell. Implement Hub as a projection over these authorities. Add-ons/pay-now/support actions must prepare governed intents and never expose non-customer-owned state."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Hub",
+          "Titan Interaction Engine",
+          "Titan Interface Runtime",
+          "PWA SG03 PWA17 checkpoint"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:01:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Hub already provides trusted customer context, strict projection guards and customer-safe contribution gateway; PWA17 provides the shared chat/generative shell. Implement Hub as a projection over these authorities. Add-ons/pay-now/support actions must prepare governed intents and never expose non-customer-owned state."
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 7,
+      "title": "Deliver Titan Command as a chat-first owner and manager PWA with Chat, Pending, Operations, Workforce and System surfaces, exception-ranked decisions, governed interventions, AI hierarchy visibility, tier and trust state, autonomy controls, Rewind and verified business-value attribution; owner experience must feel like carrying the management team in their pocket",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "full outcome, file, test and acceptance contracts in canonical Goal 43 plan",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY",
+        "full_plan_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+        "predeclared_goal_pass_ids": [
+          "PWA-37-COMMAND-DECISION-RUNTIME",
+          "PWA-38-COMMAND-OPERATIONS",
+          "PWA-39-COMMAND-WORKFORCE",
+          "PWA-40-COMMAND-AUTONOMY-CONTROLS",
+          "PWA-41-COMMAND-SYSTEM-REWIND-ROI",
+          "PWA-42-COMMAND-CERTIFICATION-CHECKPOINT"
+        ],
+        "predeclared_pass_count": 6,
+        "predeclared_state": "PLANNED",
+        "builder_instruction": "On claim, adopt the first incomplete predeclared pass immediately. Refine only remaining pass detail; preserve pass outcomes, canonical ownership, checkpoint cadence and no-wait execution.",
+        "checkpoint_policy": "ONE_CUMULATIVE_DELTA_AFTER_SIX_PASS_SUBGOAL; NO_PER_PASS_ARCHIVES"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Command Bus",
+        "Titan Go",
+        "Titan Hub",
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Signal Engine",
+        "Titan Visual Runtime",
+        "Titan Zero"
+      ],
+      "subgoal_id": "TZ-ROADMAP-43-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_SURFACE_BINDING",
+        "workforce_impact": "SURFACE_BINDING_EXISTING_AGENTS",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Bind only canonical domain/workforce agents relevant to the user outcome; never create a host/surface-specific agent identity."
+        ],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_FOUND_CHAT_SHELL_AND_PLAN_COMMAND_RUNTIME_NOT_YET_IMPLEMENTED",
+        "last_scanned_at_utc": "2026-09-19T06:16:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "MANAGER_PROMOTED_CANONICAL_THREE_COPY_SHA_ZIP_TYPECHECK_TEST_VERIFIED"
+          },
+          {
+            "source_ref": "PWA Workspace SG02 cumulative delta",
+            "file_id": "file_00000000189881fab5b8e24b80428677",
+            "library_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CUMULATIVE-DELTA.tar.gz",
+            "sha256": "af8a720580521bb3bff0241ca3f3d3b6aea8238231b18e5b76373c35728b5823",
+            "verification": "DELTA_MANIFEST_TYPECHECK_PASS_SURFACE_SDK_6_6_SITE_TESTS_79_79_SITE_LINT_PASS_DEPLOYMENT_SUCCEEDED_BASE_MERGE77_REBASE_REQUIRED"
+          },
+          {
+            "source_ref": "PWA Workspace SG03 checkpoint PWA16",
+            "file_id": "file_000000002d3c81fabdfb7125c213d874",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/CHECKPOINTS/TZ-ROADMAP-43-SG-03-CHECKPOINT-PWA16.tar.gz",
+            "sha256": "cf3377e9a9d17f52d700badcc8248f73341d63f29d1daaffdb3ddbaad5fe16cb",
+            "verification": "ACTIVE_BUILDER_CHECKPOINT_PWA13_TO_PWA16_FOCUSED_TESTS_15_15_PASS_NOT_MANAGER_FINAL_DELTA"
+          },
+          {
+            "source_ref": "Titan Command Bus",
+            "file_id": "file_00000000c5b881fa8fe5ae4bbdee2319",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Command Bus/Titan Command Bus Master v0.5.4.zip",
+            "sha256": "848182ace094fc57ff3419d59b110d69bb93297ce280648672f9a04331ec9294",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Go",
+            "file_id": "file_00000000c190820ba7330d252cf684d1",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Go/Titan Go Master v1.10.0.zip",
+            "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Hub",
+            "file_id": "file_00000000955c81f98e06e237cfd46d78",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Hub/Titan Hub Master v1.0.0-alpha.8.zip",
+            "sha256": "13631ed5e0e661affcd86c66c7fd10e99434cf3656fcca95dcfbeefce3a77c5a",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          },
+          {
+            "source_ref": "Titan Signal Engine",
+            "file_id": "file_00000000006881fa9fc1c2a044086ebf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Signal Engine/Titan Signal Engine Master v0.20.0-rc.8.4.zip",
+            "sha256": "3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED"
+          },
+          {
+            "source_ref": "Titan Visual Runtime",
+            "file_id": "file_000000001fb081faaabd672d8e2d9be2",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Visual Runtime/Titan Visual Runtime Master v1.9.0.zip",
+            "sha256": "50ec413656feefdfea1b528789fd653976b552c5b8c77201cd7117d38f715907",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "PWA Workspace SG03 checkpoint PWA16",
+            "file_id": "file_000000002d3c81fabdfb7125c213d874",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/CHECKPOINTS/TZ-ROADMAP-43-SG-03-CHECKPOINT-PWA16.tar.gz",
+            "sha256": "cf3377e9a9d17f52d700badcc8248f73341d63f29d1daaffdb3ddbaad5fe16cb",
+            "verification": "ACTIVE_BUILDER_CHECKPOINT_PWA13_TO_PWA16_FOCUSED_TESTS_15_15_PASS_NOT_MANAGER_FINAL_DELTA",
+            "internal_paths": [
+              "app/titan/components/role-chat.tsx",
+              "app/titan/runtime/interaction-client.ts",
+              "app/titan/components/generated-ui/generated-ui-envelope.tsx"
+            ]
+          },
+          {
+            "source_ref": "PWA Workspace SG02 cumulative delta",
+            "file_id": "file_00000000189881fab5b8e24b80428677",
+            "library_path": "/Titan Zero/PWA Workspace/EVIDENCE/TZ-ROADMAP-43-SG-02-CUMULATIVE-DELTA.tar.gz",
+            "sha256": "af8a720580521bb3bff0241ca3f3d3b6aea8238231b18e5b76373c35728b5823",
+            "verification": "DELTA_MANIFEST_TYPECHECK_PASS_SURFACE_SDK_6_6_SITE_TESTS_79_79_SITE_LINT_PASS_DEPLOYMENT_SUCCEEDED_BASE_MERGE77_REBASE_REQUIRED",
+            "internal_paths": [
+              "packages/titan-platform/src/surface/index.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "MANAGER_PROMOTED_CANONICAL_THREE_COPY_SHA_ZIP_TYPECHECK_TEST_VERIFIED",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-workforce-surface-split.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Presentation/PresentationIntent.php",
+              "System/Presentation/GeneratedUiPresenter.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Visual Runtime",
+            "file_id": "file_000000001fb081faaabd672d8e2d9be2",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Visual Runtime/Titan Visual Runtime Master v1.9.0.zip",
+            "sha256": "50ec413656feefdfea1b528789fd653976b552c5b8c77201cd7117d38f715907",
+            "verification": "MASTER_STATUS_VERIFIED_PHYSICAL_SHA_MATCH",
+            "internal_paths": []
+          }
+        ],
+        "scan_notes": "A chat-first Command shell already exists in role-chat.tsx and the shared conversation/generated-UI runtime, but its current owner experience is still demo-oriented/hard-coded for several cards. No newer SG07 runtime artifact was found in the PWA Workspace. The 60-pass plan correctly defines PWA-37 decision runtime, PWA-38 operations, PWA-39 workforce, PWA-40 command system/autonomy/value controls and subsequent certification as planned work. Build these as live server-authorised projections over canonical decisions, workforce, trust, Rewind and ROI sources; do not encode business truth or mutation authority in Command UI.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 8,
+      "title": "Implement three install identities and route-scoped manifests under one web application, preserve and extend the single root service worker, add partitioned caches, bounded mutation and evidence queues, push notifications, deep links, secure-context enforcement and reconnect recovery",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "full outcome, file, test and acceptance contracts in canonical Goal 43 plan",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY",
+        "full_plan_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+        "predeclared_goal_pass_ids": [
+          "PWA-43-ROUTE-SCOPED-IDENTITIES",
+          "PWA-44-THREE-MANIFESTS-AND-ICONS",
+          "PWA-45-SINGLE-SERVICE-WORKER",
+          "PWA-46-BOUNDED-OFFLINE-STORES",
+          "PWA-47-PUSH-DEEP-LINK-RECONNECT",
+          "PWA-48-PWA-RUNTIME-CHECKPOINT"
+        ],
+        "predeclared_pass_count": 6,
+        "predeclared_state": "PLANNED",
+        "builder_instruction": "On claim, adopt the first incomplete predeclared pass immediately. Refine only remaining pass detail; preserve pass outcomes, canonical ownership, checkpoint cadence and no-wait execution.",
+        "checkpoint_policy": "ONE_CUMULATIVE_DELTA_AFTER_SIX_PASS_SUBGOAL; NO_PER_PASS_ARCHIVES"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Go",
+        "Titan Hub",
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Visual Runtime",
+        "Titan Command Bus",
+        "Titan Signal Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-43-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Code",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "VERIFIED_STUDIO_DONOR",
+            "internal_paths": [
+              "manifest.json",
+              "src/lib/service-worker.js",
+              "src/repository/migration-guard.js"
+            ],
+            "finding": "Service-worker/update/migration and deterministic offline/recovery primitives exist, but one web-app implementation still needs three route-scoped install identities, root service-worker partitioning, bounded evidence/mutation queues, push/deep-link wiring and reconnect revalidation."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Offline/OfflineQueue.php",
+              "System/Offline/ConflictResolver.php",
+              "System/Recovery/RecoveryEngine.php"
+            ],
+            "finding": "Service-worker/update/migration and deterministic offline/recovery primitives exist, but one web-app implementation still needs three route-scoped install identities, root service-worker partitioning, bounded evidence/mutation queues, push/deep-link wiring and reconnect revalidation."
+          },
+          {
+            "source_ref": "PWA SG03 PWA17 checkpoint",
+            "file_id": "file_000000006a3881f8a54ef8bec8e44047",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/CHECKPOINTS/TZ-ROADMAP-43-SG-03-CHECKPOINT-PWA17.tar.gz",
+            "sha256": "2ea29c4c15410beee3e1e660393543ce65af2fe7d2b9b2886233a61883db49b8",
+            "verification": "MERGE_PENDING_CHECKPOINT_PHYSICAL_SHA_SCANNED",
+            "internal_paths": [
+              "app/titan/runtime/conversation-store.ts",
+              "app/titan/runtime/interaction-client.ts"
+            ],
+            "finding": "Service-worker/update/migration and deterministic offline/recovery primitives exist, but one web-app implementation still needs three route-scoped install identities, root service-worker partitioning, bounded evidence/mutation queues, push/deep-link wiring and reconnect revalidation."
+          },
+          {
+            "source_ref": "PWA 60-pass build plan",
+            "file_id": "file_00000000e87c81fa948ca4acbcdf0441",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+            "sha256": null,
+            "verification": "ACTIVE_PLANNING_EVIDENCE",
+            "internal_paths": [],
+            "finding": "Service-worker/update/migration and deterministic offline/recovery primitives exist, but one web-app implementation still needs three route-scoped install identities, root service-worker partitioning, bounded evidence/mutation queues, push/deep-link wiring and reconnect revalidation."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Code",
+          "Titan Interaction Engine",
+          "PWA SG03 PWA17 checkpoint",
+          "PWA 60-pass build plan"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:01:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Service-worker/update/migration and deterministic offline/recovery primitives exist, but one web-app implementation still needs three route-scoped install identities, root service-worker partitioning, bounded evidence/mutation queues, push/deep-link wiring and reconnect revalidation."
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Certify company and customer isolation, role and surface allowlists, fail-closed governance, offline authority contraction, replay and revision handling, accessibility, visual consistency, low-resource performance and cross-surface/cross-host contract parity with no private PWA business logic",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "full outcome, file, test and acceptance contracts in canonical Goal 43 plan",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY",
+        "full_plan_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+        "predeclared_goal_pass_ids": [
+          "PWA-49-TENANCY-AND-ROLE-ISOLATION",
+          "PWA-50-AUTHORITY-AND-REPLAY",
+          "PWA-51-CROSS-SURFACE-PARITY",
+          "PWA-52-ACCESSIBILITY-AND-VISUAL-SYSTEM",
+          "PWA-53-LOW-RESOURCE-PERFORMANCE",
+          "PWA-54-CERTIFICATION-CHECKPOINT"
+        ],
+        "predeclared_pass_count": 6,
+        "predeclared_state": "PLANNED",
+        "builder_instruction": "On claim, adopt the first incomplete predeclared pass immediately. Refine only remaining pass detail; preserve pass outcomes, canonical ownership, checkpoint cadence and no-wait execution.",
+        "checkpoint_policy": "ONE_CUMULATIVE_DELTA_AFTER_SIX_PASS_SUBGOAL; NO_PER_PASS_ARCHIVES"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Go",
+        "Titan Hub",
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Visual Runtime",
+        "Titan Command Bus",
+        "Titan Signal Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-43-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Hub",
+            "file_id": "file_00000000955c81f98e06e237cfd46d78",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Hub/Titan Hub Master v1.0.0-alpha.8.zip",
+            "sha256": "13631ed5e0e661affcd86c66c7fd10e99434cf3656fcca95dcfbeefce3a77c5a",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/CompanyBoundaryArchitectureTest.php",
+              "tests/HubProjectionGuardTest.php",
+              "tests/HubOfflinePolicyTest.php",
+              "tests/HubProviderFailureIsolationTest.php",
+              "tests/HubSuiteReadinessArchitectureTest.php"
+            ],
+            "finding": "Strong per-surface isolation/offline/accessibility/contract tests exist. Build one cross-surface certification matrix proving company/customer isolation, allowlists, fail-closed authority, offline contraction, replay/revision handling, accessibility/performance and no private PWA business logic."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Strong per-surface isolation/offline/accessibility/contract tests exist. Build one cross-surface certification matrix proving company/customer isolation, allowlists, fail-closed authority, offline contraction, replay/revision handling, accessibility/performance and no private PWA business logic."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [],
+            "finding": "Strong per-surface isolation/offline/accessibility/contract tests exist. Build one cross-surface certification matrix proving company/customer isolation, allowlists, fail-closed authority, offline contraction, replay/revision handling, accessibility/performance and no private PWA business logic."
+          },
+          {
+            "source_ref": "PWA SG03 PWA17 checkpoint",
+            "file_id": "file_000000006a3881f8a54ef8bec8e44047",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/CHECKPOINTS/TZ-ROADMAP-43-SG-03-CHECKPOINT-PWA17.tar.gz",
+            "sha256": "2ea29c4c15410beee3e1e660393543ce65af2fe7d2b9b2886233a61883db49b8",
+            "verification": "MERGE_PENDING_CHECKPOINT_PHYSICAL_SHA_SCANNED",
+            "internal_paths": [
+              "tests/titan-accessibility-multimodal-static.test.mjs",
+              "tests/titan-streaming-interruption-static.test.mjs",
+              "tests/titan-persistent-conversation-static.test.mjs",
+              "tests/titan-generative-ui-envelope-static.test.mjs"
+            ],
+            "finding": "Strong per-surface isolation/offline/accessibility/contract tests exist. Build one cross-surface certification matrix proving company/customer isolation, allowlists, fail-closed authority, offline contraction, replay/revision handling, accessibility/performance and no private PWA business logic."
+          },
+          {
+            "source_ref": "Go Manager semantic-rebase final candidate",
+            "file_id": "file_000000009b6081faa3ad2ea53900f1e6",
+            "library_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-05__MANAGER-SEMANTIC-REBASE-FINAL-CANDIDATE.zip",
+            "sha256": "618cffa7baa0a595c8779687f266b7bd95be72f8be5ec91c988b321d820da9cb",
+            "verification": "MANAGER_SEMANTIC_REBASE_CANDIDATE_NON_CANONICAL",
+            "internal_paths": [
+              "apps/web/lib/titan/__tests__/go-surface-contract.unit.test.ts",
+              "packages/titan-platform/tests/go-field-runtime.test.mjs",
+              "packages/titan-platform/tests/go-schedule-intelligence.test.mjs"
+            ],
+            "finding": "Strong per-surface isolation/offline/accessibility/contract tests exist. Build one cross-surface certification matrix proving company/customer isolation, allowlists, fail-closed authority, offline contraction, replay/revision handling, accessibility/performance and no private PWA business logic."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Hub",
+          "Titan Interaction Engine",
+          "Titan Interface Runtime",
+          "PWA SG03 PWA17 checkpoint",
+          "Go Manager semantic-rebase final candidate"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:01:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Strong per-surface isolation/offline/accessibility/contract tests exist. Build one cross-surface certification matrix proving company/customer isolation, allowlists, fail-closed authority, offline contraction, replay/revision handling, accessibility/performance and no private PWA business logic."
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Complete visual convergence, live TLS and certificate recovery, physical iOS and Android installation and workflow evidence for all three identities, staged migration, rollback rehearsal, propagation and compatibility manifests, cumulative-delta handoff and Manager-only canonical promotion gates",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "full outcome, file, test and acceptance contracts in canonical Goal 43 plan",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY",
+        "full_plan_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+        "predeclared_goal_pass_ids": [
+          "PWA-55-VISUAL-CONVERGENCE",
+          "PWA-56-TLS-SECURE-CONTEXT",
+          "PWA-57-PHYSICAL-IOS-ANDROID",
+          "PWA-58-MIGRATION-ROLLBACK-PROPAGATION",
+          "PWA-59-END-TO-END-BUSINESS-TRACE",
+          "PWA-60-FINAL-CUMULATIVE-PROMOTION"
+        ],
+        "predeclared_pass_count": 6,
+        "predeclared_state": "PLANNED",
+        "builder_instruction": "On claim, adopt the first incomplete predeclared pass immediately. Refine only remaining pass detail; preserve pass outcomes, canonical ownership, checkpoint cadence and no-wait execution.",
+        "checkpoint_policy": "ONE_CUMULATIVE_DELTA_AFTER_SIX_PASS_SUBGOAL; NO_PER_PASS_ARCHIVES"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Zero",
+        "Titan Go",
+        "Titan Hub",
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Visual Runtime",
+        "Titan Command Bus",
+        "Titan Signal Engine"
+      ],
+      "subgoal_id": "TZ-ROADMAP-43-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Surface/runtime implementation only; no distinct workforce identity. Domain agents remain surface-neutral.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "surface_identity_rule": "NO_SURFACE_SPECIFIC_AGENT_IDENTITY; REFERENCE_CANONICAL_DOMAIN_AGENT_IDS_ONLY",
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_AND_EVIDENCE_VALIDATED_WITH_PHYSICAL_DEVICE_GAP",
+        "relevant_file_refs": [
+          {
+            "source_ref": "PWA 60-pass build plan",
+            "file_id": "file_00000000e87c81fa948ca4acbcdf0441",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+            "sha256": null,
+            "verification": "ACTIVE_PLANNING_EVIDENCE",
+            "internal_paths": [],
+            "finding": "Build/rebase/checkpoint evidence exists, but no complete physical iOS/Android PWA installation, live TLS/certificate recovery, rollback rehearsal and three-identity compatibility evidence was found. Treat certification as required release evidence, not assumed from unit tests."
+          },
+          {
+            "source_ref": "Go Manager semantic-rebase final candidate",
+            "file_id": "file_000000009b6081faa3ad2ea53900f1e6",
+            "library_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-05__MANAGER-SEMANTIC-REBASE-FINAL-CANDIDATE.zip",
+            "sha256": "618cffa7baa0a595c8779687f266b7bd95be72f8be5ec91c988b321d820da9cb",
+            "verification": "MANAGER_SEMANTIC_REBASE_CANDIDATE_NON_CANONICAL",
+            "internal_paths": [
+              "apps/web/lib/titan/go-surface-server.ts",
+              "apps/web/lib/titan/go-surface-client.ts",
+              "packages/titan-platform/src/surface/go/index.ts"
+            ],
+            "finding": "Build/rebase/checkpoint evidence exists, but no complete physical iOS/Android PWA installation, live TLS/certificate recovery, rollback rehearsal and three-identity compatibility evidence was found. Treat certification as required release evidence, not assumed from unit tests."
+          },
+          {
+            "source_ref": "PWA SG03 PWA17 checkpoint",
+            "file_id": "file_000000006a3881f8a54ef8bec8e44047",
+            "library_path": "/Titan Zero/PWA Workspace/WORK/CHECKPOINTS/TZ-ROADMAP-43-SG-03-CHECKPOINT-PWA17.tar.gz",
+            "sha256": "2ea29c4c15410beee3e1e660393543ce65af2fe7d2b9b2886233a61883db49b8",
+            "verification": "MERGE_PENDING_CHECKPOINT_PHYSICAL_SHA_SCANNED",
+            "internal_paths": [
+              "TZ-ROADMAP-43-SG-03-PWA-17-VERIFICATION.md"
+            ],
+            "finding": "Build/rebase/checkpoint evidence exists, but no complete physical iOS/Android PWA installation, live TLS/certificate recovery, rollback rehearsal and three-identity compatibility evidence was found. Treat certification as required release evidence, not assumed from unit tests."
+          }
+        ],
+        "relevant_source_refs": [
+          "PWA 60-pass build plan",
+          "Go Manager semantic-rebase final candidate",
+          "PWA SG03 PWA17 checkpoint"
+        ],
+        "last_scanned_at_utc": "2026-09-19T19:01:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Build/rebase/checkpoint evidence exists, but no complete physical iOS/Android PWA installation, live TLS/certificate recovery, rollback rehearsal and three-identity compatibility evidence was found. Treat certification as required release evidence, not assumed from unit tests."
+      }
+    }
+  ],
+  "affinity_tags": [
+    "pwa",
+    "surfaces",
+    "chat-first",
+    "go",
+    "hub",
+    "command",
+    "generative-ui",
+    "offline",
+    "autonomy",
+    "workforce",
+    "mobile"
+  ],
+  "preferred_predecessors": [
+    "TZ-ROADMAP-31",
+    "TZ-ROADMAP-34",
+    "TZ-ROADMAP-35",
+    "TZ-ROADMAP-39",
+    "TZ-ROADMAP-40",
+    "TZ-ROADMAP-42",
+    "TZ-ROADMAP-41",
+    "TZ-ROADMAP-44"
+  ],
+  "preferred_successors": [
+    "TZ-ROADMAP-47"
+  ],
+  "agent_tier_contract_required": true,
+  "unified_architecture_contract_required": true,
+  "last_canonical_revalidation": "2026-09-16T16:15:57Z",
+  "progress_percent": 20,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 4,
+  "library_reuse_refs": [
+    "Titan Zero",
+    "Titan Go",
+    "Titan Hub",
+    "Titan Interaction Engine",
+    "Titan Interface Runtime",
+    "Titan Visual Runtime",
+    "Titan Command Bus",
+    "Titan Signal Engine"
+  ],
+  "reuse_first": true,
+  "mvp_scope_note": "P0 establishes the shared Team-in-Your-Pocket conversational/workforce spine across Go, Hub and Command. Preserve completed Titan Go work; complete shared SG-03/SG-04 foundations before finishing Hub and Command. Three-install-identity and physical-device certification follow their defined passes.",
+  "canonical_execution_plan": {
+    "plan_id": "TZ-ROADMAP-43-60-PASS-PWA-PLAN",
+    "path": "/Titan Zero/PWA Workspace/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md",
+    "status": "ACTIVE",
+    "readiness": "Design ready",
+    "created_at_utc": "2026-09-16T16:15:57Z",
+    "total_passes": 60,
+    "completed_passes": 12,
+    "remaining_passes": 48,
+    "passes_per_subgoal": 6,
+    "checkpoint_interval": "one cumulative delta after every six-pass subgoal",
+    "next_subgoal_id": "TZ-ROADMAP-43-SG-01",
+    "next_pass_id": "PWA-01-CANONICAL-BASELINE",
+    "execution_rule": "builders proceed immediately after claim; Manager review is asynchronous and changes only remaining passes",
+    "completion_rule": "acceptance evidence controls completion; pass count alone does not",
+    "supersedes_missing_reference": "Manager/WORK/Titan-Zero-PWA-Surfaces-60-Pass-Build-Plan.md was referenced but absent; this canonical PWA Workspace plan resolves that broken pointer",
+    "library_file_id": "libfile_e131fdf221d481918a11329b8e5b3fa5",
+    "file_id": "file_00000000454481f59c555ca217ad3ba5"
+  },
+  "cross_goal_contracts": [
+    {
+      "goal_id": "TZ-ROADMAP-31",
+      "subgoal_ids": [
+        "TZ-ROADMAP-31-SG-02",
+        "TZ-ROADMAP-31-SG-03",
+        "TZ-ROADMAP-31-SG-04",
+        "TZ-ROADMAP-31-SG-08",
+        "TZ-ROADMAP-31-SG-09"
+      ],
+      "purpose": "capability registry, canonical TypeScript schemas, generated clients and no duplicate tool/business logic"
+    },
+    {
+      "goal_id": "TZ-ROADMAP-34",
+      "subgoal_ids": [
+        "TZ-ROADMAP-34-SG-01",
+        "TZ-ROADMAP-34-SG-04",
+        "TZ-ROADMAP-34-SG-05",
+        "TZ-ROADMAP-34-SG-06",
+        "TZ-ROADMAP-34-SG-07",
+        "TZ-ROADMAP-34-SG-08"
+      ],
+      "purpose": "identity, actor/company context, cross-surface continuation, receipt correlation and privacy-minimised history"
+    },
+    {
+      "goal_id": "TZ-ROADMAP-35",
+      "subgoal_ids": [
+        "TZ-ROADMAP-35-SG-02",
+        "TZ-ROADMAP-35-SG-03",
+        "TZ-ROADMAP-35-SG-04",
+        "TZ-ROADMAP-35-SG-05",
+        "TZ-ROADMAP-35-SG-06",
+        "TZ-ROADMAP-35-SG-07",
+        "TZ-ROADMAP-35-SG-08",
+        "TZ-ROADMAP-35-SG-09"
+      ],
+      "purpose": "shared Surface SDK, permitted-action projections, offline contraction and base-to-surface propagation"
+    },
+    {
+      "goal_id": "TZ-ROADMAP-39",
+      "subgoal_ids": [
+        "TZ-ROADMAP-39-SG-01",
+        "TZ-ROADMAP-39-SG-02",
+        "TZ-ROADMAP-39-SG-03",
+        "TZ-ROADMAP-39-SG-04",
+        "TZ-ROADMAP-39-SG-05",
+        "TZ-ROADMAP-39-SG-06",
+        "TZ-ROADMAP-39-SG-07",
+        "TZ-ROADMAP-39-SG-08",
+        "TZ-ROADMAP-39-SG-09",
+        "TZ-ROADMAP-39-SG-10"
+      ],
+      "purpose": "canonical innovative capabilities and authorised cross-surface exposure"
+    },
+    {
+      "goal_id": "TZ-ROADMAP-40",
+      "subgoal_ids": [
+        "TZ-ROADMAP-40-SG-01",
+        "TZ-ROADMAP-40-SG-05",
+        "TZ-ROADMAP-40-SG-07",
+        "TZ-ROADMAP-40-SG-08",
+        "TZ-ROADMAP-40-SG-09",
+        "TZ-ROADMAP-40-SG-10"
+      ],
+      "purpose": "verified value attribution, correction/reversal and privacy-safe ROI"
+    },
+    {
+      "goal_id": "TZ-ROADMAP-41",
+      "subgoal_ids": [
+        "TZ-ROADMAP-41-SG-01",
+        "TZ-ROADMAP-41-SG-02",
+        "TZ-ROADMAP-41-SG-03",
+        "TZ-ROADMAP-41-SG-05",
+        "TZ-ROADMAP-41-SG-07",
+        "TZ-ROADMAP-41-SG-08"
+      ],
+      "purpose": "canonical agent identity, embedded workforce ownership, hierarchy and surface projections"
+    },
+    {
+      "goal_id": "TZ-ROADMAP-42",
+      "subgoal_ids": [
+        "TZ-ROADMAP-42-SG-01",
+        "TZ-ROADMAP-42-SG-02",
+        "TZ-ROADMAP-42-SG-03",
+        "TZ-ROADMAP-42-SG-04",
+        "TZ-ROADMAP-42-SG-05",
+        "TZ-ROADMAP-42-SG-06",
+        "TZ-ROADMAP-42-SG-07",
+        "TZ-ROADMAP-42-SG-08",
+        "TZ-ROADMAP-42-SG-09",
+        "TZ-ROADMAP-42-SG-10"
+      ],
+      "purpose": "earned trust, recursive handshake, plan-gated autonomy, revocation and downgrade behaviour"
+    },
+    {
+      "goal_id": "TZ-ROADMAP-44",
+      "subgoal_ids": [
+        "TZ-ROADMAP-44-SG-02",
+        "TZ-ROADMAP-44-SG-03",
+        "TZ-ROADMAP-44-SG-04",
+        "TZ-ROADMAP-44-SG-05",
+        "TZ-ROADMAP-44-SG-06",
+        "TZ-ROADMAP-44-SG-07",
+        "TZ-ROADMAP-44-SG-08",
+        "TZ-ROADMAP-44-SG-10"
+      ],
+      "purpose": "reuse Interaction, Autonomy, Risk, Assurance, Command Bus, Signal, Rewind and Foresight without replacement engines"
+    },
+    {
+      "goal_id": "TZ-ROADMAP-47",
+      "subgoal_ids": [
+        "TZ-ROADMAP-47-SG-02",
+        "TZ-ROADMAP-47-SG-04",
+        "TZ-ROADMAP-47-SG-05",
+        "TZ-ROADMAP-47-SG-06",
+        "TZ-ROADMAP-47-SG-07",
+        "TZ-ROADMAP-47-SG-08",
+        "TZ-ROADMAP-47-SG-10"
+      ],
+      "purpose": "consume the same contracts and semantics in native iOS/Android without forking business logic"
+    }
+  ],
+  "multi_pass_groups": [
+    {
+      "subgoal_id": "TZ-ROADMAP-43-SG-01",
+      "pass_ids": [
+        "PWA-01-CANONICAL-BASELINE",
+        "PWA-02-DONOR-INVENTORY",
+        "PWA-03-AUTHORITY-CONFLICT-MATRIX",
+        "PWA-04-PRODUCT-NAVIGATION-SPEC",
+        "PWA-05-CAPABILITY-REUSE-MAP",
+        "PWA-06-SPEC-FREEZE-CHECKPOINT"
+      ],
+      "state": "PLANNED"
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-43-SG-02",
+      "pass_ids": [
+        "PWA-07-SURFACE-CONTEXT-CONTRACT",
+        "PWA-08-CAPABILITY-PROJECTION",
+        "PWA-09-EVENT-SIGNAL-RECEIPT-SCHEMAS",
+        "PWA-10-GENERATED-SURFACE-CLIENT",
+        "PWA-11-OFFLINE-AUTHORITY-CONTRACT",
+        "PWA-12-SDK-CERTIFICATION-CHECKPOINT"
+      ],
+      "state": "MANAGER_VERIFYING",
+      "manager_convergence_required": true,
+      "queue_receipt_id": "QUEUE-TZ-ROADMAP-43-SG-02-20260916T170541Z",
+      "manager_convergence_classification": "SEMANTIC_REBASE",
+      "manager_review_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-02__MANAGER-CONVERGENCE-REVIEW.json"
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-43-SG-03",
+      "pass_ids": [
+        "PWA-13-INTERACTION-CLIENT",
+        "PWA-14-PERSISTENT-CONVERSATION",
+        "PWA-15-STREAMING-AND-INTERRUPTION",
+        "PWA-16-GENERATIVE-UI-ENVELOPE",
+        "PWA-17-ACCESSIBILITY-AND-MULTIMODAL",
+        "PWA-18-CHAT-CERTIFICATION-CHECKPOINT"
+      ],
+      "state": "PLANNED"
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-43-SG-04",
+      "pass_ids": [
+        "PWA-19-WORKFORCE-PROJECTION",
+        "PWA-20-FIVE-TIER-BEHAVIOUR",
+        "PWA-21-TRUST-CYCLE-UI",
+        "PWA-22-RECURSIVE-HANDSHAKE",
+        "PWA-23-EXCEPTION-ONLY-MANAGEMENT",
+        "PWA-24-AUTONOMY-CERTIFICATION-CHECKPOINT"
+      ],
+      "state": "PLANNED"
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-43-SG-05",
+      "pass_ids": [
+        "PWA-25-GO-FIELD-RUNTIME",
+        "PWA-26-GO-ACTIVE-JOB",
+        "PWA-27-GO-SCHEDULE-INTELLIGENCE",
+        "PWA-28-GO-COMMS-AND-READY",
+        "PWA-29-GO-CHAT-AND-VISUAL-PARITY",
+        "PWA-30-GO-CERTIFICATION-CHECKPOINT"
+      ],
+      "state": "MANAGER_VERIFYING",
+      "manager_convergence_required": true,
+      "queue_receipt_id": "QUEUE-TZ-ROADMAP-43-SG-05-20260916T170541Z",
+      "manager_convergence_classification": "SEMANTIC_REBASE",
+      "manager_review_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-05__MANAGER-CONVERGENCE-REVIEW.json",
+      "manager_checkpoint_id": "TZ-ROADMAP-43-SG-05-MANAGER-CP02",
+      "manager_checkpoint_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-05__MANAGER-SEMANTIC-REBASE-CHECKPOINT-02.json",
+      "final_candidate_path": "/Titan Zero/Agent Mesh Manager/Manager/WORK/CONVERGENCE/GOAL43-2026-09-19/TZ-ROADMAP-43-SG-05__MANAGER-SEMANTIC-REBASE-FINAL-CANDIDATE.zip",
+      "final_candidate_sha256": "618cffa7baa0a595c8779687f266b7bd95be72f8be5ec91c988b321d820da9cb",
+      "final_candidate_state": "PENDING_FULL_WEB_BUILD",
+      "convergence_blocker": "FULL_WEB_BUILD_ENVIRONMENT_MISSING_DEPENDENCIES_AND_OFFLINE_REGISTRY"
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-43-SG-06",
+      "pass_ids": [
+        "PWA-31-HUB-CUSTOMER-PROJECTION",
+        "PWA-32-HUB-SERVICE-CONTROL",
+        "PWA-33-HUB-COMMS-RESOLUTION",
+        "PWA-34-HUB-PAYMENT-AND-UPSELL",
+        "PWA-35-HUB-ACCOUNT-AND-TRUST",
+        "PWA-36-HUB-CERTIFICATION-CHECKPOINT"
+      ],
+      "state": "PLANNED"
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-43-SG-07",
+      "pass_ids": [
+        "PWA-37-COMMAND-DECISION-RUNTIME",
+        "PWA-38-COMMAND-OPERATIONS",
+        "PWA-39-COMMAND-WORKFORCE",
+        "PWA-40-COMMAND-AUTONOMY-CONTROLS",
+        "PWA-41-COMMAND-SYSTEM-REWIND-ROI",
+        "PWA-42-COMMAND-CERTIFICATION-CHECKPOINT"
+      ],
+      "state": "PLANNED"
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-43-SG-08",
+      "pass_ids": [
+        "PWA-43-ROUTE-SCOPED-IDENTITIES",
+        "PWA-44-THREE-MANIFESTS-AND-ICONS",
+        "PWA-45-SINGLE-SERVICE-WORKER",
+        "PWA-46-BOUNDED-OFFLINE-STORES",
+        "PWA-47-PUSH-DEEP-LINK-RECONNECT",
+        "PWA-48-PWA-RUNTIME-CHECKPOINT"
+      ],
+      "state": "PLANNED"
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-43-SG-09",
+      "pass_ids": [
+        "PWA-49-TENANCY-AND-ROLE-ISOLATION",
+        "PWA-50-AUTHORITY-AND-REPLAY",
+        "PWA-51-CROSS-SURFACE-PARITY",
+        "PWA-52-ACCESSIBILITY-AND-VISUAL-SYSTEM",
+        "PWA-53-LOW-RESOURCE-PERFORMANCE",
+        "PWA-54-CERTIFICATION-CHECKPOINT"
+      ],
+      "state": "PLANNED"
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-43-SG-10",
+      "pass_ids": [
+        "PWA-55-VISUAL-CONVERGENCE",
+        "PWA-56-TLS-SECURE-CONTEXT",
+        "PWA-57-PHYSICAL-IOS-ANDROID",
+        "PWA-58-MIGRATION-ROLLBACK-PROPAGATION",
+        "PWA-59-END-TO-END-BUSINESS-TRACE",
+        "PWA-60-FINAL-CUMULATIVE-PROMOTION"
+      ],
+      "state": "PLANNED"
+    }
+  ],
+  "team_in_your_pocket_contract": {
+    "status": "MANDATORY",
+    "front_door": "Titan Zero conversational router; manual agent selection not required",
+    "default_mobile_composition": "conversation plus approximately three highest-value contextual cards",
+    "workforce_behavior": [
+      "canonical agent_id workers may join/leave/handoff visibly",
+      "direct talk-to-worker remains available",
+      "proactive worker contact only within current autonomy, risk, assurance and governance ceilings",
+      "routine work handled by workforce; user receives decisions, exceptions and requested detail"
+    ],
+    "surface_roles": {
+      "go": "field team in your pocket",
+      "hub": "customer service team in your pocket",
+      "command": "management team in your pocket"
+    },
+    "generated_workspace": "Interaction Engine -> PresentationIntent -> Interface Runtime -> Visual Runtime; Builder-defined reusable components; accessible text fallback mandatory",
+    "authority": "UI and agents prepare governed intents only; consequential mutations require authoritative Command Bus receipts",
+    "acceptance_test": "Every core remaining PWA outcome must be achievable conversationally on a phone without first discovering a dashboard or manually selecting an agent."
+  },
+  "agent_goal_classification": "SURFACE_ONLY_NO_SURFACE_SPECIFIC_AGENTS",
+  "agent_goal_rule": "This goal delivers an authorised surface/host projection. It MUST NOT create agents because of the surface. Reuse canonical domain agents where user journeys require them; otherwise classify technical subgoals NO_AGENT_INFRASTRUCTURE_ONLY.",
+  "workforce_goal_classification": "SURFACE_ONLY_NO_SURFACE_SPECIFIC_AGENT_IDENTITY",
+  "workforce_goal_rule": "Never create PWA, Chrome, ChatGPT, Claude, Gemini, MCP, iOS, Android, Flutter or other host-specific workforce identities. Bind existing canonical domain agents only where the surface exposes their capabilities."
+}
