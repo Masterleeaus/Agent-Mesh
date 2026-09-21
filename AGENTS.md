@@ -135,3 +135,23 @@ python3 .github/scripts/open-agent-pr.py \
 ```
 
 Do not hand-author a second competing PR for the same claim branch. The Agent Claim Gate rejects malformed agent PR structure, missing issue linkage, invalid claim branches, duplicate ownership and completed/superseded work.
+
+
+## Manager review readiness
+
+Agent implementation PRs are evaluated by:
+
+- `.github/scripts/manager-review-readiness.py`
+- `.github/workflows/manager-review-readiness.yml`
+
+The evaluator never merges automatically. It publishes one commit status:
+
+`Agent Mesh / Manager Review Readiness`
+
+States:
+
+- **READY** — claim/issue linkage is valid, required evidence sections are populated, there are no merge conflicts, and both Titan Zero CI and Agent Claim Gate succeeded for the exact PR head SHA.
+- **WAITING** — required workflows are still pending/missing or the PR remains draft.
+- **BLOCKED** — claim/issue mismatch, missing evidence, merge conflicts, or a required workflow failed.
+
+Manager remains the integration authority even when status is READY.
