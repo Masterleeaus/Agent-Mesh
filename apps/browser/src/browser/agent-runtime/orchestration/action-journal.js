@@ -65,6 +65,16 @@ export function createActionJournal({
     });
   }
 
+  // Explicitly abandon an UNKNOWN-outcome intent only after the resumed turn
+  // has re-perceived and completed. This is deliberately separate from
+  // complete(): complete means the original dispatch returned; abandon means
+  // recovery established a fresh state boundary without replaying the action.
+  function abandon(key) {
+    return mutate((journal) => {
+      delete journal[key];
+    });
+  }
+
   function clearSession(sessionId) {
     return mutate((journal) => {
       for (const [key, intent] of Object.entries(journal)) {
@@ -78,5 +88,5 @@ export function createActionJournal({
     return Object.values(journal).filter((intent) => intent.sessionId === sessionId);
   }
 
-  return { begin, complete, clearSession, pendingFor };
+  return { begin, complete, abandon, clearSession, pendingFor };
 }
