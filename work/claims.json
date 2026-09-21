@@ -1,5 +1,17 @@
 {
-  "schema": "titan-agent-mesh-claims/v3",
-  "authority": "coordination-only",
+  "schema": "titan-agent-mesh-claims/v4-branch-lock",
+  "authority": "coordination-projection-only",
+  "lock_authority": "git_branch_ref",
+  "canonical_branch_pattern": "agent/<subgoal-id>",
+  "collision_rule": "exact branch creation is atomic; existing branch means claimed",
+  "bypass_forbidden": [
+    "suffix",
+    "worker-name",
+    "timestamp",
+    "alternate-prefix"
+  ],
+  "issue_claim_comment_required": true,
+  "pr_link_required": "Closes #<issue-number>",
+  "note": "Do not use this JSON file as a mutex. Resolve live claims from GitHub agent/<subgoal-id> refs and open PRs.",
   "claims": []
 }
