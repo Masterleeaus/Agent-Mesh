@@ -59,6 +59,18 @@ export default function HomePage() {
         <div className={styles.grid}>{capabilities.map(([title,body])=><article key={title}><span>0{capabilities.findIndex(x=>x[0]===title)+1}</span><h3>{title}</h3><p>{body}</p></article>)}</div><div className={styles.actions}><Link href="/workforce">Explore the AI workforce →</Link></div>
       </section>
 
+      <section className={styles.operations}>
+        <p className={styles.kicker}>FROM CONVERSATION TO OPERATION</p>
+        <h2>Ask for the outcome. Titan Zero coordinates the work.</h2>
+        <p className={styles.operationsLead}>Instead of hunting through menus, tell the workforce what needs to happen. Titan Zero can gather context, prepare the action and route consequential steps through the authority your business has set.</p>
+        <div className={styles.operationGrid}>
+          <article><b>01</b><h3>Capture</h3><p>Turn calls, voice notes, photos and customer conversations into usable business context.</p></article>
+          <article><b>02</b><h3>Prepare</h3><p>Draft quotes, follow-ups, schedules, job updates and next actions from that context.</p></article>
+          <article><b>03</b><h3>Coordinate</h3><p>Keep customers, field teams and office workflows aligned across the systems you already use.</p></article>
+          <article><b>04</b><h3>Act with authority</h3><p>Execute approved work automatically where trust and business policy allow it.</p></article>
+        </div>
+      </section>
+
       <section className={styles.dark} id="system">
         <div><p className={styles.kicker}>BUILT FOR CONSEQUENCE</p><h2>Intelligence with boundaries.</h2><p>Titan Zero combines operational intelligence, decision support, governance and auditability. The system can observe, recommend, prepare and execute within the authority your business grants it.</p></div>
         <div className={styles.flow}><span>Observe</span><b>→</b><span>Recommend</span><b>→</b><span>Prepare</span><b>→</b><span>Approve</span><b>→</b><span>Automate</span></div>
