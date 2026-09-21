@@ -3,6 +3,7 @@ name: Extract new Titan Zero marketing sites
 on:
   push:
     paths:
+      - ".github/workflows/extract-new-marketing-sites.yml"
       - "archive/marketing-sites-extracted/marketing-sites-extracted/nexjob-marketing-main.zip"
       - "archive/marketing-sites-extracted/marketing-sites-extracted/trydrafted-landing-main.zip"
   workflow_dispatch:
