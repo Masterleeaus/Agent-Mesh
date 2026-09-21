@@ -48,6 +48,10 @@ class SurfaceSdkTitanGateway implements TitanGateway {
     if ((projection['revision']?.toString().trim().isEmpty ?? true)) {
       throw StateError('surface-projection-revision-required');
     }
+    final issuedAt = DateTime.tryParse(projection['issued_at']?.toString() ?? '');
+    if (issuedAt == null) {
+      throw StateError('surface-projection-issued-at-invalid');
+    }
     final expiresAt = DateTime.tryParse(projection['expires_at']?.toString() ?? '');
     if (expiresAt == null || !expiresAt.isAfter(DateTime.now().toUtc())) {
       throw StateError('surface-projection-expired');
