@@ -1,0 +1,41 @@
+name: Manager Review Queue
+
+on:
+  workflow_run:
+    workflows: ["Manager Review Readiness", "Agent Claim Audit"]
+    types: [completed]
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, edited, ready_for_review, converted_to_draft, closed]
+  workflow_dispatch:
+  schedule:
+    - cron: "11 * * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/scripts/manager-review-queue.py"
+      - ".github/workflows/manager-review-queue.yml"
+      - "work/agents.json"
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  actions: read
+  statuses: read
+
+concurrency:
+  group: agent-mesh-manager-review-queue
+  cancel-in-progress: true
+
+jobs:
+  queue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v4
+
+      - name: Build Manager review queue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/manager-review-queue.py
