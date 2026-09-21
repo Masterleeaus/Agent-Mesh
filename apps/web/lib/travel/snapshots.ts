@@ -1,4 +1,5 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
+import { randomUUID } from "node:crypto";
 import {
   buildTravelInvoiceLineDrafts,
   type TravelCalculationResult,
@@ -74,14 +75,15 @@ export interface InsertSnapshotInput {
 }
 
 export async function insertTravelSnapshot(
-  client: PoolClient,
+  client: DbClient,
   input: InsertSnapshotInput
 ): Promise<TravelSnapshotRow> {
   const r = input.result;
   const kind = input.kind ?? "estimate";
-  const q = await client.query<TravelSnapshotRow>(
+  const id = randomUUID();
+  await client.query(
     `INSERT INTO travel_calculation_snapshots (
-       account_id, origin_address, destination_address,
+       id, account_id, origin_address, destination_address,
        one_way_miles, round_trip_miles, one_way_minutes, round_trip_minutes,
        total_miles, total_minutes, included_miles, billable_miles,
        mileage_rate_cents, mileage_charge_cents,
@@ -96,23 +98,23 @@ export async function insertTravelSnapshot(
        estimate_id, invoice_id, work_order_id, visit_id, job_id,
        kind, parent_snapshot_id, created_by
      ) VALUES (
-       $1,$2,$3,
-       $4,$5,$6,$7,
-       $8,$9,$10,$11,
-       $12,$13,
-       $14,$15,$16,
-       $17,$18,
-       $19,$20,$21,
-       $22,$23,$24,
-       $25,$26,
-       $27,$28,
-       $29,$30,
-       $31::jsonb,$32,
-       $33,$34,$35,$36,$37,
-       $38,$39,$40
-     )
-     RETURNING *`,
+       $1,$2,$3,$4,
+       $5,$6,$7,$8,
+       $9,$10,$11,$12,
+       $13,$14,
+       $15,$16,$17,
+       $18,$19,
+       $20,$21,$22,
+       $23,$24,$25,
+       $26,$27,
+       $28,$29,
+       $30,$31,
+       $32,$33,
+       $34,$35,$36,$37,$38,
+       $39,$40,$41
+     )`,
     [
+      id,
       input.account_id,
       input.origin_address,
       input.destination_address,
@@ -155,11 +157,16 @@ export async function insertTravelSnapshot(
       input.created_by ?? null,
     ]
   );
+  const q = await client.query<TravelSnapshotRow>(
+    `SELECT * FROM travel_calculation_snapshots WHERE id = $1 AND account_id = $2`,
+    [id, input.account_id]
+  );
+  if (!q.rowCount) throw new Error("Travel snapshot insert succeeded but readback failed");
   return normalizeSnapshot(q.rows[0]);
 }
 
 export async function getTravelSnapshot(
-  client: PoolClient,
+  client: DbClient,
   snapshotId: string
 ): Promise<TravelSnapshotRow | null> {
   const q = await client.query(`SELECT * FROM travel_calculation_snapshots WHERE id = $1`, [
@@ -205,7 +212,7 @@ export const TRAVEL_LINE_MARKER = "<!--travel-charge-->";
  * this helper still refuses to rewrite parent totals from option_id IS NULL lines.
  */
 export async function applyTravelToEstimate(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     estimateId: string;
@@ -296,7 +303,7 @@ export async function applyTravelToEstimate(
 }
 
 async function recalculateEstimateTotals(
-  client: PoolClient,
+  client: DbClient,
   estimateId: string,
   accountId: string
 ): Promise<void> {
@@ -327,7 +334,7 @@ async function recalculateEstimateTotals(
     [estimateId]
   );
   const lines = await client.query<{ subtotal: string }>(
-    `SELECT COALESCE(SUM(total_cents), 0)::text AS subtotal
+    `SELECT COALESCE(SUM(total_cents), 0) AS subtotal
      FROM estimate_line_items WHERE estimate_id = $1 AND option_id IS NULL`,
     [estimateId]
   );
@@ -350,7 +357,7 @@ async function recalculateEstimateTotals(
 
 /** Delete any prior travel charge lines on an invoice. */
 export async function deleteInvoiceTravelLines(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   settingsLineTitle: string
 ): Promise<void> {
@@ -358,10 +365,10 @@ export async function deleteInvoiceTravelLines(
     `DELETE FROM invoice_line_items
      WHERE invoice_id = $1
        AND (
-         description ILIKE $2 || '%'
-         OR description ILIKE 'Travel and Service-Area Adjustment%'
-         OR description ILIKE 'Travel & mileage%'
-         OR description LIKE '%' || $3 || '%'
+         LOWER(description) LIKE LOWER(CONCAT($2, '%'))
+         OR LOWER(description) LIKE LOWER('Travel and Service-Area Adjustment%')
+         OR LOWER(description) LIKE LOWER('Travel & mileage%')
+         OR description LIKE CONCAT('%', $3, '%')
        )`,
     [invoiceId, settingsLineTitle, TRAVEL_LINE_MARKER]
   );
@@ -372,7 +379,7 @@ export async function deleteInvoiceTravelLines(
  * from a snapshot. Does not update invoice totals.
  */
 export async function insertInvoiceTravelLines(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     invoiceId: string;
     snapshot: Pick<
@@ -440,7 +447,7 @@ export async function insertInvoiceTravelLines(
  * Does not rewrite invoice totals (convert keeps estimate totals).
  */
 export async function ensureInvoiceTravelLinesFromSnapshot(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     invoiceId: string;
     snapshot: TravelSnapshotRow;
@@ -457,7 +464,7 @@ export async function ensureInvoiceTravelLinesFromSnapshot(
   } else {
     const existing = await client.query(
       `SELECT 1 FROM invoice_line_items
-       WHERE invoice_id = $1 AND description LIKE '%' || $2 || '%'
+       WHERE invoice_id = $1 AND description LIKE CONCAT('%', $2, '%')
        LIMIT 1`,
       [opts.invoiceId, TRAVEL_LINE_MARKER]
     );
@@ -466,8 +473,8 @@ export async function ensureInvoiceTravelLinesFromSnapshot(
       `SELECT 1 FROM invoice_line_items
        WHERE invoice_id = $1
          AND (
-           description ILIKE $2 || '%'
-           OR description ILIKE 'Travel and Service-Area Adjustment%'
+           LOWER(description) LIKE LOWER(CONCAT($2, '%'))
+           OR LOWER(description) LIKE LOWER('Travel and Service-Area Adjustment%')
          )
        LIMIT 1`,
       [opts.invoiceId, opts.settingsLineTitle]
@@ -490,7 +497,7 @@ export async function ensureInvoiceTravelLinesFromSnapshot(
  * Apply travel to a draft invoice as itemized line items (or remove).
  */
 export async function applyTravelToInvoice(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     invoiceId: string;
@@ -524,7 +531,7 @@ export async function applyTravelToInvoice(
 
   // Recalc invoice totals from all lines (itemized travel included)
   const totals = await client.query<{ subtotal: string }>(
-    `SELECT COALESCE(SUM(total_cents), 0)::text AS subtotal
+    `SELECT COALESCE(SUM(total_cents), 0) AS subtotal
      FROM invoice_line_items WHERE invoice_id = $1`,
     [invoiceId]
   );

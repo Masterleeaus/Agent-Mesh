@@ -1,41 +1,25 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import type { CompletionCriterion } from "@ai-fsm/domain";
-import { getPool } from "@/lib/db";
+import { withPortableTransaction } from "@/lib/db/portable";
 import type { SessionPayload } from "@/lib/auth/session";
 
 export async function setDbSessionContext(
-  client: PoolClient,
-  session: Pick<SessionPayload, "userId" | "accountId" | "role">,
+  _client: DbClient,
+  _session: Pick<SessionPayload, "userId" | "accountId" | "role">,
 ): Promise<void> {
-  await client.query(
-    `SELECT set_config('app.current_user_id', $1, true),
-            set_config('app.current_account_id', $2, true),
-            set_config('app.current_role', $3, true)`,
-    [session.userId, session.accountId, session.role],
-  );
+  // Portable field-operation queries carry explicit account/user predicates.
+  // Retained as a compatibility hook for callers/tests; no dialect session state required.
 }
 
 export async function withLeadWorkOrderContext<T>(
-  session: Pick<SessionPayload, "userId" | "accountId" | "role">,
-  fn: (client: PoolClient) => Promise<T>,
+  _session: Pick<SessionPayload, "userId" | "accountId" | "role">,
+  fn: (client: DbClient) => Promise<T>,
 ): Promise<T> {
-  const client = await getPool().connect();
-  try {
-    await client.query("BEGIN");
-    await setDbSessionContext(client, session);
-    const result = await fn(client);
-    await client.query("COMMIT");
-    return result;
-  } catch (error) {
-    await client.query("ROLLBACK");
-    throw error;
-  } finally {
-    client.release();
-  }
+  return withPortableTransaction(fn);
 }
 
 export async function assertAssignedLead(
-  client: PoolClient,
+  client: DbClient,
   workOrderId: string,
   accountId: string,
   userId: string,

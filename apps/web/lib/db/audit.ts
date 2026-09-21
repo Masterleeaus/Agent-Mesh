@@ -1,11 +1,12 @@
-import type { PoolClient } from "pg";
+import { randomUUID } from "crypto";
+import type { DbClient } from "@/lib/db-contract";
 
 export interface AuditEntry {
   account_id: string;
   entity_type: string;
   entity_id: string;
   action: "insert" | "update" | "delete";
-  actor_id: string;
+  actor_id: string | null;
   trace_id?: string | null;
   old_value?: Record<string, unknown> | null;
   new_value?: Record<string, unknown> | null;
@@ -19,14 +20,15 @@ export interface AuditEntry {
  * INSERT. The RLS audit_log_insert policy requires account_id = app_account_id().
  */
 export async function appendAuditLog(
-  client: PoolClient,
+  client: DbClient,
   entry: AuditEntry
 ): Promise<void> {
   await client.query(
     `INSERT INTO audit_log
-       (account_id, entity_type, entity_id, action, actor_id, trace_id, old_value, new_value)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+       (id, account_id, entity_type, entity_id, action, actor_id, trace_id, old_value, new_value)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
     [
+      randomUUID(),
       entry.account_id,
       entry.entity_type,
       entry.entity_id,

@@ -2,7 +2,8 @@
  * Create a default schedulable work order for a project (e.g. quick-book).
  */
 
-import type { PoolClient } from "pg";
+import { randomUUID } from "crypto";
+import type { DbClient } from "@/lib/db-contract";
 
 export async function createDefaultWorkOrderForJob({
   client,
@@ -13,7 +14,7 @@ export async function createDefaultWorkOrderForJob({
   scope,
   createdBy,
 }: {
-  client: PoolClient;
+  client: DbClient;
   accountId: string;
   clientId: string;
   jobId: string;
@@ -21,11 +22,13 @@ export async function createDefaultWorkOrderForJob({
   scope?: string | null;
   createdBy: string;
 }): Promise<string> {
-  const { rows } = await client.query<{ id: string }>(
-    `INSERT INTO work_orders (account_id, client_id, job_id, title, scope, status, created_by)
-     VALUES ($1, $2, $3, $4, $5, 'ready', $6)
-     RETURNING id`,
-    [accountId, clientId, jobId, title, scope ?? null, createdBy],
+  // Generate UUID in the application so the insert behaves identically on
+  // PostgreSQL and MySQL/MariaDB without relying on dialect-specific row-return clauses.
+  const id = randomUUID();
+  await client.query(
+    `INSERT INTO work_orders (id, account_id, client_id, job_id, title, scope, status, created_by)
+     VALUES ($1, $2, $3, $4, $5, $6, 'ready', $7)`,
+    [id, accountId, clientId, jobId, title, scope ?? null, createdBy],
   );
-  return rows[0].id;
+  return id;
 }

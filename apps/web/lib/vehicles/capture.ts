@@ -2,30 +2,34 @@
  * Atomic vehicle capture + expense create (TASK-093).
  * Record tables hold facts; money lives only on expenses.
  */
-import type { PoolClient } from "pg";
+import { randomUUID } from "node:crypto";
+import type { DbClient } from "@/lib/db-contract";
+import { getDatabaseDialect } from "@/lib/db";
 import { shouldFlagSuspectOdometer } from "@ai-fsm/domain";
 
 export async function lastKnownOdometer(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   vehicleId: string,
 ): Promise<number | null> {
   const { rows } = await client.query<{ odo: number | null }>(
-    `SELECT GREATEST(
-       (SELECT MAX(end_odometer) FROM vehicle_sessions
-         WHERE account_id = $1 AND vehicle_id = $2 AND end_odometer IS NOT NULL),
-       (SELECT MAX(odometer) FROM vehicle_fuel_logs
-         WHERE account_id = $1 AND vehicle_id = $2 AND odometer IS NOT NULL AND odometer_suspect = false),
-       (SELECT MAX(odometer) FROM vehicle_service_records
-         WHERE account_id = $1 AND vehicle_id = $2 AND odometer IS NOT NULL AND odometer_suspect = false)
-     )::int AS odo`,
+    `SELECT MAX(odo) AS odo FROM (
+       SELECT MAX(end_odometer) AS odo FROM vehicle_sessions
+         WHERE account_id = $1 AND vehicle_id = $2 AND end_odometer IS NOT NULL
+       UNION ALL
+       SELECT MAX(odometer) AS odo FROM vehicle_fuel_logs
+         WHERE account_id = $1 AND vehicle_id = $2 AND odometer IS NOT NULL AND odometer_suspect = false
+       UNION ALL
+       SELECT MAX(odometer) AS odo FROM vehicle_service_records
+         WHERE account_id = $1 AND vehicle_id = $2 AND odometer IS NOT NULL AND odometer_suspect = false
+     ) vehicle_odometers`,
     [accountId, vehicleId],
   );
   return rows[0]?.odo ?? null;
 }
 
 export async function assertVehicleInAccount(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   vehicleId: string,
 ): Promise<{ id: string; kind: string; nickname: string } | null> {
@@ -38,7 +42,7 @@ export async function assertVehicleInAccount(
 }
 
 export async function insertVehicleExpense(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     userId: string;
@@ -50,28 +54,20 @@ export async function insertVehicleExpense(
     notes?: string | null;
   },
 ): Promise<string> {
-  const { rows } = await client.query<{ id: string }>(
+  const id = randomUUID();
+  await client.query(
     `INSERT INTO expenses (
-       account_id, vendor_name, category, amount_cents, expense_date,
+       id, account_id, vendor_name, category, amount_cents, expense_date,
        notes, created_by, vehicle_id
-     ) VALUES ($1, $2, $3, $4, $5::date, $6, $7, $8)
-     RETURNING id`,
-    [
-      opts.accountId,
-      opts.vendorName,
-      opts.category,
-      opts.amountCents,
-      opts.expenseDate,
-      opts.notes ?? null,
-      opts.userId,
-      opts.vehicleId,
-    ],
+     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+    [id, opts.accountId, opts.vendorName, opts.category, opts.amountCents, opts.expenseDate,
+     opts.notes ?? null, opts.userId, opts.vehicleId],
   );
-  return rows[0].id;
+  return id;
 }
 
 export async function createFuelLogWithExpense(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     userId: string;
@@ -105,31 +101,21 @@ export async function createFuelLogWithExpense(
     notes: opts.notes ?? `Fuel ${opts.gallons} gal · ${vehicle.nickname}`,
   });
 
-  const { rows } = await client.query<{ id: string }>(
+  const fuelLogId = randomUUID();
+  await client.query(
     `INSERT INTO vehicle_fuel_logs (
-       account_id, vehicle_id, filled_at, odometer, gallons, is_full_tank,
+       id, account_id, vehicle_id, filled_at, odometer, gallons, is_full_tank,
        odometer_suspect, notes, expense_id, created_by
-     ) VALUES ($1, $2, $3::timestamptz, $4, $5, $6, $7, $8, $9, $10)
-     RETURNING id`,
-    [
-      opts.accountId,
-      opts.vehicleId,
-      filledAt,
-      opts.odometer,
-      opts.gallons,
-      opts.isFullTank,
-      odometerSuspect,
-      opts.notes ?? null,
-      expenseId,
-      opts.userId,
-    ],
+     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+    [fuelLogId, opts.accountId, opts.vehicleId, filledAt, opts.odometer, opts.gallons,
+     opts.isFullTank, odometerSuspect, opts.notes ?? null, expenseId, opts.userId],
   );
 
-  return { fuelLogId: rows[0].id, expenseId, odometerSuspect };
+  return { fuelLogId, expenseId, odometerSuspect };
 }
 
 export async function createServiceRecordWithExpense(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     userId: string;
@@ -160,27 +146,18 @@ export async function createServiceRecordWithExpense(
     notes: opts.notes ?? `${opts.serviceTypes.join(", ")} · ${vehicle.nickname}`,
   });
 
-  const { rows } = await client.query<{ id: string }>(
+  const serviceRecordId = randomUUID();
+  const serviceTypes = getDatabaseDialect() === "mysql" ? JSON.stringify(opts.serviceTypes) : opts.serviceTypes;
+  await client.query(
     `INSERT INTO vehicle_service_records (
-       account_id, vehicle_id, serviced_at, odometer, odometer_suspect,
+       id, account_id, vehicle_id, serviced_at, odometer, odometer_suspect,
        service_types, vendor_name, notes, expense_id, created_by
-     ) VALUES ($1, $2, $3::date, $4, $5, $6::text[], $7, $8, $9, $10)
-     RETURNING id`,
-    [
-      opts.accountId,
-      opts.vehicleId,
-      opts.servicedAt.slice(0, 10),
-      opts.odometer,
-      odometerSuspect,
-      opts.serviceTypes,
-      opts.vendorName ?? null,
-      opts.notes ?? null,
-      expenseId,
-      opts.userId,
-    ],
+     ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+    [serviceRecordId, opts.accountId, opts.vehicleId, opts.servicedAt.slice(0, 10), opts.odometer,
+     odometerSuspect, serviceTypes, opts.vendorName ?? null, opts.notes ?? null, expenseId, opts.userId],
   );
 
-  return { serviceRecordId: rows[0].id, expenseId, odometerSuspect };
+  return { serviceRecordId, expenseId, odometerSuspect };
 }
 
 /** Map renewal_type → expenses.category (tax buckets). */
@@ -210,7 +187,7 @@ function addMonthsIso(isoDate: string, months: number): string {
  * Requires amount_cents > 0 (every event creates an expense).
  */
 export async function createRenewalRecordWithExpense(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     userId: string;
@@ -248,19 +225,12 @@ export async function createRenewalRecordWithExpense(
     notes: opts.notes ?? `${opts.renewalType} renewal · ${vehicle.nickname}`,
   });
 
-  const { rows: recordRows } = await client.query<{ id: string }>(
+  const renewalRecordId = randomUUID();
+  await client.query(
     `INSERT INTO vehicle_renewal_records (
-       account_id, vehicle_id, renewal_type, renewed_at, expense_id, created_by
-     ) VALUES ($1, $2, $3, $4::date, $5, $6)
-     RETURNING id`,
-    [
-      opts.accountId,
-      opts.vehicleId,
-      opts.renewalType,
-      renewedAt,
-      expenseId,
-      opts.userId,
-    ],
+       id, account_id, vehicle_id, renewal_type, renewed_at, expense_id, created_by
+     ) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+    [renewalRecordId, opts.accountId, opts.vehicleId, opts.renewalType, renewedAt, expenseId, opts.userId],
   );
 
   // Advance matching active schedule (if any).
@@ -286,7 +256,7 @@ export async function createRenewalRecordWithExpense(
     }
     await client.query(
       `UPDATE vehicle_renewals
-       SET current_due_date = $1::date, updated_at = now()
+       SET current_due_date = $1, updated_at = CURRENT_TIMESTAMP
        WHERE id = $2 AND account_id = $3`,
       [nextDueDate, renewalId, opts.accountId],
     );
@@ -295,7 +265,7 @@ export async function createRenewalRecordWithExpense(
   }
 
   return {
-    renewalRecordId: recordRows[0].id,
+    renewalRecordId,
     expenseId,
     nextDueDate,
     renewalId,

@@ -1,4 +1,6 @@
-import type { PoolClient } from "pg";
+import { randomUUID } from "node:crypto";
+import type { DbClient } from "@/lib/db-contract";
+import { getDatabaseDialect } from "@/lib/db";
 import { normalizePhone } from "../phone";
 import { SMS_CONSENT_TEXT } from "../sms/consent";
 
@@ -24,7 +26,7 @@ export type IntakeRecordInput = {
   preferredContact: PreferredContact;
   smsConsent: boolean;
   smsConsentSource: string;
-  routingPath?: "site_visit" | "remote_estimate" | "pending";
+  routingPath?: "site_visit" | "remote_estimate" | "book_work" | "pending";
   walkthroughScore?: number | null;
   referralSource?: "online" | "friend_neighbor" | "realtor" | "repeat" | "other" | null;
   referralName?: string | null;
@@ -36,7 +38,7 @@ export type IntakeRecordResult = {
   clientId: string;
   propertyId: string;
   jobId: string;
-  routingPath: "site_visit" | "remote_estimate" | "pending";
+  routingPath: "site_visit" | "remote_estimate" | "book_work" | "pending";
 };
 
 export type ExistingBookingRequestInput = {
@@ -81,7 +83,7 @@ function titleCaseCategory(category: string): string {
 }
 
 async function resolveCreatedByUserId(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   userId?: string | null
 ): Promise<string> {
@@ -105,7 +107,7 @@ async function resolveCreatedByUserId(
 }
 
 async function findOrCreateClient(
-  client: PoolClient,
+  client: DbClient,
   input: IntakeRecordInput
 ): Promise<string> {
   let clientId: string | null = null;
@@ -129,25 +131,21 @@ async function findOrCreateClient(
   }
 
   if (!clientId) {
-    const { rows } = await client.query<{ id: string }>(
+    const id = randomUUID();
+    await client.query(
       `INSERT INTO clients (
-         account_id, name, email, phone, preferred_contact,
+         id, account_id, name, email, phone, preferred_contact,
          sms_consent, sms_consent_at, sms_consent_source, sms_consent_text
        )
-       VALUES ($1, $2, $3, $4, $5, $6, CASE WHEN $6 THEN NOW() ELSE NULL END, $7, $8)
-       RETURNING id`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, CASE WHEN $7 THEN NOW() ELSE NULL END, $8, $9)`,
       [
-        input.accountId,
-        input.name,
-        input.email || null,
-        normalizedPhone || null,
-        input.preferredContact,
-        input.smsConsent,
+        id, input.accountId, input.name, input.email || null, normalizedPhone || null,
+        input.preferredContact, input.smsConsent,
         input.smsConsent ? input.smsConsentSource : null,
         input.smsConsent ? SMS_CONSENT_TEXT : null,
       ]
     );
-    return rows[0].id;
+    return id;
   }
 
   await client.query(
@@ -172,37 +170,29 @@ async function findOrCreateClient(
 }
 
 async function findOrCreateProperty(
-  client: PoolClient,
+  client: DbClient,
   input: IntakeRecordInput,
   clientId: string
 ): Promise<string> {
   const { rows: existingRows } = await client.query<{ id: string }>(
-    `SELECT id FROM properties WHERE client_id = $1 AND address = $2`,
-    [clientId, input.address]
+    `SELECT id FROM properties WHERE account_id = $1 AND client_id = $2 AND address = $3`,
+    [input.accountId, clientId, input.address]
   );
 
   if (existingRows[0]?.id) return existingRows[0].id;
 
-  const { rows } = await client.query<{ id: string }>(
-    `INSERT INTO properties (account_id, client_id, name, address, city, state, zip)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
-     RETURNING id`,
-    [
-      input.accountId,
-      clientId,
-      input.address,
-      input.address,
-      input.city || null,
-      input.state || null,
-      input.zip || null,
-    ]
+  const id = randomUUID();
+  await client.query(
+    `INSERT INTO properties (id, account_id, client_id, name, address, city, state, zip)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+    [id, input.accountId, clientId, input.address, input.address, input.city || null, input.state || null, input.zip || null]
   );
 
-  return rows[0].id;
+  return id;
 }
 
 async function updateDuplicateCandidates(
-  client: PoolClient,
+  client: DbClient,
   input: IntakeRecordInput,
   bookingId: string
 ): Promise<void> {
@@ -211,7 +201,7 @@ async function updateDuplicateCandidates(
      WHERE account_id = $1
        AND id != $2
        AND status NOT IN ('cancelled','converted','lost','duplicate')
-       AND created_at > NOW() - INTERVAL '90 days'
+       AND created_at > $6
        AND (
          (email IS NOT NULL AND email = $3) OR
          (phone IS NOT NULL AND phone = $4) OR
@@ -224,6 +214,7 @@ async function updateDuplicateCandidates(
       input.email || null,
       input.phone || null,
       input.name,
+      new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
     ]
   );
 
@@ -233,12 +224,12 @@ async function updateDuplicateCandidates(
     `UPDATE booking_requests
      SET duplicate_candidate_ids = $1
      WHERE id = $2 AND account_id = $3`,
-    [rows.map((row) => row.id), bookingId, input.accountId]
+    [getDatabaseDialect() === "mysql" ? JSON.stringify(rows.map((row) => row.id)) : rows.map((row) => row.id), bookingId, input.accountId]
   );
 }
 
 export async function createIntakeRecords(
-  client: PoolClient,
+  client: DbClient,
   input: IntakeRecordInput
 ): Promise<IntakeRecordResult> {
   const createdByUserId = await resolveCreatedByUserId(
@@ -252,37 +243,28 @@ export async function createIntakeRecords(
   const jobType = JOB_TYPE_BY_CATEGORY[input.serviceCategory] || "custom";
   const categoryLabel = titleCaseCategory(input.serviceCategory);
 
-  const { rows: jobRows } = await client.query<{ id: string }>(
-    `INSERT INTO jobs (account_id, client_id, property_id, title, description, status, job_type, created_by)
-     VALUES ($1, $2, $3, $4, $5, 'draft', $6, $7)
-     RETURNING id`,
-    [
-      input.accountId,
-      clientId,
-      propertyId,
-      `${categoryLabel} - ${input.name}`,
-      input.serviceDescription,
-      jobType,
-      createdByUserId,
-    ]
+  const jobId = randomUUID();
+  await client.query(
+    `INSERT INTO jobs (id, account_id, client_id, property_id, title, description, status, job_type, created_by)
+     VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, $8)`,
+    [jobId, input.accountId, clientId, propertyId, `${categoryLabel} - ${input.name}`, input.serviceDescription, jobType, createdByUserId]
   );
-  const jobId = jobRows[0].id;
 
   const routingPath = input.routingPath ?? "pending";
 
-  const { rows: bookingRows } = await client.query<{ id: string }>(
+  const bookingId = randomUUID();
+  await client.query(
     `INSERT INTO booking_requests
-       (account_id, client_id, property_id, job_id,
+       (id, account_id, client_id, property_id, job_id,
         name, email, phone, service_category, service_description,
         preferred_date, preferred_time_slot, address, city, state, zip, access_notes,
         preferred_contact, sms_consent, sms_consent_at, sms_consent_source,
         routing_path, walkthrough_score, referral_source, referral_name, intake_metadata)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
-             $17, $18, CASE WHEN $18 THEN NOW() ELSE NULL END, CASE WHEN $18 THEN $19 ELSE NULL END,
-             $20, $21, $22, $23, $24)
-     RETURNING id`,
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17,
+             $18, $19, CASE WHEN $19 THEN NOW() ELSE NULL END, CASE WHEN $19 THEN $20 ELSE NULL END,
+             $21, $22, $23, $24, $25)`,
     [
-      input.accountId,
+      bookingId, input.accountId,
       clientId,
       propertyId,
       jobId,
@@ -308,7 +290,6 @@ export async function createIntakeRecords(
       input.intakeMetadata ? JSON.stringify(input.intakeMetadata) : null,
     ]
   );
-  const bookingId = bookingRows[0].id;
 
   await updateDuplicateCandidates(client, input, bookingId);
 
@@ -335,7 +316,7 @@ export async function createIntakeRecords(
 }
 
 export async function repairBookingRequestPipelineLinks(
-  client: PoolClient,
+  client: DbClient,
   input: ExistingBookingRequestInput
 ): Promise<IntakeRecordResult> {
   const normalized: IntakeRecordInput = {
@@ -366,21 +347,12 @@ export async function repairBookingRequestPipelineLinks(
     const jobType = JOB_TYPE_BY_CATEGORY[normalized.serviceCategory] || "custom";
     const categoryLabel = titleCaseCategory(normalized.serviceCategory);
 
-    const { rows } = await client.query<{ id: string }>(
-      `INSERT INTO jobs (account_id, client_id, property_id, title, description, status, job_type, created_by)
-       VALUES ($1, $2, $3, $4, $5, 'draft', $6, $7)
-       RETURNING id`,
-      [
-        normalized.accountId,
-        clientId,
-        propertyId,
-        `${categoryLabel} - ${normalized.name}`,
-        normalized.serviceDescription,
-        jobType,
-        normalized.createdByUserId,
-      ]
+    jobId = randomUUID();
+    await client.query(
+      `INSERT INTO jobs (id, account_id, client_id, property_id, title, description, status, job_type, created_by)
+       VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7, $8)`,
+      [jobId, normalized.accountId, clientId, propertyId, `${categoryLabel} - ${normalized.name}`, normalized.serviceDescription, jobType, normalized.createdByUserId]
     );
-    jobId = rows[0].id;
   }
 
   await client.query(

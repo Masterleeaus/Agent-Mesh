@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import type { BusinessDayStatus } from "@ai-fsm/domain";
 import { businessToday, getBusinessDay } from "./business-day";
 
@@ -80,7 +80,7 @@ export function deriveValidTransitions(state: Omit<CurrentOperationsState, "vali
 }
 
 export async function getCurrentOperationsState(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   userId: string,
 ): Promise<CurrentOperationsState> {

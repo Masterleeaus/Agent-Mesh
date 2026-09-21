@@ -1,4 +1,5 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
+import { randomUUID } from "node:crypto";
 import { LABOR_CUSTOMER_RATE_CENTS_PER_HOUR } from "@ai-fsm/domain";
 import {
   roundedQuarterHoursFromMinutes,
@@ -34,7 +35,7 @@ export interface InvoiceLineItemRow {
 
 
 export async function assertDraftInvoice(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   accountId: string
 ): Promise<{ id: string; status: string; job_id: string | null; paid_cents: number; deposit_cents: number }> {
@@ -66,12 +67,12 @@ export async function assertDraftInvoice(
 }
 
 export async function recalculateInvoiceTotals(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   accountId: string
 ): Promise<InvoiceTotals> {
   const totals = await client.query<{ subtotal_cents: string }>(
-    `SELECT COALESCE(SUM(total_cents), 0)::bigint AS subtotal_cents
+    `SELECT COALESCE(SUM(total_cents), 0) AS subtotal_cents
      FROM invoice_line_items
      WHERE invoice_id = $1`,
     [invoiceId]
@@ -83,22 +84,27 @@ export async function recalculateInvoiceTotals(
   const taxCents = 0;
   const totalCents = subtotalCents + taxCents;
 
-  const updated = await client.query<InvoiceTotals>(
+  await client.query(
     `UPDATE invoices
      SET subtotal_cents = $1,
          tax_cents = $2,
          total_cents = $3,
+         balance_cents = GREATEST($3 - paid_cents - deposit_cents, 0),
          updated_at = now()
-     WHERE id = $4 AND account_id = $5
-     RETURNING subtotal_cents, tax_cents, total_cents, paid_cents, balance_cents`,
+     WHERE id = $4 AND account_id = $5`,
     [subtotalCents, taxCents, totalCents, invoiceId, accountId]
+  );
+  const updated = await client.query<InvoiceTotals>(
+    `SELECT subtotal_cents, tax_cents, total_cents, paid_cents, balance_cents
+     FROM invoices WHERE id = $1 AND account_id = $2`,
+    [invoiceId, accountId]
   );
 
   return updated.rows[0];
 }
 
 export async function createInvoiceLineItem(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   input: {
     description: string;
@@ -109,31 +115,38 @@ export async function createInvoiceLineItem(
   }
 ): Promise<InvoiceLineItemRow> {
   const totalCents = Math.round(input.quantity * input.unit_price_cents);
-  const result = await client.query<InvoiceLineItemRow>(
+  const lineItemId = randomUUID();
+  const nextSort = input.sort_order ?? Number((await client.query<{ next_sort: number }>(
+    `SELECT COALESCE(MAX(sort_order), -1) + 1 AS next_sort
+     FROM invoice_line_items WHERE invoice_id = $1`,
+    [invoiceId]
+  )).rows[0]?.next_sort ?? 0);
+  await client.query(
     `INSERT INTO invoice_line_items
-       (invoice_id, description, quantity, unit_price_cents, total_cents, line_item_type, sort_order)
-     VALUES (
-       $1, $2, $3, $4, $5, $6,
-       COALESCE($7, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM invoice_line_items WHERE invoice_id = $1))
-     )
-     RETURNING id, invoice_id, description, quantity::float8 AS quantity,
-               unit_price_cents, total_cents, line_item_type, sort_order, created_at`,
+       (id, invoice_id, description, quantity, unit_price_cents, total_cents, line_item_type, sort_order)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
     [
+      lineItemId,
       invoiceId,
       input.description,
       input.quantity,
       input.unit_price_cents,
       totalCents,
       input.line_item_type,
-      input.sort_order ?? null,
+      nextSort,
     ]
+  );
+  const result = await client.query<InvoiceLineItemRow>(
+    `SELECT id, invoice_id, description, quantity, unit_price_cents, total_cents, line_item_type, sort_order, created_at
+     FROM invoice_line_items WHERE id = $1 AND invoice_id = $2`,
+    [lineItemId, invoiceId]
   );
 
   return result.rows[0];
 }
 
 export async function updateInvoiceLineItem(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   lineItemId: string,
   input: {
@@ -144,16 +157,14 @@ export async function updateInvoiceLineItem(
   }
 ): Promise<InvoiceLineItemRow> {
   const totalCents = Math.round(input.quantity * input.unit_price_cents);
-  const result = await client.query<InvoiceLineItemRow>(
+  const updated = await client.query(
     `UPDATE invoice_line_items
      SET description = $1,
          quantity = $2,
          unit_price_cents = $3,
          total_cents = $4,
          line_item_type = $5
-     WHERE id = $6 AND invoice_id = $7
-     RETURNING id, invoice_id, description, quantity::float8 AS quantity,
-               unit_price_cents, total_cents, line_item_type, sort_order, created_at`,
+     WHERE id = $6 AND invoice_id = $7`,
     [
       input.description,
       input.quantity,
@@ -165,15 +176,22 @@ export async function updateInvoiceLineItem(
     ]
   );
 
-  if ((result.rowCount ?? 0) === 0) {
+  if ((updated.rowCount ?? 0) === 0) {
     throw Object.assign(new Error("Line item not found"), { code: "NOT_FOUND" });
   }
 
+  const result = await client.query<InvoiceLineItemRow>(
+    `SELECT id, invoice_id, description, quantity, unit_price_cents, total_cents,
+            line_item_type, sort_order, created_at
+     FROM invoice_line_items
+     WHERE id = $1 AND invoice_id = $2`,
+    [lineItemId, invoiceId]
+  );
   return result.rows[0];
 }
 
 export async function upsertLaborLineFromTrackedTime(
-  client: PoolClient,
+  client: DbClient,
   invoiceId: string,
   accountId: string,
   jobId: string

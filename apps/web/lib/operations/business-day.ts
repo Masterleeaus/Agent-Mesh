@@ -1,9 +1,13 @@
-import type { PoolClient } from "pg";
+import { randomUUID } from "crypto";
+import type { DbClient } from "@/lib/db-contract";
 import type { BusinessDayStatus } from "@ai-fsm/domain";
 
-import { BUSINESS_TIMEZONE } from "@/lib/time/business-tz";
-
-export { BUSINESS_TIMEZONE };
+/**
+ * The business operates in one local timezone (a single NH business). "Today" is
+ * computed in that zone so an evening request never opens tomorrow's row the way
+ * a UTC date would. Override with BUSINESS_TZ.
+ */
+export const BUSINESS_TIMEZONE = process.env.BUSINESS_TZ || "America/New_York";
 
 /** Today's date (YYYY-MM-DD) in the business timezone. */
 export function businessToday(tz: string = BUSINESS_TIMEZONE): string {
@@ -53,11 +57,10 @@ export interface BusinessDayRow {
   notes: string | null;
 }
 
-const COLS = `id, user_id, business_date::text AS business_date, status,
-  opened_at::text AS opened_at, closed_at::text AS closed_at, reopened_reason, notes`;
+const COLS = `id, user_id, business_date, status, opened_at, closed_at, reopened_reason, notes`;
 
 export async function getBusinessDay(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   userId: string,
   date: string,
@@ -71,7 +74,7 @@ export async function getBusinessDay(
 }
 
 export async function getBusinessDayById(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   id: string,
   opts: { lockForUpdate?: boolean } = {},
@@ -88,19 +91,23 @@ export async function getBusinessDayById(
 
 /** Open today's business day if it isn't already (idempotent — one row per user/date). */
 export async function openBusinessDay(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   userId: string,
   date: string,
   createdBy: string,
 ): Promise<BusinessDayRow> {
-  await client.query(
-    `INSERT INTO business_days (account_id, user_id, business_date, status, created_by)
-     VALUES ($1, $2, $3, 'OPEN', $4)
-     ON CONFLICT (account_id, user_id, business_date) DO NOTHING`,
-    [accountId, userId, date, createdBy],
-  );
-  const row = await getBusinessDay(client, accountId, userId, date);
+  await client.query(`SELECT id FROM users WHERE id = $1 AND account_id = $2 FOR UPDATE`, [userId, accountId]);
+  let row = await getBusinessDay(client, accountId, userId, date);
+  if (!row) {
+    const id = randomUUID();
+    await client.query(
+      `INSERT INTO business_days (id, account_id, user_id, business_date, status, created_by)
+       VALUES ($1, $2, $3, $4, 'OPEN', $5)`,
+      [id, accountId, userId, date, createdBy],
+    );
+    row = await getBusinessDay(client, accountId, userId, date);
+  }
   if (!row) throw new Error("openBusinessDay: row missing after upsert");
   return row;
 }
@@ -115,21 +122,22 @@ export async function openBusinessDay(
  * null return means the day was raced (or RLS blocked the write).
  */
 export async function setBusinessDayStatus(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   id: string,
   from: BusinessDayStatus,
   to: BusinessDayStatus,
   reason: string | null,
 ): Promise<BusinessDayRow | null> {
-  const { rows } = await client.query<BusinessDayRow>(
+  const result = await client.query(
     `UPDATE business_days
-        SET status = $4,
-            closed_at = CASE WHEN $4 = 'CLOSED' THEN now() ELSE NULL END,
-            reopened_reason = CASE WHEN $4 = 'REOPENED' THEN $5 ELSE reopened_reason END
-      WHERE id = $2 AND account_id = $1 AND status = $3
-      RETURNING ${COLS}`,
-    [accountId, id, from, to, reason],
+        SET status = $1,
+            closed_at = CASE WHEN $2 = 'CLOSED' THEN CURRENT_TIMESTAMP ELSE NULL END,
+            reopened_reason = CASE WHEN $3 = 'REOPENED' THEN $4 ELSE reopened_reason END,
+            updated_at = CURRENT_TIMESTAMP
+      WHERE id = $5 AND account_id = $6 AND status = $7`,
+    [to, to, to, reason, id, accountId, from],
   );
-  return rows[0] ?? null;
+  if ((result.rowCount ?? 0) === 0) return null;
+  return getBusinessDayById(client, accountId, id);
 }
