@@ -27,8 +27,8 @@ If a future goal is referenced without a matching goal JSON, treat that as a mig
 1. Pull/read current `main`.
 2. Read this file, `work/README.md`, the relevant roadmap goal JSON, linked GitHub issue, and applicable architecture contracts.
 3. Confirm the issue is still remaining work against current code/evidence.
-4. Claim **one** eligible subgoal.
-5. Create a dedicated branch: `agent/<subgoal-id>-<short-name>`.
+4. Claim **one** eligible subgoal by atomically creating the exact branch `agent/<subgoal-id>` from current `main`. Branch creation is the claim lock.
+5. If that exact branch already exists, the subgoal is already claimed: do not compete for it; select another eligible issue.
 6. Complete one full development pass: implementation + verification + evidence.
 7. Commit/push the branch.
 8. Open/update a PR linked to the issue.
@@ -47,9 +47,11 @@ Do not wait for Manager approval merely to begin another eligible unclaimed subg
 
 ## Collision rule
 
-One claimable subgoal = one active implementation branch/PR.
+One claimable subgoal = one canonical claim branch: `agent/<subgoal-id>` = one active implementation PR.
 
-If another agent already owns a subgoal, choose another eligible issue. Never create competing implementations for the same work item.
+The branch ref is the collision lock. Do not add suffixes, worker names, timestamps or alternate spellings to bypass an existing claim. After creating the branch, add a claim comment to the issue containing the actor identity, branch, and base `main` SHA. If the exact branch already exists, choose another eligible issue. Never create competing implementations for the same work item.
+
+Every agent PR is checked by `.github/workflows/agent-claim-gate.yml`. The PR must target `main`, use the exact claim branch, name the subgoal ID, and include `Closes #<issue-number>` for the matching open roadmap issue.
 
 ## Titan Zero non-negotiables
 
