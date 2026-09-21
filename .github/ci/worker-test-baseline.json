@@ -1,9 +1,8 @@
 {
   "schema": "titan-zero-worker-test-baseline/v1",
   "source": "GitHub Actions run 35574702122 / job 106253824765",
-  "purpose": "Temporary Merge84 worker test baseline after DB portability changes: named failures may not increase or change; remove entries as tests/implementation converge.",
+  "purpose": "Temporary Merge84 worker Vitest baseline; exact named failures may only decrease.",
   "total_failures": 24,
-  "unique_failures": 24,
   "allowed": {
     "src/invoice-followup.test.ts > emitInvoiceFollowup > inserts audit_log entry and returns true for new follow-up": 1,
     "src/invoice-followup.test.ts > emitInvoiceFollowup > returns false and skips insert if follow-up already exists for cadence step": 1,
