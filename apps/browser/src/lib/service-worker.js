@@ -1,3 +1,14 @@
+// PRIVATE TITAN CODE DEVELOPMENT-ONLY
+// NOT FOR TITAN ZERO PRODUCTION USE
+// NOT A TITAN ZERO RUNTIME DEPENDENCY
+//
+// Canonical Titan Code remains this worker. The mature imported browser-agent
+// runtime is loaded as an ESM sidecar so its ReAct/MV3/session implementation is
+// preserved rather than rewritten. It owns Auto Browser message types; Titan
+// Code retains Plan Runner, AI/provider, repository, workforce and Titan Zero
+// development authorities below.
+import '../browser/agent-runtime/background.js';
+
 // Local capability runtime. Donor modules remain read-only; this worker retains all execution authority.
 if (typeof importScripts === 'function') {
     try {
