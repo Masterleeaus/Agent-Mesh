@@ -18,3 +18,6 @@ export type { TitanMcpHostFeatures, TitanMcpHostNegotiation } from "./ported/tit
 
 export { decideInferenceRoute, COST_SOVEREIGNTY_POLICY } from "./ported/titan-ai-core/cost-sovereignty.js";
 export type { InferenceRoute, CostSovereigntyRequest, CostSovereigntyDecision } from "./ported/titan-ai-core/cost-sovereignty.js";
+
+export { createConnectorCredentialReference, CONNECTOR_CREDENTIAL_POLICY } from "./ported/titan-connect/credential-contract.js";
+export type { ConnectorCredentialReference } from "./ported/titan-connect/credential-contract.js";
