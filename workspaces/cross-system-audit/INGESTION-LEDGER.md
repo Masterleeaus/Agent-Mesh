@@ -132,3 +132,49 @@ Actions affected:
 Conflicts:
 - #72 is absorbed by #648; use #648 as active repository-wide enforcement lane.
 Needs re-ingestion: YES
+
+
+## INGEST-009
+Agent/workspace: Zero Mechanism Archaeology / .titan/research/zero-mechanism-archaeology
+Artifact: STATUS.md, FINDINGS.md, ACTIONS.md, SOURCES.md
+Commit/version inspected:
+- STATUS blob 5b415d416ebddf522a55e35801dc53b01905f76c
+- FINDINGS blob 9aa1674fdd2896960ddcf1913a07c6da79f67638
+- ACTIONS blob f728c319a3a20165dbe76d9023428d61ef754185
+- SOURCES blob 063f6559138373d148000f228b57736561615e51
+Agent status: IN PROGRESS
+Ingestion status: INGESTED
+Findings imported:
+- #153 is canonical Business Memory/Knowledge owner; do not create parallel Zero generic memory.
+- #37 is bounded predictive/outcome-learning and autonomy-safety lane.
+- #725 is persistent working-state/cross-surface continuity substrate.
+- #21 is canonical durable invocation context/handoff owner; retired top-level memory tree must not be restored.
+- No explicit Personal Zero human-understanding/behaviour semantic owner has yet been verified.
+- Persistent/recalled context has no authority effect and authority must be revalidated.
+Actions affected:
+- ACTION-CSA-008
+- new Personal Zero ownership-resolution packet
+Conflicts:
+- Duplicate finding IDs FINDING-GH-014/015/016 appear inside this source artifact. Preserve evidence but disambiguate by content when cross-referencing until the source agent repairs IDs.
+Needs re-ingestion: YES
+Note: SOURCE AGENT STILL IN PROGRESS. Its workflow output is blocked and its source-level historical scan is incomplete.
+
+## INGEST-010
+Agent/workspace: Independent P0/P1 verification
+Artifact: packages/runtime/authority/execution-boundary.mjs and company-boundary.mjs
+Commit/version inspected:
+- execution-boundary blob c94b94d667e0892c192f8049ffaae03731d71f5f
+- company-boundary blob adee918d16d3ab5357191f67ac5e6e76b7e39b5b
+Agent status: N/A
+Ingestion status: INGESTED
+Findings imported:
+- Directly verified identity_confers_authority:false and current_context_only:true.
+- Directly verified governed command envelope authority_effect:false and titan-command-bus transport.
+- Directly verified current authority decision validation, company binding, authoritative receipts and receipt continuity.
+- Directly verified legacy tenant boundary fields are rejected recursively in authority payloads.
+Actions affected:
+- Trust/Authority/Command Bus convergence map
+- company_id enforcement evidence
+Conflicts:
+- Strengthens and independently verifies mechanism-agent finding about recalled context having no authority effect.
+Needs re-ingestion: NO
