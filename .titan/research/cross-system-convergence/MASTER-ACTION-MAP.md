@@ -200,3 +200,12 @@ Before claiming/implementing Personal Zero, preserve the latest #768 clarificati
 - Personal/company/shared/derived data requires explicit ownership/portability classification and provenance.
 - Portable experience/capability evidence may inform future contexts, but execution authority never transfers; Trust/delegation must be re-established.
 - Cross-context retrieval/learning must fail closed against silent employer/customer/personal leakage.
+
+
+## Knowledge Authority consumer trace packet
+Do not build another Knowledge Authority engine. Preserve the implemented gate and receipt contracts. Remaining convergence work is to:
+1. locate canonical Decision/Model Council/Workforce reasoning call sites;
+2. route applicable knowledge through `evaluateWorkforceKnowledgeUse` before reasoning;
+3. persist/propagate the knowledge-use receipt/provenance reference into the reasoning/DecisionPacket evidence chain;
+4. keep the independent authority decision after knowledge use;
+5. add negative tests for blocked/stale/contradicted/cross-company knowledge and prove blocked knowledge cannot influence protected execution.
