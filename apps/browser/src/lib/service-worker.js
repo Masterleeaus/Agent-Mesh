@@ -2039,7 +2039,7 @@ async function executeManagerAIPlan(options={}){
         const target=String(step.target||'');
         let action=null,payload={};
         if(step.action==='CHECK_HEARTBEAT_AND_RECOVER') { action='agent_mesh.recover_agent'; payload={agent_id:target,mode:'manager_recovery_request'}; }
-        else if(step.action==='RECHECK_DEPENDENCIES_OR_ROUTE_PACKET') { action='agent_mesh.route_packet'; payload={packet_id:target,mode:'manager_route_request'}; }
+        else if(step.action==='RECHECK_DEPENDENCIES_OR_ROUTE_PACKET') { action='agent_mesh.route_packet'; const work=snapshot?.githubProjection?.issue||snapshot?.github?.issue||snapshot?.agentMesh?.issue||{}; payload={issue_number:Number(work.number)||null,subgoal_id:String(work.subgoal_id||target||''),mode:'manager_route_request',legacy_packet_id:target||null}; }
         else { skipped.push({step,reason:'advisory-only-step'}); continue; }
         if(!settings.bridgeEnabled||!settings.bridgeToken||!globalThis.CodeeTitanBridgeClient){ skipped.push({step,reason:'live-mesh-bridge-not-configured'}); continue; }
         const result=await callAgentMeshMutation(config,action,payload,snapshot);
