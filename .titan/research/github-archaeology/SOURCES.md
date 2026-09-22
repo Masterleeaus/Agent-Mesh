@@ -157,3 +157,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-041 — `Masterleeaus/clean` main, `app/TitanOS/Foundation/DurableExecution/DurableExecutor.php`, SHA `f1a79251758382c4432fb33178307727c8d4152c`; direct checkpoint/trace implementation inspection.
 - SOURCE-GH-042 — `Masterleeaus/clean` main, `app/TitanOS/Safety/Recovery/RecoveryManager.php`, SHA `812924be803669b56b670b3fed57e42bb10a22a4`; direct recovery/savepoint implementation inspection.
 - SOURCE-GH-043 — `Masterleeaus/clean` main, `app/TitanOS/Execution/OwnershipLocks/OwnershipLockManager.php`, SHA `78dd5b8e9c8a32bc1aa35bfd64d881042343bd25`; direct lock implementation inspection.
+
+
+- SOURCE-GH-044 — Worksuite branch `copilot/integrate-aichatpromemory-v1-2` vs `main`: GitHub compare reports diverged, 1 ahead / 559 behind, merge base `e1d359c49e3893dc7546eef8af46e1cad5fc6289`.
+- SOURCE-GH-045 — Worksuite donor `codetouse/AiChatProMemory_extracted/AiChatProMemory/extension.json`, SHA `dab88ad24cf2c46762b4caa9a63c7678a44e9094`; identifies AI Chat Pro Memory v1.2.
+- SOURCE-GH-046 — Worksuite donor `System/Http/Controllers/AIChatProMemoryController.php`, SHA `0700cf8f412ad17bb91e51fd5ba23ad9e9ac157f`; direct get/save/clear instruction behavior.
+- SOURCE-GH-047 — Worksuite donor `System/Models/UserChatInstruction.php`, SHA `e620791dd505a0a8c8cd01a39eaae7787f808af4`; direct user/category and guest-IP persistence behavior.
+- SOURCE-GH-048 — Worksuite donor migration `2025_12_26_163811_add_user_chat_instructions_table.php`, SHA `ffcdcd3484ccad6e14b7d8ba0684689ee5f5e2e6`; schema confirms absence of company/provenance/experience semantics.
