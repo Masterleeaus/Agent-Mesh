@@ -177,3 +177,16 @@ Remaining lanes:
 - #767 — Evolution/Business Reality convergence.
 
 Historical Decision Engine/LocalBrain/Phase10 semantics should be selectively imported into these owners only when superior and non-duplicating.
+
+
+## Recommended claim sequence
+All five principal remaining lanes are currently unclaimed.
+
+Suggested convergence order based on dependencies, not importance ranking:
+1. #153 — finish canonical Business Memory & Knowledge substrate.
+2. #59 — finish persistent DecisionPacket lifecycle / temporal re-evaluation.
+3. #768 — bind Personal Zero Understanding & Experience to existing memory/context/decision owners.
+4. #37 — close verified-outcome learning/predictive adaptation against those contracts.
+5. #767 — connect the full Evolution/Reality loop around canonical Nexus, memory, decision, learning and authority boundaries.
+
+Parallel work is safe only where contracts are already stable. Do not create substitute issues for these lanes.
