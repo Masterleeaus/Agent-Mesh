@@ -190,15 +190,19 @@
     "Pass 20: audited all Agent Mesh bridge mutation call sites in the service worker and bridge allowlist",
     "Pass 20: generic callTitanBridge path already denies every classified agent_mesh mutation, forcing mutations through callAgentMeshMutation",
     "Pass 20: central mutation policy classifies recover/route/takeover as resume-gated and checkpoint as continuity-record-only; tests now lock these boundaries",
-    "Pass 20: Manager recover/route and continuation takeover use governed mutation wrapper; no direct bypassing Agent Mesh mutation call remained in audited service-worker paths"
+    "Pass 20: Manager recover/route and continuation takeover use governed mutation wrapper; no direct bypassing Agent Mesh mutation call remained in audited service-worker paths",
+    "Pass 20: audited Agent Mesh bridge mutation call sites and confirmed they converge through a central AGENT_MESH_MUTATION_POLICY/callAgentMeshMutation gate",
+    "Pass 20: recover_agent, route_packet and continuation takeover are resume-gated; checkpoint remains continuity-record-only and cannot grant execution authority",
+    "Pass 20: unknown Agent Mesh mutation actions fail closed; legacy packet_id is retained only as non-authoritative compatibility metadata",
+    "Pass 20: regression guards now prevent takeover/Manager mutation paths from bypassing the central gate"
   ],
   "current_work": [
-    "Converge legacy route_packet vocabulary and recovery payloads toward GitHub-native issue/subgoal semantics without breaking bridge compatibility"
+    "Remove remaining legacy packet terminology from active Manager Agent Mesh routing while preserving compatibility adapters"
   ],
   "next_actions": [
-    "Inspect bridge/server handlers for agent_mesh.route_packet and recover_agent",
-    "Preserve legacy packet_id only as compatibility adapter and normalize to issue_number/subgoal_id before authority decisions",
-    "Ensure recovery/takeover keep same claim branch and cannot silently create a second claim"
+    "Rename active routing semantics from packet to issue/subgoal where safe",
+    "Keep legacy packet fields only at compatibility boundary",
+    "Audit Manager supervisor step names and UI labels for packet/delta/promotion terminology"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
