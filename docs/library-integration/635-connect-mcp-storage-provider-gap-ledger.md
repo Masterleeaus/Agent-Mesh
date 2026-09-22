@@ -33,3 +33,11 @@ Deep-scan storage/offline/local bridge and MCP-specific current TypeScript imple
 The current TypeScript platform already contains a canonical Storage Fabric under `src/storage/`, plus offline mutation queue, sync, reconciliation, restart recovery and network resilience. These systems already enforce `company_id`, reject legacy tenant boundaries, use local-primary reconciliation, record explicit conflicts, and mark storage/offline outputs authority-neutral. No second storage backend or offline runtime was created.
 
 Added focused regression coverage for legacy tenant rejection, cross-company payload rejection, and authority-neutral storage envelopes. Existing storage/offline implementations are therefore the canonical convergence target; donor storage semantics should be imported only where a later audit identifies a concrete gap.
+
+## Pass 3 — MCP host negotiation convergence
+
+Library discovery evidence confirms the mature Titan MCP donor has JSON-RPC transport, tools/resources/prompts, scoped authentication, capability gating, trusted-origin controls and mutation continuity, while the live TypeScript ChatGPT App supplies the preferred TypeScript host/client seam. The existing canonical TypeScript capability registry and MCP external-tool governance remain the authority sources.
+
+The concrete missing cross-host semantic was a provider-neutral feature negotiation contract. Added `mcp-host-contract.ts` with MCP 2025-03-26 versioning, canonical `company_id`, host feature intersection, and explicit authority-neutral semantics. It does not execute tools, own credentials, or grant permissions. Added focused regression coverage. No PHP MCP server or duplicate tool catalogue was ported.
+
+Remaining MCP work is transport/host wiring and security/provider credential semantics only if the current repository demonstrates a real gap; those must delegate to canonical capability, governance and Command Bus systems.
