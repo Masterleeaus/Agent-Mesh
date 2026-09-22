@@ -136,3 +136,19 @@ Security evidence includes physically retrieved/SHA-verified Titan Locker and ve
 Library file: Titan-Chatbot-Field-Services-MVP-Extraction-Scaffold-Prompt.md
 Classification: HISTORICAL SECURITY REMEDIATION SPECIFICATION.
 Useful negative contracts: no public secret serialization; public callers forced to user role; privileged roles server-created only; file/conversation operations bind chatbot/session/conversation/customer context rather than ID-only authorization; company context derives from trusted host context.
+
+
+## SOURCE-LIB-017
+Library file: SUBGOAL-CODE-MAP.json
+Classification: VERIFIED LIBRARY MAPPING.
+Evidence: verified canonical-product masters include Titan Zero Apps v0.19.0-alpha.1, Titan Go v1.10.0 and Titan Hub v1.0.0-alpha.8, with Flutter workspace/deployment readiness and Interface/Interaction/Command Bus references.
+
+## SOURCE-LIB-018
+Library file: P0-EXECUTION-QUEUE.json
+Classification: CURRENT ROADMAP EXECUTION SPECIFICATION.
+Evidence: defines chat-first Go/Hub/Command surface goals, governed workforce projection, Go offline/field workflows, Hub customer-owned projection and Command exception/decision/workforce/system experience.
+
+## SOURCE-LIB-019
+Library file: Pasted markdown(20260922-131634).md
+Classification: CURRENT PRODUCT ARCHITECTURE DESCRIPTION.
+Evidence: Command = Chat/Control/Workforce/Decisions/System; Go = Chat/Active/Schedule/Communications/Field Kit with Camera + Maps; Hub = Chat/My Services/Support/Account with commercial interaction.
