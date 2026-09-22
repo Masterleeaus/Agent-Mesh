@@ -1523,3 +1523,118 @@ HIGH
 
 ### Related action
 #37; #633; #761; #768 and canonical security owners.
+
+
+---
+
+## FINDING-GH-058
+
+### Finding
+Direct inspection of Titan Rewind v1.0.9 verifies that Rewind is evidence-driven recovery, not blind rollback. It assembles traceable evidence/readiness material before restoration and is therefore a strong owner for recovering from bad Zero-state promotion without erasing the evidence chain.
+
+### Evidence
+Library master: `/MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip`, recorded SHA-256 `af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531`. Relevant implementation includes `System/Audit/RewindEvidenceAssembler.php` and `System/Certification/RewindHostReadinessReport.php` plus restore/recovery contracts in the master.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+#768; Rewind convergence.
+
+---
+
+## FINDING-GH-059
+
+### Finding
+Zero recovery must distinguish reversible internal state from irreversible or externally consequential effects. A bad preference, inferred rule, confidence update or learned lesson can often be superseded/recomputed; an email sent, payment made, customer contacted or physical action performed cannot be made historically untrue by restoring an earlier snapshot.
+
+### Why it matters
+Rewind must restore internal state and then use compensation/remediation for external effects. “Rollback” must never imply that the world was rewound.
+
+### Classification
+CROSS-SYSTEM RECOVERY INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+Rewind; Command Bus; #768.
+
+---
+
+## FINDING-GH-060
+
+### Finding
+The correct recovery primitive for Personal Zero is lineage-preserving supersession, not destructive overwrite. A recovered state should identify the bad revision, its source evidence, affected downstream decisions/actions, replacement/superseding revision and any recomputation required.
+
+### Evidence
+This converges Rewind evidence assembly with the previously verified Decision Engine revision/supersession chain, Phase10 truth lifecycle and Knowledge Authority source-version lineage.
+
+### Classification
+TARGET CONVERGENCE PATTERN
+
+### Confidence
+HIGH
+
+### Related action
+#768; #633; Rewind.
+
+---
+
+## FINDING-GH-061
+
+### Finding
+Recovery needs blast-radius analysis. When a poisoned or incorrect Zero belief is invalidated, Titan should identify which recommendations, DecisionPackets, workforce handoffs, configuration changes and external actions depended on that state before deciding what to recompute, supersede, compensate or leave unchanged.
+
+### Why it matters
+Restoring one memory record without tracing derived consequences can leave the system internally inconsistent.
+
+### Classification
+RECOVERY HARDENING REQUIREMENT
+
+### Confidence
+HIGH
+
+### Related action
+Rewind; Nexus/causality; #633; #768.
+
+---
+
+## FINDING-GH-062
+
+### Finding
+Authority must be revalidated during recovery. An old snapshot may contain an approval, trust tier, entitlement or delegation that was valid then but is invalid now; restoring historical state must never restore historical authority automatically.
+
+### Why it matters
+This closes a privilege-escalation path where Rewind could otherwise resurrect expired or revoked permissions.
+
+### Classification
+SECURITY / AUTHORITY INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#761; Operation Identity; Authority Continuance; Rewind.
+
+---
+
+## FINDING-GH-063
+
+### Finding
+Zero recovery should support four distinct outcomes: `restore/recompute internal state`, `supersede learned state`, `compensate external effects`, and `declare irreversible effect with remediation/escalation`. These should remain explicit rather than being collapsed into a generic rollback result.
+
+### Why it matters
+This makes Rewind honest about what can and cannot be undone and provides a clean contract for Zero, Decision, Workforce and Command Bus.
+
+### Classification
+TARGET ARCHITECTURE
+
+### Confidence
+HIGH
+
+### Related action
+Rewind; #768.
