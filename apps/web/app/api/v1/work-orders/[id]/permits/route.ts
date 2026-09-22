@@ -19,7 +19,7 @@ export const POST=withRole(["owner","admin"],async(request:NextRequest,session:A
   await withPortableTransaction(async(client)=>{
    const wo=await client.query(`SELECT id FROM work_orders WHERE id=$1 AND account_id=$2 FOR UPDATE`,[id,session.accountId]);if(!wo.rows[0])throw new Error("WORK_ORDER_NOT_FOUND");
    const provenance={source:"titan-zero-field-api",recorded_at:new Date().toISOString(),idempotency_key:`${session.traceId}:permit:${parsed.data.permit_id}`,trace_id:session.traceId};
-   const permit=buildTitanFieldPermit({...parsed.data,work_order_id:id,provenance});
+   const permit=buildTitanFieldPermit({...parsed.data,company_id:canonicalCompanyIdFromSession(session.accountId),work_order_id:id,provenance});
    await recordGovernedPermitState(client as any,{accountId:session.accountId,company_id:permit.company_id,actorId:session.userId,traceId:session.traceId,role:session.role},permit);
   });
   return NextResponse.json({data:{permit_id:parsed.data.permit_id,state:parsed.data.state}});
