@@ -1,4 +1,4 @@
-import type { StorageContextInput, StorageRecord } from "../storage/index.js";
+import { assertNoLegacyStorageBoundary, type StorageContextInput, type StorageRecord } from "../storage/index.js";
 import type { VerifiedOutcome } from "../workforce-evidence/contracts.js";
 import { proposeLearningFromCorrection, proposeLearningFromPredictionError, proposeLearningFromVerifiedOutcome, assertLearningProposalAuthorityNeutral, type PersonalZeroLearningProposal } from "./learning-governor-bridge.js";
 import { createLearningProposalRecord, reviewLearningProposal, supersedeLearningProposal, type LearningProposalRecord } from "./learning-review.js";
@@ -40,6 +40,8 @@ function requireRelationshipMatch(relationship:CompanyRelationship,one_id:string
   if(relationship.status!=="active")throw new Error("Personal Zero relationship is revoked");
 }
 function recordData<T>(row:StorageRecord|null):T|null{return row?.data?structuredClone(row.data) as T:null}
+function guardInput(value:unknown,label:string){assertNoLegacyStorageBoundary(value,label)}
+function requireContextCompany(context:StorageContextInput,company_id:string){if(String(context.company_id??"").trim()!==company_id)throw new Error("Personal Zero context company mismatch")}
 
 export function createPersonalZeroStateService({repository,clock=()=>Date.now()}:{repository:Repository;clock?:()=>number}){
   if(!repository?.put||!repository?.get||!repository?.list)throw new Error("Canonical Titan storage repository is required");
@@ -47,6 +49,7 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
     descriptor:Object.freeze({protocol:"titan.personal-zero.state.v1",module_id:MODULE_ID,company_boundary:"company_id",authority_neutral:true,execution_authority:false}),
 
     async putRelationship(context:StorageContextInput,input:CompanyRelationship){
+      guardInput(input,"personal_zero.relationship");requireContextCompany(context,input.company_id);
       const relationship=createCompanyRelationship(input);
       return repository.put(context,{module_id:MODULE_ID,collection:RELATIONSHIPS,record_id:relationship.relationship_id,data:relationship});
     },
@@ -60,6 +63,7 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
     },
 
     async putUnderstandingEvidence(context:StorageContextInput,input:UnderstandingEvidence){
+      guardInput(input,"personal_zero.understanding_evidence");requireContextCompany(context,input.company_id);
       if(!input.relationship_id)throw new Error("Company-scoped understanding evidence requires relationship_id");
       const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
       if(!relationship)throw new Error("Personal Zero relationship not found");
@@ -73,6 +77,7 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
     },
 
     async promoteUnderstanding(context:StorageContextInput,input:UnderstandingState){
+      guardInput(input,"personal_zero.understanding");requireContextCompany(context,input.company_id);
       if(input.status!=="candidate"&&input.status!=="accepted")throw new Error("Promotion status must be candidate or accepted");
       if(!input.relationship_id)throw new Error("Company-scoped understanding requires relationship_id");
       const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
@@ -100,6 +105,7 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
     },
 
     async putExperience(context:StorageContextInput,input:ExperienceRecord,verifiedOutcome?:Readonly<{company_id:string;outcome_id:string;verified:boolean;receipt_refs:readonly string[]}>){
+      guardInput(input,"personal_zero.experience");guardInput(verifiedOutcome,"personal_zero.verified_outcome");requireContextCompany(context,input.company_id);
       if(!input.relationship_id)throw new Error("Company-scoped experience requires relationship_id");
       const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
       if(!relationship)throw new Error("Personal Zero relationship not found");
@@ -112,6 +118,7 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
     },
 
     async appendCognitiveEvent(context:StorageContextInput,input:Omit<CognitiveEvent,"authority_neutral"|"execution_authority">){
+      guardInput(input,"personal_zero.cognitive_event");requireContextCompany(context,input.company_id);
       if(!input.relationship_id)throw new Error("Company-scoped cognitive event requires relationship_id");
       const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
       if(!relationship)throw new Error("Personal Zero relationship not found");
@@ -136,6 +143,7 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
     },
 
     async proposeLearningFromVerifiedOutcome(context:StorageContextInput,input:{one_id:string;zero_id:string;relationship_id:string;outcome:VerifiedOutcome}){
+      guardInput(input,"personal_zero.learning_outcome");requireContextCompany(context,input.outcome.company_id);
       const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
       if(!relationship)throw new Error("Personal Zero relationship not found");
       requireRelationshipMatch(relationship,input.one_id,input.zero_id,input.outcome.company_id);
@@ -182,6 +190,7 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
     },
 
     async putCrossContextShareGrant(context:StorageContextInput,input:Omit<CrossContextShareGrant,"authority_neutral">){
+      guardInput(input,"personal_zero.share_grant");
       const grant=createCrossContextShareGrant(input);
       if(context.company_id!==grant.source_company_id)throw new Error("Share grant must be created from source company context");
       const source=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,grant.source_relationship_id));
