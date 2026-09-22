@@ -91,3 +91,23 @@ Key findings:
 - This confirms #636 is a convergence/routing problem, not a need to import another app core.
 
 Implementation rule: preserve the existing domain pages and mature AppShell functionality, but make canonical Zero/Go/Hub chat-first surfaces the primary role entry experience and expose legacy domain pages as secondary destinations. Do not create a fourth app or duplicate business logic.
+
+## Pass 6 — entry-point trace
+
+Direct branch inspection resolves the apparent `app/titan` ambiguity:
+- the Titan PWA component/runtime files exist and are substantial,
+- but there is no routable `apps/web/app/titan/page.tsx` or `layout.tsx`,
+- and no root `/go`, `/hub`, `/command` or `/titan/{go,hub,zero}` pages were found.
+- repository search also finds no current caller mounting `RoleChat`, `RoleDetails` or the role secondary-surface components.
+
+Therefore the canonical chat-first implementation is currently **orphaned presentation code**, not an active application entry surface.
+
+Meanwhile `/app` is an authenticated server-rendered owner/field application backed by real database workflows. Replacing that route with the demo projection would be unsafe because the current Titan PWA components still call `getDemoSurfaceProjection()` with `demo_001` and prototype data.
+
+Convergence requirement:
+1. do not redirect production `/app` to demo-backed components;
+2. first extract/mount a role-shell entry seam that can receive real authenticated `company_id`/actor/projection data;
+3. preserve existing `/app/*` workflows as secondary destinations;
+4. then route owner/worker/customer entry points into the shared shell without duplicating business logic.
+
+This changes the immediate implementation priority from “routing” to “remove demo-only entry dependency / establish injectable surface projection seam.”
