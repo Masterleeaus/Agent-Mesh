@@ -1,5 +1,5 @@
 /**
- * Worker service logger — thin wrapper around @titan-zero/log.
+ * Worker service logger — thin wrapper around @ai-fsm/log.
  *
  * Usage:
  *   import { logger } from "./logger.js";
@@ -10,7 +10,7 @@
  *   import { _setWriter } from "./logger.js";  // test-only
  */
 
-import { createLogger, type LogLevel, type LogRecord } from "@titan-zero/log";
+import { createLogger, type LogLevel, type LogRecord } from "@ai-fsm/log";
 
 const { logger, _setWriter } = createLogger({ service: "worker" });
 
