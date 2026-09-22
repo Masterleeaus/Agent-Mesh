@@ -27,3 +27,8 @@ test('legacy tenant aliases fail closed and reviewed records stop overdue clock'
  assert.throws(()=>buildTitanProjectSubmittal({...base,tenant_company_id:'legacy'}),/legacy tenant boundary/);
  assert.deepEqual(deriveSubmittalReviewTiming({state:'approved',date_submitted:'2026-09-10',date_required:'2026-09-12',date_reviewed:'2026-09-15',as_of:'2026-09-22'}),{days_in_review:5,is_overdue:false});
 });
+test('review identity and chronology fail closed',()=>{
+ assert.throws(()=>buildTitanProjectSubmittal({...base,state:'approved',date_reviewed:'2026-09-18'}),/reviewer_ref/);
+ assert.throws(()=>buildTitanProjectSubmittal({...base,state:'approved',reviewer_ref:'user\/2',date_reviewed:'2026-09-09'}),/date_reviewed must not precede date_submitted/);
+ assert.throws(()=>buildTitanProjectSubmittal({...base,date_required:'2026-09-09'}),/date_required must not precede date_submitted/);
+});
