@@ -31,10 +31,10 @@ const integrations = [
 ]
 
 const features = [
-  { icon: '\ud83d\udccb', title: 'Smart Quoting', desc: 'Create professional quotes in seconds. AI suggests pricing based on job type, materials, and your history. Clients approve with one tap.', color: 'bg-purple-500/10' },
-  { icon: '\ud83d\udcc5', title: 'AI Scheduling', desc: 'Drag-and-drop calendar with AI-powered auto-assignment. Matches technicians by skill, location, and availability. No more double-bookings.', color: 'bg-cyan-500/10' },
-  { icon: '\ud83d\uddfa\ufe0f', title: 'Route Optimization', desc: 'Real turn-by-turn routing with multi-stop optimization. Traffic-aware ETAs. Your crew saves hours and fuel every week.', color: 'bg-green-500/10' },
-  { icon: '\ud83d\udcb0', title: 'Invoicing & Payments', desc: 'Progress invoicing, batch invoicing, deposit tracking, and Tap to Pay. Accept cards, ACH, Apple Pay, Google Pay via Stripe \u2014 with 0% platform markup, so every dollar the customer pays lands in your account.', color: 'bg-yellow-500/10' },
+  { icon: '📋', title: 'Quote Preparation', desc: 'Bring customer, property, job history and approved business knowledge together to prepare quotes for review and approval.', color: 'bg-purple-500/10' },
+  { icon: '📅', title: 'Scheduling Support', desc: 'Coordinate recurring work, availability, skills, locations and exceptions while keeping your existing scheduling systems where they fit.', color: 'bg-cyan-500/10' },
+  { icon: '🗺️', title: 'Field Coordination', desc: 'Keep jobs, locations, field teams, changes and customer communication connected across the operating day.', color: 'bg-green-500/10' },
+  { icon: '💰', title: 'Billing Workflow', desc: 'Move authorised completed work toward invoicing and payment through the accounting and payment systems selected by the business.', color: 'bg-yellow-500/10' },
   { icon: '\ud83d\udc65', title: 'Client CRM', desc: 'Full client profiles with service history, lifetime value, communication log, and satisfaction scores. Know every customer like your best one.', color: 'bg-red-500/10' },
   { icon: '\ud83d\udcf1', title: 'Offline Mode + Sync', desc: "Your crew works everywhere \u2014 even without signal. IndexedDB caching, mutation queue, and automatic background sync when connectivity returns.", color: 'bg-orange-500/10' },
   { icon: '\ud83d\udcac', title: 'Two-Way SMS', desc: 'Text clients and crew from one dashboard. Automated appointment reminders, on-my-way alerts, and follow-ups \u2014 included in every plan.', color: 'bg-blue-500/10' },
@@ -45,7 +45,7 @@ const features = [
   { icon: '\ud83d\udd04', title: 'Recurring Jobs & Invoices', desc: 'Set up maintenance contracts and recurring services. Invoices generate and send automatically on schedule.', color: 'bg-emerald-500/10' },
   { icon: '\ud83d\udccd', title: 'Geofencing', desc: 'Auto clock-in when techs arrive on site. Monitor arrivals, departures, and violations. Per-job radius controls with manager alerts.', color: 'bg-rose-500/10' },
   { icon: '\ud83c\udfa4', title: 'Voice-to-Invoice', desc: 'Techs record a voice note after a job. AI transcribes it and extracts line items into a ready-to-send invoice draft.', color: 'bg-amber-500/10' },
-  { icon: '\ud83d\udce5', title: 'Competitor Import', desc: 'Migrating from Jobber or HousecallPro? Import your customers, jobs, and history automatically with platform auto-detection.', color: 'bg-sky-500/10' },
+  { icon: '🔌', title: 'System Integration & Gap Filling', desc: 'Keep useful software, connect it through governed interfaces, and add Titan Zero software where a genuine operational gap remains.', color: 'bg-sky-500/10' },
 ]
 
 const aiFeatures = [
@@ -150,7 +150,7 @@ export default function Home() {
             One operating flow.<br />Less work falling between systems.
           </h2>
           <p className="text-nx-muted text-lg max-w-xl leading-relaxed">
-            From the first quote to the final invoice \u2014 and every job, route, and payment in between.
+            From the first enquiry through booking, field work, payment, follow-up and repeat service — Titan Zero helps connect the operational flow around your existing systems.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-nx-border border border-nx-border rounded-2xl overflow-hidden mt-12">
