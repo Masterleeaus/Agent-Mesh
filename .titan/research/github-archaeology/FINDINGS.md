@@ -1744,3 +1744,65 @@ CAPABILITY DISTINCTION / FALSE-CONFLATION PREVENTION
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-060
+
+### Finding
+A targeted archaeology pass does **not** verify a working Ollama/LM Studio/local-inference adapter inside current AI Coding Studio or Titan Builder/OpenBrowser. Their implemented “local” capability is primarily local tool/filesystem/bridge execution while reasoning is routed through browser AI providers.
+
+### Evidence
+- AI Coding Studio searches for Ollama/local inference yielded no concrete Ollama/LM Studio runtime adapter; its Local Bridge report describes local command/tool contracts rather than model inference.
+- Titan Builder provider UI/runtime currently enumerates browser providers such as ChatGPT, Claude, Gemini, DeepSeek, Perplexity, GLM and Grok.
+- Titan Builder architecture explicitly describes the extension sending work to browser AI pages while the local Node runtime retains project/tool authority.
+
+### Classification
+VERIFIED GAP / TERMINOLOGY CORRECTION
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-061
+
+### Finding
+Local-model execution remains a canonical Titan Zero capability, but its current ownership is outside the private browser bridge implementation.
+
+### Evidence
+Current Agent-Mesh issues:
+- #647 Consolidated Device / Distributed Intelligence Runtime includes Ollama/local-model and Cost Sovereignty direction.
+- #80 integrates/tests Intelligence Runtime and Local Bridge concerns.
+- #645 Edge Fabric provides adjacent device/node ownership.
+- #649 owns Titan Code browser convergence/personal AI workforce.
+
+Historical TitanPro product material also explicitly names BYO providers, Ollama and local models, but this is product/architecture evidence rather than proof of the Titan Code local-inference implementation.
+
+### Classification
+CURRENT OWNER EXISTS / IMPLEMENTATION PARITY REQUIRES SEPARATE CHECK
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-062
+
+### Finding
+Titan Code should support two distinct reasoning routes without conflating their trust/cost/privacy properties:
+
+1. **Browser-provider route** — ChatGPT/Claude/Gemini/etc. through the hardened browser bridge.
+2. **Local-model route** — Ollama/other approved customer/owner-hosted inference through an explicit local model adapter.
+
+Both may share project-context preparation and governed tool execution, but provider/model routing must remain separable from tool authority.
+
+### Classification
+PRIVATE DEVELOPMENT ARCHITECTURE GAP / CONVERGENCE REQUIREMENT
+
+### Confidence
+HIGH
+
+### Boundary
+For Titan Zero production, the corresponding provider choice belongs to canonical Intelligence Router/Cost Sovereignty (#647), not Titan Code.
