@@ -1933,7 +1933,9 @@ async function fetchLiveManagerAISnapshot(){
     const liveReconciliation=githubInput&&globalThis.TitanZeroManagerLiveState
         ? globalThis.TitanZeroManagerLiveState.reconcile({github:githubInput})
         : null;
-    const normalized={schema:'titan-code.manager-snapshot.v3',...value,githubProjection,liveReconciliation,live:true,health:health.ok?health.result:null,capabilities:capabilities.ok?capabilities.result:null,fetchedAt:new Date().toISOString()};
+    const auditSeed={...value,githubProjection};
+    const executionAudit=await fetchAgentMeshExecutionAudit(config,auditSeed).catch(error=>({ok:false,unavailable:true,reason:String(error?.message||error).slice(0,500)}));
+    const normalized={schema:'titan-code.manager-snapshot.v3',...value,githubProjection,liveReconciliation,executionAudit,live:true,health:health.ok?health.result:null,capabilities:capabilities.ok?capabilities.result:null,fetchedAt:new Date().toISOString()};
     await chrome.storage.local.set({[MANAGER_AI_SNAPSHOT_STORAGE_KEY]:normalized,[MANAGER_AI_LIVE_STORAGE_KEY]:{ok:true,fetchedAt:normalized.fetchedAt,health:normalized.health,capabilities:normalized.capabilities}});
     // Best-effort durable checkpoint. Failure never grants authority or blocks read-only supervision.
     checkpointAgentMeshContinuation(normalized,'live-snapshot').catch(()=>{});
