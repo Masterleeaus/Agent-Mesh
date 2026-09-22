@@ -13,7 +13,10 @@ export function normalizeSignal(input:TitanSignal){
 
 export function prioritizeSignals(signals:readonly TitanSignal[],company_id:string){
  const cid=clean(company_id,"company_id");
- const normalized=signals.map(normalizeSignal);\n const foreign=normalized.find(s=>s.company_id!==cid);\n if(foreign) throw new Error("signal-company-mismatch");\n return Object.freeze(normalized.sort((a,b)=>b.priority-a.priority||b.confidence-a.confidence||a.id.localeCompare(b.id)));
+ const normalized=signals.map(normalizeSignal);
+ const foreign=normalized.find(s=>s.company_id!==cid);
+ if(foreign) throw new Error("signal-company-mismatch");
+ return Object.freeze(normalized.sort((a,b)=>b.priority-a.priority||b.confidence-a.confidence||a.id.localeCompare(b.id)));
 }
 
 export const SIGNAL_POLICY=Object.freeze({tenant_boundary:"company_id" as const,deterministic:true as const,signal_is_authority:false as const,execution_authority:false as const});
