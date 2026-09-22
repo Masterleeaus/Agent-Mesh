@@ -320,3 +320,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-048 | Personal Zero Verification run #1 | workflow run 35787598460 / job 106948069220 | head f1c0e37dafa30c1744dd083e9e506aa3debe4cb7 | ACTIVE/FAILED-CERTIFICATION | DIRECT EXECUTION EVIDENCE | Typecheck passes. Personal Zero tests visibly exercise key TASK-152 invariants; one legacy-tenant assertion fails because runtime says “Personal Zero context company mismatch” while regex expects company_id/legacy tenant. Package-wide 111 failures are dominated by unrelated Workforce compiled-output/export debt. | YES |
+
+
+| INGEST-049 | #768 final scoped execution certification | Personal Zero Verification run 35788141465 / job 106949861698 | PR #770 head 8bc89997a6e7bfde21bbeb69b37ef66abbec4e47 | COMPLETE-IMPLEMENTATION/GOVERNANCE-PENDING | DIRECT EXECUTION EVIDENCE | Titan Platform typecheck PASS; scoped Personal Zero tests 52/52 PASS, 0 fail. TASK-152 implementation acceptance is satisfied. Claim Gate branch-format mismatch and unrelated global CI debt remain outside Personal Zero implementation scope. | YES |
