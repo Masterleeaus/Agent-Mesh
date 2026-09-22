@@ -521,3 +521,16 @@ Do not broaden architecture. Repair only observed failures.
    - do not bypass the gate merely to make PR #770 green.
 
 TASK-152/#768 remains In Progress until required code checks pass.
+
+
+## PR #770 Personal Zero compile gate passed
+The CSA-060 Personal Zero compile failures are closed.
+
+Do not absorb unrelated `services/worker` dependency/API failures into TASK-152.
+
+Remaining #768 evidence:
+1. obtain executed `@titan-zero/titan-platform` unit-test results through an existing scoped CI/evidence route if available;
+2. if tests fail, repair only failures attributable to Personal Zero/TASK-152;
+3. record exact run/job/head SHA;
+4. keep Agent Claim Gate branch-format reconciliation separate;
+5. once scoped typecheck + tests pass and acceptance criteria remain satisfied, TASK-152 can be marked complete even if unrelated repository debt is tracked by its existing owner, subject to the repository's merge policy.
