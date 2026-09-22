@@ -3,7 +3,14 @@ import { resolveTenantSmsSettings, tenantSmsWebhookKeyMatches } from "../setting
 
 describe("resolveTenantSmsSettings", () => {
   it("defaults SMS on while preserving environment-backed gateway credentials", () => {
-    expect(resolveTenantSmsSettings({})).toEqual({ enabled: true, simNumber: undefined, webhookKey: undefined });
+    expect(resolveTenantSmsSettings({})).toEqual({
+      enabled: true,
+      simNumber: undefined,
+      webhookKey: undefined,
+      gatewayUrl: undefined,
+      gatewayUsername: undefined,
+      gatewayPassword: undefined,
+    });
   });
 
   it("respects tenant disable and portable JSON-string settings", () => {
@@ -11,6 +18,9 @@ describe("resolveTenantSmsSettings", () => {
       enabled: false,
       simNumber: 2,
       webhookKey: undefined,
+      gatewayUrl: undefined,
+      gatewayUsername: undefined,
+      gatewayPassword: undefined,
     });
   });
 
@@ -21,6 +31,27 @@ describe("resolveTenantSmsSettings", () => {
       webhookKey: undefined,
     });
   });
+  it("resolves tenant gateway credentials without exposing deployment-global values", () => {
+    expect(resolveTenantSmsSettings({
+      sms_gateway_url: "  https://gateway.example.test  ",
+      sms_gateway_username: " tenant-user ",
+      sms_gateway_password: " tenant-password ",
+      sms_sim_number: 3,
+    })).toMatchObject({
+      gatewayUrl: "https://gateway.example.test",
+      gatewayUsername: "tenant-user",
+      gatewayPassword: "tenant-password",
+      simNumber: 3,
+    });
+  });
+
+  it("does not synthesize tenant gateway credentials when settings are absent", () => {
+    const settings = resolveTenantSmsSettings({});
+    expect(settings.gatewayUrl).toBeUndefined();
+    expect(settings.gatewayUsername).toBeUndefined();
+    expect(settings.gatewayPassword).toBeUndefined();
+  });
+
   it("resolves and trims a tenant webhook credential", () => {
     expect(resolveTenantSmsSettings({ sms_webhook_key: "  tenant-secret  " })).toMatchObject({
       webhookKey: "tenant-secret",
