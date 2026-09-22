@@ -70,3 +70,12 @@ test("canonical surfaces use the Titan operational accent palette", () => {
   assert.equal(getDemoSurfaceProjection("go").data.presentation.accent, "#2563eb");
   assert.equal(getDemoSurfaceProjection("hub").data.presentation.accent, "#16a34a");
 });
+
+
+test("canonical presentation copy does not assert demo customer, job, health or decision facts", () => {
+  for (const surface of ["zero", "go", "hub"]) {
+    const presentation = getDemoSurfaceProjection(surface).data.presentation;
+    const copy = [presentation.greeting, ...presentation.suggestions].join(" ");
+    assert.doesNotMatch(copy, /Jason|Alex|Sam|Hartwell|healthy|confirmed for tomorrow|two decisions/i);
+  }
+});
