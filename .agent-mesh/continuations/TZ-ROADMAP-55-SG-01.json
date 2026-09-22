@@ -80,15 +80,18 @@
     "Pass 19: regression guards enforce fail-closed takeover and Manager mutation authority",
     "Pass 20: audited all current Agent Mesh bridge call sites in the service worker: snapshot/health/capabilities/execution audit are reads; checkpoint records evidence; takeover and Manager recover/route are post-claim work mutations",
     "Pass 20: centralized takeover and Manager recover/route gating through preflightAgentMeshWorkMutation, which delegates to the GitHub-first resume bootstrap and fails closed",
-    "Pass 20: regression guards prevent those post-claim mutation paths from bypassing centralized reconciliation preflight"
+    "Pass 20: regression guards prevent those post-claim mutation paths from bypassing centralized reconciliation preflight",
+    "Pass 20: audited all current Agent Mesh bridge call sites in service-worker and bridge-client; read-only snapshot/health/capabilities/execution-audit calls require no mutation gate",
+    "Pass 20: found and closed the remaining continuation checkpoint mutation bypass; checkpoint now requires READY_TO_RESUME before the bridge mutation",
+    "Pass 20: takeover plus Manager recover/route were already gated from Pass 19; regression test now proves checkpoint preflight occurs before its bridge call"
   ],
   "current_work": [
-    "Harden bridge classification so Agent Mesh mutation actions carry explicit semantic classes and cannot be accidentally invoked as generic mutations"
+    "Reduce repeated resume-gate logic into a small preflight helper if this can be done without changing authority semantics"
   ],
   "next_actions": [
-    "Add Agent Mesh mutation metadata/classification without creating authority",
-    "Differentiate evidence checkpoint from work mutation/takeover",
-    "Use classification to make future bypasses test-detectable"
+    "Consolidate fail-closed mutation preflight used by checkpoint/takeover/Manager execution",
+    "Keep operation-specific identity checks after preflight",
+    "Add tests that read-only Agent Mesh calls remain available while mutations fail closed"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
