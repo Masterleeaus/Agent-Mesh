@@ -159,3 +159,48 @@ PROPOSED / UNCLAIMED IN BRANCH SEARCH AT THIS CHECKPOINT
 
 Purpose:
 Define one canonical Personal Zero Understanding & Experience contract layer, reusing current TypeScript evidence/storage/context owners and recovering only missing semantics from verified historical donors. This supersedes the need for ACTION-GH-003 to propose a new implementation issue; ACTION-GH-003 remains archaeology-only for donor verification.
+
+
+---
+
+## SYNTHESIS / HANDOFF ACTION MAP — 2026-09-23
+
+### ACTION-GH-004 — Personal Zero contracts
+Owner: #768
+Status: EXISTING OWNER — DO NOT DUPLICATE
+Use: Understanding Evidence/State, Experience Record, Cognitive Event, correction/supersession, privacy/locality and authority-neutral retrieval contracts. Recover LocalBrain/Decision donor semantics only where missing.
+
+### ACTION-GH-005 — Business Reality + Evolution convergence
+Owner: #767
+Status: EXISTING OWNER — DO NOT DUPLICATE
+Use: observation/change detection, Reality graph semantics, semantic diff, impact preview, exact approval fingerprint, idempotent provisioning, verification and continuous reassessment. OnboardingPro remains donor, not production authority.
+
+### ACTION-GH-006 — Business Memory / anti-repeat
+Owner: #153
+Status: EXISTING OWNER — DO NOT DUPLICATE
+Use: longitudinal intervention/outcome memory, provenance, context/freshness-aware anti-repeat and controlled retest. Keep business memory distinct from Personal Zero Experience Memory.
+
+### ACTION-GH-007 — Learning Governor / verified outcome adaptation
+Owner: #37 with #768/#153 consumers
+Status: EXISTING OWNER — DO NOT DUPLICATE
+Use: verified outcomes, minimum evidence, calibration, reversible/versioned adaptation, regression/drift detection. Learning never creates authority.
+
+### ACTION-GH-008 — Decision / evidence epistemics
+Owner: #633
+Status: EXISTING OWNER — DO NOT DUPLICATE
+Use: DecisionPacket, Model Council challenge, Knowledge Authority provenance/contradiction/freshness, evidence independence, insufficient-evidence outcomes and calibrated confidence.
+
+### ACTION-GH-009 — Durable context and continuity
+Owner: #21 + #725
+Status: EXISTING OWNERS — DO NOT DUPLICATE
+Use: actor/company/surface context, stable agent/operation references, handoffs, resume/reconnect and authority revalidation.
+
+### ACTION-GH-010 — Local/provider-neutral inference parity
+Owner: existing Cost Sovereignty / AI Core / Goal 51 convergence lane
+Status: GAP REQUIRES IMPLEMENTATION VERIFICATION
+Need: one production provider-independent capability/routing contract for device/local/LAN/Ollama/browser-local/BYO/Titan-entitled routes, with privacy/locality, entitlement, cost/latency/quality telemetry and no silent Titan-funded/cloud fallback.
+
+### ACTION-GH-011 — Final #763 handoff housekeeping
+Owner: #763
+Status: IN PROGRESS
+Need: finish source/index backfill, resolve duplicate ACTION-GH-003 naming in this file, capture current-repo references where possible, and prepare final archaeology handoff. Do not create implementation systems in #763.
