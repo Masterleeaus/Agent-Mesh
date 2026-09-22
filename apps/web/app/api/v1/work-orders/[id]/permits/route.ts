@@ -21,7 +21,7 @@ export const POST=withRole(["owner","admin"],async(request:NextRequest,session:A
    const wo=await client.query(`SELECT id FROM work_orders WHERE id=$1 AND account_id=$2 FOR UPDATE`,[id,session.accountId]);if(!wo.rows[0])throw new Error("WORK_ORDER_NOT_FOUND");
    const provenance={source:"titan-zero-field-api",recorded_at:new Date().toISOString(),idempotency_key:`${session.traceId}:permit:${parsed.data.permit_id}`,trace_id:session.traceId};
    const permit=buildTitanFieldPermit({...parsed.data,company_id:canonicalCompanyIdFromSession(session.accountId),work_order_id:id,provenance});
-   await recordGovernedPermitState(client as DbClient,{accountId:session.accountId,company_id:permit.company_id,actorId:session.userId,traceId:session.traceId,role:session.role},permit);
+   await recordGovernedPermitState(client,{accountId:session.accountId,company_id:permit.company_id,actorId:session.userId,traceId:session.traceId,role:session.role},permit);
   });
   return NextResponse.json({data:{permit_id:parsed.data.permit_id,state:parsed.data.state}});
  }catch(e){const missing=e instanceof Error&&e.message==="WORK_ORDER_NOT_FOUND";return NextResponse.json({error:{code:missing?"NOT_FOUND":"MUTATION_REJECTED",message:missing?"Work order not found":"Permit mutation rejected",traceId:session.traceId}},{status:missing?404:422});}
