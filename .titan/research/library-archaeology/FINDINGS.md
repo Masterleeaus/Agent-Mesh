@@ -374,3 +374,25 @@ HIGH.
 
 ### Related action
 ACTION-LIB-009.
+
+
+---
+
+## FINDING-LIB-013
+
+### Finding
+Environmental capability archaeology found an explicit Titan Zero plan but no recovered implementation donor. The Device-First Business OS plan marked Pass 25 Environmental & Sustainability Module as `UNRESOLVED_SOURCE_REQUIRED` and specified energy, water, waste, chemical/material, emissions/activity evidence, environmental incidents, improvement opportunities and jurisdiction overlays with source/unit/time/confidence/provenance. Later architecture material expands this into environmental risk, compliance, resource efficiency, opportunity and specialist workforce.
+
+Current GitHub code search found no implementation symbols for environmental, sustainability, emissions or environmental risk.
+
+### Classification
+SPECIFICATION / CURRENT CAPABILITY GAP — not a lost implemented subsystem.
+
+### Architectural conclusion
+Environmental Intelligence should be a vertical capability pack over existing Business Reality, Knowledge Authority, Risk, Decision, Signal, Workforce, Assets/Field, Experience and governed execution. Do not create environmental duplicates of those engines.
+
+### Confidence
+HIGH for specification/gap classification.
+
+### Related action
+ACTION-LIB-010 / #769.
