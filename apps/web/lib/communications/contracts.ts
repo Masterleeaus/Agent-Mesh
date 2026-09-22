@@ -244,3 +244,32 @@ export function isCommunicationQuietHour(
   if (start === end) return false;
   return start < end ? hour >= start && hour < end : hour >= start || hour < end;
 }
+
+
+export type OutboundCommunicationGateDecision =
+  | { allowed: true; remaining: number }
+  | {
+      allowed: false;
+      reason: Exclude<OutboundPolicyDecision, { allowed: true }>["reason"] | "rate-limit-exhausted";
+      remaining: number;
+    };
+
+/**
+ * One fail-closed pre-provider gate for outbound communications. Channel
+ * adapters should call this rather than composing policy and quota checks in
+ * provider-specific code.
+ */
+export function evaluateOutboundCommunicationGate(input: {
+  policy: OutboundCommunicationPolicy;
+  rate_limit: CommunicationRateLimit;
+}): OutboundCommunicationGateDecision {
+  const policy = evaluateOutboundCommunicationPolicy(input.policy);
+  const rate = evaluateCommunicationRateLimit(input.rate_limit);
+  if (!policy.allowed) {
+    return { allowed: false, reason: policy.reason, remaining: rate.remaining };
+  }
+  if (!rate.allowed) {
+    return { allowed: false, reason: "rate-limit-exhausted", remaining: 0 };
+  }
+  return { allowed: true, remaining: rate.remaining };
+}
