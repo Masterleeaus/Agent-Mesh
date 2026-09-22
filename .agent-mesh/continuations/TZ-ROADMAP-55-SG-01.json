@@ -157,15 +157,19 @@
     "Pass 20: audited Agent Mesh bridge mutation call sites; current service worker centralizes recover, route, continuation checkpoint and takeover under AGENT_MESH_MUTATION_POLICY",
     "Pass 20: generic callTitanBridge rejects all classified agent_mesh mutations so UI/model callers cannot bypass governed paths",
     "Pass 20: unknown Agent Mesh mutations fail closed; recover/route/takeover are resume-gated while checkpoint remains continuity-record-only",
-    "Pass 20: regression guards lock the central policy, generic-bridge denial and governed Manager mutation path"
+    "Pass 20: regression guards lock the central policy, generic-bridge denial and governed Manager mutation path",
+    "Pass 20: audited live Agent Mesh bridge mutation call sites; generic Titan Bridge calls now deny Agent Mesh mutations and mutations are centralized through callAgentMeshMutation",
+    "Pass 20: central policy allowlists recover_agent, route_packet, continuation checkpoint and takeover; unknown Agent Mesh mutations fail closed",
+    "Pass 20: recover/route/takeover are resume-gated while checkpoint remains continuity-record-only; Manager execution uses the governed mutation wrapper",
+    "Pass 20: regression guards lock generic bridge denial, central allowlist and governed Manager/checkpoint paths"
   ],
   "current_work": [
-    "Harden execution-request submission so allowlisted GitHub Action bridge requests use the same work identity/reconciliation semantics"
+    "Converge stale route_packet/packet terminology in Manager recovery path to GitHub-native issue/subgoal routing without creating a new operation"
   ],
   "next_actions": [
-    "Inspect current execution request creation/submission path before adding code",
-    "Ensure expected head SHA and canonical claim branch are sourced from reconciled GitHub projection",
-    "Prevent arbitrary operation expansion and preserve fixed execution operation registry"
+    "Inspect bridge/server implementation for agent_mesh.route_packet semantics",
+    "Map packet_id compatibility input to issue/subgoal identity before authorization/execution",
+    "Retain compatibility adapter only if needed and make GitHub issue/subgoal canonical"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
