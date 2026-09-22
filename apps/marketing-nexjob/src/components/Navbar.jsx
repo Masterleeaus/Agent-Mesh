@@ -9,15 +9,25 @@ const industryLinks = [
 
 const navLinks = [
   { label: 'Home', path: '/' },
+  { label: 'Your Zero', path: '/your-zero' },
   { label: 'Features', path: '/features' },
   { label: 'Fully Managed', path: '/fully-managed' },
   { label: 'Investment', path: '/investment' },
-  { label: 'Industries', path: '/industries' },
-  { label: 'Privacy', path: '/privacy-architecture' },
-  { label: 'Costs', path: '/cost-sovereignty' },
-  { label: 'Environment', path: '/environmental-systems' },
   { label: 'Compare', path: '/compare' },
-  { label: 'About', path: '/about' },
+]
+
+const capabilityLinks = [
+  ['AI Workforce','/ai-workforce'],
+  ['Intelligence & Decisions','/intelligence-decisions'],
+  ['Continuous Evolution','/continuous-evolution'],
+  ['Existing Systems & Integrations','/existing-systems'],
+  ['Chat, Voice, Camera & Location','/real-world-intelligence'],
+  ['Command, Go & Hub','/apps'],
+  ['Privacy & Architecture','/privacy-architecture'],
+  ['Cost Sovereignty','/cost-sovereignty'],
+  ['Security, Evidence & Recovery','/security-recovery'],
+  ['Measured Outcomes','/measured-outcomes'],
+  ['Environmental Intelligence','/environmental-systems'],
 ]
 
 export default function Navbar() {
@@ -48,6 +58,14 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
+          <div className="relative group">
+            <Link to="/features" className={`text-sm font-medium px-3.5 py-2 rounded-lg inline-flex items-center gap-1 ${capabilityLinks.some(([,p])=>pathname===p) ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
+              Capabilities <ChevronDown size={14}/>
+            </Link>
+            <div className="absolute right-0 top-full mt-1 w-72 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
+              {capabilityLinks.map(([label,path])=><Link key={path} to={path} className={`block px-3 py-2.5 rounded-lg text-sm ${pathname === path ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>{label}</Link>)}
+            </div>
+          </div>
           <div className="relative group">
             <Link to="/industries" className={`text-sm font-medium px-3.5 py-2 rounded-lg inline-flex items-center gap-1 ${pathname.startsWith('/industries') ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
               Industries <ChevronDown size={14}/>
@@ -103,7 +121,12 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="mt-3 border-t border-nx-border pt-3">
+            <p className="px-3 py-2 text-xs uppercase tracking-widest text-nx-muted2">Capabilities</p>
+            {capabilityLinks.map(([label,path])=><Link key={path} to={path} onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm rounded-lg ${pathname === path ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>{label}</Link>)}
+          </div>
+          <div className="mt-3 border-t border-nx-border pt-3">
             <p className="px-3 py-2 text-xs uppercase tracking-widest text-nx-muted2">Industries</p>
+            <Link to="/industries" onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm rounded-lg ${pathname === '/industries' ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>Industries Overview</Link>
             {industryLinks.map(([label,slug])=><Link key={slug} to={`/industries/${slug}`} onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm rounded-lg ${pathname === `/industries/${slug}` ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>{label}</Link>)}
           </div>
           <div className="mt-3 flex flex-col gap-2">
