@@ -170,3 +170,9 @@ if(!sw.includes("agent-mesh-mutation-requires-governed-path")) throw new Error('
 if(!sw.includes("const AGENT_MESH_MUTATION_POLICY=Object.freeze")) throw new Error('central Agent Mesh mutation policy missing');
 if(!sw.includes("agent_mesh.continuation.checkpoint':'continuity-record-only'")) throw new Error('checkpoint classification missing');
 if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager Agent Mesh mutations bypass governed policy');
+
+if(!sw.includes("agent-mesh-mutation-requires-governed-path")) throw new Error('generic Titan Bridge path must deny Agent Mesh mutations');
+if(!sw.includes("AGENT_MESH_MUTATION_POLICY=Object.freeze")) throw new Error('central Agent Mesh mutation policy missing');
+if(!sw.includes("agent-mesh-mutation-not-allowlisted")) throw new Error('unknown Agent Mesh mutations must fail closed');
+if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.checkpoint'")) throw new Error('continuation checkpoint must use governed mutation path');
+if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager Agent Mesh mutations must use governed mutation path');
