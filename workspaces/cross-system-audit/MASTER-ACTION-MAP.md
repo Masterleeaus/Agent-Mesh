@@ -290,3 +290,15 @@ Still unclaimed:
 4. #767 — Business Reality/Evolution lifecycle around existing Nexus.
 
 Coordination rule: allow #768 to proceed against stable existing contracts; the four unclaimed lanes must reuse its published contracts when relevant but must not block by inventing duplicate identity/memory/authority abstractions.
+
+
+## Issue #768 canonical owner selected
+Active implementation has selected `@titan-zero/titan-platform` using the existing `src/storage` repository contract.
+
+Audit coordination should now enforce:
+- no new Personal Zero database/service;
+- no LocalBrain resurrection;
+- no duplicate Interaction, Business Memory, Business Reality or Authority owner;
+- Personal Zero stores only its versioned identity/relationship, Understanding, Experience and CognitiveEvent contracts plus references into existing evidence/decision/outcome systems;
+- preserve ONE identity outside any single company relationship while retaining `company_id` as the sole company tenant boundary;
+- re-ingest `agent/768` after the next implementation slice and verify isolation, revocation, provenance, correction/supersession and authority-neutral tests.
