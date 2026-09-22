@@ -1899,7 +1899,27 @@ async function fetchLiveManagerAISnapshot(){
     ]);
     if(!snapshot.ok) return {ok:false,source:'local',reason:snapshot.reason||'live-mesh-snapshot-failed',health:health.ok?health.result:null,capabilities:capabilities.ok?capabilities.result:null,snapshot:await getManagerAISnapshot()};
     const value=snapshot.result&&typeof snapshot.result==='object'?snapshot.result:{};
-    const normalized={schema:'titan-code.manager-snapshot.v2',...value,live:true,health:health.ok?health.result:null,capabilities:capabilities.ok?capabilities.result:null,fetchedAt:new Date().toISOString()};
+    // Agent Mesh V4: preserve the bridge payload but derive development lifecycle
+    // from GitHub facts when they are present. Local/AI state remains projection-only.
+    const githubInput=value.github||value.agentMesh||null;
+    const githubProjection=githubInput&&globalThis.TitanCodeManagerGitHubState
+        ? globalThis.TitanCodeManagerGitHubState.derive({
+            issue:githubInput.issue,
+            mainSha:githubInput.git?.mainSha||githubInput.mainSha,
+            baseSha:githubInput.claim?.baseSha||githubInput.git?.baseSha||githubInput.baseSha,
+            headSha:githubInput.git?.headSha||githubInput.claim?.headSha||githubInput.headSha,
+            branch:githubInput.claim?.branch||githubInput.branch,
+            claimBranchExists:githubInput.claim?.exists===true||githubInput.claimBranchExists===true,
+            pr:githubInput.pullRequest||githubInput.pr,
+            checks:Array.isArray(githubInput.checks)?githubInput.checks:(githubInput.checks?.items||[]),
+            compare:githubInput.compare,
+            rebaseRequired:githubInput.lifecycle==='REBASE_REQUIRED'||githubInput.rebaseRequired
+        })
+        : null;
+    const liveReconciliation=githubInput&&globalThis.TitanZeroManagerLiveState
+        ? globalThis.TitanZeroManagerLiveState.reconcile({github:githubInput})
+        : null;
+    const normalized={schema:'titan-code.manager-snapshot.v3',...value,githubProjection,liveReconciliation,live:true,health:health.ok?health.result:null,capabilities:capabilities.ok?capabilities.result:null,fetchedAt:new Date().toISOString()};
     await chrome.storage.local.set({[MANAGER_AI_SNAPSHOT_STORAGE_KEY]:normalized,[MANAGER_AI_LIVE_STORAGE_KEY]:{ok:true,fetchedAt:normalized.fetchedAt,health:normalized.health,capabilities:normalized.capabilities}});
     return {ok:true,source:'live',snapshot:normalized,health:normalized.health,capabilities:normalized.capabilities};
 }
