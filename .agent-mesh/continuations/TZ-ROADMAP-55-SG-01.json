@@ -113,15 +113,18 @@
     "Pass 20: audited all visible agent_mesh mutation call sites in Titan Code service worker and found the existing centralized callAgentMeshMutation gate",
     "Pass 20: all governed Agent Mesh mutations now flow through the centralized GitHub-first resume preflight; direct generic callTitanBridge rejects agent_mesh mutations",
     "Pass 20: fixed a concrete resume-gate variable bug where the mutation payload referenced undefined resumeGate instead of the validated gate",
-    "Pass 20: added regression guards preventing bypass and requiring the validated resume gate in mutation payloads"
+    "Pass 20: added regression guards preventing bypass and requiring the validated resume gate in mutation payloads",
+    "Pass 20: audited current Titan Code Agent Mesh mutation paths; direct agent_mesh mutations are blocked by callTitanBridge and governed mutation calls route through callAgentMeshMutation",
+    "Pass 20: central callAgentMeshMutation now performs GitHub-first resume reconciliation before recover, route, checkpoint or takeover operations",
+    "Pass 20: regression guard added for the central mutation preflight and governed dispatch path"
   ],
   "current_work": [
-    "Audit the broader Titan Code browser/Agent Mesh action dispatch paths and GitHub-side mutation endpoints for equivalent bypasses"
+    "Audit Agent Mesh server/workflow-side mutation entrypoints and claim lifecycle for equivalent bypasses"
   ],
   "next_actions": [
-    "Inspect all action dispatchers that can invoke agent_mesh or repository mutations",
-    "Separate claim/bootstrap operations from post-takeover work mutations",
-    "Add a single reusable mutation authorization contract only where an existing path genuinely bypasses it"
+    "Inspect bridge/server handlers for agent_mesh.recover_agent, route_packet, checkpoint and takeover",
+    "Require request-side identity and authority validation server-side, not only browser-side",
+    "Add cross-surface contract tests so Titan Code and Agent Mesh enforce the same mutation rules"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
