@@ -109,3 +109,7 @@ if(!sw.includes("allowed=new Set(['agent_mesh.recover_agent','agent_mesh.route_p
 
 if(!bridge.includes("const RESUME_GATED_MUTATIONS=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover'])")) throw new Error('central resume gate must cover takeover mutation');
 if(!bridge.includes("resume.status!=='READY_TO_RESUME'")) throw new Error('bridge mutation gate must require READY_TO_RESUME');
+
+const bc=fs.readFileSync('src/integration/titan-bridge-client.js','utf8');
+if(!bc.includes("agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover")) throw new Error('all Agent Mesh mutations must be resume-gated');
+if(!sw.includes('const gatedPayload={...payload,resume_gate:resumeGate.bootstrap}')) throw new Error('validated resume gate must reach bridge mutation client');
