@@ -451,3 +451,18 @@ Required convergence packet:
 7. no authority, delegation or tenant boundary is transferred with shared understanding.
 
 Before implementation, deep-scan current consent/governance/Command Bus/cross-company messaging owners and reuse an existing contract if present.
+
+
+## Issue #768 target-acceptance verification
+Reported target-side acceptance may close the cross-company handshake design gap, but do not mark it certified until the artifact is directly inspected.
+
+Next verification requirements:
+- resolve the new target-acceptance source file and immutable blob on `agent/768`;
+- verify target relationship is checked under target `company_id`;
+- verify acceptance fingerprint covers every material source grant field;
+- verify grant mutation, source revocation, target revocation and either-side expiry fail closed;
+- verify accepted subject subset cannot widen the source grant;
+- verify ONE/Zero binding cannot be substituted;
+- verify broker artifact carries provenance/integrity evidence and no authority/delegation;
+- verify source consumption requires a valid target acceptance rather than merely defining the artifact;
+- execute committed tests/CI.
