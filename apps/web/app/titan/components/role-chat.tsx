@@ -133,8 +133,8 @@ export function RoleChat({ role, onOpenDetails, projection: suppliedProjection, 
     document.addEventListener("visibilitychange", onVisibility); window.addEventListener("online", onOnline);
     return () => { document.removeEventListener("visibilitychange", onVisibility); window.removeEventListener("online", onOnline); };
   }, [interaction, streamState]);
-  const response = useMemo(() => answerFor(role, intent), [intent, role]);
-  const presentationIntent = useMemo(() => demoPresentationIntent({ company_id: projection.company_id, conversation_id: conversationId, surface: role, text: intent }), [projection.company_id, conversationId, role, intent]);
+  const response = useMemo(() => demo ? answerFor(role, intent) : "Your authenticated workspace is ready. Ask Zero for current business context or open the existing operational details.", [demo, intent, role]);
+  const presentationIntent = useMemo(() => demo ? demoPresentationIntent({ company_id: projection.company_id, conversation_id: conversationId, surface: role, text: intent }) : null, [demo, projection.company_id, conversationId, role, intent]);
 
   function prepareMultimodal(kind: MultimodalInputKind, file?: File) {
     const envelope = createMultimodalInput({ company_id: projection.company_id, conversation_id: conversationId, surface: role, kind, input_id: `input-${Date.now().toString(36)}`, file_name: file?.name, media_type: file?.type });
@@ -157,7 +157,7 @@ export function RoleChat({ role, onOpenDetails, projection: suppliedProjection, 
       setStreamState(session.interrupted ? "interrupted" : "idle");
       if (session.interrupted) resumeNeeded.current = true;
       conversation.reconcile(clientMessageId, true);
-      const workerText = requestedWorker ? `${requestedWorker} joined this conversation. I’ll keep the context here while they help.` : answerFor(role, clean);
+      const workerText = requestedWorker ? `${requestedWorker} joined this conversation. I’ll keep the context here while they help.` : (projected.length ? "Updated from the authenticated interaction runtime." : "Request received. No live structured response was returned, so no business facts were inferred.");
       const projected = events.flatMap((event) => event.message ? [{ ...event.message, delivery_state: "accepted" as const }] : []);
       const reply: ConversationRecord = { id: `reply-${clientMessageId}`, conversation_id: conversationId, company_id: projection.company_id, surface: role, from: "zero", text: workerText, created_at: new Date().toISOString(), delivery_state: "accepted" };
       setHistory(conversation.append([...projected, reply]));
@@ -176,7 +176,7 @@ export function RoleChat({ role, onOpenDetails, projection: suppliedProjection, 
         {streamState === "streaming" && <div className="worker-handoff" role="status"><Sparkles /><span><strong>Working…</strong> response can be interrupted safely</span></div>}
         {streamState === "interrupted" && <div className="worker-handoff" role="status"><ShieldAlert /><span><strong>Connection interrupted</strong> · conversation can continue from the last server token</span></div>}
         {activeWorker && <div className="worker-handoff" role="status"><Sparkles /><span><strong>{activeWorker}</strong> joined · same conversation, shared context</span></div>}
-        <div className="zero-notification"><div className="zero-message"><div className="bubble zero"><div className="zero-bubble-intro"><ZeroMark state="speaking" size="hero"/><div><p>{profile.greeting}</p><p>{response}</p></div></div><GeneratedUiEnvelope intent={presentationIntent} expected={{ company_id: projection.company_id, conversation_id: conversationId, surface: role }}/><div className="gen-meta"><span>{demo ? "Demo CRM" : "Authenticated workspace"} · Updated just now</span><span>Surface API · {projection.revision}</span><span>{demo ? "Prototype" : "Governed"} · No external change without a receipt</span></div><button className="detail-link" onClick={onOpenDetails}>View details <ArrowRight /></button></div></div></div>
+        <div className="zero-notification"><div className="zero-message"><div className="bubble zero"><div className="zero-bubble-intro"><ZeroMark state="speaking" size="hero"/><div><p>{profile.greeting}</p><p>{response}</p></div></div>{presentationIntent ? <GeneratedUiEnvelope intent={presentationIntent} expected={{ company_id: projection.company_id, conversation_id: conversationId, surface: role }}/> : <div className="generated-ui-fallback" role="status">Live generated cards will appear here when returned by the authenticated interaction runtime.</div>}<div className="gen-meta"><span>{demo ? "Demo CRM" : "Authenticated workspace"} · Updated just now</span><span>Surface API · {projection.revision}</span><span>{demo ? "Prototype" : "Governed"} · No external change without a receipt</span></div><button className="detail-link" onClick={onOpenDetails}>View details <ArrowRight /></button></div></div></div>
         {demo && demoConversations[role].map((message, index) => <div key={`${role}-demo-${message.from}-${index}`} className={message.from === "user" ? "bubble user" : "bubble zero compact"}>{message.text}</div>)}
         {history.map((message) => <div key={message.id} data-delivery-state={message.delivery_state} className={message.from === "user" ? "bubble user" : "bubble zero compact"}>{message.text}{message.delivery_state === "sending" && <small> · Sending…</small>}{message.delivery_state === "failed" && <small> · Not sent</small>}</div>)}
       </div>
