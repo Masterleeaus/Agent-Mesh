@@ -1,6 +1,6 @@
 import type { Client } from "pg";
 import { logger } from "./logger.js";
-import { recurringInspectionHtml } from "@titan-zero/email-templates";
+import { recurringInspectionHtml } from "@ai-fsm/email-templates";
 import type { AutomationRow, RunResult } from "./automations/types.js";
 import { enqueueNotification } from "./notification/enqueue.js";
 import { PRIORITY } from "./notification/priority.js";
