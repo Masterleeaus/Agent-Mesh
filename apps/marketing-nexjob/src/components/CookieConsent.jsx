@@ -4,21 +4,17 @@ export default function CookieConsent() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    const consent = localStorage.getItem('nx_cookie_consent')
+    const consent = localStorage.getItem('titan_zero_cookie_consent')
     if (!consent) setVisible(true)
   }, [])
 
   const accept = () => {
-    localStorage.setItem('nx_cookie_consent', 'accepted')
-    // Update GA4 consent
-    if (window.gtag) {
-      window.gtag('consent', 'update', { analytics_storage: 'granted' })
-    }
+    localStorage.setItem('titan_zero_cookie_consent', 'accepted')
     setVisible(false)
   }
 
   const decline = () => {
-    localStorage.setItem('nx_cookie_consent', 'declined')
+    localStorage.setItem('titan_zero_cookie_consent', 'declined')
     setVisible(false)
   }
 
