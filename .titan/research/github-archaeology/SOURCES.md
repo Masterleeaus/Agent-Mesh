@@ -216,3 +216,11 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-084 — InvoiceFollowupTool SHA `4fd787b5b87217402fbab99a5e865007ec578676`, PaymentLinkTool SHA `84b60320afc57d0376d0f18994a8e57e54e43e68`, PaymentPlanTool SHA `7e43816e3831f051921819701afe60d77982a279`, JobStatusAssistTool SHA `4c6957e23d35ab4802f976ce54ebd1318f1e5983`; direct inspection demonstrates draft/wrapper maturity.
 - SOURCE-GH-085 — TitanPro `Modules/TitanNexus/AI/Tools/LeadScoringTool.php`, SHA `293faed545562e78bdf23932a409f8e4d0fb4117`; direct draft/approval-required scoring handler.
 - SOURCE-GH-086 — TitanPro `Modules/TitanNexus/Agents/MarketingAgent/memory/payment-memory.schema.json`, SHA `ef43e9f28d5ac8eafc6765fe0198c7c95fcabc7f`; legacy tenant_id invoice/payment/job-pattern memory schema.
+
+
+- SOURCE-GH-087 — cleanly `docs/01-PWA/17-edge-node-and-pwa-runtime-contract.md`, SHA `244abc24da9556ecdb103b22280f23ed52efe7ca`; device identity/trust, bootstrap, offline queues, replay, evidence, revocation and conflict contract.
+- SOURCE-GH-088 — cleanly `docs/01-PWA/01-system-doctrine.md`, SHA `1b5107b41277ad332a867932c09461a53e7c5204`; historical nine-node taxonomy, company_id doctrine and role-specific PWA principle.
+- SOURCE-GH-089 — cleanly `docs/Titan_Blueprints/13-SYNC-OFFLINE-NODE-BLUEPRINT.md`, SHA `3dd9cb376d541405abcb6c9699e5b90f42ce800d`; sync/offline/checkpoint/replay/security blueprint.
+- SOURCE-GH-090 — cleanly `docs/01-PWA/09-canonical-data-model.md`, SHA `1bf7a96325fa9fe38350651597fe23229a77b1c4`; canonical object families and surface projection rule.
+- SOURCE-GH-091 — cleanly `docs/dashboards/titan-go.md`, SHA `35b8326bf5326ae6a1fdf2a3075203780332b29b`; field-worker offline/checklist/evidence/safety workflow.
+- SOURCE-GH-092 — Agent-Mesh issue search: #641/#636/#542/#549/#550 current PWA owners, #690 Zero/Go/Hub normalization, #645 Edge Fabric, #725 cross-surface continuity.
