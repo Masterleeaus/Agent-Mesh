@@ -1,0 +1,78 @@
+import { Link, Navigate, useParams } from 'react-router-dom'
+import { Check } from 'lucide-react'
+import SectionLabel from '../components/SectionLabel'
+import CTASection from '../components/CTASection'
+import { ButtonPrimary, ButtonOutline } from '../components/Button'
+import { appRoutes } from '../config'
+
+export const industryConfigs = {
+  cleaning: {
+    name:'Cleaning', icon:'🧹', headline:'A managed business system built for cleaning companies.',
+    intro:'Connect enquiries, quotes, recurring cleans, properties, teams, checklists, customer communication, evidence, billing and rebooking — while Titan Zero manages the intelligence system behind the operation.',
+    pains:['Missed enquiries while the team is working','Recurring jobs and customer preferences spread across tools','Last-minute roster changes and team coordination','Quality evidence, checklists and follow-up consuming office time'],
+    flow:['Enquiry','Quote','Book','Clean','Verify','Bill','Rebook'],
+    capabilities:[['Reception & lead handling','Capture and qualify enquiries, prepare next steps and keep follow-up moving.'],['Recurring service operations','Coordinate repeat schedules, property notes, customer preferences and exceptions.'],['Team coordination','Support assignments, schedule changes, readiness and field communication.'],['Quality & evidence','Keep checklists, photos, notes and service evidence connected to the job.'],['Customer care','Handle reminders, updates, feedback, issues and proactive rebooking.'],['Business operations','Connect operational context with quoting, billing, purchasing and reporting workflows.']]
+  },
+  landscaping: {
+    name:'Landscaping & Lawn Care', icon:'🌿', headline:'Run recurring routes, crews and seasonal work as one managed system.',
+    intro:'Titan Zero connects leads, properties, quotes, recurring routes, crews, equipment, seasonal work, customer requests and follow-up around the systems your landscaping business already uses.',
+    pains:['Route changes and recurring schedules taking office time','Seasonal work creating peaks in enquiries and planning','Property notes and customer requests getting lost','Crews, equipment and materials needing coordination'],
+    flow:['Lead','Property','Quote','Route','Service','Follow up','Repeat'],
+    capabilities:[['Lead & quote support','Keep new work moving from enquiry through site context and quote preparation.'],['Recurring routes','Coordinate repeat service schedules, route context and exceptions.'],['Crew operations','Support assignments, job context, field communication and changes.'],['Property knowledge','Keep access notes, service history, preferences and evidence with the property.'],['Seasonal campaigns','Support seasonal services, reminders, reactivation and customer communication.'],['Resource coordination','Connect equipment, materials, purchasing and operational requirements to planned work.']]
+  },
+  pools: {
+    name:'Pool Service', icon:'🏊', headline:'A managed intelligence system for recurring pool service.',
+    intro:'Coordinate customers, pools, recurring visits, readings, chemicals, equipment history, technicians, repairs, communication and billing without turning the business into another software migration project.',
+    pains:['Recurring visits mixed with repair work','Pool history and readings spread between people and systems','Chemical and equipment context needed in the field','Customers expecting proactive updates'],
+    flow:['Customer','Pool','Schedule','Service','Record','Resolve','Repeat'],
+    capabilities:[['Recurring service','Coordinate regular visits, exceptions and technician assignments.'],['Pool history','Keep readings, service notes, equipment and prior issues in context.'],['Field support','Give technicians the relevant job, customer and asset knowledge at the point of work.'],['Repair workflow','Move identified issues into approval, parts, scheduling and completion.'],['Customer communication','Support reminders, service updates, recommendations and follow-up.'],['Environmental context','Support evidence around water, chemical and resource practices for qualified review where required.']]
+  },
+  'pressure-washing': {
+    name:'Pressure Washing', icon:'💦', headline:'Turn enquiries and site evidence into a smoother pressure-washing operation.',
+    intro:'Titan Zero helps connect lead qualification, site assessment, quoting, booking, crews, before-and-after evidence, customer communication, payment and review follow-up.',
+    pains:['Quoting from incomplete site information','Weather and scheduling changes','Before-and-after evidence scattered across phones','Follow-up and review requests happening inconsistently'],
+    flow:['Enquiry','Assess','Quote','Book','Service','Evidence','Follow up'],
+    capabilities:[['Lead qualification','Collect the information needed to understand the property and requested work.'],['Quote preparation','Bring site context, service scope and business knowledge together for review.'],['Scheduling','Coordinate bookings, teams and operational exceptions.'],['Visual evidence','Keep photos and job evidence associated with the customer and service.'],['Customer updates','Support confirmations, reminders, arrival communication and completion messages.'],['Growth follow-up','Keep reviews, repeat work and related service opportunities from being forgotten.']]
+  },
+  'pest-control': {
+    name:'Pest Control', icon:'🐛', headline:'Managed operations for recurring treatments, evidence and customer care.',
+    intro:'Connect enquiries, sites, pest history, bookings, recurring treatments, field records, materials, customer communication, follow-up and controlled environmental knowledge.',
+    pains:['Recurring treatment schedules and exceptions','Site and pest history needed during visits','Field evidence and material records requiring discipline','Compliance-sensitive information needing controlled review'],
+    flow:['Enquiry','Site','Plan','Treat','Record','Review','Repeat'],
+    capabilities:[['Site history','Maintain relevant customer, site, issue and treatment context.'],['Recurring treatments','Coordinate repeat schedules, reminders and exceptions.'],['Field records','Capture authorised notes, evidence and materials against the work.'],['Customer care','Support preparation instructions, updates, follow-up and recurring service.'],['Knowledge controls','Provide governed access to approved procedures and business knowledge.'],['Environmental support','Environmental evidence and assessment workflows can be reviewed by appropriately qualified environmental scientists where professional judgement is required.']]
+  },
+  'window-cleaning': {
+    name:'Window Cleaning', icon:'🪟', headline:'A managed system for routes, repeat customers and field teams.',
+    intro:'Titan Zero connects enquiries, properties, quoting, recurring schedules, team assignments, access notes, service evidence, customer communication and rebooking.',
+    pains:['Repeat work relying on manual reminders','Access and property notes living in staff memory','Route and team changes creating admin','Commercial and residential work needing different workflows'],
+    flow:['Lead','Property','Quote','Schedule','Service','Confirm','Rebook'],
+    capabilities:[['Recurring customers','Support repeat schedules and proactive rebooking.'],['Property context','Keep access, scope, preferences and service history attached to the property.'],['Team coordination','Support assignment, readiness and schedule changes.'],['Service evidence','Capture completion notes and authorised visual evidence.'],['Customer communication','Coordinate confirmations, reminders, updates and follow-up.'],['Commercial workflows','Support more structured sites, contacts, recurring requirements and evidence where needed.']]
+  },
+  'property-maintenance': {
+    name:'Property Maintenance', icon:'🏠', headline:'One managed operating layer across multi-service property work.',
+    intro:'Connect customers, properties, service requests, quotes, work orders, teams, contractors, materials, evidence, communication and recurring maintenance while retaining the systems that already work.',
+    pains:['Many service types creating fragmented workflows','Multiple contacts, properties and recurring requirements','Jobs moving between employees and contractors','Evidence, approvals and materials spread across systems'],
+    flow:['Request','Property','Scope','Assign','Work','Evidence','Maintain'],
+    capabilities:[['Multi-service intake','Qualify and route different maintenance requests with the right context.'],['Property knowledge','Keep contacts, access, history, assets and recurring requirements together.'],['Work coordination','Support employees, contractors, stages, dependencies and changes.'],['Approvals & evidence','Keep scope, approvals, notes and completion evidence connected.'],['Materials & purchasing','Connect requirements, purchasing context and work progress.'],['Recurring maintenance','Support planned work, reminders and ongoing property relationships.']]
+  },
+  'mobile-services': {
+    name:'Mobile Services', icon:'🚐', headline:'Take the business to the customer without leaving the office work behind.',
+    intro:'Titan Zero connects leads, customer locations, scheduling, travel context, mobile workers, job information, evidence, communication, payment and follow-up for businesses that deliver services wherever the customer is.',
+    pains:['Travel and schedule changes affecting the whole day','Workers needing context away from the office','Customer arrival communication consuming time','Field notes and evidence needing to reach office workflows'],
+    flow:['Lead','Locate','Schedule','Travel','Serve','Close','Follow up'],
+    capabilities:[['Location-aware planning','Keep customer location and operational context available to scheduling workflows.'],['Mobile worker support','Bring authorised customer, job and knowledge context closer to the worker.'],['Communication','Support booking, arrival, delay and completion updates.'],['Field capture','Connect notes, voice, camera and evidence back to the job.'],['Completion workflows','Move completed work toward billing, follow-up and next actions.'],['Edge capability','Customer-controlled devices can participate in the Titan Zero node architecture where appropriate.']]
+  }
+}
+
+export default function IndustryHome(){
+ const {industry}=useParams(); const cfg=industryConfigs[industry]; if(!cfg)return <Navigate to="/industries" replace/>
+ return <main>
+  <section className="relative pt-36 pb-20 overflow-hidden"><div className="absolute -top-48 left-1/2 -translate-x-1/2 w-[800px] h-[800px] hero-glow pointer-events-none"/><div className="relative z-10 max-w-7xl mx-auto px-6 text-center"><div className="text-4xl mb-4">{cfg.icon}</div><div className="inline-flex items-center gap-2 text-xs font-semibold text-nx-purple-light bg-purple-500/10 border border-purple-500/20 px-4 py-1.5 rounded-full mb-6">Titan Zero Field Services · {cfg.name}</div><h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-6">{cfg.headline}</h1><p className="text-lg text-nx-muted max-w-3xl mx-auto mb-9 leading-relaxed">{cfg.intro}</p><div className="flex justify-center gap-4 flex-wrap"><ButtonPrimary size="lg" href={appRoutes.signup}>Sign Up →</ButtonPrimary><ButtonOutline size="lg" to="/fully-managed">See how Fully Managed works</ButtonOutline></div><p className="text-xs text-nx-muted2 mt-7">Keep useful software · Fill missing software gaps · Managed workforce · Privacy-first options</p></div></section>
+  <section className="border-y border-nx-border py-10 px-6"><div className="max-w-7xl mx-auto"><p className="text-center text-xs uppercase tracking-widest text-nx-muted2 mb-5">Your {cfg.name} operating flow</p><div className="flex flex-wrap justify-center gap-3">{cfg.flow.map((x,i)=><span key={x} className="bg-nx-surface border border-nx-border rounded-xl px-4 py-2 text-sm font-semibold">{i+1}. {x}</span>)}</div></div></section>
+  <section className="py-24 px-6"><div className="max-w-7xl mx-auto"><SectionLabel>Built around the real operation</SectionLabel><h2 className="text-4xl sm:text-5xl font-extrabold mb-10">Less work falling between people, apps and jobs.</h2><div className="grid md:grid-cols-2 gap-4">{cfg.pains.map(x=><div key={x} className="flex gap-3 bg-nx-surface border border-nx-border rounded-xl p-5"><Check className="text-nx-green flex-shrink-0" size={18}/><p className="text-sm text-nx-muted">{x}</p></div>)}</div></div></section>
+  <section className="py-24 px-6 border-y border-nx-border"><div className="max-w-7xl mx-auto"><SectionLabel>Managed workforce + software</SectionLabel><h2 className="text-4xl sm:text-5xl font-extrabold mb-3">Keep what works. Add what is missing.</h2><p className="text-lg text-nx-muted max-w-3xl mb-10">Titan Zero works across authorised existing systems and can fill genuine software gaps with Titan Zero capabilities. The resulting system is configured and managed around your {cfg.name.toLowerCase()} business.</p><div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">{cfg.capabilities.map(([t,d])=><div key={t} className="bg-nx-surface border border-nx-border rounded-2xl p-7"><h3 className="font-bold mb-2">{t}</h3><p className="text-sm text-nx-muted leading-relaxed">{d}</p></div>)}</div></div></section>
+  <section className="py-24 px-6"><div className="max-w-7xl mx-auto"><SectionLabel>One Titan Zero architecture</SectionLabel><h2 className="text-4xl font-extrabold mb-8">The {cfg.name} system includes more than job software.</h2><div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">{[['Fully Managed','/fully-managed'],['Privacy & Architecture','/privacy-architecture'],['Cost Sovereignty','/cost-sovereignty'],['Environmental Systems','/environmental-systems'],['Compare','/compare']].map(([t,to])=><Link key={t} to={to} className="bg-nx-surface border border-nx-border rounded-xl p-5 hover:border-nx-purple transition-colors"><h3 className="font-semibold">{t}</h3><p className="text-xs text-nx-muted mt-2">Explore →</p></Link>)}</div></div></section>
+  <section className="px-6 pb-8"><div className="max-w-7xl mx-auto"><p className="text-xs text-nx-muted2 uppercase tracking-widest mb-4">Other Field Services systems</p><div className="flex flex-wrap gap-2">{Object.entries(industryConfigs).filter(([k])=>k!==industry).map(([k,v])=><Link key={k} to={'/industries/'+k} className="text-sm bg-nx-surface border border-nx-border rounded-lg px-3 py-2 hover:border-nx-purple">{v.icon} {v.name}</Link>)}</div></div></section>
+  <CTASection title={'Build Titan Zero around your '+cfg.name+' business.'} subtitle="We assess the operation, integrate the systems worth keeping, fill software gaps and manage the Advanced Intelligence workforce around it." buttonText="Sign Up" buttonHref={appRoutes.signup} showDemo={false}/>
+ </main>
+}
