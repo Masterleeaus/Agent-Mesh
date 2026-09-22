@@ -299,11 +299,14 @@ export async function POST(req: NextRequest) {
     occurred_at: new Date().toISOString(),
     provider_id,
   });
-  const inboundRouting = routeInboundCommunication(inboundEnvelope, {
-    kind: "review",
-    confidence: "low",
-    intent: "unclassified-sms",
-    requires_human_review: true,
+  const inboundRouting = routeInboundCommunication({
+    message: inboundEnvelope,
+    classification: {
+      kind: "review",
+      confidence: "low",
+      intent: "unclassified-sms",
+      requires_human_review: true,
+    },
   });
 
   // Idempotency: already-seen message → no re-action, no Claude call.
@@ -409,11 +412,14 @@ export async function POST(req: NextRequest) {
     ? await getClientContext(accountId, existing.id)
     : { openEstimates: [], recentJobs: [], recentMessages: [] };
   const ai = await classifySms({ message, phone, context });
-  const classifiedRouting = routeInboundCommunication(inboundEnvelope, {
-    kind: ai.is_business ? (ai.confidence === "low" ? "review" : "business") : "ignored",
-    confidence: ai.confidence,
-    intent: ai.message_type,
-    requires_human_review: ai.confidence === "low",
+  const classifiedRouting = routeInboundCommunication({
+    message: inboundEnvelope,
+    classification: {
+      kind: ai.is_business ? (ai.confidence === "low" ? "review" : "business") : "ignored",
+      confidence: ai.confidence,
+      intent: ai.message_type,
+      requires_human_review: ai.confidence === "low",
+    },
   });
 
   if (!ai.is_business) {
