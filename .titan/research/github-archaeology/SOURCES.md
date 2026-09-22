@@ -110,3 +110,9 @@ Path/classes: SiteAsset, AssetServiceEvent, InspectionInstance/Response/events, 
 Inspected: YES — commit diff
 Relevant findings: FINDING-GH-011
 Notes: Concrete company-scoped business-state/history mechanisms; evidence for compositional Business Reality.
+
+
+- SOURCE-GH-011 — `Masterleeaus/Titancore` main, `TitanCore_V1.9/AI/Providers/provider.json`, SHA `c08a7d54639203d138776afca3e5422df785078e`; direct file inspection.
+- SOURCE-GH-012 — `Masterleeaus/Titancore` main, `TitanCore_V1.9/Services/TitanCoreModelGateway.php`, SHA `f76ae50e96a3ace6ff02932557ccb47c6fc84a67`; direct file inspection.
+- SOURCE-GH-013 — Agent-Mesh open issue #647, canonical Device/Distributed Intelligence Runtime + Cost Sovereignty owner; direct issue inspection.
+- SOURCE-GH-014 — Agent-Mesh open issue #80, final Intelligence Runtime integration/certification owner; direct issue inspection.
