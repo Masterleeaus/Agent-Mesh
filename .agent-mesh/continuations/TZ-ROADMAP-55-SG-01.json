@@ -194,15 +194,18 @@
     "Pass 20: audited Agent Mesh bridge mutation call sites and confirmed they converge through a central AGENT_MESH_MUTATION_POLICY/callAgentMeshMutation gate",
     "Pass 20: recover_agent, route_packet and continuation takeover are resume-gated; checkpoint remains continuity-record-only and cannot grant execution authority",
     "Pass 20: unknown Agent Mesh mutation actions fail closed; legacy packet_id is retained only as non-authoritative compatibility metadata",
-    "Pass 20: regression guards now prevent takeover/Manager mutation paths from bypassing the central gate"
+    "Pass 20: regression guards now prevent takeover/Manager mutation paths from bypassing the central gate",
+    "Pass 20: audited all current service-worker Agent Mesh bridge mutations and confirmed they converge through callAgentMeshMutation allowlist/policy",
+    "Pass 20: generic callTitanBridge rejects direct agent_mesh mutation calls, preventing UI/provider callers from bypassing governed mutation paths",
+    "Pass 20: recover_agent, route_packet and continuation takeover are resume-gated; checkpoint remains continuity-record-only and cannot grant lifecycle authority"
   ],
   "current_work": [
-    "Remove remaining legacy packet terminology from active Manager Agent Mesh routing while preserving compatibility adapters"
+    "Harden route_packet legacy naming/payload semantics so GitHub issue/subgoal identity is primary and packet is compatibility-only"
   ],
   "next_actions": [
-    "Rename active routing semantics from packet to issue/subgoal where safe",
-    "Keep legacy packet fields only at compatibility boundary",
-    "Audit Manager supervisor step names and UI labels for packet/delta/promotion terminology"
+    "Inspect normalizeAgentMeshRoutingPayload and bridge route contract",
+    "Replace packet-primary payload semantics with issue/subgoal/claim identity while preserving compatibility adapter",
+    "Add regression tests that route mutations cannot operate from a bare legacy packet id"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
