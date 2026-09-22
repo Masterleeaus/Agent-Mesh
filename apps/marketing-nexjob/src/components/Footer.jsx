@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 const footerLinks = {
   Product: [
     { label: 'Features', path: '/features' },
-    { label: 'Investment', path: '/pricing' },
+    { label: 'Investment', path: '/investment' },
     { label: 'Industries', path: '/industries' },
     { label: 'Fully Managed', path: '/fully-managed' },
     { label: 'Compare', path: '/compare' },
