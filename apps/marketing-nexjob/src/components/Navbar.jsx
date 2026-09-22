@@ -37,7 +37,7 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-nx-border/60">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 font-extrabold text-xl tracking-tight">
+        <Link to="/" aria-label="Titan Zero Field Services home" className="flex items-center gap-2 font-extrabold text-xl tracking-tight">
           <span className="w-2 h-2 bg-nx-purple rounded-full animate-pulse-dot" />
           Titan Zero <span className="text-nx-muted font-medium">Field Services</span>
         </Link>
@@ -95,7 +95,7 @@ export default function Navbar() {
         {/* Mobile Toggle */}
         <button
           type="button"
-          className="xl:hidden text-nx-text"
+          className="xl:hidden text-nx-text p-2 -mr-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-purple"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
           aria-expanded={mobileOpen}
@@ -107,7 +107,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div id="mobile-navigation" className="xl:hidden border-t border-nx-border bg-nx-bg px-6 pb-4 pt-2">
+        <div id="mobile-navigation" aria-label="Mobile navigation" className="xl:hidden border-t border-nx-border bg-nx-bg px-6 pb-4 pt-2 max-h-[calc(100vh-4rem)] overflow-y-auto">
           {navLinks.map(({ label, path }) => (
             <Link
               key={path}
