@@ -651,3 +651,28 @@ PR #760 is OPEN and unmerged at head aa59cbf0f392e910c1b7d158619ec90522245c4d. I
 EVIDENCE PIPELINE / HISTORICAL DONOR SUPPORT / CURRENT PARITY UNVERIFIED
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-027
+### Finding
+Issue #767 is a well-scoped Evolution/Reality convergence specification but is not yet claimed or implemented.
+### Evidence
+At this checkpoint #767 is OPEN, has no comments, no matching agent/767 branch and no PR. Its donor list and convergence invariants are therefore an action specification, not implementation evidence.
+### Classification
+EXISTING ACTION / UNCLAIMED / NOT IMPLEMENTED
+### Confidence
+HIGH
+
+## FINDING-CSA-028
+### Finding
+Current main's verified Nexus implementation is materially narrower than the #767 Evolution/Reality lifecycle.
+### Evidence
+packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts (sha f7936d44dcf30fd9cb0d091af0efbc10fbcd501a) implements deterministic company-scoped recommendation orchestration and explicitly declares authority_neutral:true, execution_authority:false, orchestration_is_authority:false and authority_conferred_by_activation:false. It does not itself implement Continuous Business Observation, a Business Reality Graph, freshness/change detection, reconfiguration, consent, outcome measurement or rollback.
+### Interpretation
+Preserve this Nexus as the authority-neutral orchestration primitive. #767 should CONNECT recovered Reality/Evolution mechanisms to it rather than replacing it or treating Nexus as the whole Evolution Engine.
+### Classification
+CURRENT / IMPLEMENTED NARROW PRIMITIVE + MISSING LIFECYCLE INTEGRATION
+### Confidence
+HIGH
