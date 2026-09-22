@@ -197,3 +197,17 @@ Status: OPEN
 
 Summary:
 Define/converge canonical Titan Rewind semantics from verified distributed donors. Distinguish retry, replay, restore, reversal and compensation; classify reversible/compensatable/irreversible/unknown actions; require checkpoints/receipts/observed-state verification; preserve immutable history; revalidate authority for recovery; integrate existing provider, Storage, Edge, Evolution and Experience owners without replacing them.
+
+
+---
+
+## ACTION-LIB-015
+
+Type: HARDEN EXISTING SIGNAL OWNER / REJECT DUPLICATE SIGNAL ENGINE
+Priority: P0
+Finding: FINDING-LIB-018
+GitHub Issues: #642/#73, #575, #694
+Status: EVIDENCE ADDED TO #642
+
+Summary:
+Port only missing Titan Signal donor semantics into the canonical TypeScript accepted-change/evidence path: versioned event identity, company/provenance/correlation fields, durable lease/retry/dedupe delivery, anomaly evidence packaging, duplicate alert suppression, correction/supersession history and replay-safe integration. Signal/event receipt never grants authority and failed/rejected commands cannot emit accepted-change evidence.
