@@ -202,5 +202,6 @@ Need: one production provider-independent capability/routing contract for device
 
 ### ACTION-GH-011 — Final #763 handoff housekeeping
 Owner: #763
-Status: READY FOR FINAL CHECKPOINT
-Need: only final source/index backfill and handoff/closure decision remain. Do not create implementation systems in #763.
+Status: RESEARCH COMPLETE — WAITING FOR MANAGER INTEGRATION
+Result: source/index backfill, ownership/gap matrix and closure audit are complete. Do not create implementation systems in #763.
+Closure condition: integrate/supersede PR #764 through manager-controlled reconciliation, then close #763. Current branch is diverged and required checks are not green.
