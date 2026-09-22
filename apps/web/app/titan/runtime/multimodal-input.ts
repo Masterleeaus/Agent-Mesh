@@ -22,6 +22,9 @@ export function createMultimodalInput(input: Omit<MultimodalInputEnvelope, "sche
   const record = input as unknown as Record<string, unknown>;
   for (const key of forbiddenTenantKeys) if (key in record) throw new Error(`Legacy tenant authority is forbidden: ${key}`);
   if (!input.company_id?.trim() || !input.conversation_id?.trim()) throw new Error("Canonical conversation scope is required");
+  if (input.surface !== "zero" && input.surface !== "go" && input.surface !== "hub") throw new Error("Canonical surface is required");
+  if (!input.input_id?.trim()) throw new Error("input_id is required");
+  if (input.kind !== "voice" && input.kind !== "camera" && input.kind !== "file") throw new Error("Unsupported multimodal input kind");
   return { schema: "titan-multimodal-input/v1", authority: "evidence_only", created_at: new Date().toISOString(), ...input };
 }
 
