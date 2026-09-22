@@ -106,12 +106,46 @@ export const POST = withRole(
         { status: 404 }
       );
     }
-    const quietHours = smsSettings.quietHours
-      ? isCommunicationQuietHour(new Date().getHours(), {
-          start_hour: smsSettings.quietHours.startHour,
-          end_hour: smsSettings.quietHours.endHour,
-        })
-      : false;
+    let quietHours = false;
+    if (smsSettings.quietHours) {
+      if (!smsSettings.quietHoursTimeZone) {
+        return NextResponse.json(
+          {
+            error: {
+              code: "SMS_POLICY_CONFIGURATION_ERROR",
+              message: "SMS quiet hours require sms_quiet_hours_timezone.",
+              traceId: session.traceId,
+            },
+          },
+          { status: 503 }
+        );
+      }
+      let recipientLocalHour: number;
+      try {
+        const hourPart = new Intl.DateTimeFormat("en-AU", {
+          timeZone: smsSettings.quietHoursTimeZone,
+          hour: "2-digit",
+          hourCycle: "h23",
+        }).formatToParts(new Date()).find((part) => part.type === "hour")?.value;
+        recipientLocalHour = Number(hourPart);
+        if (!Number.isInteger(recipientLocalHour)) throw new Error("missing local hour");
+      } catch {
+        return NextResponse.json(
+          {
+            error: {
+              code: "SMS_POLICY_CONFIGURATION_ERROR",
+              message: "SMS quiet-hours timezone is invalid.",
+              traceId: session.traceId,
+            },
+          },
+          { status: 503 }
+        );
+      }
+      quietHours = isCommunicationQuietHour(recipientLocalHour, {
+        start_hour: smsSettings.quietHours.startHour,
+        end_hour: smsSettings.quietHours.endHour,
+      });
+    }
     const outboundPolicy = evaluateOutboundCommunicationPolicy({
       consent: client.sms_consent ? "granted" : "denied",
       opted_out: !client.sms_consent,
