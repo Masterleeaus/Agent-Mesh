@@ -171,3 +171,14 @@ Converged the existing AppShell entry/navigation model around the canonical chat
 - existing Work/People/Money, My Work, Visits, Day Review, Settings and other operational pages remain available.
 
 This makes the chat-first surface the navigation home without deleting or cloning the mature business workflow routes.
+
+## Pass 12 — authenticated/demo presentation separation
+
+Removed remaining demo transcript/status leakage from the mounted authenticated Command and Go chat surfaces:
+- `RoleChat` now has an explicit demo mode, defaulting to demo only when no projection is supplied;
+- authenticated wrapper explicitly sets `demo={false}`;
+- canned demo conversation history is no longer rendered for authenticated sessions;
+- authenticated surfaces no longer label themselves “Live demo data”, “Prototype” or “Demo CRM”;
+- demo fallback remains available for isolated prototype/demo rendering.
+
+This does not yet claim that all generated cards contain live business data: several role-specific card bodies are still prototype content and must be replaced by injected live projections before they are represented as live operational facts.
