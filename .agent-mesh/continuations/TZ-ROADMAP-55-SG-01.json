@@ -122,15 +122,18 @@
     "Pass 20: preserved other generic workspace/repository mutations outside this classification because they are not inherently post-takeover Agent Mesh continuation mutations",
     "Pass 20: audited all Titan Code service-worker Agent Mesh bridge calls; only read-only snapshot/health/capabilities calls and the governed callAgentMeshMutation remain",
     "Pass 20: generic callTitanBridge explicitly rejects Agent Mesh mutations, preventing bypass of the governed path",
-    "Pass 20: regression test scans for direct Agent Mesh mutation calls and requires Manager mutations to use callAgentMeshMutation"
+    "Pass 20: regression test scans for direct Agent Mesh mutation calls and requires Manager mutations to use callAgentMeshMutation",
+    "Pass 20: audited remaining browser Agent Mesh mutation call sites and found the existing centralized callAgentMeshMutation gate already covers recover_agent, route_packet and takeover",
+    "Pass 20: corrected an important boundary: durable continuation checkpoints remain writable during reconciliation, while recover/route/takeover remain resume-gated work mutations",
+    "Pass 20: bridge-client and service-worker gate classifications plus regression guards now agree"
   ],
   "current_work": [
-    "Harden the bridge itself so action classification cannot be bypassed by future service-worker code, then validate Titan Code/Agent Mesh language and contract alignment"
+    "Audit Codex mutation path and direct bridge consumers for equivalent resume/claim protections, then consolidate only if existing architecture supports it"
   ],
   "next_actions": [
-    "Review Titan Bridge action classifier and mutation allowlist for exact canonical operation names",
-    "Add defense-in-depth rejection of unknown agent_mesh.* actions",
-    "Then run contract alignment pass across Agent Mesh and apps/browser"
+    "Trace codex.run and other Titan Code mutation callers",
+    "Ensure Codex execution cannot bypass Agent Mesh claim/resume authority",
+    "Add tests for direct bridge action classification and resume-gate requirements"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
