@@ -159,3 +159,15 @@ Mounted the field-worker chat-first entry and made it the default field landing 
 - changed the existing `/app` tech redirect from `/app/my-work` to `/app/go`.
 
 This establishes the intended “chat first, workflows behind it” pattern for field staff without rewriting scheduling, work orders, visits, location capture, maps/navigation or field-day business logic.
+
+## Pass 11 — primary navigation convergence
+
+Converged the existing AppShell entry/navigation model around the canonical chat-first surfaces while retaining legacy operational destinations:
+- owner/admin desktop Home now points to `/app/command` and is labelled Command;
+- owner/admin mobile primary home now points to Command;
+- sidebar brand/home routes owner/admin to Command and tech to Go;
+- tech navigation now exposes Go as the primary entry and Active as the existing field-work destination;
+- tech attempts to open Command are redirected to `/app/go`;
+- existing Work/People/Money, My Work, Visits, Day Review, Settings and other operational pages remain available.
+
+This makes the chat-first surface the navigation home without deleting or cloning the mature business workflow routes.
