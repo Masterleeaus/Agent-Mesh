@@ -170,3 +170,27 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** Useful donor behavior exists only behind canonical current owners, with no CallingAgent-owned tenant, memory, authority or provider-routing silo.
 - **Confidence:** HIGH
 - **Status:** READY FOR OWNER COMPARISON
+
+
+---
+
+## ACTION-GH-010 — Compare and converge TitanPro Dispatch into canonical Scheduling/Dispatch
+
+- **Type:** IMPORT + HARDEN / CONVERGE
+- **Priority:** P1
+- **Findings:** FINDING-GH-049, FINDING-GH-050, FINDING-GH-051
+- **Evidence:** TitanPro `Modules/Dispatch` direct implementation files and API routes.
+- **Current State:** Historical Laravel donor implements schedule validation/rescheduling, work-order synchronization, dispatch KPIs, SLA policies, checklists/exceptions and route-related endpoints.
+- **Gap:** Exact parity with current TypeScript #353 remains to be checked; old module must not be assumed obsolete before semantic comparison.
+- **Canonical Owner:** #353 Scheduling, Dispatch & Capacity; #360 certification; #183 CRM/service lifecycle adjacent.
+- **Proposed Treatment:** Compare donor code/contracts with #353, directly port or reimplement only superior missing mechanics, then retire donor ownership assumptions.
+- **Dependencies:** service/job lifecycle, Workforce identity/capability, Signal, Risk/Assurance/Governance, Go surface.
+- **company_id:** Mandatory/non-null for business dispatch state; normalize legacy fields and fail closed.
+- **Trust/Authority:** recommendation, resequencing, rescheduling and exception resolution remain bounded by effective authority.
+- **Privacy/Security:** technician/customer/location/schedule data scoped by company and role.
+- **Cost Sovereignty:** routing/provider/map calls must use canonical cost/provider policy.
+- **Migration:** semantic migration to current TypeScript contracts; no Laravel runtime dependency.
+- **Tests:** overlap conflict, ignored-current-appointment reschedule, cross-company isolation, stale schedule change, route resequence, SLA breach, required checklist, exception lifecycle, duplicate event/idempotency, authority denial.
+- **Acceptance Criteria:** all useful donor semantics are either proven present in #353 or converged there; no second Dispatch domain/store/tenant boundary remains.
+- **Confidence:** HIGH
+- **Status:** READY FOR OWNER COMPARISON
