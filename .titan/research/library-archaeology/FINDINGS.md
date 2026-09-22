@@ -206,3 +206,40 @@ HIGH for specification existence; LOW for implementation status.
 
 ### Related action
 Further archaeology required before GitHub implementation action.
+
+
+---
+
+## FINDING-LIB-008
+
+### Finding
+The Personal Zero / LocalBrain lineage progressed beyond the 29-Jul Phase-10 specification. A later 03-Aug cumulative LocalBrain tree contains implemented cognitive-event, local-memory, preference/action persistence, offline cognitive outbox, causal sync/vector-clock, memory reranking and persona-drift components, plus explicit Phase-11 cognitive-event and Phase-14 authority build reports/changelogs.
+
+### Why it matters
+Personal Zero archaeology is not limited to design documents. There is later implemented donor code for persistent/device intelligence that should be inspected before any new Personal Zero memory/cognition runtime is designed.
+
+### Evidence
+- Library: Titan-Zero-Offline-LocalBrain-FLAT-file-map.csv
+- Underlying tree: Titan-Zero-Offline-LocalBrain-FULL-2026-08-03/interaction-engine/
+- CHANGELOG_PHASE11_COGNITIVE_EVENTS.md and PHASE11_BUILD_REPORT.md
+- CHANGELOG_PHASE14_AUTHORITY_CONTROLS.md and PHASE14_BUILD_REPORT.md
+- src/Models/CognitiveEvent.php
+- src/Models/LocalIntelligenceMemory.php
+- EloquentLocalIntelligenceMemoryStore.php
+- WeightedMemoryReranker.php
+- CausalSyncResolver.php and VectorClock.php
+- episodic-memory, semantic-memory, user-actions and user-preferences migrations
+- offline cognitive-event-outbox, memory-store, memory-reranker, persona-drift, IndexedDB, crypto and sync modules
+- docs/ADAPTIVE_PERSONA_LOCALBRAIN_V2_SCAN.md and docs/LOCALBRAIN_V2.md
+
+### Current Titan equivalent
+Current Agent-Mesh default-branch exact-symbol search returned no CognitiveEvent, LocalBrain, MemoryTruthStatus, OutcomeLinker, InformationGainCalculator or device-preference-model matches. #763 is the existing archaeology mechanism scan; #153 is company-scoped Business Memory and must not silently become the Personal Zero owner.
+
+### Classification
+HISTORICAL / IMPLEMENTED / PARTIAL / POSSIBLE REGRESSION. Source-level inspection is still required before declaring any capability LOST.
+
+### Confidence
+HIGH that the Aug-03 implementation tree contains these components; MEDIUM on current functional gap until deeper TypeScript parity mapping is complete.
+
+### Related action
+ACTION-LIB-006.
