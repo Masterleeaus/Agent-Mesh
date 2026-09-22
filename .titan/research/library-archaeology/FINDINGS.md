@@ -347,3 +347,30 @@ HIGH for issue deduplication and owner separation.
 
 ### Related action
 ACTION-LIB-008 / #768.
+
+
+---
+
+## FINDING-LIB-012
+
+### Finding
+Local AI / Cost Sovereignty archaeology shows this family has largely converged into current TypeScript Intelligence Runtime rather than being lost. Current main already owns provider/model registries, local-first routing, privacy/egress gates, free-tier Titan-funded denial, entitlement/metered gates, Ollama loopback execution/discovery, health/fallback, device resource pressure and edge capability advertisement. Library evidence confirms the historical Cost Sovereignty inventory was ported.
+
+### Remaining delta
+The strongest remaining donor-informed gaps are:
+- one provider-independent context-window/prompt-compaction budget manager;
+- selectively richer canonical model capability metadata beyond the current capabilities/contextWindow shape;
+- verification/completion of estimated + actual monetary cost in canonical execution receipts/telemetry;
+- explicit data-residency/local-only policy classes through the existing distributed/privacy contract owner.
+
+### Classification
+CURRENT / CONVERGED with NARROW HARDENING GAPS.
+
+### Confidence
+HIGH.
+
+### Canonical treatment
+#647 remains the model/provider/device/local execution owner. #257/#572 own privacy/data-residency/distributed policy contract work. Do not create a second router, provider registry, device registry, Ollama adapter or Cost Sovereignty engine.
+
+### Related action
+ACTION-LIB-009.
