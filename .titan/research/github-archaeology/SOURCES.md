@@ -294,3 +294,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-140 — TitanPro `docs/06-automation/runtime-state-store.md`, SHA `3cc1784ff63462e416a2be8312b815b42cb51c82`; current state + append-only history, approval/retry/recovery semantics.
 - SOURCE-GH-141 — TitanPro `docs/06-automation/worked-engine-examples.md`, SHA `96d071e1ca9e362fc2846f93854f51e1ac05e67e`; temporal trigger, suppression and replay examples.
 - SOURCE-GH-142 — TitanPro `docs/07-workflows/stuck-state-detection.md`, SHA `48740d987456ef8ae1aae5414a7b544df02ef7a6`; scheduled/event-driven watch and recovery semantics with workflow-truth boundary.
+
+
+- SOURCE-GH-143 — Agent-Mesh issue #768, `[ARCHITECTURE] Define Personal Zero Understanding & Experience contracts`; current canonical Personal Zero convergence target and One/principal identity correction.
+- SOURCE-GH-144 — Agent-Mesh issue #153, canonical company-scoped Business Memory & Knowledge runtime.
+- SOURCE-GH-145 — Agent-Mesh issue #767, canonical Business Reality/Evolution recovery/convergence target.
+- SOURCE-GH-146 — Agent-Mesh commit `3f7c3f8ffd18cf165206f3ed6deddc9d4c9fe62c`, “research(library): confirm Personal Zero owner gap.”
+- SOURCE-GH-147 — Agent-Mesh commits `93f06b2600faac271a17e4b547decba03bb07dbe` and `4450e857481ecc5d96086e994bde82f2a6e76647`; register Personal Zero convergence action and owner-selection checkpoint.
