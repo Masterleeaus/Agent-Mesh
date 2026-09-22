@@ -510,3 +510,22 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** #768 receives a provenance-backed donor mapping with no duplicate Personal Zero/Business Memory/Reality/Interaction stores and one selected production owner.
 - **Confidence:** VERY HIGH
 - **Status:** SUPPORT EXISTING OWNER
+
+
+---
+
+## ACTION-GH-027 — Converge #767 onto existing Business Discovery/installation baseline instead of building a second discovery authority
+
+- **Type:** CONVERGE / IMPORT+HARDEN / RECOVER
+- **Priority:** P1
+- **Findings:** FINDING-GH-113–116
+- **Canonical owner:** #767, reusing current Workforce Business Discovery/install/commissioning contracts and #31 existing-business discovery decisions.
+- **Objective:** Treat current evidence-backed discovery + commissioning result as the initial Reality/configuration baseline, then port missing OnboardingPro continuous observation/change/reassessment/diff/reconfiguration/verification/outcome semantics around it.
+- **Do not do:** do not resurrect OnboardingPro; do not create a second Business Discovery compiler; do not make quarantined browser-adaptation code the authoritative persistent Reality store; do not merge Personal Zero into Business Reality.
+- **company_id:** mandatory on observations, facts, graph/configuration revisions, diffs, proposals, execution receipts and outcomes.
+- **Authority:** observations/inferences/diffs cannot mutate authoritative business state; consequential reconfiguration goes through canonical Risk/Assurance/Governance/Command Bus.
+- **Integration:** current commissioning baseline → continuous observation → meaningful-change detector → reassessment → semantic diff → governed change plan → existing installation/change execution primitives → verification → outcome measurement → #153/Signal/Rewind learning inputs.
+- **Tests:** no-op change rejected; stale/fresh observations; source provenance/confidence; cross-company denial; inferred fact cannot silently overwrite verified fact; reconfiguration approval fingerprint; idempotent apply; verification failure; rollback/recovery path; commissioning baseline remains traceable.
+- **Acceptance Criteria:** one continuous Evolution/Reality lifecycle extends existing discovery/install machinery and closes #767 donor gaps without parallel truth/discovery/authority systems.
+- **Confidence:** HIGH
+- **Status:** READY FOR IMPLEMENTATION COMPARISON
