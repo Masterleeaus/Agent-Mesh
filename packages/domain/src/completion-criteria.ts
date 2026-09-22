@@ -87,9 +87,31 @@ export function allRequiredCriteriaMet(criteria: CompletionCriterion[]): boolean
 const TERMINAL_VISIT = new Set(["completed", "cancelled"]);
 
 /** Gate manual or derived transition to work order `completed`. */
+export interface ExternalCompletionBlocker {
+  source: string;
+  reason: string;
+}
+
+/**
+ * Completion blockers contributed by bounded domain systems such as permits,
+ * inspections and independently verified defects. These do not own the work
+ * order lifecycle; they only fail the canonical completion gate closed.
+ */
+export function externalCompletionGateMessage(
+  blockers: ExternalCompletionBlocker[] = [],
+): string | null {
+  const normalized = blockers
+    .map((b) => ({ source: String(b.source ?? "").trim(), reason: String(b.reason ?? "").trim() }))
+    .filter((b) => b.source && b.reason);
+  if (normalized.length === 0) return null;
+  const reasons = [...new Set(normalized.map((b) => `${b.source}:${b.reason}`))];
+  return `Completion requirements remain unresolved: ${reasons.join(", ")}`;
+}
+
 export function completionGateMessage(
   visits: Array<{ status: string }>,
   criteria: CompletionCriterion[],
+  externalBlockers: ExternalCompletionBlocker[] = [],
 ): string | null {
   if (visits.length === 0) {
     return "Schedule and complete at least one visit before closing this work order";
@@ -103,5 +125,5 @@ export function completionGateMessage(
   if (!allRequiredCriteriaMet(criteria)) {
     return "All required completion criteria must be checked before closing this work order";
   }
-  return null;
+  return externalCompletionGateMessage(externalBlockers);
 }
