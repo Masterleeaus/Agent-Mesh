@@ -266,3 +266,8 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-120 — current main `apps/web/lib/titan/workforce-command-gateway.ts`, SHA `e40a6640a58096316a9972d66cb96d8f36f13778`; Dovetails session.accountId currently projected as Titan company identity.
 - SOURCE-GH-121 — current main `apps/web/lib/titan/interface-runtime/host.ts`, SHA `e044fa95d0c773aaa64e1c56756e939d19aaa8a5`; Zero/Go/Hub host navigation.
 - SOURCE-GH-122 — current main `apps/web/lib/titan/workforce-hierarchy/delegation-envelope.ts`, SHA `fde1e0184095056235d430fe55785b21e38001f2`; canonical workforce delegation binding.
+
+
+- SOURCE-GH-123 — current main `packages/titan-platform/src/intelligence.ts`, SHA `8320eef651c334789a950163ed277238bd8311f6`; facade references ported Titan intelligence/AI Core modules.
+- SOURCE-GH-124 — direct current-main fetch attempts for `ported/titan-intelligence/model-council/index.js`, `signal/index.js`, `nexus/index.js` and `ported/titan-ai-core/provider-registry.js` returned NOT_FOUND.
+- SOURCE-GH-125 — migration commit `76a7c8c1387be83ebed37f9e0c79fbfa3d77b54c`; contains Titan intelligence regression tests and facade but its file inventory does not include the referenced ported intelligence/AI-core implementation directories.
