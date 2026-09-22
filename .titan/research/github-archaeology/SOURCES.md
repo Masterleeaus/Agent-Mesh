@@ -326,3 +326,9 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-162 — current main `packages/titan-platform/src/ported/titan-runtime/authority/execution-boundary.ts`, SHA `a97baf3a19acdd47120c231c072420f6f0271c09`; authoritative receipt continuity/history integrity and post-action verification contracts.
 - SOURCE-GH-163 — current main `packages/titan-platform/src/ported/titan-intelligence/signal/index.ts`, SHA `847a14df1b68278330971a97c05d679d0f606e15`; deterministic company-bound authority-neutral Signal primitive.
 - SOURCE-GH-164 — current main `packages/titan-platform/src/intelligence.ts`, SHA `8320eef651c334789a950163ed277238bd8311f6`; current Signal export through Titan intelligence facade.
+
+
+- SOURCE-GH-165 — current main `packages/titan-platform/src/ported/titan-workforce/knowledge/workforce-knowledge-authority-runtime.ts`, SHA `7998e595becaf28938fce237df31a51cd2b1f073`; thin Knowledge Authority facade re-exporting handover implementation.
+- SOURCE-GH-166 — current main `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts`, SHA `415ee5647bed8a54b60d4e18ee628c67316d97ee`; Knowledge Authority source/provenance/version/freshness/contradiction/jurisdiction/vertical control plane and knowledge-use receipts.
+- SOURCE-GH-167 — same current handover bundle, worker-memory runtime with provenance/confidence/relevance/privacy/purpose/expiry/supersession/revocation/recall receipts and memory-not-truth/not-authority invariants.
+- SOURCE-GH-168 — current main `packages/titan-platform/src/workforce.ts`, SHA `98f77554d22f76aa1131a257a171c803bfa43979`; exports Knowledge Authority functions through the Titan Workforce facade.
