@@ -1941,6 +1941,12 @@ async function fetchLiveManagerAISnapshot(){
     checkpointAgentMeshContinuation(normalized,'live-snapshot').catch(()=>{});
     return {ok:true,source:'live',snapshot:normalized,health:normalized.health,capabilities:normalized.capabilities};
 }
+async function callAgentMeshMutation(config,action,payload,snapshot,{bootstrapRequired=true}={}){
+    const allowed=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover']);
+    if(!allowed.has(action)) return {ok:false,reason:'agent-mesh-mutation-not-allowlisted',mayMutate:false};
+    if(bootstrapRequired){const gate=await bootstrapAgentMeshResume(snapshot);if(!gate.ok||gate.mayMutate!==true)return {ok:false,reason:'resume-reconciliation-required',mayMutate:false,bootstrap:gate.bootstrap||null};}
+    return globalThis.CodeeTitanBridgeClient.call(config,action,payload);
+}
 async function checkpointAgentMeshContinuation(snapshot,reason='manager-lifecycle'){
     const resumeGate=await bootstrapAgentMeshResume(snapshot);
     if(!resumeGate.ok||resumeGate.mayMutate!==true) return {ok:false,reason:'resume-reconciliation-required',mayMutate:false,bootstrap:resumeGate.bootstrap||null};
@@ -1950,7 +1956,7 @@ async function checkpointAgentMeshContinuation(snapshot,reason='manager-lifecycl
     const github=value.github||value.agentMesh||null;
     if(!github?.issue?.number||!github?.issue?.subgoal_id) return {ok:false,reason:'github-work-identity-missing'};
     const config={enabled:settings.bridgeEnabled,endpoint:settings.bridgeEndpoint,token:settings.bridgeToken,workspace:settings.bridgeWorkspace};
-    return globalThis.CodeeTitanBridgeClient.call(config,'agent_mesh.continuation.checkpoint',{
+    return callAgentMeshMutation(config,'agent_mesh.continuation.checkpoint',{
         issue_number:github.issue.number,
         subgoal_id:github.issue.subgoal_id,
         claim_branch:github.claim?.branch||github.branch||('agent/'+github.issue.subgoal_id),
@@ -1962,7 +1968,7 @@ async function checkpointAgentMeshContinuation(snapshot,reason='manager-lifecycl
         execution_resume:value.executionResume||value.execution_resume||null,
         source:'titan-code-manager',
         authority:{claim_release:false,merge:false,ai:false}
-    });
+    },snapshot);
 }
 async function preflightAgentMeshWorkMutation(snapshot,kind='work-mutation'){
     const gate=await bootstrapAgentMeshResume(snapshot);
@@ -1978,14 +1984,14 @@ async function takeoverAgentMeshContinuation(snapshot,{fromExecutionSession=null
     const value=snapshot&&typeof snapshot==='object'?snapshot:{},github=value.github||value.agentMesh||null;
     if(!github?.issue?.number||!github?.issue?.subgoal_id) return {ok:false,reason:'github-work-identity-missing'};
     const config={enabled:settings.bridgeEnabled,endpoint:settings.bridgeEndpoint,token:settings.bridgeToken,workspace:settings.bridgeWorkspace};
-    return globalThis.CodeeTitanBridgeClient.call(config,'agent_mesh.continuation.takeover',{
+    return callAgentMeshMutation(config,'agent_mesh.continuation.takeover',{
         issue_number:github.issue.number,subgoal_id:github.issue.subgoal_id,
         claim_branch:github.claim?.branch||github.branch||('agent/'+github.issue.subgoal_id),
         from_execution_session:fromExecutionSession,to_execution_session:toExecutionSession,reason,
         execution_resume:value.executionResume||value.execution_resume||null,
         head_sha:github.git?.headSha||github.claim?.headSha||null,
         authority:{same_claim_branch:true,claim_release:false,merge:false,ai:false}
-    });
+    },snapshot,{bootstrapRequired:false});
 }
 async function getAgentMeshWorkContext(snapshot){
     const value=snapshot&&typeof snapshot==='object'?snapshot:{},githubProjection=value.githubProjection||null,raw=value.github||value.agentMesh||{};
@@ -2026,7 +2032,7 @@ async function executeManagerAIPlan(options={}){
         else if(step.action==='RECHECK_DEPENDENCIES_OR_ROUTE_PACKET') { action='agent_mesh.route_packet'; payload={packet_id:target,mode:'manager_route_request'}; }
         else { skipped.push({step,reason:'advisory-only-step'}); continue; }
         if(!settings.bridgeEnabled||!settings.bridgeToken||!globalThis.CodeeTitanBridgeClient){ skipped.push({step,reason:'live-mesh-bridge-not-configured'}); continue; }
-        const result=await globalThis.CodeeTitanBridgeClient.call(config,action,payload);
+        const result=await callAgentMeshMutation(config,action,payload,snapshot);
         if(result.ok) executed.push({step,action,result}); else skipped.push({step,action,reason:result.reason||'manager-action-failed'});
     }
     const out={schema:'titan-code.manager-ai-execution.v1',generatedAt:new Date().toISOString(),source:live.source,inspection,plan,executed,skipped,authority:{ai:false,managerRules:true,githubMergeRequest:false,delete:false}};
