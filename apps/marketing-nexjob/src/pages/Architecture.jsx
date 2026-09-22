@@ -1,0 +1,11 @@
+import SectionLabel from '../components/SectionLabel'
+import CTASection from '../components/CTASection'
+const items=[
+['Privacy first','Architecture choices start with minimising unnecessary movement and exposure of business data.'],
+['Device first','Where practical, intelligence and data processing can run on customer-controlled devices rather than requiring every task to leave the business.'],
+['Private models','Customer-hosted and private LLM options can keep sensitive knowledge closer to the organisation and support private RAG over authorised business knowledge.'],
+['Edge node network','Customer-controlled computers and devices can participate as governed edge nodes, bringing compute and intelligence closer to the work.'],
+['Bring your own AI and API keys','Where supported, businesses can use their own provider accounts and keys instead of being permanently locked to a Titan-funded provider.'],
+['Provider choice','Device, customer-hosted, BYO cloud and Titan-managed options can be selected according to the workload, privacy requirements and operating model.'],
+]
+export default function Architecture(){return <><section className="pt-32 pb-16 px-6 text-center"><div className="max-w-5xl mx-auto"><SectionLabel>Privacy & Architecture</SectionLabel><h1 className="text-4xl sm:text-6xl font-extrabold mb-5">Your intelligence system should work <span className="text-nx-purple-light">for your business — not trap it.</span></h1><p className="text-lg text-nx-muted max-w-3xl mx-auto">Titan Zero is designed around privacy, locality and customer choice: use existing systems, add missing software, run appropriate workloads on devices or customer-controlled infrastructure, and choose the AI providers that fit the job.</p></div></section><section className="px-6 pb-24"><div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-5">{items.map(([t,d])=><div key={t} className="bg-nx-surface border border-nx-border rounded-2xl p-7"><h2 className="text-lg font-bold mb-2">{t}</h2><p className="text-sm text-nx-muted leading-relaxed">{d}</p></div>)}</div></section><CTASection title="Keep control of where intelligence runs." subtitle="Locality and provider choices can be matched to the workload instead of forcing one architecture on every business."/></>}
