@@ -7,7 +7,7 @@ STATUS:
 IN PROGRESS
 
 CURRENT PHASE:
-Shared evidence workspace established; mechanism-first archaeology Action implemented. Detailed source-level recovery and verification remain in progress.
+Shared evidence workspace established; PR/CI verification completed. Detailed source-level recovery and verification remain in progress, with generated archaeology output blocked on workflow dispatch.
 
 COMPLETED:
 - Inspected repository execution contract in AGENTS.md.
@@ -30,7 +30,9 @@ NOT YET SCANNED:
 - Detailed component-level verification of the highest-value memory/learning candidates.
 
 BLOCKERS:
-- None currently.
+- PR #764 claim gate fails because the repository validator accepts only roadmap-style `agent/<subgoal-id>` branch names (example `agent/TZ-ROADMAP-31-SG-01`), while this research issue was claimed as `agent/763` under the written AGENTS.md issue-number protocol.
+- Titan Zero CI also fails in pre-existing worker dependency/typecheck areas unrelated to this read-only research change: unresolved @ai-fsm/email-templates, mysql2/promise, @ai-fsm/log, @ai-fsm/domain/promise-capture, plus workflow-events test/export mismatches.
+- The archaeology workflow itself is workflow_dispatch-only and cannot be started by the currently exposed GitHub connector; its generated heuristic report therefore remains uninspected.
 
 MAJOR ARTIFACTS CREATED:
 - .titan/research/zero-mechanism-archaeology/STATUS.md
@@ -44,7 +46,7 @@ ISSUES CREATED/UPDATED:
 - #764 — PR implementing the archaeology Action
 
 LAST UPDATED:
-2026-09-22 — workspace checkpoint
+2026-09-22 — CI/claim-gate verification checkpoint
 
 COMPLETION ESTIMATE:
 Several research phases remain: current-system mapping, historical mechanism recovery, candidate verification, cross-source deduplication, and final handoff.
