@@ -242,3 +242,23 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** one private Titan Code browser/local authority with no duplicate bridges and no Titan Zero production dependency.
 - **Confidence:** HIGH
 - **Status:** READY FOR TITAN CODE CONVERGENCE
+
+
+---
+
+## ACTION-GH-013 — Add/verify explicit local-model route without duplicating Local Bridge authority
+
+- **Type:** COMPARE / CONNECT
+- **Priority:** P1
+- **Findings:** FINDING-GH-060, FINDING-GH-061, FINDING-GH-062
+- **Current State:** Titan Code browser-provider execution is evidenced; a concrete Ollama/LM Studio inference adapter was not found in the scanned AI Coding Studio/Titan Builder paths.
+- **Canonical Owners:** #649 for private Titan Code convergence; #647/#80/#645 for production Titan Zero device/intelligence/local-model architecture.
+- **Proposed Treatment:** In Titan Code, connect an explicit local-model adapter to the existing project-context/orchestration layer rather than creating another filesystem/tool bridge. Keep model routing independent from execution authority. For production, reuse #647 contracts instead of Titan Code runtime code.
+- **company_id:** Production local-model requests use canonical `company_id`; private Titan Code itself is owner-development scoped.
+- **Trust/Authority:** Model locality never increases authority. Local model output is untrusted reasoning input subject to the same operation validation/approval pipeline.
+- **Privacy/Security:** Explicit endpoint allowlist, loopback/LAN policy, model provenance, context minimisation and no silent fallback to external providers.
+- **Cost Sovereignty:** Local/customer-hosted route should be preferred where policy/capability permits; fallback must be explicit and auditable.
+- **Tests:** local endpoint unavailable; model capability mismatch; no external fallback without policy; malicious model tool proposal; context secret filtering; same approval requirements across browser/local routes.
+- **Acceptance Criteria:** browser AI and local AI are two selectable reasoning providers over one governed execution plane; no duplicate Local Bridge/tool authority exists.
+- **Confidence:** HIGH
+- **Status:** GAP VERIFIED / OWNER MAPPED
