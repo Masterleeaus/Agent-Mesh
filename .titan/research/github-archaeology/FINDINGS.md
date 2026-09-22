@@ -1131,3 +1131,115 @@ HIGH
 
 ### Recovery judgment
 Preserve the relationship between governed lifecycle transitions, evidence, checkpoints and rewind. Current architecture should keep memory/knowledge ownership separate from recovery snapshots; a recovery checkpoint must not become a second memory authority.
+
+
+---
+
+## FINDING-GH-037
+
+### Finding
+The historical `clean` Phase 2/3/4 branches are not stranded branch-only work: their implementation is present on `clean/main`, and the repository's own completion record marks all three phases merged to main.
+
+### Evidence
+Repository: `Masterleeaus/clean`
+Branch: `main`
+Completion record: `.titan/documentation/status/phase-completion.md` SHA `baca0717fde6dacd1a4c20c6bfc83b2310762341`.
+
+Verified main-tree implementations include:
+- Phase 2 Knowledge: `KnowledgeGraphBuilder`, `ConstitutionEnforcer`, `ArchitecturalDriftDetector`;
+- Phase 3 Execution: `AgentTeamManager`, `OwnershipLockManager`, `BranchWorkflowManager`;
+- Phase 4 Safety: `ResourceLimitManager`, `SecurityPolicyEnforcer`, `AuditLogger`, `RateLimiter`, `RecoveryManager`.
+
+### Classification
+MERGED HISTORICAL IMPLEMENTATION / NOT LOST
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Do not recover the phase branches themselves. Treat `clean/main` as the donor source when a current Titan Zero owner has a verified implementation gap.
+
+---
+
+## FINDING-GH-038
+
+### Finding
+`clean/main` contains a durable execution/checkpoint precursor with integrity hashes, execution traces, task evidence and checkpoint selection for rollback.
+
+### Evidence
+Repository: `Masterleeaus/clean`
+Path: `app/TitanOS/Foundation/DurableExecution/DurableExecutor.php`
+SHA: `f1a79251758382c4432fb33178307727c8d4152c`.
+
+Verified semantics:
+- checkpoint IDs and execution IDs;
+- state + evidence captured together;
+- SHA-256 integrity verification before restore;
+- per-execution checkpoint trace;
+- completed-task evidence;
+- rollback target selection and rollback audit record.
+
+Important limitation: its `rollback()` records the target checkpoint but does not itself restore business side effects. It is therefore evidence/checkpoint lineage, not sufficient production Rewind authority.
+
+### Current Titan equivalent
+#14 owns persisted/resumable execution and compensation; #293 owns canonical recovery/Rewind; #560 certifies end-to-end recovery.
+
+### Classification
+HISTORICAL / IMPLEMENTED DONOR / PARTIAL REWIND PRECURSOR
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Harvest checkpoint integrity/evidence/trace tests where missing. Do not port its rollback semantics as complete Rewind.
+
+---
+
+## FINDING-GH-039
+
+### Finding
+`clean/main` also contains an implemented savepoint/recovery strategy manager covering timeout, deadlock, constraint violation, resource exhaustion and unknown failures.
+
+### Evidence
+Repository: `Masterleeaus/clean`
+Path: `app/TitanOS/Safety/Recovery/RecoveryManager.php`
+SHA: `812924be803669b56b670b3fed57e42bb10a22a4`.
+
+It provides savepoint creation/commit/rollback plus scenario-specific recommended actions such as release locks, rollback, retry with backoff, validate state, notify operator, cleanup and throttle.
+
+### Current Titan equivalent
+#293 already owns shared failure classification, retry/backoff, containment, dead-letter/recovery, self-healing and Rewind. #14 owns action compensation.
+
+### Classification
+HISTORICAL / IMPLEMENTED RECOVERY DONOR / CURRENT OWNER EXISTS
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Compare failure taxonomy and deterministic recovery-strategy tests against #293. Do not revive `RecoveryManager` as a parallel runtime.
+
+---
+
+## FINDING-GH-040
+
+### Finding
+The `clean` Execution Control implementation is also lineage for today's Agent Mesh claim/isolation workflow: it implemented per-agent ownership locks and branch-per-agent coordination before the current GitHub issue-claim system.
+
+### Evidence
+Repository: `Masterleeaus/clean`
+Paths include:
+- `app/TitanOS/Execution/OwnershipLocks/OwnershipLockManager.php` SHA `78dd5b8e9c8a32bc1aa35bfd64d881042343bd25`;
+- `app/TitanOS/Execution/BranchWorkflows/BranchWorkflowManager.php`;
+- Phase 3 completion evidence in `.titan/documentation/status/phase-completion.md`.
+
+Verified lock semantics include holder identity, TTL/expiry, renewal, conflict detection and force release.
+
+### Classification
+HISTORICAL DEVELOPMENT-ORCHESTRATION LINEAGE / NOT TITAN ZERO BUSINESS RUNTIME
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Keep this separate from Titan Zero production Workforce/authority. It may inform Agent Mesh development coordination only; it must not be imported as customer runtime authority.
