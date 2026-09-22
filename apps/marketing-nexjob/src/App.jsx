@@ -13,6 +13,7 @@ import Architecture from './pages/Architecture'
 import CostSovereignty from './pages/CostSovereignty'
 import EnvironmentalSystems from './pages/EnvironmentalSystems'
 import Compare from './pages/Compare'
+import IndustryHome from './pages/IndustryHome'
 import ScrollToTop from './components/ScrollToTop'
 import CookieConsent from './components/CookieConsent'
 
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/features" element={<Features />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/industries" element={<Industries />} />
+        <Route path="/industries/:industry" element={<IndustryHome />} />
         <Route path="/fully-managed" element={<ManagedSystem />} />
         <Route path="/privacy-architecture" element={<Architecture />} />
         <Route path="/cost-sovereignty" element={<CostSovereignty />} />
