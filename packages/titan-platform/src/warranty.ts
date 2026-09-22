@@ -210,7 +210,7 @@ export function buildTitanWarrantyClaim(input: TitanWarrantyClaimInput) {
     resolved_date: input.resolved_date ? isoDate(input.resolved_date, 'resolved_date') : null,
     labor_cost_cents,
     parts_cost_cents,
-    total_cost_cents: labor_cost_cents + parts_cost_cents,
+    total_cost_cents: (()=>{const total=labor_cost_cents+parts_cost_cents;if(!Number.isSafeInteger(total))throw new Error('total_cost_cents exceeds safe integer range');return total;})(),
     state,
     denied_reason: optionalString(input.denied_reason),
     resolution: optionalString(input.resolution),
