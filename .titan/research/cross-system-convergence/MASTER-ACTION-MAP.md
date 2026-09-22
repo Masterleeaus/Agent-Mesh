@@ -339,3 +339,19 @@ Remaining audit targets before #768 completion:
 - relationship revocation effects on all Personal Zero record types;
 - Trust/Autonomy non-elevation tests;
 - final merge/certification evidence.
+
+
+## Issue #768 slice-3 verification
+Core Personal Zero source architecture is now substantially present on `agent/768`:
+`ONE/Zero identity → company relationship → understanding evidence/state → experience → cognitive chronology → Interaction/Decision/Workforce projections`.
+
+Do not add parallel state primitives.
+
+Remaining convergence/certification targets:
+- execute committed tests and capture CI/check evidence;
+- verify privacy/locality/provider-egress enforcement at service/consumer boundaries, not only contract creation;
+- prove Personal Zero learning/projections cannot elevate Trust/Autonomy or authorize execution;
+- verify relationship revocation suppresses every company-scoped Personal Zero consumer path;
+- verify multi-company same-Zero isolation and portable-state classification;
+- verify correction/supersession and outcome lineage under repository revisions/restarts;
+- merge/final certification and update dependent #153/#59/#37/#767 consumers to use the canonical contracts rather than copying them.
