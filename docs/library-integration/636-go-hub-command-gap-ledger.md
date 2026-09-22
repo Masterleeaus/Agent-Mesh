@@ -306,3 +306,13 @@ Removed purple/pink from the effective Titan palette without breaking legacy tok
 - black/slate foundations, operational blue/green/orange/red and Command orange remain the intended palette.
 
 This is a token-level convergence pass; it avoids duplicating theme systems or mass-editing components.
+
+## Pass 23 — interaction boundary deep hardening
+
+Repeated the search for an existing production interaction/chat transport before implementing one. No canonical production `InteractionTransport` or chat API route was found, so no parallel backend was invented.
+
+Deep audit found a narrower isolation gap in the client boundary: top-level interaction events were scoped to company/conversation/surface, but a nested `event.message` could theoretically carry different scope metadata and still pass the outer filter.
+
+Hardened `TitanInteractionClient` so message events are accepted only when both the event and nested message match the authenticated `company_id`, conversation and canonical surface. Added regression coverage for a cross-company nested message.
+
+This keeps authenticated chat fail-closed while the real canonical transport remains absent. Test coverage is committed but not execution-verified in this connector-only pass.
