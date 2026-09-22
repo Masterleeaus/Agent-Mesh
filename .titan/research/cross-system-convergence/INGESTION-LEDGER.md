@@ -230,3 +230,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-018 | Current Authority Continuance source verification | packages/runtime/authority/{autonomy,authority-lease,lease-control,delegation,execution-boundary,company-boundary,index}.mjs | immutable blob SHAs recorded in SOURCE-REGISTER | CURRENT MAIN | VERIFIED | Source-level verification: contraction-only authority, lease freshness/revocation, non-widening controls/delegation, current-context execution, authoritative receipts, company_id-only boundary. This verifies substantial continuance primitives but not completion of #640/#540 recursive Trust lifecycle. | NO |
+
+
+| INGEST-019 | Blueprint evidence pipeline discovery | #749/PR #750; #751/PR #752; #757/PR #758 | current GitHub issue/PR definitions | IN PROGRESS / ARTIFACT RESULTS UNKNOWN | PARTIAL | All three are read-only evidence-generation/validation pipelines. Their definitions do not satisfy the Current-System Blueprint completion gate. | YES |
