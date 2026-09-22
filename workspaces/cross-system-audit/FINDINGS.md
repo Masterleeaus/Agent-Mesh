@@ -557,3 +557,52 @@ HIGH
 
 ### Related action
 PRESERVE + CONNECT current authority lease/control/delegation runtime; use #761 to map missing handshake/Trust integration rather than rebuilding continuance.
+
+
+---
+
+## FINDING-CSA-020
+### Finding
+Zero Mechanism Archaeology has now directly verified implemented historical Personal Zero cognition donors in Titan Interaction Engine v10.12.0.
+### Evidence
+SOURCE-LIB-001 / FINDING-GH-022 through FINDING-GH-026: cognitive events distinguish recommendation, correction, approval, rejection, outcome, prediction scoring, memory dispute and model update; prediction/outcome linkage uses Brier scoring; recommendation creation is separated from confirmed user action; cognitive envelopes retain company_id plus subordinate user/device/privacy scope.
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED DONOR
+### Convergence
+Recover semantics into #768; do not resurrect LocalBrain or create a second memory/authority runtime.
+### Confidence
+HIGH
+
+## FINDING-CSA-021
+### Finding
+Phase10 provides strong Personal Zero memory truth, privacy/locality and Learning Governor semantics, but the inspected evidence does not prove all proposed Pass18/19 TypeScript device modules were implemented.
+### Evidence
+SOURCE-LIB-002 / FINDING-GH-027 through FINDING-GH-031. Truth states include observed, confirmed, inferred, predicted, disputed, superseded, expired and deleted. Scope separates device-private/user-private/team/company/collective-safe. Learning is evidence-thresholded, reversible and outcome/correction driven; device intelligence cannot bypass server authority.
+### Classification
+SUPERIOR HISTORICAL SPECIFICATION / IMPLEMENTATION UNPROVEN FOR PASS18/19 DEVICE MODULES
+### Convergence
+Use as contract semantics for #768/#37 only after mapping to current owners; no direct-import claim for unverified modules.
+### Confidence
+HIGH
+
+## FINDING-CSA-022
+### Finding
+Titan Decision Engine Step25 contains implemented TypeScript donors for actor/company preferences, immutable-style revision lineage and verified-outcome learning.
+### Evidence
+SOURCE-LIB-003 / FINDING-GH-032 through FINDING-GH-035. Preference resolution is company/actor scoped and authority-neutral. Learning requires verified outcomes plus verification refs, preserves historical evidence/decisions, increments learning revision, and reports authority_effect:none. Decision history hashes snapshots and preserves supersession lineage.
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED DONOR
+### Convergence
+Compare/import superior semantics into #768/#37/#633 and existing provenance/Rewind owners rather than creating parallel engines.
+### Confidence
+HIGH
+
+## FINDING-CSA-023
+### Finding
+The historical Personal Zero ownership gap is now an action-history issue rather than a current ownership conflict: #763 correctly found no explicit owner at its earlier checkpoint, while #768 now owns architecture-contract convergence.
+### Classification
+RESOLVED OWNERSHIP TRANSITION
+### Convergence
+#763 remains archaeology/donor verification. #768 is the current convergence action. Implementation ownership inside the codebase must still be selected from existing canonical packages before coding.
+### Confidence
+HIGH
