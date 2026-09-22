@@ -209,3 +209,9 @@ if(!sw.includes("agent_mesh.continuation.checkpoint':'continuity-record-only'"))
 if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover must use governed Agent Mesh mutation path');
 if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager mutations must use governed Agent Mesh mutation path');
 if(!sw.includes("compatibility:{legacy_packet_id:target||null,authority:false}")) throw new Error('legacy packet routing compatibility must be explicitly non-authoritative');
+
+if(!sw.includes("agent-mesh-mutation-requires-governed-path")) throw new Error('generic bridge path must deny Agent Mesh mutations');
+if(!sw.includes("const AGENT_MESH_MUTATION_POLICY=Object.freeze")) throw new Error('central Agent Mesh mutation policy missing');
+if(!sw.includes("agent_mesh.continuation.checkpoint':'continuity-record-only'")) throw new Error('checkpoint must remain continuity-only, not work authority');
+if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover must use governed Agent Mesh mutation path');
+if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager mutations must use governed Agent Mesh mutation path');
