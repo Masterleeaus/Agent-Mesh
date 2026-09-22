@@ -789,3 +789,31 @@ The cross-system audit must not finalize yet. Existing findings can be used prov
 FINALIZATION GATE / SOURCE AGENTS STILL IN PROGRESS
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-037
+### Finding
+The five principal remaining convergence implementation lanes remain unclaimed, but #768 has received a material architecture clarification since the prior claim-state checkpoint.
+### Evidence
+Direct current issue/branch/PR recheck:
+- #153 Business Memory & Knowledge: OPEN, 0 comments, no `agent/153` branch, no matching open PR.
+- #37 predictive/outcome learning: OPEN, 0 comments, no `agent/37` branch, no matching open PR.
+- #59 Decision lifecycle: OPEN, 0 comments, no `agent/59` branch, no matching open PR.
+- #767 Evolution/Reality: OPEN, 0 comments, no `agent/767` branch, no matching open PR.
+- #768 Personal Zero: OPEN, 1 architecture clarification comment, no `agent/768` branch, no matching open PR.
+### #768 clarification that must be preserved
+- ONE is the persistent human/account principal; Zero belongs to ONE.
+- Company/customer/employment roles are revocable contexts/relationships, not owners of Zero.
+- `company_id` remains the only canonical multi-tenant boundary for company-owned data/execution.
+- Do not create `company_id + context_id` as a compound tenant boundary and do not fake `company_id = personal`.
+- Context/relationship identifiers may scope authority, consent, purpose, observation and data ownership without becoming tenancy.
+- Authority is not portable between contexts; portable evidence may inform a new context but delegation/Trust must be re-established.
+- No silent cross-context leakage between employer, personal and customer contexts.
+### Interpretation
+The execution queue is still available for claiming. Any implementation of #768 must use the clarified ONE/Zero/company-relationship model rather than older owner-centric assumptions.
+### Classification
+EXECUTION QUEUE / UNCLAIMED + ARCHITECTURE CLARIFICATION
+### Confidence
+HIGH
