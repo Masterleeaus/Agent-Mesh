@@ -478,3 +478,23 @@ HIGH.
 
 ### Related action
 ACTION-LIB-014 / #771.
+
+
+---
+
+## FINDING-LIB-018
+
+### Finding
+Titan Signal Engine v0.20.0-rc.8.4 is a physically verified historical donor with concrete event, anomaly and durable-delivery primitives. Current exact-main searches did not find the donor symbols, but canonical roadmap ownership already exists through the Command Bus → Signal → Assurance convergence path (#642/#73), distributed contract work (#575) and provider/Edge integrations. This is therefore a donor-parity gap inside an existing owner, not grounds for another Signal engine.
+
+### Classification
+VERIFIED IMPLEMENTED DONOR / EXISTING CANONICAL OWNER / PARITY-HARDENING GAP.
+
+### Architectural conclusion
+Signal is the accepted-change/observation/evidence event path and never mutation authority. Recover typed event identity/provenance, durable idempotent delivery/leases, anomaly evidence contracts, duplicate suppression, correction/supersession and replay-safe correlation into the existing TypeScript path. Keep anomaly detection distributed across appropriate engines while converging event semantics.
+
+### Confidence
+HIGH.
+
+### Related action
+ACTION-LIB-015.
