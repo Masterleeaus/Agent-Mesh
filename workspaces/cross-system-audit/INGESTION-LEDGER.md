@@ -302,3 +302,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-042 | #768 target-share acceptance update | issue #768 latest comment; source-side Personal Zero files rechecked | reported commits 19fd012,89dddcc; existing contracts blob 6dd6887bdc532a03c841e153b044e9223bfc8529; existing state blob 4e0480607a0c56a36e7aae40cfb9a862834a95a2 | ACTIVE/PROVISIONAL | SOURCE AGENT REPORT; NEW ARTIFACT PATH/BLOB NOT YET RESOLVED | Reported target-side acceptance binds grant fingerprint and target relationship under target company context without cross-company repository reads. Must directly verify artifact before certification. | YES |
+
+
+| INGEST-043 | #768 two-sided sharing gate | issue #768 update + share acceptance/state/index direct inspection | acceptance blob 97c9ebeb3efd7b8343ddbfe747db8fe288f4890f; state blob cd56091410e2d277edfa82cef089a1c83435b842; index blob ce539c5edeb3d15440a402007830d40c81f94c2c; commits e632fb6,a208935,2181d84 | ACTIVE/PROVISIONAL | DIRECT SOURCE VERIFIED; CI PENDING | Source grant plus exact-fingerprint target acceptance is now mandatory for shared-understanding retrieval; source/target expiry/revocation and identity/context mismatches fail closed without cross-company repository reads. | YES |
