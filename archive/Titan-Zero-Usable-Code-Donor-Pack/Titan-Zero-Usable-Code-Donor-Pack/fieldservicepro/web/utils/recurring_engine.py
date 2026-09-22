@@ -1,6 +1,6 @@
 """
 Recurring Job Generation Engine
-================================
+--------------------------------
 Generates Jobs from RecurringSchedule rows and ContractLineItem rows.
 
 Public API:
