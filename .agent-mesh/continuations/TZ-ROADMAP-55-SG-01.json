@@ -138,15 +138,19 @@
     "Pass 20: added regression guards preventing future mesh mutation paths from bypassing the central resume gate",
     "Pass 20: audited direct Agent Mesh mutation call sites and confirmed service-worker routes through central callAgentMeshMutation/preflight gate",
     "Pass 20: aligned Titan Bridge resume-gated mutation classification to recover_agent, route_packet, continuation.checkpoint and continuation.takeover; removed stale duplicate classification that incorrectly listed codex.run",
-    "Pass 20: added regression guard preventing duplicate gate definitions and requiring all four Agent Mesh continuation/work mutation actions to use the canonical gate"
+    "Pass 20: added regression guard preventing duplicate gate definitions and requiring all four Agent Mesh continuation/work mutation actions to use the canonical gate",
+    "Pass 20: audited Agent Mesh mutation call sites in Titan Code bridge/service worker and confirmed a single central callAgentMeshMutation gate handles Agent Mesh mutations",
+    "Pass 20: identified and corrected an over-gating defect: durable continuation checkpoints must remain writable during reconciliation so the latest recovery context is not lost",
+    "Pass 20: recover_agent, route_packet and continuation.takeover remain resume-gated; checkpoint is explicitly non-authoritative continuity recording",
+    "Pass 20: added regression guards for the mutation gate classification"
   ],
   "current_work": [
-    "Audit non-browser Agent Mesh/ChatGPT-facing entrypoints for equivalent mutation bypasses and align terminology/contracts with GitHub where relevant"
+    "Audit Agent Mesh ↔ Titan Code language/contracts and bootstrap surfaces for schema drift and duplicate concepts"
   ],
   "next_actions": [
-    "Scan repository server/workflow/agent tooling for direct recover/route/write paths",
-    "Ensure ChatGPT and Titan Code use the same request/claim/continuation language",
-    "Add cross-surface contract tests before declaring continuation system complete"
+    "Compare bridge action names, continuation schemas and GitHub workflow contracts",
+    "Align naming with GitHub-native concepts where useful without changing GitHub terminology",
+    "Add contract drift tests"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
