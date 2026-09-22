@@ -41,3 +41,23 @@ Treat #767 as the current action/ownership lane while retaining FINDING-GH-007 a
 Confidence: HIGH
 Further work required:
 Re-ingest GitHub and Library archaeology after their next checkpoints and independently verify P1 donor claims before finalization.
+
+
+## CONFLICT-003 — Trust action ownership vs evidence completion
+
+### Competing readings
+1. #640 defines the canonical recursive Trust/Autonomy implementation flow, so Trust/handshake ownership is resolved.
+2. #761/#762 could be read as proof that the handshake and Authority Continuance have already been recovered/verified.
+
+### Resolution
+Both are true only at different layers. #640 resolves IMPLEMENTATION OWNERSHIP. #761/#762 owns EVIDENCE RECOVERY, but PR #762 currently contains only a workflow and no generated evidence result. Authority Continuance therefore remains unverified in this audit.
+
+### Consequence
+- No new Trust state machine.
+- No new handshake issue.
+- Do not mark Authority Continuance implemented from #762.
+- Re-ingest #761/#762 when workflow results or source-level findings appear.
+- Compare Library donors only for superior missing semantics.
+
+### Confidence
+HIGH
