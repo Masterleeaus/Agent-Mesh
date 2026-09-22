@@ -23,11 +23,11 @@ export async function recordGovernedInspectionState(client:PoolClient,ctx:{accou
  WHERE field_permit_inspections.company_id=EXCLUDED.company_id AND field_permit_inspections.account_id=EXCLUDED.account_id AND field_permit_inspections.work_order_id=EXCLUDED.work_order_id`,
  [inspection.inspection_id,ctx.company_id,ctx.accountId,inspection.permit_id,inspection.work_order_id,inspection.inspection_date,inspection.result,JSON.stringify(inspection.provenance??{})]);
  if(write.rowCount!==1) throw new Error("field inspection boundary conflict");
- await syncInspectionCompletionBlockers(client,ctx.accountId,{company_id:ctx.company_id,work_order_id:inspection.work_order_id,inspection_id:inspection.inspection_id,result:inspection.result,provenance:inspection.provenance});
+ await syncInspectionCompletionBlockers(client,ctx.accountId,{company_id:ctx.company_id,work_order_id:inspection.work_order_id,permit_id:inspection.permit_id,inspection_id:inspection.inspection_id,result:inspection.result,provenance:inspection.provenance});
  await appendAuditLog(client,{account_id:ctx.accountId,entity_type:"field_inspection",entity_id:inspection.inspection_id,action:"update",actor_id:ctx.actorId,trace_id:ctx.traceId,new_value:{company_id:ctx.company_id,permit_id:inspection.permit_id,result:inspection.result}});
 }
 export async function recordGovernedDefectState(client:PoolClient,ctx:{accountId:string;company_id:string;actorId:string;traceId:string;role:Role},defect:{defect_id:string;work_order_id:string;punch_list_id:string;severity:string;state:string;verified_by_ref?:string|null;verified_date?:string|null;defer_reason?:string|null;completion_blockers:readonly string[];provenance?:Record<string,unknown>}){
- assertFieldMutationAuthority({role:ctx.role,actor_id:ctx.actorId,kind:"defect_state",next_state:defect.state,severity:defect.severity,verified_by_ref:defect.verified_by_ref,defer_reason:defect.defer_reason});
+ assertFieldMutationAuthority({role:ctx.role,actor_id:ctx.actorId,kind:"defect_state",next_state:defect.state,severity:defect.severity,verified_by_ref:defect.verified_by_ref,verified_date:defect.verified_date,defer_reason:defect.defer_reason});
  const write=await client.query(`INSERT INTO field_defects(id,company_id,account_id,work_order_id,punch_list_id,severity,state,verified_by_ref,verified_date,defer_reason,provenance)
  VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::jsonb)
  ON CONFLICT(id) DO UPDATE SET severity=EXCLUDED.severity,state=EXCLUDED.state,verified_by_ref=EXCLUDED.verified_by_ref,verified_date=EXCLUDED.verified_date,defer_reason=EXCLUDED.defer_reason,provenance=EXCLUDED.provenance,updated_at=CURRENT_TIMESTAMP
