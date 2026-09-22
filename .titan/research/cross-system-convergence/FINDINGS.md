@@ -1290,3 +1290,25 @@ The architectural cross-company sharing gap identified in CSA-056/057 is closed 
 SOURCE-VERIFIED IMPLEMENTATION / TWO-SIDED SHARING GATE LANDED / CI PENDING
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-059
+### Finding
+#768/TASK-152 has reached acceptance-audit completeness at source/documentation level except for executed Titan Platform typecheck/unit-test evidence; the latest audit closed explicit persisted-contract versioning and durable donor/duplicate-decision provenance gaps.
+### Evidence
+Latest #768 update reports commits `138752a`, `ad65007`, `bbf5bac`, `e7012e0`.
+Direct inspection verifies:
+- `packages/titan-platform/src/personal-zero/contracts.ts`, blob `bcf006be3f7c0d21501504e560f2fc89a3080f99`, now gives UnderstandingEvidence, UnderstandingState, ExperienceRecord and CognitiveEvent explicit persisted `schema` + version markers;
+- constructors assign those v1 schema/version markers rather than trusting callers;
+- `packages/titan-platform/src/personal-zero/state-service.ts`, blob `f7b693a04f1999f5a3ae2a98d7927f4232669666`, accepts unversioned input shapes for those records and constructs canonical versioned records before persistence;
+- the #768 completion audit reports EPIC-005 now records canonical ownership, donor families, reused semantics and rejected duplicate-runtime decisions.
+The issue's own acceptance audit marks architecture/storage ownership, portable ONE/Zero identity, relationship revocation, versioned contracts, understanding lifecycle/correction lineage, verified outcome/calibration neutrality, company/context isolation tests, private-egress/consent, consumer projections, company_id boundary and donor provenance implemented.
+The explicit remaining blocker is executed Titan Platform typecheck/unit-test PASS evidence.
+### Interpretation
+Do not add more Personal Zero architecture merely to keep #768 active. TASK-152 should now move through execution verification: run the package typecheck/tests, fix concrete failures only, capture evidence, then mark TASK-152/#768 complete if clean. This is an important convergence stop condition.
+### Classification
+SOURCE/DOCUMENTATION ACCEPTANCE COMPLETE / EXECUTION CERTIFICATION BLOCKER
+### Confidence
+HIGH
