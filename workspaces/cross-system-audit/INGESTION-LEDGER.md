@@ -281,3 +281,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-035 | #768 implementation slice 3 | issue #768 update + agent/768 Personal Zero state service | state-service blob 23122d55f5aa0a7136f9655f9ed62e6daaf83961; commits 00dc71f,0fc566b | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Experience + CognitiveEvent persistence and interaction/decision/workforce projections now exist. Verified actual outcomes require matching verified receipt evidence; revocation suppresses projections; outputs remain authority-neutral. | YES |
+
+
+| INGEST-036 | #768 implementation slice 4 | issue #768 update + agent/768 Personal Zero state/contracts | state-service blob ee156d98b7405a0144b5f919dc5d2656ab08bdfc; contracts blob bb268e67abeb837ca5fb054927e030129c0f326b; commits 2114048,ba73236 | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Same-relationship Brier calibration, stale-evidence suppression, retention primitive and explicit purpose/subject-scoped cross-context sharing now exist and remain authority-neutral. | YES |
