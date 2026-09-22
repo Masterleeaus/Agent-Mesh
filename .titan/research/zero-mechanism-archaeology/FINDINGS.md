@@ -475,3 +475,116 @@ HIGH
 
 ### Related action
 #725; #761/#762 Trust/Authority evidence recovery.
+
+
+---
+
+## FINDING-GH-014
+
+### Finding
+Canonical durable context ownership has already been consolidated into issue #21; former issue #19 is explicitly absorbed. The repository states that the retired top-level `memory/` tree must not be restored.
+
+### Why it matters
+Persistent Zero state should not be implemented as another generic memory tree. Zero needs a personal/intelligence state model that composes with the canonical durable context contract rather than duplicating storage, handoff or authority semantics.
+
+### Evidence
+- Issue #21 — Invocation context, durable memory & cross-agent handoff completion.
+- Former #19 is explicitly absorbed into #21.
+- #21 requires one canonical durable agent context/memory owner, company-scoped provenance, actor/source identity, freshness/revision and retention metadata.
+- #21 requires context references in handoff rather than copying authority state.
+- #19 records current implementation evidence in `packages/runtime/authority/execution-boundary.mjs` and `packages/runtime/authority/company-boundary.mjs` and states the old top-level `memory/` tree is gone.
+
+### Current Titan equivalent
+Canonical invocation/durable-context/handoff contract (#21).
+
+### Classification
+CURRENT
+
+### Confidence
+HIGH
+
+### Related action
+SUPPORTED EXISTING ACTION #21. Do not restore the retired memory tree.
+
+---
+
+## FINDING-GH-015
+
+### Finding
+Issue #725 already owns canonical identity, working state and cross-surface continuity. Its state model includes agent identity, goals/plans, policies, working state, history/events and verified performance/outcome references, while authority remains referenced from existing Trust/Autonomy owners and is revalidated on resume/transition.
+
+### Why it matters
+This is a strong existing substrate for persistent Zero working state and continuity. A future Personal Zero state model should distinguish human-understanding/behavioural state from agent/session continuity, but should reuse this continuity orchestration instead of creating per-surface Zero clones.
+
+### Evidence
+- Issue #725 — Consolidated identity, agent state & cross-surface continuity.
+- Explicit ownership references: #639 Workforce identity, #640 Trust/Autonomy, #21 durable context/handoff, #542/#641 surfaces, #644 host transport, #645 offline/Edge.
+- #725 requires same canonical agent/task across zero/Command, go, hub, mobile/PWA, browser and supported LLM hosts.
+- It explicitly prohibits client/session history from refreshing authority.
+
+### Current Titan equivalent
+Goal34 continuity orchestration and canonical working-state projection.
+
+### Classification
+PARTIAL
+
+### Confidence
+HIGH
+
+### Related action
+SUPPORTED EXISTING ACTION #725.
+
+---
+
+## FINDING-GH-016
+
+### Finding
+Current roadmap coverage for “preferences” is business/procedural rather than a complete Personal Zero human-understanding model. Issue #153/#156 cover SOPs, playbooks and preferences in canonical Business Memory, while the issue inventory inspected in this pass did not reveal an explicit canonical owner for a versioned model of the human's goals, priorities, relationships, communication patterns, decision patterns and evolving personal working context.
+
+### Why it matters
+The new Zero model requires more than generic business memory or session continuity. This appears to be a genuine architecture gap/candidate missing layer: a governed Personal Understanding/Behavioural Model that references canonical memory/context/state owners without becoming a second generic memory engine.
+
+### Evidence
+- #153: procedural memory includes SOPs/playbooks/preferences and is company-scoped Business Memory & Knowledge.
+- #156: procedural memory for SOPs/playbooks/preferences.
+- #21: durable context/handoff, not a full human-understanding model.
+- #725: agent/session working state and continuity, not a full human-understanding model.
+- Mechanism-specific issue searches in this pass for user profile/preferences/behavioural model/persistent profile state/personalization memory produced no explicit canonical Personal Zero owner beyond #763 archaeology and the above generic owners.
+
+### Current Titan equivalent
+No explicit complete equivalent verified in this pass. Likely requires composition over #153, #21 and #725 rather than duplication.
+
+### Classification
+UNKNOWN
+
+### Confidence
+MEDIUM
+
+### Related action
+Continue archaeology before proposing a new implementation issue. Search historical donors and other agents' evidence for prior human/user modelling mechanisms.
+
+---
+
+## FINDING-GH-017
+
+### Finding
+The existing authority boundary already encodes the correct rule for recalled/persistent context: identity/context has no authority effect and current authority must be evaluated separately.
+
+### Why it matters
+This provides a concrete architectural invariant for Personal Zero: remembered preferences, historical approvals, behavioural patterns, inferred intent and prior identity context can inform understanding but cannot grant, widen or refresh authority.
+
+### Evidence
+- Issue #19 current-code audit records `packages/runtime/authority/execution-boundary.mjs` returning `identity_confers_authority:false`, `current_context_only:true`, and execution context with `authority_effect:false`.
+- #19/#21 require negative tests for recalled approval/authority claims, stale context and revoked authority after recall.
+
+### Current Titan equivalent
+Canonical execution-context/authority boundary.
+
+### Classification
+IMPLEMENTED
+
+### Confidence
+HIGH based on current-code evidence recorded in the roadmap issue; direct file inspection remains a later source-verification step.
+
+### Related action
+#21; #763.
