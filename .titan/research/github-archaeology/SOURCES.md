@@ -189,3 +189,11 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-065 — TitanPro `Modules/Dispatch/Database/Migrations/2026_05_13_000700_create_dispatch_quality_and_sla_tables.php`, SHA `f7c957e336fc9b1dc5ad6f1cbd99a367fa69c2d9`; direct SLA/checklist/exception schema.
 - SOURCE-GH-066 — TitanPro `Modules/Dispatch/Routes/api.php`; search inspection confirms schedule, reschedule, technician recommendation, assignment status, route build and resequence API surfaces.
 - SOURCE-GH-067 — Agent-Mesh owner dedup search: #353 Scheduling/Dispatch/Capacity, #360 certification and #183 CRM/service-execution lifecycle.
+
+
+- SOURCE-GH-068 — TitanPro `docs/04-AI/orchestration.md`, SHA `f0acf3476a6edb171181f39b733938007e092c62`; multi-core participation/sequencing/critique/convergence/escalation design.
+- SOURCE-GH-069 — TitanPro `docs/04-AI/weighting-and-consensus.md`, SHA `bda664184804597402412007d1d8cc85f1cc01a5`; weighting, multiple consensus classes, risk thresholds and replay design.
+- SOURCE-GH-070 — TitanPro `docs/04-AI/specialist-cores.md`, SHA `617ea3ca42e860a0227112b75dc2b9f820810183`; specialist reasoning lanes, common context discipline and governance separation.
+- SOURCE-GH-071 — TitanPro `docs/04-AI/evaluation.md`, SHA `c3b72fd0b538ec3fe7463a508e3b83957e4dafd6`; outcome/evaluation/refinement semantics.
+- SOURCE-GH-072 — TitanPro `docs/04-AI/model-routing.md`, SHA `04a4a2cabdee5eebb54074b2e6cb94d2e1cc55bf`; privacy/cost/latency/local-server-external routing precursor.
+- SOURCE-GH-073 — Agent-Mesh current owner search: #642 and #80 explicitly include Model Council; #633 owns AI/Decision/Intelligence convergence.
