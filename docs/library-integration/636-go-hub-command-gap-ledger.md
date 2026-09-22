@@ -148,3 +148,14 @@ Mounted the first production-authenticated chat-first surface without replacing 
 - `TitanRole` now reuses the canonical surface type rather than maintaining a separate string union.
 
 This is intentionally additive. The existing `/app` dashboard remains untouched while the authenticated chat-first surface is proven. No demo company identity is used by the mounted Command entry.
+
+## Pass 10 — authenticated Go primary entry
+
+Mounted the field-worker chat-first entry and made it the default field landing path:
+- added authenticated `/app/go`;
+- only `tech` sessions can enter Go; non-tech staff are redirected to Command;
+- Go receives a short-lived authenticated `go` projection using session `company_id`/actor context;
+- the existing `/app/my-work` implementation remains the operational detail destination behind Go;
+- changed the existing `/app` tech redirect from `/app/my-work` to `/app/go`.
+
+This establishes the intended “chat first, workflows behind it” pattern for field staff without rewriting scheduling, work orders, visits, location capture, maps/navigation or field-day business logic.
