@@ -21,9 +21,9 @@ export interface CommunicationProviderAdapter {
 
 export type GovernedOutboundResult =
   | { ok: false; denied: true; reason: string }
-  | { ok: false; denied: false; reason: "no-provider"; receipt: DeliveryReceipt }
-  | { ok: false; denied: false; reason: "provider-failed"; provider_id: string; receipt: DeliveryReceipt; retry?: { next_attempt: number; delay_ms: number } }
-  | { ok: true; provider_id: string; receipt: DeliveryReceipt };
+  | { ok: false; denied: false; reason: "no-provider"; receipt: DeliveryReceipt; persisted: boolean }
+  | { ok: false; denied: false; reason: "provider-failed"; provider_id: string; receipt: DeliveryReceipt; persisted: boolean; retry?: { next_attempt: number; delay_ms: number } }
+  | { ok: true; provider_id: string; receipt: DeliveryReceipt; persisted: boolean };
 
 export interface ProviderAttemptEvidence { provider_id: string; receipt: DeliveryReceipt; persisted: boolean; }
 
@@ -52,30 +52,22 @@ export async function executeGovernedOutbound(input: {
     input.candidates.filter((item) => item.channel === message.channel),
   );
   if (!candidate) {
-    return {
-      ok: false,
-      denied: false,
-      reason: "no-provider",
-      receipt: createDeliveryReceipt({
-        message,
-        result: { ok: false, error_code: "no-provider" },
-        attempt: input.attempt,
-      }),
-    };
+    const receipt = createDeliveryReceipt({
+      message,
+      result: { ok: false, error_code: "no-provider" },
+      attempt: input.attempt,
+    });
+    return { ok: false, denied: false, reason: "no-provider", receipt, persisted: await recordDeliveryReceipt(receipt) };
   }
 
   const adapter = input.adapters.find((item) => item.provider_id === candidate.provider_id);
   if (!adapter) {
-    return {
-      ok: false,
-      denied: false,
-      reason: "no-provider",
-      receipt: createDeliveryReceipt({
-        message,
-        result: { ok: false, error_code: "provider-adapter-missing" },
-        attempt: input.attempt,
-      }),
-    };
+    const receipt = createDeliveryReceipt({
+      message,
+      result: { ok: false, error_code: "provider-adapter-missing" },
+      attempt: input.attempt,
+    });
+    return { ok: false, denied: false, reason: "no-provider", receipt, persisted: await recordDeliveryReceipt(receipt) };
   }
 
   const providerResult = await adapter.send(message);
@@ -84,8 +76,9 @@ export async function executeGovernedOutbound(input: {
     result: providerResult,
     attempt: input.attempt,
   });
+  const persisted = await recordDeliveryReceipt(receipt);
   if (providerResult.ok) {
-    return { ok: true, provider_id: candidate.provider_id, receipt };
+    return { ok: true, provider_id: candidate.provider_id, receipt, persisted };
   }
 
   const retry = input.retry_policy
@@ -101,6 +94,7 @@ export async function executeGovernedOutbound(input: {
     reason: "provider-failed",
     provider_id: candidate.provider_id,
     receipt,
+    persisted,
     ...(retry?.retry && retry.delay_ms !== undefined
       ? { retry: { next_attempt: retry.next_attempt, delay_ms: retry.delay_ms } }
       : {}),
@@ -155,7 +149,7 @@ export async function executeGovernedOutboundWithFallback(input: {
     attempts.push({ provider_id: candidate.provider_id, receipt, persisted });
     if (providerResult.ok) {
       return {
-        result: { ok: true, provider_id: candidate.provider_id, receipt },
+        result: { ok: true, provider_id: candidate.provider_id, receipt, persisted },
         attempts,
       };
     }
@@ -170,22 +164,27 @@ export async function executeGovernedOutboundWithFallback(input: {
         reason: "provider-failed",
         provider_id: last.provider_id,
         receipt: last.receipt,
+        persisted: last.persisted,
       },
       attempts,
     };
   }
 
   return {
-    result: {
-      ok: false,
-      denied: false,
-      reason: "no-provider",
-      receipt: createDeliveryReceipt({
+    result: await (async () => {
+      const receipt = createDeliveryReceipt({
         message,
         result: { ok: false, error_code: "no-provider" },
         attempt: input.attempt,
-      }),
-    },
+      });
+      return {
+        ok: false as const,
+        denied: false as const,
+        reason: "no-provider" as const,
+        receipt,
+        persisted: await recordDeliveryReceipt(receipt),
+      };
+    })(),
     attempts,
   };
 }
