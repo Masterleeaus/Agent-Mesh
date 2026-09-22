@@ -68,3 +68,5 @@ Remaining research phases: broad Library family inventory; Personal Zero/cogniti
 - Pass 6 completed Local AI / Cost Sovereignty archaeology: current Intelligence Runtime is the canonical converged owner; only narrow context-budget/model-metadata/cost-receipt/data-residency gaps remain. #647 updated; no duplicate issue created.
 
 - Pass 7 completed Environmental Intelligence archaeology. Classification: specified but not recovered as an implemented historical subsystem; current main search also lacks the domain. #769 created as a vertical capability-pack implementation target over shared canonical engines.
+
+- Pass 8 completed Security/Privacy archaeology. Historical Shield/Locker/Trust/Command Bus security semantics map to existing canonical owners; no duplicate security subsystem justified. #302 updated with donor hardening contracts; #310 remains certification owner.
