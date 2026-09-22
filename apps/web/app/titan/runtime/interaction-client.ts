@@ -30,7 +30,7 @@ export class TitanInteractionClient {
   getContinuationToken() { return this.continuationToken; }
   async send(text: string, requested_agent_id?: string, client_message_id = id("msg"), options: { signal?: AbortSignal; continuation_token?: string } = {}): Promise<InteractionEvent[]> {
     const clean = text.trim(); if (!clean) return [];
-    if (!this.transport) return [{ id: id("event"), kind: "message", conversation_id: this.conversation_id, company_id: this.company_id, surface: this.surface, message: { id: client_message_id, conversation_id: this.conversation_id, company_id: this.company_id, surface: this.surface, from: "user", text: clean, created_at: new Date().toISOString() } }];
+    if (!this.transport) return [];
     const result = await this.transport.send({ company_id: this.company_id, conversation_id: this.conversation_id, surface: this.surface, text: clean, requested_agent_id, client_message_id, continuation_token: options.continuation_token ?? this.continuationToken }, { signal: options.signal });
     if (!result.accepted) return []; this.continuationToken = result.continuation_token ?? this.continuationToken; return this.scoped(result.events);
   }
