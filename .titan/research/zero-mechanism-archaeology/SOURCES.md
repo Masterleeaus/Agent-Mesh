@@ -164,3 +164,17 @@ Recorded SHA-256: 7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa
 Verification: physical source materialized and relevant lineage/contradiction/security mechanisms inspected during #763; prior architecture evidence records physical SHA verification.
 Relevant paths: System/Services/KnowledgeContradictionService.php; System/Domain/Services/SourceVersionHasher.php; tests/Unit/SourceVersionLineagePolicyTest.php; tests/Security/KnowledgeAuthorityPolicyTest.php.
 Supports: FINDING-GH-052 through FINDING-GH-057 together with previously verified LocalBrain, Phase10, OnboardingPro and Assurance sources.
+
+
+---
+
+## SOURCE-LIB-008
+
+Type: Library master / direct source inspection
+Artifact: Titan Rewind Master v1.0.9.zip
+Library file id: file_00000000820881faba0c8f0eecd71cf3
+Library path: /MASTER Software/Masters/Platform/Titan Rewind/Titan Rewind Master v1.0.9.zip
+Recorded SHA-256: af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c9531
+Verification: physical source materialized and relevant evidence/readiness/recovery mechanisms inspected during #763; prior architecture evidence records physical SHA verification.
+Relevant paths: System/Audit/RewindEvidenceAssembler.php; System/Certification/RewindHostReadinessReport.php; restore/recovery contracts and tests within the master.
+Supports: FINDING-GH-058 through FINDING-GH-063 together with Decision Engine revision history, Knowledge Authority lineage and Phase10 truth-lifecycle evidence.
