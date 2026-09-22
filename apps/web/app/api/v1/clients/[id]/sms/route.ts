@@ -7,7 +7,7 @@ import { logger } from "@/lib/logger";
 import { normalizePhone } from "@/lib/phone";
 import { isSmsGatewayConfigured, sendSmsViaGateway } from "@/lib/sms/gateway";
 import { resolveTenantSmsSettings } from "@/lib/sms/settings";
-import { evaluateOutboundCommunicationPolicy } from "@/lib/communications/contracts";
+import { evaluateOutboundCommunicationPolicy, isCommunicationQuietHour } from "@/lib/communications/contracts";
 import {
   findActiveJobForClient,
   logOutboundSms,
@@ -106,10 +106,16 @@ export const POST = withRole(
         { status: 404 }
       );
     }
+    const quietHours = smsSettings.quietHours
+      ? isCommunicationQuietHour(new Date().getHours(), {
+          start_hour: smsSettings.quietHours.startHour,
+          end_hour: smsSettings.quietHours.endHour,
+        })
+      : false;
     const outboundPolicy = evaluateOutboundCommunicationPolicy({
       consent: client.sms_consent ? "granted" : "denied",
       opted_out: !client.sms_consent,
-      quiet_hours: false,
+      quiet_hours: quietHours,
       channel_allowed: smsSettings.enabled,
       privacy_allowed: true,
       funding_allowed: true,
