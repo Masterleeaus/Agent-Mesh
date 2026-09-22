@@ -172,3 +172,13 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-052 — `Masterleeaus/TitanPro` main, `Modules/TitanNexus/CHANGELOG.md`, SHA `3180f19f92813ed8dd5aa44cb3be844c84b9a228`.
 - SOURCE-GH-053 — `Masterleeaus/TitanPro` main, `Modules/Dispatch/CHANGELOG.md`, SHA `c74ac901abdba98ac22e5e86b7a2b490e4da9862`.
 - SOURCE-GH-054 — `Masterleeaus/TitanPro` main, `Modules/CallingAgent/CHANGELOG.md`, SHA `6dd31999e7686767cd6cc8a7734574ba0e39082e`.
+
+
+- SOURCE-GH-055 — TitanPro `Modules/CallingAgent/AI/Memory/CallerProfileMemory.php`, SHA `9fb66fd85f68daaa6ca28b82dbf2d55b0c5245c9`; direct caller-profile recall/outcome implementation.
+- SOURCE-GH-056 — TitanPro `Modules/CallingAgent/AI/Pipelines/OutcomeExtractionPipeline.php`, SHA `15c7f48dccbc98e9d5a3c1af96f30386623d8f3a`; direct structured call outcome heuristic implementation.
+- SOURCE-GH-057 — TitanPro `Modules/CallingAgent/Automation/Pipelines/MissedCallRecoveryPipeline.php`, SHA `13a5668c5713cd42745fc474e4f36240670ef665`; direct SMS/callback/voicemail recovery-plan implementation.
+- SOURCE-GH-058 — TitanPro `Modules/CallingAgent/Services/Providers/ProviderFailoverManager.php`, SHA `dd57494445424d177281a6709c528d1aeeb17b33`; direct provider health/quota failover implementation.
+- SOURCE-GH-059 — TitanPro `Modules/CallingAgent/Services/Sip/SipBridgeService.php`, SHA `aadb5947843d84e3e49889ea0ff3e39e21183cf5`; direct SIP bridge-plan implementation.
+- SOURCE-GH-060 — TitanPro `Modules/CallingAgent/AI/Agents/PersonaResolver.php`, SHA `829346ed56ab97b069f2156d288df24328763f05`; direct reception-persona implementation.
+- SOURCE-GH-061 — TitanPro `Modules/CallingAgent/Services/Calendar/CalendarProviderManager.php`, SHA `7ddb43cf0339782d9a42199fa9ee2023a50a7850`; direct Google/Outlook/CalDAV provider manager.
+- SOURCE-GH-062 — Agent-Mesh current owner dedup search: #234 Communications & Channels, #333 Reception & Customer Access, #363 Customer Care/Retention, #343 Sales & Revenue Growth.
