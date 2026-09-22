@@ -81,3 +81,29 @@ FINDING-GH-013
 
 Purpose:
 Bounded predictive/outcome learning and autonomy-safety certification. Candidate canonical constraint/owner for Zero Learning Governor integration.
+
+
+---
+
+## SUPPORTED EXISTING ACTION:
+#725
+
+Additional evidence:
+FINDING-GH-014; FINDING-GH-016
+
+Purpose:
+Canonical persistent working-state and cross-surface continuity substrate. Personal Zero should reuse these contracts for durable context/continuity while authority is always revalidated rather than persisted as permission.
+
+---
+
+## ACTION-GH-003
+
+Type: DEEP ARCHAEOLOGY / OWNERSHIP RESOLUTION
+Priority: P0
+Finding: FINDING-GH-015
+GitHub Issue: #763
+Status: IN PROGRESS
+Canonical Owner: UNRESOLVED — candidate future Personal Zero Understanding/Behaviour model
+
+Summary:
+Determine whether current or historical Titan code already implements a semantic model of the human's goals, preferences, responsibilities, relationships, working style and behavioural patterns. Search code/history/donors before proposing implementation. Keep it distinct from Business Memory, Workforce identity, session continuity and authority state.
