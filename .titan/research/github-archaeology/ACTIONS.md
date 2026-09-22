@@ -343,3 +343,22 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** current production TypeScript and private Titan Code paths have regression coverage for the recovered failure modes, and no tenant-owned canonical audit path relies on a tenantless legacy stream.
 - **Confidence:** HIGH
 - **Status:** READY FOR CURRENT IMPLEMENTATION VERIFICATION
+
+
+---
+
+## ACTION-GH-018 — Certify company-scoped audit/evidence persistence in current TypeScript baseline
+
+- **Type:** DEEP SCAN / P0 SECURITY-AUTHORITY CERTIFICATION
+- **Priority:** P0
+- **Findings:** FINDING-GH-076, FINDING-GH-077, FINDING-GH-078, FINDING-GH-079, FINDING-GH-080
+- **Canonical Owners:** #423/#430, #63, #642, final convergence/certification owners.
+- **Current State:** Historical Laravel evidence proves a tenantless AI/signal audit gap existed; repository symbol search does not yet prove the current TypeScript implementation closes it.
+- **Proposed Treatment:** During current-baseline certification, locate every audit/evidence/receipt persistence path by runtime tracing/package inventory rather than relying on symbol names. Verify company scope before write, read, replay and export.
+- **company_id:** Required for tenant-owned business/AI/Signal/Decision/Workforce/finance/customer/job/approval evidence. System-null allowed only for explicitly pre-auth/global security telemetry.
+- **Trust/Authority:** audit records are evidence of authority decisions, not authority themselves.
+- **Migration:** do not import old `tz_audit_log`; if legacy evidence is migrated, company ownership must be established from authoritative relationships or quarantined.
+- **Tests:** tenant-owned event missing company; cross-company query/export; replay under wrong company; company mismatch between receipt and parent; null-company business event; valid pre-auth system event; actor/device/integration attribution; approval/execution/rollback correlation.
+- **Acceptance Criteria:** an executable certification test proves no tenant-owned evidence path can persist or return without validated canonical company scope.
+- **Confidence:** HIGH
+- **Status:** CURRENT CODE LOCATION STILL NEEDS RUNTIME/PACKAGE INVENTORY
