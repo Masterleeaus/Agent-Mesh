@@ -551,3 +551,13 @@ Rules:
 - if repository governance requires a CI artifact, add only the minimal scoped evidence route needed to invoke the existing package script;
 - capture head SHA, command, exit result, test counts/failures and logs;
 - only Personal Zero/TASK-152-attributable failures belong to #768.
+
+
+## TASK-152 unit-test repair and isolation
+1. Fix the observed Personal Zero legacy-tenant assertion/message mismatch without weakening fail-closed behavior.
+2. Keep the canonical diagnostic explicit enough to identify the company boundary; prefer consistency with existing company_id error conventions after inspecting nearby tests/runtime.
+3. Re-run the Personal Zero tests.
+4. Narrow the verification workflow's test execution to TASK-152/Personal Zero test files after the normal Titan Platform compile step, so historical Workforce test debt cannot determine Personal Zero certification.
+5. Do not delete/skip Personal Zero negative tests to obtain green status.
+6. Record exact scoped test count/pass/fail and head SHA.
+7. Track package-wide Workforce test-output/export failures with their existing owner rather than #768.
