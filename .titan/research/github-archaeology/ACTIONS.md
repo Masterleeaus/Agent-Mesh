@@ -529,3 +529,21 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** one continuous Evolution/Reality lifecycle extends existing discovery/install machinery and closes #767 donor gaps without parallel truth/discovery/authority systems.
 - **Confidence:** HIGH
 - **Status:** READY FOR IMPLEMENTATION COMPARISON
+
+
+---
+
+## ACTION-GH-028 — Import unknown-outcome write-ahead recovery semantics into canonical governed execution
+
+- **Type:** CONVERGE / IMPORT+HARDEN
+- **Priority:** P1
+- **Findings:** FINDING-GH-117–120
+- **Canonical owners:** #14 governed execution/recovery/compensation and #293 reliability/recovery; certification #300/#560.
+- **Donor:** browser agent action journal + resume planner. Do not make browser orchestration a business execution authority.
+- **Recover semantics:** write-ahead mutation intent; correlation/idempotency key; DISPATCHED-but-unconfirmed/UNKNOWN outcome; never blind replay unknown mutation; reconcile current external/business truth; explicit terminal resolution; evidence linking original dispatch, reconciliation, retry/compensation and final outcome.
+- **Authority:** recovery/retry/compensation must revalidate current company_id, actor/agent authority, policy/risk/approval and reversibility; reconnect/restart cannot elevate authority.
+- **Distinguish:** LLM stuck-loop replanning is orchestration recovery only and must not serve as Rewind/compensation.
+- **Tests:** worker/process death immediately after dispatch; receipt loss after provider success; provider timeout with unknown commit; duplicate resume; idempotent retry; irreversible unknown outcome escalates rather than retries; cross-company recovery denied; revoked authority blocks resumed mutation.
+- **Acceptance Criteria:** canonical execution can safely classify and reconcile UNKNOWN mutation outcomes without duplicate writes, while preserving existing Command Bus/Rewind ownership.
+- **Confidence:** VERY HIGH
+- **Status:** SUPPORT EXISTING OWNERS
