@@ -422,3 +422,57 @@ MEDIUM
 
 ### Related action
 Do not create an implementation issue yet. Continue ownership/source archaeology and package the capability only after Blueprint, GitHub and Library final evidence is reconciled.
+
+
+---
+
+## FINDING-CSA-015
+
+### Finding
+The Personal Zero ownership gap identified in FINDING-CSA-014 now has an existing architecture action: issue #768, Define Personal Zero Understanding & Experience contracts.
+
+### Why it matters
+A new Personal Zero implementation issue would now be duplicate work. #768 explicitly preserves the boundaries this audit requires: Personal Zero is not Business Memory, Business Reality, Interaction persistence, Intelligence routing or an authority engine.
+
+### Evidence
+- Issue #768, open.
+- Defines Understanding Memory, Experience Memory and Cognitive Event contracts.
+- Requires one canonical owner after inspecting existing storage/evidence/provenance contracts.
+- Requires provenance/confidence/freshness/correction/supersession and prediction calibration.
+- Explicitly states learning/recommendation/prediction/confidence/consensus never creates authority.
+- Coordinates with #153, #633, #767 and Trust/Assurance/Governance/Autonomy/Command Bus.
+
+### Classification
+EXISTING ACTION / READY FOR ARCHITECTURE CONVERGENCE, NOT YET IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+SUPPORT EXISTING #768. Do not create a competing Personal Zero memory/model issue.
+
+---
+
+## FINDING-CSA-016
+
+### Finding
+The user's three-way/recursive trust handshake is not merely an undocumented concept: open issue #640 is the consolidated implementation owner and defines effective authority as the bounded intersection of earned trust, explicit delegation/approval, entitlement, class ceiling, current Risk/Governance/Assurance and downstream acceptance.
+
+### Why it matters
+This resolves canonical action ownership for Trust progression while preserving #761 as evidence recovery/audit rather than a second Trust implementation.
+
+### Evidence
+- #640 consolidated Goal42 implementation.
+- Recursive handshake = system readiness + explicit user delegation + required downstream agent acceptance, accumulating through hierarchy.
+- Starts all workforce roles reactive/bounded; hierarchy is a ceiling, not starting authority.
+- Includes refusal/pause/revocation/regression, plan-lock separation and path-scoped trust.
+- #761 separately owns recovery of Trust handshake and Authority Continuance evidence and explicitly says not to implement a new trust system.
+
+### Classification
+PARTIAL / EXISTING IMPLEMENTATION ACTION
+
+### Confidence
+HIGH
+
+### Related action
+#640 implementation; #761 evidence recovery; #540 final certification.
