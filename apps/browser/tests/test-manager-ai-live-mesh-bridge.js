@@ -202,3 +202,10 @@ if(!sw.includes("'agent_mesh.continuation.checkpoint':'continuity-record-only'")
 if(!sw.includes("'agent_mesh.recover_agent':'resume-gated'")) throw new Error('recover_agent must remain resume-gated');
 if(!sw.includes("'agent_mesh.route_packet':'resume-gated'")) throw new Error('route mutation must remain resume-gated');
 if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover must use governed mutation dispatcher');
+
+if(!sw.includes("reason: 'agent-mesh-mutation-requires-governed-path'")) throw new Error('generic bridge must deny Agent Mesh mutation bypass');
+if(!sw.includes("const AGENT_MESH_MUTATION_POLICY=Object.freeze")) throw new Error('central Agent Mesh mutation policy missing');
+if(!sw.includes("agent_mesh.continuation.checkpoint':'continuity-record-only'")) throw new Error('checkpoint must remain continuity-only, not lifecycle mutation');
+if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover must use governed Agent Mesh mutation path');
+if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager mutations must use governed Agent Mesh mutation path');
+if(!sw.includes("compatibility:{legacy_packet_id:target||null,authority:false}")) throw new Error('legacy packet routing compatibility must be explicitly non-authoritative');
