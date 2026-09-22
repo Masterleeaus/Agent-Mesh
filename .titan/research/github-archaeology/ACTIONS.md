@@ -324,3 +324,22 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** every consequential execution path can identify principal + company + surface/device/channel + effective authority/policy result; guards fail closed and reuse canonical authority/governance rather than bypassing it.
 - **Confidence:** HIGH
 - **Status:** READY FOR SECURITY OWNER COMPARISON
+
+
+---
+
+## ACTION-GH-017 — Convert historical security defects into canonical regression gates and verify audit tenancy closure
+
+- **Type:** P0 SECURITY/AUTHORITY / COMPARE / REGRESSION
+- **Priority:** P0
+- **Findings:** FINDING-GH-074, FINDING-GH-075, FINDING-GH-076, FINDING-GH-077
+- **Canonical Owners:** #302 security hardening; #648/#60 final convergence/regression certification; #649 private Titan Code convergence; #574 distributed identity authority; canonical audit/governance owners.
+- **Proposed Treatment:** Use AI Coding Studio defect history as a failure-first security test corpus, retain Titan Builder's stronger hardened controls where applicable, and verify current TypeScript audit/signal paths cannot emit tenant-owned evidence without canonical `company_id`.
+- **company_id:** Mandatory before persistence of tenant-owned audit, signal, AI/tool, approval or execution evidence.
+- **Trust/Authority:** page/model/extension output cannot self-authorize; apply capabilities are scoped, short-lived and replay-resistant; audit records describe authority but do not create it.
+- **Privacy/Security:** block arbitrary privileged fetch proxies, sanitize untrusted rendered content, authenticate page/extension/sandbox channels, bound archive/context ingestion, exclude secrets by default, separate browser/control credentials.
+- **Migration:** historical tenantless audit records require explicit migration/quarantine policy; never infer company ownership from unsafe heuristics.
+- **Tests:** localhost/private-network fetch denial; unapproved remote endpoint; HTML/Markdown injection; spoofed postMessage/window event; archive bomb; .env/private-key ingestion; fake-success runtime; approval replay; stale preview; cross-company audit query; tenant-owned event missing company_id; rollback evidence attribution.
+- **Acceptance Criteria:** current production TypeScript and private Titan Code paths have regression coverage for the recovered failure modes, and no tenant-owned canonical audit path relies on a tenantless legacy stream.
+- **Confidence:** HIGH
+- **Status:** READY FOR CURRENT IMPLEMENTATION VERIFICATION
