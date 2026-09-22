@@ -197,15 +197,19 @@
     "Pass 20: regression guards now prevent takeover/Manager mutation paths from bypassing the central gate",
     "Pass 20: audited all current service-worker Agent Mesh bridge mutations and confirmed they converge through callAgentMeshMutation allowlist/policy",
     "Pass 20: generic callTitanBridge rejects direct agent_mesh mutation calls, preventing UI/provider callers from bypassing governed mutation paths",
-    "Pass 20: recover_agent, route_packet and continuation takeover are resume-gated; checkpoint remains continuity-record-only and cannot grant lifecycle authority"
+    "Pass 20: recover_agent, route_packet and continuation takeover are resume-gated; checkpoint remains continuity-record-only and cannot grant lifecycle authority",
+    "Pass 20: audited every Agent Mesh bridge mutation call site in the current service worker and bridge client",
+    "Pass 20: all work mutations converge through central callAgentMeshMutation policy; generic callTitanBridge rejects Agent Mesh mutations and unknown mesh mutations fail closed",
+    "Pass 20: recover_agent, route_packet and continuation.takeover are resume-gated; continuation.checkpoint is continuity-record-only; legacy packet routing is compatibility metadata with authority false",
+    "Pass 20: regression guards lock these mutation boundaries against future bypass"
   ],
   "current_work": [
-    "Harden route_packet legacy naming/payload semantics so GitHub issue/subgoal identity is primary and packet is compatibility-only"
+    "Replace remaining legacy packet terminology in active Manager routing surfaces with GitHub issue/subgoal terminology while retaining compatibility adapters only"
   ],
   "next_actions": [
-    "Inspect normalizeAgentMeshRoutingPayload and bridge route contract",
-    "Replace packet-primary payload semantics with issue/subgoal/claim identity while preserving compatibility adapter",
-    "Add regression tests that route mutations cannot operate from a bare legacy packet id"
+    "Audit active route_packet action contract and bridge host implementation",
+    "Introduce canonical issue/subgoal route naming if host supports it, retaining route_packet only as compatibility adapter",
+    "Update tests and UI-facing Manager terminology without changing GitHub authority"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
