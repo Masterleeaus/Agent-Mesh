@@ -3308,3 +3308,72 @@ RECOVER SEMANTICS / KEEP MEMORY DOMAINS SEPARATE
 
 ### Confidence
 VERY HIGH
+
+
+---
+
+## FINDING-GH-133
+
+### Finding
+A reachability distinction is required for the worker-memory capability found in Pass 42: its implementation exists inside the large handover bundle, but it is **not exported by the current top-level `packages/titan-platform/src/workforce.ts` facade**.
+
+### Evidence
+The handover bundle exports `buildWorkforceWorkerMemorySnapshot`, `recallWorkforceWorkerMemory`, `buildWorkforceWorkerMemoryRecallReceipt` and summary functions internally. The top-level Workforce facade exports Knowledge Authority functions but contains no WorkerMemory exports.
+
+Repository search also did not identify current consumers of those worker-memory function names.
+
+### Classification
+IMPLEMENTED BUT NOT VERIFIED REACHABLE / PORTED DONOR
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-134
+
+### Finding
+This corrects an important possible overstatement from Pass 42: Worker Memory is not yet proven to be an active production capability merely because implementation code exists. It is currently best classified as a **ported, quarantined semantic donor** until a canonical facade/consumer/test path is verified.
+
+### Classification
+REACHABILITY CORRECTION
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-135
+
+### Finding
+The worker-memory donor still has high convergence value because it encodes mature recall safety mechanics without claiming truth or authority. However, whether Titan Zero should expose a standalone Workforce Memory runtime must be decided against #153 Business Memory and #768 Personal Zero to avoid creating a third overlapping long-term memory authority.
+
+### Recommended ownership test
+Only retain standalone worker memory if there is a distinct need for agent/worker execution-context memory that cannot be represented as:
+- company knowledge/outcome/procedure memory (#153),
+- One's personal understanding/experience (#768), or
+- short-lived Interaction/workflow state.
+
+### Classification
+OWNER/NECESSITY REVIEW REQUIRED BEFORE ACTIVATION
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-136
+
+### Finding
+This pass reinforces a broader archaeology rule: **source present ≠ capability reachable**. For every recovered/migrated subsystem the matrix must separately track:
+1. implementation present;
+2. exported through canonical facade;
+3. consumed by an active surface/runtime;
+4. covered by tests/certification;
+5. authoritative owner identified.
+
+### Classification
+ARCHAEOLOGY METHODOLOGY HARDENING
+
+### Confidence
+VERY HIGH
