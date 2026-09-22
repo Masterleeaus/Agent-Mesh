@@ -132,15 +132,18 @@
     "Pass 20: audited Agent Mesh mutation call sites in the browser service worker",
     "Pass 20: confirmed generic callTitanBridge rejects every classified agent_mesh mutation, preventing a direct bridge bypass",
     "Pass 20: confirmed recover_agent, route_packet and continuation.takeover pass through the GitHub-first resume gate; checkpoint remains governed and read-only surfaces remain separate",
-    "Pass 20: added regression assertions for generic mutation bypass prevention and governed-path presence"
+    "Pass 20: added regression assertions for generic mutation bypass prevention and governed-path presence",
+    "Pass 20: audited Agent Mesh mutation call sites in the browser service worker and confirmed mesh mutations funnel through callAgentMeshMutation",
+    "Pass 20: strengthened the central mesh mutation wrapper to require a snapshot and route recover, route, checkpoint and takeover through the same resume preflight",
+    "Pass 20: added regression guards preventing future mesh mutation paths from bypassing the central resume gate"
   ],
   "current_work": [
-    "Complete broader Titan Code/Agent Mesh contract alignment and identify remaining takeover usability gaps"
+    "Audit non-browser Agent Mesh/Titan Code mutation entrypoints and GitHub-side claim/execution workflows for equivalent bypasses"
   ],
   "next_actions": [
-    "Audit bridge action naming against GitHub terminology and existing Titan Code terminology",
-    "Create compact takeover handoff artifact consumable by both ChatGPT and Titan Code/Codex",
-    "Then test end-to-end context replacement semantics"
+    "Scan apps/browser and repository scripts/workflows for direct mutation calls or alternate recovery paths",
+    "Align any alternate path with the same canonical claim/head/resume contract",
+    "Add cross-surface invariants for ChatGPT app and Titan Code extension"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
