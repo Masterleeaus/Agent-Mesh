@@ -58,8 +58,8 @@ export default function Industries() {
       </section>
 
       <CTASection
-        title="Don't see your industry?"
-        subtitle="Titan Zero can be configured around your existing systems, workflows and operating requirements."
+        title="Build Titan Zero around your field-service business."
+        subtitle="We assess the operation, retain useful systems, fill genuine gaps and configure the managed workforce around your workflows."
       />
     </>
   )
