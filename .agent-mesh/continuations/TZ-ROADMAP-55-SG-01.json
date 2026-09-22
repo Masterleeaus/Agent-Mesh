@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 5,
+    "current_pass": 6,
     "status": "ACTIVE"
   },
   "completed": [
@@ -32,15 +32,18 @@
     "Pass 4: regression assertions require continuation bridge wiring",
     "Pass 5: added repository-side record-agent-continuation.py that validates issue, canonical claim branch and optional head SHA against live GitHub before persisting recovery context",
     "Pass 5: checkpoint/takeover receipts are issue-comment projections only; GitHub branch/issue remain authority and receipts cannot release claims or merge",
-    "Concurrent agent work detected on the same claimed branch; preserved it and continued from the new head rather than overwriting it"
+    "Concurrent agent work detected on the same claimed branch; preserved it and continued from the new head rather than overwriting it",
+    "Pass 6: added agent-continuation.yml event-driven workflow triggered by continuation-request JSON pushed on canonical agent branches; workflow_dispatch retained only as fallback",
+    "Pass 6: workflow validates request path, canonical claim branch, subgoal/branch identity and checkpoint/takeover kind before invoking GitHub-validated recorder",
+    "Pass 6: Agent Mesh CI now self-tests record-agent-continuation.py"
   ],
   "current_work": [
-    "Connect repository-side continuation recorder to an event-driven workflow and execution bridge"
+    "Build generic governed Execution Bridge request contract using the same event-driven pattern"
   ],
   "next_actions": [
-    "Add guarded continuation workflow/event entrypoint",
-    "Add execution-request schema and allowlisted event-driven Action",
-    "Add concurrency/replay/SHA validation"
+    "Add execution-request JSON schema/validator",
+    "Allowlist deterministic repository operations only; no arbitrary shell",
+    "Add path-triggered execution workflow with per-request concurrency and receipts"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
