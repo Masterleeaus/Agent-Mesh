@@ -1470,3 +1470,26 @@ Proceed with #59 as an implementation gap, but still follow reuse-first archaeol
 OPEN CANONICAL IMPLEMENTATION GAP / OWNER #59 / REPOSITORY SEARCH CORROBORATED
 ### Confidence
 HIGH for current default-branch discoverability; historical/Library donors still require reuse review
+
+
+---
+
+## FINDING-CSA-067
+### Finding
+Library evidence materially narrows #59's donor strategy: the retained Titan Decision Engine Step 25 bundle contains canonical decision-model/history artifacts and a broader Observation→Learning analytical chain, while the current roadmap explicitly requires preserving the earlier canonical Step-9 DecisionPacket rather than replacing it. #59 should therefore converge Step25 lifecycle/history semantics around the existing canonical DecisionPacket contract, not import Step25 as a parallel engine.
+### Evidence
+Library retrieval found:
+- `CODE-DISCOVERY-LEDGER.json` identifies physically retrieved/SHA-verified `Titan Decision Engine Master Step 25.zip` at `/MASTER Software/Masters/Platform/Titan Decision Engine/`, SHA-256 `3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a`. Verified internal artifacts include `08-canonical-decision-model/CANONICAL-DECISION-MODEL.json` and `24-decision-history/DECISION-HISTORY.schema.json`; the ledger classifies them as reusable analytical donors, not operational authority.
+- `TITAN-ZERO-LIBRARY-CAPABILITY-RECOVERY-MATRIX.md` records Step25 context enrichment, evidence extraction, option discovery, constraints, preference model, comparison, ranking, explanation, confidence, learning loop and observation; it separately flags persistent-state candidates for deep scan.
+- `TZ-ROADMAP-52.json` states repeatedly that Decision convergence must preserve the canonical Step-9 DecisionPacket, company_id-only tenancy and authority separation. Its manager-only SG19 is “Decision Runtime Orchestrator and canonical Step-9 DecisionPacket convergence”; SG22 defines persistent WATCHING decisions and temporal triggers/re-evaluation; SG23 defines persistent Decision Object memory and durable entity correlation; SG28 enforces best-action-is-not-authority and governed execution/outcome learning.
+### Interpretation
+The donor relationship is now clear:
+- Step-9 DecisionPacket = contract to preserve/converge around.
+- Step25 = analytical/lifecycle/history/learning donor.
+- Phia = observation/comparison/opportunity donor where generalized.
+- current Titan runtime = canonical runtime identity and authority-neutral boundary.
+Implementation must compose these, not select one donor wholesale.
+### Classification
+#59 DONOR CONVERGENCE BOUNDARY VERIFIED
+### Confidence
+HIGH
