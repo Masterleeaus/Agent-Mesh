@@ -1304,3 +1304,102 @@ ARCHAEOLOGY CORRECTION / FALSE-POSITIVE ELIMINATED
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-043
+
+### Finding
+The available GitHub connector does not expose a tag/release enumeration endpoint, so release archaeology cannot safely infer repository tags from commit-message searches. However, first-party version/changelog artifacts inside several repositories provide recoverable release-line evidence and should be treated as secondary release evidence, not as proof that a Git tag exists.
+
+### Verified release-line evidence
+- Titan Builder main package/bridge/extension identify version `0.5.0`.
+- AI Coding Studio's authoritative changelog records Pass 02 as version `2.1.0`.
+- TitanPro contains module-level release histories including TitanNexus `0.19.0`, Dispatch versions through `1.1.0` plus hardening passes, and CallingAgent through `1.0.12`.
+
+### Classification
+RELEASE ARCHAEOLOGY / PARTIAL EVIDENCE
+
+### Confidence
+HIGH for file-declared versions; UNKNOWN for corresponding Git tags/releases.
+
+### Recovery judgment
+Do not fabricate tag history. Continue using version manifests/changelogs and strategic commits as evidence until an actual refs/releases endpoint or independent repository checkout is available.
+
+---
+
+## FINDING-GH-044
+
+### Finding
+TitanPro module changelogs preserve useful capability milestones that are easy to miss when scanning only current source names.
+
+### Evidence
+`Modules/TitanNexus/CHANGELOG.md` SHA `3180f19f92813ed8dd5aa44cb3be844c84b9a228`:
+- version 0.19.0;
+- MarketingAgent nativeized with invoice, payment and job tools;
+- production manifests, migrations, mail templates, workflows and control-panel convergence.
+
+`Modules/Dispatch/CHANGELOG.md` SHA `c74ac901abdba98ac22e5e86b7a2b490e4da9862`:
+- technician schedule conflict validation;
+- rescheduling;
+- dispatch KPI summary;
+- standalone work orders/appointments;
+- route recalculation;
+- guarded assignment transitions;
+- SLA policies/checklists/exceptions and breach sweep.
+
+`Modules/CallingAgent/CHANGELOG.md` SHA `6dd31999e7686767cd6cc8a7734574ba0e39082e`:
+- provider abstraction for telephony/STT/TTS/realtime voice/channels;
+- realtime sessions/turn-taking/media relay;
+- receptionist pipeline;
+- caller memory;
+- structured outcome extraction;
+- persona resolver;
+- transfer trees;
+- missed-call recovery;
+- calendar federation;
+- SIP bridge;
+- provider failover/full-duplex helpers.
+
+### Classification
+HISTORICAL RELEASE-LINE CAPABILITY EVIDENCE
+
+### Confidence
+HIGH
+
+### Recovery judgment
+These are high-value inputs for later Workforce/Field Ops/Communications passes. Changelog claims must still be verified against implementation before classifying a capability as recoverable code.
+
+---
+
+## FINDING-GH-045
+
+### Finding
+AI Coding Studio's own release history confirms the intended architectural boundary now used for Titan Code: private/local development orchestration over mature tools, with a fail-closed approval policy and versioned Local Bridge, rather than a Titan Zero production runtime.
+
+### Evidence
+Repository: `Masterleeaus/AI-Coding-Studio`
+Path: `CHANGELOG.md`
+SHA: `3ee7ea91220d27a569cd2777a16a3d3aacf2434d`.
+
+Pass 02 records:
+- removal of disconnected module-wrapper architecture;
+- production-imported Runtime Kernel;
+- structured command results;
+- fail-closed approval;
+- versioned Local Bridge protocol;
+- allowlisted command catalog;
+- timeout/cancellation/unavailable-state behavior;
+- tool registry for Git/GitHub CLI/VS Code/PowerShell/Node/npm/PHP/Composer/Python/Docker/7-Zip/ripgrep/Playwright/MySQL;
+- repository-runtime delegation and workflow definitions;
+- version 2.1.0.
+
+### Classification
+CURRENT PRIVATE DEVELOPMENT LINEAGE / TITAN CODE BOUNDARY CONFIRMED
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Use this later when converging Titan Code itself, but never make Titan Zero Base App depend on AI Coding Studio/Titan Code runtime.
