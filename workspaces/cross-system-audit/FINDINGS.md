@@ -1092,3 +1092,28 @@ At source level, #768 now contains the principal identity/relationship, Understa
 ACTIVE IMPLEMENTATION / CORE PERSONAL ZERO STATE LOOP PRESENT / CERTIFICATION PENDING
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-051
+### Finding
+#768 implementation slice 4 has landed bounded prediction calibration, freshness filtering and explicit cross-context sharing primitives on `agent/768`, materially implementing several LocalBrain/Phase10 donor semantics without resurrecting those donor systems.
+### Evidence
+Latest #768 update reports commits `2114048`, `ba73236` plus a learning/sharing test commit.
+Direct inspection verifies:
+- `packages/titan-platform/src/personal-zero/state-service.ts`, blob `ee156d98b7405a0144b5f919dc5d2656ab08bdfc`, persists prediction calibrations and cross-context share grants;
+- prediction calibration requires an active relationship plus a prediction event and outcome event in the same relationship; cross-context calibration is rejected;
+- `PredictionCalibration` computes Brier score and is hard authority-neutral;
+- consumer projection excludes accepted understanding when none of its referenced evidence remains fresh;
+- cross-context sharing is explicit through `CrossContextShareGrant`, requires distinct contexts, named subject refs and purpose, and is authority-neutral;
+- share retrieval returns nothing for missing/revoked/expired grants and returns only explicitly named accepted subjects;
+- freshness and retention primitives are now represented in the Personal Zero contracts.
+Contracts blob: `bb268e67abeb837ca5fb054927e030129c0f326b`.
+Tests are reported committed but execution evidence remains pending.
+### Interpretation
+The audit should now classify prediction scoring, stale-evidence suppression and explicit scoped sharing as implemented source-level Personal Zero capabilities rather than missing architecture. They remain provisional until executed tests/CI. Broader #37 predictive policy adaptation remains separate: Brier scoring is evidence for bounded learning, not authority or autonomous policy mutation.
+### Classification
+ACTIVE IMPLEMENTATION / LEARNING-PRIVACY PRIMITIVES LANDED / CI PENDING
+### Confidence
+HIGH
