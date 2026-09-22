@@ -391,3 +391,87 @@ HIGH
 
 ### Related action
 SUPPORTED EXISTING ACTION #37. Zero Learning Governor must preserve these authority ceilings.
+
+
+---
+
+## FINDING-GH-014
+
+### Finding
+Issue #725 already owns canonical identity, working-state persistence and cross-surface continuity semantics. It persists canonical agent working state by reference to existing owners and carries goals/plans, policies, working state, history/events and verified performance/outcome references across hosts/surfaces while revalidating authority on every resume.
+
+### Why it matters
+This is a strong existing infrastructure owner for the persistent-state and continuity substrate needed by a person's Zero. A future Personal Zero state model should reuse these continuation/correlation/state contracts rather than creating a second session or cross-surface state authority.
+
+### Evidence
+- Repository: Masterleeaus/Agent-Mesh
+- Issue: #725 — [TZ-ROADMAP-34] Consolidated identity, agent state & cross-surface continuity
+- Explicit flow includes canonical session/context, persistent working state, goals/plans, history/events, cross-host continuation, correlation, stale-state handling, privacy-minimised projection and server-side authority revalidation.
+- #725 explicitly prohibits second Workforce/trust ledgers and per-host agent clones.
+
+### Current Titan equivalent
+Goal 34 continuity orchestration, consuming Workforce #639, Trust/Autonomy #640, durable context/handoff #21, surfaces #542/#641, host transport #644 and offline/Edge #645.
+
+### Classification
+CURRENT
+
+### Confidence
+HIGH
+
+### Related action
+SUPPORTED EXISTING ACTION #725. Reuse as persistent-state/continuity substrate; do not treat it as the Personal Zero understanding model itself.
+
+---
+
+## FINDING-GH-015
+
+### Finding
+The issue inventory does not currently expose a clear canonical implementation owner for the semantic Personal Understanding model itself: a durable model of the human's goals, preferences, responsibilities, relationships, working style and behavioural patterns. Existing #725 covers continuity/working state, #153 covers company-scoped business memory/knowledge, and #639 covers Workforce identity/hierarchy; none of those issue descriptions claims ownership of this human-understanding semantic layer.
+
+### Why it matters
+This appears to be a genuine architectural gap or an as-yet-undiscovered implementation, and it is central to HUMAN=ONE / DIGITAL WORKING INTELLIGENCE=ZERO. It must be deep-scanned before any new implementation issue is created.
+
+### Evidence
+- Repository issue searches performed for: user profile/preferences/goals/relationships, personalization memory, behavioural/behavioral model, working context/user model, identity/preferences/goals.
+- Relevant owners found: #725 continuity, #153 business memory, #639 Workforce, #763 archaeology.
+- No issue result inspected in this pass explicitly owns a Personal Zero understanding/behaviour semantic model.
+- GitHub code search for these terms is unavailable/unindexed in this repository, so absence from code is NOT established.
+
+### Current Titan equivalent
+UNKNOWN / potentially distributed across continuity, memory, interaction and historical donors.
+
+### Classification
+UNKNOWN
+
+### Confidence
+MEDIUM
+
+### Related action
+Continue #763 archaeology. Do not create a new implementation issue until current code, historical Git and donor evidence are directly inspected.
+
+---
+
+## FINDING-GH-016
+
+### Finding
+Persistent Zero state must remain distinct from authority state. #725 explicitly requires current company/actor authority and delegation to be revalidated server-side on every resume/transition; client/session history cannot refresh authority.
+
+### Why it matters
+A Zero may persist understanding, context, plans and learned experience across devices and hosts, but persistence cannot make expired/revoked authority durable. This directly supports the architecture rule that memory/learning/prediction do not create authority.
+
+### Evidence
+- Issue #725, implementation flow steps 5–8.
+- Revalidation covers company_id, actor, current authority/delegation, entitlement/policy and relevant state.
+- Stale sessions, revoked delegation and reduced authority fail closed through revalidation/reconciliation.
+
+### Current Titan equivalent
+Goal 34 continuity + Trust/Autonomy/Authority owners.
+
+### Classification
+CURRENT
+
+### Confidence
+HIGH
+
+### Related action
+#725; #761/#762 Trust/Authority evidence recovery.
