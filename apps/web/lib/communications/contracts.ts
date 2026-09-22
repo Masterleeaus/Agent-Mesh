@@ -190,3 +190,57 @@ export function selectCommunicationProvider(
       candidate.available && candidate.funded && candidate.policy_allowed,
   ) ?? null;
 }
+
+
+export interface CommunicationRateLimit {
+  limit: number;
+  used: number;
+  resets_at: string;
+}
+
+export interface CommunicationRateLimitDecision {
+  allowed: boolean;
+  remaining: number;
+  resets_at: string;
+  reason?: "rate-limit-exhausted";
+}
+
+/**
+ * Provider-neutral rate-limit gate. This is deliberately pure so adapters and
+ * queue workers can share identical enforcement before provider execution.
+ */
+export function evaluateCommunicationRateLimit(
+  state: CommunicationRateLimit,
+): CommunicationRateLimitDecision {
+  const limit = Math.max(0, state.limit);
+  const used = Math.max(0, state.used);
+  const remaining = Math.max(0, limit - used);
+  return remaining > 0
+    ? { allowed: true, remaining, resets_at: state.resets_at }
+    : {
+        allowed: false,
+        remaining: 0,
+        resets_at: state.resets_at,
+        reason: "rate-limit-exhausted",
+      };
+}
+
+export interface QuietHoursWindow {
+  start_hour: number;
+  end_hour: number;
+}
+
+/**
+ * UTC/local-clock independent quiet-hour evaluation. The caller supplies the
+ * recipient-local hour after applying its canonical timezone rules.
+ */
+export function isCommunicationQuietHour(
+  recipientLocalHour: number,
+  window: QuietHoursWindow,
+): boolean {
+  const hour = Math.min(23, Math.max(0, Math.trunc(recipientLocalHour)));
+  const start = Math.min(23, Math.max(0, Math.trunc(window.start_hour)));
+  const end = Math.min(23, Math.max(0, Math.trunc(window.end_hour)));
+  if (start === end) return false;
+  return start < end ? hour >= start && hour < end : hour >= start || hour < end;
+}
