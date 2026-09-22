@@ -1403,3 +1403,74 @@ HIGH
 
 ### Recovery judgment
 Use this later when converging Titan Code itself, but never make Titan Zero Base App depend on AI Coding Studio/Titan Code runtime.
+
+
+---
+
+## FINDING-GH-046
+
+### Finding
+TitanPro CallingAgent 1.0.12 release claims are backed by real implementation files, but several are lightweight precursors rather than production-complete subsystems.
+
+### Direct implementation verified
+Repository: `Masterleeaus/TitanPro`, `Modules/CallingAgent`.
+
+- `CallerProfileMemory.php` SHA `9fb66fd85f68daaa6ca28b82dbf2d55b0c5245c9`: in-memory caller profile recall keyed by phone/email, last outcome and tags.
+- `OutcomeExtractionPipeline.php` SHA `15c7f48dccbc98e9d5a3c1af96f30386623d8f3a`: deterministic transcript classification for intent, urgency, lead quality, handoff, sentiment, entities and next actions.
+- `MissedCallRecoveryPipeline.php` SHA `13a5668c5713cd42745fc474e4f36240670ef665`: builds SMS, callback and voicemail-summary recovery steps.
+- `ProviderFailoverManager.php` SHA `dd57494445424d177281a6709c528d1aeeb17b33`: chooses preferred/healthy/quota-available provider per layer.
+- `SipBridgeService.php` SHA `aadb5947843d84e3e49889ea0ff3e39e21183cf5`: normalizes SIP destination and builds credential-aware bridge plans.
+- `PersonaResolver.php` SHA `829346ed56ab97b069f2156d288df24328763f05`: resolves industry receptionist persona and returning-caller greeting.
+- `CalendarProviderManager.php` SHA `7ddb43cf0339782d9a42199fa9ee2023a50a7850`: Google/Outlook/CalDAV provider selection for availability and booking.
+
+### Limitations
+The caller-memory implementation shown here is process-local memory, not durable governed Personal Zero/Business Memory. The outcome extractor is heuristic/rule-based. Provider failover lacks the full current Cost Sovereignty/privacy/egress/authority decision envelope. SIP returns a bridge plan rather than proving end-to-end telephony execution.
+
+### Classification
+IMPLEMENTED HISTORICAL DONOR / MIXED MATURITY
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-047
+
+### Finding
+CallingAgent's strongest recoverable value is not its old module boundary; it is a set of concrete communications/reception mechanisms that map into current canonical owners.
+
+### Current owner mapping
+- voice/channel/provider/SIP/failover mechanics → #234 Communications & Channels;
+- receptionist persona, transfer routing and customer access → #333 Reception & Customer Access;
+- missed-call callback/recovery → #333 and #363 Customer Care/Retention;
+- sales/lead outcome signals → #343 Sales & Revenue Growth;
+- caller preferences/history must converge through #153 Business Memory and/or #768 Personal Zero where appropriate, rather than a CallingAgent-owned memory silo;
+- provider selection must respect #647 Cost Sovereignty/device/provider routing where AI/provider choice is involved.
+
+### Classification
+CONVERGE / DO NOT RESTORE CALLINGAGENT AS PARALLEL AUTHORITY
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Directly port/harden only superior missing mechanisms behind current TypeScript contracts. Preserve `company_id`, consent, communication authority, privacy/egress, idempotency and audit. Do not import legacy `TenantContext` as a second tenancy boundary.
+
+---
+
+## FINDING-GH-048
+
+### Finding
+The historical missed-call recovery mechanism is a particularly reusable workflow seed: unanswered/busy/failed calls can produce bounded recovery steps for SMS, callback scheduling and voicemail summarisation.
+
+### Why it matters
+This closes a practical operational loop between Reception, Communications and Customer Care without requiring a separate CallingAgent product/runtime.
+
+### Current owners
+#234, #333, #363.
+
+### Classification
+RECOVER/HARDEN SEMANTICS INTO EXISTING OWNERS
+
+### Confidence
+HIGH
