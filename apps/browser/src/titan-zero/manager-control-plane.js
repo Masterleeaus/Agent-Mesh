@@ -1,11 +1,11 @@
 (function attachTitanZeroManagerControlPlane(global){
 'use strict';
-const SCHEMA='titan-zero.manager.control-plane.v1';
+const SCHEMA='titan-zero.manager.control-plane.v2';
 function freeze(v){if(!v||typeof v!=='object'||Object.isFrozen(v))return v;Object.freeze(v);for(const k of Object.keys(v))freeze(v[k]);return v;}
 const topology=global.TitanZeroAgentMeshRoleTopology;
 if(!topology) throw new Error('Titan Zero Manager control plane requires role topology');
 const MANAGER_IDENTITY=freeze({surface:'titan-code',role:'manager',authority:'canonical-manager'});
-const protectedCapabilities=freeze(['canonical.promote','merge.execute','packet.assign','dependency.manage','delta.process','cleanup.eligibility.mark']);
+const protectedCapabilities=freeze(['github.merge.request','merge.execute','packet.assign','dependency.manage','delta.process','cleanup.eligibility.mark']);
 function can(roleId,capability){return topology.can(roleId,capability);}
 function isCanonicalManager(identity={}){return identity&&identity.surface===MANAGER_IDENTITY.surface&&identity.role===MANAGER_IDENTITY.role&&identity.authority===MANAGER_IDENTITY.authority;}
 function authorize(input={}){
