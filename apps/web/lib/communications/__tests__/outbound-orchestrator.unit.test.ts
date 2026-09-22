@@ -56,4 +56,40 @@ describe("executeGovernedOutbound", () => {
       receipt: { company_id: "company-1", state: "sent", provider_message_id: "provider-1" },
     });
   });
+
+  it("returns bounded retry evidence after a retryable provider failure", async () => {
+    const send = vi.fn().mockResolvedValue({ ok: false, error_code: "gateway-timeout" });
+    const result = await executeGovernedOutbound({
+      message,
+      policy: allowed,
+      rate_limit: rate,
+      candidates: [{ provider_id: "gateway", channel: "sms", available: true, funded: true, policy_allowed: true }],
+      adapters: [{ provider_id: "gateway", send }],
+      attempt: 1,
+      retry_policy: { max_attempts: 3, base_delay_ms: 1000, max_delay_ms: 5000 },
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      denied: false,
+      reason: "provider-failed",
+      provider_id: "gateway",
+      receipt: { state: "failed", error_code: "gateway-timeout", attempt: 1 },
+      retry: { next_attempt: 2, delay_ms: 1000 },
+    });
+  });
+
+  it("stops retrying when the configured attempt limit is reached", async () => {
+    const send = vi.fn().mockResolvedValue({ ok: false, error_code: "gateway-timeout" });
+    const result = await executeGovernedOutbound({
+      message,
+      policy: allowed,
+      rate_limit: rate,
+      candidates: [{ provider_id: "gateway", channel: "sms", available: true, funded: true, policy_allowed: true }],
+      adapters: [{ provider_id: "gateway", send }],
+      attempt: 3,
+      retry_policy: { max_attempts: 3, base_delay_ms: 1000, max_delay_ms: 5000 },
+    });
+    expect(result).toMatchObject({ ok: false, reason: "provider-failed" });
+    expect("retry" in result ? result.retry : undefined).toBeUndefined();
+  });
 });
