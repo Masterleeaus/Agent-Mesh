@@ -9,6 +9,10 @@ import {
   createCognitiveEvent,
   type ExperienceRecord,
   type CognitiveEvent,
+  createCrossContextShareGrant,
+  scorePrediction,
+  isFresh,
+  type CrossContextShareGrant,
 } from "./contracts.js";
 
 const MODULE_ID="personal-zero";
@@ -17,6 +21,8 @@ const EVIDENCE="understanding-evidence";
 const UNDERSTANDING="understanding";
 const EXPERIENCES="experiences";
 const COGNITIVE_EVENTS="cognitive-events";
+const SHARE_GRANTS="cross-context-share-grants";
+const CALIBRATIONS="prediction-calibrations";
 
 type Repository=Readonly<{
   put(context:StorageContextInput,input:Readonly<{module_id:string;collection:string;record_id:string;expected_revision?:number;data?:unknown}>):Promise<StorageRecord>;
@@ -104,6 +110,35 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
       return repository.put(context,{module_id:MODULE_ID,collection:COGNITIVE_EVENTS,record_id:event.event_id,data:event});
     },
 
+    async scorePredictionOutcome(context:StorageContextInput,input:{relationship_id:string;prediction_event_id:string;outcome_event_id:string;predicted_probability:number;actual:boolean;scored_at?:number}){
+      const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
+      if(!relationship||relationship.status!=="active")throw new Error("Personal Zero relationship not active");
+      const prediction=recordData<CognitiveEvent>(await repository.get(context,MODULE_ID,COGNITIVE_EVENTS,input.prediction_event_id));
+      const outcome=recordData<CognitiveEvent>(await repository.get(context,MODULE_ID,COGNITIVE_EVENTS,input.outcome_event_id));
+      if(!prediction||prediction.type!=="prediction"||!outcome||outcome.type!=="outcome")throw new Error("Prediction and outcome events are required");
+      for(const event of [prediction,outcome])requireRelationshipMatch(relationship,event.one_id,event.zero_id,event.company_id);
+      if(prediction.relationship_id!==input.relationship_id||outcome.relationship_id!==input.relationship_id)throw new Error("Cross-context prediction calibration rejected");
+      const calibration=scorePrediction(input);
+      return repository.put(context,{module_id:MODULE_ID,collection:CALIBRATIONS,record_id:`${input.prediction_event_id}:${input.outcome_event_id}`,data:{...calibration,company_id:relationship.company_id,one_id:relationship.one_id,zero_id:relationship.zero_id,relationship_id:input.relationship_id}});
+    },
+
+    async putCrossContextShareGrant(context:StorageContextInput,input:Omit<CrossContextShareGrant,"authority_neutral">){
+      const grant=createCrossContextShareGrant(input);
+      if(context.company_id!==grant.source_company_id)throw new Error("Share grant must be created from source company context");
+      const source=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,grant.source_relationship_id));
+      if(!source)throw new Error("Source relationship not found");
+      requireRelationshipMatch(source,grant.one_id,grant.zero_id,grant.source_company_id);
+      return repository.put(context,{module_id:MODULE_ID,collection:SHARE_GRANTS,record_id:grant.grant_id,data:grant});
+    },
+
+    async getSharedUnderstanding(context:StorageContextInput,source_company_id:string,grant_id:string,now=Date.now()){
+      if(context.company_id!==source_company_id)throw new Error("Shared understanding lookup must use source company context");
+      const grant=recordData<CrossContextShareGrant>(await repository.get(context,MODULE_ID,SHARE_GRANTS,grant_id));
+      if(!grant||grant.source_company_id!==source_company_id||grant.revoked_at!=null||(grant.expires_at!=null&&grant.expires_at<=now))return [];
+      const rows=await repository.list(context,{module_id:MODULE_ID,collection:UNDERSTANDING});
+      return rows.map(r=>recordData<UnderstandingState>(r)).filter((state):state is UnderstandingState=>Boolean(state&&state.relationship_id===grant.source_relationship_id&&state.status==="accepted"&&grant.subject_refs.includes(state.subject)));
+    },
+
     async getConsumerProjection(context:StorageContextInput,relationship_id:string,consumer:"interaction"|"decision"|"workforce"){
       const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,relationship_id));
       if(!relationship||relationship.status!=="active")return null;
@@ -113,7 +148,10 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
         repository.list(context,{module_id:MODULE_ID,collection:COGNITIVE_EVENTS}),
       ]);
       const same=<T extends {one_id:string;zero_id:string;company_id:string;relationship_id:string|null}>(x:T|null):x is T=>Boolean(x&&x.one_id===relationship.one_id&&x.zero_id===relationship.zero_id&&x.company_id===relationship.company_id&&x.relationship_id===relationship_id);
-      const understanding=understandingRows.map(r=>recordData<UnderstandingState>(r)).filter(s=>same(s)&&s.status==="accepted");
+      const now=Number(clock());
+      const evidenceRows=await repository.list(context,{module_id:MODULE_ID,collection:EVIDENCE});
+      const freshEvidence=new Set(evidenceRows.map(r=>recordData<UnderstandingEvidence>(r)).filter(e=>e&&same(e)&&isFresh(e.fresh_until,now)).map(e=>e!.understanding_evidence_id));
+      const understanding=understandingRows.map(r=>recordData<UnderstandingState>(r)).filter(s=>same(s)&&s.status==="accepted"&&s.evidence_refs.some(ref=>freshEvidence.has(ref)));
       const experiences=experienceRows.map(r=>recordData<ExperienceRecord>(r)).filter(same);
       const events=eventRows.map(r=>recordData<CognitiveEvent>(r)).filter(same);
       return Object.freeze({protocol:"titan.personal-zero.projection.v1",consumer,company_id:relationship.company_id,one_id:relationship.one_id,zero_id:relationship.zero_id,relationship_id,understanding:Object.freeze(understanding),experiences:Object.freeze(experiences),cognitive_events:Object.freeze(events),authority_refs:Object.freeze([...relationship.authority_refs]),authority_neutral:true,execution_authority:false});
