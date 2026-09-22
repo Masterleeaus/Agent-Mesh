@@ -2930,3 +2930,72 @@ NO NEW OWNER / SUPPORT EXISTING #768
 
 ### Confidence
 VERY HIGH
+
+
+---
+
+## FINDING-GH-113
+
+### Finding
+Direct current-main archaeology did not find the OnboardingPro-named continuous Business Reality/Evolution services (`BusinessRealityGraphService`, `ContinuousBusinessObservationService`, `BusinessReconfigurationService`, `NexusReassessmentService`, `OutcomeMeasurementService`, `RollbackDecisionService`) as production TypeScript implementations.
+
+### Classification
+#767 RECOVERY TARGET REMAINS OPEN / DONOR NOT YET CONVERGED UNDER THOSE MECHANISMS
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-114
+
+### Finding
+Current Titan Zero nevertheless already has a **strong adjacent initial-state discovery/install/commissioning implementation** that #767 must extend rather than duplicate.
+
+### Current implementation boundary
+`investigation-installation-handover.ts` provides evidence-backed investigation, Business Discovery compilation, installation specification, deterministic installation planning and commissioning gates. It inventories processes, people, systems, devices, documents, objectives, risks and required capabilities and explicitly routes governed changes through Command Bus/authoritative receipts.
+
+### Missing evolution dimension
+The verified code is strongest at initial investigation/install/commissioning. It does not by itself prove the continuous post-commission lifecycle:
+OBSERVE → DETECT CHANGE → REASSESS → semantic diff → PROPOSE → governed RECONFIGURE → VERIFY → MEASURE → LEARN → REPEAT.
+
+### Classification
+CURRENT FOUNDATION + CONTINUOUS-EVOLUTION GAP
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-115
+
+### Finding
+The current installation runtime is marked as a **ported/quarantined browser-adaptation bundle** (`@ts-nocheck`; “QUARANTINE: not exported to standalone runtime until browser/DOM dependencies are adapted”), even though its semantics are substantial.
+
+### Convergence implication
+#767 should not blindly make this file the Business Reality authority. Its discovery/install contracts are valuable inputs, but continuous Reality/Evolution needs a canonical production owner with typed contracts, tests and storage/provenance integration. Browser-extension adaptation code must not become an accidental second source of business truth.
+
+### Classification
+IMPLEMENTED SEMANTICS / PRODUCTION-OWNERSHIP HARDENING REQUIRED
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-116
+
+### Finding
+The cleanest convergence architecture is now visible:
+- current Business Discovery/installation pipeline establishes an evidence-backed initial business configuration and commissioning baseline;
+- #767 Business Reality/Evolution should observe changes against that baseline and authoritative business sources;
+- semantic reconfiguration proposals return through the same governed installation/change mechanisms where practical;
+- verified outcomes feed #153 Business Memory/Experience and Signal/Rewind without allowing Reality inference or learning to self-authorize changes.
+
+This reuses existing installation machinery while keeping Business Reality, Personal Zero and Business Memory separate.
+
+### Classification
+CONVERGENCE PATH IDENTIFIED / NO PARALLEL DISCOVERY ENGINE
+
+### Confidence
+HIGH
