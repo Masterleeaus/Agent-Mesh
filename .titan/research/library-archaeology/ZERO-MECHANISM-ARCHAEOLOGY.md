@@ -136,3 +136,7 @@ Current convergence evidence supports: Interaction/Zero context → governed evi
 
 ### ZM-020 — Operation identity persists; authority does not
 Consequential long-running work needs stable Operation Identity/provenance across decisions, commands, receipts, offline queues and Rewind, but authority snapshots are historical evidence only. Resume/reconnect must re-evaluate current delegation, Trust/Autonomy, policy, risk, assurance, target/reality freshness and replay/idempotency before mutation. Offline operation contracts to an explicitly safe cached envelope and never turns queued work into permanent authority. Zero remembers the mission/context; current authority machinery decides whether the next consequential step may execute.
+
+
+### ZM-021 — Physical evidence informs Zero; sensors never grant authority
+Vision, maps/location, field observations, measurements, equipment context and environmental evidence enter Titan as typed/provenanced evidence. They may update candidate Business Reality/Zero context and Decision inputs only after privacy, freshness, integrity and verification controls. Visible image evidence must remain distinct from hidden-condition/safety/compliance inference. Environmental consequences participate in shared Risk/Decision/Workforce architecture rather than forming a parallel platform. Physical action still requires current assurance/authority and the governed execution path.
