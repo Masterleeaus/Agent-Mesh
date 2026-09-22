@@ -293,3 +293,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-039 | #768 slices 7-8 | issue #768 updates + learning review/consumption/state service | review blob 4c8fa477ccc655a4f626ebd71efe34828f543f9b; consumption blob ed691615ec70bcc9da7df01d59b85386946b6e26; state blob 130a239b261fd1f9a4ca892a69b27c9c5c96c515 | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Evidenced accept/reject/supersede lifecycle and read-only accepted-learning projections for Interaction/Decision/Workforce now exist. Application/execution authority remains false. | YES |
+
+
+| INGEST-040 | #768 company-boundary hardening | issue #768 hardening update + Personal Zero state service | state-service blob d02577802179af08e7d1e6392a0ee04b4df30b13; commit 3c02a0d | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Personal Zero writes now recursively reject legacy tenant aliases and require context company_id to match record/outcome company before persistence, while retaining relationship/company isolation. | YES |
