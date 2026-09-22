@@ -3,6 +3,8 @@ const fs=require('fs');const vm=require('vm');
 const ctx={globalThis:{}};ctx.globalThis=ctx;vm.createContext(ctx);
 vm.runInContext(fs.readFileSync('src/titan-zero/manager-workspace-ledger.js','utf8'),ctx);
 const W=ctx.TitanZeroManagerWorkspaceLedger;
+assert.equal(W.authority.repositoryBaseline,'git-main-sha');assert.equal(W.authority.generation,'legacy-artifact-compatibility-only');
+assert.equal(W.assertGitBase('a'.repeat(40),'a'.repeat(40)),true);assert.throws(()=>W.assertGitBase('a'.repeat(40),'b'.repeat(40)),/REBASE_REQUIRED/);
 function base(){return {revision:4,generation:2,packets:[
  {packet_id:'SAFE',state:'ACTIVE',exclusive_hotspots:['sidebar'],changed_paths:['src/sidebar/**']},
  {packet_id:'COLLIDE',state:'ACTIVE',exclusive_hotspots:['service-worker'],changed_paths:['src/lib/service-worker.js']}
