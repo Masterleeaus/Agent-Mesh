@@ -5,6 +5,8 @@ import {
   createDeliveryReceipt,
   communicationRetryDecision,
   selectCommunicationProvider,
+  evaluateCommunicationRateLimit,
+  isCommunicationQuietHour,
   evaluateOutboundCommunicationPolicy,
   type CommunicationEnvelope,
   type OutboundCommunicationPolicy,
@@ -136,5 +138,31 @@ describe("canonical communications contract", () => {
     expect(selectCommunicationProvider([
       { provider_id: "blocked", channel: "email", available: true, funded: true, policy_allowed: false },
     ])).toBeNull();
+  });
+
+  it("blocks exhausted communication rate limits", () => {
+    expect(evaluateCommunicationRateLimit({
+      limit: 10,
+      used: 10,
+      resets_at: "2026-09-22T05:00:00.000Z",
+    })).toEqual({
+      allowed: false,
+      remaining: 0,
+      resets_at: "2026-09-22T05:00:00.000Z",
+      reason: "rate-limit-exhausted",
+    });
+    expect(evaluateCommunicationRateLimit({
+      limit: 10,
+      used: 7,
+      resets_at: "2026-09-22T05:00:00.000Z",
+    }).remaining).toBe(3);
+  });
+
+  it("handles same-day and overnight quiet-hour windows", () => {
+    expect(isCommunicationQuietHour(13, { start_hour: 12, end_hour: 15 })).toBe(true);
+    expect(isCommunicationQuietHour(16, { start_hour: 12, end_hour: 15 })).toBe(false);
+    expect(isCommunicationQuietHour(23, { start_hour: 21, end_hour: 8 })).toBe(true);
+    expect(isCommunicationQuietHour(7, { start_hour: 21, end_hour: 8 })).toBe(true);
+    expect(isCommunicationQuietHour(12, { start_hour: 21, end_hour: 8 })).toBe(false);
   });
 });
