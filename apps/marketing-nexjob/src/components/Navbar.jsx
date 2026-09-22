@@ -76,8 +76,12 @@ export default function Navbar() {
 
         {/* Mobile Toggle */}
         <button
+          type="button"
           className="xl:hidden text-nx-text"
           onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-navigation"
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
