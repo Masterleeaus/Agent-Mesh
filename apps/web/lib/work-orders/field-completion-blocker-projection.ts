@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 
 export type FieldCompletionBlockerSource = "permit" | "inspection" | "defect";
 export interface FieldCompletionBlockerProjection {
@@ -17,7 +17,7 @@ function reasons(values:readonly string[]):string[]{return [...new Set(values.ma
  * the canonical permit/inspection/defect state. This function grants none.
  */
 export async function syncFieldCompletionBlockerProjection(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   projection: FieldCompletionBlockerProjection,
 ): Promise<void> {
@@ -36,7 +36,7 @@ export async function syncFieldCompletionBlockerProjection(
     await client.query(
       `INSERT INTO field_completion_blockers
          (company_id, account_id, work_order_id, source_type, source_id, reason, blocking, resolved_at, provenance)
-       VALUES ($1,$2,$3,$4,$5,$6,TRUE,NULL,$7::jsonb)
+       VALUES ($1,$2,$3,$4,$5,$6,TRUE,NULL,$7)
        ON CONFLICT (company_id, work_order_id, source_type, source_id, reason)
        DO UPDATE SET blocking=TRUE,resolved_at=NULL,provenance=EXCLUDED.provenance,updated_at=CURRENT_TIMESTAMP`,
       [companyId,accountId,workOrderId,projection.source_type,sourceId,reason,JSON.stringify(projection.provenance??{})],
