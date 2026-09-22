@@ -877,3 +877,92 @@ HIGH
 
 ### Recovery judgment
 Preserve the capability chain and outcome semantics; retire historical runtime ownership assumptions.
+
+
+---
+
+## FINDING-GH-028
+
+### Finding
+Historical `zero` contains implemented prediction→outcome feedback event semantics, directly supporting the current Personal Zero Experience Memory requirement for prediction calibration.
+
+### Evidence
+Repository: `Masterleeaus/zero`
+Branch: `main`
+Path: `app/Events/Predict/PredictionFeedbackRecorded.php`
+SHA: `c08b691fbf788af791055b3a75eebd3a8165e335`
+
+The event explicitly binds a `Prediction` to a `PredictionOutcome`, proving this was represented as a runtime concept rather than only product prose.
+
+### Current Titan equivalent
+#768 explicitly requires prediction→outcome linkage/scoring, prediction calibration and Experience Memory. Decision runtime remains adjacent.
+
+### Classification
+HISTORICAL / IMPLEMENTED SEMANTIC DONOR / CURRENTLY CONVERGING
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Recover the typed linkage/calibration semantics into #768/current Decision/Experience contracts. Do not import the old Laravel prediction subsystem wholesale.
+
+---
+
+## FINDING-GH-029
+
+### Finding
+Historical `zero` contains an installed ExecutionTimeGraph subsystem providing ordered causal execution history, checkpoints, replay and timing-anomaly analysis.
+
+### Evidence
+Repository: `Masterleeaus/zero`
+Branch: `main`
+Path: `docs/modules/MODULE_06_ExecutionTimeGraph_report.md`
+SHA: `109f06369f86e82f7d8679a873479d83ab9d518d`
+Source status: Installed.
+
+Verified documented implementation includes:
+- persistent ordered execution graphs;
+- events for stage transitions, signals, user actions, AI decisions and system triggers;
+- parent-linked causal chains;
+- named checkpoints;
+- replay to a selected time;
+- timing-anomaly detection;
+- unit and feature tests.
+
+### Current Titan equivalent
+#293 owns Reliability/Recovery/Self-Healing and Rewind-related recovery semantics; #768 owns cognitive/experience chronology. Current Signal/Decision paths are adjacent.
+
+### Classification
+HISTORICAL / IMPLEMENTED DONOR / STRONG RECOVERY CANDIDATE
+
+### Confidence
+HIGH
+
+### Recovery judgment
+This is stronger than a generic audit log and deserves semantic comparison against current Rewind/Signal/Decision chronology before retirement. Recover causal-parent, checkpoint and replay semantics if current TypeScript lacks equivalents; never resurrect a parallel TimeGraph authority.
+
+---
+
+## FINDING-GH-030
+
+### Finding
+Historical `TitanPro` has implemented company-aware cashflow forecasting, while broader growth/churn intelligence appears at least partially represented as a module.
+
+### Evidence
+Repository: `Masterleeaus/TitanPro`
+Branch: `main`
+Paths:
+- `Modules/Accountings/Services/CashflowForecastService.php` SHA `18f5f2b85082b146d84354fdaf6a5fab38fa1545`;
+- `Modules/NexusGrowth/module.json` SHA `0a71690619c94807ced047ee34acd396a81c536c`.
+
+Cashflow implementation combines budget inflow/outflow, normalized recurring expenses, outstanding receivables and payables into monthly forecasts and filters company-aware invoice/expense data where `company_id` is available.
+NexusGrowth declares funnel analytics, CLV modelling, churn prediction, A/B result views, expansion scoring and ROI reporting.
+
+### Classification
+HISTORICAL / IMPLEMENTED FINANCE DONOR + PARTIAL GROWTH CAPABILITY
+
+### Confidence
+HIGH for cashflow implementation; MEDIUM for depth of NexusGrowth implementation.
+
+### Recovery judgment
+Do not declare these lost yet. Next pass should map finance forecasting and growth/churn analytics against current Finance/Marketing/Decision/Signal owners and only create convergence action for genuinely absent semantics.
