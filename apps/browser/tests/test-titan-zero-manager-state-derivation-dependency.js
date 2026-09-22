@@ -31,3 +31,6 @@ const live=s.TitanZeroManagerLiveState.reconcile({});assert.strictEqual(live.sou
 console.log('PASS test-titan-zero-manager-state-derivation-dependency');
 
 const unavailable=Q.project({});assert.strictEqual(unavailable.source,'unavailable');assert.strictEqual(unavailable.nextGlobal,null);assert.strictEqual(unavailable.authority.maySelectClaimCandidate,false);const legacy=Q.project({allowLegacyProjection:true,packets:[],claims:[],dependencyState:{byPacket:{}}});assert.strictEqual(legacy.source,'legacy-projection');
+assert.strictEqual(S.derive({packets:[{packet_id:'LEGACY',status:'AVAILABLE'}],claims:[],agents:[],deltas:[],handoffs:[],verification:[]}).operational,false);assert.strictEqual(S.derive({packets:[{packet_id:'LEGACY',status:'AVAILABLE'}],claims:[],agents:[],deltas:[],handoffs:[],verification:[]}).authority.operationalUse,'diagnostic-only');
+assert.strictEqual(S.derive({githubProjection:{state:'AVAILABLE',git:{mainSha:'a'.repeat(40),headSha:'b'.repeat(40),branch:'agent/LEGACY'}}}).operational,undefined);
+const q=S.derive({packets:[{packet_id:'LEGACY',status:'AVAILABLE'}],claims:[],agents:[],deltas:[],handoffs:[],verification:[]}).queue;assert.strictEqual(q.operational,false);assert.deepStrictEqual(q.eligible,[]);assert.strictEqual(q.nextGlobal,null);assert.strictEqual(q.authority.mayUnlockDependency,false);
