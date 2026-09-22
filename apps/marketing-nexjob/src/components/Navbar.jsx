@@ -47,13 +47,13 @@ export default function Navbar() {
             href={appRoutes.login}
             className="text-sm font-medium text-nx-muted hover:text-nx-text px-4 py-2 transition-colors"
           >
-            Log In
+            Login
           </a>
           <a
-            href={appRoutes.trial}
+            href={appRoutes.signup}
             className="text-sm font-semibold text-white bg-nx-purple hover:bg-nx-purple-dark px-5 py-2 rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/30"
           >
-            Open Titan Zero
+            Sign Up
           </a>
         </div>
 
