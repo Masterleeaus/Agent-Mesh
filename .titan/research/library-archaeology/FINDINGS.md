@@ -498,3 +498,23 @@ HIGH.
 
 ### Related action
 ACTION-LIB-015.
+
+
+---
+
+## FINDING-LIB-019
+
+### Finding
+Wisdom/Foresight archaeology separates one verified implemented donor from one unresolved lineage. Titan Wisdom Engine v0.3.2 is physically verified and contains evidence-linked prediction, recommendation, outcome-learning and confidence-adaptation primitives. Titan Foresight provenance is known, but its executable payload remains unresolved and must not be reconstructed from memory. Current main does not expose the historical Wisdom symbols, while #393 already owns forecasting/scenarios/analytics convergence.
+
+### Classification
+WISDOM = VERIFIED IMPLEMENTED DONOR / EXISTING CANONICAL OWNER; FORESIGHT = VERIFIED PROVENANCE / EXECUTABLE SOURCE UNRESOLVED.
+
+### Architectural conclusion
+Recover bounded prediction/recommendation/outcome-calibration semantics into #393 rather than resurrecting Wisdom/Foresight engines. Forecasts/scenarios are evidence-backed advisory artifacts; observed outcomes calibrate them without rewriting history or creating authority. Do not recreate unresolved Foresight behavior.
+
+### Confidence
+HIGH for Wisdom; MEDIUM/HIGH for Foresight lineage, LOW for any unobserved executable behavior.
+
+### Related action
+ACTION-LIB-016.
