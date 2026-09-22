@@ -1,8 +1,13 @@
 import { describe,expect,it } from "vitest";
 import { buildTitanFieldDefect,buildTitanFieldInspection,buildTitanFieldPermit } from "@titan-zero/titan-platform/business-ops";
+import { canonicalCompanyIdFromSession } from "@/lib/auth/company-boundary";
 
 const provenance={source:"route-test",recorded_at:"2026-09-22T00:00:00.000Z",idempotency_key:"k1"};
 describe("field API package contracts",()=>{
+ it("derives canonical company_id from authenticated compatibility boundary",()=>{
+  expect(canonicalCompanyIdFromSession("account-1")).toBe("account-1");
+  expect(()=>canonicalCompanyIdFromSession(" ")).toThrow("CANONICAL_COMPANY_BOUNDARY_UNAVAILABLE");
+ });
  it("consumes permits through the public titan-platform boundary",()=>{
   const p=buildTitanFieldPermit({permit_id:"p1",company_id:"c1",work_order_id:"wo1",permit_type:"building",state:"inspection_required",provenance},{as_of:"2026-09-22"});
   expect(p.completion_blocked).toBe(true);expect(p.grants_authority).toBe(false);
