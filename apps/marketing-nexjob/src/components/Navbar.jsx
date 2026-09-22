@@ -34,13 +34,13 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden xl:flex items-center gap-1">
           {navLinks.map(({ label, path }) => (
             <Link
               key={path}
               to={path}
               className={`text-sm font-medium px-3.5 py-2 rounded-lg transition-all ${
-                pathname === path
+                pathname === path || (path === '/industries' && pathname.startsWith('/industries/'))
                   ? 'text-nx-text bg-white/5'
                   : 'text-nx-muted hover:text-nx-text hover:bg-white/5'
               }`}
@@ -49,17 +49,17 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="relative group">
-            <Link to="/industries" className="text-sm font-medium px-3.5 py-2 rounded-lg text-nx-muted hover:text-nx-text hover:bg-white/5 inline-flex items-center gap-1">
+            <Link to="/industries" className={`text-sm font-medium px-3.5 py-2 rounded-lg inline-flex items-center gap-1 ${pathname.startsWith('/industries') ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
               Industries <ChevronDown size={14}/>
             </Link>
             <div className="absolute right-0 top-full mt-1 w-64 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
-              {industryLinks.map(([label,slug])=><Link key={slug} to={`/industries/${slug}`} className="block px-3 py-2.5 rounded-lg text-sm text-nx-muted hover:text-nx-text hover:bg-white/5">{label}</Link>)}
+              {industryLinks.map(([label,slug])=><Link key={slug} to={`/industries/${slug}`} className={`block px-3 py-2.5 rounded-lg text-sm ${pathname === `/industries/${slug}` ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>{label}</Link>)}
             </div>
           </div>
         </div>
 
         {/* CTA — linked to Titan Zero Command */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden xl:flex items-center gap-3">
           <a
             href={appRoutes.login}
             className="text-sm font-medium text-nx-muted hover:text-nx-text px-4 py-2 transition-colors"
@@ -76,7 +76,7 @@ export default function Navbar() {
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-nx-text"
+          className="xl:hidden text-nx-text"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -85,14 +85,14 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-nx-border bg-nx-bg px-6 pb-4 pt-2">
+        <div id="mobile-navigation" className="xl:hidden border-t border-nx-border bg-nx-bg px-6 pb-4 pt-2">
           {navLinks.map(({ label, path }) => (
             <Link
               key={path}
               to={path}
               onClick={() => setMobileOpen(false)}
               className={`block text-sm font-medium px-3 py-2.5 rounded-lg transition-colors ${
-                pathname === path ? 'text-nx-text bg-white/5' : 'text-nx-muted'
+                pathname === path || (path === '/industries' && pathname.startsWith('/industries/')) ? 'text-nx-text bg-white/5' : 'text-nx-muted'
               }`}
             >
               {label}
@@ -100,7 +100,7 @@ export default function Navbar() {
           ))}
           <div className="mt-3 border-t border-nx-border pt-3">
             <p className="px-3 py-2 text-xs uppercase tracking-widest text-nx-muted2">Industries</p>
-            {industryLinks.map(([label,slug])=><Link key={slug} to={`/industries/${slug}`} onClick={()=>setMobileOpen(false)} className="block px-3 py-2 text-sm text-nx-muted">{label}</Link>)}
+            {industryLinks.map(([label,slug])=><Link key={slug} to={`/industries/${slug}`} onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm rounded-lg ${pathname === `/industries/${slug}` ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>{label}</Link>)}
           </div>
           <div className="mt-3 flex flex-col gap-2">
             <a href={appRoutes.login} className="text-sm font-medium text-nx-muted py-2 text-center">

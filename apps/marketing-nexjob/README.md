@@ -1,24 +1,32 @@
-# ⚠️ ARCHIVED — do not use (2026-08-28)
+# Titan Zero Field Services Marketing
 
-**This repo was never deployed and its content is dangerously stale.**
+Standalone marketing site for the **Titan Zero Field Services** vertical.
 
-- The **live** marketing site is built from
-  [`nexjob/frontend`](https://github.com/sguilkey6-crypto/nexjob) (React SPA,
-  prerendered to `frontend/dist/`, served by the `nexjob-ui` Render static
-  service at https://nex-job.com). Fix marketing copy **there**, never here.
-- The pricing in this repo is **wrong in every tier**: a free Solo plan, a
-  $49 Crew with per-seat overage, a "Scale" tier, and a $15/user fee — none
-  of which exist. Canonical prices live in
-  `nexjob/app/services/stripe_billing_service.rb` (Solo $39 / Crew $69 /
-  Ops $149 / Pro $249, plus the Roofing $219 and Electrical $179 trade
-  plans), enforced on the public pages by
-  `nexjob/frontend/scripts/claims-guard.mjs`.
-- It also claims features under names and states that no longer match the
-  product. Any copy resurrected from here would violate the marketing-copy
-  verification hard rule in `nexjob/CLAUDE.md`.
+## Purpose
 
-Archived per the 2026-08-28 parity-audit program
-(`~/Developer/briefs/BRIEF-2026-08-28-parity-audit-cowork.md`, §5) so no
-future session or contributor mistakes this for the real site. If you need
-anything from the old content, it remains readable in this archive's
-history.
+This site is the current master implementation for Titan Zero vertical marketing. It presents the managed Advanced Intelligence operating model, Field Services industry entry pages, privacy/local intelligence architecture, cost sovereignty, environmental systems, progressive trust and indicative investment examples.
+
+It is a marketing surface only. It is **not** a Titan Zero runtime dependency.
+
+## Local development
+
+```bash
+npm ci
+npm run dev
+```
+
+Production build:
+
+```bash
+npm run check
+```
+
+## Application destination
+
+Consequential product actions route to the canonical Titan Zero Command application through `VITE_APP_URL`. If unset, the current fallback is `https://titanzero.io`.
+
+## Public routes
+
+The canonical public investment route is `/investment`; `/pricing` exists only as a redirect. Industry microsites live under `/industries/:industry`.
+
+The sitemap and robots configuration must be updated when the final Field Services marketing hostname/subdomain is assigned.
