@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 22,
+    "current_pass": 23,
     "status": "ACTIVE"
   },
   "completed": [
@@ -174,15 +174,14 @@
     "Pass 20: regression guards now lock checkpoint/takeover to the governed mutation path and guard against generic bridge bypass",
     "Pass 22: normalized active Manager dependency/routing payload around GitHub issue_number and subgoal_id before the legacy route_packet bridge boundary",
     "Pass 22: legacy packet identifier moved under an explicit compatibility object with authority:false; missing GitHub work identity now fails closed instead of routing by packet identity",
-    "Pass 22: regression guards prevent legacy packet_id from returning as primary routing authority"
+    "Pass 22: regression guards prevent legacy packet_id from returning as primary routing authority",
+    "Pass 23: Manager control-room and queue projections now expose GitHub-native presentation labels for Issues, Agent Branches, Pull Requests, Checks and Git main while retaining legacy labels only inside diagnostic compatibility projections"
   ],
-  "current_work": [
-    "Converge active Manager UI/state terminology from packet/delta/promotion language to GitHub Issue/Branch/Pull Request/Checks while retaining compatibility adapters only where required"
-  ],
+  "current_work": "Converge remaining Agent Mesh workflow execution and handoff presentation around the GitHub-native Issue/Branch/Pull Request/Checks model",
   "next_actions": [
-    "Audit Manager control-room and queue labels for active legacy terminology",
-    "Rename presentation/state labels without changing durable GitHub lifecycle",
-    "Keep legacy donor/pre-Git artifact vocabulary isolated to compatibility/history"
+    "Audit continuation/workflow UI and generated handoff text for remaining active packet/delta/promotion terminology",
+    "Keep legacy donor/pre-Git artifact vocabulary confined to explicit compatibility/history fields",
+    "Verify the GitHub-native presentation layer does not alter durable lifecycle or authority"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
