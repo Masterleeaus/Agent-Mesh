@@ -112,3 +112,17 @@ Canonical Owner: to be selected by #768 after storage/evidence/provenance inspec
 
 Summary:
 Define Personal Zero Understanding Memory + Experience Memory as a distinct authority-neutral production contract. Reuse current Intelligence Runtime, Interaction Engine and Offline owners; keep #153 Business Memory and #767 Business Reality separate. Recover only missing cognition chronology, correction/preference evidence, decision/action/outcome linkage, prediction calibration and adaptive learning semantics.
+
+
+---
+
+## ACTION-LIB-009
+
+Type: HARDEN EXISTING OWNER / REJECT DUPLICATE IMPORT
+Priority: P1
+Finding: FINDING-LIB-012
+GitHub Issues: #647, #257, #572
+Status: EVIDENCE ADDED TO #647
+
+Summary:
+Retain current Intelligence Runtime and Cost Sovereignty ownership. Recover only narrow missing semantics: canonical context-window/prompt-compaction budgeting, justified richer model capability metadata, complete estimated/actual cost receipts, and explicit data-residency/local-only policy integration. No new implementation issue and no historical router resurrection.
