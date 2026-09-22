@@ -419,3 +419,21 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** no Titan runtime receives `accountId` as an implicit tenant authority; all business-scoped Titan execution receives validated `company_id`.
 - **Confidence:** VERY HIGH
 - **Status:** READY
+
+
+---
+
+## ACTION-GH-022 — Repair/verify Titan intelligence package dependency closure before claiming Model Council/Signal/Nexus migration complete
+
+- **Type:** P0/P1 REGRESSION / RECOVER UNMERGED / CONVERGE
+- **Priority:** P0 build integrity, P1 capability convergence
+- **Findings:** FINDING-GH-093 through FINDING-GH-096
+- **Current evidence:** `src/intelligence.ts` references missing/unproven `ported/titan-intelligence` and `ported/titan-ai-core` modules.
+- **Objective:** Trace the referenced implementations through pre-pivot tree, archived `titan/` tree, migration branches and donor repositories; restore/rebind the canonical existing implementation rather than inventing another AI Core/Model Council/Signal/Nexus.
+- **Required sequence:** locate source → compare with current canonical owners/issues → import/rebind only if superior/current → run preserved migration tests → certify package export resolution.
+- **company_id:** all restored intelligence paths remain company-bound and cannot accept legacy tenant aliases downstream.
+- **Authority:** Model Council/Signal/Nexus/provider selection remain informational/orchestration layers; none creates execution authority.
+- **Tests:** module resolution/build; risk-classification; convergence/divergence; evidence independence; high-risk challenge; receiving-domain acceptance; Zero synthesis authority; provider routing; cross-company rejection.
+- **Acceptance Criteria:** every export from `packages/titan-platform/src/intelligence.ts` resolves to a real canonical implementation and preserved intelligence tests pass without duplicate engines.
+- **Confidence:** VERY HIGH
+- **Status:** READY FOR SOURCE RECOVERY
