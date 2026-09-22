@@ -14,7 +14,7 @@ export default function LandingPage() {
   return <main className={styles.page}>
     <header className={styles.header}>
       <Link href="/" className={styles.brand} aria-label="Titan Zero home"><span><Route/></span><strong>TITAN <span>ZERO</span><small>Service operations intelligence</small></strong></Link>
-      <nav aria-label="Landing navigation"><a href="#recovery">Recovery</a><a href="#system">System</a><Link href="https://titanzero.io/app" className={styles.headerCta}>Launch workspace <ArrowUpRight/></Link></nav>
+      <nav aria-label="Landing navigation"><a href="#recovery">Recovery</a><a href="#system">System</a><Link href="https://titanzero.io/app" className={styles.headerCta}>Login <ArrowUpRight/></Link></nav>
     </header>
 
     <section className={styles.hero}>
@@ -22,7 +22,7 @@ export default function LandingPage() {
         <span className={styles.kicker}><i/> AI-ORCHESTRATED SERVICE OPERATIONS</span>
         <h1>Protect every customer promise when the shop plan breaks.</h1>
         <p>Titan Zero converts technician callouts and capacity gaps into feasible repair-order recovery plans that managers can inspect, approve, and audit.</p>
-        <div className={styles.heroActions}><Link href="#recovery" className={styles.primaryAction}><Sparkles/> See the recovery</Link><Link href="https://titanzero.io/app" className={styles.secondaryAction}>Open live system <ArrowRight/></Link></div>
+        <div className={styles.heroActions}><Link href="#recovery" className={styles.primaryAction}><Sparkles/> See the recovery</Link><Link href="https://titanzero.io/app" className={styles.secondaryAction}>Sign Up <ArrowRight/></Link></div>
         <div className={styles.proofRail}><span><Check/> Constraint checked</span><span><Check/> Manager controlled</span><span><Check/> Fully auditable</span></div>
       </div>
 
