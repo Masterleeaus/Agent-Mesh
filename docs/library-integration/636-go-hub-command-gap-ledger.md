@@ -227,3 +227,14 @@ Added explicit containment:
 - demo rendering remains available for prototype/marketing contexts.
 
 No prototype job/customer/access/payment record should be promoted into authenticated operation through these components until a real scoped projection is injected.
+
+## Pass 17 — Go navigation convergence
+
+Converged the staff shell toward the canonical Go information architecture without creating another app:
+- Go primary entry is labelled **Chat** and remains `/app/go`;
+- existing field workflow is labelled **Active** and retains `/app/my-work` plus visits as its active prefix;
+- desktop Go navigation now exposes **Schedule · Today**, **Comms · Dispatch**, and **Ready · Field Kit** using existing mature routes rather than duplicate pages;
+- owner field-home wording is also normalized from My Day to Active;
+- mobile keeps the compact Chat + Active primary pair while the existing More/shell navigation retains secondary operational reachability.
+
+This is route/label convergence only; it deliberately reuses the mature field-service routes.
