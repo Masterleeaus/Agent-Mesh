@@ -111,3 +111,15 @@ Convergence requirement:
 4. then route owner/worker/customer entry points into the shared shell without duplicating business logic.
 
 This changes the immediate implementation priority from “routing” to “remove demo-only entry dependency / establish injectable surface projection seam.”
+
+## Pass 7 — authenticated projection injection seam
+
+Implemented the first production-safe convergence seam without changing existing `/app` routing:
+- added `createSurfaceProjection(...)` to build canonical `zero|go|hub` projections from explicit `company_id`, actor, revision and lifetime inputs;
+- legacy tenant keys are rejected before projection creation;
+- projections remain authority-neutral and identity/cached state never grant authority;
+- the demo projection now delegates to the same canonical constructor rather than maintaining a parallel shape;
+- `RoleChat` now accepts an injected projection and rejects role/projection mismatches, while retaining demo fallback for the isolated prototype path;
+- added regression coverage for explicit company/actor injection and legacy tenant rejection.
+
+This enables a server-authenticated entry component to derive `company_id` from the existing session/account boundary and inject it into the chat-first surface without embedding session/database logic in the presentation runtime.
