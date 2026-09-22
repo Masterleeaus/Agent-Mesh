@@ -251,3 +251,17 @@ Converged owner/admin desktop navigation toward the canonical Command IA without
 Existing Work/People/Money sections remain reachable beneath Command. Owner field mode still uses the field navigation rather than duplicating Command there.
 
 This is deliberately a reuse/convergence pass: no parallel Control, Workforce, Decisions or System implementations were created.
+
+## Pass 19 — Hub authentication boundary
+
+Audited the current web app for a real customer/Hub session or portal boundary. None was found. The existing `fsm_session` resolves staff users and active business memberships with owner/admin/tech roles, so it must not be reused to infer customer identity.
+
+Hardened the authenticated surface adapter:
+- added an explicit Hub fail-closed boundary;
+- staff authentication cannot construct an authenticated Hub projection;
+- Hub requires a future independently verified customer-auth adapter carrying the correct company/customer actor context;
+- added regression coverage asserting that the staff path cannot derive Hub.
+
+No fake Hub route or customer session was introduced. Prototype Hub UI remains isolated until the real customer identity boundary exists.
+
+Test coverage is committed but was not executed in this connector-only pass.
