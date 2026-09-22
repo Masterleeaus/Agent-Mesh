@@ -1067,3 +1067,28 @@ Personal Zero has progressed from contracts to an actual storage-backed lifecycl
 ACTIVE IMPLEMENTATION / STATE SERVICE LANDED / CI PENDING
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-050
+### Finding
+#768 implementation slice 3 has closed the main source-level Personal Zero Experience/CognitiveEvent persistence and stable consumer-projection gaps on `agent/768`. Executed CI/certification evidence remains outstanding.
+### Evidence
+Latest #768 update reports commits `00dc71f` and `0fc566b`.
+Direct inspection of `packages/titan-platform/src/personal-zero/state-service.ts` on `agent/768`, blob `23122d55f5aa0a7136f9655f9ed62e6daaf83961`, verifies:
+- repository-backed ExperienceRecord persistence;
+- an actual outcome requires a verified outcome proof with matching company, matching outcome ID, `verified:true` and at least one receipt reference;
+- repository-backed CognitiveEvent chronology;
+- company-scoped Experience/CognitiveEvent writes require an active matching ONE/Zero/company relationship;
+- stable consumer projections exist for `interaction`, `decision` and `workforce`;
+- projections are filtered to the active relationship's ONE/Zero/company/relationship records;
+- revoked relationships return no consumer projection;
+- projections expose relationship authority refs only as references and explicitly set `authority_neutral:true`, `execution_authority:false`.
+The implementation update reports negative coverage for unverified/mismatched outcomes, revoked cognitive writes, cross-company projection leakage and revocation of one relationship without destroying another; execution/CI evidence remains pending.
+### Interpretation
+At source level, #768 now contains the principal identity/relationship, Understanding, Experience, CognitiveEvent and consumer retrieval architecture requested by the issue. Remaining work has shifted primarily to privacy/locality integration depth, Trust non-elevation/cross-context certification, executed tests/CI and merge/final evidence rather than missing core Personal Zero state primitives.
+### Classification
+ACTIVE IMPLEMENTATION / CORE PERSONAL ZERO STATE LOOP PRESENT / CERTIFICATION PENDING
+### Confidence
+HIGH
