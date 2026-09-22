@@ -391,3 +391,18 @@ Remaining #768 certification:
 - prove no proposal can mutate entitlement, delegation ceiling, governance policy, company boundary or execution authority;
 - provider-egress/retention/share revocation integration;
 - merge/final certification.
+
+
+## Issue #768 slice-6 durable learning
+The canonical Personal Zero learning path is now:
+`evidence/outcome → calibration/correction → authority-neutral proposal → durable pending_review → canonical Learning Governor review`.
+
+Do not add a second proposal store or Personal Zero learning executor.
+
+Remaining audit targets:
+- trace canonical Learning Governor review/application/audit path and verify Personal Zero proposals can enter it without bypass;
+- ensure approved adjustments remain restricted to non-authority targets;
+- ensure rejected/superseded proposals preserve audit history;
+- execute CI/tests;
+- finish retention/provider-egress/share-revocation integration;
+- certify Trust/Autonomy non-elevation and merge.
