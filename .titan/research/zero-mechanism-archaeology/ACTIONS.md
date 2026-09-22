@@ -107,3 +107,40 @@ Canonical Owner: UNRESOLVED — candidate future Personal Zero Understanding/Beh
 
 Summary:
 Determine whether current or historical Titan code already implements a semantic model of the human's goals, preferences, responsibilities, relationships, working style and behavioural patterns. Search code/history/donors before proposing implementation. Keep it distinct from Business Memory, Workforce identity, session continuity and authority state.
+
+
+---
+
+## SUPPORTED EXISTING ACTION:
+#21
+
+Additional evidence:
+FINDING-GH-014; FINDING-GH-017
+
+Purpose:
+Canonical durable context/memory and handoff ownership. Personal Zero persistent context should reuse this contract; recalled context must remain authority-neutral.
+
+---
+
+## SUPPORTED EXISTING ACTION:
+#725
+
+Additional evidence:
+FINDING-GH-015
+
+Purpose:
+Canonical identity/working-state/cross-surface continuity. Reuse for Zero continuity rather than creating per-host or per-surface state clones.
+
+---
+
+## ACTION-GH-003
+
+Type: FURTHER ARCHAEOLOGY BEFORE IMPLEMENTATION
+Priority: P1
+Finding: FINDING-GH-016
+GitHub Issue: #763
+Status: IN PROGRESS
+Canonical Owner: UNRESOLVED — candidate Personal Zero Understanding/Behavioural layer over existing canonical memory/context/state owners
+
+Summary:
+Search historical donors and shared agent evidence for a versioned human-understanding model covering goals, priorities, preferences, relationships, communication/decision patterns and evolving working context. Do not create a new implementation issue until historical evidence and current ownership are exhausted.
