@@ -1142,3 +1142,29 @@ The former Personal Zero Learning Governor gap is now substantially closed at so
 ACTIVE IMPLEMENTATION / LEARNING GOVERNOR CONVERGENCE LANDED / CI PENDING
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-053
+### Finding
+#768 implementation slice 6 makes Personal Zero learning proposals durable while preserving the existing Learning Governor as the review boundary and preserving relationship/company isolation.
+### Evidence
+Latest #768 update reports commits `1558b64` and `2769a6f`.
+Direct inspection of `packages/titan-platform/src/personal-zero/state-service.ts` on `agent/768`, blob `82b470c958194bac7f82742c1c79d81a3595dc87`, verifies:
+- correction evidence automatically persists a provenance-linked learning proposal with `pending_review`;
+- material prediction error persists a `pending_review` proposal after Brier calibration;
+- verified outcomes can persist a proposal through the canonical Personal Zero → workforce Learning Governor bridge;
+- every proposal passes `assertLearningProposalAuthorityNeutral` before persistence;
+- proposal listing is constrained to the active relationship's company/ONE/Zero/relationship;
+- revoked relationships return no proposal list and the active-relationship check prevents new verified-outcome proposal creation;
+- proposal persistence does not execute an adjustment and does not expand authority.
+Tests are committed but CI execution evidence remains pending.
+### Interpretation
+The Personal Zero learning loop is now durable through proposal creation:
+`correction / prediction error / verified outcome → governed proposal → pending review`.
+The next architectural boundary is proposal review/application/audit through the canonical Learning Governor, not another Personal Zero learner. #37 should begin downstream of governed evidence/proposals and focus on bounded predictive triggers/certification.
+### Classification
+ACTIVE IMPLEMENTATION / DURABLE GOVERNED LEARNING PROPOSALS / CI PENDING
+### Confidence
+HIGH
