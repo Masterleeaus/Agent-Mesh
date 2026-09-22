@@ -3156,3 +3156,71 @@ GAP NARROWED / NO COMMAND BUS REBUILD
 
 ### Confidence
 VERY HIGH
+
+
+---
+
+## FINDING-GH-125
+
+### Finding
+Current governed execution has a much stronger **receipt + post-action verification integrity layer** than earlier archaeology had established.
+
+### Direct evidence
+`execution-boundary.ts` validates authoritative receipts against company/action/capability/operation/idempotency/authority/actor/correlation/trace/execution-attempt/context/replay bindings and prevents receipt equivocation, history truncation, source-sequence rollback and binding downgrade.
+
+For high-risk commands it also requires post-action verification against authoritative state with evidence and links verification back to the exact receipt/command. Missing or uncertain required verification raises `RECOVERY_REQUIRED`.
+
+### Classification
+CURRENT ASSURANCE FOUNDATION / RETAIN
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-126
+
+### Finding
+Current `Signal` is intentionally a small authority-neutral intelligence primitive, while execution receipts/post-action verification live in the governed execution boundary. Therefore “Command Bus → Signal → Assurance” should not be implemented by bloating Signal into the execution ledger.
+
+### Architecture consequence
+Signal may project/announce verified facts and outcomes, but the authoritative mutation proof remains the command/receipt/verification chain. Assurance can consume/attest that evidence without allowing Signal to become authority or system-of-record truth.
+
+### Classification
+BOUNDARY CONFIRMED / AVOID SIGNAL OVERLOAD
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-127
+
+### Finding
+The current receipt/verification layer already protects against several subtle replay/history attacks:
+- same receipt ref with changed content → equivocation error;
+- same execution attempt with provider substitution/outcome change → rejection;
+- history truncation → rejection;
+- time/source-sequence rollback → rejection;
+- verification without matching successful receipt → rejection;
+- verification before execution → rejection;
+- binding downgrade across history → rejection.
+
+### Classification
+CURRENT SECURITY/ASSURANCE CAPABILITY / HIGH-VALUE RETAIN
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-128
+
+### Finding
+The remaining evidence-chain convergence is principally **projection/reachability**: ensure every accepted consequential mutation actually produces this authoritative receipt/verification evidence and that canonical Signal/Assurance/outcome systems receive correlated projections. The low-level integrity primitives themselves are already substantial.
+
+### Classification
+GAP NARROWED TO END-TO-END WIRING/CERTIFICATION
+
+### Confidence
+VERY HIGH
