@@ -263,3 +263,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-029 | #37 bounded learning/predictive substrate trace | issue #37 + current Workforce handover runtime | handover blob 415ee5647bed8a54b60d4e18ee628c67316d97ee | OPEN/PARTIAL | VERIFIED | Existing runtime supplies verification, rollback/recovery, security, privacy/evidence and certification substrates; inspected path does not close verified-outcome learning, predictive calibration or false-positive/missed-intervention measurement. | YES |
+
+
+| INGEST-030 | #768 claim-state + relationship substrate recheck | issue #768 comments + current Workforce human/external actor boundaries | claim base 83258dddf10ac19e68d63310c7f15bf9c60cc852; handover blob 415ee5647bed8a54b60d4e18ee628c67316d97ee | ACTIVE CLAIM | VERIFIED | #768 is now claimed on agent/768. Existing Workforce human/external actor contracts provide company relationship/participation semantics but are not persistent ONE/Zero identity ownership. | YES |
