@@ -8,7 +8,7 @@ export async function recordGovernedPermitState(client:PoolClient,ctx:{accountId
  assertFieldMutationAuthority({role:ctx.role,actor_id:ctx.actorId,kind:"permit_state",next_state:permit.state});
  const write=await client.query(`INSERT INTO field_permits(id,company_id,account_id,work_order_id,permit_type,state,expiry_date,provenance,idempotency_key)
  VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9)
- ON CONFLICT(id) DO UPDATE SET state=EXCLUDED.state,expiry_date=EXCLUDED.expiry_date,provenance=EXCLUDED.provenance,updated_at=CURRENT_TIMESTAMP
+ ON CONFLICT(id) DO UPDATE SET state=EXCLUDED.state,expiry_date=EXCLUDED.expiry_date,provenance=EXCLUDED.provenance,idempotency_key=EXCLUDED.idempotency_key,updated_at=CURRENT_TIMESTAMP
  WHERE field_permits.company_id=EXCLUDED.company_id AND field_permits.account_id=EXCLUDED.account_id AND field_permits.work_order_id=EXCLUDED.work_order_id`,
  [permit.permit_id,ctx.company_id,ctx.accountId,permit.work_order_id,permit.permit_type,permit.state,permit.expiry_date??null,JSON.stringify(permit.provenance??{}),String(permit.provenance?.idempotency_key??`${ctx.traceId}:permit:${permit.permit_id}`) ]);
  if(write.rowCount!==1) throw new Error("field permit boundary conflict");
@@ -19,7 +19,7 @@ export async function recordGovernedInspectionState(client:PoolClient,ctx:{accou
  assertFieldMutationAuthority({role:ctx.role,actor_id:ctx.actorId,kind:"inspection_result",next_state:inspection.result});
  const write=await client.query(`INSERT INTO field_permit_inspections(id,company_id,account_id,permit_id,work_order_id,inspection_date,result,provenance,idempotency_key)
  VALUES($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9)
- ON CONFLICT(id) DO UPDATE SET inspection_date=EXCLUDED.inspection_date,result=EXCLUDED.result,provenance=EXCLUDED.provenance,updated_at=CURRENT_TIMESTAMP
+ ON CONFLICT(id) DO UPDATE SET inspection_date=EXCLUDED.inspection_date,result=EXCLUDED.result,provenance=EXCLUDED.provenance,idempotency_key=EXCLUDED.idempotency_key,updated_at=CURRENT_TIMESTAMP
  WHERE field_permit_inspections.company_id=EXCLUDED.company_id AND field_permit_inspections.account_id=EXCLUDED.account_id AND field_permit_inspections.work_order_id=EXCLUDED.work_order_id`,
  [inspection.inspection_id,ctx.company_id,ctx.accountId,inspection.permit_id,inspection.work_order_id,inspection.inspection_date,inspection.result,JSON.stringify(inspection.provenance??{}),String(inspection.provenance?.idempotency_key??`${ctx.traceId}:inspection:${inspection.inspection_id}`) ]);
  if(write.rowCount!==1) throw new Error("field inspection boundary conflict");
@@ -30,7 +30,7 @@ export async function recordGovernedDefectState(client:PoolClient,ctx:{accountId
  assertFieldMutationAuthority({role:ctx.role,actor_id:ctx.actorId,kind:"defect_state",next_state:defect.state,severity:defect.severity,verified_by_ref:defect.verified_by_ref,verified_date:defect.verified_date,defer_reason:defect.defer_reason});
  const write=await client.query(`INSERT INTO field_defects(id,company_id,account_id,work_order_id,punch_list_id,severity,state,verified_by_ref,verified_date,defer_reason,provenance,idempotency_key)
  VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::jsonb,$12)
- ON CONFLICT(id) DO UPDATE SET severity=EXCLUDED.severity,state=EXCLUDED.state,verified_by_ref=EXCLUDED.verified_by_ref,verified_date=EXCLUDED.verified_date,defer_reason=EXCLUDED.defer_reason,provenance=EXCLUDED.provenance,updated_at=CURRENT_TIMESTAMP
+ ON CONFLICT(id) DO UPDATE SET severity=EXCLUDED.severity,state=EXCLUDED.state,verified_by_ref=EXCLUDED.verified_by_ref,verified_date=EXCLUDED.verified_date,defer_reason=EXCLUDED.defer_reason,provenance=EXCLUDED.provenance,idempotency_key=EXCLUDED.idempotency_key,updated_at=CURRENT_TIMESTAMP
  WHERE field_defects.company_id=EXCLUDED.company_id AND field_defects.account_id=EXCLUDED.account_id AND field_defects.work_order_id=EXCLUDED.work_order_id`,
  [defect.defect_id,ctx.company_id,ctx.accountId,defect.work_order_id,defect.punch_list_id,defect.severity,defect.state,defect.verified_by_ref??null,defect.verified_date??null,defect.defer_reason??null,JSON.stringify(defect.provenance??{}),String(defect.provenance?.idempotency_key??`${ctx.traceId}:defect:${defect.defect_id}`) ]);
  if(write.rowCount!==1) throw new Error("field defect boundary conflict");
