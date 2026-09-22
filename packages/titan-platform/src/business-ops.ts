@@ -2,6 +2,12 @@ import { classifyRisk, type TitanRiskAssessment } from "./intelligence.js";
 import { routeOperationalRole, type TitanRoleRouteResult } from "./workforce.js";
 
 export type TitanBusinessOpsAgentCommandId =
+  | "clients.list"
+  | "clients.create"
+  | "properties.list"
+  | "properties.create"
+  | "booking_requests.list"
+  | "booking_requests.create"
   | "estimates.list"
   | "estimates.get"
   | "estimates.create"
@@ -22,11 +28,14 @@ export type TitanBusinessOpsAgentCommandId =
   | "invoices.get"
   | "invoices.create"
   | "invoices.transition"
-  | "invoices.send";
+  | "invoices.send"
+  | "expenses.list"
+  | "materials.list"
+  | "people.list";
 
 export type TitanBusinessOpsAgentCommand = Readonly<{
   id: TitanBusinessOpsAgentCommandId;
-  domain: "estimating" | "projects" | "dispatch" | "field" | "invoicing";
+  domain: "crm" | "people" | "intake" | "estimating" | "projects" | "dispatch" | "field" | "invoicing";
   method: "GET" | "POST" | "PATCH";
   path: string;
   mutating: boolean;
@@ -35,6 +44,13 @@ export type TitanBusinessOpsAgentCommand = Readonly<{
 }>;
 
 export const TITAN_BUSINESS_OPS_AGENT_COMMANDS: readonly TitanBusinessOpsAgentCommand[] = Object.freeze([
+  { id: "people.list", domain: "people", method: "GET", path: "/api/v1/users", mutating: false, description: "List canonical human workforce identities", allowedRoles: ["owner", "admin"] },
+  { id: "clients.list", domain: "crm", method: "GET", path: "/api/v1/clients", mutating: false, description: "List canonical clients", allowedRoles: ["owner", "admin"] },
+  { id: "clients.create", domain: "crm", method: "POST", path: "/api/v1/clients", mutating: true, description: "Create a canonical client", allowedRoles: ["owner", "admin"] },
+  { id: "properties.list", domain: "crm", method: "GET", path: "/api/v1/properties", mutating: false, description: "List canonical service properties", allowedRoles: ["owner", "admin"] },
+  { id: "properties.create", domain: "crm", method: "POST", path: "/api/v1/properties", mutating: true, description: "Create a canonical service property", allowedRoles: ["owner", "admin"] },
+  { id: "booking_requests.list", domain: "intake", method: "GET", path: "/api/v1/booking-requests", mutating: false, description: "List booking-request intake evidence", allowedRoles: ["owner", "admin"] },
+  { id: "booking_requests.create", domain: "intake", method: "POST", path: "/api/v1/booking-requests", mutating: true, description: "Create booking-request intake through the canonical intake pipeline", allowedRoles: ["owner", "admin"] },
   { id: "estimates.list", domain: "estimating", method: "GET", path: "/api/v1/estimates", mutating: false, description: "List estimates", allowedRoles: ["owner", "admin"] },
   { id: "estimates.get", domain: "estimating", method: "GET", path: "/api/v1/estimates/:id", mutating: false, description: "Load an estimate", allowedRoles: ["owner", "admin"] },
   { id: "estimates.create", domain: "estimating", method: "POST", path: "/api/v1/estimates", mutating: true, description: "Create an estimate", allowedRoles: ["owner", "admin"] },
@@ -56,6 +72,9 @@ export const TITAN_BUSINESS_OPS_AGENT_COMMANDS: readonly TitanBusinessOpsAgentCo
   { id: "invoices.create", domain: "invoicing", method: "POST", path: "/api/v1/invoices", mutating: true, description: "Create an invoice", allowedRoles: ["owner", "admin"] },
   { id: "invoices.transition", domain: "invoicing", method: "POST", path: "/api/v1/invoices/:id/transition", mutating: true, description: "Transition invoice lifecycle", allowedRoles: ["owner", "admin"] },
   { id: "invoices.send", domain: "invoicing", method: "POST", path: "/api/v1/invoices/:id/send", mutating: true, description: "Send an invoice through the native Business Ops delivery flow", allowedRoles: ["owner", "admin"] },
+  { id: "expenses.list", domain: "invoicing", method: "GET", path: "/api/v1/expenses", mutating: false, description: "Read canonical expense records for operational profitability context", allowedRoles: ["owner", "admin"] },
+  { id: "materials.list", domain: "invoicing", method: "GET", path: "/api/v1/materials", mutating: false, description: "Read canonical material price-book records", allowedRoles: ["owner", "admin", "tech"] },
+  { id: "people.list", domain: "people", method: "GET", path: "/api/v1/users", mutating: false, description: "List canonical human workforce identities", allowedRoles: ["owner", "admin"] },
 ]);
 
 export function getTitanBusinessOpsAgentCommand(id: string): TitanBusinessOpsAgentCommand | null {
