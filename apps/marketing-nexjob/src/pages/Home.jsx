@@ -31,21 +31,25 @@ const integrations = [
 ]
 
 const features = [
-  { icon: '📋', title: 'Quote Preparation', desc: 'Bring customer, property, job history and approved business knowledge together to prepare quotes for review and approval.', color: 'bg-purple-500/10' },
-  { icon: '📅', title: 'Scheduling Support', desc: 'Coordinate recurring work, availability, skills, locations and exceptions while keeping your existing scheduling systems where they fit.', color: 'bg-cyan-500/10' },
-  { icon: '🗺️', title: 'Field Coordination', desc: 'Keep jobs, locations, field teams, changes and customer communication connected across the operating day.', color: 'bg-green-500/10' },
-  { icon: '💰', title: 'Billing Workflow', desc: 'Move authorised completed work toward invoicing and payment through the accounting and payment systems selected by the business.', color: 'bg-yellow-500/10' },
-  { icon: '\ud83d\udc65', title: 'Client CRM', desc: 'Full client profiles with service history, lifetime value, communication log, and satisfaction scores. Know every customer like your best one.', color: 'bg-red-500/10' },
-  { icon: '\ud83d\udcf1', title: 'Offline Mode + Sync', desc: "Your crew works everywhere \u2014 even without signal. IndexedDB caching, mutation queue, and automatic background sync when connectivity returns.", color: 'bg-orange-500/10' },
-  { icon: '\ud83d\udcac', title: 'Two-Way SMS', desc: 'Text clients and crew from one dashboard. Automated appointment reminders, on-my-way alerts, and follow-ups \u2014 included in every plan.', color: 'bg-blue-500/10' },
-  { icon: '\ud83d\udcca', title: 'Real Analytics', desc: "Not basic pie charts. Custom dashboards, revenue trends, technician scorecards, job profitability \u2014 the insights your business actually needs.", color: 'bg-violet-500/10' },
-  { icon: '\ud83c\udf10', title: 'Client Portal', desc: 'A branded self-serve portal where your customers approve quotes, track their technician in real-time, pay invoices, and book services 24/7.', color: 'bg-teal-500/10' },
-  { icon: '\ud83d\udcc6', title: 'Calendar Sync', desc: 'Two-way sync with Google Calendar and Microsoft 365. Schedule or update a job and the calendar event updates automatically.', color: 'bg-indigo-500/10' },
-  { icon: '\ud83d\udce8', title: 'Email Campaigns', desc: 'Send targeted SMS and email campaigns to your customer base. Built-in templates, batch messaging, and delivery tracking.', color: 'bg-pink-500/10' },
-  { icon: '\ud83d\udd04', title: 'Recurring Jobs & Invoices', desc: 'Set up maintenance contracts and recurring services. Invoices generate and send automatically on schedule.', color: 'bg-emerald-500/10' },
-  { icon: '\ud83d\udccd', title: 'Geofencing', desc: 'Auto clock-in when techs arrive on site. Monitor arrivals, departures, and violations. Per-job radius controls with manager alerts.', color: 'bg-rose-500/10' },
-  { icon: '\ud83c\udfa4', title: 'Voice-to-Invoice', desc: 'Techs record a voice note after a job. AI transcribes it and extracts line items into a ready-to-send invoice draft.', color: 'bg-amber-500/10' },
+  { icon: '📞', title: 'Reception & Lead Handling', desc: 'Capture enquiries, qualify leads, prepare next actions and keep authorised follow-up moving across configured channels.', color: 'bg-purple-500/10' },
+  { icon: '📋', title: 'Quote Preparation', desc: 'Bring customer, property, job history and approved business knowledge together to prepare quotes for review and approval.', color: 'bg-cyan-500/10' },
+  { icon: '📅', title: 'Scheduling Support', desc: 'Coordinate recurring work, availability, skills, locations and exceptions while keeping existing scheduling systems where they fit.', color: 'bg-green-500/10' },
+  { icon: '🗺️', title: 'Field Coordination', desc: 'Keep jobs, locations, field teams, changes and customer communication connected across the operating day.', color: 'bg-yellow-500/10' },
+  { icon: '💬', title: 'Customer Care', desc: 'Support reminders, updates, feedback, service recovery, rebooking and retention workflows using authorised customer context.', color: 'bg-red-500/10' },
+  { icon: '💰', title: 'Billing & Collections Workflow', desc: 'Move authorised completed work toward invoicing, follow-up and payment through the accounting and payment systems selected by the business.', color: 'bg-orange-500/10' },
+  { icon: '📄', title: 'Document Intelligence', desc: 'Connect receipts, quotes, job records, compliance evidence and other authorised documents to the relevant business workflow.', color: 'bg-blue-500/10' },
+  { icon: '📊', title: 'Value Measurement', desc: 'Establish baselines and report measured changes across revenue, cost, time, cash and resources instead of relying on generic ROI claims.', color: 'bg-violet-500/10' },
+  { icon: '🧠', title: 'Private Business Knowledge', desc: 'Use governed company knowledge and private retrieval options so workforce capabilities operate with relevant business context.', color: 'bg-teal-500/10' },
+  { icon: '📦', title: 'Inventory & Procurement', desc: 'Connect stock, consumables, purchasing, suppliers and resource-use context to operational decisions where configured.', color: 'bg-indigo-500/10' },
+  { icon: '🌱', title: 'Environmental Intelligence', desc: 'Measure chemical, water, energy, waste and procurement opportunities and connect improvements to operating evidence.', color: 'bg-emerald-500/10' },
   { icon: '🔌', title: 'System Integration & Gap Filling', desc: 'Keep useful software, connect it through governed interfaces, and add Titan Zero software where a genuine operational gap remains.', color: 'bg-sky-500/10' },
+]
+
+const aiFeatures = [
+  { icon: '📞', title: 'Customer & Reception Workforce', desc: 'Supports enquiries, qualification, booking, reminders and follow-up within configured authority.' },
+  { icon: '⚙️', title: 'Operations Workforce', desc: 'Supports scheduling, field coordination, exceptions and operational next actions across connected systems.' },
+  { icon: '📈', title: 'Business Intelligence Workforce', desc: 'Surfaces baselines, exceptions, opportunities and decision support from authorised business information.' },
+  { icon: '🔄', title: 'Follow-Up Workforce', desc: 'Keeps authorised quote, invoice, customer-care and rebooking workflows moving instead of letting work disappear between systems.' },
 ]
 
 const aiFeatures = [
@@ -226,21 +230,18 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right: Terminal */}
+          {/* Right: managed-system model */}
           <div className="bg-nx-surface border border-nx-border rounded-2xl p-6">
-            <div className="bg-nx-bg rounded-xl p-5 font-mono text-sm leading-loose">
-              <p className="text-nx-muted2">{'// NexJob AI \u2014 Live dispatch optimization'}</p>
-              <p className="mt-2"><span className="text-nx-purple-light">nexjob&gt;</span> <span className="text-nx-cyan-light">optimize_schedule</span>(date: &quot;today&quot;)</p>
-              <p className="text-nx-green-light mt-2">\u2713 Analyzing 12 jobs across 4 technicians...</p>
-              <p className="text-nx-green-light">\u2713 Rerouted Mike: saved 47 min drive time</p>
-              <p className="text-nx-green-light">\u2713 Swapped Job #1847 \u2192 Sarah (closer + certified)</p>
-              <p className="text-nx-green-light">\u2713 Flagged: Client Martinez hasn't viewed estimate</p>
-              <p className="text-nx-green-light">&nbsp; \u2192 Auto-SMS follow-up scheduled for 2:00 PM</p>
-              <p className="mt-3"><span className="text-nx-purple-light">nexjob&gt;</span> <span className="text-nx-cyan-light">revenue_query</span>(&quot;best month this quarter&quot;)</p>
-              <p className="text-nx-green-light mt-2">\u2713 February: $48,720 (+22% vs Jan)</p>
-              <p className="text-nx-green-light">&nbsp; Top service: HVAC maintenance ($18,400)</p>
-              <p className="text-nx-green-light">&nbsp; Top closer: Sarah K. (94% win rate)</p>
-              <p className="text-nx-muted2 mt-3">\u2588 Ready for next command...</p>
+            <p className="text-xs uppercase tracking-widest text-nx-muted2 mb-5">Managed operating model</p>
+            <div className="space-y-3">
+              {[
+                ['01','Keep the systems that already work'],
+                ['02','Connect authorised business context'],
+                ['03','Fill genuine software and workflow gaps'],
+                ['04','Commission specialised workforce capabilities'],
+                ['05','Apply governance, review and authority controls'],
+                ['06','Measure results and continuously improve'],
+              ].map(([n,t]) => <div key={n} className="bg-nx-bg border border-nx-border rounded-xl p-4 flex gap-4"><span className="text-xs font-bold text-nx-purple-light">{n}</span><span className="text-sm">{t}</span></div>)}
             </div>
           </div>
         </div>
