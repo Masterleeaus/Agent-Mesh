@@ -11,6 +11,7 @@ import { detectSmsKeyword, replyForSmsKeyword, type SmsKeyword } from "@/lib/sms
 import { SMS_CONSENT_TEXT } from "@/lib/sms/consent";
 import { isSmsGatewayConfigured, sendSmsViaGateway } from "@/lib/sms/gateway";
 import { logOutboundSms } from "@/lib/sms/outbound";
+import { normalizeInboundProviderEvent, routeInboundCommunication } from "@/lib/communications/inbound";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,9 @@ const bodySchema = z.object({
   external_id: z.string().max(255).optional(),
   company_id: z.string().uuid(),
   owner_user_id: z.string().uuid(),
+  conversation_id: z.string().min(1).max(255),
+  correlation_id: z.string().min(1).max(255),
+  provider_id: z.string().min(1).max(255).default("sms-gateway"),
 });
 
 const ACTIVE_JOB_STATUSES = ["draft", "quoted", "scheduled", "in_progress"];
@@ -263,7 +267,7 @@ export async function POST(req: NextRequest) {
       { status: 422 }
     );
   }
-  const { phone: rawPhone, message, external_id, company_id, owner_user_id } = parsed.data;
+  const { phone: rawPhone, message, external_id, company_id, owner_user_id, conversation_id, correlation_id, provider_id } = parsed.data;
   const phone = normalizePhone(rawPhone) ?? rawPhone;
 
   // The authenticated integration must carry canonical company scope.
@@ -281,6 +285,26 @@ export async function POST(req: NextRequest) {
   }
   const accountId = company_id; // legacy storage alias after canonical normalization
   const userId = owner.user_id;
+
+  // Normalize provider evidence before any business classification or side effects.
+  // Routing preserves identity and explicitly carries no execution authority.
+  const inboundEnvelope = normalizeInboundProviderEvent({
+    company_id,
+    message_id: external_id ?? traceId,
+    conversation_id,
+    correlation_id,
+    channel: "sms",
+    participants: [{ address: phone }],
+    body: message,
+    occurred_at: new Date().toISOString(),
+    provider_id,
+  });
+  const inboundRouting = routeInboundCommunication(inboundEnvelope, {
+    kind: "review",
+    confidence: "low",
+    intent: "unclassified-sms",
+    requires_human_review: true,
+  });
 
   // Idempotency: already-seen message → no re-action, no Claude call.
   // The unique index on (account_id, external_id) is the hard backstop.
@@ -388,7 +412,7 @@ export async function POST(req: NextRequest) {
 
   if (!ai.is_business) {
     logger.info("SMS not business — skipping", { traceId, phone, type: ai.message_type });
-    return NextResponse.json({ skipped: true, reason: "not_business" });
+    return NextResponse.json({ skipped: true, reason: "not_business", routing: inboundRouting });
   }
 
   // Resolve the client (create now if new)
