@@ -314,3 +314,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-046 | PR #770 post-fix CI | workflow run 35786535672 / job 106944907831 | head 43d73b7f0092ed795563f6999a1dc8169fda625b; fixes 3834aab,ccc10ff,5c167f4,43d73b7 | ACTIVE/PARTIAL-CERTIFICATION | DIRECT EXECUTION EVIDENCE | titan-platform typecheck now passes. Recursive CI then fails in services/worker on unrelated missing dependencies/API mismatches, so titan-platform tests are skipped. | YES |
+
+
+| INGEST-047 | Titan Platform scoped test-path verification | packages/titan-platform/package.json + PR #770 CI state | package blob 642a0b5f0648781a591f38210828621074c48f56 | ACTIVE/CERTIFICATION | DIRECT SOURCE VERIFIED | Existing test:unit command already compiles Titan Platform and runs package tests. Remaining gap is invoking it independently of unrelated worker CI failure; no new test framework needed. | YES |
