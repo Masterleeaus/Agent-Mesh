@@ -3074,3 +3074,85 @@ RECOVER/HARDEN INVARIANT
 
 ### Confidence
 VERY HIGH
+
+
+---
+
+## FINDING-GH-121
+
+### Finding
+Current main contains a substantial canonical **governed command execution boundary** under the Authority Runtime; Command Bus semantics are not merely roadmap text.
+
+### Direct evidence
+`packages/titan-platform/src/ported/titan-runtime/authority/execution-boundary.ts` SHA `a97baf3...` implements:
+- `prepareGovernedCommandEnvelope`;
+- company_id and legacy-boundary rejection;
+- actor/action/capability/operation/idempotency binding;
+- current Authority Decision validation;
+- execution-context binding and revision checks;
+- approval/evidence requirements by risk;
+- reversibility and compensation requirements;
+- replay-binding over authority/proof/evidence/context/expected effect;
+- trace/correlation/causation IDs;
+- `execution_transport:'titan-command-bus'`;
+- `direct_mutation:false`;
+- authoritative execution receipt validation;
+- post-action verification and receipt-history continuity;
+- current-authority/supersession checks before execution.
+
+### Classification
+CURRENT CANONICAL COMMAND-BOUNDARY IMPLEMENTATION / RETAIN
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-122
+
+### Finding
+The canonical execution boundary already contains an explicit hook for the unknown-outcome recovery invariant discovered in Pass 39: an authoritative receipt with `status==='unknown'` throws `RECOVERY_REQUIRED:execution-receipt-unknown`.
+
+### Consequence
+ACTION-GH-028 should therefore **extend an existing recovery seam**, not introduce a new UNKNOWN state model. The missing convergence is primarily durable execution-state orchestration/reconciliation around this contract.
+
+### Classification
+EXISTING RECOVERY SEAM CONFIRMED / ACTION NARROWED
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-123
+
+### Finding
+Current governed-command proof is stronger than a simple “permission check.” The replay binding cryptographically/canonically binds company, actor, action, capability, operation, idempotency key, authority decision/provenance, execution context, approvals, evidence, reversibility, expected effect and proof material.
+
+### Architecture implication
+Retries/replays must preserve this binding or be rejected as superseded/stale. Provider or surface adapters must not reconstruct a weaker command envelope after authority evaluation.
+
+### Classification
+CURRENT HIGH-VALUE SECURITY/ASSURANCE SEMANTIC / RETAIN
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-124
+
+### Finding
+The remaining Command Bus problem is correctly framed by open #14 as **reachability and resumable execution convergence**, not absence of the governed-command primitive. Historical/adjacent recovery donors should target:
+- active mutation bypasses;
+- persisted/resumable execution graph;
+- UNKNOWN reconciliation;
+- retry/compensation orchestration;
+- Signal/Assurance receipt correlation;
+rather than replacing `prepareGovernedCommandEnvelope`.
+
+### Classification
+GAP NARROWED / NO COMMAND BUS REBUILD
+
+### Confidence
+VERY HIGH
