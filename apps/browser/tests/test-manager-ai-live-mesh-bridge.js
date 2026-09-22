@@ -133,3 +133,9 @@ const bridgeClient=fs.readFileSync('src/integration/titan-bridge-client.js','utf
 if(bridgeClient.includes("agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover'])")) throw new Error('checkpoint must not be resume-gated');
 if(!bridgeClient.includes("agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover")) throw new Error('work mutations must remain resume-gated');
 if(!sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover']).has(action)")) throw new Error('service-worker mutation gate classification missing');
+
+const swSource=sw.split('\n');
+const directMeshCalls=swSource.filter(line=>line.includes("CodeeTitanBridgeClient.call")&&line.includes("'agent_mesh."));
+assert.strictEqual(directMeshCalls.length,1,'Agent Mesh direct bridge calls must remain read-only audit/snapshot paths; mutations must use governed wrapper');
+assert(sw.includes("function callAgentMeshMutation(config,action,payload,snapshot)"),'central Agent Mesh mutation wrapper missing');
+assert(sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover'])"),'all post-takeover mutation classes must remain resume-gated');
