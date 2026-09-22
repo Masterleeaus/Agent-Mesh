@@ -595,3 +595,18 @@ Dependency preference:
 - all four must preserve `company_id`, provenance, authority neutrality of intelligence/learning, and existing Trust/Risk/Assurance/Command Bus gates.
 
 Do not create new issues for these already-owned lanes.
+
+
+## Issue #59 repository-search handoff
+Current default-branch search did not reveal a hidden canonical DecisionPacket/Decision Object persistence runtime.
+
+Before implementation:
+1. preserve the existing Decision Engine descriptor/envelope as the canonical runtime identity;
+2. inspect historical/Library Decision Step25 and any decision-history donors for directly reusable lifecycle semantics;
+3. reuse current workforce decision-rights, runtime authority, provenance and Interaction Engine state;
+4. add persistent Decision Object/Packet state beneath the existing owner rather than a parallel engine;
+5. bind durable entity/correlation/evidence links with `company_id`;
+6. add temporal watch/re-evaluation and explicit supersession history;
+7. consume certified Personal Zero evidence only as authority-neutral context;
+8. ensure re-evaluation/recommendation never grants authority;
+9. certify cross-company denial, stale evidence, supersession, temporal trigger and authority-bound execution handoff.
