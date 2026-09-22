@@ -116,3 +116,7 @@ Knowledge Authority source verification adds source/version hashing, contradicti
 
 ### ZM-015 — Rewind recovers state; it does not rewrite reality
 Rewind v1.0.9 source verification supports evidence-driven recovery. Personal Zero recovery should preserve lineage and supersede/recompute bad internal state, then trace its blast radius into decisions, handoffs, configuration and actions. External effects require compensation/remediation; irreversible effects must be declared rather than pretending a snapshot restored the world. Historical approvals/trust/delegations must be revalidated and never resurrected automatically during restore.
+
+
+### ZM-016 — Zero privacy separates observation, memory, learning and egress
+Purpose-bound OnboardingPro consent plus LocalBrain/Phase10 privacy scopes imply a stronger Personal Zero rule: permission to observe a source does not automatically permit durable retention, learning, later retrieval, provider disclosure or action. Revocation must stop future observation/egress and propagate through caches/derived state subject to retention obligations. Provider routing must respect locality and never silently escalate private context to cloud inference. Decision/Workforce/Interaction consumers should receive purpose-minimised projections of Zero, not the complete personal model.
