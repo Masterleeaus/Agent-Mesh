@@ -67,3 +67,18 @@ Canonical Owner: Titan Trust / authority architecture
 
 Summary:
 Compare historical Trust evidence/receipt semantics against current earned-trust and three-way-handshake architecture. Never allow learning, prediction, consensus or historical trust code to bypass current authority.
+
+
+---
+
+## ACTION-LIB-006
+
+Type: DEEP RECOVERY AUDIT / CONVERGENCE CANDIDATE
+Priority: P1
+Finding: FINDING-LIB-007, FINDING-LIB-008
+GitHub Issue: #763
+Status: SUPPORTED EXISTING ACTION; evidence added to #763
+Canonical Owner: UNRESOLVED — Personal Zero cognition/understanding/experience owner must be selected only after current-code parity and backlog ownership review.
+
+Summary:
+Deep-inspect the Aug-03 Offline LocalBrain implementation and map reusable cognitive-event, local memory, user preference/action, offline sync, persona-drift and memory-reranking mechanisms to current Titan Zero. Do not resurrect the old Interaction Engine, do not fold Personal Zero into company Business Memory, and do not create a new implementation issue until source-level parity and existing backlog ownership are resolved.
