@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { routeInboundCommunication } from "../inbound";
+import { normalizeInboundProviderEvent, routeInboundCommunication } from "../inbound";
 
 const inbound = {
   id: "msg-in-1",
@@ -46,5 +46,38 @@ describe("routeInboundCommunication", () => {
       message: { ...inbound, direction: "outbound" },
       classification: { kind: "business", confidence: "high" },
     })).toThrow("inbound communication required");
+  });
+
+  it("normalizes provider evidence into a canonical inbound envelope", () => {
+    expect(normalizeInboundProviderEvent({
+      company_id: "company-1",
+      message_id: "provider-msg-1",
+      conversation_id: "conv-1",
+      correlation_id: "corr-1",
+      channel: "messaging",
+      participants: [{ address: "customer-1" }],
+      body: "Hello",
+      occurred_at: "2026-09-22T06:30:00.000Z",
+      provider_id: "provider-a",
+    })).toMatchObject({
+      id: "provider-msg-1",
+      company_id: "company-1",
+      conversation_id: "conv-1",
+      direction: "inbound",
+      provenance: { source: "provider-inbound", provider_id: "provider-a" },
+    });
+  });
+
+  it("fails closed when provider input lacks canonical company scope", () => {
+    expect(() => normalizeInboundProviderEvent({
+      company_id: "",
+      message_id: "provider-msg-1",
+      conversation_id: "conv-1",
+      correlation_id: "corr-1",
+      channel: "sms",
+      participants: [{ address: "+61400000000" }],
+      occurred_at: "2026-09-22T06:30:00.000Z",
+      provider_id: "gateway",
+    })).toThrow("company_id is required");
   });
 });
