@@ -123,3 +123,9 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-017 — `Masterleeaus/cleanly` main, `docs/01-PWA/18-signal-envelope-and-event-backfeed-contract.md`, SHA `6dc757c77112efb9db5533915f08c8e0e428c33a`; direct file inspection.
 - SOURCE-GH-018 — `Masterleeaus/cleanly` main, `docs/01-PWA/24-security-identity-device-trust-and-tenant-boundary.md`, SHA `8bf4e285832d00295f25bf4ddd2672147f238e20`; direct file inspection.
 - SOURCE-GH-019 — Agent-Mesh #645 Edge Fabric and #302 security identity/credential hardening; direct open-issue inspection.
+
+
+- SOURCE-GH-020 — `Masterleeaus/TitanPro` main, `config/titan_verticals.php`, SHA `627c0a60cf06e147677e4a1aa6d9254dfba61d22`; direct file inspection.
+- SOURCE-GH-021 — `Masterleeaus/zero` main, ComplianceIQ `README.md`, SHA `c7deda650b12783ff902a5372042b6638624ae3b`, and `WORKFLOWS.md`, SHA `1fd1083d0785b1edede191a1ae545b946b48ac2f`; direct file inspection.
+- SOURCE-GH-022 — `Masterleeaus/Worksuite-Saas---Project-Management-System_Laravel` main, `Modules/StaffCompliance/Services/ComplianceDashboardService.php`, SHA `d76dd5581361789ccb509b6b13917ec49a5863e3`; direct file inspection.
+- SOURCE-GH-023 — Agent-Mesh #769 Environmental Intelligence, #423 Compliance/Audit/Governance, #430 certification; direct open-issue inspection.
