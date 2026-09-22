@@ -10,6 +10,7 @@ describe("resolveTenantSmsSettings", () => {
       gatewayUrl: undefined,
       gatewayUsername: undefined,
       gatewayPassword: undefined,
+      quietHours: undefined,
     });
   });
 
@@ -21,6 +22,7 @@ describe("resolveTenantSmsSettings", () => {
       gatewayUrl: undefined,
       gatewayUsername: undefined,
       gatewayPassword: undefined,
+      quietHours: undefined,
     });
   });
 
@@ -31,6 +33,22 @@ describe("resolveTenantSmsSettings", () => {
       webhookKey: undefined,
     });
   });
+  it("resolves a valid tenant quiet-hours window", () => {
+    expect(resolveTenantSmsSettings({
+      sms_quiet_hours_start: 21,
+      sms_quiet_hours_end: 7,
+    })).toMatchObject({
+      quietHours: { startHour: 21, endHour: 7 },
+    });
+  });
+
+  it("fails closed to no configured window for invalid or incomplete quiet-hours settings", () => {
+    expect(resolveTenantSmsSettings({ sms_quiet_hours_start: 21 }).quietHours).toBeUndefined();
+    expect(resolveTenantSmsSettings({ sms_quiet_hours_start: -1, sms_quiet_hours_end: 7 }).quietHours).toBeUndefined();
+    expect(resolveTenantSmsSettings({ sms_quiet_hours_start: 21, sms_quiet_hours_end: 24 }).quietHours).toBeUndefined();
+    expect(resolveTenantSmsSettings({ sms_quiet_hours_start: "21", sms_quiet_hours_end: 7 }).quietHours).toBeUndefined();
+  });
+
   it("resolves tenant gateway credentials without exposing deployment-global values", () => {
     expect(resolveTenantSmsSettings({
       sms_gateway_url: "  https://gateway.example.test  ",
