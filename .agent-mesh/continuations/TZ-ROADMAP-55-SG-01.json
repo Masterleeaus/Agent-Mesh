@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 20,
+    "current_pass": 22,
     "status": "ACTIVE"
   },
   "completed": [
@@ -171,15 +171,18 @@
     "Pass 20: audited service-worker Agent Mesh mutation call sites and confirmed they converge through a central allowlisted callAgentMeshMutation path",
     "Pass 20: generic Titan Bridge calls reject Agent Mesh mutations, preventing callers from bypassing governed resume-aware mutation handling",
     "Pass 20: mutation policy distinguishes resume-gated recover/route/takeover from continuity-record-only checkpoint, and unknown Agent Mesh mutations fail closed",
-    "Pass 20: regression guards now lock checkpoint/takeover to the governed mutation path and guard against generic bridge bypass"
+    "Pass 20: regression guards now lock checkpoint/takeover to the governed mutation path and guard against generic bridge bypass",
+    "Pass 22: normalized active Manager dependency/routing payload around GitHub issue_number and subgoal_id before the legacy route_packet bridge boundary",
+    "Pass 22: legacy packet identifier moved under an explicit compatibility object with authority:false; missing GitHub work identity now fails closed instead of routing by packet identity",
+    "Pass 22: regression guards prevent legacy packet_id from returning as primary routing authority"
   ],
   "current_work": [
-    "Replace remaining legacy packet terminology in active Manager routing path with GitHub issue/subgoal terminology while preserving compatibility adapter only at boundary"
+    "Converge active Manager UI/state terminology from packet/delta/promotion language to GitHub Issue/Branch/Pull Request/Checks while retaining compatibility adapters only where required"
   ],
   "next_actions": [
-    "Audit route_packet bridge/provider implementation and consumers",
-    "Normalize active routing payload to issue_number/subgoal_id before execution",
-    "Retain legacy packet_id only as compatibility input, never authority"
+    "Audit Manager control-room and queue labels for active legacy terminology",
+    "Rename presentation/state labels without changing durable GitHub lifecycle",
+    "Keep legacy donor/pre-Git artifact vocabulary isolated to compatibility/history"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
