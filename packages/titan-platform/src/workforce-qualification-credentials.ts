@@ -34,12 +34,14 @@ export function buildTitanQualificationCredential(input:TitanQualificationCreden
  const issue_date=dateOnly(input.issue_date,'issue_date'),expiry_date=input.expiry_date?dateOnly(input.expiry_date,'expiry_date'):null;
  if(expiry_date&&Date.parse(`${expiry_date}T00:00:00Z`)<Date.parse(`${issue_date}T00:00:00Z`))throw new Error('expiry_date cannot precede issue_date');
  const renewal_reminder_days=nonNegativeInt(input.renewal_reminder_days??30,'renewal_reminder_days');
+ const evidence_refs=[...new Set((input.evidence_refs??[]).map(x=>req(x,'evidence_ref')))];
+ if(input.is_required&&evidence_refs.length===0)throw new Error('required credential requires at least one evidence_ref');
  const computed=deriveCredentialState({administrative_state:input.administrative_state,expiry_date,renewal_reminder_days,as_of:options.as_of});
  return Object.freeze({
   schema:TITAN_WORKFORCE_CREDENTIAL_SCHEMA,credential_id:req(input.credential_id,'credential_id'),company_id:req(input.company_id,'company_id'),worker_id:req(input.worker_id,'worker_id'),qualification_tag:req(input.qualification_tag,'qualification_tag'),
   credential_type:input.credential_type,credential_name:req(input.credential_name,'credential_name'),issuing_body:opt(input.issuing_body),certificate_number:opt(input.certificate_number),issue_date,expiry_date,
   administrative_state:input.administrative_state,computed_state:computed.state,days_until_expiry:computed.days_until_expiry,valid:computed.valid,renewal_due:computed.renewal_due,renewal_reminder_days,is_required:Boolean(input.is_required),
-  evidence_refs:Object.freeze(input.evidence_refs.map(x=>req(x,'evidence_ref'))),notes:opt(input.notes),provenance:prov(input.provenance),
+  evidence_refs:Object.freeze(evidence_refs),notes:opt(input.notes),provenance:prov(input.provenance),
   qualification_owner:'shared_workforce_qualification_owner' as const,automatic_assignment:false as const,automatic_renewal:false as const,automatic_status_mutation:false as const,
   credential_validity_grants_authority:false as const,proposal_only:true as const,requires_fresh_authority:true as const,grants_authority:false as const,execution_permitted:false as const,
  });
