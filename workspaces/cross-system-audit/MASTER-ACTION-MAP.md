@@ -373,3 +373,21 @@ Remaining #768 checks:
 - provider-egress enforcement at actual consumer/provider boundary;
 - Trust/Autonomy non-elevation certification;
 - merge/final issue completion evidence.
+
+
+## Issue #768 slice-5 learning convergence
+Personal Zero now has a canonical proposal-only bridge into the existing Learning Governor. Preserve it.
+
+Update dependent ownership:
+- #768 owns Personal Zero correction/prediction-error/verified-outcome proposal formation.
+- Existing Learning Governor remains the review/learning-policy authority.
+- #37 must consume governed proposals/calibration/verified outcomes for bounded predictive triggers and adaptation; do not create a second Personal Zero learning engine.
+- #153 Business Memory may store/retrieve relevant governed lessons but must not reinterpret learning proposals as authority.
+- #59 Decision lifecycle may reference Personal Zero learning evidence but must re-evaluate current evidence/authority at decision time.
+
+Remaining #768 certification:
+- execute tests/CI;
+- verify governor rejection of forbidden adjustment targets in the integrated path;
+- prove no proposal can mutate entitlement, delegation ceiling, governance policy, company boundary or execution authority;
+- provider-egress/retention/share revocation integration;
+- merge/final certification.
