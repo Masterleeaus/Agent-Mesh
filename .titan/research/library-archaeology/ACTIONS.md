@@ -126,3 +126,18 @@ Status: EVIDENCE ADDED TO #647
 
 Summary:
 Retain current Intelligence Runtime and Cost Sovereignty ownership. Recover only narrow missing semantics: canonical context-window/prompt-compaction budgeting, justified richer model capability metadata, complete estimated/actual cost receipts, and explicit data-residency/local-only policy integration. No new implementation issue and no historical router resurrection.
+
+
+---
+
+## ACTION-LIB-010
+
+Type: IMPLEMENT MISSING VERTICAL CAPABILITY
+Priority: P1
+Finding: FINDING-LIB-013
+GitHub Issue: #769
+Status: OPEN
+Canonical Owner: Environmental Intelligence vertical capability pack over shared Titan Zero engines.
+
+Summary:
+Implement evidence-backed environmental schemas/capabilities for energy, water, waste, chemicals/materials, emissions/activity evidence, incidents, monitoring, improvement opportunities and jurisdiction overlays. Reuse canonical Reality/Knowledge/Risk/Decision/Signal/Workforce/Experience/Command paths. Do not create a separate environmental platform or duplicate engines.
