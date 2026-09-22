@@ -91,3 +91,20 @@ Notes: Issue text establishes intended canonical ownership but does not by itsel
 ## Source relationship warning
 
 Historical code may also exist in Library archives, ZIPs, copied repositories or merged branches. Such copies must not be counted as independent confirmations without lineage evidence.
+
+
+## SOURCE-GH-026
+Repository: `Masterleeaus/zero`
+Commit: `61db48c38d990de010587144cfe601a4b487dd03`
+Path/classes: TitanMemoryService, VectorMemoryAdapter, MemoryRecallTool, MemoryStoreTool, ProcessContract, SignalContract
+Inspected: YES — commit diff
+Relevant findings: FINDING-GH-010
+Notes: Concrete memory/context implementation integrated with Signal/Rewind; same underlying repository lineage as later TitanMemory merge commit `9e3b764...`, so do not count both as independent evidence.
+
+## SOURCE-GH-027
+Repository: `Masterleeaus/zero`
+Commit: `70e21c70ddb07ff69571bf616bfa19070c817e4c`
+Path/classes: SiteAsset, AssetServiceEvent, InspectionInstance/Response/events, hazard/site-access/occupancy/service-plan/meter domain additions
+Inspected: YES — commit diff
+Relevant findings: FINDING-GH-011
+Notes: Concrete company-scoped business-state/history mechanisms; evidence for compositional Business Reality.
