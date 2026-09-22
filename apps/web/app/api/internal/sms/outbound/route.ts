@@ -145,6 +145,11 @@ export async function POST(req: NextRequest) {
 
   const fromEnvelope = extractFromGatewayEnvelope(body);
   if (fromEnvelope) {
+    const companyScope = z.string().uuid().safeParse(fromEnvelope.companyId);
+    if (!companyScope.success) {
+      return NextResponse.json({ error: "Valid company_id is required" }, { status: 422 });
+    }
+    fromEnvelope.companyId = companyScope.data;
     phone = fromEnvelope.phone;
     message = fromEnvelope.message;
     externalId = fromEnvelope.external_id;
