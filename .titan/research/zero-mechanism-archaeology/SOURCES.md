@@ -124,3 +124,15 @@ Library path: /MASTER Software/Masters/Platform/Titan Model Council/Titan Model 
 Verification: materialized and source-inspected during #763.
 Relevant paths: System/Governed/GovernedDeliberationOrchestrator.php; System/Governed/GovernedDeliberationResult.php; System/Governed/ParticipantResult.php; System/Receipts/CouncilDecisionReceiptService.php.
 Supports: FINDING-GH-037 through FINDING-GH-041.
+
+
+---
+
+## SOURCE-LIB-005
+
+Type: Library architecture/upgrade specification
+Artifact: Titan-AI-Assurance-Engine-Upgrade-Prompt.md
+Library file id: file_0000000007b081f79529b34ef49f0633
+Verification: relevant workflow, scoring, statuses, testing and completion sections inspected during #763.
+Relevant semantics: immutable evidence packet; independent first-pass analysis; deterministic validation; typed disagreement; adversarial challenge; confidence/independence/evidence-sufficiency separation; correlated-failure penalties; insufficient-evidence/material-disagreement states; human gates; outcome calibration without silent tenant-data training.
+Supports: FINDING-GH-042 through FINDING-GH-046.
