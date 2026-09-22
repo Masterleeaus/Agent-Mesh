@@ -61,5 +61,5 @@ test("projection seam rejects legacy tenant boundaries", () => {
     revision: "rev-1",
     issued_at: "2026-09-22T08:00:00.000Z",
     expires_at: "2099-09-22T08:30:00.000Z",
-  }), /tenant_company_id-not-authoritative/);
+  }), /legacy-tenant-boundary-forbidden/);
 });
