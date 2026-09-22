@@ -1,4 +1,6 @@
 import type { StorageContextInput, StorageRecord } from "../storage/index.js";
+import type { VerifiedOutcome } from "../workforce-evidence/contracts.js";
+import { proposeLearningFromCorrection, proposeLearningFromPredictionError, proposeLearningFromVerifiedOutcome, assertLearningProposalAuthorityNeutral, type PersonalZeroLearningProposal } from "./learning-governor-bridge.js";
 import {
   createCompanyRelationship,
   createUnderstandingState,
@@ -23,6 +25,7 @@ const EXPERIENCES="experiences";
 const COGNITIVE_EVENTS="cognitive-events";
 const SHARE_GRANTS="cross-context-share-grants";
 const CALIBRATIONS="prediction-calibrations";
+const LEARNING_PROPOSALS="learning-proposals";
 
 type Repository=Readonly<{
   put(context:StorageContextInput,input:Readonly<{module_id:string;collection:string;record_id:string;expected_revision?:number;data?:unknown}>):Promise<StorageRecord>;
@@ -59,7 +62,12 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
       const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
       if(!relationship)throw new Error("Personal Zero relationship not found");
       requireRelationshipMatch(relationship,input.one_id,input.zero_id,input.company_id);
-      return repository.put(context,{module_id:MODULE_ID,collection:EVIDENCE,record_id:input.understanding_evidence_id,data:input});
+      const row=await repository.put(context,{module_id:MODULE_ID,collection:EVIDENCE,record_id:input.understanding_evidence_id,data:input});
+      if(input.correction_of){
+        const proposal=assertLearningProposalAuthorityNeutral(proposeLearningFromCorrection(input));
+        await repository.put(context,{module_id:MODULE_ID,collection:LEARNING_PROPOSALS,record_id:"correction:"+input.understanding_evidence_id,data:{...proposal,proposal_id:"correction:"+input.understanding_evidence_id,status:"pending_review",created_at:Number(clock())}});
+      }
+      return row;
     },
 
     async promoteUnderstanding(context:StorageContextInput,input:UnderstandingState){
@@ -119,7 +127,25 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
       for(const event of [prediction,outcome])requireRelationshipMatch(relationship,event.one_id,event.zero_id,event.company_id);
       if(prediction.relationship_id!==input.relationship_id||outcome.relationship_id!==input.relationship_id)throw new Error("Cross-context prediction calibration rejected");
       const calibration=scorePrediction(input);
-      return repository.put(context,{module_id:MODULE_ID,collection:CALIBRATIONS,record_id:`${input.prediction_event_id}:${input.outcome_event_id}`,data:{...calibration,company_id:relationship.company_id,one_id:relationship.one_id,zero_id:relationship.zero_id,relationship_id:input.relationship_id}});
+      const row=await repository.put(context,{module_id:MODULE_ID,collection:CALIBRATIONS,record_id:input.prediction_event_id+":"+input.outcome_event_id,data:{...calibration,company_id:relationship.company_id,one_id:relationship.one_id,zero_id:relationship.zero_id,relationship_id:input.relationship_id}});
+      const proposal=proposeLearningFromPredictionError({company_id:relationship.company_id,one_id:relationship.one_id,zero_id:relationship.zero_id,relationship_id:input.relationship_id,calibration});
+      if(proposal)await repository.put(context,{module_id:MODULE_ID,collection:LEARNING_PROPOSALS,record_id:"prediction:"+input.prediction_event_id+":"+input.outcome_event_id,data:{...assertLearningProposalAuthorityNeutral(proposal),proposal_id:"prediction:"+input.prediction_event_id+":"+input.outcome_event_id,status:"pending_review",created_at:Number(clock())}});
+      return row;
+    },
+
+    async proposeLearningFromVerifiedOutcome(context:StorageContextInput,input:{one_id:string;zero_id:string;relationship_id:string;outcome:VerifiedOutcome}){
+      const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
+      if(!relationship)throw new Error("Personal Zero relationship not found");
+      requireRelationshipMatch(relationship,input.one_id,input.zero_id,input.outcome.company_id);
+      const proposal=assertLearningProposalAuthorityNeutral(proposeLearningFromVerifiedOutcome(input));
+      return repository.put(context,{module_id:MODULE_ID,collection:LEARNING_PROPOSALS,record_id:"outcome:"+input.outcome.outcome_id,data:{...proposal,proposal_id:"outcome:"+input.outcome.outcome_id,status:"pending_review",created_at:Number(clock())}});
+    },
+
+    async listLearningProposals(context:StorageContextInput,relationship_id:string){
+      const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,relationship_id));
+      if(!relationship||relationship.status!=="active")return [];
+      const rows=await repository.list(context,{module_id:MODULE_ID,collection:LEARNING_PROPOSALS});
+      return rows.map(r=>recordData<PersonalZeroLearningProposal & {proposal_id:string;status:"pending_review";created_at:number}>(r)).filter(p=>Boolean(p&&p.company_id===relationship.company_id&&p.one_id===relationship.one_id&&p.zero_id===relationship.zero_id&&p.relationship_id===relationship_id));
     },
 
     async putCrossContextShareGrant(context:StorageContextInput,input:Omit<CrossContextShareGrant,"authority_neutral">){
