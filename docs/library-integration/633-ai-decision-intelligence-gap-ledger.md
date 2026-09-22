@@ -26,7 +26,7 @@ Issue: #633
 - **Signal — complete for #633:** existing prioritisation retained; canonical company scope and advisory-only behavior are regression-covered.
 - **Nexus — complete for #633:** repository audit found no canonical Nexus runtime, so the smallest authority-neutral, company-scoped orchestration contract was added without creating an execution host.
 - **Prime — complete for #633:** existing Prime runtime retained and hardened. Mission envelopes require canonical `company_id` and bounded mission identity/objective, deterministically normalize evidence references, explicitly remain authority-neutral/non-executable, and declare Command Bus, governance and authority checks as mandatory. `PrimeMissionEnvelope.schema.json` now locks those guarantees and regression tests cover legacy tenant rejection, deterministic evidence and no-bypass/no-authority behavior.
-- **Knowledge Authority — pending:** converge provenance/source identity, public/private separation, company isolation, deterministic knowledge decisions where applicable, and no-authority retrieval semantics.
+- **Knowledge Authority — complete for #633:** existing Workforce Knowledge Authority retained. Sources now require explicit source identity in addition to provenance/version/freshness; shared-public and company-private scopes remain distinct; private knowledge is company-isolated; reasoning-use decisions and receipts explicitly remain non-authorizing/non-executable. Regression coverage locks source identity/provenance, legacy/cross-company rejection, scope separation and no-authority retrieval.
 - **Final cross-system convergence — pending:** duplicate/tenant/authority/contracts/exports/imports/tests/donor-runtime audit.
 
 ## Prime evidence
@@ -35,3 +35,11 @@ Issue: #633
 - Regression coverage: `packages/titan-platform/tests/prime-library-parity.test.mjs`.
 - Runtime activation, mission creation, evidence attachment and mission state never confer execution authority.
 - Prime declares `command_bus_required: true`, `governance_required: true`, and `authority_check_required: true`; these are invariants, not authority grants.
+
+
+## Knowledge Authority evidence
+- Canonical runtime remains `packages/titan-platform/src/ported/titan-workforce/knowledge/workforce-knowledge-authority-runtime.ts`, re-exporting the existing implementation from the handover runtime; no second store/RAG/authority engine was introduced.
+- Source-identity hardening: `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts`.
+- Regression coverage: `packages/titan-platform/tests/knowledge-authority-library-parity.test.mjs`.
+- `SHARED_PUBLIC` knowledge has no company ownership; `COMPANY_PRIVATE` knowledge is bound to the requesting `company_id` and cross-company private sources fail closed.
+- Knowledge can be allowed only for reasoning and still requires an independent authority decision; neither retrieval nor its receipt permits execution.
