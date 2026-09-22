@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   assertCommunicationEnvelope,
   communicationIdempotencyKey,
+  createDeliveryReceipt,
   evaluateOutboundCommunicationPolicy,
   type CommunicationEnvelope,
   type OutboundCommunicationPolicy,
@@ -68,5 +69,43 @@ describe("canonical communications contract", () => {
         provenance: { source: "test" },
       })
     ).toThrow(/company_id/);
+  });
+  it("normalizes provider outcomes into canonical delivery receipts", () => {
+    const receipt = createDeliveryReceipt({
+      message: {
+        id: "msg-2",
+        company_id: "company-1",
+        conversation_id: "conv-1",
+        correlation_id: "corr-2",
+        channel: "email",
+      },
+      result: { ok: true, provider_message_id: "smtp-123" },
+      attempt: 2,
+      occurred_at: "2026-09-22T01:00:00.000Z",
+    });
+    expect(receipt).toEqual({
+      company_id: "company-1",
+      message_id: "msg-2",
+      conversation_id: "conv-1",
+      correlation_id: "corr-2",
+      channel: "email",
+      state: "sent",
+      provider_message_id: "smtp-123",
+      attempt: 2,
+      occurred_at: "2026-09-22T01:00:00.000Z",
+      error_code: undefined,
+    });
+
+    expect(createDeliveryReceipt({
+      message: {
+        id: "msg-3",
+        company_id: "company-1",
+        conversation_id: "conv-2",
+        correlation_id: "corr-3",
+        channel: "push",
+      },
+      result: { ok: false, error_code: "provider-unavailable" },
+      occurred_at: "2026-09-22T01:01:00.000Z",
+    }).state).toBe("failed");
   });
 });
