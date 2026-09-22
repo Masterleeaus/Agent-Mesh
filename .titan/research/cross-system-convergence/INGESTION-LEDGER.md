@@ -305,3 +305,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-043 | #768 two-sided sharing gate | issue #768 update + share acceptance/state/index direct inspection | acceptance blob 97c9ebeb3efd7b8343ddbfe747db8fe288f4890f; state blob cd56091410e2d277edfa82cef089a1c83435b842; index blob ce539c5edeb3d15440a402007830d40c81f94c2c; commits e632fb6,a208935,2181d84 | ACTIVE/PROVISIONAL | DIRECT SOURCE VERIFIED; CI PENDING | Source grant plus exact-fingerprint target acceptance is now mandatory for shared-understanding retrieval; source/target expiry/revocation and identity/context mismatches fail closed without cross-company repository reads. | YES |
+
+
+| INGEST-044 | #768 TASK-152 completion audit | issue #768 completion audit + Personal Zero contracts/state service | contracts blob bcf006be3f7c0d21501504e560f2fc89a3080f99; state blob f7b693a04f1999f5a3ae2a98d7927f4232669666; commits 138752a,ad65007,bbf5bac,e7012e0 | ACTIVE/FINAL-CERTIFICATION | DIRECT SOURCE VERIFIED; EXECUTION EVIDENCE PENDING | Explicit persisted schema/version markers and constructor enforcement close contract-version gap; donor/rejected-duplicate provenance documented. Only actual Titan Platform typecheck/unit-test PASS evidence remains before TASK-152/#768 completion. | YES |
