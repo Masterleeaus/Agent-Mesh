@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ZeroMark } from "./titan-brand";
 import { getDemoSurfaceProjection } from "../runtime/surface-contract.mjs";
+import type { CanonicalTitanSurface } from "../runtime/authenticated-surface";
 import { TitanInteractionClient, requestedWorkerFromText } from "../runtime/interaction-client";
 import { TitanConversationStore, type ConversationRecord } from "../runtime/conversation-store";
 import { GeneratedUiEnvelope } from "./generated-ui/generated-ui-envelope";
 import { demoPresentationIntent } from "../runtime/demo-presentation-intent";
 import { createMultimodalInput, multimodalAnnouncement, type MultimodalInputKind } from "../runtime/multimodal-input";
 
-export type TitanRole = "zero" | "go" | "hub";
+export type TitanRole = CanonicalTitanSurface;
 
 type ChatMessage = { from: "user" | "zero"; text: string };
 
