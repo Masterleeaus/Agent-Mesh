@@ -7,7 +7,7 @@ STATUS:
 IN PROGRESS
 
 CURRENT PHASE:
-Canonical ownership mapping for Experience Memory, Learning, durable context and persistent working state is complete at issue/evidence level. Historical Personal Understanding/Behavioural Model archaeology is now the unresolved focus.
+Personal Zero architecture gap is now linked to existing issue #768. Historical donor verification is focused on LocalBrain v10.12.0, Phase10 Device Intelligence, OnboardingPro v6 and Decision Engine Step25.
 
 COMPLETED:
 - Inspected repository execution contract in AGENTS.md.
@@ -19,7 +19,7 @@ COMPLETED:
 - Opened PR #764.
 
 IN PROGRESS:
-- Historical search for Personal Understanding / Behavioural Model donors.
+- Independently verify the four Personal Zero donor families recorded by #768.
 - Direct source verification of current authority/context implementation evidence.
 - Verification of current versus historical mechanism candidates.
 
