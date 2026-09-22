@@ -1312,3 +1312,99 @@ HIGH
 
 ### Related action
 #37; #633; #768.
+
+
+---
+
+## FINDING-GH-047
+
+### Finding
+Direct inspection of OnboardingPro v6 verifies that its Business Reality layer is evidence-bearing business state, not a Personal Zero profile and not an authority store. Reality facts/nodes/edges are company-scoped and carry source/provenance, confidence and observation/freshness semantics.
+
+### Evidence
+Library master: `/MASTER Software/Masters/Operations/OnboardingPro/OnboardingPro Master v6.0.0-rc.4.zip` (recorded SHA-256 `a2330f9826e6da15612e8a782d3f71203dccab0636c7da26302d7a19ee6b7f42`). Directly inspected Business Reality, observation, evidence-authority and reconfiguration services/models/migrations.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+#767; #768.
+
+---
+
+## FINDING-GH-048
+
+### Finding
+OnboardingPro separates observation/change detection from reconfiguration: observed change can update evidence/reality and trigger reassessment, but configuration mutation proceeds through a semantic diff/preview/approval/provision/verification lifecycle rather than treating observation as permission to act.
+
+### Why it matters
+This is a strong donor boundary for the Evolution Engine: `observed change ≠ accepted Zero learning ≠ approved configuration change ≠ execution authority`.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+#767; #768; Trust/Governance/Assurance.
+
+---
+
+## FINDING-GH-049
+
+### Finding
+The historical v6 implementation is business-centric. Its Reality Graph and continuous observation machinery should not be reused as the storage owner for Personal Zero. The reusable part is the lifecycle pattern—evidence, freshness, change detection, semantic diff, preview, approval, verification—not the assumption that business facts and personal understanding are one graph.
+
+### Why it matters
+This prevents the new architecture from accidentally merging Business Reality and Personal Zero merely because both evolve continuously.
+
+### Classification
+OWNERSHIP BOUNDARY / HIGH-CONFIDENCE CONVERGENCE RULE
+
+### Confidence
+HIGH
+
+### Related action
+#767 owns Business Reality/Evolution; #768 owns Personal Zero Understanding/Experience.
+
+---
+
+## FINDING-GH-050
+
+### Finding
+Historical intelligence donors repeatedly contain potentially dangerous semantic shortcuts if imported without ownership boundaries: preferences can influence ranking, learning can update future decisions, reality can trigger reassessment, and trust/assurance can gate execution. None of those signals individually constitutes authority.
+
+### Why it matters
+The canonical invariant should be enforced across convergence: `Reality informs → Zero understands → Decision recommends → Trust/Assurance/Governance evaluate → current delegated authority permits → Command Bus executes`. No upstream evidence, confidence, preference, learning, recommendation or business-state transition may mint permission.
+
+### Classification
+CROSS-SYSTEM INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#37; #633; #761; #767; #768.
+
+---
+
+## FINDING-GH-051
+
+### Finding
+The safe Business↔Zero co-evolution bridge is bidirectional but verification-gated. Business Reality changes may trigger role-impact analysis and a candidate Zero revision; sustained Zero observations may trigger Business Discovery/reality verification. Neither side silently rewrites the other.
+
+### Why it matters
+This allows the two models to co-evolve without conflation and gives the Evolution Engine a precise responsibility: detect cross-model impact and propose/reassess changes, not collapse the models into one truth store.
+
+### Classification
+TARGET ARCHITECTURE / SUPPORTED BY HISTORICAL LIFECYCLE DONOR
+
+### Confidence
+HIGH
+
+### Related action
+#767; #768.
