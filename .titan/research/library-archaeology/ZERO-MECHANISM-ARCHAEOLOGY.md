@@ -132,3 +132,7 @@ Command/zero, Go, Hub, model hosts and browser surfaces must not fork Personal Z
 
 ### ZM-019 — One governed execution spine, not a pile of engines
 Current convergence evidence supports: Interaction/Zero context → governed evidence/Knowledge → Decision/optional Council → Risk → Assurance/Shield → Governance → Autonomy/Trust/current authority → Command Bus → owning business domain → receipt/Signal → outcome/Wisdom/Rewind/learning. AI Core owns inference/provider execution; Decision owns DecisionPacket; Council is governed deliberation; Knowledge Authority owns evidence integrity; Command Bus is consequential execution boundary; Rewind is recovery. Signal/Prime/Nexus/Forge remain attention/mission/coordination/improvement concepts rather than Personal Zero stores. Named engines do not automatically justify separate state ownership.
+
+
+### ZM-020 — Operation identity persists; authority does not
+Consequential long-running work needs stable Operation Identity/provenance across decisions, commands, receipts, offline queues and Rewind, but authority snapshots are historical evidence only. Resume/reconnect must re-evaluate current delegation, Trust/Autonomy, policy, risk, assurance, target/reality freshness and replay/idempotency before mutation. Offline operation contracts to an explicitly safe cached envelope and never turns queued work into permanent authority. Zero remembers the mission/context; current authority machinery decides whether the next consequential step may execute.
