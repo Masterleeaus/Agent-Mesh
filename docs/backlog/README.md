@@ -135,7 +135,7 @@ closed in tests; owner-flow AC still open.
 | TASK-148 | [Geofence-anchored stops + home fence](TASK-148-geofence-anchored-stops.md) | 007 | Done |
 | TASK-149 | [Park (Bluetooth disconnect) → confirm location](TASK-149-park-arrival-prompt.md) | 007 | Done |
 | TASK-150 | [Hold the stop until Bluetooth / zone / different property](TASK-150-hold-until-vehicle.md) | 007 | In Progress |
-| TASK-151 | [ResQAI customer-care convergence](TASK-151-resqai-customer-care-convergence.md) | 005 | In Progress |
+| TASK-151 | [ResQAI customer-care convergence](TASK-151-resqai-customer-care-convergence.md) | 005 | Done |
 | TASK-001 | Vehicle Mileage Sessions | 001 | Done |
 | TASK-002 | Vehicle Session Recovery | 001 | Done |
 | TASK-003 | Wrong Vehicle Correction | 001 | Done |
