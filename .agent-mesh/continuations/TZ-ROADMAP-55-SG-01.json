@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 8,
+    "current_pass": 9,
     "status": "ACTIVE"
   },
   "completed": [
@@ -41,15 +41,18 @@
     "Pass 7: CI now self-tests validator and validates execution-request schema JSON",
     "Pass 8: added path-triggered agent-execution-bridge.yml with exact triggering-commit checkout, live claim ref verification, expected-head SHA gate and per-claim concurrency",
     "Pass 8: added deterministic run-execution-request.py operation registry; no request-provided commands are executed",
-    "Pass 8: successful execution emits immutable v1 receipt artifact with request SHA-256, validated head SHA, operation result and zero merge/claim-release/canonical-mutation authority"
+    "Pass 8: successful execution emits immutable v1 receipt artifact with request SHA-256, validated head SHA, operation result and zero merge/claim-release/canonical-mutation authority",
+    "Pass 9: execution validator now requires request_id and issue_number and returns them in normalized request identity",
+    "Pass 9: execution workflow binds filename exactly to request_id, verifies the referenced issue is open and its title matches the subgoal",
+    "Pass 9: execution workflow writes an issue acceptance marker and rejects duplicate request_id markers, providing durable GitHub-backed replay protection without merge/claim-release authority"
   ],
   "current_work": [
-    "Harden execution bridge replay protection, request identity and durable receipt indexing"
+    "Add failure receipts and improve request replay atomicity/concurrency scope"
   ],
   "next_actions": [
-    "Add request-id replay/idempotency protection",
-    "Bind request filename/request_id/issue to live GitHub issue",
-    "Add failure receipts and audit summary without granting write authority"
+    "Emit durable failure receipt artifact on validation/handler failures",
+    "Use request-id-specific concurrency plus claim serialization where safe",
+    "Add execution audit summary and retention/index policy"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
