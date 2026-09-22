@@ -257,3 +257,12 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-113 — Agent-Mesh at ref `3063eb...`, `roadmap/INDEX.json` SHA `2e178e68a655aa077aa1fcddf652c43759efc9de`; authoritative Titan Zero TypeScript roadmap.
 - SOURCE-GH-114 — Follow-on convergence commits: `76a7c8c...`, `94568b3...`, `02ca896...`, `3fce403...`, `a18c0a9...`, `44d2cad...`; Titan platform/core/capability/app migration into Dovetails base.
 - SOURCE-GH-115 — Rebrand-back commits including `d21e6d2...`, `ce82866...`, `dcb1db5...`, `69b5e30...`, `9dd1042...`; evidence the transplanted shell was subsequently returned to Titan Zero visible identity.
+
+
+- SOURCE-GH-116 — current main `packages/titan-platform/src/intelligence.ts`, SHA `8320eef651c334789a950163ed277238bd8311f6`; current Signal/Model Council/Nexus/provider/risk exports.
+- SOURCE-GH-117 — current main `packages/titan-platform/src/distributed/authority.ts`, SHA `52972f28b6f14a95741afd9803b7bf5e8f358f58`; company-bound authority/trust neutrality and authority bands.
+- SOURCE-GH-118 — current main `packages/titan-platform/src/interface-runtime.ts`, SHA `628194c355be3aec6997c8e0c0be987f5975ad00`; canonical company/surface presentation runtime.
+- SOURCE-GH-119 — current main `packages/settings/control-plane/ai-cost-routing-settings.mjs`, SHA `d367fff82b2479d209a64ac6bbf0e7a9f253132a`; Cost Sovereignty and strict company-boundary input.
+- SOURCE-GH-120 — current main `apps/web/lib/titan/workforce-command-gateway.ts`, SHA `e40a6640a58096316a9972d66cb96d8f36f13778`; Dovetails session.accountId currently projected as Titan company identity.
+- SOURCE-GH-121 — current main `apps/web/lib/titan/interface-runtime/host.ts`, SHA `e044fa95d0c773aaa64e1c56756e939d19aaa8a5`; Zero/Go/Hub host navigation.
+- SOURCE-GH-122 — current main `apps/web/lib/titan/workforce-hierarchy/delegation-envelope.ts`, SHA `fde1e0184095056235d430fe55785b21e38001f2`; canonical workforce delegation binding.
