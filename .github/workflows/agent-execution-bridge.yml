@@ -1,0 +1,67 @@
+name: Agent Mesh Execution Bridge
+
+on:
+  push:
+    branches:
+      - "agent/**"
+    paths:
+      - ".agent-mesh/execution-requests/**.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-execution-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve execution request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUEST="$(jq -r '.commits[].added[], .commits[].modified[]' "$GITHUB_EVENT_PATH" 2>/dev/null | grep '^.agent-mesh/execution-requests/.*\.json$' | tail -n 1 || true)"
+          case "$REQUEST" in .agent-mesh/execution-requests/*.json) ;; *) echo "No valid execution request" >&2; exit 1 ;; esac
+          echo "request=$REQUEST" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout exact triggering commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Validate request and live claim
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUEST="${{ steps.request.outputs.request }}"
+          python3 .github/scripts/validate-execution-request.py --file "$REQUEST" >/tmp/request.json
+          SUBGOAL="$(jq -r '.subgoal_id' /tmp/request.json)"
+          CLAIM="$(jq -r '.claim_branch' /tmp/request.json)"
+          EXPECTED="$(jq -r '.expected_head_sha' /tmp/request.json)"
+          test "$CLAIM" = "${{ github.ref_name }}"
+          test "$CLAIM" = "agent/$SUBGOAL"
+          LIVE="$(gh api "repos/${{ github.repository }}/git/ref/heads/$CLAIM" --jq '.object.sha')"
+          test "$LIVE" = "$EXPECTED"
+          test "${{ github.sha }}" = "$EXPECTED"
+
+      - name: Execute deterministic registered operation
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUEST="${{ steps.request.outputs.request }}"
+          ID="$(jq -r '.request_id' "$REQUEST")"
+          python3 .github/scripts/run-execution-request.py --file "$REQUEST" --receipt "/tmp/$ID.receipt.json"
+
+      - name: Upload immutable execution receipt artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-execution-receipt-${{ github.run_id }}
+          path: /tmp/*.receipt.json
+          if-no-files-found: error
+          retention-days: 90
