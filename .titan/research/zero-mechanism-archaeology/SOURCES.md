@@ -221,3 +221,24 @@ Library file id: file_000000004f8481fd8e6f7065bdd09a72
 Verification: direct Library inspection during #763.
 Relevant semantics: Hub and Go remain product PWAs while CRM/Interaction Engine/Mobile Core are infrastructure; Go bounded LocalBrain offline commands use encrypted/idempotent journal and reconcile after reconnect; Hub customer-scope handoff.
 Supports: FINDING-GH-085 and surface ownership separation.
+
+
+---
+
+## SOURCE-LIB-013
+
+Type: Library roadmap/architecture convergence evidence
+Artifact: GOAL-CODE-MAP.json
+Library file id: file_000000003eac81fa94f84b4174ff16a5
+Verification: direct Library inspection during #763.
+Relevant semantics: Goal 44 canonical engine reuse objective explicitly targets one governed end-to-end execution spine across Interaction, authority, risk, evidence, command, signal, workforce and business state; reuse refs include Knowledge Authority, Assurance, AI Core, Autonomy, Command Bus, Decision, Governance, Model Council, Rewind, Risk, Shield, Signal, Trust and Wisdom.
+Supports: FINDING-GH-086 through GH-094 together with previously source-verified engine donors.
+
+## SOURCE-LIB-014
+
+Type: Library architecture reference index
+Artifact: ARCHITECTURE-REFERENCE-INDEX.json
+Library file id: file_000000008ce881f59425aff53e7c5fb7
+Verification: direct Library inspection during #763.
+Relevant semantics: current target architecture repeatedly binds AI Core/Intelligence, Interaction, Interface/Visual/Builder, Capability Router, Signal, Command Bus, Risk, Assurance, Governance, Autonomy, Model Council, Knowledge Authority, Rewind, Shield and Local Bridge/Ollama into shared roadmap convergence rather than isolated product stacks.
+Supports: core ownership/convergence context.
