@@ -254,3 +254,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-026 | Decision Engine envelope ↔ Knowledge Authority trace | runtime.ts + ported titan-runtime decision-engine | blobs c485cf417e150e7ee8af801374a03eb7ab816cff / a86d862e2dde6a574a88158a5644f80e9a9cbf5d | CURRENT | VERIFIED | Decision Engine runtime surface is authority-neutral envelope/descriptor only; it does not close Knowledge Authority receipt → persistent DecisionPacket lifecycle. Existing #59 remains the correct convergence owner. | NO |
+
+
+| INGEST-027 | #59 Decision lifecycle scope verification | issue #59 + current titan-platform Decision Engine + likely DecisionPacket paths | current GitHub/main | OPEN GAP | VERIFIED | #59 explicitly owns persistent DecisionPacket/Decision Object state, durable entity/correlation links and temporal re-evaluation. Current located runtime remains envelope-only; no separate implementation found at inspected likely paths. | YES |
