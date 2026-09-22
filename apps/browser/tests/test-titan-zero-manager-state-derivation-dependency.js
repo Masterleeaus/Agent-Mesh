@@ -29,3 +29,5 @@ assert.strictEqual(rebuilt.restart.reconstructed,true);assert.strictEqual(rebuil
 
 const live=s.TitanZeroManagerLiveState.reconcile({});assert.strictEqual(live.source,'unavailable');assert.strictEqual(live.failClosed,true);
 console.log('PASS test-titan-zero-manager-state-derivation-dependency');
+
+const unavailable=Q.project({});assert.strictEqual(unavailable.source,'unavailable');assert.strictEqual(unavailable.nextGlobal,null);assert.strictEqual(unavailable.authority.maySelectClaimCandidate,false);const legacy=Q.project({allowLegacyProjection:true,packets:[],claims:[],dependencyState:{byPacket:{}}});assert.strictEqual(legacy.source,'legacy-projection');
