@@ -230,3 +230,9 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-094 — cleanly `docs/01-PWA/11-security-identity-and-governance.md`, SHA `6a0fda59fe92b1af8cee9d151878540f9f2a1238`; security layers, company/user distinction, approval pipeline, secret management and zero-trust doctrine.
 - SOURCE-GH-095 — cleanly `docs/07-workflows/guards.md`, SHA `2ec6dc1a6341aa88304db237d1c0e8a7e0c41192`; deterministic guard contracts and allow/deny/approval/recovery outcomes.
 - SOURCE-GH-096 — Agent-Mesh issue search: #302 security/identity/session/credential hardening; #574 distributed identity never grants authority; #725 cross-surface identity; #645 Edge Fabric.
+
+
+- SOURCE-GH-097 — AI Coding Studio `docs/audits/AI-Coding-Studio-Architecture-Runtime-Audit-Pass1.md`, SHA `2d7b59c134eb10d6ad56afd223682cbd33372cb0`; verified historical extension/runtime security defects.
+- SOURCE-GH-098 — Titan Builder `.titan/todo/issues/OpenBrowser-v0.5.0-Titan-Builder-V2.6-Deep-Scan-Issues.md`; deep-audit ledger documenting project-containment, transactional-operation, attachment-correlation and bridge-security repairs.
+- SOURCE-GH-099 — zero `docs/SECURITY_TENANCY_ALIGNMENT.md`, SHA `b93d0b410ca6a832b6c61723513518bdd96d9152`; tenant-aware security audit plus explicit legacy tz_audit_log tenancy gap.
+- SOURCE-GH-100 — zero `docs/SECURITY_PASS_IMPLEMENTATION_REPORT.md`, SHA `1bf390f4982d915f0c5eee29f1506f9a5ab14ccd`; implemented security domain and deferred AI/signal audit company_id closure.
