@@ -50,13 +50,14 @@ Re-ingest GitHub and Library archaeology after their next checkpoints and indepe
 2. #761/#762 could be read as proof that the handshake and Authority Continuance have already been recovered/verified.
 
 ### Resolution
-Both are true only at different layers. #640 resolves IMPLEMENTATION OWNERSHIP. #761/#762 owns EVIDENCE RECOVERY, but PR #762 currently contains only a workflow and no generated evidence result. Authority Continuance therefore remains unverified in this audit.
+Both are true only at different layers. #640 resolves IMPLEMENTATION OWNERSHIP. #761/#762 owns EVIDENCE RECOVERY, but PR #762 currently contains only a workflow and no generated evidence result. PR #762 alone does not verify Authority Continuance. Independent source-level review subsequently verified substantial current Authority Continuance runtime primitives; the full recursive Trust promotion/handshake lifecycle remains unverified/certification-pending.
 
 ### Consequence
 - No new Trust state machine.
 - No new handshake issue.
-- Do not mark Authority Continuance implemented from #762.
-- Re-ingest #761/#762 when workflow results or source-level findings appear.
+- Do not use #762 itself as implementation proof.
+- Preserve the directly verified current authority lease/control/delegation/execution primitives rather than rebuilding them.
+- Re-ingest #761/#762 when workflow results appear to identify any remaining Trust/continuance integration gaps.
 - Compare Library donors only for superior missing semantics.
 
 ### Confidence
@@ -73,5 +74,19 @@ HIGH
 These statements refer to different repository/action revisions. The archaeology finding remains historically valid; #768 subsequently resolves the action-ownership gap. #768 does not by itself prove a production implementation owner has been selected or implemented.
 ### Consequence
 Treat #763 as donor/evidence archaeology and #768 as current convergence architecture. Do not create another Personal Zero issue.
+### Confidence
+HIGH
+
+
+---
+
+## CONFLICT-005 — Blueprint workflow artifacts vs completed Current-System Blueprint
+### Competing readings
+1. #749/#751/#757 and PRs #750/#752/#758 can look like completed blueprint/source-evidence work.
+2. Their definitions show they are manually dispatched read-only workflows that generate evidence artifacts rather than the final blueprint itself.
+### Resolution
+Treat these PRs as evidence tooling only until their generated artifacts are located and ingested. They do not satisfy the Current-System Blueprint finalization gate by themselves.
+### Consequence
+Keep finalization open and continue discovery of generated artifacts or a separate completed blueprint workspace/report.
 ### Confidence
 HIGH
