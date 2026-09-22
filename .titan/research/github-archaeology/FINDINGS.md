@@ -2404,3 +2404,87 @@ CANONICAL ARCHAEOLOGY BASELINE RESOLVED
 
 ### Confidence
 VERY HIGH
+
+
+---
+
+## FINDING-GH-089
+
+### Finding
+The first capability-loss matrix slice shows that the Dovetails transplant did **not** permanently erase the Titan platform. Major Titan runtime families were subsequently copied back into the new root as first-class packages and app bindings.
+
+### Direct implementation evidence on current main
+- `packages/titan-platform/src/intelligence.ts` exports deterministic risk classification, AI provider registry, Signal, Model Council and Nexus.
+- `packages/titan-platform/src/distributed/authority.ts` implements company-bound authority ceilings, the full Observe→Predictive authority-band vocabulary, explicit identity/trust neutrality, and trust eligibility that cannot itself grant authority.
+- `packages/titan-platform/src/interface-runtime.ts` enforces `company_id`, canonical `zero|go|hub` surfaces and presentation-only/no-authority semantics.
+- `packages/settings/control-plane/ai-cost-routing-settings.mjs` implements the Cost Sovereignty route order DEVICE_LOCAL → CUSTOMER_LOCAL → BYO_API → BYO_SERVICE → TITAN_ENTITLED → TITAN_METERED_ADDON, rejects legacy company-boundary aliases and prevents settings from granting authority or silent Titan spend.
+- `apps/web/lib/titan/interface-runtime/host.ts` projects current Zero/Go/Hub navigation.
+- `apps/web/lib/titan/workforce-hierarchy/delegation-envelope.ts` binds web runtime to canonical Titan workforce delegation contracts.
+
+### Classification
+RETAINED / MIGRATED / CURRENTLY REACHABLE
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-090
+
+### Finding
+The strongest immediate regression exposed by the transplant is a **tenant-boundary adapter mismatch**, not wholesale loss of Titan authority semantics.
+
+### Evidence
+Current `apps/web/lib/titan/workforce-command-gateway.ts` passes Dovetails session `accountId` into Titan as:
+- `companyId: session.accountId`
+- `companyBoundary: session.accountId`
+- HTTP header `x-titan-company-id: session.accountId`.
+
+Meanwhile canonical Titan packages require `company_id` and the settings control plane explicitly rejects legacy aliases before routing.
+
+### Interpretation
+This is an adapter-normalization problem at the Dovetails/Titan seam. `accountId` may be a host/session identifier, but it must not silently become an independent canonical tenant boundary. The host must resolve/normalize it to the authoritative Titan `company_id` before authorization, data access, projection, storage or execution.
+
+### Classification
+P0 TENANT-BOUNDARY CONVERGENCE GAP
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-091
+
+### Finding
+The migration sequence demonstrates that Titan's high-value intelligence, authority, workforce, interface and operational capabilities were restored in staged layers rather than in the original pivot commit.
+
+### Migration evidence
+- `76a7c8c...` migrated `packages/titan-platform`, including intelligence, distributed authority/execution, interface runtime, offline resilience, workforce and extensive Titan intelligence/runtime verification.
+- `94568b3...` established migration automation for Titan core runtime folders.
+- `02ca896...` migrated business services, inventory, revenue journey, settings/control-plane and tool capability folders.
+- `3fce403...` merged Titan web routes/runtime bindings including dispatch, Builder, workforce commands, native agents, interface runtime, workforce context/hierarchy and operational repair.
+- `44d2cad...` wired Titan platform and portable MySQL runtime into the Dovetails web app.
+
+### Classification
+STAGED CAPABILITY RECOVERY CONFIRMED
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-092
+
+### Finding
+The capability-loss matrix must therefore distinguish three different states that previously looked like one problem:
+1. **Titan capability genuinely absent/lost after transplant**;
+2. **Titan capability migrated and reachable, but host adapters still use Dovetails-era identity/schema terminology**;
+3. **Titan capability migrated, while root product/canonical documentation remained Dovetails-derived**.
+
+Treating all three as “missing Titan Zero” would cause duplicate implementation.
+
+### Classification
+CONVERGENCE MODEL CORRECTION
+
+### Confidence
+VERY HIGH
