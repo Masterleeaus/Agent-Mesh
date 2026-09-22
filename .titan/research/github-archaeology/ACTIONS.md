@@ -218,3 +218,27 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** Canonical Model Council can expose who participated, evidence used, critique/disagreement, weighting basis, convergence status and escalation reason while remaining advisory to authority.
 - **Confidence:** HIGH
 - **Status:** READY FOR OWNER COMPARISON
+
+
+---
+
+## ACTION-GH-012 — Converge private Titan Code browser/local development runtime
+
+- **Type:** CONVERGE / IMPORT + HARDEN
+- **Priority:** P1 private-development tooling
+- **Findings:** FINDING-GH-056, FINDING-GH-057, FINDING-GH-058, FINDING-GH-059
+- **Evidence:** AI Coding Studio Local Bridge report and Titan Builder/OpenBrowser implementation/architecture.
+- **Current State:** Two strong private-development lineages overlap: AI Coding Studio has hardened bridge contracts; Titan Builder has the fuller browser/local workflow.
+- **Gap:** Avoid duplicate bridge, approval, command, project-memory and browser-provider authorities while preserving the best controls from both.
+- **Canonical Owner:** Titan Code private development system; not Titan Zero Base App.
+- **Proposed Treatment:** Retain one browser/local runtime. Prefer the proven Titan Builder execution/browser workflow while importing any stronger AI Coding Studio protocol, risk catalogue, secret filtering, repository-ingestion and trusted-approval semantics that are absent.
+- **Dependencies:** private Titan Code security model, browser provider adapters, local Node host, Git/GitHub tooling, transaction/rollback system.
+- **company_id:** Not a customer-runtime tenancy mechanism. Titan Code remains owner/private-development scoped; any future production Browser Node must use canonical Titan Zero `company_id` contracts.
+- **Trust/Authority:** Browser/page/model output never self-authorizes writes or publish actions; host approval and risk policy remain authoritative.
+- **Privacy/Security:** loopback-only authenticated transport, origin/instance pinning, secret filtering, repository containment, symlink/realpath validation, no page-accessible privileged mutation API.
+- **Cost Sovereignty:** browser subscription path and local models may reduce API cost, but provider choice remains explicit; do not label browser-hosted reasoning as local AI.
+- **Migration:** subsystem-level convergence, not repository wholesale merge.
+- **Tests:** caller self-approval denial, risk downgrade denial, path/symlink escape, malicious page message, bridge instance replacement, secret ingestion/log leakage, stale diff/precondition, rollback, provider DOM failure, browser/control credential separation.
+- **Acceptance Criteria:** one private Titan Code browser/local authority with no duplicate bridges and no Titan Zero production dependency.
+- **Confidence:** HIGH
+- **Status:** READY FOR TITAN CODE CONVERGENCE
