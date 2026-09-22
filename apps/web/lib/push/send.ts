@@ -17,6 +17,11 @@ import { getWebPush, isPushConfigured } from "./vapid";
 import { buildPushPayload, type PushInput } from "./payload";
 import { ownerAndAdminUserIds } from "./recipients";
 import { type PushSubscriptionRow } from "./subscriptions";
+import {
+  createDeliveryReceipt,
+  type CommunicationEnvelope,
+  type DeliveryReceipt,
+} from "@/lib/communications/contracts";
 
 /**
  * Dedicated connection pool for push, separate from the request pool. Callers
@@ -142,4 +147,42 @@ export async function sendPushToOwners(accountId: string, input: PushInput): Pro
     logger.error("push: sendPushToOwners error", error, { accountId });
     return 0;
   }
+}
+
+
+export interface GovernedPushResult {
+  sent: number;
+  receipt: DeliveryReceipt;
+}
+
+/**
+ * Canonical push adapter for governed communications. It reuses the existing
+ * delivery path and projects the provider outcome into the shared receipt
+ * contract rather than creating a second push runtime.
+ */
+export async function sendGovernedPushToUsers(
+  accountId: string,
+  userIds: string[],
+  input: PushInput,
+  communication: Pick<
+    CommunicationEnvelope,
+    "id" | "company_id" | "conversation_id" | "correlation_id"
+  >,
+  attempt = 1,
+): Promise<GovernedPushResult> {
+  if (communication.company_id !== accountId) {
+    throw new Error("company_id must match the push account scope");
+  }
+  const sent = await sendPushToUsers(accountId, userIds, input);
+  return {
+    sent,
+    receipt: createDeliveryReceipt({
+      message: { ...communication, channel: "push" },
+      result:
+        sent > 0
+          ? { ok: true }
+          : { ok: false, error_code: "push-not-delivered" },
+      attempt,
+    }),
+  };
 }
