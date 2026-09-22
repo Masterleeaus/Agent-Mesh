@@ -72,3 +72,5 @@ Remaining research phases: broad Library family inventory; Personal Zero/cogniti
 - Pass 8 completed Security/Privacy archaeology. Historical Shield/Locker/Trust/Command Bus security semantics map to existing canonical owners; no duplicate security subsystem justified. #302 updated with donor hardening contracts; #310 remains certification owner.
 
 - Pass 9 completed Mobile/PWA archaeology. Verified Library Go/Hub/Zero donors map to a substantially recovered current Flutter/PWA architecture; no duplicate app core is justified. #636 updated to feed remaining donor parity into #542/#641/#121/#120.
+
+- Pass 10 completed Browser/Titan Code archaeology. Multiple proven browser donors exist, but Titan Code remains private development-only. #637 updated with a strict production-safe extraction set feeding canonical Titan Browser Node #643; no duplicate browser runtime created.
