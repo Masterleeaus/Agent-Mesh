@@ -304,3 +304,23 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** canonical surfaces retain useful historical offline/edge behavior without resurrecting obsolete node boundaries or duplicating domain state.
 - **Confidence:** HIGH
 - **Status:** READY FOR OWNER COMPARISON
+
+
+---
+
+## ACTION-GH-016 — Converge historical security fabric and workflow guards into canonical identity/authority enforcement
+
+- **Type:** IMPORT + HARDEN / CONVERGE
+- **Priority:** P0/P1
+- **Findings:** FINDING-GH-070, FINDING-GH-071, FINDING-GH-072, FINDING-GH-073
+- **Canonical Owners:** #302 security/identity/session/credentials; #725 cross-surface identity; #574 distributed identity authority certification; #645 Edge Fabric; #640/#761/#147/#36 Trust/Authority; #14 governed execution/recovery where guard reroutes interact with execution.
+- **Proposed Treatment:** Compare current TypeScript enforcement against the historical principal separation, actor attribution, tenant-defense layers and deterministic guard outcomes. Import missing contracts into existing security/authority/workflow paths only.
+- **company_id:** Resolve before record access, policy evaluation, queued execution or replay; never infer tenant solely from UI or user identity.
+- **Trust/Authority:** device trust, session assurance, provider identity and AI confidence are inputs/constraints, never authority grants.
+- **Privacy/Security:** distinct system/integration/device principals; step-up/short-lived authorization for high-risk actions; revocation; secret isolation; fail-closed tenant mismatch.
+- **Cost Sovereignty:** not directly affected except provider/integration identity must remain separable from authority.
+- **Migration:** normalize any legacy tenant fields to `company_id` before enforcement; do not introduce a second security/guard authority.
+- **Tests:** cross-company route binding, queued job with wrong/missing company, stale/revoked device, AI actor impersonation attempt, integration credential revocation, package entitlement mismatch, guard approval reroute, guard recovery reroute, replay after policy change, UI-visible-but-unauthorized direct API request.
+- **Acceptance Criteria:** every consequential execution path can identify principal + company + surface/device/channel + effective authority/policy result; guards fail closed and reuse canonical authority/governance rather than bypassing it.
+- **Confidence:** HIGH
+- **Status:** READY FOR SECURITY OWNER COMPARISON
