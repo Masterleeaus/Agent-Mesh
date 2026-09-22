@@ -2488,3 +2488,78 @@ CONVERGENCE MODEL CORRECTION
 
 ### Confidence
 VERY HIGH
+
+
+---
+
+## FINDING-GH-093
+
+### Finding
+Direct file verification uncovered a packaging-integrity problem in the migrated Titan intelligence facade: `packages/titan-platform/src/intelligence.ts` imports/exports modules under `./ported/titan-intelligence/*` and `./ported/titan-ai-core/*`, but those expected implementation paths were not present in the migration commit inventory and direct current-main fetches return 404.
+
+### Evidence
+Current facade SHA `8320eef651c334789a950163ed277238bd8311f6` references:
+- `./ported/titan-intelligence/core/risk-classification.js`
+- `./ported/titan-ai-core/provider-registry.js`
+- `./ported/titan-intelligence/signal/index.js`
+- `./ported/titan-intelligence/model-council/index.js`
+- `./ported/titan-intelligence/nexus/index.js`
+
+Direct fetches for the named Model Council, Signal, Nexus and provider-registry paths on current main return NOT_FOUND. The `76a7c8c...` migration inventory contains intelligence tests and the facade, but no corresponding `ported/titan-intelligence` or `ported/titan-ai-core` implementation paths.
+
+### Classification
+P0/P1 MIGRATION PACKAGING REGRESSION / FACADE PRESENT, DEPENDENCY IMPLEMENTATION UNPROVEN
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-094
+
+### Finding
+Pass 32's classification of Model Council/Signal/Nexus as “currently reachable” must be corrected: their **facade exports are present**, but reachability is not proven until the missing referenced modules are restored or the facade is rebound to their actual canonical implementation paths.
+
+### Archaeology rule
+An export statement or migration test name is not implementation proof. A capability is only “reachable” when its dependency chain resolves from the current package/build graph.
+
+### Classification
+CORRECTION / IMPLEMENTATION VERIFICATION HARDENING
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-095
+
+### Finding
+Not all Titan runtime families suffered this problem. Several directly verified current TypeScript implementations are intact:
+- distributed authority/trust neutrality: `src/distributed/authority.ts`;
+- Interface Runtime and Zero/Go/Hub company-bound projection: `src/interface-runtime.ts`;
+- web workforce command/hierarchy bindings;
+- settings Cost Sovereignty controls.
+
+Therefore the transplant produced a **mixed migration state**, not a total package failure.
+
+### Classification
+MIXED RETENTION: DIRECT IMPLEMENTATION + BROKEN/UNPROVEN FACADES
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-096
+
+### Finding
+The migration commit preserved a large Titan intelligence regression-test corpus even where the corresponding implementation files are currently unproven. Tests include convergence/divergence, consequence intelligence, evidence independence, high-risk agreement challenge, receiving-domain acceptance, risk classification and Zero synthesis authority.
+
+### Recovery value
+These tests are strong recovery specifications. They should be used to locate the original implementation in pre-pivot/archive/branch history or to validate a canonical rebind. They must not be satisfied by creating a parallel replacement engine without first finding existing code.
+
+### Classification
+RECOVERABLE TEST ORACLE / IMPLEMENTATION LOCATION REQUIRED
+
+### Confidence
+HIGH
