@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 15,
+    "current_pass": 16,
     "status": "ACTIVE"
   },
   "completed": [
@@ -62,15 +62,18 @@
     "Pass 14: regression tests guard live snapshot attachment and projection-only restart semantics",
     "Pass 15: restart reconstruction now derives per-request SUCCEEDED, FAILED, and ACCEPTED-BUT-UNRESOLVED resume states from GitHub-backed execution audit evidence",
     "Pass 15: resume policy explicitly forbids replay of SUCCEEDED or unresolved accepted requests; failed requests remain visible for deliberate diagnosis/retry",
-    "Pass 15: execution resume evidence remains non-authoritative for lifecycle advancement and regression tests cover status precedence and replay policy"
+    "Pass 15: execution resume evidence remains non-authoritative for lifecycle advancement and regression tests cover status precedence and replay policy",
+    "Pass 16: compact execution resume state now travels with checkpoints, takeover receipts and work context instead of transferring bulky audit history",
+    "Pass 16: work context explicitly tells replacement agents not to replay succeeded or accepted-but-unresolved execution requests",
+    "Pass 16: tests verify same canonical claim branch takeover retains unresolved/succeeded execution hints without gaining lifecycle authority"
   ],
   "current_work": [
-    "Feed replay-safe execution resume hints into continuation/takeover context and agent bootstrap"
+    "Converge agent bootstrap/resume entrypoint so a new agent can reconstruct issue context from GitHub plus continuation in one path"
   ],
   "next_actions": [
-    "Attach executionResume summary to takeover/checkpoint payloads without transferring bulky audit history",
-    "Teach bootstrap/resume context to surface unresolved execution requests before new mutations",
-    "Add handoff regression guard that same claim branch is retained during takeover"
+    "Locate existing bootstrap/context assembler before adding anything",
+    "Compose GitHub issue/branch/PR/check/continuation/execution resume into one compact machine context",
+    "Fail closed on branch/head mismatch and keep conversation disposable"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
