@@ -126,13 +126,32 @@ export function getNavSections(role: Role, view: "office" | "field" = "field"): 
 
   // EPIC-006 Phase 5: pure admins never see the field home.
   if (role === "admin") {
-    return buildHubSections(NAV_COMMAND);
+    return [
+      { label: "Command", items: [
+        { href: "/app/command", label: "Chat", Icon: IconDashboard },
+        { href: "/app", label: "Control", Icon: IconDashboard },
+        { href: "/app/settings", label: "Workforce", Icon: IconField },
+        { href: "/app/requests", label: "Decisions", Icon: IconInbox },
+        { href: "/app/settings", label: "System", Icon: IconSettings },
+      ]},
+      ...buildHubSections(NAV_COMMAND).slice(1),
+    ];
   }
 
-  // Owner: sidebar reflects the ACTIVE workspace so the two homes never sit
-  // side-by-side (TASK-058 follow-up). Shared business destinations stay in both.
-  const home = view === "office" ? NAV_COMMAND : NAV_MY_DAY;
-  return buildHubSections(home);
+  if (view === "office") {
+    return [
+      { label: "Command", items: [
+        { href: "/app/command", label: "Chat", Icon: IconDashboard },
+        { href: "/app", label: "Control", Icon: IconDashboard },
+        { href: "/app/settings", label: "Workforce", Icon: IconField },
+        { href: "/app/requests", label: "Decisions", Icon: IconInbox },
+        { href: "/app/settings", label: "System", Icon: IconSettings },
+      ]},
+      ...buildHubSections(NAV_COMMAND).slice(1),
+    ];
+  }
+
+  return buildHubSections(NAV_MY_DAY);
 }
 
 /**
