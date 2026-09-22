@@ -109,3 +109,9 @@ export {
 export { VISUAL_RUNTIME_PACKAGE_MANIFEST, VISUAL_SUITE_COMPATIBILITY, validateVisualRuntimePackageManifest, validateVisualContributionSchema, sanitizeVisualBrowserMetadata, detectVisualBrowserEnvironment, applyVisualBrowserPlan, assertVisualInterfaceBridgeCompatibility } from "./ported/titan-runtime/visual-runtime/index.js";
 
 export * from './interface-runtime.js';
+
+export {
+  createPrimeEnvelope,
+  runtimeDescriptor as primeRuntimeDescriptor,
+  RUNTIME_ID as PRIME_RUNTIME_ID,
+} from "./ported/titan-runtime/prime/index.js";
