@@ -105,8 +105,9 @@ function ResultCard({ role, intent }: { role: TitanRole; intent: string }) {
   </article>;
 }
 
-export function RoleChat({ role, onOpenDetails }: { role: TitanRole; onOpenDetails: () => void }) {
-  const projection = getDemoSurfaceProjection(role);
+export function RoleChat({ role, onOpenDetails, projection: suppliedProjection }: { role: TitanRole; onOpenDetails: () => void; projection?: ReturnType<typeof getDemoSurfaceProjection> }) {
+  const projection = suppliedProjection ?? getDemoSurfaceProjection(role);
+  if (projection.surface !== role) throw new TypeError("surface-projection-role-mismatch");
   const profile = projection.data.presentation;
   const [query, setQuery] = useState("");
   const [intent, setIntent] = useState(role === "zero" ? "needs me" : "next booking");
