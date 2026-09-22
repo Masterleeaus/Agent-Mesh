@@ -5,10 +5,11 @@ function freeze(v){if(!v||typeof v!=='object'||Object.isFrozen(v))return v;Objec
 const topology=global.TitanZeroAgentMeshRoleTopology;
 if(!topology) throw new Error('Titan Zero Manager control plane requires role topology');
 const MANAGER_IDENTITY=freeze({surface:'titan-code',role:'manager',authority:'canonical-manager'});
-const protectedCapabilities=freeze(['github.merge.request','merge.execute','packet.assign','dependency.manage','delta.process','cleanup.eligibility.mark']);
+const protectedCapabilities=freeze(['github.merge.request','packet.assign','dependency.manage','delta.process','cleanup.eligibility.mark']);
 function can(roleId,capability){return topology.can(roleId,capability);}
 function isCanonicalManager(identity={}){return identity&&identity.surface===MANAGER_IDENTITY.surface&&identity.role===MANAGER_IDENTITY.role&&identity.authority===MANAGER_IDENTITY.authority;}
 function authorize(input={}){
+ if(String(input.capability||'')==='merge.execute')throw new Error('merge.execute is not a local Manager capability; GitHub PR merge is authoritative');
  const role=String(input.role||''); const capability=String(input.capability||'');
  if(!can(role,capability)) throw new Error(`${role||'unknown'} is not authorized for ${capability||'unknown capability'}`);
  if(protectedCapabilities.includes(capability)&&role!=='manager') throw new Error(`${role} is not authorized for protected Manager capability ${capability}`);
