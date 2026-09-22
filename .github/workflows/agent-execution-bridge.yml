@@ -27,6 +27,8 @@ jobs:
           REQUEST="$(jq -r '.commits[].added[], .commits[].modified[]' "$GITHUB_EVENT_PATH" 2>/dev/null | grep '^.agent-mesh/execution-requests/.*\.json$' | tail -n 1 || true)"
           case "$REQUEST" in .agent-mesh/execution-requests/*.json) ;; *) echo "No valid execution request" >&2; exit 1 ;; esac
           echo "request=$REQUEST" >> "$GITHUB_OUTPUT"
+          ID="$(basename "$REQUEST" .json)"
+          echo "request_id=$ID" >> "$GITHUB_OUTPUT"
 
       - name: Checkout exact triggering commit
         uses: actions/checkout@v4
@@ -75,10 +77,28 @@ This marker provides replay protection; it grants no merge or claim-release auth
           ID="$(jq -r '.request_id' "$REQUEST")"
           python3 .github/scripts/run-execution-request.py --file "$REQUEST" --receipt "/tmp/$ID.receipt.json"
 
+      - name: Create failure receipt
+        if: ${{ failure() && steps.request.outputs.request_id != '' }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          rid=os.environ["RID"]
+          payload={"schema":"titan-agent-mesh-execution-receipt/v1","request_id":rid,"status":"FAILED","workflow_run_id":os.environ["RUN_ID"],"trigger_sha":os.environ["TRIGGER_SHA"],"claim_branch":os.environ["CLAIM_BRANCH"],"authority":{"merge":False,"release_claim":False,"canonical_mutation":False},"recorded_at":datetime.now(timezone.utc).isoformat()}
+          open(f"/tmp/{rid}.failure.receipt.json","w").write(json.dumps(payload,indent=2)+"\\n")
+          PY
+        env:
+          RID: ${{ steps.request.outputs.request_id }}
+          RUN_ID: ${{ github.run_id }}
+          TRIGGER_SHA: ${{ github.sha }}
+          CLAIM_BRANCH: ${{ github.ref_name }}
+
       - name: Upload immutable execution receipt artifact
+        if: ${{ always() && steps.request.outputs.request_id != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: agent-execution-receipt-${{ github.run_id }}
           path: /tmp/*.receipt.json
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 90
