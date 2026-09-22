@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { ButtonPrimary, ButtonOutline } from '../components/Button'
 import SectionLabel from '../components/SectionLabel'
 import FadeIn from '../components/FadeIn'
@@ -118,7 +119,7 @@ export default function Home() {
       <section className="px-6 pb-24">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center bg-nx-surface border border-nx-border rounded-3xl p-8 sm:p-12">
           <div><SectionLabel>Meet Your Zero</SectionLabel><h2 className="text-4xl sm:text-5xl font-extrabold mb-5">One + Zero + Team.</h2><p className="text-lg text-nx-muted leading-relaxed mb-5">The person using the account is One. Zero is their personal digital working intelligence. The owner, each staff member and each customer can have a different Zero shaped around their own role, relationship and authority.</p><p className="text-nx-muted leading-relaxed">For an owner it can become a digital operating counterpart. For staff it can handle digital work and guide physical jobs. For customers it can become a personal service companion that helps them interact with the business.</p></div>
-          <div className="space-y-3">{[['One','The human account holder — owner, staff member or customer.'],['Zero','That person’s persistent digital working intelligence.'],['Team','Specialist intelligence, systems and people Zero can coordinate within that person’s role.']].map(([t,d])=><div key={t} className="bg-nx-bg border border-nx-border rounded-xl p-5"><h3 className="font-bold text-nx-purple-light">{t}</h3><p className="text-sm text-nx-muted mt-1">{d}</p></div>)}<a href="/your-zero" className="inline-block mt-3 text-sm font-bold text-nx-purple-light hover:text-white">Meet Your Zero →</a></div>
+          <div className="space-y-3">{[['One','The human account holder — owner, staff member or customer.'],['Zero','That person’s persistent digital working intelligence.'],['Team','Specialist intelligence, systems and people Zero can coordinate within that person’s role.']].map(([t,d])=><div key={t} className="bg-nx-bg border border-nx-border rounded-xl p-5"><h3 className="font-bold text-nx-purple-light">{t}</h3><p className="text-sm text-nx-muted mt-1">{d}</p></div>)}<Link to="/your-zero" className="inline-block mt-3 text-sm font-bold text-nx-purple-light hover:text-white">Meet Your Zero →</Link></div>
         </div>
       </section>
 
