@@ -50,7 +50,8 @@ export default function Industries() {
                     </span>
                   ))}
                 </div>
-              </div>
+                <span className="text-xs text-nx-purple-light mt-5 font-semibold">Explore {ind.name} →</span>
+              </Link>
             </FadeIn>
           ))}
         </div>
