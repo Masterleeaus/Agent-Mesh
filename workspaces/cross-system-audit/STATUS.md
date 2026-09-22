@@ -19,16 +19,21 @@ COMPLETED:
 - Created first-pass final audit report with uncertainties explicitly recorded.
 - Verified substantial current titan-platform runtime/intelligence/workforce/builder/connect/cost-sovereignty implementation.
 - Verified concrete historical zero donor evidence for local-first sync/rewind and mobile/Omni areas.
-- Verified GitHub archaeology #765 has a repository inventory but is not yet capability-complete.
+- Ingested the latest durable GitHub archaeology #765 capability matrix, owner map, findings and actions.
+- Corrected the provisional tenancy finding: company_id is already the target invariant; #648/#72 own remaining enforcement.
+- Verified #153 is the existing canonical owner for most Experience Memory semantics.
+- Verified #767 already owns OnboardingPro Evolution/Reality convergence, avoiding a duplicate issue.
+- Cross-referenced recovered Ai-extensions semantics for revision-aware recomposition, per-value provenance, stale-context rejection and AI-proposal separation.
 
 IN PROGRESS:
 - Cross-reference specialist agent workspaces without taking over their missions.
 - Upgrade provisional gap claims to source-verified findings.
 - Resolve current architecture/documentation mismatch.
-- Trace company_id boundary, Trust/Authority, Experience/Learning, Reality and Evolution loops.
+- Continue Trust/Authority, Personal Zero Understanding, Reality and Evolution integration tracing.
+- Consume further #765 specialist archaeology as its targeted Personal Zero/Reality/Evolution phase progresses.
 
 NOT YET SCANNED:
-- Full capability-level evidence across all 40 historical GitHub repositories.
+- Remaining capability-level evidence across historical GitHub repositories not yet covered by #765.
 - Complete Library archaeology output set.
 - Complete OnboardingPro lineage source comparison.
 - Complete historical Trust/autonomy source comparison.
@@ -49,7 +54,7 @@ ISSUES CREATED/UPDATED:
 - #766 — Cross-system Zero convergence audit
 
 LAST UPDATED:
-agent/766 checkpoint after shared multi-agent evidence workflow update.
+agent/766 checkpoint after ingesting the current GitHub archaeology coordination workspace and deduplicating owners/actions.
 
 COMPLETION ESTIMATE:
 Remaining phases: specialist-workspace ingestion; unresolved source verification; cross-agent conflict reconciliation; final capability/action register refresh; formal handoff.
