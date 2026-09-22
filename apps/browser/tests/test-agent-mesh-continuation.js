@@ -13,6 +13,8 @@ assert.strictEqual(receipt.resume_pass,3);assert.strictEqual(receipt.authority.c
 assert.throws(()=>C.takeover({checkpoint:cp,to_execution_session:'chat-c',live_claim_branch:'agent/OTHER',live_head_sha:'a'.repeat(40)}),/live canonical claim branch mismatch/);
 const reconciled=C.reconcileTakeover(receipt,{claim_branch:cp.claim_branch,head_sha:'b'.repeat(40)});assert.strictEqual(reconciled.status,'GITHUB_RECONCILED');assert.strictEqual(reconciled.head_moved,true);assert.strictEqual(reconciled.authority.claimReleased,false);
 assert.throws(()=>C.reconcileTakeover(receipt,{claim_branch:'agent/OTHER',head_sha:'b'.repeat(40)}),/claim branch no longer canonical/);
+const wc=C.workContext({checkpoint:cp,github:{state:'ACTIVE',git:{mainSha:'c'.repeat(40),baseSha:'c'.repeat(40),headSha:'b'.repeat(40),branch:cp.claim_branch},pr:{number:737,state:'OPEN',draft:true},checks:{required:2,pending:true,failed:false}}});
+assert.strictEqual(wc.schema,'titan-code.agent-mesh-work-context.v1');assert.strictEqual(wc.issue.number,734);assert.strictEqual(wc.claim.branch,cp.claim_branch);assert.strictEqual(wc.claim.head_sha,'b'.repeat(40));assert.strictEqual(wc.pr.number,737);assert.strictEqual(wc.authority.merge,'github-pr-merge');assert.strictEqual(wc.authority.conversationState,'disposable');assert.strictEqual(wc.authority.titanZeroRuntimeDependency,false);assert(wc.instructions.some(x=>x.includes('GitHub wins')));assert.throws(()=>C.workContext({checkpoint:cp,github:{git:{branch:'agent/OTHER',headSha:'b'.repeat(40)}}}),/claim branch mismatch/);
 const resume=C.resumeInstructions(cp);
 assert(resume.instructions.some(x=>x.includes('GitHub wins')));
 assert.deepStrictEqual(Array.from(resume.do_not_repeat),[]);
