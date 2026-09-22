@@ -25,7 +25,7 @@ COMPLETED:
 IN PROGRESS:
 - Older Personal Zero / cognition / memory / preference / experience lineage — source-level v10.12.0 audit now verifies cognitive-event, outcome-linking, behavioural memory, adaptive learning, preference and device/offline mechanisms; current semantic-owner exhaustion remains.
 - Wider Library inventory and version comparison.
-- Current TypeScript parity checks for regression candidates.
+- Current TypeScript parity checks for regression candidates — Pass 4 exhausted primary current owners for LocalBrain semantics: device/routing/offline/conversation capabilities survive; cognition-learning/experience cluster remains a regression candidate.
 - Cross-agent workspace inspection as other research workspaces appear.
 
 NOT YET SCANNED:
@@ -55,7 +55,7 @@ ISSUES CREATED/UPDATED:
 - #759 UPDATED — continuous observation / Nexus evidence.
 - #761 UPDATED — historical Trust evidence.
 - #767 CREATED — recover OnboardingPro Evolution and Reality capabilities.
-- #763 UPDATED — Pass-2 lineage evidence plus Pass-3 source-level cognition/outcome/learning verification; no competing implementation issue created.
+- #763 UPDATED — Pass-2 lineage, Pass-3 source verification and Pass-4 current-owner exhaustion; wholesale LocalBrain import rejected.
 
 LAST UPDATED:
 2026-09-22 — Pass 2 checkpoint: Phase-10 plan fully inspected; Aug-03 Offline LocalBrain implementation lineage discovered; #763 updated.
