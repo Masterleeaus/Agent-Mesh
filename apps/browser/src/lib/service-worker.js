@@ -2022,6 +2022,12 @@ globalThis.getManagerAISnapshot=getManagerAISnapshot;\nglobalThis.bootstrapAgent
 globalThis.getAgentMeshWorkContext=getAgentMeshWorkContext;
 async function managerAIWatchSweep(){try{const live=await fetchLiveManagerAISnapshot();const snapshot=live.snapshot||await getManagerAISnapshot();const inspection=globalThis.TitanCodeManagerAISupervisor.inspect(snapshot);const plan=globalThis.TitanCodeManagerAISupervisor.deterministicPlan(inspection);await chrome.storage.local.set({[MANAGER_AI_LAST_STORAGE_KEY]:{schema:'titan-code.manager-ai-watch.v2',generatedAt:new Date().toISOString(),inspection,deterministicPlan:plan,watchdog:true,source:live.source,bridgeReason:live.reason||null,health:live.health||null}});}catch(error){console.warn('[Codee] Manager AI watchdog failed:',error);}}
 async function runStoredManagerAISupervision(options={}){const live=await fetchLiveManagerAISnapshot();const snapshot=live.snapshot||await getManagerAISnapshot();const result=await globalThis.TitanCodeManagerAISupervisor.advise(snapshot,options);await chrome.storage.local.set({[MANAGER_AI_LAST_STORAGE_KEY]:{...result,source:live.source,bridgeReason:live.reason||null,health:live.health||null}});return {...result,source:live.source,bridgeReason:live.reason||null,health:live.health||null};}
+function normalizeAgentMeshRoutingPayload(snapshot,target=''){
+    const work=snapshot?.githubProjection?.issue||snapshot?.github?.issue||snapshot?.agentMesh?.issue||{};
+    const issueNumber=Number(work.number)||null,subgoalId=String(work.subgoal_id||target||'').trim();
+    if(!issueNumber||!subgoalId)return {ok:false,reason:'github-work-identity-missing'};
+    return {ok:true,payload:{issue_number:issueNumber,subgoal_id:subgoalId,mode:'manager_route_request',compatibility:{legacy_packet_id:target||null,authority:false}}};
+}
 async function executeManagerAIPlan(options={}){
     const live=await fetchLiveManagerAISnapshot();
     const snapshot=live.snapshot||await getManagerAISnapshot();
@@ -2039,7 +2045,7 @@ async function executeManagerAIPlan(options={}){
         const target=String(step.target||'');
         let action=null,payload={};
         if(step.action==='CHECK_HEARTBEAT_AND_RECOVER') { action='agent_mesh.recover_agent'; payload={agent_id:target,mode:'manager_recovery_request'}; }
-        else if(step.action==='RECHECK_DEPENDENCIES_OR_ROUTE_PACKET') { action='agent_mesh.route_packet'; const work=snapshot?.githubProjection?.issue||snapshot?.github?.issue||snapshot?.agentMesh?.issue||{}; payload={issue_number:Number(work.number)||null,subgoal_id:String(work.subgoal_id||target||''),mode:'manager_route_request',legacy_packet_id:target||null}; }
+        else if(step.action==='RECHECK_DEPENDENCIES_OR_ROUTE_PACKET') { action='agent_mesh.route_packet'; const routing=normalizeAgentMeshRoutingPayload(snapshot,target); if(!routing.ok){skipped.push({step,reason:routing.reason});continue;} payload=routing.payload; }
         else { skipped.push({step,reason:'advisory-only-step'}); continue; }
         if(!settings.bridgeEnabled||!settings.bridgeToken||!globalThis.CodeeTitanBridgeClient){ skipped.push({step,reason:'live-mesh-bridge-not-configured'}); continue; }
         const result=await callAgentMeshMutation(config,action,payload,snapshot);
