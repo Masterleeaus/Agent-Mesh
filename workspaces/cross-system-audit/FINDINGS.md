@@ -173,13 +173,16 @@ These must not be silently assumed equivalent. Authorization, storage, projectio
 Runtime plus active operational database/domain layer.
 
 ### Classification
-CURRENT / PARTIAL / REGRESSION-RISK
+SUPERSEDED AS ARCHITECTURAL-GAP CLAIM
 
 ### Confidence
-HIGH that the mismatch exists; exact migration treatment requires deeper trace.
+HIGH that legacy/current Dovetails account_id evidence exists. Cross-agent archaeology plus issue #72/#648 confirms company_id is already the Titan Zero architectural invariant, so this is an active-code enforcement/migration concern rather than an unresolved target-tenancy design.
 
 ### Related action
 ACTION-CSA-005
+
+### Superseded by
+FINDING-CSA-009
 
 ---
 
@@ -237,3 +240,122 @@ HIGH
 
 ### Related action
 ACTION-CSA-007
+
+
+---
+
+## FINDING-CSA-009
+
+### Finding
+company_id is already the broader Titan Zero architectural invariant; remaining legacy/account_id concerns belong to active-code enforcement rather than creation of a new tenancy model.
+
+### Why it matters
+This corrects FINDING-CSA-006's provisional framing and prevents duplicate tenancy architecture.
+
+### Evidence
+- Cross-agent support: FINDING-GH-006/007 owner analysis in agent/765.
+- Repository: Masterleeaus/Agent-Mesh
+- Issue #72: explicitly states company_id is already the architectural invariant and scopes work to active-code enforcement defects.
+- Issue #648 absorbs the remaining repository-wide company_id normalization/enforcement work.
+- Current source: packages/titan-platform/src/runtime.ts.
+
+### Current Titan equivalent
+Titan Runtime plus issue #648 repository convergence lane.
+
+### Classification
+CURRENT / IMPLEMENTED INVARIANT / PARTIAL ENFORCEMENT
+
+### Confidence
+HIGH
+
+### Related action
+ACTION-CSA-005
+
+---
+
+## FINDING-CSA-010
+
+### Finding
+Experience Memory already has a strong canonical destination in issue #153; a separate Experience Memory engine would duplicate current ownership.
+
+### Why it matters
+#153 explicitly covers company-scoped canonical memory, provenance, freshness, confidence, episodic memory from verified outcomes, correction/supersession, retention, privacy, anti-repeat behavior and the rule that memory never grants authority.
+
+### Evidence
+- Repository: Masterleeaus/Agent-Mesh
+- Issue #153: Finish canonical company-scoped Business Memory & Knowledge runtime.
+- Donor recovery already recorded in #153 from OnboardingPro v6.0.0-rc.4:
+  - LongitudinalStrategyMemoryService.php
+  - AntiRepeatDecisionService.php
+  - StrategyMemory model/migration
+  - OutcomeMeasurementService.php
+  - RollbackDecisionService.php
+- Cross-agent support: FINDING-GH-006 and CANONICAL-OWNER-MAP.md on agent/765.
+
+### Current Titan equivalent
+Issue #153 / Knowledge Authority memory runtime.
+
+### Classification
+CURRENT OWNER / PARTIAL OR SPECIFICATION-ONLY PENDING IMPLEMENTATION EVIDENCE
+
+### Confidence
+HIGH for ownership; implementation completeness not asserted.
+
+### Related action
+ACTION-CSA-008
+
+---
+
+## FINDING-CSA-011
+
+### Finding
+A dedicated convergence action now exists for OnboardingPro Evolution and Business Reality recovery: issue #767.
+
+### Why it matters
+This removes the need for this cross-system audit to create a competing Evolution/Reality implementation issue and provides a canonical place for the strongest Library donor mechanisms.
+
+### Evidence
+- Repository: Masterleeaus/Agent-Mesh
+- Issue #767: Recover OnboardingPro Evolution and Reality capabilities.
+- Verified donor components listed by #767 include ContinuousBusinessObservationService, BusinessRealityGraphService, BusinessRealityFactService, BusinessConfigurationDiffer, BusinessReconfigurationService, Nexus reassessment/configuration/provisioning/verification/reconciliation services, DiscoveryConsentService, OutcomeMeasurementService and RollbackDecisionService.
+- Required lifecycle: DISCOVER → CONFIGURE → OBSERVE → DETECT CHANGE → REASSESS → DIAGNOSE → PROPOSE → APPROVE WHERE REQUIRED → RECONFIGURE → VERIFY → MEASURE → LEARN → REPEAT.
+
+### Current Titan equivalent
+Issue #767 convergence lane, dependent on #31, #759, #153 and #633.
+
+### Classification
+CURRENT ACTION / HISTORICAL DONOR RECOVERY
+
+### Confidence
+HIGH that the action and donor inventory exist; implementation status not asserted.
+
+### Related action
+ACTION-CSA-009
+
+---
+
+## FINDING-CSA-012
+
+### Finding
+GitHub archaeology recovered superior historical semantics for revision-aware recomposition and per-value provenance from diverged Ai-extensions branches.
+
+### Why it matters
+These mechanisms directly support Zero/Evolution without granting authority and can strengthen existing Decision/Memory owners rather than becoming a new wizard/context engine.
+
+### Evidence
+Cross-agent evidence from agent/765:
+- FINDING-GH-003: Masterleeaus/Ai-extensions branch feature/wizard-answer-recomposition; WizardAnswerChanged.php and WizardAnswerRecompositionService.php; stale revision/context rejection and affected-section recomposition.
+- FINDING-GH-004: branch feature/titan-vertical-context-composer; VerticalContextComposer.php and ContextValueProvenance.php; per-value source/confidence/confirmed/risk/revision metadata.
+- FINDING-GH-005: feature/vertical-ai-proposal-bridge; AI proposals are validated/sanitized and cannot claim state application.
+
+### Current Titan equivalent
+#59 Decision runtime + #153 Business Memory/Knowledge + #642 governed convergence.
+
+### Classification
+SUPERIOR HISTORICAL SEMANTICS / PARTIAL CURRENT EQUIVALENT
+
+### Confidence
+HIGH based on specialist source inspection; this audit treats the specialist workspace as supporting evidence and has not duplicated its full branch archaeology.
+
+### Related action
+ACTION-CSA-010
