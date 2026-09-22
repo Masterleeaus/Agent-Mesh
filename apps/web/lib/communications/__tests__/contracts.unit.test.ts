@@ -3,6 +3,8 @@ import {
   assertCommunicationEnvelope,
   communicationIdempotencyKey,
   createDeliveryReceipt,
+  communicationRetryDecision,
+  selectCommunicationProvider,
   evaluateOutboundCommunicationPolicy,
   type CommunicationEnvelope,
   type OutboundCommunicationPolicy,
@@ -107,5 +109,32 @@ describe("canonical communications contract", () => {
       result: { ok: false, error_code: "provider-unavailable" },
       occurred_at: "2026-09-22T01:01:00.000Z",
     }).state).toBe("failed");
+  });
+
+  it("bounds provider retries with deterministic exponential backoff", () => {
+    const policy = { max_attempts: 3, base_delay_ms: 1000, max_delay_ms: 5000 };
+    expect(communicationRetryDecision({ attempt: 1, retryable: true, policy })).toEqual({
+      retry: true,
+      next_attempt: 2,
+      delay_ms: 1000,
+      reason: "retryable-provider-failure",
+    });
+    expect(communicationRetryDecision({ attempt: 3, retryable: true, policy })).toEqual({
+      retry: false,
+      next_attempt: 3,
+      reason: "attempt-limit",
+    });
+    expect(communicationRetryDecision({ attempt: 1, retryable: false, policy }).retry).toBe(false);
+  });
+
+  it("selects only available funded policy-allowed fallback providers", () => {
+    expect(selectCommunicationProvider([
+      { provider_id: "primary", channel: "sms", available: false, funded: true, policy_allowed: true },
+      { provider_id: "unfunded", channel: "sms", available: true, funded: false, policy_allowed: true },
+      { provider_id: "fallback", channel: "sms", available: true, funded: true, policy_allowed: true },
+    ])?.provider_id).toBe("fallback");
+    expect(selectCommunicationProvider([
+      { provider_id: "blocked", channel: "email", available: true, funded: true, policy_allowed: false },
+    ])).toBeNull();
   });
 });
