@@ -11,9 +11,9 @@ assert.strictEqual(L.get({state:'MERGED'}),'MERGED');
 assert.strictEqual(L.get({status:'PROMOTED'}),'MERGED');
 assert.strictEqual(L.get({state:'ACTIVE',status:'DONE'}),'ACTIVE','canonical state wins conflicts');
 assert.strictEqual(L.get({status:'ACTIVE'}),'ACTIVE');
-assert.strictEqual(L.dependencySatisfied({status:'DONE'}),true);
-assert.strictEqual(L.dependencySatisfied({state:'MERGED'}),true);
-assert.strictEqual(L.dependencySatisfied({status:'PROMOTED'}),true);
+assert.strictEqual(L.dependencySatisfied({status:'DONE'}),false);
+assert.strictEqual(L.dependencySatisfied({state:'MERGED'}),false);assert.strictEqual(L.dependencySatisfied({state:'MERGED',source:'github'}),true);
+assert.strictEqual(L.dependencySatisfied({status:'PROMOTED'}),false);
 for(const x of ['CONVERGENCE_PENDING','ACTIVE','CLAIMED','VERIFYING']) assert.strictEqual(L.dependencySatisfied({status:x}),false,x+' must not satisfy hard dependencies');
 
 const lifecyclePackets=[
@@ -29,14 +29,13 @@ const lifecyclePackets=[
  {packet_id:'STATUS_ONLY',status:'AVAILABLE',priority:'P1',owner_lane:'Agent 2'}
 ];
 const lifeDep=D.derive(lifecyclePackets,{});
-assert.deepStrictEqual(Array.from(lifeDep.completedPackets),['LEGACY','MERGED','PROMOTED']);
-assert.strictEqual(lifeDep.byPacket.WAIT_LEGACY.eligible,true);
-assert.strictEqual(lifeDep.byPacket.WAIT_MERGED.eligible,true);
-assert.strictEqual(lifeDep.byPacket.WAIT_PROMOTED.eligible,true);
+assert.deepStrictEqual(Array.from(lifeDep.completedPackets),[]);
+assert.strictEqual(lifeDep.byPacket.WAIT_LEGACY.eligible,false);
+assert.strictEqual(lifeDep.byPacket.WAIT_MERGED.eligible,false);
+assert.strictEqual(lifeDep.byPacket.WAIT_PROMOTED.eligible,false);
 assert.strictEqual(lifeDep.byPacket.WAIT_PENDING.eligible,false);
 const lifeQ=Q.project({packets:lifecyclePackets,claims:[],dependencyState:lifeDep});
-assert(lifeQ.eligible.includes('STATE_ONLY'));
-assert(lifeQ.eligible.includes('STATUS_ONLY'));
+assert.deepStrictEqual(Array.from(lifeQ.eligible),[]);assert.strictEqual(lifeQ.nextGlobal,null);assert.strictEqual(lifeQ.authority.maySelectClaimCandidate,false);
 
 const packets=[
  {packet_id:'A',status:'DONE'},
@@ -45,21 +44,19 @@ const packets=[
  {packet_id:'D',status:'AVAILABLE',priority:'P2',owner_lane:'Agent 2',exclusive_hotspots:['bridge']}
 ];
 const dep=D.derive(packets,{activeClaims:[{agent:'Agent 2',packet:'Z',lane:'bridge_only',status:'ACTIVE',exclusive_hotspots:['bridge']} ]});
-assert.deepStrictEqual(Array.from(dep.completedPackets),['A']);
-assert.strictEqual(dep.byPacket.B.eligible,true);
+assert.deepStrictEqual(Array.from(dep.completedPackets),[]);
+assert.strictEqual(dep.byPacket.B.eligible,false);
 assert.strictEqual(dep.byPacket.C.eligible,false);
 assert(dep.byPacket.C.blockers.includes('dependency:MISSING'));
 assert.strictEqual(dep.byPacket.D.eligible,false);
 assert(dep.byPacket.D.blockers.includes('exclusive-hotspot:bridge'));
 const q=Q.project({packets,claims:[{agent:'Agent 1',packet:'B',status:'ACTIVE'}],dependencyState:dep});
 assert.strictEqual(q.counts.active,1);
-assert.strictEqual(q.counts.availableEligible,1);
-assert.strictEqual(q.nextByLane['Agent 1'].packet_id,'B');
+assert.strictEqual(q.nextGlobal,null);assert.deepStrictEqual(Object.keys(q.nextByLane),[]);
 const consistentPackets=packets.map(p=>p.packet_id==='B'?{...p,status:'ACTIVE'}:p);
 const st=S.derive({packets:consistentPackets,claims:[{agent:'Agent 1',packet:'B',status:'ACTIVE'}],agents:[{workspace:'Agent 1',status:'ACTIVE',current_work_packet:'B'}],deltas:[{packet_id:'X',status:'READY'}],handoffs:[{packet_id:'X',result:'READY_FOR_COORDINATOR_REVIEW'}],verification:[{packet_id:'X',result:'VERIFIED_LOCAL_LANE'}]});
 assert.strictEqual(st.status,'CONSISTENT');
-assert.strictEqual(st.activeClaims.length,1);
-assert.strictEqual(st.convergencePending.length,1);
+assert.strictEqual(st.failClosed,true);assert.strictEqual(st.diagnostics.activeClaims.length,1);assert.strictEqual(st.diagnostics.convergencePending.length,1);
 assert.strictEqual(st.queue.counts.pendingConvergence,1);
 const stale=S.derive({packets:[{packet_id:'B',status:'AVAILABLE'}],claims:[{agent:'Agent 1',packet:'B',status:'ACTIVE'}],agents:[{workspace:'Agent 1',status:'ACTIVE',current_work_packet:'B'}]});
 assert.strictEqual(stale.status,'STATE_DRIFT_DETECTED');
