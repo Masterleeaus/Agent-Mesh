@@ -20,3 +20,29 @@ Use the repository's canonical surface/runtime authorities first. Import only mi
 
 ### Next audit
 Locate the actual current web/PWA surface implementation and navigation/component files in the repository, then compare them to Go/Hub/PWA17 semantics before changing code.
+
+## Pass 2 — live-surface location and product-spec reconciliation
+
+GitHub directory probes confirm `apps/web/app`, `apps/web/app/titan` and `apps/web/components` exist, while default-branch code search currently returns no indexed hits for the expected PWA17 filenames. This means absence from search is not evidence that the surface implementation is absent; direct-path/repository inspection must remain authoritative.
+
+Library PWA build-plan evidence provides the expected canonical TypeScript layout:
+- `app/titan/components/role-chat.tsx`
+- `app/titan/components/generated-ui/*`
+- `app/titan/runtime/surface-contract.mjs`
+- `app/titan/components/role-details.tsx`
+- `app/titan/components/role-secondary-surfaces.tsx`
+- `app/titan/components/app-surfaces.tsx`
+- `app/titan/components/workforce-surface.tsx`
+- Go field runtime and schedule intelligence
+- Hub service runtime
+- Command decision runtime
+- PWA identity/offline/sync runtime
+
+The frozen navigation target in the PWA plan is:
+- Go: Chat / Active / Schedule / Comms / Ready
+- Hub: Chat / Service / Comms / Account
+- Command(owner/base): Chat / Pending / Operations / Workforce / System
+
+This is close to, but not identical with, later product wording. Navigation labels must therefore be reconciled against the current repository implementation before any donor copy is made. Maps remain explicitly preserved.
+
+No code was copied from the PHP donors or the merge-pending PWA checkpoint in this pass.
