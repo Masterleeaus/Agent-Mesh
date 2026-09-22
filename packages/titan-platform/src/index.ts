@@ -15,3 +15,6 @@ export type { ConnectorCapability, ConnectorPermission, ConnectorHealth, TitanCo
 
 export { negotiateTitanMcpHost, TITAN_MCP_HOST_CONTRACT } from "./ported/titan-connect/mcp-host-contract.js";
 export type { TitanMcpHostFeatures, TitanMcpHostNegotiation } from "./ported/titan-connect/mcp-host-contract.js";
+
+export { decideInferenceRoute, COST_SOVEREIGNTY_POLICY } from "./ported/titan-ai-core/cost-sovereignty.js";
+export type { InferenceRoute, CostSovereigntyRequest, CostSovereigntyDecision } from "./ported/titan-ai-core/cost-sovereignty.js";
