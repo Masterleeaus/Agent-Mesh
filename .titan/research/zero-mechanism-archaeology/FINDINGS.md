@@ -2020,3 +2020,136 @@ HIGH
 
 ### Related action
 #21; #725; #768; TZ-ROADMAP-43.
+
+
+---
+
+## FINDING-GH-086
+
+### Finding
+Titan Zero should converge around one governed execution spine rather than treating every named subsystem as a peer engine: **Interaction/Zero context → evidence/Knowledge → Decision/Model Council as needed → Risk → Assurance/Shield → Governance → Autonomy/Trust/current authority → Command Bus → owning business domain → receipt/Signal → outcome/Wisdom/Rewind/learning**.
+
+### Evidence
+Current Goal 44 explicitly targets one governed end-to-end execution spine across Interaction, authority, risk, evidence, command, signal, workforce and business state. Existing Council, Assurance, Rewind and authority archaeology supports the separation.
+
+### Classification
+CANONICAL CONVERGENCE MODEL
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-087
+
+### Finding
+AI Core/Intelligence owns model capability, provider selection and inference execution; Decision Engine owns structured decision state/DecisionPacket; Model Council is optional governed multi-model deliberation/challenge. Model Council must not become a second default AI router or a second Decision Engine.
+
+### Classification
+OWNERSHIP BOUNDARY
+
+### Confidence
+HIGH
+
+### Related action
+#633; #647.
+
+---
+
+## FINDING-GH-088
+
+### Finding
+Knowledge Authority owns governed knowledge/evidence quality, lineage, contradiction, freshness and supersession. Personal Zero, Decision, Model Council and Workforce consume governed knowledge but must not each implement their own authoritative knowledge truth store.
+
+### Classification
+OWNERSHIP BOUNDARY
+
+### Confidence
+HIGH
+
+### Related action
+#153; #633; #768.
+
+---
+
+## FINDING-GH-089
+
+### Finding
+Risk, Assurance, Governance, Trust and Autonomy are complementary gates, not interchangeable authority engines. Risk characterises exposure; Assurance tests evidence/process sufficiency; Governance applies policy/mandatory constraints; Trust records earned operating confidence/tier; Autonomy determines permitted degree of independent operation within the current delegated envelope. None alone creates authority.
+
+### Classification
+AUTHORITY CONVERGENCE RULE
+
+### Confidence
+HIGH
+
+### Related action
+#761.
+
+---
+
+## FINDING-GH-090
+
+### Finding
+Command Bus is the consequential execution boundary. Intelligence, Decision, Council, Zero, Workforce, Signal, Nexus or Prime may prepare/request/propose work, but external/domain mutation should cross the governed command boundary and produce receipts/evidence.
+
+### Classification
+EXECUTION OWNERSHIP INVARIANT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-091
+
+### Finding
+Signal, Prime, Nexus and Forge should remain distinct coordination concepts around the execution spine: Signal identifies what deserves attention; Prime represents long-running missions/objectives; Nexus coordinates/orchestrates work across capabilities; Forge improves/builds capability/system behaviour. Zero may use all four but should not absorb their responsibilities into Personal Zero state.
+
+### Important limitation
+This pass verifies these as current target definitions; deeper direct-source verification remains appropriate before declaring every historical implementation aligned.
+
+### Classification
+TARGET OWNERSHIP MAP
+
+### Confidence
+MEDIUM-HIGH
+
+---
+
+## FINDING-GH-092
+
+### Finding
+Shield belongs before consequential execution and at untrusted-input boundaries as a security/policy guard; it should not become another learning, knowledge or authority owner. Knowledge Authority handles knowledge integrity, Learning Governor handles state promotion, and current authority gates handle permission.
+
+### Classification
+SECURITY OWNERSHIP BOUNDARY
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-093
+
+### Finding
+Rewind is downstream recovery/evidence machinery, not an alternative execution authority. Recovery, compensation and restoration requests must re-enter current Risk/Assurance/Governance/authority/Command Bus gates where they create consequential mutations.
+
+### Classification
+RECOVERY OWNERSHIP BOUNDARY
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-094
+
+### Finding
+Named engines should not imply independent data ownership. The convergence test for every subsystem is: **what canonical state does it own, what contract does it expose, what evidence does it consume/produce, and which other owner authorises mutation?** If two systems answer the same way, they are candidates for convergence rather than parallel implementation.
+
+### Classification
+ARCHITECTURE ANTI-DUPLICATION RULE
+
+### Confidence
+HIGH
