@@ -7,7 +7,7 @@ import {
   findActiveJobForClient,
   findClientByPhone,
   logOutboundSms,
-  updateOutboundSmsOutcome,
+  persistSmsDeliveryOutcome,
   type OutboundSmsOutcome,
 } from "@/lib/sms/outbound";
 
@@ -27,6 +27,9 @@ const flatSchema = z.object({
   outcome: z.enum(["sent", "delivered", "failed"]).optional(),
   sim_number: z.number().int().optional().nullable(),
   company_id: z.string().uuid(),
+  communication_id: z.string().min(1).max(255).optional().nullable(),
+  conversation_id: z.string().min(1).max(255).optional().nullable(),
+  correlation_id: z.string().min(1).max(255).optional().nullable(),
 });
 
 function extractFromGatewayEnvelope(body: unknown): {
@@ -36,6 +39,9 @@ function extractFromGatewayEnvelope(body: unknown): {
   outcome: OutboundSmsOutcome;
   simNumber: number | null;
   companyId: string | null;
+  communicationId: string | null;
+  conversationId: string | null;
+  correlationId: string | null;
 } | null {
   if (!body || typeof body !== "object") return null;
   const b = body as Record<string, unknown>;
@@ -77,7 +83,13 @@ function extractFromGatewayEnvelope(body: unknown): {
   ).trim();
 
   const companyIdRaw = payload.company_id ?? b.company_id;
+  const communicationIdRaw = payload.communication_id ?? b.communication_id;
+  const conversationIdRaw = payload.conversation_id ?? b.conversation_id;
+  const correlationIdRaw = payload.correlation_id ?? b.correlation_id;
   const companyId = typeof companyIdRaw === "string" && companyIdRaw.trim() ? companyIdRaw.trim() : null;
+  const communicationId = typeof communicationIdRaw === "string" && communicationIdRaw.trim() ? communicationIdRaw.trim() : null;
+  const conversationId = typeof conversationIdRaw === "string" && conversationIdRaw.trim() ? conversationIdRaw.trim() : null;
+  const correlationId = typeof correlationIdRaw === "string" && correlationIdRaw.trim() ? correlationIdRaw.trim() : null;
 
   const simRaw = payload.simNumber ?? b.sim_number;
   const simNumber =
@@ -97,6 +109,9 @@ function extractFromGatewayEnvelope(body: unknown): {
     outcome,
     simNumber: Number.isFinite(simNumber as number) ? (simNumber as number) : null,
     companyId,
+    communicationId,
+    conversationId,
+    correlationId,
   };
 }
 
@@ -124,6 +139,9 @@ export async function POST(req: NextRequest) {
   let outcome: OutboundSmsOutcome;
   let simNumber: number | null;
   let companyId: string | null;
+  let communicationId: string | null;
+  let conversationId: string | null;
+  let correlationId: string | null;
 
   const fromEnvelope = extractFromGatewayEnvelope(body);
   if (fromEnvelope) {
@@ -133,6 +151,9 @@ export async function POST(req: NextRequest) {
     outcome = fromEnvelope.outcome;
     simNumber = fromEnvelope.simNumber;
     companyId = fromEnvelope.companyId;
+    communicationId = fromEnvelope.communicationId;
+    conversationId = fromEnvelope.conversationId;
+    correlationId = fromEnvelope.correlationId;
   } else {
     const parsed = flatSchema.safeParse(body);
     if (!parsed.success) {
@@ -147,6 +168,9 @@ export async function POST(req: NextRequest) {
     outcome = parsed.data.outcome ?? "sent";
     simNumber = parsed.data.sim_number ?? null;
     companyId = parsed.data.company_id;
+    communicationId = parsed.data.communication_id ?? null;
+    conversationId = parsed.data.conversation_id ?? null;
+    correlationId = parsed.data.correlation_id ?? null;
   }
 
   // Business SIM only (same rule as inbound n8n filter)
@@ -164,9 +188,24 @@ export async function POST(req: NextRequest) {
   }
   const accountId = companyId; // legacy storage/input alias after canonical normalization
 
-  // Delivery/failure updates for a message we already logged as sent
+  // Delivery/failure callbacks must preserve canonical message/conversation identity.
   if (externalId && (outcome === "delivered" || outcome === "failed")) {
-    const updated = await updateOutboundSmsOutcome(accountId, externalId, outcome);
+    if (!communicationId || !conversationId || !correlationId) {
+      return NextResponse.json(
+        { error: "communication_id, conversation_id and correlation_id are required for delivery callbacks" },
+        { status: 422 },
+      );
+    }
+    const updated = await persistSmsDeliveryOutcome({
+      communication: {
+        id: communicationId,
+        company_id: companyId,
+        conversation_id: conversationId,
+        correlation_id: correlationId,
+      },
+      outcome,
+      externalId,
+    });
     if (updated) {
       logger.info("outbound SMS outcome updated", { traceId, externalId, outcome });
       return NextResponse.json({ updated: true, outcome, external_id: externalId });
@@ -198,9 +237,7 @@ export async function POST(req: NextRequest) {
 
   if (externalId && commsId === null) {
     // Duplicate send event — if this is a later status, try update
-    if (outcome === "delivered" || outcome === "failed") {
-      await updateOutboundSmsOutcome(accountId, externalId, outcome);
-    }
+    // Delivery callbacks were already normalized through canonical receipt persistence above.
     return NextResponse.json({ duplicate: true, external_id: externalId });
   }
 
