@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS field_permits (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   idempotency_key TEXT,
   CHECK (length(trim(company_id)) > 0),
-  CHECK (length(trim(idempotency_key)) > 0)
+  CHECK (idempotency_key IS NULL OR length(trim(idempotency_key)) > 0)
 );
 CREATE INDEX IF NOT EXISTS idx_field_permits_work_order ON field_permits(company_id,work_order_id);
 
@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS field_permit_inspections (
   provenance JSONB NOT NULL DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CHECK (length(trim(company_id)) > 0)
+  idempotency_key TEXT,
+  CHECK (length(trim(company_id)) > 0),
+  CHECK (idempotency_key IS NULL OR length(trim(idempotency_key)) > 0)
 );
 
 CREATE TABLE IF NOT EXISTS field_defects (
@@ -47,7 +49,9 @@ CREATE TABLE IF NOT EXISTS field_defects (
   provenance JSONB NOT NULL DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CHECK (length(trim(company_id)) > 0)
+  idempotency_key TEXT,
+  CHECK (length(trim(company_id)) > 0),
+  CHECK (idempotency_key IS NULL OR length(trim(idempotency_key)) > 0)
 );
 CREATE INDEX IF NOT EXISTS idx_field_defects_work_order ON field_defects(company_id,work_order_id);
 
