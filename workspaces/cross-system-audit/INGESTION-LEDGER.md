@@ -239,3 +239,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-021 | Specialist completion-state recheck | agent/765 GitHub Archaeology STATUS + agent/763 Zero Mechanism Archaeology STATUS | blobs eeb589bf72844561c540791e0320997d5cbf3055 / 8df6d1c246c05cbd6539f1e145935b2419ddabd1 | SOURCE AGENTS STILL IN PROGRESS | VERIFIED | Both designated specialist lanes explicitly remain IN PROGRESS. Final cross-system audit must re-ingest their final revisions before completion. | YES |
+
+
+| INGEST-022 | Remaining convergence claim-state + #768 clarification | #153/#37/#59/#767/#768 current issues, comments, branch searches, PR searches | current GitHub state | UNCLAIMED | VERIFIED | All five lanes remain unclaimed. #768 now explicitly defines ONE as persistent human principal, Zero portability across relationships, company_id-only company tenancy, non-portable authority and no silent cross-context leakage. | YES |
