@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { randomUUID } from "crypto";
 import { logger } from "@/lib/logger";
+import { queryOne } from "@/lib/db";
+import { resolveTenantSmsSettings, tenantSmsWebhookKeyMatches } from "@/lib/sms/settings";
 import { normalizePhone } from "@/lib/phone";
 import {
   findActiveJobForClient,
@@ -13,7 +15,6 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const SMS_KEY = process.env.SMS_INTERNAL_KEY;
 
 /**
  * Accept either a flat body (from n8n after extraction) or a raw SMS Gateway
@@ -121,10 +122,6 @@ function extractFromGatewayEnvelope(body: unknown): {
 export async function POST(req: NextRequest) {
   const traceId = randomUUID();
 
-  if (!SMS_KEY || req.headers.get("x-api-key") !== SMS_KEY) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   let body: unknown;
   try {
     body = await req.json();
@@ -190,6 +187,15 @@ export async function POST(req: NextRequest) {
   if (!companyId) {
     logger.warn("outbound SMS callback missing company scope", { traceId, externalId });
     return NextResponse.json({ error: "company_id is required" }, { status: 422 });
+  }
+  const account = await queryOne<{ settings: unknown }>(
+    `SELECT settings FROM accounts WHERE id = $1 LIMIT 1`,
+    [companyId],
+  );
+  const smsSettings = resolveTenantSmsSettings(account?.settings);
+  if (!tenantSmsWebhookKeyMatches(smsSettings, req.headers.get("x-api-key"))) {
+    logger.warn("Outbound SMS tenant webhook authentication rejected", { traceId, company_id: companyId });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const accountId = companyId; // legacy storage/input alias after canonical normalization
 
