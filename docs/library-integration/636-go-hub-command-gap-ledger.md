@@ -123,3 +123,17 @@ Implemented the first production-safe convergence seam without changing existing
 - added regression coverage for explicit company/actor injection and legacy tenant rejection.
 
 This enables a server-authenticated entry component to derive `company_id` from the existing session/account boundary and inject it into the chat-first surface without embedding session/database logic in the presentation runtime.
+
+## Pass 8 — authenticated session-to-surface binding
+
+Connected the existing authenticated session model to the canonical Titan surface contract without changing production routes:
+- owner/admin sessions normalize to canonical `zero`;
+- tech sessions normalize to canonical `go`;
+- the existing authenticated `accountId` is injected as canonical `company_id`;
+- authenticated `userId` becomes the projection actor;
+- role holders cannot self-select another canonical surface;
+- resulting projections remain authority-neutral and short-lived by default.
+
+Added `runtime/authenticated-surface.ts` and focused tests. Hub is intentionally not derived from the internal staff session roles because customer authentication is a separate boundary and must be wired from its real customer session rather than inferred.
+
+The production shell can now obtain a company-scoped Zero/Go projection from the existing session without demo identity leakage. Routing remains unchanged until the actual shell mount is added.
