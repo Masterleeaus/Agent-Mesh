@@ -52,12 +52,7 @@ const aiFeatures = [
   { icon: '🔄', title: 'Follow-Up Workforce', desc: 'Keeps authorised quote, invoice, customer-care and rebooking workflows moving instead of letting work disappear between systems.' },
 ]
 
-const aiFeatures = [
-  { icon: '\ud83e\udde0', title: 'Ghost Dispatching', desc: 'Auto-assigns the right technician to every job based on proximity and workload. Runs every 5 minutes \u2014 no dispatcher needed.' },
-  { icon: '\u26a1', title: 'Vision Estimating', desc: 'Upload a job photo and get an AI-generated quote. Gemini Vision analyzes the image and drafts a priced line-item estimate.' },
-  { icon: '\ud83d\udcc8', title: 'Virtual CFO Briefing', desc: 'A daily AI-generated financial summary lands in your inbox every morning: revenue, outstanding invoices, cash flow, and new leads.' },
-  { icon: '\ud83d\udd04', title: 'Auto Follow-Up', desc: 'AI detects when quotes go cold and triggers personalized follow-up sequences. Invoice dunning runs automatically too.' },
-]
+
 
 const stats = [
   { num: '24/7', label: 'Workforce availability where configured' },
@@ -256,35 +251,6 @@ export default function Home() {
               <div className="text-sm text-nx-muted mt-1">{s.label}</div>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* ===== TESTIMONIALS ===== */}
-      <section className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <SectionLabel>Testimonials</SectionLabel>
-            <h2 className="text-4xl font-extrabold tracking-tight">Built around real field-service operations</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-12">
-            {testimonials.map((t) => (
-              <FadeIn key={t.name}>
-                <div className="bg-nx-surface border border-nx-border rounded-2xl p-7 hover:border-nx-purple transition-colors h-full flex flex-col">
-                  <p className="text-yellow-400 text-sm tracking-widest mb-4">\u2605\u2605\u2605\u2605\u2605</p>
-                  <p className="text-sm text-nx-text2 leading-relaxed flex-1 mb-5">{t.text}</p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-nx-surface3 flex items-center justify-center text-xs font-bold text-nx-purple-light">
-                      {t.initials}
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold">{t.name}</div>
-                      <div className="text-xs text-nx-muted2">{t.role}</div>
-                    </div>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
         </div>
       </section>
 
