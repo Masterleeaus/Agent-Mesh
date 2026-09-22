@@ -57,3 +57,32 @@ test("legacy tenant authority is rejected at interaction boundary", () => {
     tenant_id: "legacy",
   } as never), /Legacy tenant authority is forbidden/);
 });
+
+
+test("drops an event whose nested message crosses the authenticated scope", async () => {
+  const transport = {
+    async send() {
+      return {
+        accepted: true,
+        events: [{
+          id: "event-cross-scope",
+          kind: "message" as const,
+          company_id: "company-a",
+          conversation_id: "conversation-a",
+          surface: "zero" as const,
+          message: {
+            id: "message-cross-scope",
+            conversation_id: "conversation-a",
+            company_id: "company-b",
+            surface: "zero" as const,
+            from: "zero" as const,
+            text: "must not project",
+            created_at: new Date().toISOString(),
+          },
+        }],
+      };
+    },
+  };
+  const client = new TitanInteractionClient({ company_id: "company-a", conversation_id: "conversation-a", surface: "zero", transport });
+  assert.deepEqual(await client.send("hello"), []);
+});
