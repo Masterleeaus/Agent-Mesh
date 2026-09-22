@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: agent-execution-${{ github.ref_name }}
@@ -40,15 +41,31 @@ jobs:
         run: |
           set -euo pipefail
           REQUEST="${{ steps.request.outputs.request }}"
+          ID="$(jq -r '.request_id // empty' "$REQUEST")"
+          test "$REQUEST" = ".agent-mesh/execution-requests/$ID.json"
           python3 .github/scripts/validate-execution-request.py --file "$REQUEST" >/tmp/request.json
           SUBGOAL="$(jq -r '.subgoal_id' /tmp/request.json)"
           CLAIM="$(jq -r '.claim_branch' /tmp/request.json)"
           EXPECTED="$(jq -r '.expected_head_sha' /tmp/request.json)"
+          ISSUE="$(jq -r '.issue_number' /tmp/request.json)"
           test "$CLAIM" = "${{ github.ref_name }}"
           test "$CLAIM" = "agent/$SUBGOAL"
           LIVE="$(gh api "repos/${{ github.repository }}/git/ref/heads/$CLAIM" --jq '.object.sha')"
           test "$LIVE" = "$EXPECTED"
           test "${{ github.sha }}" = "$EXPECTED"
+          TITLE="$(gh issue view "$ISSUE" --repo "${{ github.repository }}" --json title,state --jq 'select(.state=="OPEN") | .title')"
+          case "$TITLE" in "[$SUBGOAL]"*) ;; *) echo "Issue/subgoal mismatch or issue closed" >&2; exit 1 ;; esac
+          MARKER="<!-- agent-execution-request:$ID -->"
+          if gh api --paginate "repos/${{ github.repository }}/issues/$ISSUE/comments" --jq '.[].body' | grep -Fq "$MARKER"; then echo "Replay rejected: $ID" >&2; exit 1; fi
+          gh issue comment "$ISSUE" --repo "${{ github.repository }}" --body "$MARKER
+### Agent Mesh execution accepted
+
+- Request: \`$ID\`
+- Operation: \`$(jq -r '.operation' /tmp/request.json)\`
+- Claim: \`$CLAIM\`
+- Head: \`$EXPECTED\`
+
+This marker provides replay protection; it grants no merge or claim-release authority."
 
       - name: Execute deterministic registered operation
         shell: bash
