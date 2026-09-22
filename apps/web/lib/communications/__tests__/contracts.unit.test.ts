@@ -6,6 +6,7 @@ import {
   communicationRetryDecision,
   selectCommunicationProvider,
   evaluateCommunicationRateLimit,
+  evaluateOutboundCommunicationGate,
   isCommunicationQuietHour,
   evaluateOutboundCommunicationPolicy,
   type CommunicationEnvelope,
@@ -164,5 +165,31 @@ describe("canonical communications contract", () => {
     expect(isCommunicationQuietHour(23, { start_hour: 21, end_hour: 8 })).toBe(true);
     expect(isCommunicationQuietHour(7, { start_hour: 21, end_hour: 8 })).toBe(true);
     expect(isCommunicationQuietHour(12, { start_hour: 21, end_hour: 8 })).toBe(false);
+  });
+
+  it("uses one fail-closed outbound gate for policy and rate limits", () => {
+    const base = {
+      consent: "granted" as const,
+      opted_out: false,
+      quiet_hours: false,
+      channel_allowed: true,
+      privacy_allowed: true,
+      funding_allowed: true,
+      authority_allowed: true,
+    };
+    expect(evaluateOutboundCommunicationGate({
+      policy: base,
+      rate_limit: { limit: 5, used: 2, resets_at: "2026-09-22T06:00:00.000Z" },
+    })).toEqual({ allowed: true, remaining: 3 });
+
+    expect(evaluateOutboundCommunicationGate({
+      policy: { ...base, authority_allowed: false },
+      rate_limit: { limit: 5, used: 2, resets_at: "2026-09-22T06:00:00.000Z" },
+    })).toMatchObject({ allowed: false, reason: "authority-required" });
+
+    expect(evaluateOutboundCommunicationGate({
+      policy: base,
+      rate_limit: { limit: 5, used: 5, resets_at: "2026-09-22T06:00:00.000Z" },
+    })).toEqual({ allowed: false, reason: "rate-limit-exhausted", remaining: 0 });
   });
 });
