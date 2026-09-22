@@ -315,3 +315,9 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-155 — current main `apps/browser/src/browser/agent-runtime/orchestration/resume-planner.js`, SHA `d3eb25ceadc30926f8172d0d305d5da69ff838ef`; re-perceive rather than replay unknown-outcome actions.
 - SOURCE-GH-156 — current main `apps/browser/src/browser/agent-runtime/orchestration/recovery.js`, SHA `d9b355e88a39e2d7fe9c9495785b320b43b4b3a3`; stuck-loop LLM recovery planner, explicitly distinct from business Rewind.
 - SOURCE-GH-157 — Agent-Mesh commit `25cb5217b07fe1e0d9adbe5fd058171e88edcd1c`, merged donor ReAct recovery/browser orchestration runtime.
+
+
+- SOURCE-GH-158 — current main `packages/titan-platform/src/ported/titan-runtime/authority/index.ts`, SHA `fac2bf4cef45cdfa42c52bc5b6c14a78db675a90`; exports canonical governed-command/execution-boundary functions.
+- SOURCE-GH-159 — current main `packages/titan-platform/src/ported/titan-runtime/authority/execution-boundary.ts`, SHA `a97baf3a19acdd47120c231c072420f6f0271c09`; command envelope, replay/proof binding, authoritative receipts, post-action verification and UNKNOWN recovery seam.
+- SOURCE-GH-160 — issue #14; remaining governed execution graph, mutation convergence, recovery/compensation and active Workforce gateway bypass correction.
+- SOURCE-GH-161 — closed duplicate issues #73/#47 preserve historical scope for Command Bus→Signal→Assurance correlation and DecisionPacket→provider execution, now consolidated into canonical owners.
