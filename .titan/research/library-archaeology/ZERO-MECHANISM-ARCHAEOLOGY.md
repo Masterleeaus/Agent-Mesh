@@ -128,3 +128,7 @@ Sovereign/Goal-13 evidence confirms the intended route order: device/local → t
 
 ### ZM-018 — One Zero, projected across surfaces and workforce
 Command/zero, Go, Hub, model hosts and browser surfaces must not fork Personal Zero, agents or authority. Interaction Engine owns conversation/session/task context; Personal Zero owns durable personal understanding/experience; Workforce owns organisational capability coordination. Surfaces receive purpose/role-authorised projections of the same canonical identities and state, and handoffs carry references/provenance rather than cloned stores. Surface/host identity never raises authority; reconnect/resume revalidates current identity, company and authority.
+
+
+### ZM-019 — One governed execution spine, not a pile of engines
+Current convergence evidence supports: Interaction/Zero context → governed evidence/Knowledge → Decision/optional Council → Risk → Assurance/Shield → Governance → Autonomy/Trust/current authority → Command Bus → owning business domain → receipt/Signal → outcome/Wisdom/Rewind/learning. AI Core owns inference/provider execution; Decision owns DecisionPacket; Council is governed deliberation; Knowledge Authority owns evidence integrity; Command Bus is consequential execution boundary; Rewind is recovery. Signal/Prime/Nexus/Forge remain attention/mission/coordination/improvement concepts rather than Personal Zero stores. Named engines do not automatically justify separate state ownership.
