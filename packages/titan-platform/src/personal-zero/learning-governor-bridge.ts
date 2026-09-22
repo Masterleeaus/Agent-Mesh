@@ -15,7 +15,7 @@ export type PersonalZeroLearningProposal=Readonly<{
 
 const base=(x:{company_id:string;one_id:string;zero_id:string;relationship_id:string|null},trigger:PersonalZeroLearningProposal["trigger"],evidence_refs:readonly string[],workforce_governor_proposal:ReturnType<typeof createLearningProposal>|null):PersonalZeroLearningProposal=>{
  if(!x.relationship_id)throw new Error("Personal Zero learning requires relationship_id");
- return Object.freeze({schema:"titan.personal-zero.learning-proposal.v1",company_id:x.company_id,one_id:x.one_id,zero_id:x.zero_id,relationship_id:x.relationship_id,trigger,evidence_refs:Object.freeze([...evidence_refs]),proposed_adjustments:Object.freeze(["ranking","recommendation_weight","workflow_preference","exception_pattern"]),workforce_governor_proposal,requires_learning_governor_review:true,authority_granted:false,execution_permitted:false,grants_authority:false,authority_effect:false});
+ return Object.freeze({schema:"titan.personal-zero.learning-proposal.v1",company_id:x.company_id,one_id:x.one_id,zero_id:x.zero_id,relationship_id:x.relationship_id,trigger,evidence_refs:Object.freeze([...evidence_refs]),proposed_adjustments:Object.freeze(["ranking","recommendation_weight","workflow_preference","exception_pattern"] as const),workforce_governor_proposal,requires_learning_governor_review:true,authority_granted:false,execution_permitted:false,grants_authority:false,authority_effect:false});
 };
 
 export function proposeLearningFromCorrection(evidence:UnderstandingEvidence):PersonalZeroLearningProposal{
