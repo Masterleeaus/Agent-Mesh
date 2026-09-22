@@ -81,7 +81,7 @@ const NAV_COMMAND:    NavItem = { href: "/app/command",      label: "Command",  
 const NAV_TODAY:      NavItem = { href: "/app",              label: "Overview",   Icon: IconDashboard };
 // EPIC-006 Phase 5: the field surface. Owners can switch into it; pure admins
 // (who don't do field work) and the all-techs list never see it here.
-const NAV_MY_DAY:     NavItem = { href: "/app/my-work",      label: "My Day",     Icon: IconMyDay };
+const NAV_MY_DAY:     NavItem = { href: "/app/my-work",      label: "Active",     Icon: IconMyDay };
 const NAV_CAPTURE:    NavItem = { href: "/app/capture",      label: "Capture",    Icon: IconCapture };
 const NAV_DAY_REVIEW: NavItem = { href: "/app/day-review",   label: "Day Review", Icon: IconDayReview };
 const NAV_TRACKING:   NavItem = { href: "/app/timeline",     label: "Tracking",   Icon: IconField };
@@ -117,9 +117,11 @@ function buildHubSections(home: NavItem): NavSection[] {
 /** Returns filtered nav sections for a given role and active workspace view. */
 export function getNavSections(role: Role, view: "office" | "field" = "field"): NavSection[] {
   if (role === "tech") {
-    const myDay: NavItem = { href: "/app/my-work", label: "My Day", Icon: IconMyDay };
-    const visits: NavItem = { href: "/app/visits", label: "Visits", Icon: IconVisits };
-    return [{ label: "", items: [{ href: "/app/go", label: "Go", Icon: IconMyDay }, myDay, visits, NAV_DAY_REVIEW] }];
+    const active: NavItem = { href: "/app/my-work", label: "Active", Icon: IconMyDay, activePrefixes: ["/app/my-work", "/app/visits"] };
+    const schedule: NavItem = { href: "/app/day-review", label: "Schedule · Today", Icon: IconSchedule };
+    const comms: NavItem = { href: "/app/requests", label: "Comms · Dispatch", Icon: IconInbox };
+    const ready: NavItem = { href: "/app/capture", label: "Ready · Field Kit", Icon: IconCapture };
+    return [{ label: "", items: [{ href: "/app/go", label: "Chat", Icon: IconMyDay }, active, schedule, comms, ready] }];
   }
 
   // EPIC-006 Phase 5: pure admins never see the field home.
@@ -139,7 +141,7 @@ export function getNavSections(role: Role, view: "office" | "field" = "field"): 
  */
 export function getBottomNavItems(role: Role): NavItem[] {
   if (role === "tech") {
-    const go: NavItem = { href: "/app/go", label: "Go", Icon: IconMyDay, activePrefixes: ["/app/go"] };
+    const go: NavItem = { href: "/app/go", label: "Chat", Icon: IconMyDay, activePrefixes: ["/app/go"] };
     const active: NavItem = { href: "/app/my-work", label: "Active", Icon: IconVisits, activePrefixes: ["/app/my-work", "/app/visits"] };
     return [go, active];
   }
