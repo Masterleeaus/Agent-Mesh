@@ -293,3 +293,24 @@ Library file id: file_00000000071881f5b1fff9e9b53d48f4
 Verification: direct Library inspection during #763.
 Relevant semantics: environmental risk participates in Risk/Decision; environmental compliance, resource efficiency, environmental opportunity and specialist environmental workforce are shared architecture capabilities; company_id remains sole tenant boundary; purpose limitation/minimisation/local-first privacy applies to persistent Zero context.
 Supports: FINDING-GH-108, GH-109, GH-112.
+
+
+---
+
+## SOURCE-LIB-020
+
+Type: Library current integration/convergence instruction
+Artifact: Pasted markdown(20260922-050024).md
+Library file id: file_000000009e6481faa8d7f99a4d6d8e7d
+Verification: direct Library inspection during #763.
+Relevant semantics: explicit canonical owners for CRM, bookings/quotes, Titan Field, Titan Connect, AI Workforce, Knowledge Authority, governance stack, Command Bus, Assets/Locker, Maps, Rewind/Signal and reporting; canonical-service-owners principles include company_id, no duplicate domain authority, donors/adapters/workforce do not own domain truth; duplication audit rejects parallel domain authority/database/workflow/auth/tenant/mutation paths.
+Supports: FINDING-GH-113 through GH-121.
+
+## SOURCE-LIB-021
+
+Type: Library workforce architecture evidence
+Artifact: WORKFORCE-ARCHITECTURE.json
+Library file id: file_000000003eec81f895bbaaaceef65da1
+Verification: direct Library inspection during #763.
+Relevant semantics: cross-domain supply/field-readiness orchestration combines demand, inventory, asset readiness, procurement, finance and field-risk signals while preserving accountable managers; safeguards require company/actor scope, current authoritative state revalidation, idempotency/correlation and receipts; uniqueness rule explicitly says orchestrator does not replace domain managers.
+Supports: FINDING-GH-115, GH-117, GH-120.
