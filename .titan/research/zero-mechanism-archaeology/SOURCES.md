@@ -111,3 +111,16 @@ Recorded SHA-256: 3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a7
 Verification: materialized and source-inspected during #763.
 Relevant paths: 10-observation-engine/runtime/observationEngine.ts; 17-preference-model/runtime/preferenceModel.ts; 24-decision-history/runtime/decisionHistory.ts; 25-learning-loop/runtime/learningLoop.ts; 04-capability-deobfuscation/PERSISTENT-STATE-CANDIDATES.json.
 Supports: FINDING-GH-032 through FINDING-GH-036.
+
+
+---
+
+## SOURCE-LIB-004
+
+Type: Library master / direct source inspection
+Artifact: Titan Model Council Master v1.0.0-rc.2.zip
+Library file id: file_00000000c824820e8e230ba127b115a6
+Library path: /MASTER Software/Masters/Platform/Titan Model Council/Titan Model Council Master v1.0.0-rc.2.zip
+Verification: materialized and source-inspected during #763.
+Relevant paths: System/Governed/GovernedDeliberationOrchestrator.php; System/Governed/GovernedDeliberationResult.php; System/Governed/ParticipantResult.php; System/Receipts/CouncilDecisionReceiptService.php.
+Supports: FINDING-GH-037 through FINDING-GH-041.
