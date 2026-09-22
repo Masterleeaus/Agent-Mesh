@@ -221,3 +221,6 @@ Needs re-ingestion: YES
 
 | INGEST-014 | Blueprint validation lane | #757 / PR #758 | head 409344b50d990284a1d677ff0fc2a3db38896703 | IN PROGRESS / PR OPEN | PARTIAL | Read-only workflow only; generated validation artifact not committed/available in branch; heuristic evidence is not proof | YES |
 | INGEST-015 | Observation / Reality / Nexus evidence lane | #759 / PR #760 | head aa59cbf0f392e910c1b7d158619ec90522245c4d | IN PROGRESS / PR OPEN | PARTIAL | Read-only workflow only; generated trigger-map artifact not committed/available in branch; OnboardingPro donor evidence supports #767 but current parity remains unverified | YES |
+
+
+| INGEST-016 | Evolution/Reality implementation readiness | #767 + current Nexus source | #767 OPEN/unclaimed; Nexus sha f7936d44dcf30fd9cb0d091af0efbc10fbcd501a | CURRENT CHECKPOINT | INGESTED | #767 has no branch/PR; current Nexus is an authority-neutral recommendation orchestrator, not the full Evolution/Reality lifecycle | YES |
