@@ -1970,3 +1970,98 @@ CURRENT ARCHITECTURE CONFIRMED
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-070
+
+### Finding
+cleanly contains a strong historical security-fabric design that already separates principal identity, tenant scope, capability, environmental/device trust and approval. This is highly compatible with current Titan Trust/Authority doctrine and should be treated as a semantic donor rather than a new security subsystem.
+
+### Evidence
+`docs/01-PWA/24-security-identity-device-trust-and-tenant-boundary.md` SHA `8bf4e285832d00295f25bf4ddd2672147f238e20` explicitly defines:
+- `company_id` as tenant boundary and `user_id` as actor/owner context;
+- human, device, system/AI and integration identities as separate principal domains;
+- device registration/trust/revocation;
+- separate browser sessions, API/device tokens, short-lived high-risk action tokens and webhook/channel verification;
+- database/query/route/action/UI/job tenant-boundary enforcement;
+- package/module entitlement as capability input;
+- approval/risk gating above ordinary permission;
+- audit attribution for actor, company, surface, device, workflow, AI involvement and policy result.
+
+### Classification
+STRONG SECURITY/IDENTITY SEMANTIC DONOR / CURRENT OWNERS EXIST
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-071
+
+### Finding
+The historical security design contains an important anti-impersonation rule: Titan Zero/AI/system actors must not silently impersonate ordinary users.
+
+### Recovery value
+Canonical audit/execution identity should distinguish:
+- human initiation;
+- Zero/system proposal;
+- human approval;
+- workforce/tool execution;
+- integration/device origin.
+
+This preserves accountability across chat, voice, PWA, automation and API surfaces.
+
+### Current owner mapping
+#302 security/identity/session hardening, #725 identity/cross-surface continuity, #574 distributed identity authority certification, and current Trust/Authority owners.
+
+### Classification
+RECOVER/HARDEN ACTOR ATTRIBUTION
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-072
+
+### Finding
+cleanly's workflow guard architecture is a strong reusable precursor for deterministic pre-execution policy evaluation.
+
+### Evidence
+`docs/07-workflows/guards.md` SHA `2ec6dc1a6341aa88304db237d1c0e8a7e0c41192` defines first-class transition, step-entry and execution-mode guards with structured outcomes:
+- allow;
+- deny;
+- reroute_for_approval;
+- reroute_for_recovery.
+
+It defines deterministic evaluation across tenant boundary, entitlement, permission, dependency, scheduling, finance/compliance, evidence and execution mode; guards perform no side effect themselves; replay/recovery must re-evaluate against current truth.
+
+### Architecture fit
+This maps naturally to current effective-authority/Authority Continuance behavior. It should not become a second Authority engine. Guards are deterministic enforcement adapters consuming canonical authority/governance decisions.
+
+### Classification
+STRONG EXECUTION-GUARD DONOR / CONVERGE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-073
+
+### Finding
+Historical device trust tiers/states are environmental assurance signals, not authority tiers.
+
+### Evidence
+cleanly security docs define registered/verified/high-trust/restricted/revoked devices and explicitly state device trust affects what offline/delegated behavior is possible while authorization remains separate.
+
+### Current owner
+#574 explicitly certifies distributed identity never grants business authority; #645/#302/#725 own adjacent runtime/identity mechanics.
+
+### Classification
+CURRENT PRINCIPLE CONFIRMED / TERMINOLOGY HARDENING
+
+### Confidence
+HIGH
