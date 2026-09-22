@@ -195,6 +195,13 @@ export function buildTitanWarrantyClaim(input: TitanWarrantyClaimInput) {
   const state = input.state ?? 'open';
   if (!CLAIM_TYPES.has(input.claim_type)) throw new Error('unsupported claim_type');
   if (!CLAIM_STATES.has(state)) throw new Error('unsupported claim state');
+  const claimed_date = isoDate(input.claimed_date, 'claimed_date');
+  const resolved_date = input.resolved_date ? isoDate(input.resolved_date, 'resolved_date') : null;
+  const denied_reason = optionalString(input.denied_reason);
+  const resolution = optionalString(input.resolution);
+  if (state === 'denied' && !denied_reason) throw new Error('denied claim requires denied_reason');
+  if (state === 'completed' && (!resolution || !resolved_date)) throw new Error('completed claim requires resolution and resolved_date');
+  if (resolved_date && Date.parse(`${resolved_date}T00:00:00Z`) < Date.parse(`${claimed_date}T00:00:00Z`)) throw new Error('resolved_date must not precede claimed_date');
   const labor_cost_cents = nonNegativeCents(input.labor_cost_cents, 'labor_cost_cents');
   const parts_cost_cents = nonNegativeCents(input.parts_cost_cents, 'parts_cost_cents');
   return Object.freeze({
@@ -206,14 +213,14 @@ export function buildTitanWarrantyClaim(input: TitanWarrantyClaimInput) {
     source_work_order_id: optionalString(input.source_work_order_id),
     claim_type: input.claim_type,
     description: requiredString(input.description, 'description'),
-    claimed_date: isoDate(input.claimed_date, 'claimed_date'),
-    resolved_date: input.resolved_date ? isoDate(input.resolved_date, 'resolved_date') : null,
+    claimed_date,
+    resolved_date,
     labor_cost_cents,
     parts_cost_cents,
     total_cost_cents: (()=>{const total=labor_cost_cents+parts_cost_cents;if(!Number.isSafeInteger(total))throw new Error('total_cost_cents exceeds safe integer range');return total;})(),
     state,
-    denied_reason: optionalString(input.denied_reason),
-    resolution: optionalString(input.resolution),
+    denied_reason,
+    resolution,
     evidence_refs: Object.freeze([...(input.evidence_refs ?? [])].map(x => requiredString(x, 'evidence_ref'))),
     provenance: provenance(input.provenance),
     proposal_only: true as const,
