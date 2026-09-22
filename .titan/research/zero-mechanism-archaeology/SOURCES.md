@@ -242,3 +242,33 @@ Library file id: file_000000008ce881f59425aff53e7c5fb7
 Verification: direct Library inspection during #763.
 Relevant semantics: current target architecture repeatedly binds AI Core/Intelligence, Interaction, Interface/Visual/Builder, Capability Router, Signal, Command Bus, Risk, Assurance, Governance, Autonomy, Model Council, Knowledge Authority, Rewind, Shield and Local Bridge/Ollama into shared roadmap convergence rather than isolated product stacks.
 Supports: core ownership/convergence context.
+
+
+---
+
+## SOURCE-LIB-015
+
+Type: Library TypeScript convergence evidence
+Artifact: TYPESCRIPT-PORT-MAPPING.md
+Library file id: file_00000000c94481fab24a492b9208e125
+Verification: direct Library inspection during #763.
+Relevant semantics: current TypeScript base already has retry/idempotency, operation identity/offline queues, workforce context/handoffs, authority evaluator/autonomy and reliability; trust bridge deliberately returns authority_granted:false and routes eligibility into existing Autonomy authority evaluation.
+Supports: FINDING-GH-095 through GH-100.
+
+## SOURCE-LIB-016
+
+Type: Library current product/architecture summary
+Artifact: Pasted markdown(20260922-131634).md
+Library file id: file_00000000071881f5b1fff9e9b53d48f4
+Verification: direct Library inspection during #763.
+Relevant semantics: Operation Identity connects initiator/company/authority/capability/decision/execution; Authority Continuance rechecks permission at execution time; revocation/reduction/fresh authority/offline fail-closed; Command Bus execution envelope and receipts.
+Supports: FINDING-GH-095 through GH-103 as target architecture evidence.
+
+## SOURCE-LIB-017
+
+Type: Library discovery/convergence evidence
+Artifact: P0-DISCOVERY-CONVERGENCE-PATCH-001.json
+Library file id: file_00000000e83c81fa8fb308daaf7c8701
+Verification: direct Library inspection during #763.
+Relevant semantics: existing provenance chain records company/task/actor role/correlation/causation/command receipt/idempotency/evidence/decision/execution refs; Wisdom adds expected/actual/context versions/revisions; Signal preserves correlation/root causation; Rewind retains governed recovery receipts. Supports lineage reuse instead of another operation/outcome store.
+Supports: FINDING-GH-095, GH-101, GH-103.
