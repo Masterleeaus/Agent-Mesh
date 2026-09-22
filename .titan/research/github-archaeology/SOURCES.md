@@ -209,3 +209,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-079 — Titan Builder `pid.md`, SHA `410f437b09ca268f813268d0db4016a8a4576023`; local Node execution + browser-provider reasoning separation.
 - SOURCE-GH-080 — Agent-Mesh issue search: #647 Device/Distributed Intelligence Runtime, #80 Intelligence Runtime integration, #645 Edge Fabric, #649 Titan Code browser convergence.
 - SOURCE-GH-081 — TitanPro `resources/reference/titan/titan_bos_expanded_script.md`; historical product architecture explicitly names BYO OpenAI/Anthropic/Google/Ollama/local models, treated as architecture/product evidence rather than implementation proof.
+
+
+- SOURCE-GH-082 — TitanPro `Modules/TitanNexus/Agents/MarketingAgent/agent.manifest.json`, SHA `c54f5dc98a8a91e36bc132c611e6f69fdd76fd3e`; MarketingAgent ownership and approval boundaries.
+- SOURCE-GH-083 — TitanPro `Modules/TitanNexus/module.json`, SHA `3cbe78954ed770d80bb2cf203adaed035687559c`; TitanNexus 0.19.0 advertised capability surface.
+- SOURCE-GH-084 — InvoiceFollowupTool SHA `4fd787b5b87217402fbab99a5e865007ec578676`, PaymentLinkTool SHA `84b60320afc57d0376d0f18994a8e57e54e43e68`, PaymentPlanTool SHA `7e43816e3831f051921819701afe60d77982a279`, JobStatusAssistTool SHA `4c6957e23d35ab4802f976ce54ebd1318f1e5983`; direct inspection demonstrates draft/wrapper maturity.
+- SOURCE-GH-085 — TitanPro `Modules/TitanNexus/AI/Tools/LeadScoringTool.php`, SHA `293faed545562e78bdf23932a409f8e4d0fb4117`; direct draft/approval-required scoring handler.
+- SOURCE-GH-086 — TitanPro `Modules/TitanNexus/Agents/MarketingAgent/memory/payment-memory.schema.json`, SHA `ef43e9f28d5ac8eafc6765fe0198c7c95fcabc7f`; legacy tenant_id invoice/payment/job-pattern memory schema.
