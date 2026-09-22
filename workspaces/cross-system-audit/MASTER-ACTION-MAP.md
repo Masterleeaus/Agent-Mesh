@@ -302,3 +302,18 @@ Audit coordination should now enforce:
 - Personal Zero stores only its versioned identity/relationship, Understanding, Experience and CognitiveEvent contracts plus references into existing evidence/decision/outcome systems;
 - preserve ONE identity outside any single company relationship while retaining `company_id` as the sole company tenant boundary;
 - re-ingest `agent/768` after the next implementation slice and verify isolation, revocation, provenance, correction/supersession and authority-neutral tests.
+
+
+## Issue #768 slice-1 verification
+Preserve the landed Personal Zero contract module on `agent/768`; do not redesign or duplicate it.
+
+Next verification target:
+- repository-backed state service using existing titan-platform storage;
+- company/context isolation;
+- relationship revocation immediately blocks company-context use;
+- correction/promotion/supersession lineage remains provenance-preserving;
+- cross-company and cross-context negative tests;
+- personal-private provider egress remains fail-closed;
+- actual outcomes cannot enter Experience without verified outcome references;
+- cognitive/understanding/experience state never elevates Trust or execution authority;
+- CI/check evidence before classifying #768 complete.
