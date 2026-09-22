@@ -601,3 +601,20 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** one hardened Knowledge Authority implementation remains canonical; reusable memory mechanics are factored without collapsing Business Memory, Personal Zero, Workforce Memory or Business Reality.
 - **Confidence:** VERY HIGH
 - **Status:** SUPPORT EXISTING OWNERS
+
+
+---
+
+## ACTION-GH-032 — Add reachability certification to capability-loss matrix; resolve Worker Memory before activation
+
+- **Type:** COMPARE / CERTIFY / RETIRE-OR-CONVERGE
+- **Priority:** P1
+- **Findings:** FINDING-GH-133–136
+- **Canonical owners to compare:** #153, #768, Workforce runtime, Interaction Engine.
+- **Worker Memory decision:** determine whether company+worker long-term memory has a distinct canonical purpose. If yes, expose it deliberately through one facade with tests and clear retention/privacy boundaries. If no, migrate useful mechanics to existing memory owners and retire the hidden implementation.
+- **Do not do:** do not activate a third generic memory store simply because donor code exists.
+- **Matrix change:** add explicit columns/status for PRESENT / EXPORTED / CONSUMED / TESTED-CERTIFIED / CANONICAL-OWNER.
+- **Tests if retained:** facade export, real consumer path, cross-company/cross-worker isolation, expiry/supersession/revocation, privacy/purpose filtering, knowledge verification, authority neutrality.
+- **Acceptance Criteria:** no capability is labeled “current/active” solely from source presence; Worker Memory receives explicit converge-or-retire treatment.
+- **Confidence:** VERY HIGH
+- **Status:** READY
