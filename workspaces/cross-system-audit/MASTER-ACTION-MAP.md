@@ -499,3 +499,25 @@ Required final sequence:
 6. if green, mark TASK-152 Done and close/merge #768 through the normal claim/PR workflow.
 
 Do not close #768 based only on committed test files or source inspection.
+
+
+## PR #770 concrete CI repair packet
+Do not broaden architecture. Repair only observed failures.
+
+1. **UnderstandingState version collision**
+   - retain explicit persisted contract schema version, but do not collide with the pre-existing mutable/state revision field;
+   - choose an unambiguous schema-version field consistent with repository conventions (for example inspect whether canonical contracts use `schema_version`), rather than deleting state revision semantics;
+   - update constructor/types/tests and persisted compatibility deliberately.
+
+2. **Learning proposal adjustment typing**
+   - preserve the canonical allowed adjustment set: `ranking | recommendation_weight | workflow_preference | exception_pattern`;
+   - narrow donor/workforce proposal output at the bridge with validation/typed mapping; do not widen the Personal Zero contract to arbitrary strings.
+
+3. Re-run Titan Zero CI. Only after typecheck passes can unit-test/build evidence be evaluated.
+
+4. **Claim Gate**
+   - treat the `agent/768` rejection as workflow/protocol reconciliation, not Personal Zero code failure;
+   - inspect AGENTS.md and claim scripts/current issue-to-subgoal mapping before changing branch/validator behavior;
+   - do not bypass the gate merely to make PR #770 green.
+
+TASK-152/#768 remains In Progress until required code checks pass.
