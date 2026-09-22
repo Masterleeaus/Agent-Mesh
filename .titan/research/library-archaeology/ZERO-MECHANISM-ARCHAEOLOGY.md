@@ -112,3 +112,7 @@ OnboardingPro v6 source inspection confirms a reusable business-evolution lifecy
 
 ### ZM-014 — Zero poisoning is a promotion-boundary problem
 Knowledge Authority source verification adds source/version hashing, contradiction, stale/superseded and isolation controls to the previously verified cognitive-event and learning pipeline. Untrusted observations/model outputs/connected data may become evidence candidates but never durable Zero state or instructions directly. Preferred composition: Shield secures untrusted instructions; Knowledge Authority validates provenance/contradictions; Operation Identity validates actors; Learning Governor controls promotion; Rewind preserves recovery lineage; Trust/Assurance/Governance gate consequential action. Do not build a duplicate monolithic Zero Poisoning Engine.
+
+
+### ZM-015 — Rewind recovers state; it does not rewrite reality
+Rewind v1.0.9 source verification supports evidence-driven recovery. Personal Zero recovery should preserve lineage and supersede/recompute bad internal state, then trace its blast radius into decisions, handoffs, configuration and actions. External effects require compensation/remediation; irreversible effects must be declared rather than pretending a snapshot restored the world. Historical approvals/trust/delegations must be revalidated and never resurrected automatically during restore.
