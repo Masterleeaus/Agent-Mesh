@@ -83,15 +83,18 @@
     "Pass 20: regression guards prevent those post-claim mutation paths from bypassing centralized reconciliation preflight",
     "Pass 20: audited all current Agent Mesh bridge call sites in service-worker and bridge-client; read-only snapshot/health/capabilities/execution-audit calls require no mutation gate",
     "Pass 20: found and closed the remaining continuation checkpoint mutation bypass; checkpoint now requires READY_TO_RESUME before the bridge mutation",
-    "Pass 20: takeover plus Manager recover/route were already gated from Pass 19; regression test now proves checkpoint preflight occurs before its bridge call"
+    "Pass 20: takeover plus Manager recover/route were already gated from Pass 19; regression test now proves checkpoint preflight occurs before its bridge call",
+    "Pass 20: audited all current service-worker Agent Mesh bridge calls; reads are execution audit/snapshot/health/capabilities and mutations are checkpoint/takeover/recover/route",
+    "Pass 20: confirmed continuation checkpoint had already been concurrently hardened with the same GitHub-first resume gate; no bypass remained there",
+    "Pass 20: added regression coverage that checkpoint is resume-gated and that all four current Agent Mesh mutation call-site families remain visible to the guard"
   ],
   "current_work": [
-    "Reduce repeated resume-gate logic into a small preflight helper if this can be done without changing authority semantics"
+    "Reduce duplicated resume-gate checks with a central non-authoritative mutation preflight helper if this improves maintainability"
   ],
   "next_actions": [
-    "Consolidate fail-closed mutation preflight used by checkpoint/takeover/Manager execution",
-    "Keep operation-specific identity checks after preflight",
-    "Add tests that read-only Agent Mesh calls remain available while mutations fail closed"
+    "Refactor checkpoint/takeover/Manager mutation gating through one helper without changing authority semantics",
+    "Keep snapshot/health/capabilities/execution audit read-only and ungated",
+    "Add regression tests proving helper cannot convert advisory/model state into mutation authority"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
