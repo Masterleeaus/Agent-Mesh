@@ -1964,6 +1964,8 @@ async function checkpointAgentMeshContinuation(snapshot,reason='manager-lifecycl
 }
 async function takeoverAgentMeshContinuation(snapshot,{fromExecutionSession=null,toExecutionSession,reason='SESSION_REPLACED'}={}){
     if(!toExecutionSession) return {ok:false,reason:'to-execution-session-required'};
+    const resumeGate=await bootstrapAgentMeshResume(snapshot);
+    if(!resumeGate.ok||resumeGate.mayMutate!==true) return {ok:false,reason:'resume-reconciliation-required',mayMutate:false,bootstrap:resumeGate.bootstrap||null};
     const settings=await getSystemIntegrationSettings();
     if(!settings.bridgeEnabled||!settings.bridgeToken||!globalThis.CodeeTitanBridgeClient) return {ok:false,reason:'live-mesh-bridge-not-configured'};
     const value=snapshot&&typeof snapshot==='object'?snapshot:{},github=value.github||value.agentMesh||null;
@@ -2000,6 +2002,11 @@ async function runStoredManagerAISupervision(options={}){const live=await fetchL
 async function executeManagerAIPlan(options={}){
     const live=await fetchLiveManagerAISnapshot();
     const snapshot=live.snapshot||await getManagerAISnapshot();
+    const resumeGate=await bootstrapAgentMeshResume(snapshot);
+    if(!resumeGate.ok||resumeGate.mayMutate!==true){
+        const out={schema:'titan-code.manager-ai-execution.v2',generatedAt:new Date().toISOString(),source:live.source,inspection:null,plan:null,executed:[],skipped:[{reason:'agent-mesh-resume-reconciliation-required',bootstrap:resumeGate.bootstrap||null,detail:resumeGate.reason||null}],authority:{ai:false,managerRules:true,githubMergeRequest:false,delete:false,mayMutate:false}};
+        await chrome.storage.local.set({[MANAGER_AI_LAST_STORAGE_KEY]:out});return out;
+    }
     const inspection=globalThis.TitanCodeManagerAISupervisor.inspect(snapshot);
     const plan=globalThis.TitanCodeManagerAISupervisor.deterministicPlan(inspection);
     const executed=[]; const skipped=[];
