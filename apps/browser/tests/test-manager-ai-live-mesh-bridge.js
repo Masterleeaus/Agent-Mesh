@@ -82,3 +82,9 @@ const checkpointFn=sw.slice(sw.indexOf('async function checkpointAgentMeshContin
 if(!checkpointFn.includes('bootstrapAgentMeshResume(snapshot)')||!checkpointFn.includes("reason:'resume-reconciliation-required'")) throw new Error('continuation checkpoint must also be resume-gated');
 const mutationCalls=(sw.match(/agent_mesh\.(?:continuation\.checkpoint|continuation\.takeover|recover_agent|route_packet)/g)||[]);
 if(mutationCalls.length<4) throw new Error('expected Agent Mesh mutation call sites missing');
+
+if(!sw.includes('async function callAgentMeshMutation')) throw new Error('central Agent Mesh mutation preflight missing');
+if(!sw.includes("'agent_mesh-mutation-not-allowlisted'")) throw new Error('Agent Mesh mutation preflight must fail closed on unknown actions');
+if(!sw.includes("callAgentMeshMutation(config,'agent_mesh.continuation.checkpoint'")) throw new Error('checkpoint bypasses central mutation preflight');
+if(!sw.includes("callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover bypasses central mutation preflight');
+if(!sw.includes('callAgentMeshMutation(config,action,payload,snapshot)')) throw new Error('Manager Agent Mesh mutations bypass central preflight');
