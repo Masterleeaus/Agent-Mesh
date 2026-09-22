@@ -317,3 +317,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-047 | Titan Platform scoped test-path verification | packages/titan-platform/package.json + PR #770 CI state | package blob 642a0b5f0648781a591f38210828621074c48f56 | ACTIVE/CERTIFICATION | DIRECT SOURCE VERIFIED | Existing test:unit command already compiles Titan Platform and runs package tests. Remaining gap is invoking it independently of unrelated worker CI failure; no new test framework needed. | YES |
+
+
+| INGEST-048 | Personal Zero Verification run #1 | workflow run 35787598460 / job 106948069220 | head f1c0e37dafa30c1744dd083e9e506aa3debe4cb7 | ACTIVE/FAILED-CERTIFICATION | DIRECT EXECUTION EVIDENCE | Typecheck passes. Personal Zero tests visibly exercise key TASK-152 invariants; one legacy-tenant assertion fails because runtime says “Personal Zero context company mismatch” while regex expects company_id/legacy tenant. Package-wide 111 failures are dominated by unrelated Workforce compiled-output/export debt. | YES |
