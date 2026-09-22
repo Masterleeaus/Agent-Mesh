@@ -74,17 +74,19 @@
       ]
     },
     {
-      "id": "automotive",
-      "name": "Automotive",
+      "id": "asset-services",
+      "name": "Asset Services",
       "examples": [
-        "Mechanics",
+        "Automotive",
+        "Cars & trucks",
+        "Appliance repair",
+        "Electronics & devices",
+        "Machinery",
+        "Equipment servicing",
+        "Mobile repairs",
         "Workshops",
-        "Dealerships",
-        "Tyre services",
         "Auto electricians",
-        "Smash repair",
-        "Detailing",
-        "Mobile mechanics"
+        "Detailing"
       ],
       "sites": [
         "marketing-fieldops"
@@ -130,15 +132,57 @@
     "marketing-fieldcrew": "Field Services / Cleaning industry pack",
     "marketing-nexjob": "Field Services / broad field-service industry pack",
     "marketing-tradepilot": "Trades & Construction / trade industry packs",
-    "marketing-fieldops": "Automotive / automotive service industry pack",
+    "marketing-fieldops": "Asset Services / automotive is the initial industry pack; broaden the vertical entry point to assets, equipment, devices, appliances and vehicles",
     "marketing-trydrafted": "Personal Services / initial donor conversion; do not retain contractor-only positioning"
   },
   "crossVerticalCapabilities": [
-    "Environmental intelligence",
-    "Environmental impact and efficiency analysis",
-    "Privacy and security",
-    "AI workforce",
+    "Fully managed Advanced Intelligence workforce",
+    "Existing-system integration plus software gap filling",
+    "Environmental assessment, auditing and improvement",
+    "Privacy-first and device-first architecture",
+    "Private and local LLMs and private RAG",
+    "Customer-controlled edge node network",
+    "BYO API and AI keys",
     "Governance and assurance",
     "Cost sovereignty"
-  ]
+  ],
+  "sharedPageSystem": {
+    "strategy": "Each vertical site is the entry point for that vertical and may be deployed on its own subdomain. Preserve useful donor sales pages, rebrand/correct them, and add the shared Titan Zero differentiation pages rather than deleting the original site breadth.",
+    "requiredPages": [
+      {
+        "id": "fully-managed",
+        "purpose": "Explain assessment, integration, gap-filling software, workforce configuration, ongoing management and improvement."
+      },
+      {
+        "id": "privacy-architecture",
+        "purpose": "Privacy-first/device-first architecture, private LLM/RAG, edge node network, locality and provider choice."
+      },
+      {
+        "id": "cost-sovereignty",
+        "purpose": "BYO API/AI keys, local/private models, customer-owned compute and transparent third-party cost structure."
+      },
+      {
+        "id": "environmental-systems",
+        "purpose": "Environmental assessment, auditing, evidence, compliance and improvement with appropriately qualified environmental scientists where professional judgement/sign-off is required."
+      },
+      {
+        "id": "compare",
+        "purpose": "Explain how the Titan Zero managed-system model differs from typical software-first and bundled-AI approaches without unsupported competitor claims."
+      },
+      {
+        "id": "industries",
+        "purpose": "Vertical-specific industry directory linking to dedicated industry landing pages."
+      }
+    ],
+    "verticalEntryPoints": {
+      "field-services": "marketing-nexjob",
+      "trades-construction": "marketing-tradepilot",
+      "personal-services": "marketing-trydrafted",
+      "asset-services": "marketing-fieldops",
+      "professional-business-services": "pending dedicated site"
+    },
+    "deployment": "Vertical entry sites must remain independently deployable so DNS/subdomains can be assigned later without making them Titan Zero runtime dependencies.",
+    "copyRule": "Reuse the shared page architecture and concepts across verticals, but rewrite examples, workflows, pain points, workforce roles, capabilities and industry language for the target vertical.",
+    "industryPageRule": "Each listed industry should have a dedicated landing page beneath its vertical entry site. Industry pages should use the vertical's shared managed-system architecture but contain industry-specific workflows, pain points, workforce roles, knowledge and capabilities."
+  }
 }
