@@ -273,3 +273,60 @@ HIGH
 
 ### Related action
 ACTION-GH-001 / ongoing Business Reality owner-resolution scan.
+
+
+---
+
+## FINDING-GH-008
+
+### Finding
+Historical `Masterleeaus/zero` contains an AIOX Memory Intelligence System donor with episodic, semantic, procedural and reflective cognitive sectors, progressive retrieval, attention scoring, privacy scoping and planned correction/outcome learning.
+
+### Why it matters
+It is useful evidence for separating what happened, what is true, how work is done and what was learned. Those distinctions can inform canonical Understanding/Experience semantics without creating another memory engine.
+
+### Evidence
+Repository: `Masterleeaus/zero`
+Branch: `main`
+Path: `CodeToUse/AI/AICores/aiox-core-main/docs/guides/MEMORY-INTEGRATION.md`
+Document identifies MIS-6 and describes integration with UnifiedActivationPipeline plus future MIS-5 self-learning.
+
+### Current Titan equivalent
+#153 canonical Business Memory & Knowledge runtime.
+
+### Classification
+HISTORICAL / PARTIAL; likely external AIOX donor lineage requiring provenance/license verification.
+
+### Confidence
+HIGH for documented semantics; MEDIUM for Titan-origin lineage.
+
+### Related action
+Compare against #153; harvest only superior/licensable semantics.
+
+---
+
+## FINDING-GH-009
+
+### Finding
+The same historical AIOX donor specifies a remember → learn → evolve/adapt lifecycle with contextual preferences/rules, saved insights, fitness metrics and rollback points.
+
+### Why it matters
+This is a concrete historical mechanism precursor to continuous evolution, while also showing why Evolution must remain separate from authority.
+
+### Evidence
+Repository: `Masterleeaus/zero`
+Branch: `main`
+Path: `CodeToUse/AI/AICores/aiox-core-main/docs/meta-agent-commands.md`
+Commands inspected: `remember`, `learn`, `evolve`, `adapt`.
+
+### Current Titan equivalent
+Pieces are owned by #153 memory, #59 decision re-evaluation and #293 recovery; no single Evolution orchestration owner has yet been verified.
+
+### Classification
+HISTORICAL / SPECIFICATION ONLY or PARTIAL
+
+### Confidence
+HIGH for documented design; LOW-MEDIUM for runtime implementation until code/tests are inspected.
+
+### Related action
+Use as architecture evidence; do not create a parallel self-modifying engine.
