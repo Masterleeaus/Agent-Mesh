@@ -173,3 +173,24 @@ Evidence: governed read-only MCP inspector, existing governance gateway, unknown
 Library file: LBR-P1-G45-DISCOVERY-001.json
 Classification: VERIFIED GOAL45 DISCOVERY.
 Evidence: Titan Code browser context capture/page-aware policy/side panel/contextual routing and lifecycle/migration/rollback patterns exist; finding explicitly requires projection through canonical Titan capabilities and one extension lifecycle rather than extension-private domain logic.
+
+
+## SOURCE-LIB-024
+Library file: ARCHITECTURE-ROADMAP-TARGET-ARCHITECTURE-PASS03.json
+Classification: PHYSICALLY VERIFIED DONOR MAPPING.
+Evidence: Titan Builder v0.10.2 contains versioned publishing, builder rollback action and migration normalization; roadmap finding calls for canonical receipt-backed upgrade/deprecation/rollback semantics rather than per-extension recovery.
+
+## SOURCE-LIB-025
+Library file: ARCHITECTURE-ROADMAP-TARGET-ARCHITECTURE-PASS06.json
+Classification: PHYSICALLY VERIFIED DONOR MAPPING.
+Evidence: Titan Code migration/rollback/recovery donor paths, Titan MCP RecoveryTools and Titan Forge release governance/release verification are verified; finding calls for one lifecycle/recovery contract.
+
+## SOURCE-LIB-026
+Library file: WORKFORCE-ARCHITECTURE.json
+Classification: CURRENT ARCHITECTURE SPECIFICATION.
+Evidence: workforce recovery policy requires checkpoint before consequential action, idempotent command where possible, compensating/reversal action, receipt verification and Titan Rewind trace; success cannot be reported before expected state and receipt are verified.
+
+## SOURCE-LIB-027
+Library file: Titan-Zero-Library-Archaeology prompt (Pasted markdown 20260922-105857)
+Classification: ARCHAEOLOGY MISSION SPECIFICATION.
+Evidence: explicitly requires search for rollback, undo, rewind, revisions, snapshots, immutable history, audit trails, event sourcing, compensation, recovery, transaction history and temporal state, compared with current Titan Rewind.
