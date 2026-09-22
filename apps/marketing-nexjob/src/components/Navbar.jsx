@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ChevronDown } from 'lucide-react'
 import { appRoutes } from '../config'
+
+const industryLinks = [
+  ['Cleaning','cleaning'],['Landscaping & Lawn Care','landscaping'],['Pool Service','pools'],['Pressure Washing','pressure-washing'],['Pest Control','pest-control'],['Window Cleaning','window-cleaning'],['Property Maintenance','property-maintenance'],['Mobile Services','mobile-services'],
+]
 
 const navLinks = [
   { label: 'Home', path: '/' },
@@ -44,6 +48,14 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
+          <div className="relative group">
+            <Link to="/industries" className="text-sm font-medium px-3.5 py-2 rounded-lg text-nx-muted hover:text-nx-text hover:bg-white/5 inline-flex items-center gap-1">
+              Industries <ChevronDown size={14}/>
+            </Link>
+            <div className="absolute right-0 top-full mt-1 w-64 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
+              {industryLinks.map(([label,slug])=><Link key={slug} to={`/industries/${slug}`} className="block px-3 py-2.5 rounded-lg text-sm text-nx-muted hover:text-nx-text hover:bg-white/5">{label}</Link>)}
+            </div>
+          </div>
         </div>
 
         {/* CTA — linked to Titan Zero Command */}
@@ -86,6 +98,10 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
+          <div className="mt-3 border-t border-nx-border pt-3">
+            <p className="px-3 py-2 text-xs uppercase tracking-widest text-nx-muted2">Industries</p>
+            {industryLinks.map(([label,slug])=><Link key={slug} to={`/industries/${slug}`} onClick={()=>setMobileOpen(false)} className="block px-3 py-2 text-sm text-nx-muted">{label}</Link>)}
+          </div>
           <div className="mt-3 flex flex-col gap-2">
             <a href={appRoutes.login} className="text-sm font-medium text-nx-muted py-2 text-center">
               Log In
