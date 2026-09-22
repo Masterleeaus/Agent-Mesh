@@ -106,3 +106,49 @@ Notes: Current canonical set substantially describes Dovetails FSM; requires con
 
 ## SOURCE RELATIONSHIP NOTE
 Historical files copied between GitHub, Library archives, ZIPs or branches are treated as one underlying source lineage unless provenance proves independent origin.
+
+
+## SOURCE-CSA-014
+Repository: Masterleeaus/Agent-Mesh
+Branch: agent/765
+Path: workspaces/github-archaeology/FINDINGS.md
+Inspected: YES
+Relevant findings: FINDING-CSA-009, FINDING-CSA-010, FINDING-CSA-012
+Notes: Cross-agent supporting evidence. Findings reference exact historical branches/files; this audit does not count the workspace and underlying historical source as independent confirmations.
+
+## SOURCE-CSA-015
+Repository: Masterleeaus/Agent-Mesh
+Branch: agent/765
+Path: workspaces/github-archaeology/CAPABILITY-RECOVERY-MATRIX.md
+Inspected: YES
+Relevant findings: FINDING-CSA-012
+Notes: Specialist source comparison for revision-aware recomposition, value-level provenance and AI-proposal separation.
+
+## SOURCE-CSA-016
+Repository: Masterleeaus/Agent-Mesh
+Branch: agent/765
+Path: workspaces/github-archaeology/CANONICAL-OWNER-MAP.md
+Inspected: YES
+Relevant findings: FINDING-CSA-009, FINDING-CSA-010
+Notes: Cross-agent owner reconciliation; checked against current issues #153 and #72/#648.
+
+## SOURCE-CSA-017
+Repository: Masterleeaus/Agent-Mesh
+Issue: #153
+Inspected: YES
+Relevant findings: FINDING-CSA-010
+Notes: Canonical Business Memory/Knowledge owner; explicitly includes OnboardingPro longitudinal strategy memory, anti-repeat, verified outcomes and no-authority-from-memory constraints.
+
+## SOURCE-CSA-018
+Repository: Masterleeaus/Agent-Mesh
+Issue: #767
+Inspected: YES
+Relevant findings: FINDING-CSA-011
+Notes: Existing OnboardingPro Evolution/Reality convergence action; do not duplicate.
+
+## SOURCE-CSA-019
+Repository: Masterleeaus/Agent-Mesh
+Issues: #72 and #648
+Inspected: YES
+Relevant findings: FINDING-CSA-009
+Notes: Confirms company_id is already the target invariant and remaining work is active-code enforcement/repository convergence.
