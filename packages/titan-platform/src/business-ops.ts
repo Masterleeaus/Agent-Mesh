@@ -1,3 +1,4 @@
+export * from "./field-permits.js";
 export * from "./warranty.js";
 import { classifyRisk, type TitanRiskAssessment } from "./intelligence.js";
 import { routeOperationalRole, type TitanRoleRouteResult } from "./workforce.js";
