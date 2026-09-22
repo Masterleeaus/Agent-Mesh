@@ -24,6 +24,8 @@ export type GovernedOutboundResult =
   | { ok: false; denied: false; reason: "provider-failed"; provider_id: string; receipt: DeliveryReceipt; retry?: { next_attempt: number; delay_ms: number } }
   | { ok: true; provider_id: string; receipt: DeliveryReceipt };
 
+export interface ProviderAttemptEvidence { provider_id: string; receipt: DeliveryReceipt; }
+
 /**
  * Canonical pre-provider orchestration seam. Authority is supplied by the
  * canonical authority/Command Bus boundary; this module only verifies it and
@@ -101,5 +103,87 @@ export async function executeGovernedOutbound(input: {
     ...(retry?.retry && retry.delay_ms !== undefined
       ? { retry: { next_attempt: retry.next_attempt, delay_ms: retry.delay_ms } }
       : {}),
+  };
+}
+
+
+/**
+ * Governed provider fallback. Every provider attempt stays inside the same
+ * already-authorized message execution and produces evidence. Fallback cannot
+ * cross channels or use unfunded/policy-blocked providers.
+ */
+export async function executeGovernedOutboundWithFallback(input: {
+  message: CommunicationEnvelope;
+  policy: OutboundCommunicationPolicy;
+  rate_limit: CommunicationRateLimit;
+  candidates: CommunicationProviderCandidate[];
+  adapters: CommunicationProviderAdapter[];
+  attempt?: number;
+}): Promise<{
+  result: GovernedOutboundResult;
+  attempts: ProviderAttemptEvidence[];
+}> {
+  const message = assertCommunicationEnvelope(input.message);
+  const gate = evaluateOutboundCommunicationGate({
+    policy: input.policy,
+    rate_limit: input.rate_limit,
+  });
+  if (!gate.allowed) {
+    return { result: { ok: false, denied: true, reason: gate.reason }, attempts: [] };
+  }
+
+  const eligible = input.candidates.filter(
+    (candidate) =>
+      candidate.channel === message.channel &&
+      candidate.available &&
+      candidate.funded &&
+      candidate.policy_allowed,
+  );
+  const attempts: ProviderAttemptEvidence[] = [];
+
+  for (const candidate of eligible) {
+    const adapter = input.adapters.find((item) => item.provider_id === candidate.provider_id);
+    if (!adapter) continue;
+    const providerResult = await adapter.send(message);
+    const receipt = createDeliveryReceipt({
+      message,
+      result: providerResult,
+      attempt: input.attempt,
+    });
+    attempts.push({ provider_id: candidate.provider_id, receipt });
+    if (providerResult.ok) {
+      return {
+        result: { ok: true, provider_id: candidate.provider_id, receipt },
+        attempts,
+      };
+    }
+  }
+
+  const last = attempts[attempts.length - 1];
+  if (last) {
+    return {
+      result: {
+        ok: false,
+        denied: false,
+        reason: "provider-failed",
+        provider_id: last.provider_id,
+        receipt: last.receipt,
+      },
+      attempts,
+    };
+  }
+
+  return {
+    result: {
+      ok: false,
+      denied: false,
+      reason: "no-provider",
+      receipt: createDeliveryReceipt({
+        message,
+        result: { ok: false, error_code: "no-provider" },
+        attempt: input.attempt,
+      }),
+    },
+    attempts,
   };
 }
