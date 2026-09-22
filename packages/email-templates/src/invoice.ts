@@ -1,4 +1,4 @@
-import { formatCents } from "@ai-fsm/money";
+import { formatCents } from "@titan-zero/money";
 import { BRAND, btn, wrap } from "./layout.js";
 import type { InvoiceEmailData, InvoiceFollowupEmailData } from "./types.js";
 
