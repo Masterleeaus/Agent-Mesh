@@ -1,0 +1,6 @@
+import assert from "node:assert/strict";import test from "node:test";
+import { assessRecurringPreferenceWindow,buildTitanRecurringPreferences } from "../.test-dist/src/recurring-preferences.js";
+const base={company_id:"c1",schedule_id:"s1",provenance:{source:"fieldservicepro-convergence",recorded_at:"2026-09-22T00:00:00Z",idempotency_key:"k1"}};
+test("recurring preferences preserve seasonality and pause without execution authority",()=>{const p=buildTitanRecurringPreferences({...base,seasonal_months:[3,9],pause_until:"2026-09-30",preferred_weekday:"tue",preferred_time:"09:30",generate_advance_days:14});assert.equal(p.automatic_generation,false);assert.equal(p.grants_authority,false);assert.deepEqual(assessRecurringPreferenceWindow(p,"2026-09-22").reasons,["PAUSED_UNTIL"]);assert.deepEqual(assessRecurringPreferenceWindow(p,"2026-10-01").reasons,["OUTSIDE_SEASON"]);});
+test("legacy boundary fails closed",()=>assert.throws(()=>buildTitanRecurringPreferences({...base,account_id:"a1"}),/legacy tenant boundary/));
+test("invalid calendar values fail closed",()=>{assert.throws(()=>buildTitanRecurringPreferences({...base,seasonal_months:[13]}),/1-12/);assert.throws(()=>buildTitanRecurringPreferences({...base,preferred_time:"25:00"}),/HH:MM/);});
