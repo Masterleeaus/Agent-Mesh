@@ -1,0 +1,11 @@
+import SectionLabel from '../components/SectionLabel'
+import CTASection from '../components/CTASection'
+const areas=[
+['Environmental assessment','Structure environmental information, evidence and workflows to support assessment and decision-making.'],
+['Environmental auditing','Support evidence collection, audit preparation, findings, actions, follow-up and traceable environmental records.'],
+['Resource & waste review','Analyse operational resource use, waste streams and opportunities for practical environmental improvement.'],
+['Water, soil & emissions data','Organise field and laboratory information, trends, exceptions and reporting inputs for qualified review.'],
+['Compliance support','Maintain environmental obligations, evidence, recurring checks and controlled knowledge alongside operational workflows.'],
+['Improvement programs','Turn findings into assigned actions, evidence and ongoing measurement rather than leaving environmental work in static reports.'],
+]
+export default function EnvironmentalSystems(){return <><section className="pt-32 pb-16 px-6 text-center"><div className="max-w-5xl mx-auto"><SectionLabel>Environmental Systems</SectionLabel><h1 className="text-4xl sm:text-6xl font-extrabold mb-5">Environmental intelligence built into <span className="text-nx-purple-light">how the business operates.</span></h1><p className="text-lg text-nx-muted max-w-3xl mx-auto">Titan Zero can extend the managed system with environmental assessment, auditing, evidence and improvement workflows. Where professional environmental judgement is required, work can be performed or reviewed by appropriately qualified environmental scientists rather than treating an AI output as professional sign-off.</p></div></section><section className="px-6 pb-24"><div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-5">{areas.map(([t,d])=><div key={t} className="bg-nx-surface border border-nx-border rounded-2xl p-7"><h2 className="text-lg font-bold mb-2">{t}</h2><p className="text-sm text-nx-muted leading-relaxed">{d}</p></div>)}</div></section><CTASection title="Make environmental performance part of operations." subtitle="Assessment, evidence, actions and qualified review can sit alongside the rest of the managed business system."/></>}

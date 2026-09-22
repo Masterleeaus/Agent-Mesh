@@ -15,7 +15,11 @@
     "./workforce-capacity": "./src/workforce-capacity/index.ts",
     "./interface-runtime": "./src/interface-runtime.ts",
     "./visual-runtime": "./src/visual-runtime.ts",
-    "./titan-builder": "./src/titan-builder/index.ts"
+    "./titan-builder": "./src/titan-builder/index.ts",
+    "./titan-connect": "src/ported/titan-connect/connector-contract.ts",
+    "./titan-connect/mcp": "src/ported/titan-connect/mcp-host-contract.ts",
+    "./titan-connect/credentials": "src/ported/titan-connect/credential-contract.ts",
+    "./ai-core/cost-sovereignty": "src/ported/titan-ai-core/cost-sovereignty.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",

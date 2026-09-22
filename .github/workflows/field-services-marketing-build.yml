@@ -1,0 +1,29 @@
+name: Field Services Marketing Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/marketing-nexjob/**'
+      - '.github/workflows/field-services-marketing-build.yml'
+  pull_request:
+    paths:
+      - 'apps/marketing-nexjob/**'
+      - '.github/workflows/field-services-marketing-build.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/marketing-nexjob
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: apps/marketing-nexjob/package-lock.json
+      - run: npm ci
+      - run: npm run check

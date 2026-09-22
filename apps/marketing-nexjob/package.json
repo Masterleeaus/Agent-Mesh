@@ -1,12 +1,13 @@
 {
-  "name": "nexjob-marketing",
+  "name": "titan-zero-field-services-marketing",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check": "vite build"
   },
   "dependencies": {
     "lucide-react": "^0.383.0",

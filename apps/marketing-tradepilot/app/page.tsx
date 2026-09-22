@@ -183,18 +183,21 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between" style={{ height: 64 }}>
           <Image src="/app_icon.png" alt="Titan Zero" width={40} height={40} style={{ height: 32, width: 'auto' }} priority />
           <div className="hidden md:flex items-center gap-7">
-            {['App', 'How It Works', 'Features', 'Pricing'].map(link => (
-              <a key={link} href={`#${link.toLowerCase().replace(/[TM\s]/g, '-').replace('how-it-works', 'features')}`}
+            {['Industries', 'How It Works', 'Workforce', 'Resources'].map(link => (
+              <a key={link} href={`#${link.toLowerCase().replace(/\s/g, '-').replace('how-it-works', 'features').replace('workforce', 'features').replace('resources', 'faq')}`}
                 style={{ color: '#FFFFFF', fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, textDecoration: 'none', opacity: 0.85 }}
                 onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
                 onMouseLeave={e => (e.currentTarget.style.opacity = '0.85')}
               >{link}</a>
             ))}
           </div>
-          <a href="#waitlist" style={{
-            background: '#E8352A', color: '#FFFFFF', fontWeight: 700, fontSize: 13,
-            padding: '8px 18px', borderRadius: '4px', textDecoration: 'none', letterSpacing: '0.04em',
-          }}>Join Waitlist</a>
+          <div className="flex items-center gap-3">
+            <a href="https://titanzero.io/app" style={{ color: '#FFFFFF', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>Login</a>
+            <a href="https://titanzero.io/app" style={{
+              background: '#E8352A', color: '#FFFFFF', fontWeight: 700, fontSize: 13,
+              padding: '8px 18px', borderRadius: '4px', textDecoration: 'none', letterSpacing: '0.04em',
+            }}>Sign Up</a>
+          </div>
         </div>
       </nav>
 
@@ -223,20 +226,20 @@ export default function Home() {
             {/* Left: Copy */}
             <div style={{ maxWidth: 600 }}>
               <div className="mb-5" style={{ fontSize: 12, color: '#E8352A', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700 }}>
-                AI-NATIVE FIELD SERVICE
+                TRADES & CONSTRUCTION
               </div>
               <h1 className="font-black" style={{ fontSize: 'clamp(48px, 7vw, 72px)', lineHeight: 1.05, marginBottom: 20, color: '#FFFFFF' }}>
-                You built this city.<br />Now run it smarter.
+                Run the work.<br />Know the job is under control.
               </h1>
               <p style={{ fontSize: 18, color: '#AAAAAA', maxWidth: 520, lineHeight: 1.65, marginBottom: 32 }}>
-                Titan Zero implements and manages an Advanced Intelligence workforce around the systems your business already uses. Chat, voice and camera become practical ways to get work done without adding another admin-heavy system.
+                Titan Zero adds a managed Advanced Intelligence workforce around the systems your trade business already uses — connecting enquiries, estimates, schedules, crews, site information, materials, job stages, customer communication and billing without forcing a replacement platform.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 mb-12">
-                <a href="#waitlist" style={{
+                <a href="https://titanzero.io/app" style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8,
                   background: '#E8352A', color: '#FFFFFF', fontWeight: 700,
                   padding: '14px 28px', borderRadius: '4px', textDecoration: 'none', fontSize: 15,
-                }}>Claim My Founding Spot &rarr;</a>
+                }}>Sign Up &rarr;</a>
                 <a href="#app-preview" style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8,
                   background: 'transparent', color: '#FFFFFF', fontWeight: 600,
@@ -246,17 +249,17 @@ export default function Home() {
               </div>
               {/* Built for strip */}
               <div style={{ fontSize: 13, color: '#AAAAAA', letterSpacing: '0.04em' }}>
-                Built for: Plumbers &middot; HVAC Techs &middot; Electricians &middot; Contractors &middot; Landscapers
+                Built for: Plumbing &middot; Electrical &middot; HVAC &middot; Roofing &middot; Building &middot; Renovations &middot; Carpentry
               </div>
             </div>
 
             {/* Right: 2x2 stats grid */}
             <div className="grid grid-cols-2 gap-3" style={{ minWidth: 280 }}>
               {[
-                { value: '47 min', label: 'Lost to paperwork every job' },
-                { value: '$12K', label: 'Uncharged time per year' },
-                { value: '3.2x', label: 'Faster quoting with AI' },
-                { value: '8 hrs', label: 'Admin saved per week' },
+                { value: 'Quote', label: 'Estimate and scope the work' },
+                { value: 'Plan', label: 'Schedule crews and job stages' },
+                { value: 'Build', label: 'Capture site, labour and materials' },
+                { value: 'Bill', label: 'Move completed work toward payment' },
               ].map(s => (
                 <div key={s.label} style={{
                   background: '#181818', borderLeft: '3px solid #E8352A',
