@@ -27,11 +27,20 @@ const allowed = {
 const rate = { limit: 10, used: 0, resets_at: "2026-09-22T07:00:00.000Z" };
 
 describe("executeGovernedOutbound", () => {
-  beforeEach(() => recordDeliveryReceipt.mockClear());
+  let sequence = 0;
+  beforeEach(() => {
+    recordDeliveryReceipt.mockClear();
+    sequence += 1;
+  });
+  const uniqueMessage = () => ({
+    ...message,
+    id: `${message.id}-${sequence}`,
+    correlation_id: `${message.correlation_id}-${sequence}`,
+  });
   it("does not invoke providers when authority is denied", async () => {
     const send = vi.fn();
     const result = await executeGovernedOutbound({
-      message,
+      message: uniqueMessage(),
       policy: { ...allowed, authority_allowed: false },
       rate_limit: rate,
       candidates: [{ provider_id: "gateway", channel: "sms", available: true, funded: true, policy_allowed: true }],
@@ -45,7 +54,7 @@ describe("executeGovernedOutbound", () => {
   it("selects an eligible provider and emits canonical delivery evidence", async () => {
     const send = vi.fn().mockResolvedValue({ ok: true, provider_message_id: "provider-1" });
     const result = await executeGovernedOutbound({
-      message,
+      message: uniqueMessage(),
       policy: allowed,
       rate_limit: rate,
       candidates: [
@@ -67,7 +76,7 @@ describe("executeGovernedOutbound", () => {
   it("returns bounded retry evidence after a retryable provider failure", async () => {
     const send = vi.fn().mockResolvedValue({ ok: false, error_code: "gateway-timeout" });
     const result = await executeGovernedOutbound({
-      message,
+      message: uniqueMessage(),
       policy: allowed,
       rate_limit: rate,
       candidates: [{ provider_id: "gateway", channel: "sms", available: true, funded: true, policy_allowed: true }],
@@ -88,7 +97,7 @@ describe("executeGovernedOutbound", () => {
   it("stops retrying when the configured attempt limit is reached", async () => {
     const send = vi.fn().mockResolvedValue({ ok: false, error_code: "gateway-timeout" });
     const result = await executeGovernedOutbound({
-      message,
+      message: uniqueMessage(),
       policy: allowed,
       rate_limit: rate,
       candidates: [{ provider_id: "gateway", channel: "sms", available: true, funded: true, policy_allowed: true }],
@@ -104,7 +113,7 @@ describe("executeGovernedOutbound", () => {
     const primary = vi.fn().mockResolvedValue({ ok: false, error_code: "primary-down" });
     const fallback = vi.fn().mockResolvedValue({ ok: true, provider_message_id: "fallback-1" });
     const { result, attempts } = await executeGovernedOutboundWithFallback({
-      message,
+      message: uniqueMessage(),
       policy: allowed,
       rate_limit: rate,
       candidates: [
@@ -129,7 +138,7 @@ describe("executeGovernedOutbound", () => {
   it("never falls back across communication channels", async () => {
     const email = vi.fn().mockResolvedValue({ ok: true });
     const { result } = await executeGovernedOutboundWithFallback({
-      message,
+      message: uniqueMessage(),
       policy: allowed,
       rate_limit: rate,
       candidates: [{ provider_id: "email-provider", channel: "email", available: true, funded: true, policy_allowed: true }],
@@ -138,4 +147,21 @@ describe("executeGovernedOutbound", () => {
     expect(result).toMatchObject({ ok: false, reason: "no-provider" });
     expect(email).not.toHaveBeenCalled();
   });
+  it("suppresses a duplicate before a second provider execution", async () => {
+    const send = vi.fn().mockResolvedValue({ ok: true, provider_message_id: "provider-dedupe" });
+    const duplicateMessage = uniqueMessage();
+    const input = {
+      message: duplicateMessage,
+      policy: allowed,
+      rate_limit: rate,
+      candidates: [{ provider_id: "gateway", channel: "sms" as const, available: true, funded: true, policy_allowed: true }],
+      adapters: [{ provider_id: "gateway", send }],
+    };
+    const first = await executeGovernedOutbound(input);
+    const second = await executeGovernedOutbound(input);
+    expect(first).toMatchObject({ ok: true });
+    expect(second).toEqual({ ok: false, denied: false, reason: "duplicate" });
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
 });
