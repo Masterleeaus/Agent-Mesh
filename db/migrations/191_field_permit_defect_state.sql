@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS field_permits (
   provenance JSONB NOT NULL DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CHECK (length(trim(company_id)) > 0)
+  idempotency_key TEXT NOT NULL DEFAULT '',
+  CHECK (length(trim(company_id)) > 0),
+  CHECK (length(trim(idempotency_key)) > 0)
 );
 CREATE INDEX IF NOT EXISTS idx_field_permits_work_order ON field_permits(company_id,work_order_id);
 
@@ -48,6 +50,10 @@ CREATE TABLE IF NOT EXISTS field_defects (
   CHECK (length(trim(company_id)) > 0)
 );
 CREATE INDEX IF NOT EXISTS idx_field_defects_work_order ON field_defects(company_id,work_order_id);
+
+CREATE UNIQUE INDEX IF NOT EXISTS uq_field_permits_idempotency ON field_permits(company_id,idempotency_key);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_field_permit_inspections_idempotency ON field_permit_inspections(company_id,idempotency_key);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_field_defects_idempotency ON field_defects(company_id,idempotency_key);
 
 
 -- Fail closed if compatibility account boundaries or canonical company/work-order
