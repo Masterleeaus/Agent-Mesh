@@ -37,3 +37,9 @@ if(!bridge.includes("agent_mesh.execution.audit")) throw new Error('execution au
 if(!sw.includes('fetchAgentMeshExecutionAudit')) throw new Error('execution audit projection helper missing');
 if(!sw.includes("authority:'github-projection-only'")) throw new Error('execution audit must remain projection-only');
 if(!sw.includes('mayMerge:false') || !sw.includes('mayReleaseClaim:false')) throw new Error('execution audit must not gain merge/claim release authority');
+
+if(!sw.includes('const executionAudit=await fetchAgentMeshExecutionAudit')) throw new Error('live snapshot must attach execution audit');
+if(!sw.includes('liveReconciliation,executionAudit')) throw new Error('execution audit missing from normalized live snapshot');
+const rr=fs.readFileSync('src/titan-zero/manager-restart-reconstruction.js','utf8');
+if(!rr.includes("mayAdvanceLifecycle:false")) throw new Error('execution audit must not advance lifecycle during restart');
+if(!rr.includes("authority:'github-projection-only'")) throw new Error('restart execution evidence must remain projection-only');
