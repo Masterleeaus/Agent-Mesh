@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { Client } from "pg";
-import { extractFirmCommitments } from "@titan-zero/domain/promise-capture";
+import { extractFirmCommitments } from "@ai-fsm/domain/promise-capture";
 import { logger } from "./logger.js";
 
 const CAPTURE_UPLOAD_ROOT = "/app/uploads/captures";
