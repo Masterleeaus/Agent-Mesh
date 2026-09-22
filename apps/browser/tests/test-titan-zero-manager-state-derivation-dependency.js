@@ -89,3 +89,5 @@ const legacyState=S.deriveLegacy({packets:[{packet_id:'LEGACY_NEXT',status:'AVAI
 
 const noGithub=S.derive({packets:[{packet_id:'LEGACY',status:'AVAILABLE'}],claims:[]});assert.strictEqual(noGithub.source,'github');assert.strictEqual(noGithub.failClosed,true);assert.strictEqual(noGithub.drift[0].code,'github-state-required');
 const qNoGithub=Q.project({packets:[{packet_id:'LEGACY',status:'AVAILABLE'}]});assert.strictEqual(qNoGithub.source,'github');assert.strictEqual(qNoGithub.nextGlobal,null);assert.strictEqual(qNoGithub.authority.localQueueProjectionOnly,true);
+
+const legacyQueue=Q.projectLegacy({packets:[{packet_id:'LEGACY',priority:'P0',status:'AVAILABLE'}],claims:[],dependencyState:{byPacket:{LEGACY:{eligible:true}}}});assert.strictEqual(legacyQueue.nextGlobal,null);assert.deepStrictEqual(legacyQueue.nextByLane,{});assert.deepStrictEqual(legacyQueue.legacyCandidates,['LEGACY']);assert.strictEqual(legacyQueue.authority.maySelectClaimCandidate,false);assert.strictEqual(legacyQueue.authority.mayUnlockDependency,false);assert.strictEqual(legacyQueue.authority.mayAdvanceLifecycle,false);assert.strictEqual(legacyQueue.authority.mayRequestMerge,false);
