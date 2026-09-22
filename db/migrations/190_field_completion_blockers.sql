@@ -5,7 +5,7 @@
 -- canonical boundary and must be supplied after boundary normalization.
 
 CREATE TABLE IF NOT EXISTS field_completion_blockers (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id TEXT PRIMARY KEY,
   company_id TEXT NOT NULL,
   account_id UUID NOT NULL,
   work_order_id UUID NOT NULL REFERENCES work_orders(id) ON DELETE CASCADE,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS field_completion_blockers (
   reason TEXT NOT NULL,
   blocking BOOLEAN NOT NULL DEFAULT TRUE,
   resolved_at TIMESTAMPTZ,
-  provenance JSONB NOT NULL DEFAULT '{}'::jsonb,
+  provenance JSON NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT field_completion_blockers_company_required CHECK (length(trim(company_id)) > 0),
@@ -23,26 +23,8 @@ CREATE TABLE IF NOT EXISTS field_completion_blockers (
 );
 
 CREATE INDEX IF NOT EXISTS idx_field_completion_blockers_open
-  ON field_completion_blockers (company_id, work_order_id)
-  WHERE blocking = TRUE AND resolved_at IS NULL;
+  ON field_completion_blockers (company_id, work_order_id, blocking, resolved_at);
 
-CREATE OR REPLACE FUNCTION validate_field_completion_blocker_work_order()
-RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE
-  wo_account_id UUID;
-BEGIN
-  SELECT account_id INTO wo_account_id FROM work_orders WHERE id = NEW.work_order_id;
-  IF wo_account_id IS NULL THEN
-    RAISE EXCEPTION 'work_order % not found', NEW.work_order_id USING ERRCODE = 'P0001';
-  END IF;
-  IF NEW.account_id IS DISTINCT FROM wo_account_id THEN
-    RAISE EXCEPTION 'completion blocker account boundary must match work order' USING ERRCODE = 'P0001';
-  END IF;
-  RETURN NEW;
-END;
-$$;
-
-DROP TRIGGER IF EXISTS trg_field_completion_blocker_work_order ON field_completion_blockers;
-CREATE TRIGGER trg_field_completion_blocker_work_order
-  BEFORE INSERT OR UPDATE OF account_id, work_order_id ON field_completion_blockers
-  FOR EACH ROW EXECUTE FUNCTION validate_field_completion_blocker_work_order();
+-- Cross-record boundary validation is enforced by the governed mutation layer
+-- inside the same transaction for PostgreSQL and MySQL. Avoid dialect-specific
+-- trigger functions here; company_id remains the canonical boundary.
