@@ -94,6 +94,30 @@ async function logCommunicationStorage(opts: LogCommunicationOpts): Promise<stri
 }
 
 
+/**
+ * Durable company-scoped idempotency claim using the existing communications
+ * audit store. A successful insert owns the key; a duplicate returns false.
+ * This complements the process-local replay guard for multi-instance runtimes.
+ */
+export async function claimCommunicationIdempotency(input: {
+  company_id: string;
+  external_id: string;
+  channel: "sms" | "email" | "phone";
+  initiated_by?: string | null;
+}): Promise<boolean> {
+  if (!input.company_id.trim()) throw new Error("company_id is required");
+  if (!input.external_id.trim()) throw new Error("external_id is required");
+  const id = await logCommunicationForCompany({
+    company_id: input.company_id,
+    channel: input.channel,
+    direction: "outbound",
+    outcome: "sent",
+    initiatedBy: input.initiated_by ?? null,
+    externalId: input.external_id,
+  });
+  return id !== null;
+}
+
 export async function findCommunicationByExternalId(accountId: string, externalId: string) {
   return portableQueryOne<{ id: string; outcome: string }>(
     `SELECT id, outcome FROM communications_log WHERE account_id = $1 AND external_id = $2 LIMIT 1`,
