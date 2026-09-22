@@ -91,3 +91,24 @@ Archive: ZIP
 Inspected: YES — source-level Pass 3
 Relevant findings: FINDING-LIB-008, FINDING-LIB-009
 Notes: Physically materialized and inspected. Confirms CognitiveEvent taxonomy/store, OutcomeRecorder/OutcomeLinker with Brier scoring, BehavioralMemory, AdaptiveReweightingEngine, PreferenceLearningEngine, BehavioralDriftTracker, encrypted TS cognitive-event outbox, offline/local-memory modules and relevant persistence migrations. Treat as donor evidence only; do not resurrect Interaction Engine wholesale.
+
+
+## SOURCE-LIB-010
+Library evidence: Titan AI Master v1.5.4 / Titan Model Council Master v1.0.0-rc.2 architecture-roadmap deep-scan records.
+Relevant paths recorded by verified Library archaeology:
+- System/Governance/Inference/ModelBudgetGuard.php
+- System/Providers/CostSovereigntyInferenceGuard.php
+- System/Providers/MagicAIUsageRecorder.php
+- System/Settings/ModelCouncilSettingsRepository.php
+- System/Billing/CouncilBillingReservationService.php
+- cost-sovereignty.contract.json
+Finding: historical cost/token controls existed; prior verified scan found no single provider-independent context-window/prompt-compaction budget manager.
+
+## SOURCE-LIB-011
+Library file: TZ-NEXT-017-CONVERGENCE-AGENT-DONOR-CANONICAL-MAPPING.json
+Finding: historical cost-sovereignty inventory preserved as exact source plus TypeScript port at packages/titan-platform/src/ported/titan-entitlements/inventory/cost-sovereignty-inventory.ts; company_id preserved; inventory has no execution authority.
+
+## SOURCE-LIB-012
+Library file: Pasted markdown(20260920-150654).md
+Classification: ARCHITECTURE PROPOSAL, not implementation evidence.
+Relevant ideas: richer model capability metadata and execution-locality vocabulary. Use only as donor design input after comparison with current canonical registries; do not treat Titan Code architecture as Titan Zero runtime.
