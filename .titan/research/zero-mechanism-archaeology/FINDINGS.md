@@ -1097,3 +1097,113 @@ HIGH
 
 ### Related action
 #21; #725; #768.
+
+
+---
+
+## FINDING-GH-037
+
+### Finding
+Direct inspection of `Titan Model Council Master v1.0.0-rc.2.zip` verifies an implemented governed deliberation pipeline with explicit proposer, critic, verifier and arbiter roles, Shield validation before and after arbitration, escalation on failed participants/validation, and advisory-only decision receipts.
+
+### Evidence
+Library master: `/MASTER Software/Masters/Platform/Titan Model Council/Titan Model Council Master v1.0.0-rc.2.zip`.
+Directly inspected:
+- `System/Governed/GovernedDeliberationOrchestrator.php`
+- `System/Governed/GovernedDeliberationResult.php`
+- `System/Governed/ParticipantResult.php`
+- `System/Receipts/CouncilDecisionReceiptService.php`.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+#633; #763.
+
+---
+
+## FINDING-GH-038
+
+### Finding
+The historical Council implements useful epistemic challenge semantics: the Critic must challenge unsupported assumptions, gaps, risks and alternatives; the Verifier classifies claims against supplied evidence; and the Arbiter must preserve material disagreement/uncertainty, must not treat consensus as proof, and should escalate consequential decisions when evidence is insufficient.
+
+### Why it matters
+These are strong donor semantics for Zero's reasoning discipline and Model Council. Zero should be able to disagree with itself, expose uncertainty and seek more evidence instead of converting repeated model agreement into false certainty.
+
+### Evidence
+Role instructions in `GovernedDeliberationOrchestrator.php`.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+#633.
+
+---
+
+## FINDING-GH-039
+
+### Finding
+The implemented v1.0.0-rc.2 Council does not by itself prove the full newer target architecture for evidence-independence scoring, blind-spot analysis, high-risk agreement challenge or a formal `INSUFFICIENT_EVIDENCE` result type. Those richer mechanisms appear in later architecture/Assurance specifications and must not be retroactively attributed to this donor without source evidence.
+
+### Why it matters
+This prevents archaeology from overstating historical implementation. The old Council is a valuable governed multi-perspective donor, but #633/current architecture still needs explicit convergence for the richer epistemic mechanisms.
+
+### Classification
+CURRENT GAP / HISTORICAL DONOR PARTIAL
+
+### Confidence
+HIGH
+
+### Related action
+#633.
+
+---
+
+## FINDING-GH-040
+
+### Finding
+Council confidence in the inspected orchestrator is currently a simple average of successful participant confidence values. It is not evidence-quality confidence and is not sufficient for the new Zero/Model Council architecture.
+
+### Evidence
+`GovernedDeliberationOrchestrator::averageConfidence()` averages participant `confidencePercent` values. The newer architecture separately calls for evidence quality, independence, calibration, unresolved disagreement and correlated-failure treatment.
+
+### Why it matters
+Do not import the historical confidence aggregator as canonical confidence. Preserve the deliberation roles, challenge and receipts, but harden confidence through current evidence/calibration mechanisms.
+
+### Classification
+HISTORICAL DONOR / NEEDS HARDENING
+
+### Confidence
+HIGH
+
+### Related action
+#633; #37.
+
+---
+
+## FINDING-GH-041
+
+### Finding
+Council receipts are explicitly advisory-only and hash-addressed, preserve company/correlation/causation lineage, participant output hashes, risk/assurance/Shield summaries and escalation state, while intentionally excluding hidden chain-of-thought and provider credentials.
+
+### Why it matters
+This is a strong boundary for Zero: deliberation produces auditable decision evidence, not execution authority. It also provides a safe provenance pattern without persisting private reasoning traces.
+
+### Evidence
+`System/Receipts/CouncilDecisionReceiptService.php` sets `execution_authority` default `advisory_only`, `advisory_only:true`, canonicalizes and SHA-256 hashes the receipt, and stores participant output hashes rather than hidden reasoning.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+#633; Trust/Assurance/Rewind owners.
