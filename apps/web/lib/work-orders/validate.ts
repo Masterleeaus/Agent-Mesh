@@ -76,17 +76,36 @@ export function enforceDraftOnlyFromAssessment(input: {
   return null;
 }
 
-/** Reject work order `completed` when visits or criteria are not satisfied. */
+export async function loadWorkOrderExternalCompletionBlockers(
+  client: PoolClient,
+  workOrderId: string,
+  accountId: string,
+): Promise<ExternalCompletionBlocker[]> {
+  const result = await client.query<{ source_type: string; reason: string }>(
+    `SELECT source_type, reason
+       FROM field_completion_blockers
+      WHERE work_order_id = $1
+        AND account_id = $2
+        AND blocking = TRUE
+        AND resolved_at IS NULL
+      ORDER BY source_type, reason`,
+    [workOrderId, accountId],
+  );
+  return result.rows.map((row) => ({ source: row.source_type, reason: row.reason }));
+}
+
+/** Reject work order `completed` when visits, criteria, or bounded external requirements are not satisfied. */
 export async function validateWorkOrderCompletion(
   client: PoolClient,
   workOrderId: string,
   accountId: string,
   completionCriteria: CompletionCriterion[],
-  externalBlockers: ExternalCompletionBlocker[] = [],
+  externalBlockers?: ExternalCompletionBlocker[],
 ): Promise<string | null> {
   const visitRes = await client.query<{ status: string }>(
     `SELECT status FROM visits WHERE work_order_id = $1 AND account_id = $2`,
     [workOrderId, accountId],
   );
-  return completionGateMessage(visitRes.rows, completionCriteria, externalBlockers);
+  const blockers = externalBlockers ?? await loadWorkOrderExternalCompletionBlockers(client, workOrderId, accountId);
+  return completionGateMessage(visitRes.rows, completionCriteria, blockers);
 }
