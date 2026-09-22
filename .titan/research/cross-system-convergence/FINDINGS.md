@@ -1012,3 +1012,29 @@ The previous Personal Zero owner ambiguity is now resolved at package level. Cro
 ACTIVE CONVERGENCE / CANONICAL PACKAGE OWNER SELECTED
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-048
+### Finding
+#768 implementation slice 1 has landed on `agent/768`: Personal Zero now has a concrete canonical contract module in titan-platform, but repository-backed state/lifecycle enforcement and CI evidence are still pending.
+### Evidence
+Latest #768 implementation update reports commits `f3908a2`, `46a1ec1`, `0d8ae47`, `2233287`, `7c7adda`.
+Direct inspection of `packages/titan-platform/src/personal-zero/contracts.ts` on `agent/768`, blob `158b67c84e4533d214a6eb3926526aa54bd9efbd`, verifies:
+- `OneIdentity` and `ZeroIdentity` are company-independent identities;
+- `CompanyRelationship` carries company/role/capability/authority/data-visibility refs and revocation state;
+- `UnderstandingEvidence` carries provenance/evidence/confidence/freshness/privacy and correction linkage;
+- `UnderstandingState` supports candidate/accepted/superseded/expired/deleted and version/supersession lineage;
+- accepted understanding requires evidence;
+- personal-private evidence forces provider egress false;
+- `ExperienceRecord` requires a verified outcome reference when an actual outcome is recorded;
+- `CognitiveEvent` covers observation/recommendation/correction/approval/rejection/decision/action/outcome/prediction/scoring/understanding lifecycle and hard-codes `authority_neutral:true`, `execution_authority:false`.
+The branch index `packages/titan-platform/src/personal-zero/index.ts`, blob `b4628b4911fd45118953fed113497772c4ce0c81`, exports the contracts.
+The implementation agent explicitly states CI/check evidence is still required and the next slice is repository-backed state service, company/context isolation, relationship revocation, promotion/correction lineage and cross-context negative tests.
+### Interpretation
+This materially closes the former contract-definition gap, but not #768 as a whole. Treat the contracts as provisional branch implementation until merged/certified. The next audit re-ingestion should focus on storage/service behavior, revocation and leakage tests rather than redesigning these types.
+### Classification
+ACTIVE IMPLEMENTATION / CONTRACT SLICE LANDED / NOT YET CERTIFIED
+### Confidence
+HIGH
