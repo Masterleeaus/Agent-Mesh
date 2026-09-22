@@ -271,3 +271,12 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-123 — current main `packages/titan-platform/src/intelligence.ts`, SHA `8320eef651c334789a950163ed277238bd8311f6`; facade references ported Titan intelligence/AI Core modules.
 - SOURCE-GH-124 — direct current-main fetch attempts for `ported/titan-intelligence/model-council/index.js`, `signal/index.js`, `nexus/index.js` and `ported/titan-ai-core/provider-registry.js` returned NOT_FOUND.
 - SOURCE-GH-125 — migration commit `76a7c8c1387be83ebed37f9e0c79fbfa3d77b54c`; contains Titan intelligence regression tests and facade but its file inventory does not include the referenced ported intelligence/AI-core implementation directories.
+
+
+- SOURCE-GH-126 — current main Model Council `packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts`, SHA `f989f8ba7e39ba0e807251dc625edc2c2d2672c2`.
+- SOURCE-GH-127 — current main Signal `packages/titan-platform/src/ported/titan-intelligence/signal/index.ts`, SHA `847a14df1b68278330971a97c05d679d0f606e15`.
+- SOURCE-GH-128 — current main Nexus `packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts`, SHA `f7936d44dcf30fd9cb0d091af0efbc10fbcd501a`.
+- SOURCE-GH-129 — current main AI Core provider registry `packages/titan-platform/src/ported/titan-ai-core/provider-registry.ts`, SHA `7e5d9f996c9225672ca0c5973ace97376210b07f`.
+- SOURCE-GH-130 — current main deterministic risk classification `packages/titan-platform/src/ported/titan-intelligence/core/risk-classification.ts`, SHA `c604b81cbd5a614b7ee3d6d6fefab9608528195a`.
+- SOURCE-GH-131 — Agent-Mesh commits `2a9b662...`, `6394463...`, `364bbaa...`, `71c3842...` show post-transplant Model Council convergence/hardening.
+- SOURCE-GH-132 — Agent-Mesh commits `647ae85...`, `1179072...`, `10ebc1f...` show post-transplant AI provider registry convergence/hardening.
