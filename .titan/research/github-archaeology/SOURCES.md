@@ -202,3 +202,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-074 — AI Coding Studio `docs/agents/agent-2-local-bridge-report.md`, SHA `50e8efe6f69abd891b9a523a94627161efc541e9`; hardened Local Bridge protocol/risk/approval/path/secret-filter lineage and explicit implementation limitations.
 - SOURCE-GH-075 — Titan Builder `pid.md`, SHA `410f437b09ca268f813268d0db4016a8a4576023`; OpenBrowser browser-provider/local Node architecture, project context, diff/apply workflow and browser subscription path.
 - SOURCE-GH-076 — Titan Builder main search evidence: `browser-extension/bridge-trust.ts`, `browser-extension/README.md`, workspace/security audit records; authenticated loopback, separated credentials, local companion, preconditions and rollback controls.
+
+
+- SOURCE-GH-077 — Targeted AI Coding Studio repository searches for Ollama, LM Studio, localhost model and local inference; no concrete local-inference adapter found in returned implementation evidence.
+- SOURCE-GH-078 — Titan Builder `browser-extension/src/sidepanel.html` and provider-routing search evidence; current provider selector enumerates browser-hosted ChatGPT/Claude/Gemini/DeepSeek/Perplexity/GLM/Grok.
+- SOURCE-GH-079 — Titan Builder `pid.md`, SHA `410f437b09ca268f813268d0db4016a8a4576023`; local Node execution + browser-provider reasoning separation.
+- SOURCE-GH-080 — Agent-Mesh issue search: #647 Device/Distributed Intelligence Runtime, #80 Intelligence Runtime integration, #645 Edge Fabric, #649 Titan Code browser convergence.
+- SOURCE-GH-081 — TitanPro `resources/reference/titan/titan_bos_expanded_script.md`; historical product architecture explicitly names BYO OpenAI/Anthropic/Google/Ollama/local models, treated as architecture/product evidence rather than implementation proof.
