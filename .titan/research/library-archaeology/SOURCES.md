@@ -112,3 +112,16 @@ Finding: historical cost-sovereignty inventory preserved as exact source plus Ty
 Library file: Pasted markdown(20260920-150654).md
 Classification: ARCHITECTURE PROPOSAL, not implementation evidence.
 Relevant ideas: richer model capability metadata and execution-locality vocabulary. Use only as donor design input after comparison with current canonical registries; do not treat Titan Code architecture as Titan Zero runtime.
+
+
+## SOURCE-LIB-013
+Library file: Titan-Zero-Device-First-Business-OS-30-Step-Upgrade-Plan.md
+Relevant section: Pass 25 — Environmental & Sustainability Module.
+Classification: SPECIFICATION.
+Evidence: explicitly marks environmental domain `UNRESOLVED_SOURCE_REQUIRED`; proposes energy, water, waste, chemical/material, emissions/activity evidence, incidents, opportunities and jurisdiction overlays with source/unit/time/confidence/provenance acceptance.
+
+## SOURCE-LIB-014
+Library file: Pasted markdown(20260922-131634).md
+Relevant section: Environmental Intelligence.
+Classification: CURRENT ARCHITECTURE DESCRIPTION / SPECIFICATION, not implementation evidence.
+Evidence: environmental risk, compliance, resource efficiency, environmental opportunity, specialist environmental workforce and cross-domain analysis.
