@@ -701,3 +701,154 @@ HIGH
 
 ### Related action
 #768; #153; #767.
+
+
+---
+
+## FINDING-GH-022
+
+### Finding
+Direct inspection of the Library master `Titan Interaction Engine Master v10.12.0.zip` independently verifies that LocalBrain contains implemented Personal Zero donor mechanisms rather than specification-only placeholders.
+
+### Verified source evidence
+Library artifact:
+`/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip`
+SHA-256 recorded in Library evidence: `481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219`.
+
+Directly inspected implementation paths include:
+- `System/Cognition/Events/CognitiveEvent.php`
+- `System/Cognition/Events/CognitiveEventType.php`
+- `System/Cognition/Decision/DecisionRecorder.php`
+- `System/Cognition/Outcome/OutcomeRecorder.php`
+- `System/Cognition/Outcome/OutcomeLinker.php`
+- `System/LocalIntelligence/Memory/BehavioralMemory.php`
+- `System/LocalIntelligence/Persona/BehavioralDriftTracker.php`
+- `System/Engines/Learning/Implementations/BehaviourLearningEngine.php`
+- `System/Engines/Learning/Implementations/PreferenceLearningEngine.php`
+- `System/LocalIntelligence/LocalBrain.php`.
+
+### Mechanisms verified
+- company-scoped cognitive-event envelopes;
+- user/device/team/subject/run context;
+- confidence and evidence references;
+- model version, correlation/parent event IDs, privacy classification and sequence;
+- explicit observation/inference/recommendation/correction/approval/rejection/outcome/prediction/memory/model-update event vocabulary;
+- behavioural transition memory;
+- behavioural drift/persona observation;
+- preference/behaviour learning implementations;
+- recommendation recording separated from confirmed user action.
+
+### Current Titan equivalent
+Historical donor for Personal Zero Understanding/Experience contracts (#768), not a canonical runtime owner.
+
+### Classification
+SUPERIOR HISTORICAL
+
+### Confidence
+HIGH — source inspected directly from the Library master.
+
+### Related action
+#768; #763.
+
+---
+
+## FINDING-GH-023
+
+### Finding
+LocalBrain's cognitive event model has a strong epistemic separation useful for Personal Zero. It distinguishes `recommendation_created`, `user_corrected`, `user_approved`, `user_rejected`, `outcome_observed`, `prediction_scored`, `memory_created`, `memory_disputed`, and `model_updated` as separate event types.
+
+### Why it matters
+This directly supports the new Zero rule that inference/recommendation is not human confirmation and that corrections/disputes must remain first-class evidence. It provides a reusable chronology vocabulary for “what Zero thought, what One said/did, and what actually happened.”
+
+### Evidence
+Direct source: `System/Cognition/Events/CognitiveEventType.php` in Interaction Engine v10.12.0.
+
+### Current Titan equivalent
+Candidate donor vocabulary for #768 Cognitive Event / Understanding Evidence contracts.
+
+### Classification
+SUPERIOR HISTORICAL
+
+### Confidence
+HIGH
+
+### Related action
+#768.
+
+---
+
+## FINDING-GH-024
+
+### Finding
+LocalBrain implements prediction-to-outcome calibration rather than merely storing predictions. `OutcomeLinker::linkAndScore()` requires prediction and outcome events in the same company context and calculates a Brier score before writing a `prediction_scored` cognitive event.
+
+### Why it matters
+This is a concrete donor for Zero learning from prediction error. Future Zero can measure whether its expectations were accurate and adjust confidence/understanding without treating prediction confidence as authority.
+
+### Evidence
+Direct source: `System/Cognition/Outcome/OutcomeLinker.php`.
+- resolves prediction and outcome within company scope;
+- rejects missing/cross-context pairings;
+- computes `(probability - observed)^2`;
+- records `brier_score` in a `PredictionScored` event.
+
+### Current Titan equivalent
+Candidate Personal Zero Experience/calibration donor; bounded predictive learning also belongs with canonical #37.
+
+### Classification
+SUPERIOR HISTORICAL
+
+### Confidence
+HIGH
+
+### Related action
+#768; #37.
+
+---
+
+## FINDING-GH-025
+
+### Finding
+The inspected LocalBrain process path correctly avoids learning its own recommendation as confirmed user behaviour. `process()` records a recommendation; behavioural memory is updated separately through `confirmAction()`, which records the actual user decision.
+
+### Why it matters
+This is a critical anti-self-reinforcement safeguard for Zero. Otherwise Zero could recommend something, observe its own recommendation, and falsely learn that the human prefers that behaviour.
+
+### Evidence
+Direct source: `System/LocalIntelligence/LocalBrain.php`.
+- `process()` calls `recordRecommendation(...)`.
+- `confirmAction()` separately calls behavioural `recordAction(...)` and `recordUserDecision(... approved: true)`.
+
+### Current Titan equivalent
+Candidate invariant for #768 raw observation/candidate understanding/accepted understanding promotion.
+
+### Classification
+SUPERIOR HISTORICAL
+
+### Confidence
+HIGH
+
+### Related action
+#768.
+
+---
+
+## FINDING-GH-026
+
+### Finding
+The historical LocalBrain cognitive envelope is already `company_id` based, but it also carries team/user/device scope and personal privacy classes. This is compatible with the Titan Zero company boundary provided these subordinate identities remain context/scope rather than alternate tenant boundaries.
+
+### Evidence
+Direct source: `System/Cognition/Events/CognitiveEvent.php` requires non-empty `companyId` and stores `teamId`, `userId`, `deviceId`, subject identity, privacy class and evidence separately.
+
+### Current Titan equivalent
+Potential contract donor for #768 subject/user identity and company-context rules.
+
+### Classification
+SUPERIOR HISTORICAL
+
+### Confidence
+HIGH
+
+### Related action
+#768; canonical `company_id` invariant.
