@@ -245,3 +245,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-023 | Knowledge Authority reasoning-consumption source trace | workforce.ts + workforce knowledge authority wrapper + handover runtime | current main blobs 98f77554d22f76aa1131a257a171c803bfa43979 / 7998e595becaf28938fce237df31a51cd2b1f073 | CURRENT | VERIFIED | Reasoning-use ALLOW/BLOCK gate and provenance receipt are implemented and explicitly authority-neutral. Downstream Decision/Model Council caller wiring remains to be proven. | NO |
+
+
+| INGEST-024 | Knowledge Authority call-site inspection | current main handover runtime + workforce export surface | current main | CURRENT | VERIFIED | Knowledge Authority functions appear only at their definitions in the inspected implementation and are re-exported by workforce.ts; no downstream call exists in this path. Repository-wide absence is not claimed. | NO |
