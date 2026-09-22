@@ -855,3 +855,21 @@ Knowledge Authority has a real implemented reasoning gate/receipt contract, but 
 CURRENT IMPLEMENTATION / CONSUMER WIRING UNPROVEN
 ### Confidence
 HIGH for inspected path; repository-wide absence NOT CLAIMED
+
+
+---
+
+## FINDING-CSA-040
+### Finding
+The current canonical Model Council and Nexus primitives accept generic `evidence_refs` but do not themselves require or validate a Knowledge Authority use decision/receipt. This identifies the exact integration seam behind FINDING-CSA-039.
+### Evidence
+Current main:
+- `packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts` blob `f989f8ba7e39ba0e807251dc625edc2c2d2672c2`: each vote carries optional `evidence_refs`; the function validates `company_id`, recommendation/confidence and deterministically computes consensus. It has no Knowledge Authority packet/use-decision/receipt field or validation.
+- `packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts` blob `f7936d44dcf30fd9cb0d091af0efbc10fbcd501a`: recommendations carry optional `evidence_refs`; orchestration validates `company_id` and `correlation_id` but has no Knowledge Authority gate/receipt validation.
+- `packages/titan-platform/src/intelligence.ts` blob `8320eef651c334789a950163ed277238bd8311f6` exports Model Council and Nexus directly as intelligence primitives.
+### Interpretation
+Do not modify Knowledge Authority into an execution authority and do not create another intelligence engine. The missing connection is evidence-contract composition: when knowledge-backed evidence is used by Model Council/Nexus/Decision reasoning, the evidence chain should carry a validated Knowledge Authority use receipt (or equivalent canonical reference) and fail closed when the knowledge gate blocks use.
+### Classification
+CURRENT / EXPLICIT INTEGRATION SEAM
+### Confidence
+HIGH
