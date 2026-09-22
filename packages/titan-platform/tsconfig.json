@@ -14,7 +14,6 @@
     "isolatedModules": true
   },
   "files": [
-    "src/index.ts",
     "src/descriptor.ts",
     "src/runtime.ts",
     "src/workforce.ts",
@@ -32,6 +31,11 @@
     "src/interface-semantics.ts",
     "src/interface-integrity.ts",
     "src/interface-interaction-handoff.ts",
-    "src/interface-boundary-hardening.ts"
+    "src/interface-boundary-hardening.ts",
+    "src/index.ts",
+    "src/ported/titan-ai-core/cost-sovereignty.ts",
+    "src/ported/titan-connect/connector-contract.ts",
+    "src/ported/titan-connect/credential-contract.ts",
+    "src/ported/titan-connect/mcp-host-contract.ts"
   ]
 }
