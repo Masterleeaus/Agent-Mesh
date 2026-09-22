@@ -15,7 +15,6 @@ import EnvironmentalSystems from './pages/EnvironmentalSystems'
 import Compare from './pages/Compare'
 import IndustryHome from './pages/IndustryHome'
 import ScrollToTop from './components/ScrollToTop'
-import CookieConsent from './components/CookieConsent'
 import PageMeta from './components/PageMeta'
 import YourZero from './pages/YourZero'
 import Workforce from './pages/Workforce'
@@ -58,7 +57,6 @@ export default function App() {
         <Route path="/changelog" element={<><PageMeta title="System Evolution" description="Follow the evolution of Titan Zero Field Services and the managed operating-system capabilities available across customer deployments." /><Changelog /></>} />
       </Routes>
       <Footer />
-      <CookieConsent />
     </div>
   )
 }
