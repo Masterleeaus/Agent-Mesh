@@ -1,5 +1,5 @@
 import { query, queryOne } from "@/lib/db";
-import { logCommunication } from "@/lib/communications-log";
+import { logCommunication, recordDeliveryReceipt } from "@/lib/communications-log";
 import { normalizePhone } from "@/lib/phone";
 import {
   createDeliveryReceipt,
@@ -139,4 +139,23 @@ export function smsDeliveryReceipt(opts: {
     occurred_at: opts.occurredAt,
   });
   return opts.outcome === "delivered" ? { ...receipt, state: "delivered" } : receipt;
+}
+
+
+/**
+ * Canonical callback path for provider delivery evidence. The company scope
+ * carried by the communication is authoritative; provider callbacks cannot
+ * select or widen tenant scope.
+ */
+export async function persistSmsDeliveryOutcome(opts: {
+  communication: Pick<
+    CommunicationEnvelope,
+    "id" | "company_id" | "conversation_id" | "correlation_id"
+  >;
+  outcome: OutboundSmsOutcome;
+  externalId?: string | null;
+  attempt?: number;
+  occurredAt?: string;
+}): Promise<boolean> {
+  return recordDeliveryReceipt(smsDeliveryReceipt(opts));
 }
