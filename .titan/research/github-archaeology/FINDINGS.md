@@ -966,3 +966,71 @@ HIGH for cashflow implementation; MEDIUM for depth of NexusGrowth implementation
 
 ### Recovery judgment
 Do not declare these lost yet. Next pass should map finance forecasting and growth/churn analytics against current Finance/Marketing/Decision/Signal owners and only create convergence action for genuinely absent semantics.
+
+
+---
+
+## FINDING-GH-031
+
+### Finding
+The historical TitanPro cashflow-forecast capability from FINDING-GH-030 is not a lost standalone subsystem. Current #263 is the canonical Finance/Invoicing/Payments + money-flow owner and explicitly includes cashflow, AR/AP, Cash Control/Cash Position and Cashflow Guardian semantics.
+
+### Historical donor value
+`CashflowForecastService` remains useful implementation evidence because it demonstrates a concrete calculation path:
+budget inflow/outflow + normalized recurring expenses + outstanding receivables + outstanding payables → monthly forecast.
+
+### Current owner
+#263, with #270 certification and #638 Business Value Attribution/ROI adjacent.
+
+### Classification
+CURRENT EQUIVALENT FOUND / IMPLEMENTATION DONOR
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Support #263 with the historical calculation/data-source semantics if current TypeScript forecasting is weaker. Do not recreate the Accountings module.
+
+---
+
+## FINDING-GH-032
+
+### Finding
+The historical NexusGrowth capability cluster is substantially covered by current canonical Sales, Customer Care, Marketing and ROI owners rather than requiring a revived NexusGrowth analytics application.
+
+### Mapping
+- churn/rebooking prevention → #363 and #716;
+- demand/campaign/reputation/attribution → #373;
+- pipeline/opportunity/revenue growth → #343;
+- verified ROI/value attribution → #638;
+- finance/cashflow evidence → #263.
+
+Historical NexusGrowth still provides provenance for funnel visualisation, conversion analytics, CLV modelling, churn prediction, A/B results, expansion scoring and ROI reporting.
+
+### Classification
+CURRENT EQUIVALENTS FOUND / HISTORICAL PRODUCT BOUNDARY RETIRED
+
+### Confidence
+HIGH for ownership mapping; MEDIUM on exact parity of every historical analytic.
+
+### Recovery judgment
+Do not resurrect NexusGrowth. During implementation/certification of #343/#363/#373/#638, compare exact historical analytics and recover any missing metric or prediction semantics into those owners.
+
+---
+
+## FINDING-GH-033
+
+### Finding
+The current roadmap already expresses predictive workforce behavior as governed capability progression rather than a separate prediction authority.
+
+### Evidence
+#343, #363 and #373 require proactive/autonomous/predictive behavior to remain inside Goal42 trust/autonomy and authority ceilings. #716 registers churn prevention, missed-revenue recovery, Cashflow Guardian and other innovation capabilities through the canonical Workforce/capability registry.
+
+### Classification
+CURRENT ARCHITECTURE / CONVERGENCE CONFIRMED
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Historical prediction modules are evidence/algorithm donors. Prediction confidence never grants execution authority; consequential actions still require canonical effective authority, Risk/Assurance/Governance and Command Bus.
