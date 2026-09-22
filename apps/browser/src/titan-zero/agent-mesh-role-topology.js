@@ -20,7 +20,7 @@ const roles=freeze({
     'packet.assign','dependency.manage','delta.process','github.merge.request',
     'supervisor.verify.request','cleanup.eligibility.mark'
   ],[
-    'supervisor.verdict.fabricate','builder.active-work.overwrite','artifact.unresolved.delete','verification.required.bypass'
+    'merge.execute','supervisor.verdict.fabricate','builder.active-work.overwrite','artifact.unresolved.delete','verification.required.bypass'
   ],['Persistent operational Manager runtime for Titan Zero development.']),
   supervisor:role('chatgpt','independent-verification',[
     'verification.inspect','verification.challenge','verification.verdict','scan.request','remediation.require','conflict.raise'
@@ -55,6 +55,7 @@ function can(roleId,capability){
 function assertSeparation(){
   const violations=[];
   if(!can('manager','github.merge.request')) violations.push('manager-missing-github-merge-request');
+  if(can('manager','merge.execute')) violations.push('manager-may-execute-merge');
   for(const roleId of ['supervisor','librarian','builder','browserIntelligence']){
     if(can(roleId,'github.merge.request')) violations.push(`${roleId}-may-request-github-merge`);
   }
