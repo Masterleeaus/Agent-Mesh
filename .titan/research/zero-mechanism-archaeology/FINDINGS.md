@@ -171,3 +171,71 @@ HIGH
 ## UNVERIFIED / PROVISIONAL
 
 The Action's heuristic output has not yet been inspected and promoted into source-level findings. Until source paths, symbols, revisions, and behaviour are manually verified, generated candidate rankings remain discovery evidence rather than architectural conclusions.
+
+
+---
+
+## FINDING-GH-007
+
+### Finding
+A separate open GitHub archaeology issue (#765) identifies `workspaces/github-archaeology/` as the workspace for a broader GitHub archaeology/convergence investigation. This specialist workspace remains intentionally separate because the workflow update prohibits taking over another agent's workspace.
+
+### Why it matters
+The repository now contains an explicit cross-agent workspace convention. The specialist mechanism archaeology work should remain isolated while referencing the broader archaeology workspace as supporting context rather than modifying it.
+
+### Evidence
+- Repository: Masterleeaus/Agent-Mesh
+- Issue: #765 — ARCHAELOGY: GitHub development history recovery workspace
+- Issue text specifies: `workspaces/github-archaeology/`.
+- Issue is separate from #763 and has a broader archaeology scope.
+
+### Current Titan equivalent
+Cross-agent research coordination boundary.
+
+### Classification
+CURRENT
+
+### Confidence
+HIGH
+
+### Related action
+#763
+
+### Cross-agent note
+Supports separation of specialist mechanism archaeology from the broader GitHub archaeology assignment. Do not modify #765's workspace unless its owner explicitly establishes a collaboration convention.
+
+---
+
+## FINDING-GH-008
+
+### Finding
+Issue #767 records verified OnboardingPro v6 donor components for Continuous Business Observation, Business Reality Graph, reconfiguration, Nexus reassessment/provisioning, discovery consent, outcome measurement and rollback/learning tests. These are relevant supporting evidence but belong to the Evolution/Reality convergence assignment rather than this mechanism-only implementation claim.
+
+### Why it matters
+It corroborates that the repository's active convergence backlog already contains concrete donor evidence and prevents this specialist issue from creating duplicate implementation work for those capabilities.
+
+### Evidence
+- Repository: Masterleeaus/Agent-Mesh
+- Issue: #767 — [LIBRARY] Recover OnboardingPro Evolution and Reality capabilities
+- Issue text names concrete donor paths and required convergence tests.
+
+### Current Titan equivalent
+Evolution Engine / Reality / Nexus ownership under existing convergence work.
+
+### Classification
+HISTORICAL
+
+### Confidence
+MEDIUM
+
+### Related action
+#759; #767
+
+### Cross-agent note
+Use as supporting evidence only. Do not duplicate the implementation assignment owned by #767.
+
+---
+
+## SUPERSESSION NOTE
+
+FINDING-GH-002 remains accurate for the exact initial paths inspected, but it is superseded for repository-wide workspace discovery by FINDING-GH-007. A broader canonical archaeology workspace is now known to exist through issue #765; it is another agent's assigned workspace and therefore is not adopted here.
