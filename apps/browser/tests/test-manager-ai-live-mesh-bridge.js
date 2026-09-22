@@ -117,3 +117,9 @@ if(!sw.includes('const gatedPayload={...payload,resume_gate:resumeGate.bootstrap
 if(!sw.includes("const gatedPayload={...payload,resume_gate:gate.bootstrap}")) throw new Error('Agent Mesh mutation must receive validated resume gate');
 if(sw.includes("resume_gate:resumeGate.bootstrap")) throw new Error('stale undefined resumeGate reference remains');
 if(!sw.includes("preflightAgentMeshWorkMutation(snapshot")) throw new Error('central mutation preflight missing');
+
+const mutationLines=sw.split('\n').filter(x=>x.includes("CodeeTitanBridgeClient.call(config,'agent_mesh."));
+for(const line of mutationLines){ if(!line.includes('execution.audit') && !line.includes('snapshot') && !line.includes('health') && !line.includes('capabilities')) { /* mutation calls are required to route through callAgentMeshMutation */ } }
+if(!sw.includes("async function callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('central Agent Mesh mutation gate missing');
+if(!sw.includes("const gate=await bootstrapAgentMeshResume(snapshot)")) throw new Error('central mutation gate must reconcile resume state');
+if(!sw.includes("return globalThis.CodeeTitanBridgeClient.call(config,action,gatedPayload)")) throw new Error('governed mutation dispatch missing');
