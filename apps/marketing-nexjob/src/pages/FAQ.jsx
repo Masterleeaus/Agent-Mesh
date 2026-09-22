@@ -3,122 +3,17 @@ import { ChevronDown } from 'lucide-react'
 import SectionLabel from '../components/SectionLabel'
 import CTASection from '../components/CTASection'
 
-const faqs = [
-  {
-    q: 'Is there a free trial?',
-    a: 'Yes — every new account gets a 14-day free trial with full access to all features. No credit card required to start.',
-  },
-  {
-    q: 'How is NexJob different from Jobber or ServiceTitan?',
-    a: 'NexJob is built AI-first. Features like AI Quote Advisor, Gemini Vision Estimating, Ghost Dispatching, and Voice-to-Invoice are core — not add-ons. We also price fairly: no per-user fees that penalize you for growing your team.',
-  },
-  {
-    q: 'Do I need to sign a long-term contract?',
-    a: 'No contracts, ever. NexJob is month-to-month. You can cancel anytime from your billing settings with no cancellation fees.',
-  },
-  {
-    q: 'What trades and industries does NexJob support?',
-    a: 'HVAC, Plumbing, Electrical, Landscaping, Cleaning, Handyman, Roofing, Painting, Pest Control, RV Technicians, and more. The platform is flexible enough to work for any field service business.',
-  },
-  {
-    q: 'Does NexJob work on mobile?',
-    a: 'Yes. NexJob is a mobile-responsive web app — it works on any smartphone or tablet browser. Technicians can access jobs, upload photos, and log time directly from the field without downloading an app.',
-  },
-  {
-    q: 'How does the AI Quote Advisor work?',
-    a: 'You describe the job and NexJob automatically suggests line items, quantities, and pricing — targeting your configured gross margin goal. It routes through Gemini Flash for jobs under $1,500 and Claude Opus for complex or high-value jobs.',
-  },
-  {
-    q: 'What payment methods do customers use to pay invoices?',
-    a: 'Credit cards, debit cards, ACH bank transfer, Apple Pay, and Google Pay — all powered by Stripe. Customers can pay from an SMS payment link without downloading anything.',
-  },
-  {
-    q: 'Does NexJob integrate with QuickBooks?',
-    a: 'Yes. NexJob has a native QuickBooks Online integration. Every invoice sent and payment received syncs automatically. A manual sync button is also available if you ever need to force a full sync.',
-  },
-  {
-    q: 'Can I connect my Google or Microsoft calendar?',
-    a: 'Yes. NexJob connects with both Google Workspace and Microsoft 365. When you schedule or update a job, a calendar event is created or updated automatically.',
-  },
-  {
-    q: 'Is my data secure?',
-    a: 'All data is encrypted in transit and at rest. NexJob is hosted on Render with PostgreSQL on secure infrastructure. We never sell your data. You can export everything at any time.',
-  },
-  {
-    q: 'Can I switch plans or cancel at any time?',
-    a: 'Yes. You can upgrade, downgrade, or cancel your subscription at any time from your Billing settings. No phone calls, no hoops.',
-  },
-  {
-    q: 'How do I get support?',
-    a: 'Email us at steve@nexjob.app. We typically respond within a few hours during business hours. Enterprise plan customers get priority support.',
-  },
+const faqs=[
+{q:'What does fully managed mean?',a:'Titan Zero assesses the business, integrates systems worth keeping, fills genuine software gaps, configures the Advanced Intelligence workforce, establishes governance and review boundaries, and continues managing and improving the system with the business.'},
+{q:'Do I have to replace my existing field-service software?',a:'No. Titan Zero is designed to keep useful systems where they fit. We integrate around them and can add Titan Zero software or interfaces where an operational gap remains.'},
+{q:'Is Titan Zero just an AI chatbot?',a:'No. Chat, voice and camera are interaction surfaces. Behind them, Titan Zero coordinates authorised workforce capabilities, business knowledge, integrations, software functions, governance and operational workflows.'},
+{q:'Can Titan Zero use private or local AI models?',a:'The architecture supports device, customer-hosted, BYO-cloud and Titan-managed approaches where suitable. Private/local LLMs and private retrieval over authorised business knowledge can be used for appropriate workloads.'},
+{q:'Can I use my own AI or API keys?',a:'Where a provider or integration supports it, Titan Zero is designed to allow customer-owned provider accounts and keys rather than requiring every usage cost to be hidden inside one bundled subscription.'},
+{q:'What Field Services industries are supported?',a:'The Field Services site currently includes dedicated systems for cleaning, landscaping and lawn care, pool service, pressure washing, pest control, window cleaning, property maintenance and mobile service businesses.'},
+{q:'How is authority controlled?',a:'An intelligence result, recommendation or prediction does not automatically grant permission to execute. Consequential actions can be governed by company authority, permissions, review points and configured autonomy.'},
+{q:'What are Environmental Systems?',a:'Titan Zero can connect environmental assessment, auditing, evidence, compliance and improvement workflows to business operations. Where professional environmental judgement or sign-off is required, work can be performed or reviewed by appropriately qualified environmental scientists.'},
+{q:'How is Titan Zero different from normal field-service SaaS?',a:'Traditional products generally concentrate the business inside the vendor application. Titan Zero starts from the business itself: keep useful systems, connect them, add missing software, configure a managed intelligence workforce, and choose appropriate privacy, locality and provider options.'},
+{q:'Does local AI always cost less?',a:'Not necessarily. Cost depends on workload, hardware, provider, model and management requirements. Local models, customer-owned compute and BYO keys can change the cost structure and reduce some third-party usage, but Titan Zero does not promise a fixed saving.'},
 ]
-
-function FAQItem({ q, a }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <div
-      className={`border border-nx-border rounded-xl overflow-hidden transition-all ${
-        open ? 'border-nx-purple/50' : 'hover:border-nx-border'
-      }`}
-    >
-      <button
-        className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left"
-        onClick={() => setOpen(!open)}
-      >
-        <span className="text-sm font-semibold text-nx-text">{q}</span>
-        <ChevronDown
-          size={16}
-          className={`text-nx-muted flex-shrink-0 transition-transform ${
-            open ? 'rotate-180' : ''
-          }`}
-        />
-      </button>
-      {open && (
-        <div className="px-6 pb-5">
-          <p className="text-sm text-nx-muted leading-relaxed">{a}</p>
-        </div>
-      )}
-    </div>
-  )
-}
-
-export default function FAQ() {
-  return (
-    <>
-      <section className="pt-32 pb-16 px-6 text-center">
-        <div className="max-w-7xl mx-auto">
-          <SectionLabel>FAQ</SectionLabel>
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4">
-            Frequently Asked<br />
-            <span className="text-nx-purple-light">Questions</span>
-          </h1>
-          <p className="text-lg text-nx-muted max-w-xl mx-auto">
-            Everything you need to know before getting started.
-          </p>
-        </div>
-      </section>
-
-      <section className="px-6 pb-24">
-        <div className="max-w-3xl mx-auto space-y-3">
-          {faqs.map((faq) => (
-            <FAQItem key={faq.q} {...faq} />
-          ))}
-        </div>
-        <div className="text-center mt-10">
-          <p className="text-sm text-nx-muted">
-            Still have questions?{' '}
-            <a href="mailto:steve@nexjob.app" className="text-nx-purple-light hover:underline">
-              Email us at steve@nexjob.app
-            </a>
-          </p>
-        </div>
-      </section>
-
-      <CTASection
-        title="Ready to get started?"
-        subtitle="14-day free trial. No credit card required. Full access from day one."
-      />
-    </>
-  )
-}
+function FAQItem({q,a}){const[open,setOpen]=useState(false);return <div className={`border border-nx-border rounded-xl overflow-hidden ${open?'border-nx-purple/50':''}`}><button className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left" onClick={()=>setOpen(!open)}><span className="text-sm font-semibold">{q}</span><ChevronDown size={16} className={`text-nx-muted transition-transform ${open?'rotate-180':''}`}/></button>{open&&<div className="px-6 pb-5"><p className="text-sm text-nx-muted leading-relaxed">{a}</p></div>}</div>}
+export default function FAQ(){return <><section className="pt-32 pb-16 px-6 text-center"><div className="max-w-7xl mx-auto"><SectionLabel>FAQ</SectionLabel><h1 className="text-4xl sm:text-5xl font-extrabold mb-4">Understand the <span className="text-nx-purple-light">Titan Zero model.</span></h1><p className="text-lg text-nx-muted max-w-2xl mx-auto">How the managed workforce, existing-system integration, software gap filling, privacy architecture and cost model work.</p></div></section><section className="px-6 pb-24"><div className="max-w-3xl mx-auto space-y-3">{faqs.map(f=><FAQItem key={f.q}{...f}/>)}</div></section><CTASection/></>}
