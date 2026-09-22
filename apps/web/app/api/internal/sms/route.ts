@@ -12,10 +12,10 @@ import { SMS_CONSENT_TEXT } from "@/lib/sms/consent";
 import { isSmsGatewayConfigured, sendSmsViaGateway } from "@/lib/sms/gateway";
 import { logOutboundSms } from "@/lib/sms/outbound";
 import { normalizeInboundProviderEvent, routeInboundCommunication } from "@/lib/communications/inbound";
+import { resolveTenantSmsSettings, tenantSmsWebhookKeyMatches } from "@/lib/sms/settings";
 
 export const dynamic = "force-dynamic";
 
-const SMS_KEY = process.env.SMS_INTERNAL_KEY;
 
 const bodySchema = z.object({
   phone: z.string().min(7).max(20),
@@ -250,10 +250,6 @@ function buildNotification(
 export async function POST(req: NextRequest) {
   const traceId = randomUUID();
 
-  if (!SMS_KEY || req.headers.get("x-api-key") !== SMS_KEY) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   let body: unknown;
   try {
     body = await req.json();
@@ -268,6 +264,19 @@ export async function POST(req: NextRequest) {
     );
   }
   const { phone: rawPhone, message, external_id, company_id, owner_user_id, conversation_id, correlation_id, provider_id } = parsed.data;
+
+  // Bind webhook authentication to the canonical company before any company-scoped
+  // lookup or side effect. A credential for one company cannot authorize another.
+  const account = await queryOne<{ settings: unknown }>(
+    `SELECT settings FROM accounts WHERE id = $1 LIMIT 1`,
+    [company_id],
+  );
+  const smsSettings = resolveTenantSmsSettings(account?.settings);
+  if (!tenantSmsWebhookKeyMatches(smsSettings, req.headers.get("x-api-key"))) {
+    logger.warn("Inbound SMS tenant webhook authentication rejected", { traceId, company_id });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const phone = normalizePhone(rawPhone) ?? rawPhone;
 
   // The authenticated integration must carry canonical company scope.
