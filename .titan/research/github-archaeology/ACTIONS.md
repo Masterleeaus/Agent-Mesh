@@ -565,3 +565,21 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** representative consequential mutations prove one path through canonical governed envelope → execution → authoritative receipt → Signal/Assurance/verification → recovery/compensation when needed.
 - **Confidence:** VERY HIGH
 - **Status:** SUPPORT #14 / P0 BYPASS AUDIT
+
+
+---
+
+## ACTION-GH-030 — Wire authoritative receipt/verification evidence into Signal/Assurance without duplicating the ledger
+
+- **Type:** CONNECT / CONVERGE / CERTIFY
+- **Priority:** P1
+- **Findings:** FINDING-GH-125–128
+- **Canonical owners:** #14 execution; #293 recovery; #560 E2E certification; Signal/Assurance existing canonical systems.
+- **Retain:** execution-boundary receipt and verification histories as authoritative mutation evidence.
+- **Connect:** successful verified mutations project correlated Signal/Assurance/outcome evidence using stable command/action/receipt/verification/correlation IDs.
+- **Do not do:** do not make Signal a mutation ledger; do not let Signal/AI/model assertions substitute for authoritative provider/domain receipt or post-action verification.
+- **Failure rule:** rejected, failed, UNKNOWN or unverified required actions cannot emit “accepted successful change” evidence.
+- **Tests:** receipt equivocation; provider substitution; history truncation; verification-before-execution; missing receipt; uncertain verification; accepted verified mutation projection; failed/unknown mutation projection semantics; replay produces no duplicate accepted-change signal.
+- **Acceptance Criteria:** one trace proves command → authoritative receipt → authoritative-state verification → Signal/Assurance projection → visible outcome, with recovery rather than success evidence on UNKNOWN/uncertain states.
+- **Confidence:** VERY HIGH
+- **Status:** SUPPORT EXISTING OWNERS
