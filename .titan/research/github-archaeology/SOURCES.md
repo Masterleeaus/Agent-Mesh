@@ -236,3 +236,7 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-098 — Titan Builder `.titan/todo/issues/OpenBrowser-v0.5.0-Titan-Builder-V2.6-Deep-Scan-Issues.md`; deep-audit ledger documenting project-containment, transactional-operation, attachment-correlation and bridge-security repairs.
 - SOURCE-GH-099 — zero `docs/SECURITY_TENANCY_ALIGNMENT.md`, SHA `b93d0b410ca6a832b6c61723513518bdd96d9152`; tenant-aware security audit plus explicit legacy tz_audit_log tenancy gap.
 - SOURCE-GH-100 — zero `docs/SECURITY_PASS_IMPLEMENTATION_REPORT.md`, SHA `1bf390f4982d915f0c5eee29f1506f9a5ab14ccd`; implemented security domain and deferred AI/signal audit company_id closure.
+
+
+- SOURCE-GH-101 — Agent-Mesh current repository targeted searches for `tz_audit_log`, audit-event/service/receipt symbols and company-scoped audit terminology; no implementation hit returned by repository search.
+- SOURCE-GH-102 — Agent-Mesh issue search confirms #423 Compliance/Audit/Governance, #430 certification, #63 security/privacy/replay certification and #642 engine convergence as current ownership surfaces.
