@@ -82,3 +82,18 @@ Canonical Owner: UNRESOLVED — Personal Zero cognition/understanding/experience
 
 Summary:
 Deep-inspect the Aug-03 Offline LocalBrain implementation and map reusable cognitive-event, local memory, user preference/action, offline sync, persona-drift and memory-reranking mechanisms to current Titan Zero. Do not resurrect the old Interaction Engine, do not fold Personal Zero into company Business Memory, and do not create a new implementation issue until source-level parity and existing backlog ownership are resolved.
+
+
+---
+
+## ACTION-LIB-007
+
+Type: REJECT DUPLICATE IMPORT + NARROW RECOVERY
+Priority: P1
+Finding: FINDING-LIB-009, FINDING-LIB-010
+GitHub Issue: #763
+Status: PROPOSED ARCHITECTURAL CONVERGENCE; no new implementation issue yet
+Canonical Owner: split across existing Intelligence Runtime, Interaction Engine, Offline runtime, plus unresolved Personal Zero Understanding/Experience evidence owner.
+
+Summary:
+Explicitly reject wholesale LocalBrain recovery. Retain current TypeScript device/runtime routing, conversation persistence and offline recovery. Recover only missing cognitive-event chronology, correction/preference evidence, outcome linkage/scoring and adaptive experience-learning semantics after canonical Personal Zero owner selection. Keep #153 company Business Memory separate from private Personal Zero state.
