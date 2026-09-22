@@ -85,7 +85,7 @@ def validate_roadmap_integrity():
             errors.append(f"duplicate goal_id across goal files: {gid}")
         goal_file_ids.add(gid)
 
-    expected_goal_ids = {"TZ-G00"} | {f"TZ-ROADMAP-{i:02d}" for i in range(1, 55)}
+    expected_goal_ids = {"TZ-G00"} | {f"TZ-ROADMAP-{i:02d}" for i in range(1, 56)}
     missing_goals = sorted(expected_goal_ids - goal_file_ids)
     extra_goals = sorted(goal_file_ids - expected_goal_ids)
     if missing_goals:
