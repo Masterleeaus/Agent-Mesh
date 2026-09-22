@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { createAuthenticatedSurfaceProjection } from "@/app/titan/runtime/authenticated-surface";
-import { RoleChat } from "@/app/titan/components/role-chat";
+import { AuthenticatedRoleChat } from "@/app/titan/components/authenticated-role-chat";
 
 export const dynamic = "force-dynamic";
 
@@ -12,11 +12,5 @@ export default async function CommandPage() {
 
   const projection = createAuthenticatedSurfaceProjection(session, { surface: "zero" });
 
-  return (
-    <RoleChat
-      role="zero"
-      projection={projection}
-      onOpenDetails={() => undefined}
-    />
-  );
+  return <AuthenticatedRoleChat role="zero" projection={projection} />;
 }
