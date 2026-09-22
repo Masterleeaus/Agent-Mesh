@@ -16,7 +16,7 @@ def live(repo,sid):
  issue=next((x for x in issues if (x.get("title") or "").startswith(f"[{sid}]")),None)
  if not issue: raise ValueError(f"no open issue for {sid}")
  cmp=jr(["gh","api",f"repos/{repo}/compare/main...{branch}"])
- return {"issue":issue,"branch":branch,"head_sha":((ref or {}).get("object") or {}).get("sha"),"merge_base_sha":((cmp.get("merge_base_commit") or {}).get("sha"),),"ahead_by":int(cmp.get("ahead_by") or 0),"behind_by":int(cmp.get("behind_by") or 0)}
+ return {"issue":issue,"branch":branch,"head_sha":((ref or {}).get("object") or {}).get("sha"),"merge_base_sha":((cmp.get("merge_base_commit") or {}).get("sha")),"ahead_by":int(cmp.get("ahead_by") or 0),"behind_by":int(cmp.get("behind_by") or 0)}
 def validate(p,s):
  sid=str(p.get("subgoal_id") or "")
  if not SID_RE.match(sid): raise ValueError("invalid subgoal_id")
