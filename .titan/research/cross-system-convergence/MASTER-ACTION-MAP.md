@@ -219,3 +219,21 @@ Preserve `createDecisionEngineEnvelope` as the canonical authority-neutral runti
 - temporal re-evaluation when evidence becomes stale, contradicted or superseded;
 - independent current authority decision and governed execution receipt.
 A blocked Knowledge Authority decision must not become valid merely because a model/council recommends the same action.
+
+
+## Issue #59 implementation-ready boundary
+Treat #59 as the canonical implementation owner for the durable decision lifecycle. Reuse:
+- workforce decision-rights runtime;
+- runtime Authority contracts;
+- provenance contracts/index;
+- Interaction Engine conversation state;
+- current `createDecisionEngineEnvelope` runtime boundary.
+
+Converge, rather than duplicate:
+- one persistent DecisionPacket/Decision Object lifecycle;
+- durable entity/correlation links;
+- evidence snapshots and Knowledge Authority use-receipt references;
+- watch/trigger temporal re-evaluation when knowledge/evidence/context changes;
+- Model Council/Nexus evidence references where applicable;
+- current authority revalidation before protected execution;
+- execution/outcome receipts that can later feed #153/#37/#768 learning lanes.
