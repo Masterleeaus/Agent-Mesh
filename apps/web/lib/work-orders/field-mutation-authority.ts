@@ -2,7 +2,7 @@ import type { Role } from "@ai-fsm/domain";
 import { canDeferCriticalFieldDefect, canManageFieldPermits, canRecordFieldInspectionResult, canVerifyFieldDefects } from "@/lib/auth/permissions";
 
 export type FieldMutationKind="permit_state"|"inspection_result"|"defect_state";
-export interface FieldMutationAuthorityInput{role:Role;actor_id:string;kind:FieldMutationKind;next_state?:string;severity?:string;verified_by_ref?:string|null;defer_reason?:string|null}
+export interface FieldMutationAuthorityInput{role:Role;actor_id:string;kind:FieldMutationKind;next_state?:string;severity?:string;verified_by_ref?:string|null;verified_date?:string|null;defer_reason?:string|null}
 export function assertFieldMutationAuthority(input:FieldMutationAuthorityInput):void{
  const actor=String(input.actor_id??"").trim();if(!actor)throw new Error("actor_id is required");
  if(input.kind==="permit_state"){if(!canManageFieldPermits(input.role))throw new Error("permit state mutation requires owner or admin authority");return;}
@@ -11,6 +11,7 @@ export function assertFieldMutationAuthority(input:FieldMutationAuthorityInput):
  if(state==="verified"){
    if(!canVerifyFieldDefects(input.role))throw new Error("defect verification requires owner or admin authority");
    if(String(input.verified_by_ref??"").trim()!==actor)throw new Error("verified_by_ref must identify the authorized verifier");
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(String(input.verified_date??"")))throw new Error("verified defect requires verified_date");
  }
  if(state==="deferred"&&input.severity==="critical"){
    if(!canDeferCriticalFieldDefect(input.role))throw new Error("critical defect deferral requires owner authority");
