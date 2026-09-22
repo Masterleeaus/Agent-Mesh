@@ -137,3 +137,14 @@ Connected the existing authenticated session model to the canonical Titan surfac
 Added `runtime/authenticated-surface.ts` and focused tests. Hub is intentionally not derived from the internal staff session roles because customer authentication is a separate boundary and must be wired from its real customer session rather than inferred.
 
 The production shell can now obtain a company-scoped Zero/Go projection from the existing session without demo identity leakage. Routing remains unchanged until the actual shell mount is added.
+
+## Pass 9 — first authenticated chat-first mount
+
+Mounted the first production-authenticated chat-first surface without replacing existing workflows:
+- added `/app/command` as an authenticated owner/admin Command entry;
+- tech sessions fail closed back to their field route rather than receiving owner Command;
+- the page creates a short-lived `zero` projection from the authenticated session and injects it into `RoleChat`;
+- added a small client wrapper so “View details” returns to the existing operational `/app` destination rather than duplicating owner workflows;
+- `TitanRole` now reuses the canonical surface type rather than maintaining a separate string union.
+
+This is intentionally additive. The existing `/app` dashboard remains untouched while the authenticated chat-first surface is proven. No demo company identity is used by the mounted Command entry.
