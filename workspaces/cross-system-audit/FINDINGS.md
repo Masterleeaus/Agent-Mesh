@@ -359,3 +359,66 @@ HIGH based on specialist source inspection; this audit treats the specialist wor
 
 ### Related action
 ACTION-CSA-010
+
+
+---
+
+## FINDING-CSA-013
+
+### Finding
+The current authority runtime directly proves that persistent/recalled execution context cannot create authority and that governed execution revalidates authority against the current company-bound decision.
+
+### Why it matters
+This closes an important P0/P1 evidence question independently of archaeology summaries: Personal Zero memory, behavioural learning and continuity can inform context but cannot grant, widen or refresh execution permission.
+
+### Evidence
+- Repository: Masterleeaus/Agent-Mesh
+- Branch: main
+- packages/runtime/authority/execution-boundary.mjs
+  - assertCurrentExecutionContextBinding returns identity_confers_authority:false and current_context_only:true.
+  - prepareGovernedCommandEnvelope validates the authority decision, emits execution_transport:'titan-command-bus', direct_mutation:false, requires_authoritative_receipt:true and authority_effect:false.
+  - assertCommandAuthorityCurrentAt checks company, actor/capability/operation/action bindings and supersession before execution.
+  - assertAuthoritativeExecutionReceipt and continuity checks bind successful execution evidence to company/action/authority/replay context.
+- packages/runtime/authority/company-boundary.mjs
+  - company_id is required.
+  - tenant_id, tenant_company_id and related legacy tenant fields are recursively rejected from authority payloads.
+
+### Current Titan equivalent
+Authority execution boundary / Command Bus governed envelope.
+
+### Classification
+CURRENT / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+Preserve and use as a hard invariant for Personal Zero, Experience, Learning, Evolution and continuity convergence.
+
+---
+
+## FINDING-CSA-014
+
+### Finding
+The newly discovered Zero Mechanism Archaeology workspace independently converges on existing owners for Business Memory (#153), bounded learning (#37), durable context (#21) and continuity (#725), while still finding no verified canonical owner for the semantic Personal Zero human-understanding/behaviour model.
+
+### Why it matters
+This narrows the genuine missing-capability question. The likely gap is not another generic memory store; it is a governed semantic model of the human that composes with existing memory/context/continuity owners.
+
+### Evidence
+- Cross-agent workspace: agent/763 .titan/research/zero-mechanism-archaeology/
+- Source agent is IN PROGRESS.
+- Relevant source findings include its #153/#37/#725/#21 ownership analysis and Personal Understanding searches.
+- Important source-quality note: the source artifact currently reuses FINDING-GH-014, FINDING-GH-015 and FINDING-GH-016 IDs for different findings. This audit therefore references the evidence by content until corrected.
+
+### Current Titan equivalent
+Composition candidates: #153 Business Memory/Knowledge + #21 durable context/handoff + #725 continuity + #37 bounded learning. Complete Personal Understanding owner remains UNKNOWN.
+
+### Classification
+UNKNOWN / LIKELY GAP PENDING FINAL ARCHAEOLOGY
+
+### Confidence
+MEDIUM
+
+### Related action
+Do not create an implementation issue yet. Continue ownership/source archaeology and package the capability only after Blueprint, GitHub and Library final evidence is reconciled.
