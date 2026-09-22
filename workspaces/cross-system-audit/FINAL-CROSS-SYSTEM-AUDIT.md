@@ -52,7 +52,7 @@ These are donor leads unless their source-level superiority has been proven.
 4. Complete Evolution Engine integration.
 5. Business Reality ↔ Zero integration.
 6. Outcome → Experience → Learning → Evolution closure.
-7. Complete Trust T0-T6 / three-way handshake / Authority Continuance path.
+7. Complete/certify the earned-Trust recursive handshake and autonomy progression; Authority Continuance runtime primitives are already substantially implemented.
 8. Complete Zero → Decision → Authority → Command Bus → Execution → Outcome trace.
 9. Proven Knowledge Authority consumption by reasoning.
 
@@ -104,9 +104,7 @@ Historical zero is unusually valuable because its documented design separates do
 
 ## 9. Tenant and authority finding
 
-Titan Runtime explicitly normalizes legacy tenant aliases into company_id. Historical zero WorkCore notes also use company_id as the tenant boundary.
-
-However, current Agent-Mesh operational invariants describe the active Dovetails database around account_id. This is not safe to silently treat as equivalent. A full authorization/storage/projection/decision/execution trace is a P0/P1 reconciliation item.
+`company_id` is the established Titan Zero target invariant and the current authority boundary rejects legacy tenant fields. `account_id` remains legacy/current Dovetails implementation evidence rather than a competing target tenancy model. Remaining work is enforcement/migration at active data, provider and execution boundaries through existing #648/#72, not creation of another tenancy abstraction.
 
 ## 10. Documentation finding
 
@@ -117,15 +115,14 @@ This should be corrected through a controlled documentation migration, not by si
 ## 11. Recommended execution order
 
 ### P0/P1
-1. Complete company_id boundary trace.
-2. Trace Trust T0-T6, three-way handshake, continuance, downgrade and revocation.
-3. Define and recover the canonical Understanding Memory.
-4. Define and recover the canonical Experience Memory.
-5. Close outcome→experience→learning.
-6. Establish evidence-backed Reality and its consumers.
-7. Connect Reality, Experience, Decision, Trust, Authority, Command Bus and outcomes.
-8. Reconstruct Evolution Engine from existing onboarding/configuration/change-detection mechanisms.
-9. Verify Knowledge Authority is consumed by reasoning.
+1. Finish active `company_id` enforcement through existing #648/#72.
+2. Implement/certify the recursive earned-Trust handshake and autonomy lifecycle through #640/#540 while preserving current Authority Continuance primitives.
+3. Finish canonical Business Memory/Knowledge through #153 and persistent Decision lifecycle through #59.
+4. Converge Personal Zero Understanding/Experience through #768 using verified historical donors without another memory/decision engine.
+5. Close bounded verified-outcome learning through #37.
+6. Implement #767 Evolution/Reality convergence around the existing authority-neutral Nexus primitive.
+7. Verify the full Reality → Decision → Trust/Authority → Command Bus → Execution → Outcome → Experience/Learning closure.
+8. Verify Knowledge Authority consumption by reasoning without conferring authority.
 
 ### P2
 10. Converge historical local-first sync/rewind.
