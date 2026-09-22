@@ -169,3 +169,17 @@ Status: EVIDENCE ADDED TO #636
 
 Summary:
 Treat verified Titan Zero/Go/Hub Library masters as donors only. Retain recovered shared Flutter/offline/maps/evidence/generated-UI foundations; finish canonical Surface SDK/Core transport, Go and Command projections, PWA install identities and native release/device certification through existing owners. No second mobile runtime or per-surface business authority.
+
+
+---
+
+## ACTION-LIB-013
+
+Type: SELECTIVE DONOR EXTRACTION / STRICT BOUNDARY
+Priority: P0
+Finding: FINDING-LIB-016
+GitHub Issues: #637, #643, #569, #570
+Status: EVIDENCE ADDED TO #637
+
+Summary:
+Extract only production-safe browser primitives from verified Library extension/Titan Code donors: semantic-first operation, unified browser observation evidence, governed propose-authorize-act-verify loop, cross-tab/workspace session support, source-linked page capture, capability-pack adapters, crash/restart journaling and least-privilege MV3 lifecycle patterns. Keep all Titan Code development-only systems out of production.
