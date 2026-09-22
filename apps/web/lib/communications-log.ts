@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getDatabaseDialect } from "@/lib/db";
 import { portableQuery, portableQueryOne } from "@/lib/db/portable";
+import type { DeliveryReceipt } from "@/lib/communications/contracts";
 
 export interface LogCommunicationOpts {
   accountId: string;
@@ -60,4 +61,29 @@ export async function findCommunicationByExternalId(accountId: string, externalI
     `SELECT id, outcome FROM communications_log WHERE account_id = $1 AND external_id = $2 LIMIT 1`,
     [accountId, externalId],
   );
+}
+
+
+/**
+ * Persist canonical provider delivery evidence into the existing communications
+ * audit store. account_id is retained only as the legacy storage column; callers
+ * must supply the canonical company_id carried by the receipt.
+ */
+export async function recordDeliveryReceipt(receipt: DeliveryReceipt): Promise<boolean> {
+  if (!receipt.company_id.trim()) throw new Error("company_id is required");
+  const rows = await portableQuery<{ id: string }>(
+    `UPDATE communications_log
+       SET outcome = $3
+     WHERE account_id = $1
+       AND external_id = $2
+       AND channel = $4
+       AND direction = 'outbound'`,
+    [
+      receipt.company_id,
+      receipt.provider_message_id ?? receipt.message_id,
+      receipt.state,
+      receipt.channel === "call" || receipt.channel === "voice" ? "phone" : receipt.channel,
+    ],
+  );
+  return rows.length > 0;
 }
