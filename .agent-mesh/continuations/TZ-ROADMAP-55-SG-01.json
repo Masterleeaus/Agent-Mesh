@@ -149,15 +149,19 @@
     "Pass 20: audited Agent Mesh bridge mutation call sites and confirmed/converged them behind a central governed mutation wrapper",
     "Pass 20: generic Titan Bridge path rejects agent_mesh mutation actions; only explicit allowlisted governed paths may mutate",
     "Pass 20: recover_agent, route_packet and continuation takeover are resume-gated; continuation checkpoint remains continuity-record-only and cannot grant lifecycle authority",
-    "Pass 20: regression guards prevent direct generic bridge mutation, unknown Agent Mesh mutation actions, or bypass of governed checkpoint/takeover/Manager paths"
+    "Pass 20: regression guards prevent direct generic bridge mutation, unknown Agent Mesh mutation actions, or bypass of governed checkpoint/takeover/Manager paths",
+    "Pass 20: audited current service-worker Agent Mesh bridge calls and confirmed all mutation actions are centralized in AGENT_MESH_MUTATION_POLICY/callAgentMeshMutation",
+    "Pass 20: generic callTitanBridge rejects Agent Mesh mutations, preventing UI/other callers from bypassing governed mutation paths",
+    "Pass 20: recover_agent, route_packet and continuation takeover are resume-gated; continuation checkpoint is explicitly continuity-record-only and cannot grant lifecycle authority",
+    "Pass 20: regression guards now fail if Manager Agent Mesh mutations stop using callAgentMeshMutation or generic bridge mutation denial disappears"
   ],
   "current_work": [
-    "Converge stale route_packet/packet terminology in Manager recovery onto GitHub issue/subgoal terminology without breaking bridge compatibility"
+    "Converge stale route_packet/packet terminology in Manager recovery path onto GitHub issue/subgoal semantics without creating a second routing system"
   ],
   "next_actions": [
-    "Inspect bridge/server implementation of agent_mesh.route_packet and recover_agent",
-    "Add compatibility adapter so user-facing/control-plane semantics use issue/subgoal while legacy packet is transport-only",
-    "Do not create a new routing system"
+    "Inspect bridge/backend contract for agent_mesh.route_packet and existing issue/subgoal routing support",
+    "Prefer compatibility adapter at boundary rather than renaming internal GitHub-native state back to packet",
+    "Add tests that durable work identity remains issue/subgoal/claim branch"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
