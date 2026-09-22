@@ -55,3 +55,41 @@ export function routeInboundCommunication(input: {
     execution_authority: false,
   };
 }
+
+
+export interface InboundProviderEvent {
+  company_id: string;
+  message_id: string;
+  conversation_id: string;
+  correlation_id: string;
+  channel: CommunicationEnvelope["channel"];
+  participants: CommunicationEnvelope["participants"];
+  body?: string;
+  occurred_at: string;
+  provider_id: string;
+}
+
+/**
+ * Normalizes provider webhook/input evidence into the canonical message
+ * envelope before classification or workforce routing. Provider identity is
+ * provenance only and never a tenant or authority boundary.
+ */
+export function normalizeInboundProviderEvent(
+  event: InboundProviderEvent,
+): CommunicationEnvelope {
+  return assertCommunicationEnvelope({
+    id: event.message_id,
+    company_id: event.company_id,
+    conversation_id: event.conversation_id,
+    correlation_id: event.correlation_id,
+    channel: event.channel,
+    direction: "inbound",
+    participants: event.participants,
+    body: event.body,
+    created_at: event.occurred_at,
+    provenance: {
+      source: "provider-inbound",
+      provider_id: event.provider_id,
+    },
+  });
+}
