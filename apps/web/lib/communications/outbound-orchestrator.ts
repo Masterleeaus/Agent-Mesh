@@ -129,11 +129,15 @@ export async function executeGovernedOutboundWithFallback(input: {
   attempts: ProviderAttemptEvidence[];
 }> {
   const message = assertCommunicationEnvelope(input.message);
+  if (!outboundReplayGuard.claim(message)) {
+    return { result: { ok: false, denied: false, reason: "duplicate" }, attempts: [] };
+  }
   const gate = evaluateOutboundCommunicationGate({
     policy: input.policy,
     rate_limit: input.rate_limit,
   });
   if (!gate.allowed) {
+    outboundReplayGuard.release(message);
     return { result: { ok: false, denied: true, reason: gate.reason }, attempts: [] };
   }
 
