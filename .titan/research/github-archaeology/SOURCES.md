@@ -129,3 +129,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-021 — `Masterleeaus/zero` main, ComplianceIQ `README.md`, SHA `c7deda650b12783ff902a5372042b6638624ae3b`, and `WORKFLOWS.md`, SHA `1fd1083d0785b1edede191a1ae545b946b48ac2f`; direct file inspection.
 - SOURCE-GH-022 — `Masterleeaus/Worksuite-Saas---Project-Management-System_Laravel` main, `Modules/StaffCompliance/Services/ComplianceDashboardService.php`, SHA `d76dd5581361789ccb509b6b13917ec49a5863e3`; direct file inspection.
 - SOURCE-GH-023 — Agent-Mesh #769 Environmental Intelligence, #423 Compliance/Audit/Governance, #430 certification; direct open-issue inspection.
+
+
+- SOURCE-GH-024 — `Masterleeaus/TitanPro` main, `docs/09-communications/Titan_Unified_Inbox.md`, SHA `02546d5021ce302043901c4f22a020dead3996b3`; direct file inspection.
+- SOURCE-GH-025 — `Masterleeaus/TitanPro` main, `docs/01-PWA/21-communications-voice-and-consent-architecture.md`, SHA `58cac4abb9c3fa76497f6ab626468a3698b8e809`; direct file inspection.
+- SOURCE-GH-026 — `Masterleeaus/Worksuite-Saas---Project-Management-System_Laravel` main, `TitanDocs/docs/09-communications/Titan_Communications_Orchestration_and_Fallback_Model.md`; direct file inspection.
+- SOURCE-GH-027 — `Masterleeaus/TitanPro` main, `resources/reference/titan/titan_bos_expanded_script.md`, SHA `7260a681ac7d9d3a498883bb4729f60743db9d3e`; direct file inspection.
+- SOURCE-GH-028 — Agent-Mesh #234 canonical Communications & Channels runtime and #240 certification; direct open-issue inspection.
