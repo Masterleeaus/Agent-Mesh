@@ -7,7 +7,7 @@ STATUS:
 IN PROGRESS
 
 CURRENT PHASE:
-Shared evidence coordination established; continuing source-level cross-system reconciliation and consuming specialist archaeology outputs as they become durable.
+LIVE MULTI-AGENT INGESTION — progressive convergence audit. Independent baseline is established; available GitHub archaeology has been ingested; Current-System Blueprint and Library Archaeology workspaces are pending discovery/availability and will be re-ingested by revision rather than waited on.
 
 COMPLETED:
 - Claimed issue #766 on canonical branch agent/766.
@@ -49,6 +49,10 @@ MAJOR ARTIFACTS CREATED:
 - workspaces/cross-system-audit/TITAN-ZERO-MASTER-CONVERGENCE-ACTION-MAP.md
 - workspaces/cross-system-audit/FINAL-CROSS-SYSTEM-AUDIT.md
 - workspaces/cross-system-audit/SOURCE-REGISTER.md
+- workspaces/cross-system-audit/INGESTION-LEDGER.md
+- workspaces/cross-system-audit/CONFLICTS.md
+- workspaces/cross-system-audit/MASTER-CAPABILITY-MAP.md
+- workspaces/cross-system-audit/MASTER-ACTION-MAP.md
 
 ISSUES CREATED/UPDATED:
 - #766 — Cross-system Zero convergence audit
@@ -57,4 +61,4 @@ LAST UPDATED:
 agent/766 checkpoint after ingesting the current GitHub archaeology coordination workspace and deduplicating owners/actions.
 
 COMPLETION ESTIMATE:
-Remaining phases: specialist-workspace ingestion; unresolved source verification; cross-agent conflict reconciliation; final capability/action register refresh; formal handoff.
+Remaining phases: Blueprint ingestion when available; GitHub archaeology re-ingestion as it advances; Library archaeology ingestion when available; cross-source reconciliation; gap/duplicate/orphan audit; action packet reconciliation; final source verification; final convergence map. Finalization is gated on designated research agents reaching COMPLETE.
