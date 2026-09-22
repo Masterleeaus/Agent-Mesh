@@ -48,4 +48,12 @@ describe("equipment telemetry health projection", () => {
       recorded_at: "2026-09-22T01:00:00Z",
     })).toThrow("equipment-health-company-id-required");
   });
+  it("matches verified FieldFlow threshold and zero-suppression semantics", () => {
+    const atThreshold = evaluateEquipmentTelemetryHealth({
+      company_id: "company-1", asset_id: "asset-1", recorded_at: "2026-09-22T00:00:00Z",
+      engine_temperature_c: 105, hydraulic_pressure_psi: 0, battery_voltage: 0, connectivity: "online",
+    });
+    expect(atThreshold.alerts.map((alert) => alert.rule_id)).toEqual(["engine-temperature-high"]);
+  });
+
 });
