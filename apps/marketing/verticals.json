@@ -33,28 +33,112 @@
     "Standalone marketing apps remain separate surfaces but share Titan Zero destination contracts.",
     "Do not carry donor pricing, testimonials, savings figures, feature counts, trial claims, or named integration claims into Titan Zero unless verified against the canonical product."
   ],
-  "pendingArchiveSites": [
+  "verticals": [
     {
-      "id": "nexjob",
-      "name": "Titan Zero Field Service",
-      "sourceArchive": "archive/marketing-sites-extracted/marketing-sites-extracted/nexjob-marketing-main.zip",
-      "targetApp": "apps/marketing-nexjob",
-      "status": "extracted-scanned-awaiting-install",
-      "vertical": "field-service"
+      "id": "field-services",
+      "name": "Field Services",
+      "examples": [
+        "Cleaning",
+        "Landscaping",
+        "Lawn care",
+        "Pool cleaning",
+        "Pressure washing",
+        "Pest control",
+        "Window cleaning",
+        "Mobile services",
+        "Property maintenance"
+      ],
+      "sites": [
+        "marketing-nexjob",
+        "marketing-fieldcrew"
+      ]
     },
     {
-      "id": "trydrafted",
-      "name": "Titan Zero Contractors",
-      "sourceArchive": "archive/marketing-sites-extracted/marketing-sites-extracted/trydrafted-landing-main.zip",
-      "targetApp": "apps/marketing-trydrafted",
-      "status": "extracted-scanned-awaiting-install",
-      "vertical": "contractors"
+      "id": "trades-construction",
+      "name": "Trades & Construction",
+      "examples": [
+        "Plumbing",
+        "Electrical",
+        "HVAC",
+        "Roofing",
+        "Carpentry",
+        "Painting",
+        "Building",
+        "Renovations",
+        "Flooring",
+        "Tiling",
+        "Concreting"
+      ],
+      "sites": [
+        "marketing-tradepilot"
+      ]
+    },
+    {
+      "id": "automotive",
+      "name": "Automotive",
+      "examples": [
+        "Mechanics",
+        "Workshops",
+        "Dealerships",
+        "Tyre services",
+        "Auto electricians",
+        "Smash repair",
+        "Detailing",
+        "Mobile mechanics"
+      ],
+      "sites": [
+        "marketing-fieldops"
+      ]
+    },
+    {
+      "id": "personal-services",
+      "name": "Personal Services",
+      "examples": [
+        "Salons",
+        "Barbers",
+        "Beauty",
+        "Nails",
+        "Massage",
+        "Spas",
+        "Personal trainers",
+        "Gyms",
+        "Fitness studios",
+        "Wellness",
+        "Coaching"
+      ],
+      "sites": [
+        "marketing-trydrafted"
+      ]
+    },
+    {
+      "id": "professional-business-services",
+      "name": "Professional & Business Services",
+      "examples": [
+        "Accounting",
+        "Consulting",
+        "Agencies",
+        "Real estate/property services",
+        "Recruitment",
+        "Marketing",
+        "IT services",
+        "Business advisors"
+      ],
+      "sites": []
     }
   ],
-  "excludedArchiveSites": [
-    {
-      "id": "tradepilot-waitlist",
-      "reason": "Do not install or reuse; existing Titan Zero Trades marketing site already uses TradePilot."
-    }
+  "sitePolicy": {
+    "marketing-fieldcrew": "Field Services / Cleaning industry pack",
+    "marketing-nexjob": "Field Services / broad field-service industry pack",
+    "marketing-tradepilot": "Trades & Construction / trade industry packs",
+    "marketing-fieldops": "Automotive / automotive service industry pack",
+    "marketing-trydrafted": "Personal Services / initial donor conversion; do not retain contractor-only positioning"
+  },
+  "crossVerticalCapabilities": [
+    "Environmental intelligence",
+    "Environmental impact and efficiency analysis",
+    "Privacy and security",
+    "AI workforce",
+    "Governance and assurance",
+    "Cost sovereignty"
   ]
 }
