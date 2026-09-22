@@ -34,7 +34,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden xl:flex items-center gap-1">
           {navLinks.map(({ label, path }) => (
             <Link
               key={path}
@@ -59,7 +59,7 @@ export default function Navbar() {
         </div>
 
         {/* CTA — linked to Titan Zero Command */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden xl:flex items-center gap-3">
           <a
             href={appRoutes.login}
             className="text-sm font-medium text-nx-muted hover:text-nx-text px-4 py-2 transition-colors"
@@ -76,7 +76,7 @@ export default function Navbar() {
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-nx-text"
+          className="xl:hidden text-nx-text"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -85,7 +85,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-nx-border bg-nx-bg px-6 pb-4 pt-2">
+        <div id="mobile-navigation" className="xl:hidden border-t border-nx-border bg-nx-bg px-6 pb-4 pt-2">
           {navLinks.map(({ label, path }) => (
             <Link
               key={path}
