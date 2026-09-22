@@ -945,3 +945,24 @@ Do not create a parallel prediction/evidence/authority system. #37 should consum
 OPEN CANONICAL GAP / STRONG SAFETY SUBSTRATE EXISTS
 ### Confidence
 HIGH for issue scope and inspected current runtime; repository-wide absence of all predictive code is not claimed.
+
+
+---
+
+## FINDING-CSA-045
+### Finding
+Issue #768 is no longer unclaimed: it has been formally claimed on canonical branch `agent/768` for implementation/convergence. Current Workforce code already supplies useful company-relationship boundary semantics for human workers and external actors, but these are company-scoped participation identities, not the persistent ONE/Zero identity model.
+### Evidence
+- #768 now contains a claim comment: canonical branch `agent/768`, base main SHA `83258dddf10ac19e68d63310c7f15bf9c60cc852`, with explicit commitment to deep-scan existing storage/evidence/provenance/context contracts before selecting the owner.
+- #768 clarification preserves: ONE = persistent human principal; Zero belongs to ONE; `company_id` remains the only company tenant boundary; no fake personal company_id; company relationships are revocable contexts; portable evidence does not port authority.
+- Current `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts` blob `415ee5647bed8a54b60d4e18ee628c67316d97ee` contains:
+  - human worker identity references separated from AI identity/runtime and authority;
+  - company-scoped external actor/customer/supplier/contractor/partner relationships;
+  - relationship status/expiry, allowed participation and scoped evidence/workflow/approval/handover participation;
+  - explicit rules that identity, role, employment or external participation do not grant authority.
+### Interpretation
+These Workforce contracts are reusable relationship/context substrates for #768 but must not become the owner of ONE or Personal Zero. #768 should compose persistent principal/Zero identity above company relationships, preserving immediate relationship revocation and independent Trust/authority evaluation.
+### Classification
+ACTIVE IMPLEMENTATION CLAIM / REUSABLE RELATIONSHIP SUBSTRATE
+### Confidence
+HIGH
