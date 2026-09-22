@@ -11,7 +11,8 @@ function plan(snapshot={},opts={}){
  for(const agent of arr(snapshot.agents).filter(a=>a&&a.state==='AVAILABLE'&&!a.execution_active).sort((a,b)=>String(a.id).localeCompare(String(b.id)))){
    const candidate=available.map(id=>byId.get(String(id))).filter(Boolean).sort((a,b)=>rank(a.priority)-rank(b.priority)||String(a.subgoal_id||a.id).localeCompare(String(b.subgoal_id||b.id)))[0];
    if(!candidate){assignments.push({agent:agent.id,status:'NO_ELIGIBLE_GITHUB_WORK'});continue;}
-   assignments.push({agent:agent.id,subgoal_id:candidate.subgoal_id||candidate.id,status:'CANDIDATE_ONLY',claim_request:{operation:'CREATE_GITHUB_REF_ATOMICALLY',branch:'agent/'+String(candidate.subgoal_id||candidate.id),expected_absent:true,base_main_sha:opts.mainSha||snapshot.mainSha||null,on_conflict:'REFRESH_GITHUB_AND_RESELECT'}});
+   if(!opts.mainSha&&!snapshot.mainSha)throw new Error('live GitHub main SHA required for claim request');
+   assignments.push({agent:agent.id,subgoal_id:candidate.subgoal_id||candidate.id,status:'CANDIDATE_ONLY',claim_request:{operation:'CREATE_GITHUB_REF_ATOMICALLY',branch:'agent/'+String(candidate.subgoal_id||candidate.id),expected_absent:true,base_main_sha:opts.mainSha||snapshot.mainSha,on_conflict:'REFRESH_GITHUB_AND_RESELECT'}});
  }
  return freeze({schema:SCHEMA,source:'github',assignments,mutatesLocalState:false,createsClaim:false,authority:{durableTruth:'github',selection:'advisory',claim:'git-branch-ref',localLedgerMutation:false,dependencyUnlock:false,lifecycleAdvance:false}});
 }
