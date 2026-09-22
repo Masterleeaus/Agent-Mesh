@@ -908,3 +908,23 @@ Issue #59 explicitly confirms that persistent Decision Object/DecisionPacket lif
 OPEN CANONICAL GAP / EXISTING OWNER #59
 ### Confidence
 HIGH for #59 scope and inspected paths; repository-wide absence beyond inspected paths is not claimed.
+
+
+---
+
+## FINDING-CSA-043
+### Finding
+Current main already contains a substantial worker-scoped memory control plane with provenance, confidence/relevance ranking, expiry, supersession, privacy classification, purpose filtering, recall receipts and explicit non-authority semantics. This is a reusable substrate for #153, but it is not the canonical company-wide Business Memory runtime requested by #153.
+### Evidence
+Current `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts` blob `415ee5647bed8a54b60d4e18ee628c67316d97ee`, Workforce Pass 36:
+- `buildWorkforceWorkerMemorySnapshot`: strict `company_id` + `worker_id`; provenance, confidence, relevance, privacy class, purpose tags, expiry and supersession; history-preserving supersession.
+- `recallWorkforceWorkerMemory`: filters inactive/expired/superseded memories, confidence/relevance thresholds and purpose mismatch; ranks relevance → confidence → recency; marks recall context-only and requires current knowledge verification + independent authority decision.
+- `buildWorkforceWorkerMemoryRecallReceipt`: preserves selected memory IDs, provenance refs, reasoning trace, Knowledge verification ref and authority decision ref; receipt is not execution authority.
+- Privacy/evidence controls in the same current runtime enforce purpose limitation, retention expiry, delegation, minimisation/redaction and governed disposition.
+Issue #153 explicitly requires one company-scoped Business Memory/Knowledge runtime and forbids parallel memory systems per agent/surface.
+### Interpretation
+Do not discard or duplicate Worker Memory. #153 should reuse/converge its proven record/recall/receipt/privacy semantics beneath a company-wide Business Memory owner, while keeping worker-specific memory as a scoped view/context rather than the canonical memory boundary. #153 still needs company-wide ingestion/deduplication, verified-outcome episodic memory, procedural memory, correction/forgetting semantics, stable cross-runtime APIs and OnboardingPro longitudinal/anti-repeat semantics.
+### Classification
+CURRENT / SUBSTANTIAL REUSABLE SUBSTRATE; #153 COMPANY-WIDE CONVERGENCE STILL OPEN
+### Confidence
+HIGH
