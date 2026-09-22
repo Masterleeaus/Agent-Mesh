@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Drafted</title>
+<meta name="description" content="Simple, flat monthly pricing for Drafted's overnight AI agents. Plans for solo operators and multi-crew home-service businesses. No setup fee, cancel anytime.">
+<link rel="canonical" href="https://trydrafted.io/pricing.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pricing — Drafted">
+<meta property="og:description" content="Simple, flat monthly pricing for Drafted's overnight AI agents. Plans for solo operators and multi-crew home-service businesses. No setup fee, cancel anytime.">
+<meta property="og:url" content="https://trydrafted.io/pricing.html">
+<script defer data-domain="trydrafted.io" src="https://plausible.io/js/script.tagged-events.js"></script>
+<!-- Meta Pixel Code --><script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '1242274827817542'); fbq('track', 'PageView');</script><noscript> <img height="1" width="1" src="https://www.facebook.com/tr?id=1242274827817542&ev=PageView&noscript=1"/></noscript><!-- End Meta Pixel Code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root[data-theme="dark"] { --bg:#0a0a0a;--bg-elev:#131313;--bg-card:#161616;--bg-hover:#1d1d1d;--border:rgba(255,255,255,0.08);--border-strong:rgba(255,255,255,0.14);--text:#f5f5f5;--text-dim:#a3a3a3;--text-faint:#6b6b6b;--accent:#84cc16;--accent-glow:rgba(132,204,22,0.18);--accent-soft:rgba(132,204,22,0.08);--gradient:radial-gradient(circle at 50% 0%,rgba(132,204,22,0.08),transparent 70%); }
+:root[data-theme="light"] { --bg:#fafafa;--bg-elev:#ffffff;--bg-card:#ffffff;--bg-hover:#f5f5f5;--border:rgba(0,0,0,0.08);--border-strong:rgba(0,0,0,0.14);--text:#0a0a0a;--text-dim:#525252;--text-faint:#a3a3a3;--accent:#4d7c0f;--accent-glow:rgba(77,124,15,0.15);--accent-soft:rgba(77,124,15,0.06);--gradient:radial-gradient(circle at 50% 0%,rgba(77,124,15,0.06),transparent 70%); }
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Geist',-apple-system,BlinkMacSystemFont,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .3s ease,color .3s ease;letter-spacing:-0.01em}
+.serif{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;letter-spacing:-0.02em}
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;background:var(--gradient)}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;padding:16px 0;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:-0.02em;color:var(--text);text-decoration:none}
+.logo-mark{width:22px;height:22px;border-radius:6px;background:var(--accent);display:grid;place-items:center;color:var(--bg);font-weight:800;font-size:12px;letter-spacing:-0.05em;box-shadow:0 0 0 1px var(--accent),0 0 24px var(--accent-glow)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-link{color:var(--text-dim);text-decoration:none;font-size:14px;font-weight:500;transition:color .15s}
+.nav-link:hover,.nav-link.active{color:var(--text)}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.theme-toggle{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-dim);cursor:pointer;display:grid;place-items:center;transition:all .15s}
+.theme-toggle:hover{border-color:var(--border-strong);color:var(--text)}
+.theme-toggle svg{width:14px;height:14px}
+[data-theme="dark"] .sun-icon{display:block}[data-theme="dark"] .moon-icon{display:none}
+[data-theme="light"] .sun-icon{display:none}[data-theme="light"] .moon-icon{display:block}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-size:14px;font-weight:500;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-family:inherit;letter-spacing:-0.01em;transition:all .15s ease}
+.btn:hover{background:var(--bg-hover);border-color:var(--border-strong)}
+.btn-primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn-primary:hover{background:var(--text);border-color:var(--text);transform:translateY(-1px);box-shadow:0 8px 24px color-mix(in srgb,var(--text) 20%,transparent)}
+
+/* SECTIONS */
+.section{max-width:1200px;margin:0 auto;padding:80px 32px}
+.section-label{display:inline-flex;align-items:center;gap:8px;padding:4px 10px;border-radius:100px;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:600;font-family:'Geist Mono',monospace;text-transform:uppercase;margin-bottom:20px;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent)}
+.section-headline{font-size:clamp(32px,4.5vw,56px);line-height:1.05;font-weight:600;letter-spacing:-0.035em;margin-bottom:20px;max-width:720px}
+.section-headline .serif{color:var(--text-dim)}
+.section-sub{font-size:18px;color:var(--text-dim);max-width:600px;line-height:1.55;margin-bottom:48px}
+
+/* TIER CARDS */
+.agents-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.agent-card{padding:32px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;position:relative;transition:all .2s ease}
+.agent-card:hover{border-color:var(--border-strong)}
+.agent-card.featured{background:linear-gradient(135deg,var(--bg-card) 0%,var(--accent-soft) 100%);border-color:color-mix(in srgb,var(--accent) 30%,var(--border))}
+.agent-card.featured::after{content:'LIVE';position:absolute;top:18px;right:18px;font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.08em;padding:3px 8px;border-radius:100px;background:var(--accent);color:var(--bg)}
+.agent-card.featured.popular::after{content:'MOST POPULAR'}
+.agent-num{font-family:'Geist Mono',monospace;font-size:11px;color:var(--text-faint);letter-spacing:.08em;margin-bottom:14px;display:block}
+.agent-card h3{font-size:18px;font-weight:600;letter-spacing:-0.02em;margin-bottom:8px}
+.agent-card .desc{font-size:14px;color:var(--text-dim);line-height:1.55;margin-bottom:16px}
+
+/* COMPARISON TABLE */
+table.compare{width:100%;border-collapse:collapse;margin-top:28px;font-size:15px}
+table.compare th,table.compare td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--border)}
+table.compare thead th{font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-faint);font-weight:600}
+table.compare td:first-child{color:var(--text);font-weight:500}
+table.compare td:not(:first-child){color:var(--text-dim)}
+table.compare td.accent{color:var(--accent);font-weight:600}
+
+/* FAQ */
+.faq{max-width:800px;margin:0 auto;padding:64px 32px}
+.faq-item{border-bottom:1px solid var(--border);padding:24px 0}
+.faq-q{font-size:17px;font-weight:500;letter-spacing:-0.02em;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.faq-q .icon{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);display:grid;place-items:center;color:var(--text-dim);flex-shrink:0;transition:all .2s}
+details[open] .faq-q .icon{background:var(--accent);color:var(--bg);border-color:var(--accent);transform:rotate(45deg)}
+.faq-a{font-size:15px;line-height:1.6;color:var(--text-dim);margin-top:14px;padding-right:40px}
+details summary{list-style:none}
+details summary::-webkit-details-marker{display:none}
+
+/* FINAL CTA */
+.final{max-width:1200px;margin:0 auto;padding:64px 32px 100px}
+.final-card{background:var(--bg-card);border:1px solid var(--border);border-radius:24px;padding:64px 48px;text-align:center;position:relative;overflow:hidden}
+.final-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--accent-glow),transparent 50%);pointer-events:none}
+.final-headline{font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;position:relative}
+.final-headline .serif{color:var(--text-dim)}
+.final-sub{font-size:16px;color:var(--text-dim);margin-bottom:32px;position:relative;max-width:520px;margin-left:auto;margin-right:auto}
+.final-ctas{display:flex;gap:12px;justify-content:center;position:relative}
+
+/* FOOTER */
+footer{max-width:1200px;margin:0 auto;padding:32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--text-faint)}
+footer a{color:var(--text-faint);text-decoration:none}
+footer a:hover{color:var(--text)}
+
+@media(max-width:640px){.nav-links{display:none}.section{padding:56px 20px}.faq{padding:56px 20px}.final{padding:48px 20px 80px}.final-card{padding:48px 24px}table.compare th,table.compare td{padding:10px 8px;font-size:13px}}
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="logo-mark">D</span><span>drafted</span></a>
+    <div class="nav-links">
+      <a href="index.html#agents" class="nav-link">Agents</a>
+      <a href="index.html#how" class="nav-link">How it works</a>
+      <a href="index.html#case" class="nav-link">Customers</a>
+      <a href="index.html#faq" class="nav-link">FAQ</a>
+      <a href="pricing.html" class="nav-link active">Pricing</a>
+      <a href="blog.html" class="nav-link">Blog</a>
+    </div>
+    <div class="nav-actions">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a href="index.html#demo" class="btn btn-primary">Book demo →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="section">
+  <span class="section-label">Pricing</span>
+  <h1 class="section-headline">
+    Pricing that pays for itself <span class="serif">by the second quote.</span>
+  </h1>
+  <p class="section-sub">
+    One missed lead can cost you a season-long contract. Drafted drafts every quote, reply, and follow-up overnight — for a flat monthly rate that's a fraction of what one back-office hire would run you.
+  </p>
+</section>
+
+<!-- TIERS -->
+<section class="section" style="padding-top: 0;">
+  <div class="agents-grid">
+
+    <div class="agent-card">
+      <span class="agent-num">Solo & Small Crews</span>
+      <div style="font-size: 40px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; margin-bottom: 8px;">
+        $400<span style="font-size: 14px; color: var(--text-faint); font-weight: 500;">/mo</span>
+      </div>
+      <p class="desc">Owner-operators and small teams running 1–2 crews.</p>
+      <p class="desc" style="margin-bottom: 6px;"><span style="color: var(--accent); font-weight: 600;">✓</span> All 11 overnight agents (quotes, lead replies, follow-ups, upsells, more)</p>
+      <p class="desc" style="margin-bottom: 6px;"><span style="color: var(--accent); font-weight: 600;">✓</span> Connects to Jobber, ServiceTitan, Housecall Pro, CompanyCam</p>
+      <p class="desc" style="margin-bottom: 6px;"><span style="color: var(--accent); font-weight: 600;">✓</span> Drafts waiting every morning — you approve, it sends</p>
+      <p class="desc" style="margin-bottom: 20px;"><span style="color: var(--accent); font-weight: 600;">✓</span> Email + chat support</p>
+      <a href="index.html#demo" class="btn" style="width: 100%; justify-content: center;">Book a demo →</a>
+    </div>
+
+    <div class="agent-card featured popular">
+      <span class="agent-num">Multi-Crew</span>
+      <div style="font-size: 40px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; margin-bottom: 8px;">
+        $1,500<span style="font-size: 14px; color: var(--text-faint); font-weight: 500;">/mo</span>
+      </div>
+      <p class="desc">Growing shops running 10+ crews or multiple locations.</p>
+      <p class="desc" style="margin-bottom: 6px;"><span style="color: var(--accent); font-weight: 600;">✓</span> Everything in Solo & Small Crews</p>
+      <p class="desc" style="margin-bottom: 6px;"><span style="color: var(--accent); font-weight: 600;">✓</span> Higher volume across more crews and locations</p>
+      <p class="desc" style="margin-bottom: 6px;"><span style="color: var(--accent); font-weight: 600;">✓</span> Margin alerts + pipeline reporting across the operation</p>
+      <p class="desc" style="margin-bottom: 6px;"><span style="color: var(--accent); font-weight: 600;">✓</span> Priority onboarding (live the same week)</p>
+      <p class="desc" style="margin-bottom: 20px;"><span style="color: var(--accent); font-weight: 600;">✓</span> Dedicated support</p>
+      <a href="index.html#demo" class="btn btn-primary" style="width: 100%; justify-content: center;">Book a demo →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHAT EVERY PLAN INCLUDES -->
+<section class="section" style="padding-top: 0;">
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 32px;">
+    <span class="section-label">What every plan includes</span>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 8px;">
+      <div style="font-size: 14px; color: var(--text-dim); line-height: 1.55;"><span style="color: var(--accent); font-weight: 600;">✓</span> All 11 overnight agents</div>
+      <div style="font-size: 14px; color: var(--text-dim); line-height: 1.55;"><span style="color: var(--accent); font-weight: 600;">✓</span> Plugs into your existing CRM — your team changes nothing</div>
+      <div style="font-size: 14px; color: var(--text-dim); line-height: 1.55;"><span style="color: var(--accent); font-weight: 600;">✓</span> You approve every draft before it sends — nothing fires on its own</div>
+      <div style="font-size: 14px; color: var(--text-dim); line-height: 1.55;"><span style="color: var(--accent); font-weight: 600;">✓</span> No setup fee, no per-seat pricing, no annual lock-in</div>
+      <div style="font-size: 14px; color: var(--text-dim); line-height: 1.55;"><span style="color: var(--accent); font-weight: 600;">✓</span> Onboarding the same week you sign</div>
+    </div>
+  </div>
+</section>
+
+<!-- DO THE MATH -->
+<section class="section">
+  <span class="section-label">Is it worth it?</span>
+  <h2 class="section-headline">
+    Do the math on <span class="serif">one lost contract.</span>
+  </h2>
+  <p class="section-sub">
+    A single recurring maintenance contract is worth thousands across a season. If Drafted saves even one quote a month from going out late — one contract you'd otherwise have lost to a faster competitor — it's paid for itself several times over. Most operators are leaking far more than one.
+  </p>
+  <table class="compare">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Without Drafted</th>
+        <th>With Drafted</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Quote turnaround</td><td>1–3 days (if at all)</td><td class="accent">Drafted overnight, sent by morning</td></tr>
+      <tr><td>Late-night back office</td><td>Yours</td><td class="accent">Handled</td></tr>
+      <tr><td>Missed upsells</td><td>Slip by</td><td class="accent">Flagged automatically</td></tr>
+      <tr><td>Cost</td><td>$50K–$150K/yr for a hire</td><td class="accent">From $400/mo</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <span class="section-label" style="margin-left: 0;">Pricing FAQ</span>
+  <h2 class="section-headline" style="margin-bottom: 32px;">
+    Common questions <span class="serif">about pricing.</span>
+  </h2>
+
+  <details class="faq-item">
+    <summary class="faq-q">
+      <span>Is there a setup fee?</span>
+      <span class="icon">+</span>
+    </summary>
+    <p class="faq-a">No. Flat monthly, starting the week you onboard.</p>
+  </details>
+
+  <details class="faq-item">
+    <summary class="faq-q">
+      <span>Do you charge per user or per seat?</span>
+      <span class="icon">+</span>
+    </summary>
+    <p class="faq-a">No. One flat rate for your business, no matter how many people touch it.</p>
+  </details>
+
+  <details class="faq-item">
+    <summary class="faq-q">
+      <span>What if I'm between the two tiers?</span>
+      <span class="icon">+</span>
+    </summary>
+    <p class="faq-a">A 20-minute demo against your actual data gets you an exact quote. Pricing scales with crew count and volume — we'll land you in the right spot.</p>
+  </details>
+
+  <details class="faq-item">
+    <summary class="faq-q">
+      <span>Can I cancel anytime?</span>
+      <span class="icon">+</span>
+    </summary>
+    <p class="faq-a">Yes. No annual contracts, no lock-in.</p>
+  </details>
+
+  <details class="faq-item">
+    <summary class="faq-q">
+      <span>Does my team need to learn new software?</span>
+      <span class="icon">+</span>
+    </summary>
+    <p class="faq-a">No. Drafted reads from the tools you already use. Your team's day doesn't change.</p>
+  </details>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <div class="final-card">
+    <h2 class="final-headline">
+      Ready to put Drafted <span class="serif">to work?</span>
+    </h2>
+    <p class="final-sub">
+      20-minute demo against your actual data. No slide deck — just the system drafting your work, live. Onboarding starts the same week.
+    </p>
+    <div class="final-ctas">
+      <a href="index.html#demo" class="btn btn-primary">Book a 20-minute demo →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 Drafted · Fort Lauderdale, FL</div>
+  <div>Built by operators · for operators</div>
+  <div><a href="index.html#demo">Book a demo</a></div>
+</footer>
+
+<script>
+function toggleTheme(){const r=document.documentElement,n=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('drafted-theme',n)}catch(e){}}
+(function(){try{const s=localStorage.getItem('drafted-theme');if(s)document.documentElement.setAttribute('data-theme',s)}catch(e){}})();
+</script>
+</body>
+</html>
