@@ -144,3 +144,18 @@ Canonical Owner: UNRESOLVED — candidate Personal Zero Understanding/Behavioura
 
 Summary:
 Search historical donors and shared agent evidence for a versioned human-understanding model covering goals, priorities, preferences, relationships, communication/decision patterns and evolving working context. Do not create a new implementation issue until historical evidence and current ownership are exhausted.
+
+
+---
+
+## SUPPORTED EXISTING ACTION:
+#768
+
+Additional evidence:
+FINDING-GH-018; FINDING-GH-019; FINDING-GH-020; FINDING-GH-021
+
+Status:
+PROPOSED / UNCLAIMED IN BRANCH SEARCH AT THIS CHECKPOINT
+
+Purpose:
+Define one canonical Personal Zero Understanding & Experience contract layer, reusing current TypeScript evidence/storage/context owners and recovering only missing semantics from verified historical donors. This supersedes the need for ACTION-GH-003 to propose a new implementation issue; ACTION-GH-003 remains archaeology-only for donor verification.
