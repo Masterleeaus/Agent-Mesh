@@ -676,3 +676,28 @@ Preserve this Nexus as the authority-neutral orchestration primitive. #767 shoul
 CURRENT / IMPLEMENTED NARROW PRIMITIVE + MISSING LIFECYCLE INTEGRATION
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-029
+### Finding
+Closed issue #633 materially reduces the remaining intelligence-convergence scope: Signal, Model Council, Nexus, Prime and Knowledge Authority were converged/exposed through canonical TypeScript surfaces without creating parallel execution authority.
+### Evidence
+#633 final convergence records commits 222d8eb4, c5648ee7, 48c2c676, 71cfede0, ab436cf6 and d068929e. It explicitly reports no need for another Decision Engine, DecisionPacket, Model Council, Prime, Knowledge Authority, Signal or execution host. Knowledge Authority was retained as reasoning-only input requiring an independent authority decision.
+### Caveat
+#633 did not claim local package test/build execution. Later Library archaeology also surfaced richer donor semantics for Model Council, Knowledge Authority and Decision Engine that still need selective comparison, especially where they support Personal Zero rather than duplicate intelligence engines.
+### Classification
+CURRENT CONVERGENCE COMPLETE FOR #633 SCOPE / SELECTIVE DONOR HARDENING REMAINS
+### Confidence
+HIGH
+
+## FINDING-CSA-030
+### Finding
+The remaining Personal Zero learning/experience work should not be routed back through #633. The open canonical lanes are #768 for Personal Zero contracts, #153 for Business Memory/Knowledge, #37 for bounded predictive/outcome learning and #59 for persistent Decision lifecycle/re-evaluation.
+### Evidence
+#153 explicitly owns company-scoped memory, episodic verified-outcome memory, anti-repeat, correction/supersession and retention. #37 owns verified-outcome policy adaptation/predictive triggers with no authority expansion. #59 owns persistent DecisionPacket state and temporal re-evaluation. #768 owns Personal Zero Understanding/Experience architecture.
+### Classification
+OWNER RECONCILIATION
+### Confidence
+HIGH
