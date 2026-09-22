@@ -7,6 +7,7 @@ const sandbox={console}; sandbox.globalThis=sandbox; vm.createContext(sandbox);
 function load(rel){vm.runInContext(fs.readFileSync(path.join(root,rel),'utf8'),sandbox,{filename:rel});}
 load('src/titan-zero/agent-mesh-role-topology.js');
 load('src/titan-zero/manager-control-plane.js');
+const room=s.TitanZeroManagerControlRoom;const legacy=room.project({baselineSha256:'a'.repeat(64),claims:[{status:'ACTIVE'}],deltas:[{status:'READY'}]});assert.equal(legacy.operational,false);assert.equal(legacy.warning,'LEGACY_PROJECTION_DIAGNOSTIC_ONLY');assert.equal(legacy.authority.maySelectWork,false);assert.equal(legacy.authority.mayAdvanceLifecycle,false);
 const cp=sandbox.TitanZeroManagerControlPlane;
 assert(cp,'manager control plane must export');
 assert.strictEqual(cp.SCHEMA,'titan-zero.manager.control-plane.v2');
