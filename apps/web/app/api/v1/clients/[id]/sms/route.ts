@@ -7,6 +7,7 @@ import { logger } from "@/lib/logger";
 import { normalizePhone } from "@/lib/phone";
 import { isSmsGatewayConfigured, sendSmsViaGateway } from "@/lib/sms/gateway";
 import { resolveTenantSmsSettings } from "@/lib/sms/settings";
+import { evaluateOutboundCommunicationPolicy } from "@/lib/communications/contracts";
 import {
   findActiveJobForClient,
   logOutboundSms,
@@ -99,13 +100,26 @@ export const POST = withRole(
         { status: 404 }
       );
     }
-    if (!client.sms_consent) {
+    const outboundPolicy = evaluateOutboundCommunicationPolicy({
+      consent: client.sms_consent ? "granted" : "denied",
+      opted_out: !client.sms_consent,
+      quiet_hours: false,
+      channel_allowed: smsSettings.enabled,
+      privacy_allowed: true,
+      funding_allowed: true,
+      // This route is already bounded by withRole(["owner", "admin"]).
+      authority_allowed: true,
+    });
+    if (!outboundPolicy.allowed) {
       return NextResponse.json(
         {
           error: {
-            code: "SMS_OPTED_OUT",
+            code: "SMS_POLICY_DENIED",
+            reason: outboundPolicy.reason,
             message:
-              "This client has not consented to SMS (or opted out via STOP). Use phone/email, or ask them to reply START / re-opt in on booking.",
+              outboundPolicy.reason === "opted-out"
+                ? "This client has not consented to SMS (or opted out via STOP). Use phone/email, or ask them to reply START / re-opt in on booking."
+                : "Outbound SMS is not permitted by the current communications policy.",
             traceId: session.traceId,
           },
         },
