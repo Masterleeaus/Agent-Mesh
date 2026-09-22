@@ -236,3 +236,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-020 | Blueprint workflow PR state verification | PR #750/#752/#758 | PR metadata + patches | OPEN / UNMERGED | VERIFIED | All three PRs add evidence-generation workflows only; none is merged into main. Head revisions pinned in FINDING-CSA-035. | YES |
+
+
+| INGEST-021 | Specialist completion-state recheck | agent/765 GitHub Archaeology STATUS + agent/763 Zero Mechanism Archaeology STATUS | blobs eeb589bf72844561c540791e0320997d5cbf3055 / 8df6d1c246c05cbd6539f1e145935b2419ddabd1 | SOURCE AGENTS STILL IN PROGRESS | VERIFIED | Both designated specialist lanes explicitly remain IN PROGRESS. Final cross-system audit must re-ingest their final revisions before completion. | YES |
