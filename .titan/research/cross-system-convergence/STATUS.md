@@ -68,3 +68,10 @@ Remaining phases: Blueprint ingestion when available; GitHub + mechanism archaeo
 
 ### Latest verification checkpoint
 Direct current-main source review confirms Authority Continuance is substantially implemented in packages/runtime/authority via authority leases, lease controls, delegation extinction/continuity, supersession, expiry/freshness contraction and fail-closed execution eligibility. The remaining Trust uncertainty is primarily end-to-end Goal42 handshake/progression integration and certification, not absence of continuance primitives.
+
+
+## Finalization gate checkpoint
+- GitHub Archaeology agent/765: **IN PROGRESS** at STATUS blob `eeb589bf72844561c540791e0320997d5cbf3055`.
+- Zero Mechanism / Library-derived archaeology agent/763: **IN PROGRESS** at STATUS blob `8df6d1c246c05cbd6539f1e145935b2419ddabd1`.
+- Blueprint #749/#751/#757 lanes: unmerged evidence tooling; generated final evidence not yet ingested.
+- Therefore this audit remains **IN PROGRESS** and must not be represented as final despite the filename `FINAL-CROSS-SYSTEM-AUDIT.md`.
