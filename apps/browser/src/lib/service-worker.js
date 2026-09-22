@@ -1957,6 +1957,7 @@ async function checkpointAgentMeshContinuation(snapshot,reason='manager-lifecycl
         main_sha:github.git?.mainSha||null,
         lifecycle:value.githubProjection?.state||github.lifecycle||null,
         checkpoint_reason:String(reason||'manager-lifecycle').slice(0,120),
+        execution_resume:value.executionResume||value.execution_resume||null,
         source:'titan-code-manager',
         authority:{claim_release:false,merge:false,ai:false}
     });
@@ -1972,6 +1973,7 @@ async function takeoverAgentMeshContinuation(snapshot,{fromExecutionSession=null
         issue_number:github.issue.number,subgoal_id:github.issue.subgoal_id,
         claim_branch:github.claim?.branch||github.branch||('agent/'+github.issue.subgoal_id),
         from_execution_session:fromExecutionSession,to_execution_session:toExecutionSession,reason,
+        execution_resume:value.executionResume||value.execution_resume||null,
         head_sha:github.git?.headSha||github.claim?.headSha||null,
         authority:{same_claim_branch:true,claim_release:false,merge:false,ai:false}
     });
@@ -1980,7 +1982,7 @@ async function getAgentMeshWorkContext(snapshot){
     const value=snapshot&&typeof snapshot==='object'?snapshot:{},githubProjection=value.githubProjection||null,raw=value.github||value.agentMesh||{};
     const C=globalThis.TitanCodeAgentMeshContinuation;if(!C?.workContext) return {ok:false,reason:'work-context-runtime-unavailable'};
     const issue=githubProjection?.issue||raw.issue||{};if(!issue?.subgoal_id) return {ok:false,reason:'github-work-identity-missing'};
-    const cp={issue_number:issue.number||raw.issue?.number,subgoal_id:issue.subgoal_id,claim_branch:githubProjection?.git?.branch||raw.claim?.branch||raw.branch||('agent/'+issue.subgoal_id),objective:raw.objective||'',main_sha:githubProjection?.git?.mainSha||raw.git?.mainSha,base_sha:githubProjection?.git?.baseSha||raw.git?.baseSha,head_sha:githubProjection?.git?.headSha||raw.git?.headSha,current_pass:raw.current_pass??null,completed:raw.completed||[],current_work:raw.current_work||[],next_actions:raw.next_actions||[],blockers:raw.blockers||[],verification:raw.verification||[],do_not_repeat:raw.do_not_repeat||[]};
+    const cp={issue_number:issue.number||raw.issue?.number,subgoal_id:issue.subgoal_id,claim_branch:githubProjection?.git?.branch||raw.claim?.branch||raw.branch||('agent/'+issue.subgoal_id),objective:raw.objective||'',main_sha:githubProjection?.git?.mainSha||raw.git?.mainSha,base_sha:githubProjection?.git?.baseSha||raw.git?.baseSha,head_sha:githubProjection?.git?.headSha||raw.git?.headSha,current_pass:raw.current_pass??null,completed:raw.completed||[],current_work:raw.current_work||[],next_actions:raw.next_actions||[],blockers:raw.blockers||[],verification:raw.verification||[],do_not_repeat:raw.do_not_repeat||[],execution_resume:value.executionResume||value.execution_resume||raw.execution_resume||{}};
     return {ok:true,context:C.workContext({checkpoint:cp,github:githubProjection||raw})};
 }
 async function managerAIWatchSweep(){try{const live=await fetchLiveManagerAISnapshot();const snapshot=live.snapshot||await getManagerAISnapshot();const inspection=globalThis.TitanCodeManagerAISupervisor.inspect(snapshot);const plan=globalThis.TitanCodeManagerAISupervisor.deterministicPlan(inspection);await chrome.storage.local.set({[MANAGER_AI_LAST_STORAGE_KEY]:{schema:'titan-code.manager-ai-watch.v2',generatedAt:new Date().toISOString(),inspection,deterministicPlan:plan,watchdog:true,source:live.source,bridgeReason:live.reason||null,health:live.health||null}});}catch(error){console.warn('[Codee] Manager AI watchdog failed:',error);}}
