@@ -306,3 +306,12 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-148 — current main `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts`, SHA `415ee5647bed8a54b60d4e18ee628c67316d97ee`; evidence-backed investigation, Business Discovery, installation planning and commissioning baseline.
 - SOURCE-GH-149 — direct Agent-Mesh searches for OnboardingPro service names `BusinessRealityGraphService`, `ContinuousBusinessObservationService`, `BusinessReconfigurationService`, `NexusReassessmentService`, `OutcomeMeasurementService`, `RollbackDecisionService` returned no current implementation hits.
 - SOURCE-GH-150 — issue #767 remains the explicit canonical recovery owner for OnboardingPro Evolution/Reality mechanisms and forbids a second Reality/observation/reconfiguration/provisioning authority.
+
+
+- SOURCE-GH-151 — Agent-Mesh issue #14, canonical governed execution graph/recovery/compensation and Workforce gateway → Command Bus convergence owner.
+- SOURCE-GH-152 — Agent-Mesh issue #293, canonical Reliability/Recovery/Self-Healing implementation owner.
+- SOURCE-GH-153 — Agent-Mesh issues #300 and #560, recovery and end-to-end convergence certification owners.
+- SOURCE-GH-154 — current main `apps/browser/src/browser/agent-runtime/orchestration/action-journal.js`, SHA `89602043d16dd42d90a7145db4be3e39e1c10540`; storage-backed pre-dispatch intent journal and unknown-outcome handling.
+- SOURCE-GH-155 — current main `apps/browser/src/browser/agent-runtime/orchestration/resume-planner.js`, SHA `d3eb25ceadc30926f8172d0d305d5da69ff838ef`; re-perceive rather than replay unknown-outcome actions.
+- SOURCE-GH-156 — current main `apps/browser/src/browser/agent-runtime/orchestration/recovery.js`, SHA `d9b355e88a39e2d7fe9c9495785b320b43b4b3a3`; stuck-loop LLM recovery planner, explicitly distinct from business Rewind.
+- SOURCE-GH-157 — Agent-Mesh commit `25cb5217b07fe1e0d9adbe5fd058171e88edcd1c`, merged donor ReAct recovery/browser orchestration runtime.
