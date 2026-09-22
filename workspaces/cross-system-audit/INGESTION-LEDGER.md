@@ -227,3 +227,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-017 | Remaining convergence claim-state check | #768/#153/#37/#59/#767 | current GitHub issue comments + branch/PR searches | CURRENT CHECKPOINT | INGESTED | All five principal remaining convergence lanes are unclaimed; no implementation PRs found. agent/759 substring hit is not #59. | YES |
+
+
+| INGEST-018 | Current Authority Continuance source verification | packages/runtime/authority/{autonomy,authority-lease,lease-control,delegation,execution-boundary,company-boundary,index}.mjs | immutable blob SHAs recorded in SOURCE-REGISTER | CURRENT MAIN | VERIFIED | Source-level verification: contraction-only authority, lease freshness/revocation, non-widening controls/delegation, current-context execution, authoritative receipts, company_id-only boundary. This verifies substantial continuance primitives but not completion of #640/#540 recursive Trust lifecycle. | NO |
