@@ -4,7 +4,7 @@ import {
   completionGateMessage,
   normalizeCompletionCriteria,
   seedCompletionCriteriaFromLineItems,
-} from "../completion-criteria";
+, externalCompletionGateMessage } from "../completion-criteria";
 
 describe("seedCompletionCriteriaFromLineItems", () => {
   it("creates required criteria from labor lines only", () => {
@@ -102,5 +102,20 @@ describe("normalizeCompletionCriteria", () => {
       completed: true,
     });
     expect(allRequiredCriteriaMet(criteria)).toBe(true);
+  });
+});
+
+describe("external completion blockers", () => {
+  it("fails the canonical completion gate closed when permit or defect blockers remain", () => {
+    const visits = [{ status: "completed" }];
+    const criteria = [{ id: "c1", label: "Done", required: true, completed: true }];
+    expect(completionGateMessage(visits, criteria, [
+      { source: "permit", reason: "FAILED_INSPECTION_UNRESOLVED" },
+      { source: "defect", reason: "CRITICAL_DEFECT_UNRESOLVED" },
+    ])).toContain("permit:FAILED_INSPECTION_UNRESOLVED");
+  });
+
+  it("does not create a second lifecycle gate when there are no bounded blockers", () => {
+    expect(externalCompletionGateMessage([])).toBeNull();
   });
 });
