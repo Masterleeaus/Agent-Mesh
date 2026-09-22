@@ -70,3 +70,5 @@ Remaining research phases: broad Library family inventory; Personal Zero/cogniti
 - Pass 7 completed Environmental Intelligence archaeology. Classification: specified but not recovered as an implemented historical subsystem; current main search also lacks the domain. #769 created as a vertical capability-pack implementation target over shared canonical engines.
 
 - Pass 8 completed Security/Privacy archaeology. Historical Shield/Locker/Trust/Command Bus security semantics map to existing canonical owners; no duplicate security subsystem justified. #302 updated with donor hardening contracts; #310 remains certification owner.
+
+- Pass 9 completed Mobile/PWA archaeology. Verified Library Go/Hub/Zero donors map to a substantially recovered current Flutter/PWA architecture; no duplicate app core is justified. #636 updated to feed remaining donor parity into #542/#641/#121/#120.
