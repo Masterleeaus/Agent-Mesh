@@ -561,3 +561,22 @@ Rules:
 5. Do not delete/skip Personal Zero negative tests to obtain green status.
 6. Record exact scoped test count/pass/fail and head SHA.
 7. Track package-wide Workforce test-output/export failures with their existing owner rather than #768.
+
+
+## TASK-152 / #768 implementation complete
+Scoped implementation acceptance is satisfied at PR #770 head `8bc89997a6e7bfde21bbeb69b37ef66abbec4e47`.
+
+Evidence:
+- Titan Platform typecheck PASS;
+- Personal Zero scoped tests 52/52 PASS;
+- zero scoped failures.
+
+No further Personal Zero architecture/code action is justified absent a newly observed defect.
+
+Remaining action is governance-only:
+1. preserve PR #770 evidence and head;
+2. manager reconcile the `agent/768` claim-gate branch-format mismatch using repository policy;
+3. do not bypass or weaken the claim gate;
+4. keep unrelated repository-wide Worker/package CI debt with its existing owners;
+5. merge/close #768 when governance permits;
+6. downstream #153/#59/#37/#767 must consume the canonical Personal Zero contracts rather than copy them.
