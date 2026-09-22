@@ -287,3 +287,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-135 — current main `packages/titan-platform/src/workforce.ts`, SHA `98f77554d22f76aa1131a257a171c803bfa43979`; exports current Workforce Knowledge Authority capability.
 - SOURCE-GH-136 — Knowledge Authority convergence commits `3a27e462...`, `0767213...`, `389d864...`, `ab436cf...`.
 - SOURCE-GH-137 — current main `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts`, SHA `415ee5647bed8a54b60d4e18ee628c67316d97ee`; governed investigation, Business Discovery, installation planning and commissioning implementation.
+
+
+- SOURCE-GH-138 — Agent-Mesh issue #59, `[TZ-ROADMAP-52] Decision runtime, persistent decision state and temporal re-evaluation`; explicitly lists persistent Decision Object, lifecycle state and watch/trigger/temporal re-evaluation as remaining work.
+- SOURCE-GH-139 — TitanPro `docs/06-automation/decision-envelopes.md`, SHA `b1417ca5a841ad1262d1fdf46ff4d0bc1caad410`; durable bounded decision-envelope semantics.
+- SOURCE-GH-140 — TitanPro `docs/06-automation/runtime-state-store.md`, SHA `3cc1784ff63462e416a2be8312b815b42cb51c82`; current state + append-only history, approval/retry/recovery semantics.
+- SOURCE-GH-141 — TitanPro `docs/06-automation/worked-engine-examples.md`, SHA `96d071e1ca9e362fc2846f93854f51e1ac05e67e`; temporal trigger, suppression and replay examples.
+- SOURCE-GH-142 — TitanPro `docs/07-workflows/stuck-state-detection.md`, SHA `48740d987456ef8ae1aae5414a7b544df02ef7a6`; scheduled/event-driven watch and recovery semantics with workflow-truth boundary.
