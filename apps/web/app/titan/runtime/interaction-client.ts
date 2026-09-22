@@ -25,7 +25,13 @@ export function requestedWorkerFromText(text: string): string | undefined { cons
 export class TitanInteractionClient {
   readonly company_id: string; readonly conversation_id: string; readonly surface: TitanSurface; private readonly transport?: InteractionTransport; private continuationToken?: string; private readonly seenChunks = new Set<string>(); private activeController?: AbortController;
   constructor(options: InteractionClientOptions) { assertCanonicalContext(options as unknown as Record<string, unknown>); this.company_id = options.company_id; this.conversation_id = options.conversation_id; this.surface = normalizeInteractionSurface(options.surface); this.transport = options.transport; }
-  private scoped(events: InteractionEvent[]) { return events.filter((event) => event.company_id === this.company_id && event.conversation_id === this.conversation_id && event.surface === this.surface); }
+  private scoped(events: InteractionEvent[]) {
+    return events.filter((event) => {
+      if (event.company_id !== this.company_id || event.conversation_id !== this.conversation_id || event.surface !== this.surface) return false;
+      if (event.message && (event.message.company_id !== this.company_id || event.message.conversation_id !== this.conversation_id || event.message.surface !== this.surface)) return false;
+      return true;
+    });
+  }
   cancelActiveStream() { this.activeController?.abort(); this.activeController = undefined; }
   getContinuationToken() { return this.continuationToken; }
   async send(text: string, requested_agent_id?: string, client_message_id = id("msg"), options: { signal?: AbortSignal; continuation_token?: string } = {}): Promise<InteractionEvent[]> {
