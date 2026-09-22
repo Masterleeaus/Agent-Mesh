@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS field_permits (
   provenance JSONB NOT NULL DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  idempotency_key TEXT NOT NULL DEFAULT '',
+  idempotency_key TEXT,
   CHECK (length(trim(company_id)) > 0),
   CHECK (length(trim(idempotency_key)) > 0)
 );
