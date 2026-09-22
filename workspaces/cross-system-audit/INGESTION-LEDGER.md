@@ -266,3 +266,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-030 | #768 claim-state + relationship substrate recheck | issue #768 comments + current Workforce human/external actor boundaries | claim base 83258dddf10ac19e68d63310c7f15bf9c60cc852; handover blob 415ee5647bed8a54b60d4e18ee628c67316d97ee | ACTIVE CLAIM | VERIFIED | #768 is now claimed on agent/768. Existing Workforce human/external actor contracts provide company relationship/participation semantics but are not persistent ONE/Zero identity ownership. | YES |
+
+
+| INGEST-031 | Remaining convergence claim-state after #768 claim | issues/branches #153, #59, #37, #767 | current GitHub checkpoint | OPEN/UNCLAIMED | VERIFIED | Four principal implementation lanes remain open with zero comments and no canonical agent/<issue> claim branches found. #768 is now separately active. | YES |
