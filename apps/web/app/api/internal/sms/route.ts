@@ -132,6 +132,7 @@ async function handleSmsKeyword(opts: {
     username: smsSettings.gatewayUsername,
     password: smsSettings.gatewayPassword,
     simNumber,
+    allowEnvironmentFallback: false,
   };
   if (isSmsGatewayConfigured(gatewayConfig)) {
     const sendResult = await sendSmsViaGateway({ phone, message: reply, config: gatewayConfig });
