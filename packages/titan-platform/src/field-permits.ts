@@ -113,8 +113,9 @@ export function permitBlocksWorkOrderCompletion(input:{
   const asOf=dateOnly(input.as_of??new Date().toISOString().slice(0,10),'as_of');
   if(input.expiry_date && Date.parse(`${dateOnly(input.expiry_date,'expiry_date')}T00:00:00Z`) < Date.parse(`${asOf}T00:00:00Z`)) reasons.push('PERMIT_EXPIRED');
   if(['not_applied','application_submitted','inspection_required','inspection_failed','expired','revoked'].includes(input.state)) reasons.push(`PERMIT_STATE_${input.state.toUpperCase()}`);
-  if(input.inspections?.some(x=>x.result==='failed')) reasons.push('FAILED_INSPECTION_UNRESOLVED');
-  if(input.state==='inspection_required' && !input.inspections?.some(x=>x.result==='passed')) reasons.push('REQUIRED_INSPECTION_NOT_PASSED');
+  const latestInspection=input.inspections?.length ? input.inspections[input.inspections.length-1] : null;
+  if(latestInspection?.result==='failed') reasons.push('FAILED_INSPECTION_UNRESOLVED');
+  if(input.state==='inspection_required' && latestInspection?.result!=='passed') reasons.push('REQUIRED_INSPECTION_NOT_PASSED');
   return Object.freeze({blocked:reasons.length>0,reasons:Object.freeze([...new Set(reasons)])});
 }
 
