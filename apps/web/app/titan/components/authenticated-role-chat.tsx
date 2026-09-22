@@ -20,6 +20,7 @@ export function AuthenticatedRoleChat({
     <RoleChat
       role={role}
       projection={projection}
+      demo={false}
       onOpenDetails={() => router.push(detailsHref)}
     />
   );
