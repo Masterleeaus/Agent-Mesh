@@ -436,3 +436,18 @@ Final certification should explicitly verify:
 - read paths cannot use a mismatched context to reveal another company's Personal Zero state;
 - personal-private provider egress remains denied at actual provider/consumer integration;
 - #648/#72 remains the repository-wide company-boundary owner; #768 is a compliant consumer, not a new owner.
+
+
+## Issue #768 cross-company target acceptance gap
+Do not solve target validation by reading across company repositories or weakening `company_id` isolation.
+
+Required convergence packet:
+1. preserve current source-side grant contract and `consent_ref`;
+2. identify an existing canonical consent/broker/message/Command Bus contract capable of delivering a share offer to the target company context;
+3. target side verifies target relationship liveness, ONE/Zero identity compatibility, purpose and acceptance under its own `company_id`;
+4. return a provenance-bearing acceptance/receipt to the source-side grant without importing target private state;
+5. retrieval/consumption requires both valid source grant and valid target acceptance receipt;
+6. revocation/expiry on either side fails closed;
+7. no authority, delegation or tenant boundary is transferred with shared understanding.
+
+Before implementation, deep-scan current consent/governance/Command Bus/cross-company messaging owners and reuse an existing contract if present.
