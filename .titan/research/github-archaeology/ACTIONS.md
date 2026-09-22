@@ -472,3 +472,22 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** one traceable current path from DecisionPacket → persistent Decision Object/lifecycle → reevaluation → governed action/outcome, or a precise missing-stage recovery action.
 - **Confidence:** HIGH
 - **Status:** READY
+
+
+---
+
+## ACTION-GH-025 — Use TitanPro decision-envelope/runtime-state semantics as donor for open #59
+
+- **Type:** RECOVER DOCS / CONVERGE / IMPORT+HARDEN
+- **Priority:** P1
+- **Findings:** FINDING-GH-101, FINDING-GH-105–108
+- **Canonical owner:** #59 only; support #50/#642/#633. Do not create a parallel Decision Engine or old Laravel ProcessRecord authority.
+- **Donor:** TitanPro `docs/06-automation/decision-envelopes.md`, `runtime-state-store.md`, `worked-engine-examples.md`; workflow watch semantics from `docs/07-workflows/stuck-state-detection.md`.
+- **Recover semantics:** durable decision identity/correlation; source/evidence refs; context/evidence revision/hash; decision vs readiness separation; expiry/freshness; append-only lifecycle transitions; approval pause/resume; watch/trigger reevaluation; derived/superseded decision lineage; idempotency; outcome/recovery linkage.
+- **Do not recover:** Laravel-specific table/class/module boundaries where current TypeScript architecture already owns the concern.
+- **company_id:** mandatory on every persistent decision/watch/transition; cross-company evidence and triggers fail closed.
+- **Authority:** reevaluation can change recommendation/readiness but cannot self-expand delegated authority.
+- **Tests:** changed evidence derives new revision and supersedes stale one; expiry blocks execution; approval change reevaluates readiness; suppression condition cancels/defer path; stale packet cannot execute; same evidence is idempotent; replay distinguishes same decision retry from changed-intent regeneration.
+- **Acceptance Criteria:** #59 can be implemented by extending the existing DecisionPacket into one persistent TypeScript Decision lifecycle using proven historical semantics, without introducing a second workflow/runtime truth model.
+- **Confidence:** VERY HIGH
+- **Status:** READY / OWNER EXISTS
