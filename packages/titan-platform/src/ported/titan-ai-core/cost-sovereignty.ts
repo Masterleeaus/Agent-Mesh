@@ -35,11 +35,8 @@ export function decideInferenceRoute(input: CostSovereigntyRequest): CostSoverei
     return Object.freeze({company_id,route:allowed[0]??"device",escalation_required:true,escalation_reason:"requested-route-unavailable",titan_funded_fallback:false,authority_neutral:true,execution_authority:false});
   }
   const route=requested??allowed[0]??"device";
-  if(route==="titan-managed" && !input.titan_managed_entitled) {
-    return Object.freeze({company_id,route:allowed.find(r=>r!=="titan-managed")??"device",escalation_required:true,escalation_reason:"titan-service-not-entitled",titan_funded_fallback:false,authority_neutral:true,execution_authority:false});
-  }
   if(route==="titan-managed" && !input.titan_managed_entitled && !input.titan_metered_opt_in) {
-    return Object.freeze({company_id,route:allowed.find(r=>r!=="titan-managed")??"device",escalation_required:true,escalation_reason:"titan-metered-opt-in-required",titan_funded_fallback:false,authority_neutral:true,execution_authority:false});
+    return Object.freeze({company_id,route:allowed.find(r=>r!=="titan-managed")??"device",escalation_required:true,escalation_reason:"titan-service-not-entitled",titan_funded_fallback:false,authority_neutral:true,execution_authority:false});
   }
   return Object.freeze({company_id,route,escalation_required:false,escalation_reason:"none",titan_funded_fallback:false,authority_neutral:true,execution_authority:false});
 }
