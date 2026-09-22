@@ -321,3 +321,8 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-159 — current main `packages/titan-platform/src/ported/titan-runtime/authority/execution-boundary.ts`, SHA `a97baf3a19acdd47120c231c072420f6f0271c09`; command envelope, replay/proof binding, authoritative receipts, post-action verification and UNKNOWN recovery seam.
 - SOURCE-GH-160 — issue #14; remaining governed execution graph, mutation convergence, recovery/compensation and active Workforce gateway bypass correction.
 - SOURCE-GH-161 — closed duplicate issues #73/#47 preserve historical scope for Command Bus→Signal→Assurance correlation and DecisionPacket→provider execution, now consolidated into canonical owners.
+
+
+- SOURCE-GH-162 — current main `packages/titan-platform/src/ported/titan-runtime/authority/execution-boundary.ts`, SHA `a97baf3a19acdd47120c231c072420f6f0271c09`; authoritative receipt continuity/history integrity and post-action verification contracts.
+- SOURCE-GH-163 — current main `packages/titan-platform/src/ported/titan-intelligence/signal/index.ts`, SHA `847a14df1b68278330971a97c05d679d0f606e15`; deterministic company-bound authority-neutral Signal primitive.
+- SOURCE-GH-164 — current main `packages/titan-platform/src/intelligence.ts`, SHA `8320eef651c334789a950163ed277238bd8311f6`; current Signal export through Titan intelligence facade.
