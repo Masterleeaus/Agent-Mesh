@@ -19,7 +19,7 @@ const presentation = Object.freeze({
     prompt: "Ask about a booking, quote, invoice, or your service…",
     suggestions: Object.freeze(["Track my service team", "Reschedule tomorrow", "Show service add-ons"]),
   }),
-  command: Object.freeze({
+  zero: Object.freeze({
     name: "Titan Command",
     audience: "Owners & managers",
     accent: "#94a3b8",
@@ -45,7 +45,7 @@ const capabilities = Object.freeze({
     { capability_id: "payments.intent", operations: ["prepare", "submit"], mutation: true, offline: "forbidden", requires_receipt: true },
     { capability_id: "addons.request", operations: ["prepare", "submit"], mutation: true, offline: "forbidden", requires_receipt: true },
   ]),
-  command: Object.freeze([
+  zero: Object.freeze([
     { capability_id: "decisions.read", operations: ["read"], mutation: false, offline: "read" },
     { capability_id: "decision.resolve", operations: ["approve", "deny"], mutation: true, offline: "forbidden", requires_receipt: true },
     { capability_id: "operations.read", operations: ["read"], mutation: false, offline: "read" },
