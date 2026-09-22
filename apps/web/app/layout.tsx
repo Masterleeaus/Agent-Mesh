@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   appleWebApp:{ capable:true, title:"Titan Zero", statusBarStyle:"black-translucent" },
 };
 
-export const viewport: Viewport = { themeColor:"#f97316" };
+export const viewport: Viewport = { themeColor:"#0f172a" };
 
 export default function RootLayout({children}:{children:React.ReactNode}) {
   return <html lang="en" className={archivo.variable}><body>{children}<ServiceWorkerRegistrar/></body></html>;
