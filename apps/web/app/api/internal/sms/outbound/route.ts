@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { randomUUID } from "crypto";
-import { queryOne } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { normalizePhone } from "@/lib/phone";
 import {
@@ -27,17 +26,8 @@ const flatSchema = z.object({
   external_id: z.string().max(255).optional().nullable(),
   outcome: z.enum(["sent", "delivered", "failed"]).optional(),
   sim_number: z.number().int().optional().nullable(),
+  company_id: z.string().uuid(),
 });
-
-async function getOwnerAccountId(): Promise<string> {
-  const row = await queryOne<{ account_id: string }>(
-    `SELECT a.id AS account_id
-     FROM accounts a JOIN users u ON u.account_id = a.id
-     WHERE u.role = 'owner' ORDER BY u.created_at LIMIT 1`
-  );
-  if (!row) throw new Error("No owner account found");
-  return row.account_id;
-}
 
 function extractFromGatewayEnvelope(body: unknown): {
   phone: string;
@@ -45,6 +35,7 @@ function extractFromGatewayEnvelope(body: unknown): {
   external_id: string | null;
   outcome: OutboundSmsOutcome;
   simNumber: number | null;
+  companyId: string | null;
 } | null {
   if (!body || typeof body !== "object") return null;
   const b = body as Record<string, unknown>;
@@ -85,6 +76,9 @@ function extractFromGatewayEnvelope(body: unknown): {
     payload.messageId ?? payload.id ?? b.external_id ?? b.id ?? ""
   ).trim();
 
+  const companyIdRaw = payload.company_id ?? b.company_id;
+  const companyId = typeof companyIdRaw === "string" && companyIdRaw.trim() ? companyIdRaw.trim() : null;
+
   const simRaw = payload.simNumber ?? b.sim_number;
   const simNumber =
     typeof simRaw === "number"
@@ -102,6 +96,7 @@ function extractFromGatewayEnvelope(body: unknown): {
     external_id: messageId || null,
     outcome,
     simNumber: Number.isFinite(simNumber as number) ? (simNumber as number) : null,
+    companyId,
   };
 }
 
@@ -128,6 +123,7 @@ export async function POST(req: NextRequest) {
   let externalId: string | null;
   let outcome: OutboundSmsOutcome;
   let simNumber: number | null;
+  let companyId: string | null;
 
   const fromEnvelope = extractFromGatewayEnvelope(body);
   if (fromEnvelope) {
@@ -136,6 +132,7 @@ export async function POST(req: NextRequest) {
     externalId = fromEnvelope.external_id;
     outcome = fromEnvelope.outcome;
     simNumber = fromEnvelope.simNumber;
+    companyId = fromEnvelope.companyId;
   } else {
     const parsed = flatSchema.safeParse(body);
     if (!parsed.success) {
@@ -149,6 +146,7 @@ export async function POST(req: NextRequest) {
     externalId = parsed.data.external_id ?? null;
     outcome = parsed.data.outcome ?? "sent";
     simNumber = parsed.data.sim_number ?? null;
+    companyId = parsed.data.company_id;
   }
 
   // Business SIM only (same rule as inbound n8n filter)
@@ -158,13 +156,13 @@ export async function POST(req: NextRequest) {
 
   const normalized = normalizePhone(phone) ?? phone;
 
-  let accountId: string;
-  try {
-    accountId = await getOwnerAccountId();
-  } catch (err) {
-    logger.error("outbound SMS: owner context", err as Error, { traceId });
-    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  // The authenticated integration must identify the canonical company scope.
+  // Never infer tenant identity from the first owner in a multi-company system.
+  if (!companyId) {
+    logger.warn("outbound SMS callback missing company scope", { traceId, externalId });
+    return NextResponse.json({ error: "company_id is required" }, { status: 422 });
   }
+  const accountId = companyId; // legacy storage/input alias after canonical normalization
 
   // Delivery/failure updates for a message we already logged as sent
   if (externalId && (outcome === "delivered" || outcome === "failed")) {
