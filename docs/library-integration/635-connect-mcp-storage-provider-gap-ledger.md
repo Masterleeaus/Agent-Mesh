@@ -41,3 +41,11 @@ Library discovery evidence confirms the mature Titan MCP donor has JSON-RPC tran
 The concrete missing cross-host semantic was a provider-neutral feature negotiation contract. Added `mcp-host-contract.ts` with MCP 2025-03-26 versioning, canonical `company_id`, host feature intersection, and explicit authority-neutral semantics. It does not execute tools, own credentials, or grant permissions. Added focused regression coverage. No PHP MCP server or duplicate tool catalogue was ported.
 
 Remaining MCP work is transport/host wiring and security/provider credential semantics only if the current repository demonstrates a real gap; those must delegate to canonical capability, governance and Command Bus systems.
+
+## Pass 4 — Cost Sovereignty / local-provider convergence
+
+Deep-scan of Library evidence confirms Titan AI/Titan AI Core/Model Council already establish device/local/BYO/Titan routing, explicit credential resolution, company-scoped model access and a no-hidden-Titan-fallback contract. Existing canonical TypeScript provider locality registry remains the routing authority; no second provider registry was created.
+
+The concrete missing provider-neutral TypeScript semantic was an explicit cost-sovereignty decision contract. Added cost-sovereignty.ts with canonical company_id, device/customer-hosted/BYO/Titan route vocabulary, local-only enforcement, explicit Titan entitlement or metered opt-in requirements, and an unconditional titan_funded_fallback=false guarantee. It is policy/decision metadata only and grants no execution authority. Added regression coverage and exports.
+
+No credential material, provider SDK, Local Bridge server, or duplicate inference runtime was introduced. Local Bridge/Ollama remain provider/runtime implementations behind the canonical policy layer.
