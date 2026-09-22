@@ -154,3 +154,7 @@ if(bc.includes("const RESUME_GATED_ACTIONS=new Set")) throw new Error('stale dup
 if(!bridge.includes("agent_mesh.continuation.takeover")) throw new Error('takeover must remain resume-gated');
 if(bridge.includes("const RESUME_GATED_MUTATIONS=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint'")) throw new Error('continuation checkpoint must not be blocked by reconciliation');
 if(!sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover']).has(action)")) throw new Error('Agent Mesh mutation gate set drifted');
+
+if(!sw.includes("const AGENT_MESH_MUTATION_POLICY=Object.freeze({")) throw new Error('central Agent Mesh mutation policy missing');
+for(const pair of [["'agent_mesh.recover_agent':'resume-gated'"],["'agent_mesh.route_packet':'resume-gated'"],["'agent_mesh.continuation.takeover':'resume-gated'"],["'agent_mesh.continuation.checkpoint':'continuity-record-only'"]]) if(!sw.includes(pair[0])) throw new Error('Agent Mesh mutation policy classification missing: '+pair[0]);
+if(!sw.includes("AGENT_MESH_MUTATION_POLICY[action]==='resume-gated'")) throw new Error('central mutation path must derive resume gate from policy');
