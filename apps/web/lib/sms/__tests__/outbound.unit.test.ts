@@ -62,3 +62,41 @@ describe("updateOutboundSmsOutcome", () => {
     expect(await updateOutboundSmsOutcome("acct", "missing", "failed")).toBe(false);
   });
 });
+
+
+describe("smsDeliveryReceipt", () => {
+  it("normalizes delivered and failed provider callbacks", async () => {
+    const { smsDeliveryReceipt } = await import("../outbound");
+    const communication = {
+      id: "msg-1",
+      company_id: "acct",
+      conversation_id: "conv-1",
+      correlation_id: "corr-1",
+    };
+
+    expect(smsDeliveryReceipt({
+      communication,
+      outcome: "delivered",
+      externalId: "provider-1",
+      occurredAt: "2026-09-22T02:00:00.000Z",
+    })).toMatchObject({
+      company_id: "acct",
+      channel: "sms",
+      state: "delivered",
+      provider_message_id: "provider-1",
+    });
+
+    expect(smsDeliveryReceipt({
+      communication,
+      outcome: "failed",
+      externalId: "provider-2",
+      occurredAt: "2026-09-22T02:01:00.000Z",
+    })).toMatchObject({
+      company_id: "acct",
+      channel: "sms",
+      state: "failed",
+      error_code: "sms-provider-failed",
+      provider_message_id: "provider-2",
+    });
+  });
+});
