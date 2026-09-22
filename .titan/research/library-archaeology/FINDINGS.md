@@ -321,3 +321,29 @@ HIGH for inspected current owners; MEDIUM-HIGH that the listed learning semantic
 
 ### Related action
 ACTION-LIB-006. Do not import historical device/runtime/offline components that current owners already supersede.
+
+
+---
+
+## FINDING-LIB-011
+
+### Finding
+Issue and canonical-doc deduplication confirms there is no existing implementation issue or current canonical Personal Zero owner. #153 is explicitly company-scoped Business Memory; #763 is archaeology only; #633 is AI/Decision/Intelligence donor convergence; #767 is Business Reality/Evolution. Current canonical Production Intelligence independently reinforces the architectural rule that AI connects/calibrates authoritative sources but does not become the source of truth.
+
+### Why it matters
+Personal Zero needs its own narrowly defined Understanding + Experience contract rather than being hidden inside Business Memory, conversation state or AI routing.
+
+### Evidence
+- GitHub issue searches for Personal Zero, Understanding Memory, Experience Memory, cognition, preference memory, experience learning, user model and behavioural mechanisms.
+- docs/canonical/PRODUCTION_INTELLIGENCE.md source-of-truth and historical-performance rules.
+- Current owner evidence from FINDING-LIB-010.
+- No other agent research workspace was present under .titan/research at this checkpoint.
+
+### Classification
+CURRENT GAP / ARCHITECTURAL OWNER MISSING.
+
+### Confidence
+HIGH for issue deduplication and owner separation.
+
+### Related action
+ACTION-LIB-008 / #768.
