@@ -182,15 +182,19 @@
     "Pass 20: audited Agent Mesh bridge mutation call sites and confirmed a central governed mutation path now covers recover, route, continuation checkpoint and takeover",
     "Pass 20: generic callTitanBridge denies all classified agent_mesh mutation actions, preventing UI/caller bypass of governed mutation preflight",
     "Pass 20: checkpoint remains continuity-record-only; recover/route/takeover are resume-gated; legacy packet routing is compatibility metadata with authority false",
-    "Pass 20: regression guards lock these mutation boundaries so later refactors cannot silently restore direct bridge mutation"
+    "Pass 20: regression guards lock these mutation boundaries so later refactors cannot silently restore direct bridge mutation",
+    "Pass 20: audited Agent Mesh mutation call sites and converged them behind callAgentMeshMutation with an explicit operation policy",
+    "Pass 20: generic Titan Bridge path now refuses Agent Mesh mutations, preventing callers from bypassing governed mutation preflight",
+    "Pass 20: recover_agent, route_packet and takeover are resume-gated; checkpoint remains continuity-record-only; unknown Agent Mesh mutations fail closed",
+    "Pass 20: regression guards lock down governed mutation routing and direct bridge bypass denial"
   ],
   "current_work": [
-    "Converge remaining legacy packet terminology in Manager recovery/routing without breaking compatibility"
+    "Converge legacy route_packet vocabulary and payload semantics toward GitHub-native issue/subgoal routing without breaking compatibility"
   ],
   "next_actions": [
-    "Inspect Manager supervisor plan step target semantics and route_packet bridge contract",
-    "Prefer issue/subgoal work identity in new paths while retaining non-authoritative legacy packet adapter",
-    "Update UI/diagnostics terminology only where safe and covered by tests"
+    "Inspect normalizeAgentMeshRoutingPayload and bridge contract",
+    "Use issue/subgoal/claim branch as canonical routing identity while retaining packet compatibility only at adapter boundary",
+    "Add tests that packet IDs cannot become a parallel ownership authority"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
