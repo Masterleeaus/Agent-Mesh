@@ -2401,3 +2401,124 @@ OVERSIGHT / ISOLATION INVARIANT
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-113
+
+### Finding
+Zero is an orchestration/understanding layer over business systems, not a replacement business database. Canonical domain owners retain authoritative customer, lead, quote, booking, job, communication, finance, asset/inventory and location state; Zero consumes purpose-authorised projections and invokes governed capabilities.
+
+### Classification
+DOMAIN OWNERSHIP INVARIANT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-114
+
+### Finding
+Current convergence evidence identifies these ownership anchors: **CRM** for customers/contacts/leads/opportunities/sales pipeline/revenue documents; **Bookings/Quotes** for booking/quote lifecycle; **Titan Field** for service requests/work orders/job execution/dispatch/forms/evidence; **Titan Connect** for communications; **Titan Assets + Locker** for assets/equipment/inventory; **Titan Maps** for maps/location capability; **AI Workforce** for agents/tasks/handoffs/delegation/evidence; **Knowledge Authority** for governed knowledge/provenance; **Command Bus** for consequential execution.
+
+### Classification
+CURRENT CANONICAL OWNER MAP
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-115
+
+### Finding
+Workforce agents and adapters must not become domain authorities. A Booking Coordinator, Quote Manager, Dispatcher, Accounts worker, Purchasing worker or Inventory worker may reason and prepare work, but canonical mutation occurs through the owning domain capability and governed Command Bus path.
+
+### Classification
+WORKFORCE / DOMAIN BOUNDARY
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-116
+
+### Finding
+Business Reality should model cross-domain facts/relationships/provenance without replacing the underlying systems of record. A Reality projection may say a customer has a job, invoice, asset dependency and communication history, while CRM/Field/Finance/Assets retain authoritative mutation ownership.
+
+### Classification
+REALITY / DOMAIN BOUNDARY
+
+### Confidence
+HIGH
+
+### Related action
+#767.
+
+---
+
+## FINDING-GH-117
+
+### Finding
+Cross-domain intelligence is strongest when it joins authoritative projections rather than copying their databases. The workforce architecture already demonstrates this pattern for supply/field readiness by combining scheduled demand, inventory, asset readiness, procurement lead times, finance constraints and field risk while retaining accountable domain managers and requiring receipts before completion.
+
+### Classification
+CROSS-DOMAIN ORCHESTRATION PATTERN
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-118
+
+### Finding
+Reporting, dashboards, Zero summaries and generative UI are projections, not competing domain truth. They should be reproducible from canonical owner state plus provenance/receipts and must not accept direct business mutations that bypass owner contracts.
+
+### Classification
+PROJECTION OWNERSHIP INVARIANT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-119
+
+### Finding
+Business-system integration should prefer existing client systems when they are authoritative and adequate. Titan should adapt/connect through canonical capabilities/contracts, filling genuine gaps with Titan-owned modules rather than silently importing all external records into a second Titan system of record.
+
+### Classification
+MANAGED-SERVICE INTEGRATION RULE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-120
+
+### Finding
+A safe Zero business operation follows: **intent/context → read authorised domain projections → reason/coordinate across domains → prepare domain command → current Risk/Assurance/Governance/authority → Command Bus → canonical owner/connected system → receipt/event → Reality/Signal/outcome/Experience update**.
+
+### Classification
+TARGET BUSINESS EXECUTION SPINE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-121
+
+### Finding
+No new business capability should be implemented until checked against canonical service ownership. Reject additions that create a second customer/job/asset/invoice/inventory truth, alternate automation/runtime/auth/tenant boundary, or UI/workforce mutation path around canonical services.
+
+### Classification
+ANTI-DUPLICATION GATE
+
+### Confidence
+HIGH
