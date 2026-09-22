@@ -2522,3 +2522,121 @@ ANTI-DUPLICATION GATE
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-122
+
+### Finding
+T0GM is best treated as **Titan Oversight**: a privileged builder/install/system-oversight capability for Titan-controlled or explicitly client-authorized environments. It is not an ordinary company-admin role, not a customer superuser, and not part of the normal Zero/Workforce authority hierarchy.
+
+### Classification
+OVERSIGHT IDENTITY BOUNDARY
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-123
+
+### Finding
+T0GM authority must be purpose-, environment- and engagement-scoped. Titan implementation authority over a deployed system does not imply authority over the client's business decisions, money, customers, staff, communications or physical operations unless separately and explicitly delegated.
+
+### Classification
+AUTHORITY SEPARATION INVARIANT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-124
+
+### Finding
+Cross-company oversight must preserve `company_id` isolation. T0GM may receive governed alerts/projections across authorized installations, but must not create a global tenant bypass, shared mutable business store, or implicit cross-company query authority.
+
+### Classification
+TENANCY / OVERSIGHT INVARIANT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-125
+
+### Finding
+The oversight lenses are complementary projections over governed evidence: Security, Governance, Financial, Operational, Privacy/Legal, Environmental, Physical Safety, Anomaly and Causal Intelligence. They should share canonical evidence/operation/receipt lineage rather than each building a parallel monitoring truth store.
+
+### Classification
+OVERSIGHT CONVERGENCE RULE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-126
+
+### Finding
+T0GM should distinguish **observe/diagnose/recommend** from **intervene**. Detecting a security, financial, environmental or safety issue can create a critical Signal/investigation/escalation; consequential remediation still requires the applicable client/Titan authority, Risk/Assurance/Governance and Command Bus path.
+
+### Classification
+OVERSIGHT EXECUTION BOUNDARY
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-127
+
+### Finding
+Irreversible, cross-company, destructive, privacy-sensitive and authority-changing interventions deserve an elevated oversight lane with explicit evidence, current authority, blast-radius analysis, independent challenge/assurance, durable receipt and post-action verification. T0GM status itself is never sufficient authorization.
+
+### Classification
+HIGH-RISK OVERSIGHT REQUIREMENT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-128
+
+### Finding
+Superseded decisions and historical authority should remain visible to oversight as evidence, but cannot be silently reactivated. T0GM can identify drift, failed assumptions, superseded configuration and recovery candidates; any new mutation must use current authority and current Reality.
+
+### Classification
+HISTORICAL EVIDENCE / AUTHORITY RULE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-129
+
+### Finding
+Causal/anomaly oversight should produce hypotheses and investigation targets, not automatically declare root cause. Cross-system correlation, repeated failure and unusual behaviour are evidence for investigation; causal conclusions require sufficient independent evidence and should preserve uncertainty/disagreement.
+
+### Classification
+EPISTEMIC SAFETY REQUIREMENT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-130
+
+### Finding
+T0GM should remain outside the customer's ordinary product mental model. Customer experience remains **ME + MY ZERO + MY TEAM**; Titan Oversight is an implementation/governance safety plane visible only where relevant, authorized and useful.
+
+### Classification
+PRODUCT / ARCHITECTURE BOUNDARY
+
+### Confidence
+HIGH
