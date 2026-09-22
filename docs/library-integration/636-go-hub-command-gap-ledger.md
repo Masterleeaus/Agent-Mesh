@@ -364,3 +364,13 @@ Hardened Titan Go's existing manifest rather than creating another shell:
 - retained `/app/` scope because Go deliberately links into the mature authenticated field routes under that prefix.
 
 Clarified the shared service-worker contract: it supplies installability and web push across the web tier, but does not imply offline readiness or separate Command/Hub runtimes. No cache/offline strategy was invented under this issue.
+
+## Pass 29 — authenticated chat state truthfulness
+
+Deep-read the current RoleChat after transport/PWA hardening. Two presentation claims still overstated authenticated capability:
+- authenticated sessions rendered a second canned assistant paragraph even before any live interaction response;
+- the footer claimed “offline-ready PWA delivery” even though the shared service worker is intentionally network-only and only local conversation continuity exists.
+
+Removed the authenticated canned response entirely; authenticated surfaces now begin with the neutral canonical greeting and wait for real interaction/runtime evidence. Demo mode retains its prototype response behavior.
+
+Changed the authenticated footer to `Network-backed workspace · local conversation continuity only`; demo mode is explicitly labelled `PWA delivery prototype`. This aligns the UI with the actual service-worker and conversation-store behavior without weakening Go's installability.
