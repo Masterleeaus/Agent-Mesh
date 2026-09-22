@@ -39,7 +39,7 @@ export function buildTitanProjectSubmittal(input:TitanProjectSubmittalInput,opti
  if(input.state==='approved_as_noted'&&!opt(input.review_comments))throw new Error('approved_as_noted requires review_comments');
  if(input.state==='revise_and_resubmit'&&!opt(input.review_comments))throw new Error('revise_and_resubmit requires review_comments');
  const quantity=input.quantity==null?null:int(input.quantity,'quantity',0),unit_cost_cents=input.unit_cost_cents==null?null:int(input.unit_cost_cents,'unit_cost_cents',0);
- const total_cost_cents=quantity!=null&&unit_cost_cents!=null?quantity*unit_cost_cents:null;
+ const total_cost_cents=quantity!=null&&unit_cost_cents!=null?quantity*unit_cost_cents:null;if(total_cost_cents!=null&&!Number.isSafeInteger(total_cost_cents))throw new Error('total_cost_cents exceeds safe integer range');
  const timing=deriveSubmittalReviewTiming({state:input.state,date_submitted,date_required,date_reviewed,as_of:options.as_of});
  return Object.freeze({
   schema:TITAN_PROJECT_SUBMITTAL_SCHEMA,submittal_id:req(input.submittal_id,'submittal_id'),company_id:req(input.company_id,'company_id'),project_id:req(input.project_id,'project_id'),
