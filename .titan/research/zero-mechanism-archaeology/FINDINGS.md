@@ -2758,3 +2758,69 @@ CANONICAL EVOLUTION DONOR LOOP
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-140
+
+### Finding
+Cross-source synthesis does **not** justify a new monolithic Zero runtime. Personal understanding/experience, business memory, business reality, decision intelligence, authority, execution, recovery, interaction state and provider routing already have distinct canonical owner candidates. The convergence task is contracts and governed composition, not another engine that absorbs them.
+
+### Classification
+FINAL SYNTHESIS / ANTI-DUPLICATION
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-141
+
+### Finding
+The canonical Zero composition emerging from archaeology is: **Interaction/context + Personal Zero Understanding/Experience + governed Knowledge/Reality evidence + Decision/Council when needed + current Trust/Risk/Assurance/Governance/Autonomy + Command Bus/domain execution + receipts/outcomes + Rewind/Learning**. AI Core/Cost Sovereignty selects inference execution without becoming the owner of personal/business truth.
+
+### Classification
+TARGET COMPOSITION
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-142
+
+### Finding
+The highest-value remaining implementation gap is parity, not discovery: verify/converge source-backed OnboardingPro Evolution semantics (exact approval fingerprint, anti-repeat/retest, measured outcome, recovery linkage) into #767/#153/#37/Rewind and implement #768 contracts without retaining donor-owned parallel production stores.
+
+### Classification
+REMAINING CONVERGENCE GAP
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-143
+
+### Finding
+A second material gap remains in inference infrastructure: architecture requires provider-neutral local-first routing, but scanned evidence has not yet proven one canonical production contract covering local/Ollama/browser-local execution, locality/privacy classes, entitlement, cost/latency/quality telemetry and explicit non-fallback semantics.
+
+### Classification
+REMAINING INFRASTRUCTURE GAP
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-144
+
+### Finding
+No major recovered mechanism requires weakening the core invariant that **understanding, learning, recommendation, decision and authority are separate**. Every donor family that contributes useful learning/decision semantics can be converged while keeping authority external and current.
+
+### Classification
+FINAL ARCHITECTURAL INVARIANT
+
+### Confidence
+HIGH
