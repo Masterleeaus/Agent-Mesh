@@ -1946,8 +1946,10 @@ async function fetchLiveManagerAISnapshot(){
 async function callAgentMeshMutation(config,action,payload,snapshot){
     const allowed=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover']);
     if(!allowed.has(action)) return {ok:false,reason:'agent-mesh-mutation-not-allowlisted',mayMutate:false};
-    const gate=await bootstrapAgentMeshResume(snapshot);if(!gate.ok||gate.mayMutate!==true)return {ok:false,reason:'resume-reconciliation-required',mayMutate:false,bootstrap:gate.bootstrap||null};
-    const gatedPayload={...payload,resume_gate:gate.bootstrap};
+    const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover']).has(action);
+    const gate=requiresGate?await bootstrapAgentMeshResume(snapshot):{ok:true,mayMutate:true,bootstrap:null};
+    if(!gate.ok||gate.mayMutate!==true)return {ok:false,reason:'resume-reconciliation-required',mayMutate:false,bootstrap:gate.bootstrap||null};
+    const gatedPayload=gate.bootstrap?{...payload,resume_gate:gate.bootstrap}:payload;
     return globalThis.CodeeTitanBridgeClient.call(config,action,gatedPayload);
 }
 async function checkpointAgentMeshContinuation(snapshot,reason='manager-lifecycle'){
