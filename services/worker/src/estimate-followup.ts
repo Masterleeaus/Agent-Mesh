@@ -1,6 +1,6 @@
 import type { Client } from "pg";
 import { logger } from "./logger.js";
-import { estimateFollowupHtml } from "@ai-fsm/email-templates";
+import { estimateFollowupHtml } from "@titan-zero/email-templates";
 import { appUrl } from "./mailer.js";
 import type { AutomationRow, RunResult } from "./automations/types.js";
 import { enqueueNotification } from "./notification/enqueue.js";
