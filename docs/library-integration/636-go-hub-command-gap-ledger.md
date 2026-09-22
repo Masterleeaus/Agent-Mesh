@@ -238,3 +238,16 @@ Converged the staff shell toward the canonical Go information architecture witho
 - mobile keeps the compact Chat + Active primary pair while the existing More/shell navigation retains secondary operational reachability.
 
 This is route/label convergence only; it deliberately reuses the mature field-service routes.
+
+## Pass 18 — Command navigation convergence
+
+Converged owner/admin desktop navigation toward the canonical Command IA without inventing duplicate application cores:
+- **Chat** → authenticated `/app/command`;
+- **Control** → mature live owner dashboard `/app`;
+- **Workforce** → existing settings surface, which already loads company-scoped workforce lifecycle/hierarchy inspection;
+- **Decisions** → existing live requests/attention workflow pending a dedicated canonical decision projection;
+- **System** → existing authenticated settings/system surface.
+
+Existing Work/People/Money sections remain reachable beneath Command. Owner field mode still uses the field navigation rather than duplicating Command there.
+
+This is deliberately a reuse/convergence pass: no parallel Control, Workforce, Decisions or System implementations were created.
