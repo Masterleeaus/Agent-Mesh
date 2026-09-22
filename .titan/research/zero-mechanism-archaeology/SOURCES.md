@@ -272,3 +272,24 @@ Library file id: file_00000000e83c81fa8fb308daaf7c8701
 Verification: direct Library inspection during #763.
 Relevant semantics: existing provenance chain records company/task/actor role/correlation/causation/command receipt/idempotency/evidence/decision/execution refs; Wisdom adds expected/actual/context versions/revisions; Signal preserves correlation/root causation; Rewind retains governed recovery receipts. Supports lineage reuse instead of another operation/outcome store.
 Supports: FINDING-GH-095, GH-101, GH-103.
+
+
+---
+
+## SOURCE-LIB-018
+
+Type: Library field-service implementation/configuration evidence
+Artifact: titan_field_home_service_chatbot_suite.sql
+Library file id: file_00000000d40481faa1311fbe2999686b
+Verification: direct Library inspection during #763.
+Relevant semantics: Safety/SWMS assistant separates observed hazards from inferred risks and escalates insufficient/high-risk cases; Compliance/Inspection assistant distinguishes observation, measurement, customer statement and inference and forbids invented test/certification results; Vision assistant limits conclusions to visible evidence, labels uncertainty, requests missing views and forbids image-only claims about hidden defects, electrical/structural safety, contamination, code compliance or equipment functionality.
+Supports: FINDING-GH-104 through GH-111.
+
+## SOURCE-LIB-019
+
+Type: Library current architecture/product evidence
+Artifact: Pasted markdown(20260922-131634).md
+Library file id: file_00000000071881f5b1fff9e9b53d48f4
+Verification: direct Library inspection during #763.
+Relevant semantics: environmental risk participates in Risk/Decision; environmental compliance, resource efficiency, environmental opportunity and specialist environmental workforce are shared architecture capabilities; company_id remains sole tenant boundary; purpose limitation/minimisation/local-first privacy applies to persistent Zero context.
+Supports: FINDING-GH-108, GH-109, GH-112.
