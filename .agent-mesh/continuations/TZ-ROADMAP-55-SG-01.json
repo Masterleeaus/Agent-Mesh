@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 6,
+    "current_pass": 7,
     "status": "ACTIVE"
   },
   "completed": [
@@ -35,15 +35,18 @@
     "Concurrent agent work detected on the same claimed branch; preserved it and continued from the new head rather than overwriting it",
     "Pass 6: added agent-continuation.yml event-driven workflow triggered by continuation-request JSON pushed on canonical agent branches; workflow_dispatch retained only as fallback",
     "Pass 6: workflow validates request path, canonical claim branch, subgoal/branch identity and checkpoint/takeover kind before invoking GitHub-validated recorder",
-    "Pass 6: Agent Mesh CI now self-tests record-agent-continuation.py"
+    "Pass 6: Agent Mesh CI now self-tests record-agent-continuation.py",
+    "Pass 7: added execution-request v1 JSON schema with explicit operation allowlist and no generic command operation",
+    "Pass 7: added validate-execution-request.py; rejects arbitrary shell/script/code/exec payloads, noncanonical claims, missing expected head SHA, and self-granted merge/claim-release authority",
+    "Pass 7: CI now self-tests validator and validates execution-request schema JSON"
   ],
   "current_work": [
-    "Build generic governed Execution Bridge request contract using the same event-driven pattern"
+    "Implement event-driven execution workflow and deterministic operation handlers"
   ],
   "next_actions": [
-    "Add execution-request JSON schema/validator",
-    "Allowlist deterministic repository operations only; no arbitrary shell",
-    "Add path-triggered execution workflow with per-request concurrency and receipts"
+    "Add path-triggered execution workflow",
+    "Revalidate expected head SHA against live claim ref before execution",
+    "Implement first deterministic handlers and durable execution receipt"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
