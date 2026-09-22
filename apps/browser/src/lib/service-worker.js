@@ -1133,6 +1133,8 @@ async function updateSystemIntegrationSettings(next = {}) {
 async function callTitanBridge(action, payload = {}) {
     const settings = await getSystemIntegrationSettings();
     if (!globalThis.CodeeTitanBridgeClient) return { ok: false, reason: 'bridge-client-unavailable' };
+    const meshMutation = typeof action === 'string' && action.startsWith('agent_mesh.') && globalThis.CodeeTitanBridgeClient.classify?.(action) === 'mutation';
+    if (meshMutation) return { ok: false, reason: 'agent-mesh-mutation-requires-governed-path', mayMutate: false };
     const config = { enabled: settings.bridgeEnabled, endpoint: settings.bridgeEndpoint, token: settings.bridgeToken, workspace: settings.bridgeWorkspace };
     return globalThis.CodeeTitanBridgeClient.call(config, action, payload);
 }
