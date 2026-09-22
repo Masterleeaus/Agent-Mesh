@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 
 const footerLinks = {
   Product: [
+    { label: 'Your Zero', path: '/your-zero' },
+    { label: 'AI Workforce', path: '/ai-workforce' },
     { label: 'Features', path: '/features' },
     { label: 'Investment', path: '/investment' },
     { label: 'Industries', path: '/industries' },
@@ -9,12 +11,19 @@ const footerLinks = {
     { label: 'Compare', path: '/compare' },
   ],
   Resources: [
+    { label: 'Intelligence & Decisions', path: '/intelligence-decisions' },
+    { label: 'Continuous Evolution', path: '/continuous-evolution' },
+    { label: 'Existing Systems', path: '/existing-systems' },
+    { label: 'Measured Outcomes', path: '/measured-outcomes' },
     { label: 'FAQ', path: '/faq' },
     { label: 'Privacy & Architecture', path: '/privacy-architecture' },
     { label: 'Cost Sovereignty', path: '/cost-sovereignty' },
     { label: 'Environmental Systems', path: '/environmental-systems' },
   ],
   Company: [
+    { label: 'Command, Go & Hub', path: '/apps' },
+    { label: 'Chat, Voice & Camera', path: '/real-world-intelligence' },
+    { label: 'Security & Recovery', path: '/security-recovery' },
     { label: 'About', path: '/about' },
     { label: 'System Evolution', path: '/changelog' },
   ],
@@ -32,7 +41,7 @@ export default function Footer() {
               Titan Zero Field Services
             </Link>
             <p className="text-sm text-nx-muted mt-3 max-w-[280px] leading-relaxed">
-              Managed Advanced Intelligence workforce and connected operating system for field-service businesses.
+              Your business. Your Zero. Your team. A managed digital working intelligence and specialist workforce connected around your field-service business.
             </p>
             <a
               href="mailto:support@titanzero.io"
@@ -75,7 +84,7 @@ export default function Footer() {
 
         <div className="border-t border-nx-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-2">
           <p className="text-xs text-nx-muted2">© 2026 Titan Zero. All rights reserved.</p>
-          <p className="text-xs text-nx-muted2">Managed intelligence for field-service businesses</p>
+          <p className="text-xs text-nx-muted2">Your business. Your Zero. Your team.</p>
         </div>
       </div>
     </footer>
