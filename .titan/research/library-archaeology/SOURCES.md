@@ -152,3 +152,24 @@ Evidence: defines chat-first Go/Hub/Command surface goals, governed workforce pr
 Library file: Pasted markdown(20260922-131634).md
 Classification: CURRENT PRODUCT ARCHITECTURE DESCRIPTION.
 Evidence: Command = Chat/Control/Workforce/Decisions/System; Go = Chat/Active/Schedule/Communications/Field Kit with Camera + Maps; Hub = Chat/My Services/Support/Account with commercial interaction.
+
+
+## SOURCE-LIB-020
+Library file: TITAN-VITAL-COMPONENTS-base-extensions-AUDIT.md
+Classification: VERIFIED DONOR AUDIT.
+Evidence: 19 extension builds across seven nested ZIPs; working patterns include browser execution, cross-tab/workspace orchestration, WebMCP/site capability packs, AI-provider abstractions, persistent knowledge/chat organisation, prompt/composer adapters, task overlays, voice and page extraction. Donor reference only.
+
+## SOURCE-LIB-021
+Library file: Pasted markdown(20260920-152109).md
+Classification: TITAN CODE ARCHITECTURE/CONVERGENCE PLAN.
+Evidence: semantic-first browser hierarchy, Browser Control Engine layering, unified browser observation envelope, OBSERVE→PLAN→AUTHORIZE→ACT→VERIFY→RECORD, ReAct proposal without model authority, action journal/recovery. Titan Code-specific runtime remains excluded from Titan Zero production.
+
+## SOURCE-LIB-022
+Library file: Codee-v2.8.0-Platform-Pass7-MCP-Inspector-Verification.md
+Classification: IMPLEMENTATION VERIFICATION.
+Evidence: governed read-only MCP inspector, existing governance gateway, unknown-tool fail-closed behavior, restricted metadata exposure, MV3 regression/security/syntax verification. Useful donor for browser-node governance/inspection patterns; not production business authority.
+
+## SOURCE-LIB-023
+Library file: LBR-P1-G45-DISCOVERY-001.json
+Classification: VERIFIED GOAL45 DISCOVERY.
+Evidence: Titan Code browser context capture/page-aware policy/side panel/contextual routing and lifecycle/migration/rollback patterns exist; finding explicitly requires projection through canonical Titan capabilities and one extension lifecycle rather than extension-private domain logic.
