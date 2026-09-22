@@ -316,3 +316,13 @@ Deep audit found a narrower isolation gap in the client boundary: top-level inte
 Hardened `TitanInteractionClient` so message events are accepted only when both the event and nested message match the authenticated `company_id`, conversation and canonical surface. Added regression coverage for a cross-company nested message.
 
 This keeps authenticated chat fail-closed while the real canonical transport remains absent. Test coverage is committed but not execution-verified in this connector-only pass.
+
+## Pass 24 — regression suite compile audit
+
+Audited the Titan surface regression files against their current implementations and the web package test configuration.
+
+Found and fixed a concrete compile defect introduced in Pass 19: `authenticated-surface.test.ts` called `createAuthenticatedHubSurfaceProjection` without importing it. The import is now explicit.
+
+Also cross-checked the surface-contract legacy-tenant assertion against the implementation. An intermediate edit attempted to rename the expected error, but the implementation correctly still emits `tenant_company_id-not-authoritative`; the test was restored to that actual contract in the same pass.
+
+The web package uses Vitest, while these files use Node's test/assert APIs; no connector shell is available here, so this pass does not claim execution success. The immediate static missing-symbol defect is fixed.
