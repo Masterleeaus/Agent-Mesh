@@ -1,0 +1,48 @@
+{
+  "schema": "titan-agent-mesh-continuation/v1",
+  "issue_number": 734,
+  "subgoal_id": "TZ-ROADMAP-55-SG-01",
+  "claim_branch": "agent/TZ-ROADMAP-55-SG-01",
+  "objective": "Converge Agent Mesh and the private Titan Code Manager around GitHub-native durable state, resumable agent handoff, and a governed GitHub Actions execution bridge.",
+  "authority": {
+    "durable_development_truth": "github",
+    "claim_mutex": "refs/heads/agent/TZ-ROADMAP-55-SG-01",
+    "local_state": "projection_only",
+    "ai_authority": false,
+    "titan_code_production_dependency": false
+  },
+  "plan": {
+    "total_passes": 26,
+    "current_pass": 1,
+    "status": "ACTIVE"
+  },
+  "completed": [
+    "Multi-pass repository and Titan Code deep scan",
+    "GitHub-native lifecycle and duplicate-authority map",
+    "Canonical issue #734 and atomic claim branch established",
+    "Continuation/takeover requirements agreed"
+  ],
+  "current_work": [
+    "Establish durable continuation record",
+    "Establish GitHub-derived Manager state contract",
+    "Prepare governed execution bridge without arbitrary-shell authority"
+  ],
+  "next_actions": [
+    "Implement normalized GitHub Agent Mesh snapshot contract",
+    "Rewire manager-live-state to reconcile GitHub facts",
+    "Add automatic checkpoint/takeover receipt helpers",
+    "Add execution-request schema and guarded Action trigger"
+  ],
+  "do_not_repeat": [
+    "Do not create another Agent Mesh gateway",
+    "Do not create a second claim mutex",
+    "Do not treat Titan Code local ledgers as canonical",
+    "Do not merge Titan Code into Titan Zero production runtime",
+    "Do not use conversation history as durable repository state"
+  ],
+  "takeover": {
+    "instruction": "A replacement agent must re-read AGENTS.md, issue #734, this continuation record, the live claim ref, current main/head SHAs, open PR/check state, and changed files. Resume current_pass; do not restart completed passes.",
+    "same_branch_required": true,
+    "release_claim_on_context_limit": false
+  }
+}
