@@ -27,3 +27,9 @@ Exports and focused regressions were added without creating a connector executor
 
 ## Remaining
 Deep-scan storage/offline/local bridge and MCP-specific current TypeScript implementations/donor evidence before adding any further code. Preserve existing offline/sync and provider registry systems; do not create parallel storage or MCP execution runtimes.
+
+## Pass 2 — storage/offline convergence
+
+The current TypeScript platform already contains a canonical Storage Fabric under `src/storage/`, plus offline mutation queue, sync, reconciliation, restart recovery and network resilience. These systems already enforce `company_id`, reject legacy tenant boundaries, use local-primary reconciliation, record explicit conflicts, and mark storage/offline outputs authority-neutral. No second storage backend or offline runtime was created.
+
+Added focused regression coverage for legacy tenant rejection, cross-company payload rejection, and authority-neutral storage envelopes. Existing storage/offline implementations are therefore the canonical convergence target; donor storage semantics should be imported only where a later audit identifies a concrete gap.
