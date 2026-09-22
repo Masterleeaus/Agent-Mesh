@@ -205,3 +205,14 @@ Evidence: Titan Signal Engine Master v0.20.0-rc.8.4, SHA 3d3fa53a94186340babf116
 Library file: WORKFORCE-ARCHITECTURE.json
 Classification: CURRENT ARCHITECTURE SPECIFICATION.
 Evidence: Decision Intelligence anomaly workflow requires baseline comparison, source provenance/freshness, duplicate suppression, evidence packaging, confidence/uncertainty, separation of observation from inference/recommendation, and explicitly lists failure patterns including stale-data false anomalies, repeated alerts and correlation stated as cause.
+
+
+## SOURCE-LIB-030
+Library file: ARCHITECTURE-ROADMAP-TARGET-ARCHITECTURE-PASS03.json
+Classification: PHYSICALLY VERIFIED DONOR MAPPING.
+Evidence: Titan Wisdom Engine Master v0.3.2, SHA 4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7, physically retrieved/SHA256 verified/content scanned. Verified paths include EvidenceReference, WisdomPredictionEngine, WisdomRecommendationEngine, OutcomeLearningService, LearningConfidenceAdapter and GovernanceDecision.
+
+## SOURCE-LIB-031
+Library file: ARCHITECTURE-ROADMAP-TARGET-ARCHITECTURE-PASS04.json / LBR-P1-G27-DISCOVERY-001.json
+Classification: VERIFIED LINEAGE WITH UNRESOLVED EXECUTABLE DONOR.
+Evidence: Titan Foresight Engine is referenced through CRM-Autonomy-Deownership-Handoff-INDEX with verified provenance, but physical executable payload is unresolved. Existing finding explicitly says do not recreate from memory; forecast/scenario semantics and calibration should be normalized from supported evidence instead.
