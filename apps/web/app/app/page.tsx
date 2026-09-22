@@ -28,7 +28,7 @@ function parseN(row: CountRow | undefined | null): number {
 export default async function AppPage() {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (session.role === "tech") redirect("/app/my-work");
+  if (session.role === "tech") redirect("/app/go");
 
   bindNativeSurface("business", session.accountId);
 
