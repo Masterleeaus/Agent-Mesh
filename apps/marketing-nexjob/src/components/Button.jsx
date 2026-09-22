@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 export function ButtonPrimary({ children, to, href, onClick, size = 'md', className = '' }) {
   const base =
-    'inline-flex items-center justify-center gap-2 font-semibold text-white bg-nx-purple hover:bg-nx-purple-dark rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/30'
+    'inline-flex items-center justify-center gap-2 font-semibold text-white bg-nx-purple hover:bg-nx-purple-dark rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-900/30'
   const sizes = {
     sm: 'text-sm px-4 py-2',
     md: 'text-sm px-5 py-2.5',
