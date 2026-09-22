@@ -28,7 +28,7 @@ export interface TitanPunchListInput{
 function rejectLegacy(v:unknown,path='input'):void{if(!v||typeof v!=='object')return;if(Array.isArray(v)){v.forEach((x,i)=>rejectLegacy(x,`${path}[${i}]`));return;}for(const[k,x]of Object.entries(v as Record<string,unknown>)){if(LEGACY_BOUNDARY_KEYS.has(k))throw new Error(`${path}.${k} is a legacy tenant boundary; company_id is required`);rejectLegacy(x,`${path}.${k}`);}}
 function req(v:unknown,l:string):string{const s=String(v??'').trim();if(!s)throw new Error(`${l} is required`);return s}
 function opt(v:unknown):string|null{const s=String(v??'').trim();return s||null}
-function dateOnly(v:unknown,l:string):string{const s=req(v,l);if(!/^\d{4}-\d{2}-\d{2}$/.test(s)||Number.isNaN(Date.parse(`${s}T00:00:00Z`)))throw new Error(`${l} must be an ISO date`);return s}
+function dateOnly(v:unknown,l:string):string{const s=req(v,l);if(!/^\d{4}-\d{2}-\d{2}$/.test(s))throw new Error(`${l} must be an ISO date`);const d=new Date(`${s}T00:00:00Z`);if(Number.isNaN(d.getTime())||d.toISOString().slice(0,10)!==s)throw new Error(`${l} must be an ISO date`);return s}
 function prov(p:DefectProvenance){const recorded_at=req(p?.recorded_at,'provenance.recorded_at');if(Number.isNaN(Date.parse(recorded_at)))throw new Error('provenance.recorded_at must be an ISO date-time');return Object.freeze({source:req(p?.source,'provenance.source'),source_ref:opt(p?.source_ref),recorded_at,idempotency_key:req(p?.idempotency_key,'provenance.idempotency_key'),trace_id:opt(p?.trace_id),correlation_id:opt(p?.correlation_id)})}
 
 export function defectBlocksWorkOrderCompletion(input:{severity:FieldDefectSeverity;state:FieldDefectState;verified_by_ref?:string|null;verified_date?:string|null}):Readonly<{blocked:boolean;reasons:readonly string[]}>{
