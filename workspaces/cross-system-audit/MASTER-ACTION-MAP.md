@@ -76,7 +76,7 @@ Dependencies before implementation:
 - direct current-code search for any existing personal/user semantic model
 
 Issue treatment:
-No new implementation issue yet; ownership remains under evidence resolution.
+SUPPORT EXISTING #768. Do not create another Personal Zero issue. #768 is architecture-contract convergence and must still select/reuse a canonical package owner before implementation.
 
 ## IMPLEMENTATION PACKET — Experience and Learning Convergence
 Status: MERGE CANDIDATE / EXISTING OWNERS
@@ -119,3 +119,30 @@ packages/runtime/authority/company-boundary.mjs
 
 Treatment:
 PRESERVE + CONNECT. Any Zero/Evolution/Experience implementation must consume these boundaries rather than bypass them.
+
+
+## IMPLEMENTATION PACKET — Earned Trust, Recursive Handshake & Authority Continuance
+Status: PARTIAL / EXISTING OWNERS
+Priority: P0
+
+Contains:
+- verified-outcome trust evidence
+- reactive bounded starting state
+- role/class autonomy ceilings
+- recursive handshake gates
+- explicit human delegation/activation
+- downstream agent/chain acceptance
+- entitlement separation / EARNED_BUT_PLAN_LOCKED
+- refusal, pause, revocation and regression
+- path/responsibility-scoped trust
+- current Risk/Governance/Assurance constraints
+- Authority Continuance evidence and lifecycle verification
+
+Canonical owners:
+- #640 — implementation owner for Earned Trust & Autonomy lifecycle
+- #761 — read-only handshake / Authority Continuance evidence recovery
+- #540 — final lifecycle certification
+- current runtime authority boundary — execution-time authority validation
+
+Treatment:
+CONVERGE + VERIFY. Do not create another Trust state machine or handshake issue. Authority Continuance evidence remains subject to #761's incomplete archaeology.
