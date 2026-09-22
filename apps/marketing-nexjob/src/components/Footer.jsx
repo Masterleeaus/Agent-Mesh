@@ -14,7 +14,7 @@ const footerLinks = {
   ],
   Company: [
     { label: 'About', path: '/about' },
-    { label: 'Contact', href: 'mailto:steve@nexjob.app' },
+    { label: 'Contact', href: 'mailto:support@titanzero.io' },
     { label: 'Privacy Policy', path: '#' },
     { label: 'Terms of Service', path: '#' },
   ],
@@ -29,10 +29,10 @@ export default function Footer() {
           <div>
             <Link to="/" className="flex items-center gap-2 font-extrabold text-lg">
               <span className="w-2 h-2 bg-nx-purple rounded-full" />
-              NexJob
+              Titan Zero Field Service
             </Link>
             <p className="text-sm text-nx-muted mt-3 max-w-[280px] leading-relaxed">
-              AI-powered field service management for trade professionals. Schedule, dispatch, invoice, and grow — all from one platform.
+              Managed Advanced Intelligence workforce and connected operating system for field-service businesses.
             </p>
             <a
               href="mailto:steve@nexjob.app"
