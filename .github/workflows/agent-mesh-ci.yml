@@ -46,6 +46,8 @@ jobs:
           python3 .github/scripts/open-agent-pr.py --self-test
           python3 .github/scripts/record-pr-handoff-pending.py --self-test
           python3 .github/scripts/record-agent-continuation.py --self-test
+          python3 .github/scripts/validate-execution-request.py --self-test
+          python3 -m json.tool .agent-mesh/schemas/execution-request-v1.schema.json >/dev/null
           python3 .github/scripts/manager-review-readiness.py --self-test
           python3 .github/scripts/manager-review-queue.py --self-test
           python3 .github/scripts/finalize-merged-subgoal.py --self-test
