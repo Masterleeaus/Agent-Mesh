@@ -172,6 +172,7 @@ if (typeof importScripts === 'function') {
   '../titan-zero/manager-baseline-state.js',
   '../titan-zero/manager-packet-state.js',
   '../titan-zero/manager-eligibility.js',
+  '../titan-zero/manager-github-state.js',
   '../titan-zero/manager-live-state.js',
   '../titan-zero/manager-delta-convergence.js',
   '../titan-zero/manager-promotion-gate.js',
