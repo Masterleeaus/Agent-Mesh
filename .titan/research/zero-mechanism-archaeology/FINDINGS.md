@@ -2640,3 +2640,121 @@ PRODUCT / ARCHITECTURE BOUNDARY
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-131
+
+### Finding
+Direct source verification confirms OnboardingPro v6 implements Longitudinal Strategy Memory as a compact intervention/outcome memory, not merely a design concept. It records a company-scoped intervention fingerprint, outcome class, context, evidence refs, measured delta, confidence, harm, applicability/TTL, observed time and expiry.
+
+### Classification
+SOURCE-VERIFIED DONOR MECHANISM
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-132
+
+### Finding
+The donor's anti-repeat mechanism is context- and freshness-aware: matching harmful/failed interventions are blocked while evidence is current and context materially similar; stale evidence or material context change yields controlled retest rather than permanent prohibition.
+
+### Classification
+EXPERIENCE / DECISION DONOR
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-133
+
+### Finding
+OnboardingPro outcome measurement explicitly compares baseline to observed values for declared metrics, records numeric deltas and computes confidence from measurement coverage. This is useful Experience evidence, but its confidence is coverage confidence—not causal confidence, evidence independence or assurance—and should be hardened accordingly in canonical TypeScript.
+
+### Classification
+OUTCOME MEASUREMENT DONOR + HARDENING NOTE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-134
+
+### Finding
+The donor rollback decision triggers when measured negative deltas or unintended effects exist and the intervention is not marked irreversible. This is a useful recovery trigger, but canonical Rewind should additionally evaluate evidence quality, causality, blast radius, current target state, compensating-action feasibility and current authority before mutation.
+
+### Classification
+REWIND DONOR + HARDENING NOTE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-135
+
+### Finding
+ExperimentComparisonService compares experiment delta vectors and takes the lower confidence of the two records, but chooses a preferred experiment by simple sum of deltas. This is too weak for canonical multi-objective decisioning because metrics can have different units, directionality, materiality, risk and business value. Recover comparison semantics, not the naive preference rule.
+
+### Classification
+DONOR PARTIAL / DO NOT IMPORT BLINDLY
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-136
+
+### Finding
+Business reconfiguration is source-verified as a governed staged lifecycle: semantic diff → Nexus draft → validation → impact preview → persisted preview → authenticated approval snapshot/fingerprint → compile/plan → idempotent provisioning → verification receipt → verified or attention_required history.
+
+### Classification
+SOURCE-VERIFIED EVOLUTION DONOR
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-137
+
+### Finding
+The reconfiguration approval fingerprint binds approval to the exact semantic diff, impact preview and from/to revisions. This is a strong donor for preventing approval drift: if the proposed configuration changes after approval, the old approval must not authorize the changed plan.
+
+### Classification
+APPROVAL-INTEGRITY DONOR
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-138
+
+### Finding
+OnboardingPro correctly rejects cross-company reconfiguration and requires a newer discovery revision. Its reconfiguration history preserves revision transitions and status. These semantics should converge into the canonical Evolution/Reality/Command architecture rather than remain an Onboarding-owned production mutation system.
+
+### Classification
+CONVERGENCE RULE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-139
+
+### Finding
+The strongest reusable OnboardingPro lifecycle is now source-backed as: **discover/revise state → semantic diff → preview impact → approve exact proposal → idempotent execute → verify → measure baseline vs actual → capture unintended effects → decide recovery → store experience → block/retest future similar strategies according to context/freshness**.
+
+### Classification
+CANONICAL EVOLUTION DONOR LOOP
+
+### Confidence
+HIGH
