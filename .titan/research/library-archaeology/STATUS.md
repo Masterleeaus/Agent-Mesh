@@ -78,3 +78,5 @@ Remaining research phases: broad Library family inventory; Personal Zero/cogniti
 - Pass 11 completed Rewind/Recovery archaeology. Distributed verified donors and current dependencies exist, but no canonical current-main Rewind implementation symbols were found. #771 created to recover one cross-engine Rewind contract without duplicating execution/provider/storage/offline recovery owners.
 
 - Pass 12 completed Titan Signal archaeology. Verified Signal Engine event/anomaly/delivery donors exist; current canonical ownership is already #642/#73 plus distributed integrations. #642 updated with donor-parity requirements; no duplicate Signal engine/issue created.
+
+- Pass 13 completed Wisdom/Foresight archaeology. Wisdom v0.3.2 is a verified implemented donor; Foresight executable source remains unresolved. #393 updated with bounded forecast/scenario/recommendation/outcome-calibration semantics; no duplicate intelligence engine created and no Foresight behavior fabricated.
