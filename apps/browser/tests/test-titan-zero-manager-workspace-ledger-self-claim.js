@@ -17,6 +17,14 @@ assert.throws(()=>L.promote(ledger,5,{name:'Titan-Code-CANONICAL.zip',sha256:'e'
 assert.strictEqual(L.assertGeneration(ledger,7),true);assert.throws(()=>L.assertGeneration(ledger,6),/REBASE_REQUIRED/);
 const packets=[{packet_id:'OWN',status:'AVAILABLE',priority:'P1',owner_lane:'browser_intelligence',roadmap_pass:2},{packet_id:'BEST',status:'AVAILABLE',priority:'P0',owner_lane:'manager_core',roadmap_pass:1}];
 let pick=C.select({lane:'browser_intelligence',capabilities:[]},packets,{claims:[],dependencyState:{byPacket:{OWN:{eligible:true},BEST:{eligible:true}}}});assert.strictEqual(pick.selected.packet_id,'BEST');
-const claim=C.claim('Agent 6',{lane:'browser_intelligence'},pick.selected,5,7);assert.strictEqual(claim.claim_basis,'SELF_CLAIM_HIGHEST_PRIORITY_ELIGIBLE');
+assert.throws(()=>C.claim('Agent 6',{lane:'browser_intelligence'},pick.selected,5,7),/LOCAL_CLAIM_FORBIDDEN/);
+const req=C.claimRequest('Agent 6',{lane:'browser_intelligence'},pick.selected,'a'.repeat(40));
+assert.strictEqual(req.branch,'agent/BEST');assert.strictEqual(req.ref,'refs/heads/agent/BEST');assert.strictEqual(req.operation,'CREATE_GITHUB_REF_ATOMICALLY');assert.strictEqual(req.localMutation,false);
 assert.strictEqual(V.plan({event:'pass'}).tier,'IMPACT');assert.strictEqual(V.plan({event:'promotion'}).tier,'FULL');
 console.log('PASS test-titan-zero-manager-workspace-ledger-self-claim');
+
+pick=C.select({lane:'manager_core',capabilities:[]},packets,{claimBranches:['agent/BEST'],dependencyState:{byPacket:{OWN:{eligible:true},BEST:{eligible:true}}}});
+assert.strictEqual(pick.selected.packet_id,'OWN','existing canonical GitHub claim branch must exclude candidate');
+pick=C.select({lane:'manager_core',capabilities:[]},packets,{openPRs:[{head:{ref:'agent/BEST'}}],dependencyState:{byPacket:{OWN:{eligible:true},BEST:{eligible:true}}}});
+assert.strictEqual(pick.selected.packet_id,'OWN','open PR head must exclude already-claimed candidate');
+assert.throws(()=>C.claimRequest('Agent 6',{},pick.selected,'not-a-sha'),/current main git SHA required/);
