@@ -55,3 +55,8 @@ assert.deepStrictEqual(Array.from(resume.failed),['fail-1']);
 assert.deepStrictEqual(Array.from(resume.unresolved),['pending-1']);
 assert.strictEqual(resume.replayPolicy,'DO_NOT_REPLAY_SUCCEEDED_OR_UNRESOLVED');
 assert.strictEqual(resume.mayAdvanceLifecycle,false);
+
+if(!sw.includes('bootstrapAgentMeshResume')) throw new Error('Agent Mesh resume bootstrap entrypoint missing');
+if(!sw.includes("bootstrap.status==='READY_TO_RESUME'")) throw new Error('resume mutation must require READY_TO_RESUME');
+if(!sw.includes("mayMutate:false,reason:")) throw new Error('resume bootstrap errors must fail closed');
+if(!sw.includes('globalThis.bootstrapAgentMeshResume=bootstrapAgentMeshResume')) throw new Error('resume bootstrap not exposed through existing service worker surface');
