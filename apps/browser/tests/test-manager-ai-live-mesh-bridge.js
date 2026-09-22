@@ -64,3 +64,7 @@ if(!sw.includes('globalThis.bootstrapAgentMeshResume=bootstrapAgentMeshResume'))
 if(!sw.includes("reason:'resume-reconciliation-required',mayMutate:false")) throw new Error('takeover must fail closed behind resume bootstrap');
 if(!sw.includes("reason:'agent-mesh-resume-reconciliation-required'")) throw new Error('Manager mutation execution must be gated by resume reconciliation');
 if(!sw.includes("authority:{ai:false,managerRules:true,githubMergeRequest:false,delete:false,mayMutate:false}")) throw new Error('blocked Manager execution must explicitly deny mutation authority');
+
+if(!sw.includes("reason:'resume-reconciliation-required',mayMutate:false")) throw new Error('takeover must fail closed before mutation when resume reconciliation fails');
+if(!sw.includes("reason:'agent-mesh-resume-reconciliation-required'")) throw new Error('Manager mutation plan must be blocked by resume reconciliation');
+if(!sw.includes("authority:{ai:false,managerRules:true,githubMergeRequest:false,delete:false,mayMutate:false}")) throw new Error('blocked Manager plan must explicitly deny mutation authority');
