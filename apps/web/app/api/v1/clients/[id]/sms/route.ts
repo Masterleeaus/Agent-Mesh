@@ -52,6 +52,7 @@ export const POST = withRole(
       username: smsSettings.gatewayUsername,
       password: smsSettings.gatewayPassword,
       simNumber: smsSettings.simNumber,
+      allowEnvironmentFallback: false,
     };
     if (!isSmsGatewayConfigured(gatewayConfig)) {
       return NextResponse.json(
