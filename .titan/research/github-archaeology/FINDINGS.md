@@ -1635,3 +1635,112 @@ HISTORICAL PRECURSOR / CURRENT OWNER STRONGER
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-056
+
+### Finding
+AI Coding Studio contains a strong security-contract precursor for the private Titan Code Local Bridge, including a versioned JSON protocol, authoritative command/risk catalogue, repository scoping, trusted host approval verification, bounded execution and secret filtering.
+
+### Evidence
+`Masterleeaus/AI-Coding-Studio`, `docs/agents/agent-2-local-bridge-report.md`, SHA `50e8efe6f69abd891b9a523a94627161efc541e9`.
+
+Verified reported implementation under `src/runtime/local-bridge/` includes:
+- browser-safe protocol/catalogue/registry;
+- READ / SAFE_EXECUTION / WRITE / DESTRUCTIVE / PUBLISH risk classes;
+- no shell fallback;
+- caller cannot downgrade registered risk;
+- non-read commands fail closed without trusted host approval verification;
+- repository IDs instead of caller-provided absolute paths;
+- Windows/POSIX path containment;
+- timeout/cancellation/output limits;
+- bounded redacted operation logs;
+- secret-file ingestion filtering.
+
+The report also explicitly records that transport/process adapters were deliberately deferred at that pass and that some earlier terminal/tool runtimes simulated success.
+
+### Classification
+PRIVATE DEVELOPMENT SECURITY/LOCAL-BRIDGE DONOR
+
+### Confidence
+HIGH
+
+### Boundary
+This is Titan Code development lineage only. It must not become a Titan Zero Base App runtime dependency.
+
+---
+
+## FINDING-GH-057
+
+### Finding
+Titan Builder/OpenBrowser has a more mature browser-to-local development architecture that uses browser AI subscriptions as an interaction/provider surface while retaining filesystem and execution authority in a local Node runtime.
+
+### Evidence
+`Masterleeaus/Titan-Builder`, `pid.md`, SHA `410f437b09ca268f813268d0db4016a8a4576023`.
+
+The architecture provides:
+- Chrome extension provider adapters for ChatGPT, Claude, Gemini, DeepSeek and others;
+- local Fastify/SSE bridge;
+- project context and @file/folder attachments;
+- structured AI response parsing;
+- diff preview before file operations;
+- local filesystem execution;
+- project memory/history;
+- long-prompt attachment fallback;
+- local-first/no proprietary API-key requirement for browser AI interaction.
+
+Current Titan Builder source/search evidence further shows an authenticated loopback bridge, separate browser/control credentials, one-time operation approvals, operation precondition hashes and rollback journals.
+
+### Classification
+CURRENT PRIVATE DEVELOPMENT IMPLEMENTATION / STRONG TITAN CODE DONOR
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-058
+
+### Finding
+The strongest convergence path for Titan Code is not to merge AI Coding Studio and Titan Builder wholesale. AI Coding Studio contributes hardened command/approval/repository-ingestion contracts; Titan Builder contributes the more complete browser/local execution workflow.
+
+### Convergence rule
+Use one private Titan Code authority:
+- browser extension: provider interaction, prompt delivery/response capture, thin UI;
+- local runtime: repository/filesystem/tool/process authority;
+- authenticated loopback boundary;
+- explicit risk catalogue + one-time/trusted approvals;
+- project containment and realpath/symlink checks;
+- transactional preview/apply/rollback;
+- secret/context filtering;
+- provider adapters replaceable independently.
+
+### Classification
+PRIVATE DEVELOPMENT CONVERGENCE
+
+### Confidence
+HIGH
+
+### Boundary
+Do not connect this private development authority directly to Titan Zero production. A future Titan Browser Node must expose only hardened production contracts through Command Bus/node protocol.
+
+---
+
+## FINDING-GH-059
+
+### Finding
+Historical browser-AI integration demonstrates a practical no-API development path, but this is not equivalent to local-model execution.
+
+### Evidence
+Titan Builder's OpenBrowser architecture sends project context through supported browser AI sites and captures their responses. AI Coding Studio also has browser adapters and Local Bridge contracts. This can reduce direct API dependence for the owner's development workflow.
+
+### Important distinction
+“Local Bridge” means local tool/filesystem execution and transport. It does not itself prove that the reasoning model is local. Local Ollama/model execution must be verified separately.
+
+### Classification
+CAPABILITY DISTINCTION / FALSE-CONFLATION PREVENTION
+
+### Confidence
+HIGH
