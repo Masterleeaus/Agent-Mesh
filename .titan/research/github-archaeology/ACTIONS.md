@@ -146,3 +146,27 @@ Status: DEDUPLICATED
 
 Summary:
 Treat NexusGrowth as a historical analytics donor, not a runtime owner. During current Sales/Customer Care/Marketing/ROI convergence, compare funnel, conversion, CLV, churn prediction, A/B, expansion scoring and ROI semantics and recover only gaps. Predictive outputs remain authority-neutral.
+
+
+---
+
+## ACTION-GH-009 — Converge verified CallingAgent mechanisms into current communications/workforce owners
+
+- **Type:** IMPORT + HARDEN / CONVERGE
+- **Priority:** P1
+- **Findings:** FINDING-GH-046, FINDING-GH-047, FINDING-GH-048
+- **Evidence:** TitanPro `Modules/CallingAgent` implementation files recorded in SOURCES.
+- **Current State:** Historical Laravel CallingAgent contains working precursor implementations for caller recall, outcome extraction, missed-call recovery, provider failover, SIP planning, persona resolution and calendar federation.
+- **Gap:** Current owners exist, but each donor mechanism should be compared against the TypeScript implementation before discarding the old code.
+- **Canonical Owners:** #234 Communications & Channels; #333 Reception & Customer Access; #363 Customer Care/Retention; #343 Sales; #153 memory; #768 Personal Zero; #647 provider/Cost Sovereignty where applicable.
+- **Proposed Treatment:** Compare direct code against each current owner. Port only missing/superior semantics and tests; do not restore the CallingAgent module boundary.
+- **Dependencies:** Communications consent/identity, Workforce authority, Business/Personal memory boundaries, provider routing.
+- **company_id:** Mandatory. Legacy `TenantContext` must normalize to `company_id`; never become a second tenant boundary.
+- **Trust/Authority:** Recovery steps and AI-derived outcomes are proposals/signals unless the effective authority envelope permits execution.
+- **Privacy/Security:** Caller identity, transcript, phone/email and SIP credentials require governed storage/egress/access controls.
+- **Cost Sovereignty:** Provider failover must include locality/customer-owned/BYO/cost policy, not only health/quota.
+- **Migration:** Semantic/code extraction into current TS contracts; no Laravel runtime dependency.
+- **Tests:** missed-call status→recovery; consent block; duplicate/idempotent callback; provider unhealthy/quota exhausted; SIP credential isolation; calendar provider failure; caller cross-company isolation; outcome signal cannot grant authority.
+- **Acceptance Criteria:** Useful donor behavior exists only behind canonical current owners, with no CallingAgent-owned tenant, memory, authority or provider-routing silo.
+- **Confidence:** HIGH
+- **Status:** READY FOR OWNER COMPARISON
