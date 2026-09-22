@@ -105,16 +105,19 @@
     "Pass 20: regression tests now guard the central allowlist and resume-gate rejection path",
     "Pass 20: audited Titan Bridge mutation classification and centralized resume gating; recover_agent and route_packet were already gated",
     "Pass 20: extended the existing RESUME_GATED_MUTATIONS set to agent_mesh.continuation.takeover rather than adding another gate system",
-    "Pass 20: added regression guard requiring READY_TO_RESUME for the centralized mutation gate"
+    "Pass 20: added regression guard requiring READY_TO_RESUME for the centralized mutation gate",
+    "Pass 20: audited live Titan Code Agent Mesh mutation call sites and found the bridge client resume-gate mismatch",
+    "Pass 20: all Agent Mesh mutations, including checkpoint, are now classified as resume-gated at the bridge client",
+    "Pass 20: service-worker mutation wrapper now passes the validated READY_TO_RESUME bootstrap receipt into the bridge client",
+    "Pass 20: regression guards prevent future bypass of the resume gate"
   ],
   "current_work": [
-    "Continue mutation-path audit across browser/service-worker and bridge callers, especially codex.run and file/repo mutations, separating normal development writes from post-takeover Agent Mesh writes"
+    "Continue mutation-path audit across repository-side workflows and Agent Mesh control scripts"
   ],
   "next_actions": [
-    "Enumerate all bridge mutation actions and callers",
-    "Verify Agent Mesh work mutations always carry resume_gate",
-    "Do not gate legitimate checkpoint creation itself",
-    "Add one central caller-side preflight only if existing architecture lacks coverage"
+    "Audit claim/recovery/execution workflow triggers for equivalent stale-SHA or branch bypasses",
+    "Ensure execution requests cannot be used as a second mutation path around browser resume gate",
+    "Add central documentation/contract tests tying Titan Code and Agent Mesh mutation semantics"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
