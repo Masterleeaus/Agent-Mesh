@@ -454,3 +454,21 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** current council gains any demonstrably superior missing semantics without introducing a second council or weakening existing authority/company boundaries.
 - **Confidence:** HIGH
 - **Status:** READY FOR SEMANTIC COMPARISON
+
+
+---
+
+## ACTION-GH-024 — Verify DecisionPacket reaches one persistent Decision lifecycle before importing any historical decision semantics
+
+- **Type:** DEEP SCAN / COMPARE / CONVERGE
+- **Priority:** P1
+- **Findings:** FINDING-GH-101 plus historical Decision/Model Council findings
+- **Canonical owner:** #59 Decision runtime, #50 regression, #642 integration, #633 Library convergence.
+- **Objective:** Trace current DecisionPacket creation, persistence, lifecycle state, watch/trigger inputs, changed-evidence reevaluation, supersession, outcome linkage and governed execution handoff.
+- **Rule:** Do not create a second Decision Engine or persistent decision store. If current implementation exists under different names, retain it. Import historical semantics only where the current lifecycle has a proven gap.
+- **company_id:** every packet/object/watch/reevaluation/outcome must remain canonical company-bound.
+- **Authority:** recommendations and council consensus remain authority-neutral; execution requires canonical Authority/Governance path.
+- **Tests:** changed evidence triggers reevaluation; stale/superseded recommendation cannot execute; cross-company evidence/watch rejected; provider/model changes do not grant authority; outcome evidence links back without rewriting historical decision truth.
+- **Acceptance Criteria:** one traceable current path from DecisionPacket → persistent Decision Object/lifecycle → reevaluation → governed action/outcome, or a precise missing-stage recovery action.
+- **Confidence:** HIGH
+- **Status:** READY
