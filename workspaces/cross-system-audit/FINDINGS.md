@@ -928,3 +928,20 @@ Do not discard or duplicate Worker Memory. #153 should reuse/converge its proven
 CURRENT / SUBSTANTIAL REUSABLE SUBSTRATE; #153 COMPANY-WIDE CONVERGENCE STILL OPEN
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-044
+### Finding
+Issue #37 remains a genuine bounded-learning/predictive certification gap. The directly inspected current Workforce handover runtime contains strong evidence, verification, rollback and authority-neutral safety substrates, but no located outcome-learning/prediction-calibration loop in that runtime.
+### Evidence
+- #37 is OPEN with 0 comments and explicitly owns verified action/outcome → bounded policy adaptation/predictive triggers, false-positive/missed-intervention/calibration measurement, rollback/compensation/refusal/escalation testing and proof that learning cannot expand authority/spend/comms/provider cost/company scope.
+- Current `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts` blob `415ee5647bed8a54b60d4e18ee628c67316d97ee` contains evidence-backed verification gates, governed rollback/recovery transitions, security integrity/authority references, privacy/evidence access controls and cross-system certification primitives.
+- The inspected handover runtime did not expose a verified-outcome learning policy loop, predictive trigger calibration, Brier/calibration scoring, false-positive or missed-intervention measurement.
+### Interpretation
+Do not create a parallel prediction/evidence/authority system. #37 should consume verified outcomes from #59/#153 and historical Step25/LocalBrain/Foresight donor semantics, then add bounded adaptation and predictive-trigger certification on top of existing Trust/Risk/Assurance/Command Bus controls.
+### Classification
+OPEN CANONICAL GAP / STRONG SAFETY SUBSTRATE EXISTS
+### Confidence
+HIGH for issue scope and inspected current runtime; repository-wide absence of all predictive code is not claimed.
