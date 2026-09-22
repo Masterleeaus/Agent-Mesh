@@ -3,6 +3,9 @@ export interface TenantSmsSettings {
   simNumber?: number;
   /** Optional tenant-bound webhook credential. Never expose this value to clients/logs. */
   webhookKey?: string;
+  gatewayUrl?: string;
+  gatewayUsername?: string;
+  gatewayPassword?: string;
 }
 
 function settingsObject(value: unknown): Record<string, unknown> {
@@ -24,10 +27,20 @@ export function resolveTenantSmsSettings(value: unknown): TenantSmsSettings {
   const simNumber = typeof rawSim === "number" && Number.isInteger(rawSim) && rawSim > 0 ? rawSim : undefined;
   const rawWebhookKey = settings.sms_webhook_key;
   const webhookKey = typeof rawWebhookKey === "string" && rawWebhookKey.trim() ? rawWebhookKey.trim() : undefined;
+  const stringSetting = (key: string) => {
+    const raw = settings[key];
+    return typeof raw === "string" && raw.trim() ? raw.trim() : undefined;
+  };
+  const gatewayUrl = stringSetting("sms_gateway_url");
+  const gatewayUsername = stringSetting("sms_gateway_username");
+  const gatewayPassword = stringSetting("sms_gateway_password");
   return {
     enabled: settings.sms_enabled !== false,
     simNumber,
     webhookKey,
+    gatewayUrl,
+    gatewayUsername,
+    gatewayPassword,
   };
 }
 
