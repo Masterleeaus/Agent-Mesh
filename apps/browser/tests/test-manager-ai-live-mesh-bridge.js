@@ -68,3 +68,7 @@ if(!sw.includes("authority:{ai:false,managerRules:true,githubMergeRequest:false,
 if(!sw.includes("reason:'resume-reconciliation-required',mayMutate:false")) throw new Error('takeover must fail closed before mutation when resume reconciliation fails');
 if(!sw.includes("reason:'agent-mesh-resume-reconciliation-required'")) throw new Error('Manager mutation plan must be blocked by resume reconciliation');
 if(!sw.includes("authority:{ai:false,managerRules:true,githubMergeRequest:false,delete:false,mayMutate:false}")) throw new Error('blocked Manager plan must explicitly deny mutation authority');
+
+if(!sw.includes("preflightAgentMeshWorkMutation(snapshot,kind='work-mutation')")) throw new Error('central Agent Mesh work-mutation preflight missing');
+if(!sw.includes("preflightAgentMeshWorkMutation(snapshot,'continuation-takeover')")) throw new Error('takeover bypasses central mutation preflight');
+if(!sw.includes("preflightAgentMeshWorkMutation(snapshot,'manager-plan')")) throw new Error('Manager plan bypasses central mutation preflight');
