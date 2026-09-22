@@ -19,7 +19,8 @@
     "./titan-connect": "src/ported/titan-connect/connector-contract.ts",
     "./titan-connect/mcp": "src/ported/titan-connect/mcp-host-contract.ts",
     "./titan-connect/credentials": "src/ported/titan-connect/credential-contract.ts",
-    "./ai-core/cost-sovereignty": "src/ported/titan-ai-core/cost-sovereignty.ts"
+    "./ai-core/cost-sovereignty": "src/ported/titan-ai-core/cost-sovereignty.ts",
+    "./personal-zero": "./src/personal-zero/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
