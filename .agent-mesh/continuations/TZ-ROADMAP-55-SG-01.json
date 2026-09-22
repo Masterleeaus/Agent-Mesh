@@ -86,15 +86,18 @@
     "Pass 20: takeover plus Manager recover/route were already gated from Pass 19; regression test now proves checkpoint preflight occurs before its bridge call",
     "Pass 20: audited all current service-worker Agent Mesh bridge calls; reads are execution audit/snapshot/health/capabilities and mutations are checkpoint/takeover/recover/route",
     "Pass 20: confirmed continuation checkpoint had already been concurrently hardened with the same GitHub-first resume gate; no bypass remained there",
-    "Pass 20: added regression coverage that checkpoint is resume-gated and that all four current Agent Mesh mutation call-site families remain visible to the guard"
+    "Pass 20: added regression coverage that checkpoint is resume-gated and that all four current Agent Mesh mutation call-site families remain visible to the guard",
+    "Pass 20: audited all Agent Mesh bridge call sites in the service worker; read-only snapshot/health/capabilities/execution-audit remain ungated reads while all discovered mutations are governed",
+    "Pass 20: centralized Agent Mesh mutation preflight now allowlists recover, route, checkpoint and takeover and fails closed on unknown Agent Mesh mutations",
+    "Pass 20: checkpoint and Manager mutations require resume reconciliation; takeover retains its explicit pre-gate then uses the central caller without double-gating; regression guards prevent direct bypass"
   ],
   "current_work": [
-    "Reduce duplicated resume-gate checks with a central non-authoritative mutation preflight helper if this improves maintainability"
+    "Converge stale route_packet/packet terminology in Manager recovery path onto GitHub issue/subgoal terminology without breaking bridge compatibility"
   ],
   "next_actions": [
-    "Refactor checkpoint/takeover/Manager mutation gating through one helper without changing authority semantics",
-    "Keep snapshot/health/capabilities/execution audit read-only and ungated",
-    "Add regression tests proving helper cannot convert advisory/model state into mutation authority"
+    "Inspect bridge/server implementation of agent_mesh.route_packet and recover_agent",
+    "Keep compatibility adapter if route_packet is externally required but normalize internal Manager vocabulary to issue/subgoal",
+    "Verify no legacy packet state becomes authority"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
