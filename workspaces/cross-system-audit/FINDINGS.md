@@ -527,3 +527,33 @@ MEDIUM pending direct final Library archaeology ingestion
 
 ### Related action
 Compare donor semantics during final Trust convergence; import only superior missing semantics.
+
+
+---
+
+## FINDING-CSA-019
+
+### Finding
+Authority Continuance is substantially implemented in current main at the runtime level even though #761's archaeology report is unfinished.
+
+### Direct current-code evidence
+- authority-lease.mjs models fresh/stale/expired/revoked/suspended/unknown lease states, expiry, freshness, supersession, delegation extinction and execution eligibility.
+- stale authority contracts to a maximum ceiling of 30; expired/revoked/suspended authority becomes execution-ineligible with ceiling 0.
+- lease-control.mjs forbids authority increases and expiry extension, supports revocation/expiry/narrowing, and validates controls against the current authority decision.
+- delegation.mjs enforces bounded depth, company/capability/workflow/context continuity, expiry inheritance, ancestry/cycle checks and extinction when parent/child authority becomes inactive.
+- autonomy.mjs forbids local authority increase and contracts authority based on connectivity, status, freshness, policy, risk, evidence and local safety.
+- all inspected authority objects reject legacy tenant boundary fields and use company_id.
+
+### Interpretation
+This is concrete Authority Continuance machinery: authority is time-bound/current-state-bound, can contract or extinguish, cannot be locally raised, and delegated authority cannot outlive/widen its parent chain.
+
+This does NOT prove the full product-level Goal42 recursive handshake lifecycle is complete; #640/#761/#540 remain the convergence/certification lanes.
+
+### Classification
+CURRENT / SUBSTANTIALLY IMPLEMENTED RUNTIME CAPABILITY
+
+### Confidence
+HIGH
+
+### Related action
+PRESERVE + CONNECT current authority lease/control/delegation runtime; use #761 to map missing handshake/Trust integration rather than rebuilding continuance.
