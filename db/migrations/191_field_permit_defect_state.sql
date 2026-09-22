@@ -59,9 +59,10 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_field_permits_idempotency ON field_permits(
 CREATE UNIQUE INDEX IF NOT EXISTS uq_field_permit_inspections_idempotency ON field_permit_inspections(company_id,idempotency_key);
 CREATE UNIQUE INDEX IF NOT EXISTS uq_field_defects_idempotency ON field_defects(company_id,idempotency_key);
 
--- Cross-record work-order, permit and verifier boundary checks are enforced by
--- the governed field mutation layer inside the same portable transaction.
--- Keep this migration declarative so the schema can be applied by both the
--- PostgreSQL and MySQL runtime paths without PL/pgSQL trigger dependencies.
--- company_id remains the only canonical tenant boundary; account_id is a
--- compatibility storage field until the web schema migration is completed.
+-- IMPORTANT: this migration is currently PostgreSQL-oriented. The portable
+-- runtime mutation layer also supports MySQL, but schema DDL must be emitted
+-- through the repository's dialect-specific migration path before enabling
+-- these tables on MySQL. Do not treat runtime SQL portability as DDL portability.
+-- Cross-record work-order, permit and verifier boundary checks remain enforced
+-- transactionally by the governed field mutation layer. company_id is the
+-- canonical boundary; account_id is compatibility storage only.
