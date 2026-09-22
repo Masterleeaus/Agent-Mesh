@@ -161,3 +161,19 @@ Do not replace Nexus.
 Observation → Reality provenance/facts → freshness/change detection → reassessment → proposal → governed reconfiguration → verification → outcome/rollback → learning.
 
 Implementation must preserve #767 boundaries: Business Reality separate from Personal Zero, company_id only, no Zero inference rewrite of authoritative Reality, and consequential mutation through canonical authority/governance/Command Bus.
+
+
+## Post-#633 owner reconciliation
+Do not reopen or expand #633 into another generic intelligence project.
+
+Closed/converged #633 scope:
+Signal, Model Council, Nexus orchestration primitive, Prime, Knowledge Authority exposure and existing Decision/Intelligence convergence.
+
+Remaining lanes:
+- #768 — Personal Zero Understanding & Experience contracts.
+- #153 — canonical Business Memory & Knowledge / longitudinal verified-outcome memory.
+- #37 — bounded predictive/outcome learning and autonomy-safety.
+- #59 — persistent DecisionPacket lifecycle and temporal re-evaluation.
+- #767 — Evolution/Business Reality convergence.
+
+Historical Decision Engine/LocalBrain/Phase10 semantics should be selectively imported into these owners only when superior and non-duplicating.
