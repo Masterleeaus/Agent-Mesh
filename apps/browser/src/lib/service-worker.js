@@ -207,6 +207,19 @@ async function callGovernedMcpTool(connectionId, name, args) {
     return globalThis.CodeeMcpGovernanceGateway.call(adapter, String(connectionId || '').slice(0, 240), String(name || '').slice(0, 240), args && typeof args === 'object' ? args : {});
 }
 
+async function fetchAgentMeshExecutionAudit(config, snapshot = {}) {
+    const identity = snapshot?.githubProjection?.issue || snapshot?.github?.issue || {};
+    const payload = {
+        issue_number: identity.number || null,
+        subgoal_id: identity.subgoal_id || snapshot?.githubProjection?.subgoalId || null,
+        claim_branch: snapshot?.githubProjection?.claim?.branch || snapshot?.github?.claim?.branch || null
+    };
+    if (!payload.issue_number || !payload.subgoal_id) return { ok:false, unavailable:true, reason:'execution-audit-work-identity-missing' };
+    const result = await globalThis.CodeeTitanBridgeClient?.call?.(config, 'agent_mesh.execution.audit', payload);
+    if (!result?.ok) return { ok:false, unavailable:true, reason:result?.reason || 'execution-audit-unavailable' };
+    return { ok:true, authority:'github-projection-only', mayMerge:false, mayReleaseClaim:false, executions:Array.isArray(result.result?.executions)?result.result.executions:[], source:result.result?.source || 'github-issue-actions-audit' };
+}
+
 async function getMcpInspectorPayload(options = {}) {
     if (!globalThis.CodeeMcpInspector) throw new Error('Codee MCP inspector runtime is unavailable');
     const runtime = globalThis.CodeeMcpRuntime;
