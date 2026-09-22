@@ -1038,3 +1038,32 @@ This materially closes the former contract-definition gap, but not #768 as a who
 ACTIVE IMPLEMENTATION / CONTRACT SLICE LANDED / NOT YET CERTIFIED
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-049
+### Finding
+#768 implementation slice 2 has landed a repository-backed Personal Zero state service on `agent/768`, reusing canonical titan-platform storage and enforcing company/relationship isolation, revocation and understanding lineage at service level. CI execution evidence remains pending.
+### Evidence
+Latest #768 update reports commits `4938386`, `e2eca82`, `6300764`.
+Direct inspection of `packages/titan-platform/src/personal-zero/state-service.ts` on `agent/768`, blob `609e14f62c5830cf8000e2fb58102c34f9d0f81a`, verifies:
+- canonical storage repository is required; no new database/runtime;
+- descriptor declares `company_boundary:"company_id"`, `authority_neutral:true`, `execution_authority:false`;
+- relationship writes use canonical repository storage;
+- revocation is revision-checked and preserves a revoked relationship record;
+- company-scoped understanding evidence requires a relationship and exact ONE/Zero/company match;
+- revoked relationships reject new evidence;
+- promotion validates every evidence reference belongs to the same ONE/Zero/company/relationship;
+- cross-context evidence is rejected;
+- correction requires explicit supersession lineage and rejects cross-context replacement;
+- prior understanding is preserved as `superseded`;
+- retrieval returns no state for revoked relationships and filters deleted/expired understanding.
+The branch index now exports both contracts and state service, blob `0bf22b13ca31a8a1261ea38322506eb644bc0def`.
+The implementation update reports negative tests for multi-company isolation, cross-relationship evidence, revocation, correction lineage and legacy tenant aliases, but explicitly states execution/CI evidence is still required.
+### Interpretation
+Personal Zero has progressed from contracts to an actual storage-backed lifecycle implementation. This closes a significant portion of #768's company-context isolation/revocation gap, but completion still requires executed tests/CI and remaining Experience/CognitiveEvent persistence/retrieval/consumer integration as defined by the issue.
+### Classification
+ACTIVE IMPLEMENTATION / STATE SERVICE LANDED / CI PENDING
+### Confidence
+HIGH
