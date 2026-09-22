@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 14,
+    "current_pass": 15,
     "status": "ACTIVE"
   },
   "completed": [
@@ -59,15 +59,18 @@
     "Pass 13: tests now assert execution audit is projection-only and cannot merge or release claims",
     "Pass 14: live Manager snapshot now fetches execution audit evidence through the existing read-only Agent Mesh bridge and attaches it to manager-snapshot.v3",
     "Pass 14: restart reconstruction now accepts execution audit evidence while explicitly preventing that evidence from advancing lifecycle, merging, or releasing claims",
-    "Pass 14: regression tests guard live snapshot attachment and projection-only restart semantics"
+    "Pass 14: regression tests guard live snapshot attachment and projection-only restart semantics",
+    "Pass 15: restart reconstruction now derives per-request SUCCEEDED, FAILED, and ACCEPTED-BUT-UNRESOLVED resume states from GitHub-backed execution audit evidence",
+    "Pass 15: resume policy explicitly forbids replay of SUCCEEDED or unresolved accepted requests; failed requests remain visible for deliberate diagnosis/retry",
+    "Pass 15: execution resume evidence remains non-authoritative for lifecycle advancement and regression tests cover status precedence and replay policy"
   ],
   "current_work": [
-    "Use execution evidence to improve takeover/resume decisions without replaying completed requests"
+    "Feed replay-safe execution resume hints into continuation/takeover context and agent bootstrap"
   ],
   "next_actions": [
-    "Derive resume-safe execution statuses from audit evidence",
-    "Mark unresolved accepted requests distinctly from succeeded/failed receipts",
-    "Feed resume hints into continuation/takeover context without granting lifecycle authority"
+    "Attach executionResume summary to takeover/checkpoint payloads without transferring bulky audit history",
+    "Teach bootstrap/resume context to surface unresolved execution requests before new mutations",
+    "Add handoff regression guard that same claim branch is retained during takeover"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
