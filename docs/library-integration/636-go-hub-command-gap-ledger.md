@@ -66,3 +66,14 @@ Important convergence defects/gaps found:
 4. Go maps/navigation capability is already explicitly present as `maps.navigate`; maps must be retained.
 
 Decision: next implementation pass should fix the canonical `zero`/Command presentation-key mismatch with regression coverage before considering any donor feature import.
+
+## Pass 4 — canonical owner surface normalization
+
+Fixed the concrete owner-surface mismatch in `surface-contract.mjs`:
+- internal owner presentation/capabilities now use canonical `zero`
+- user-facing product name remains `Titan Command`
+- `command` is not accepted as a second canonical surface boundary
+- owner mutations remain authority-neutral Command Bus intents requiring server acceptance and receipts
+- Go `maps.navigate` capability remains intact
+
+Added focused Node regression coverage in `runtime/surface-contract.test.mjs`.
