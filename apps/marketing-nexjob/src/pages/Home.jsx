@@ -6,17 +6,17 @@ import CTASection from '../components/CTASection'
 import { appRoutes } from '../config'
 
 const heroProofs = [
-  'Works with the systems you already use',
-  'Managed workforce, not another dashboard to learn',
-  'Human authority for consequential actions',
-  'Built for field-service operations',
+  'Managed around the systems you already use',
+  'Titan Zero software fills genuine gaps',
+  'Privacy-first and customer-controlled options',
+  'Measured operational and resource outcomes',
 ]
 
 const heroStats = [
-  { num: 'Lead', label: 'Capture & qualify' },
-  { num: 'Book', label: 'Schedule work' },
-  { num: 'Serve', label: 'Support the field' },
-  { num: 'Retain', label: 'Follow up & grow' },
+  { num: 'Revenue', label: 'Create & recover' },
+  { num: 'Cost', label: 'Reduce waste' },
+  { num: 'Time', label: 'Return to the team' },
+  { num: 'Cash', label: 'Accelerate collection' },
 ]
 
 const trades = ['🧹 Cleaning', '🌿 Landscaping', '🏊 Pool Service', '💦 Pressure Washing', '🐛 Pest Control', '🪟 Window Cleaning', '🏠 Property Maintenance', '🚐 Mobile Services']
@@ -81,12 +81,12 @@ export default function Home() {
           </div>
 
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-            Run field service with<br />
-            <span className="gradient-text">a team behind you.</span>
+            Recover hidden value across your field-service business.<br />
+            <span className="gradient-text">Then measure what changed.</span>
           </h1>
 
           <p className="text-lg text-nx-muted max-w-xl mx-auto mb-10 leading-relaxed">
-            Titan Zero adds a managed Advanced Intelligence workforce to the systems you already use — helping handle enquiries, bookings, scheduling, customer communication, field coordination, follow-up, and operational admin.
+            Titan Zero combines a managed Advanced Intelligence workforce, software gap filling, resource optimisation and measurement around the systems you already use. We track value across revenue, cost, time, cash and resources — without requiring the owner to become an AI expert.
           </p>
 
           <div className="flex justify-center gap-4 flex-wrap mb-8">
@@ -111,6 +111,29 @@ export default function Home() {
               <div key={proof} className="flex items-center gap-1.5 text-sm text-nx-muted">
                 <Check size={16} className="text-nx-green" />
                 {proof}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 pb-24">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10">
+            <SectionLabel>Measured Value</SectionLabel>
+            <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight">Five places Titan Zero looks for value.</h2>
+            <p className="text-nx-muted text-lg max-w-3xl mx-auto mt-3">The discovery process establishes a baseline first. Titan Zero then measures actual customer results rather than presenting generic percentages as guaranteed outcomes.</p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {[
+              ['Revenue created','Missed enquiries, lead response, quote follow-up, rebooking, reactivation, referrals and appropriate upsell opportunities.'],
+              ['Cost saved','Software overlap, resource waste, avoidable rework, inefficient routing, inventory and infrastructure costs.'],
+              ['Time recovered','Reception, scheduling, administration, document handling, support, sales administration and repetitive coordination.'],
+              ['Cash accelerated','Invoice follow-up, payment workflow, quote recovery, retention and pricing/margin decision support.'],
+              ['Resources & environment','Chemicals, water, energy, waste, procurement, environmental evidence and process improvement.'],
+            ].map(([title,desc]) => (
+              <div key={title} className="bg-nx-surface border border-nx-border rounded-2xl p-6">
+                <h3 className="font-bold mb-2">{title}</h3><p className="text-xs text-nx-muted leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
