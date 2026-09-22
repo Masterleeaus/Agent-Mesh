@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 10,
+    "current_pass": 11,
     "status": "ACTIVE"
   },
   "completed": [
@@ -47,15 +47,18 @@
     "Pass 9: execution workflow writes an issue acceptance marker and rejects duplicate request_id markers, providing durable GitHub-backed replay protection without merge/claim-release authority",
     "Pass 10: execution workflow now derives request identity immediately from the request filename for audit/failure handling",
     "Pass 10: failed validation or execution emits a v1 FAILED receipt artifact containing request id, workflow run, trigger SHA, claim branch and explicit zero mutation/merge/claim-release authority",
-    "Pass 10: receipt upload now runs on success or failure, retaining auditable execution evidence for 90 days"
+    "Pass 10: receipt upload now runs on success or failure, retaining auditable execution evidence for 90 days",
+    "Pass 11: execution bridge no longer tail-selects one request from a multi-request push; changed request paths are deduplicated and exactly one request is required",
+    "Pass 11: ambiguous zero/multiple execution-request pushes fail closed instead of silently skipping work",
+    "Pass 11: CI now guards deterministic single-request selection and failure-receipt wiring"
   ],
   "current_work": [
-    "Strengthen execution request idempotency and concurrency around multiple requests in one push"
+    "Improve request concurrency/replay atomicity and receipt discoverability"
   ],
   "next_actions": [
-    "Reject multi-request pushes or process every request deterministically instead of tail-only selection",
-    "Separate request-id replay identity from per-claim execution serialization",
-    "Add workflow/audit regression checks to CI"
+    "Harden acceptance marker race handling",
+    "Add durable execution receipt/index lookup for takeover/resume",
+    "Expose execution state through existing Agent Mesh snapshot bridge"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
