@@ -2065,3 +2065,102 @@ CURRENT PRINCIPLE CONFIRMED / TERMINOLOGY HARDENING
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-074
+
+### Finding
+AI Coding Studio contains a documented critical-security defect history that is valuable as a negative donor/test corpus for Titan Code convergence, not as production code to import blindly.
+
+### Evidence
+`docs/audits/AI-Coding-Studio-Architecture-Runtime-Audit-Pass1.md` SHA `2d7b59c134eb10d6ad56afd223682cbd33372cb0` verified historical defects including:
+- privileged arbitrary cross-origin request proxy with broad host access;
+- unsanitized model/imported Markdown rendered as HTML;
+- host-page events able to mutate persisted remote configuration;
+- unauthenticated/wildcard sandbox and preview message channels;
+- repository/archive ingestion without aggregate safety budgets and with secret-file exposure risk;
+- no-op/simulated runtime modules that could report false success.
+
+### Recovery judgment
+Preserve these failure modes as explicit regression tests and threat-model cases. Do not recover the insecure mechanisms.
+
+### Classification
+NEGATIVE DONOR / SECURITY REGRESSION CORPUS
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-075
+
+### Finding
+Titan Builder's later deep-audit lineage demonstrates that several browser/local execution risks were subsequently hardened with concrete controls, providing a stronger donor than the earlier AI Coding Studio runtime.
+
+### Verified repair evidence
+Titan Builder's deep-audit ledger records:
+- canonical project containment using realpath/lstat and pre-mutation revalidation;
+- operation-order preservation;
+- SHA-256 execution preconditions;
+- durable transaction journal and before-state backups;
+- automatic rollback;
+- exact attachment correlation;
+- distinct browser/control credentials;
+- exact origin allowlisting or authenticated first-use pinning;
+- one-time short-lived apply capabilities bound to canonical project + approved preview;
+- hashed approval capability storage with replay/expiry/mismatch rejection.
+
+### Classification
+HARDENED PRIVATE-DEVELOPMENT DONOR
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-076
+
+### Finding
+The historical `zero` security integration implemented tenant-aware security audit records but explicitly left the older `tz_audit_log` without `company_id`. This is a concrete historical tenancy gap that must not survive convergence.
+
+### Evidence
+`docs/SECURITY_TENANCY_ALIGNMENT.md` SHA `b93d0b410ca6a832b6c61723513518bdd96d9152` states:
+- `SecurityAuditEvent` is company-scoped;
+- node trust fingerprints include `company_id`;
+- `tz_audit_log` was not yet tenant-scoped and was deferred.
+
+`docs/SECURITY_PASS_IMPLEMENTATION_REPORT.md` SHA `1bf390f4982d915f0c5eee29f1506f9a5ab14ccd` confirms the security pass deliberately created a separate tenant-aware audit service rather than fixing the older AI/signal audit table in that pass.
+
+### Classification
+HISTORICAL REGRESSION/GAP / VERIFY CURRENT TYPESCRIPT CLOSED
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-077
+
+### Finding
+Security archaeology supports a single audit/evidence doctrine rather than separate security, AI, signal, device and workflow audit authorities.
+
+### Recovery judgment
+Canonical audit evidence should consistently carry at minimum:
+- `company_id`;
+- actor/principal identity and type;
+- Zero/system/AI involvement;
+- device/channel/integration origin where applicable;
+- target capability/entity;
+- authority/policy/guard result;
+- approval provenance;
+- execution/result/rollback references.
+
+Domain-specific event stores may exist, but cross-domain accountability cannot depend on a tenantless legacy audit stream.
+
+### Classification
+CONVERGENCE REQUIREMENT
+
+### Confidence
+HIGH
