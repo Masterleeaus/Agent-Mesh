@@ -1,0 +1,16 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const s={console,Date};s.globalThis=s;vm.createContext(s);
+vm.runInContext(fs.readFileSync('src/titan-zero/agent-mesh-continuation.js','utf8'),s);
+const C=s.TitanCodeAgentMeshContinuation;
+const cp=C.checkpoint({issue_number:734,subgoal_id:'TZ-ROADMAP-55-SG-01',claim_branch:'agent/TZ-ROADMAP-55-SG-01',head_sha:'a'.repeat(40),current_pass:3,completed:['pass 1','pass 2'],current_work:['checkpoint takeover'],next_actions:['resume'],verification:['tests pass']});
+assert.strictEqual(cp.authority.conversation,'disposable');
+assert.strictEqual(cp.authority.mayReleaseClaim,false);
+assert.throws(()=>C.checkpoint({subgoal_id:'TZ-ROADMAP-55-SG-01',claim_branch:'agent/wrong'}),/canonical claim branch/);
+const receipt=C.takeover({checkpoint:cp,from_execution_session:'chat-a',to_execution_session:'chat-b',reason:'CONTEXT_LIMIT'});
+assert.strictEqual(receipt.claim_branch,cp.claim_branch);
+assert.strictEqual(receipt.authority.claimReleased,false);
+assert.strictEqual(receipt.resume_pass,3);
+const resume=C.resumeInstructions(cp);
+assert(resume.instructions.some(x=>x.includes('GitHub wins')));
+assert.deepStrictEqual(Array.from(resume.do_not_repeat),[]);
+console.log('PASS test-agent-mesh-continuation');
