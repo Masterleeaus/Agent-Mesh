@@ -31,14 +31,14 @@ const integrations = [
 ]
 
 const features = [
-  { icon: '📞', title: 'Reception & Lead Handling', desc: 'Capture enquiries, qualify leads, prepare next actions and keep authorised follow-up moving across configured channels.', color: 'bg-purple-500/10' },
-  { icon: '📋', title: 'Quote Preparation', desc: 'Bring customer, property, job history and approved business knowledge together to prepare quotes for review and approval.', color: 'bg-cyan-500/10' },
+  { icon: '📞', title: 'Reception & Lead Handling', desc: 'Capture enquiries, qualify leads, prepare next actions and keep authorised follow-up moving across configured channels.', color: 'bg-blue-900/10' },
+  { icon: '📋', title: 'Quote Preparation', desc: 'Bring customer, property, job history and approved business knowledge together to prepare quotes for review and approval.', color: 'bg-slate-600/10' },
   { icon: '📅', title: 'Scheduling Support', desc: 'Coordinate recurring work, availability, skills, locations and exceptions while keeping existing scheduling systems where they fit.', color: 'bg-green-500/10' },
   { icon: '🗺️', title: 'Field Coordination', desc: 'Keep jobs, locations, field teams, changes and customer communication connected across the operating day.', color: 'bg-yellow-500/10' },
   { icon: '💬', title: 'Customer Care', desc: 'Support reminders, updates, feedback, service recovery, rebooking and retention workflows using authorised customer context.', color: 'bg-red-500/10' },
   { icon: '💰', title: 'Billing & Collections Workflow', desc: 'Move authorised completed work toward invoicing, follow-up and payment through the accounting and payment systems selected by the business.', color: 'bg-orange-500/10' },
   { icon: '📄', title: 'Document Intelligence', desc: 'Connect receipts, quotes, job records, compliance evidence and other authorised documents to the relevant business workflow.', color: 'bg-blue-500/10' },
-  { icon: '📊', title: 'Value Measurement', desc: 'Establish baselines and report measured changes across revenue, cost, time, cash and resources instead of relying on generic ROI claims.', color: 'bg-violet-500/10' },
+  { icon: '📊', title: 'Value Measurement', desc: 'Establish baselines and report measured changes across revenue, cost, time, cash and resources instead of relying on generic ROI claims.', color: 'bg-slate-700/10' },
   { icon: '🧠', title: 'Private Business Knowledge', desc: 'Use governed company knowledge and private retrieval options so workforce capabilities operate with relevant business context.', color: 'bg-teal-500/10' },
   { icon: '📦', title: 'Inventory & Procurement', desc: 'Connect stock, consumables, purchasing, suppliers and resource-use context to operational decisions where configured.', color: 'bg-indigo-500/10' },
   { icon: '🌱', title: 'Environmental Intelligence', desc: 'Measure chemical, water, energy, waste and procurement opportunities and connect improvements to operating evidence.', color: 'bg-emerald-500/10' },
@@ -61,8 +61,6 @@ const stats = [
   { num: '0', label: 'Forced rip-and-replace migrations' },
 ]
 
-const testimonials = []
-
 export default function Home() {
   return (
     <>
@@ -74,7 +72,7 @@ export default function Home() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 text-xs font-semibold text-nx-purple-light bg-purple-500/10 border border-purple-500/20 px-4 py-1.5 rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold text-nx-purple-light bg-blue-900/10 border border-blue-900/20 px-4 py-1.5 rounded-full mb-6">
             <span className="w-1.5 h-1.5 bg-nx-green rounded-full animate-pulse-dot" />
             Managed Advanced Intelligence Workforce
           </div>
@@ -198,7 +196,7 @@ export default function Home() {
 
       {/* ===== AI SECTION ===== */}
       <section className="relative py-24 px-6">
-        <div className="absolute inset-0 bg-gradient-to-b from-nx-bg via-purple-500/[0.03] to-nx-bg pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-nx-bg via-blue-900/[0.03] to-nx-bg pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: Content */}
           <div>
