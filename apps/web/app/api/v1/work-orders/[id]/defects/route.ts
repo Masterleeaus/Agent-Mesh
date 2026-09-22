@@ -3,7 +3,7 @@ import { z } from "zod";
 import { withRole,type AuthSession } from "@/lib/auth/middleware";
 import { withPortableTransaction } from "@/lib/db/portable";
 import { recordGovernedDefectState } from "@/lib/work-orders/field-governed-state";
-import { buildTitanFieldDefect } from "../../../../../../../../packages/titan-platform/src/field-defects";
+import { buildTitanFieldDefect } from "@titan-zero/titan-platform/business-ops";
 export const dynamic="force-dynamic";
 const schema=z.object({
  company_id:z.string().min(1),defect_id:z.string().min(1),punch_list_id:z.string().min(1),description:z.string().min(1),
