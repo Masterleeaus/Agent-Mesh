@@ -16,7 +16,6 @@ const footerLinks = {
   ],
   Company: [
     { label: 'About', path: '/about' },
-    { label: 'FAQ', path: '/faq' },
     { label: 'System Evolution', path: '/changelog' },
   ],
 }
@@ -30,7 +29,7 @@ export default function Footer() {
           <div>
             <Link to="/" className="flex items-center gap-2 font-extrabold text-lg">
               <span className="w-2 h-2 bg-nx-purple rounded-full" />
-              Titan Zero Field Service
+              Titan Zero Field Services
             </Link>
             <p className="text-sm text-nx-muted mt-3 max-w-[280px] leading-relaxed">
               Managed Advanced Intelligence workforce and connected operating system for field-service businesses.
