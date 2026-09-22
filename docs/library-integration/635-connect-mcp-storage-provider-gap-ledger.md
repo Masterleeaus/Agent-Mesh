@@ -67,3 +67,7 @@ Also verified the Connect, MCP host, credential-reference and Cost Sovereignty c
 Final integration scan found the new #635 TypeScript contracts were exported from `src/index.ts` but were not included in the package `tsconfig.files` list or explicit package subpath exports. Corrected both so the contracts participate in the canonical platform typecheck/build surface. Strengthened Cost Sovereignty regression coverage for the explicit no-hidden-Titan-funded-fallback case.
 
 No new runtime, tenant boundary, executor, vault or authority mechanism was introduced.
+
+## Pass 8 — final verification preparation
+
+The accumulated #635 branch is 26 commits ahead and 0 behind current `main`, with only the documented Connect/MCP/credential/Cost Sovereignty/storage test and contract files changed. Combined-status reporting is empty for the branch commits, so no completed CI result can be claimed from the connector. Normalized the TypeScript `files` list to remove any duplicate entries before final verification.
