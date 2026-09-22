@@ -20,7 +20,7 @@ export interface TitanProjectRfiInput{
 function rejectLegacy(v:unknown,path='input'):void{if(!v||typeof v!=='object')return;if(Array.isArray(v)){v.forEach((x,i)=>rejectLegacy(x,`${path}[${i}]`));return;}for(const[k,x]of Object.entries(v as Record<string,unknown>)){if(LEGACY_BOUNDARY_KEYS.has(k))throw new Error(`${path}.${k} is a legacy tenant boundary; company_id is required`);rejectLegacy(x,`${path}.${k}`);}}
 function req(v:unknown,l:string):string{const s=String(v??'').trim();if(!s)throw new Error(`${l} is required`);return s}
 function opt(v:unknown):string|null{const s=String(v??'').trim();return s||null}
-function dateOnly(v:unknown,l:string):string{const s=req(v,l);if(!/^\d{4}-\d{2}-\d{2}$/.test(s)||Number.isNaN(Date.parse(`${s}T00:00:00Z`)))throw new Error(`${l} must be an ISO date`);return s}
+function dateOnly(v:unknown,l:string):string{const s=req(v,l);if(!/^\d{4}-\d{2}-\d{2}$/.test(s))throw new Error(l+' must be an ISO date');const d=new Date(s+'T00:00:00Z');if(Number.isNaN(d.getTime())||d.toISOString().slice(0,10)!==s)throw new Error(l+' must be an ISO date');return s}-\d{2}-\d{2}$/.test(s)||Number.isNaN(Date.parse(`${s}T00:00:00Z`)))throw new Error(`${l} must be an ISO date`);return s}
 function dateTime(v:unknown,l:string):string{const s=req(v,l);if(Number.isNaN(Date.parse(s)))throw new Error(`${l} must be an ISO date-time`);return s}
 function cents(v:unknown,l:string):number{const n=Number(v??0);if(!Number.isSafeInteger(n)||n<0)throw new Error(`${l} must be non-negative integer cents`);return n}
 function days(v:unknown,l:string):number{const n=Number(v??0);if(!Number.isSafeInteger(n)||n<0)throw new Error(`${l} must be a non-negative integer`);return n}
