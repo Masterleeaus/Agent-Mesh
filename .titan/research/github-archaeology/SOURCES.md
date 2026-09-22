@@ -136,3 +136,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-026 — `Masterleeaus/Worksuite-Saas---Project-Management-System_Laravel` main, `TitanDocs/docs/09-communications/Titan_Communications_Orchestration_and_Fallback_Model.md`; direct file inspection.
 - SOURCE-GH-027 — `Masterleeaus/TitanPro` main, `resources/reference/titan/titan_bos_expanded_script.md`, SHA `7260a681ac7d9d3a498883bb4729f60743db9d3e`; direct file inspection.
 - SOURCE-GH-028 — Agent-Mesh #234 canonical Communications & Channels runtime and #240 certification; direct open-issue inspection.
+
+
+- SOURCE-GH-029 — `Masterleeaus/zero` main, `app/Events/Predict/PredictionFeedbackRecorded.php`, SHA `c08b691fbf788af791055b3a75eebd3a8165e335`; direct file inspection.
+- SOURCE-GH-030 — `Masterleeaus/zero` main, `docs/modules/MODULE_06_ExecutionTimeGraph_report.md`, SHA `109f06369f86e82f7d8679a873479d83ab9d518d`; direct file inspection.
+- SOURCE-GH-031 — `Masterleeaus/TitanPro` main, `Modules/Accountings/Services/CashflowForecastService.php`, SHA `18f5f2b85082b146d84354fdaf6a5fab38fa1545`; direct file inspection.
+- SOURCE-GH-032 — `Masterleeaus/TitanPro` main, `Modules/NexusGrowth/module.json`, SHA `0a71690619c94807ced047ee34acd396a81c536c`; direct file inspection.
+- SOURCE-GH-033 — Agent-Mesh #768 Personal Zero/Experience and #293 Reliability/Recovery/Rewind convergence; direct open-issue inspection.
