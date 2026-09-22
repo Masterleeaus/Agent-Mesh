@@ -233,3 +233,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-019 | Blueprint evidence pipeline discovery | #749/PR #750; #751/PR #752; #757/PR #758 | current GitHub issue/PR definitions | IN PROGRESS / ARTIFACT RESULTS UNKNOWN | PARTIAL | All three are read-only evidence-generation/validation pipelines. Their definitions do not satisfy the Current-System Blueprint completion gate. | YES |
+
+
+| INGEST-020 | Blueprint workflow PR state verification | PR #750/#752/#758 | PR metadata + patches | OPEN / UNMERGED | VERIFIED | All three PRs add evidence-generation workflows only; none is merged into main. Head revisions pinned in FINDING-CSA-035. | YES |
