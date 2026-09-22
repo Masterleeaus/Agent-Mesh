@@ -29,7 +29,9 @@ async function supportsRequest(adapter,request){
  }
  return true;
 }
+async function resolveAgentMeshWorkContext(input={}){if(input.workContext)return input.workContext;if(input.injectAgentMeshWorkContext!==true)return null;try{const snapshot=await global.getManagerAISnapshot?.();const result=await global.getAgentMeshWorkContext?.(snapshot);return result?.ok?result.context:null;}catch(_error){return null;}}
 async function request(input={}){
+ const workContext=await resolveAgentMeshWorkContext(input);if(workContext)input={...input,workContext};
  if(!global.CodeeAIRequestContract||!global.CodeeAIResponseContract||!global.CodeeAIProviderRegistry) return failure('ai-gateway-runtime-incomplete');
  let normalized; try{normalized=global.CodeeAIRequestContract.create(input);}catch(error){return failure('invalid-ai-request',null,{error:String(error?.message||error).slice(0,1000)});}
  const providers=eligible(normalized); if(!providers.length){audit(normalized,{},'NO_PROVIDER');return failure('no-eligible-provider',normalized);}
@@ -56,5 +58,5 @@ async function requestAdvisory(legacy={}){
 }
 function registerProvider(adapter){return global.CodeeAIProviderRegistry.register(adapter);}
 function status(){const providers=global.CodeeAIProviderRegistry?.status?.()||{providers:0,active:0,local:0};const models=global.CodeeAIModelRegistry?.status?.()||{models:0,healthy:0,local:0,free:0};return Object.freeze({schema:'codee.ai.gateway.status.v1',gatewayInstalled:true,providers:providers.providers||0,activeProviders:providers.active||0,localProviders:providers.local||0,models:models.models||0,healthyModels:models.healthy||0,inferenceReady:(providers.active||0)>0,authority:AUTHORITY});}
-global.CodeeProviderGateway=Object.freeze({request,requestAdvisory,registerProvider,status});
+global.CodeeProviderGateway=Object.freeze({request,requestAdvisory,registerProvider,status,resolveAgentMeshWorkContext});
 })(typeof globalThis!=='undefined'?globalThis:this);
