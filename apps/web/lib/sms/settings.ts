@@ -6,6 +6,7 @@ export interface TenantSmsSettings {
   gatewayUrl?: string;
   gatewayUsername?: string;
   gatewayPassword?: string;
+  quietHours?: { startHour: number; endHour: number };
 }
 
 function settingsObject(value: unknown): Record<string, unknown> {
@@ -34,6 +35,14 @@ export function resolveTenantSmsSettings(value: unknown): TenantSmsSettings {
   const gatewayUrl = stringSetting("sms_gateway_url");
   const gatewayUsername = stringSetting("sms_gateway_username");
   const gatewayPassword = stringSetting("sms_gateway_password");
+  const quietStart = settings.sms_quiet_hours_start;
+  const quietEnd = settings.sms_quiet_hours_end;
+  const validHour = (value: unknown): value is number =>
+    typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= 23;
+  const quietHours =
+    validHour(quietStart) && validHour(quietEnd)
+      ? { startHour: quietStart, endHour: quietEnd }
+      : undefined;
   return {
     enabled: settings.sms_enabled !== false,
     simNumber,
@@ -41,6 +50,7 @@ export function resolveTenantSmsSettings(value: unknown): TenantSmsSettings {
     gatewayUrl,
     gatewayUsername,
     gatewayPassword,
+    quietHours,
   };
 }
 
