@@ -466,3 +466,22 @@ Next verification requirements:
 - verify broker artifact carries provenance/integrity evidence and no authority/delegation;
 - verify source consumption requires a valid target acceptance rather than merely defining the artifact;
 - execute committed tests/CI.
+
+
+## Issue #768 two-sided sharing gate verified
+The cross-company target-acceptance architecture is now source-verified. Do not create another sharing broker state model.
+
+Preserve:
+- source-side consent grant;
+- target-side acceptance artifact;
+- exact grant fingerprint binding;
+- source repository isolation;
+- authority-neutral/no-execution semantics.
+
+Remaining certification/hardening:
+- execute committed tests/CI;
+- determine whether the broker/transport acceptance needs signature/hash/MAC or canonical provenance receipt beyond the current deterministic fingerprint;
+- verify target-side issuer authenticates the accepting actor/relationship and records acceptance provenance;
+- verify replay behavior after target/source revocation and grant replacement;
+- verify grant fingerprint canonicalization is stable across serialization/runtime boundaries;
+- retain fail-closed private/stale evidence behavior.
