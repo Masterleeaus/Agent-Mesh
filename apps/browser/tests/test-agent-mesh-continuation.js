@@ -6,10 +6,13 @@ const cp=C.checkpoint({issue_number:734,subgoal_id:'TZ-ROADMAP-55-SG-01',claim_b
 assert.strictEqual(cp.authority.conversation,'disposable');
 assert.strictEqual(cp.authority.mayReleaseClaim,false);
 assert.throws(()=>C.checkpoint({subgoal_id:'TZ-ROADMAP-55-SG-01',claim_branch:'agent/wrong'}),/canonical claim branch/);
-const receipt=C.takeover({checkpoint:cp,from_execution_session:'chat-a',to_execution_session:'chat-b',reason:'CONTEXT_LIMIT'});
+const receipt=C.takeover({checkpoint:cp,from_execution_session:'chat-a',to_execution_session:'chat-b',reason:'CONTEXT_LIMIT',live_claim_branch:cp.claim_branch,live_head_sha:'a'.repeat(40)});
 assert.strictEqual(receipt.claim_branch,cp.claim_branch);
 assert.strictEqual(receipt.authority.claimReleased,false);
-assert.strictEqual(receipt.resume_pass,3);
+assert.strictEqual(receipt.resume_pass,3);assert.strictEqual(receipt.authority.conversationStateAuthority,false);
+assert.throws(()=>C.takeover({checkpoint:cp,to_execution_session:'chat-c',live_claim_branch:'agent/OTHER',live_head_sha:'a'.repeat(40)}),/live canonical claim branch mismatch/);
+const reconciled=C.reconcileTakeover(receipt,{claim_branch:cp.claim_branch,head_sha:'b'.repeat(40)});assert.strictEqual(reconciled.status,'GITHUB_RECONCILED');assert.strictEqual(reconciled.head_moved,true);assert.strictEqual(reconciled.authority.claimReleased,false);
+assert.throws(()=>C.reconcileTakeover(receipt,{claim_branch:'agent/OTHER',head_sha:'b'.repeat(40)}),/claim branch no longer canonical/);
 const resume=C.resumeInstructions(cp);
 assert(resume.instructions.some(x=>x.includes('GitHub wins')));
 assert.deepStrictEqual(Array.from(resume.do_not_repeat),[]);
