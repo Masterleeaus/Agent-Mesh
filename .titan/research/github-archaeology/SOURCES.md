@@ -116,3 +116,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-012 — `Masterleeaus/Titancore` main, `TitanCore_V1.9/Services/TitanCoreModelGateway.php`, SHA `f76ae50e96a3ace6ff02932557ccb47c6fc84a67`; direct file inspection.
 - SOURCE-GH-013 — Agent-Mesh open issue #647, canonical Device/Distributed Intelligence Runtime + Cost Sovereignty owner; direct issue inspection.
 - SOURCE-GH-014 — Agent-Mesh open issue #80, final Intelligence Runtime integration/certification owner; direct issue inspection.
+
+
+- SOURCE-GH-015 — `Masterleeaus/TitanPro` main, `docs/04-AI/aegis-core.md`, SHA `8eeda3623ba7e65e8e8220950755a5da344220a1`; direct file inspection.
+- SOURCE-GH-016 — `Masterleeaus/TitanPro` main, `docs/04-AI/orchestration.md`; direct file inspection for orchestration/convergence lineage.
+- SOURCE-GH-017 — `Masterleeaus/cleanly` main, `docs/01-PWA/18-signal-envelope-and-event-backfeed-contract.md`, SHA `6dc757c77112efb9db5533915f08c8e0e428c33a`; direct file inspection.
+- SOURCE-GH-018 — `Masterleeaus/cleanly` main, `docs/01-PWA/24-security-identity-device-trust-and-tenant-boundary.md`, SHA `8bf4e285832d00295f25bf4ddd2672147f238e20`; direct file inspection.
+- SOURCE-GH-019 — Agent-Mesh #645 Edge Fabric and #302 security identity/credential hardening; direct open-issue inspection.
