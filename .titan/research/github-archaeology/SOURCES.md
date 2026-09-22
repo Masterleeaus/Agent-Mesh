@@ -248,3 +248,12 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-106 — Agent-Mesh `docs/canonical/ARCHITECTURE.md`, SHA `bf6a891f0097332ecb14f8f0a2310b1b14269631`; Dovetails runtime architecture and account-scoped tenancy.
 - SOURCE-GH-107 — Agent-Mesh `docs/canonical/DOMAIN_MODEL.md`, SHA `074def8446dd2a7753e75929061456f4739db144`; Dovetails field-service domain model.
 - SOURCE-GH-108 — Agent-Mesh `ai/INVARIANTS.md`, SHA `f12b418b269137a9e77cae4a97559f2f9cc6c442`; current account_id scoping and warning that production/dev DB superuser bypasses RLS.
+
+
+- SOURCE-GH-109 — Agent-Mesh commit `09c72e357784fb5a588c33f912aba60a5fa8ce42`, `Make Dovetails the base app; archive previous Titan system under titan/`; explicit base-app pivot.
+- SOURCE-GH-110 — GitHub compare `09c72e...^` → `09c72e...` resolves parent/base `3063eb6306879e54888e35fddad9e07596c41c2a` and shows the large root authority/application transplant.
+- SOURCE-GH-111 — Agent-Mesh at ref `3063eb6306879e54888e35fddad9e07596c41c2a`, `AGENTS.md` SHA `153d74c75b3fbaa4b1cd42ffd8ff368f7faf2c5c`; explicit Titan Zero Agent Mesh V3 authority and non-negotiables.
+- SOURCE-GH-112 — Agent-Mesh at ref `3063eb...`, `README.md` SHA `8e9c73640ef7c3a001d5090f6e36c0809896df12`; canonical extracted Titan Zero Merge84 source on main.
+- SOURCE-GH-113 — Agent-Mesh at ref `3063eb...`, `roadmap/INDEX.json` SHA `2e178e68a655aa077aa1fcddf652c43759efc9de`; authoritative Titan Zero TypeScript roadmap.
+- SOURCE-GH-114 — Follow-on convergence commits: `76a7c8c...`, `94568b3...`, `02ca896...`, `3fce403...`, `a18c0a9...`, `44d2cad...`; Titan platform/core/capability/app migration into Dovetails base.
+- SOURCE-GH-115 — Rebrand-back commits including `d21e6d2...`, `ce82866...`, `dcb1db5...`, `69b5e30...`, `9dd1042...`; evidence the transplanted shell was subsequently returned to Titan Zero visible identity.
