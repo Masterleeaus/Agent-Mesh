@@ -260,3 +260,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-028 | #153 current memory substrate trace | issue #153 + current workforce Pass 36 Worker Memory + privacy/evidence controls | handover blob 415ee5647bed8a54b60d4e18ee628c67316d97ee | CURRENT/PARTIAL | VERIFIED | Worker-scoped memory already implements provenance, confidence/relevance, expiry, supersession, purpose/privacy filtering, recall receipts and non-authority semantics. Reuse beneath canonical company-wide Business Memory; do not create per-agent parallel memory. | NO |
+
+
+| INGEST-029 | #37 bounded learning/predictive substrate trace | issue #37 + current Workforce handover runtime | handover blob 415ee5647bed8a54b60d4e18ee628c67316d97ee | OPEN/PARTIAL | VERIFIED | Existing runtime supplies verification, rollback/recovery, security, privacy/evidence and certification substrates; inspected path does not close verified-outcome learning, predictive calibration or false-positive/missed-intervention measurement. | YES |
