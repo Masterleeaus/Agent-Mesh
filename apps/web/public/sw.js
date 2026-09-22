@@ -1,10 +1,10 @@
 // Minimal service worker for Titan Zero.
 //
-// Scope: installability only. Chromium gates the install prompt on the presence
-// of a service worker with a fetch handler; this provides exactly that and
-// nothing more. There is deliberately NO caching / offline strategy yet — every
-// request goes straight to the network (see TASK-020 / EPIC-005). Add a cache
-// here only when a real offline requirement exists.
+// Scope: shared installability and web-push plumbing for Titan Zero web surfaces.
+// There is deliberately NO caching / offline strategy yet — every request goes
+// straight to the network (see TASK-020 / EPIC-005). Go may be installed as a
+// dedicated PWA identity, but this worker must not imply offline readiness or a
+// separate Command/Hub runtime. Add caching only under an explicit offline task.
 
 self.addEventListener("install", () => {
   // Activate this worker immediately on first install.
