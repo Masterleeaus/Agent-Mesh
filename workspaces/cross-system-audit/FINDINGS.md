@@ -1333,3 +1333,24 @@ This is exactly the value of the execution gate: source inspection looked comple
 EXECUTION-VERIFIED FAILURE / TWO PERSONAL ZERO TYPE ERRORS / CLAIM-GATE WORKFLOW MISMATCH
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-061
+### Finding
+The #768 repair commits resolved both previously observed Personal Zero TypeScript failures: on PR #770 head `43d73b7f0092ed795563f6999a1dc8169fda625b`, `@titan-zero/titan-platform` typecheck completes successfully. The overall Titan Zero CI still fails later on pre-existing/other-scope `services/worker` dependency/API errors, so Personal Zero compile certification is now positive while full-repository CI remains red.
+### Evidence
+Latest #768 update reports fixes `3834aab`, `ccc10ff`, `5c167f4`, `43d73b7`: schema marker renamed to `schema_version:1` while retaining UnderstandingState `version:number`, state-service persistence aligned, learning adjustment tuple narrowed with `as const`, tests updated.
+Fresh PR #770 workflow run `35786535672`, job `106944907831`, directly shows:
+- `packages/titan-platform typecheck: Done`;
+- no Personal Zero/Titan Platform TS error before the recursive run continues;
+- failure occurs in `services/worker` due missing `@ai-fsm/email-templates`, `mysql2/promise`, `@ai-fsm/log`, `@ai-fsm/domain/promise-capture`, and workflow-events test/API mismatches;
+- because recursive strict typecheck stops on worker, later tests (including titan-platform regression gate) are skipped.
+Agent Claim Gate remains a separate branch-format governance failure.
+### Interpretation
+The two concrete Personal Zero compile defects from CSA-060 are fixed and execution-verified. Do not make unrelated worker dependency/API repairs part of TASK-152 merely to obtain a globally green workflow. The remaining #768 certification need is an executed Personal Zero/Titan Platform unit-test result; if the repository CI cannot reach that gate because of unrelated worker debt, use an existing scoped workflow/job or the repository's accepted evidence mechanism rather than expanding #768 scope.
+### Classification
+PERSONAL ZERO TYPECHECK PASS / GLOBAL CI BLOCKED BY UNRELATED WORKER DEBT / UNIT TEST EVIDENCE STILL PENDING
+### Confidence
+HIGH
