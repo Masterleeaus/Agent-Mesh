@@ -143,3 +143,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-031 — `Masterleeaus/TitanPro` main, `Modules/Accountings/Services/CashflowForecastService.php`, SHA `18f5f2b85082b146d84354fdaf6a5fab38fa1545`; direct file inspection.
 - SOURCE-GH-032 — `Masterleeaus/TitanPro` main, `Modules/NexusGrowth/module.json`, SHA `0a71690619c94807ced047ee34acd396a81c536c`; direct file inspection.
 - SOURCE-GH-033 — Agent-Mesh #768 Personal Zero/Experience and #293 Reliability/Recovery/Rewind convergence; direct open-issue inspection.
+
+
+- SOURCE-GH-034 — `Masterleeaus/Titan-Builder` main, `src/operations/index.ts`, search revision `3163e9724cd6640e1b39a913d883f5aad139ba40`; direct implementation inspection.
+- SOURCE-GH-035 — `Masterleeaus/TitanPro` main, `Modules/TitanCore/Contracts/AI/ToolRollbackContract.php`, SHA `0e41792ff3e73ccb0c91baf66832dc49dfccf8de`; direct implementation inspection.
+- SOURCE-GH-036 — `Masterleeaus/TitanPro` main, `Modules/TitanCore/Services/Upgrade/UpgradeRollbackRunner.php`, SHA `8870d4d5168a66514a9c25b438a26c7e9a223503`; direct implementation inspection.
+- SOURCE-GH-037 — `Masterleeaus/zero` main, `config/titan_process.php`, SHA `91fe151b0b94cd8704b3cd0933001dbabb4bf7ba`; direct file inspection.
+- SOURCE-GH-038 — Agent-Mesh #14 governed execution/compensation, #293/#300 reliability/recovery, #642/#560 engine convergence/certification and #330 upgrade/rollback certification; direct open-issue inspection.
