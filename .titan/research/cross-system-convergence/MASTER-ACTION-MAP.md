@@ -485,3 +485,17 @@ Remaining certification/hardening:
 - verify replay behavior after target/source revocation and grant replacement;
 - verify grant fingerprint canonicalization is stable across serialization/runtime boundaries;
 - retain fail-closed private/stale evidence behavior.
+
+
+## Issue #768 TASK-152 completion gate
+Stop architectural expansion of TASK-152 unless execution reveals a concrete defect.
+
+Required final sequence:
+1. execute Titan Platform typecheck on `agent/768`;
+2. execute the relevant Personal Zero/Titan Platform unit tests;
+3. fix only observed failures while preserving current ownership/boundaries;
+4. record exact commands, results and commit SHA;
+5. re-run after fixes;
+6. if green, mark TASK-152 Done and close/merge #768 through the normal claim/PR workflow.
+
+Do not close #768 based only on committed test files or source inspection.
