@@ -588,3 +588,116 @@ HIGH based on current-code evidence recorded in the roadmap issue; direct file i
 
 ### Related action
 #21; #763.
+
+
+---
+
+## FINDING-GH-018
+
+### Finding
+The Personal Understanding/Behavioural Model gap identified in FINDING-GH-016 now has a dedicated convergence action: issue #768, `[ARCHITECTURE] Define Personal Zero Understanding & Experience contracts`. It explicitly defines Personal Zero as a distinct production contract layer rather than another AI router, conversation store, Business Memory runtime, Business Reality graph or authority engine.
+
+### Why it matters
+This resolves the immediate ownership/action gap without this specialist creating a duplicate issue. The final architecture can compose Personal Zero over existing canonical storage/context/evidence owners while preserving separation from Business Memory, Business Reality, Interaction persistence and authority.
+
+### Evidence
+- Repository: Masterleeaus/Agent-Mesh
+- Issue: #768
+- No branch matching #768 was found in the branch search performed during this pass.
+- #768 coordinates with #763, #153, #633, #767 and existing Trust/Assurance/Governance/Autonomy/Command Bus contracts.
+
+### Current Titan equivalent
+Proposed canonical Personal Zero Understanding & Experience contract layer (#768).
+
+### Classification
+SPECIFICATION ONLY
+
+### Confidence
+HIGH
+
+### Related action
+SUPPORTED EXISTING ACTION #768. Do not create a competing Personal Zero architecture issue.
+
+### Supersedes
+FINDING-GH-016 only with respect to the absence of an explicit action/owner candidate. FINDING-GH-016 remains historically valid as the gap that prompted further archaeology.
+
+---
+
+## FINDING-GH-019
+
+### Finding
+Issue #768 records four concrete historical donor families for Personal Zero mechanisms: Titan Interaction Engine Master v10.12.0 LocalBrain; TitanZero Phase10 Device Intelligence; OnboardingPro v6; and Decision Engine Step25.
+
+### Why it matters
+This gives the mechanism archaeology a focused historical verification set rather than relying on repository/project names or broad keyword scans.
+
+### Evidence
+Issue #768 donor provenance records:
+- Titan Interaction Engine Master v10.12.0 LocalBrain: CognitiveEvent chronology, prediction/outcome linkage, correction events, preference/behavioural learning, prediction-error adaptation.
+- TitanZero Phase10 Device Intelligence: working/episodic memory, preference model, learning buffer, local correction, information-gain questions.
+- OnboardingPro v6: longitudinal strategy memory, anti-repeat decisions, outcome measurement/rollback evidence.
+- Decision Engine Step25: preference model, observation, learning loop, persistent-state candidates.
+
+### Current Titan equivalent
+No donor is automatically canonical. #768 requires recovery of missing semantics into current TypeScript architecture.
+
+### Classification
+HISTORICAL
+
+### Confidence
+MEDIUM until this specialist independently inspects the named donor sources; HIGH that #768 records these as its donor provenance.
+
+### Related action
+#768; #763.
+
+---
+
+## FINDING-GH-020
+
+### Finding
+The Personal Zero contract proposed by #768 includes a useful promotion boundary: raw observation → candidate understanding → accepted/superseded understanding. Corrections update future understanding while preserving provenance rather than silently erasing history.
+
+### Why it matters
+This provides the missing epistemic control between observation and “what Zero believes about One.” It prevents a single observation, inferred pattern or model output from silently becoming durable personal truth.
+
+### Evidence
+- Issue #768 Required architecture: versioned Understanding Evidence/State, Experience Record and Cognitive Event contracts; provenance/confidence/freshness/correction/supersession/expiry/retention/deletion; raw observation → candidate understanding → accepted/superseded understanding promotion.
+- Acceptance requires correction to affect future understanding without deleting lineage.
+
+### Current Titan equivalent
+Personal Zero Understanding & Experience contracts proposed in #768, reusing existing evidence/provenance infrastructure where possible.
+
+### Classification
+SPECIFICATION ONLY
+
+### Confidence
+HIGH
+
+### Related action
+#768.
+
+---
+
+## FINDING-GH-021
+
+### Finding
+Issue #768 explicitly preserves a three-way data-model separation: Personal Zero is not Business Memory; Personal Zero is not Business Reality; Interaction Engine conversation persistence is evidence but is not itself the personal model.
+
+### Why it matters
+This prevents three likely duplicate/conflated architectures: treating chat history as the person, treating business knowledge as the person, or allowing inferred personal understanding to rewrite authoritative business facts.
+
+### Evidence
+- Issue #768 Boundaries 1–3.
+- #768 also requires verified business outcomes to feed experience without merging Personal Zero and Business Reality.
+
+### Current Titan equivalent
+Personal Zero (#768) composed with Business Memory (#153), Business Reality/Evolution (#767), and Interaction Engine persistence as separate owners.
+
+### Classification
+SPECIFICATION ONLY
+
+### Confidence
+HIGH
+
+### Related action
+#768; #153; #767.
