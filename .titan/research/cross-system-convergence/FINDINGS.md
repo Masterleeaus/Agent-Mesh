@@ -837,3 +837,21 @@ The prior gap wording “prove Knowledge Authority consumption by reasoning, not
 CURRENT / IMPLEMENTED REASONING GATE; DOWNSTREAM CONSUMER TRACE PARTIAL
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-039
+### Finding
+Within the directly inspected current Knowledge Authority implementation/export path, the Knowledge Authority functions are defined and exported but not internally invoked by a downstream reasoning consumer. This strengthens the remaining orphan/wiring concern without proving repository-wide absence.
+### Evidence
+Current main source occurrence check:
+- `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts`: each of `buildWorkforceKnowledgeAuthorityPacket(`, `evaluateWorkforceKnowledgeUse(`, and `buildWorkforceKnowledgeUseReceipt(` occurs once — at its own function definition.
+- `packages/titan-platform/src/workforce.ts`: those call expressions occur zero times; the module exports the functions from the Knowledge Authority wrapper.
+- The wrapper itself only re-exports the handover implementation.
+### Interpretation
+Knowledge Authority has a real implemented reasoning gate/receipt contract, but this inspected path shows API availability rather than end-to-end consumption. A repository-wide consumer trace remains required before declaring the Knowledge Authority loop closed.
+### Classification
+CURRENT IMPLEMENTATION / CONSUMER WIRING UNPROVEN
+### Confidence
+HIGH for inspected path; repository-wide absence NOT CLAIMED
