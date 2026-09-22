@@ -1763,3 +1763,125 @@ HIGH
 
 ### Related action
 #768; Rewind; Knowledge Authority.
+
+
+---
+
+## FINDING-GH-071
+
+### Finding
+Titan Sovereign design evidence establishes a provider-neutral local-first execution fabric: current device → trusted local/LAN node → private server/Local Bridge/Ollama → BYO cloud → Titan-paid resource only when explicitly entitled and allowed. Models are replaceable capability packs; Zero must not be identified with any model/provider.
+
+### Classification
+STRONG ARCHITECTURE DONOR / TARGET SEMANTICS
+
+### Confidence
+HIGH
+
+### Related action
+#647; TZ-ROADMAP-51; #768.
+
+---
+
+## FINDING-GH-072
+
+### Finding
+Local/private execution is not a weaker “fallback mode”; it is a first-class route that can combine private knowledge/RAG, local models and trusted-node capabilities while returning bounded results with provenance/execution receipts.
+
+### Why it matters
+A mature Zero can preserve continuity and privacy even when external providers are unavailable, changed or intentionally disabled.
+
+### Classification
+TARGET ARCHITECTURE
+
+### Confidence
+HIGH
+
+### Related action
+#647; #768.
+
+---
+
+## FINDING-GH-073
+
+### Finding
+Current archaeology shows a real implementation gap: existing AI Core/Titan AI/Model Council masters recognize local/browser/device route kinds and Cost Sovereignty concepts, but the Goal-13 scan did not verify one canonical production Ollama/browser-local adapter or one provider-independent routing/access contract across those masters.
+
+### Why it matters
+Do not claim full local-model production parity yet. The current roadmap correctly places Local Bridge/Ollama provider routing and canonical Cost Sovereignty in Goal 51.
+
+### Classification
+VERIFIED CURRENT GAP
+
+### Confidence
+HIGH
+
+### Related action
+TZ-ROADMAP-51-SG-05/06/07; #647.
+
+---
+
+## FINDING-GH-074
+
+### Finding
+Workforce and Zero should request capabilities, not providers. Provider/model selection belongs to Intelligence Runtime/Cost Sovereignty routing based on capability, privacy, locality, entitlement, cost, latency and availability.
+
+### Why it matters
+This prevents agent definitions and Personal Zero from becoming coupled to OpenAI, Ollama or any future model vendor and allows models to be replaced without rewriting the workforce or personal model.
+
+### Classification
+OWNERSHIP INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#647; #768; Workforce convergence.
+
+---
+
+## FINDING-GH-075
+
+### Finding
+Every Zero inference should produce machine-readable execution provenance sufficient to answer: where it ran, which model/provider ran it, what context left the trusted boundary, why escalation occurred, what entitlement/cost applied and what authority the result had. Hidden reasoning is not required for this accountability.
+
+### Classification
+PROVENANCE / COST / PRIVACY REQUIREMENT
+
+### Confidence
+HIGH
+
+### Related action
+#647; #768; Intelligence Runtime.
+
+---
+
+## FINDING-GH-076
+
+### Finding
+Offline/local capability must never increase authority. Local Zero may read authorised projections, reason over local knowledge, draft/propose work and queue permitted commands, but canonical mutation still requires current authority revalidation where required.
+
+### Classification
+AUTHORITY INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#761; #647; #768.
+
+---
+
+## FINDING-GH-077
+
+### Finding
+Cost Sovereignty and Privacy Sovereignty should be evaluated together but remain distinct dimensions. A cheaper provider is ineligible if privacy/egress policy forbids it; a private route is not automatically eligible if it lacks required capability or assurance. Routing should select among policy-eligible routes rather than optimizing cost first and checking privacy later.
+
+### Classification
+ROUTING HARDENING REQUIREMENT
+
+### Confidence
+HIGH
+
+### Related action
+TZ-ROADMAP-51-SG-04/05/06/07; #647.
