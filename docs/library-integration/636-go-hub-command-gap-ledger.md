@@ -374,3 +374,11 @@ Deep-read the current RoleChat after transport/PWA hardening. Two presentation c
 Removed the authenticated canned response entirely; authenticated surfaces now begin with the neutral canonical greeting and wait for real interaction/runtime evidence. Demo mode retains its prototype response behavior.
 
 Changed the authenticated footer to `Network-backed workspace · local conversation continuity only`; demo mode is explicitly labelled `PWA delivery prototype`. This aligns the UI with the actual service-worker and conversation-store behavior without weakening Go's installability.
+
+## Pass 30 — multimodal evidence boundary hardening
+
+Audited the camera/voice/file seam used directly by the chat-first surfaces. It already enforced `company_id` and marked multimodal inputs `evidence_only`, but runtime validation did not fail closed on a noncanonical surface, missing input identity, or unsupported input kind if malformed data crossed the TypeScript boundary.
+
+Hardened the existing envelope constructor to require canonical `zero|go|hub`, a non-empty `input_id`, and an allowlisted multimodal kind while retaining legacy-tenant rejection and evidence-only authority.
+
+Added regression coverage for canonical company/surface scope, evidence-only authority, legacy tenant rejection, alias/noncanonical surface rejection and missing input identity. Tests are committed but not execution-verified in this connector-only pass.
