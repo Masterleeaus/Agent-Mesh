@@ -72,3 +72,8 @@ if(!sw.includes("authority:{ai:false,managerRules:true,githubMergeRequest:false,
 if(!sw.includes("preflightAgentMeshWorkMutation(snapshot,kind='work-mutation')")) throw new Error('central Agent Mesh work-mutation preflight missing');
 if(!sw.includes("preflightAgentMeshWorkMutation(snapshot,'continuation-takeover')")) throw new Error('takeover bypasses central mutation preflight');
 if(!sw.includes("preflightAgentMeshWorkMutation(snapshot,'manager-plan')")) throw new Error('Manager plan bypasses central mutation preflight');
+
+const checkpointGateIndex=sw.indexOf("async function checkpointAgentMeshContinuation");
+const checkpointCallIndex=sw.indexOf("'agent_mesh.continuation.checkpoint'",checkpointGateIndex);
+const checkpointResumeIndex=sw.indexOf("const resumeGate=await bootstrapAgentMeshResume(snapshot);",checkpointGateIndex);
+if(checkpointResumeIndex<checkpointGateIndex||checkpointResumeIndex>checkpointCallIndex) throw new Error('checkpoint mutation must pass resume gate before bridge call');
