@@ -43,14 +43,28 @@ export async function syncFieldCompletionBlockerProjection(
     );
   }
   for(const reason of wanted){
-    await client.query(
-      `INSERT INTO field_completion_blockers
-         (company_id, account_id, work_order_id, source_type, source_id, reason, blocking, resolved_at, provenance)
-       VALUES ($1,$2,$3,$4,$5,$6,TRUE,NULL,$7)
-       ON CONFLICT (company_id, work_order_id, source_type, source_id, reason)
-       DO UPDATE SET blocking=TRUE,resolved_at=NULL,provenance=EXCLUDED.provenance,updated_at=CURRENT_TIMESTAMP`,
-      [companyId,accountId,workOrderId,projection.source_type,sourceId,reason,JSON.stringify(projection.provenance??{})],
+    const existing=await client.query<{id:string}>(
+      `SELECT id FROM field_completion_blockers
+        WHERE company_id=$1 AND account_id=$2 AND work_order_id=$3
+          AND source_type=$4 AND source_id=$5 AND reason=$6
+        LIMIT 1 FOR UPDATE`,
+      [companyId,accountId,workOrderId,projection.source_type,sourceId,reason],
     );
+    if(existing.rows.length){
+      await client.query(
+        `UPDATE field_completion_blockers
+            SET blocking=TRUE,resolved_at=NULL,provenance=$1,updated_at=CURRENT_TIMESTAMP
+          WHERE id=$2 AND company_id=$3 AND account_id=$4 AND work_order_id=$5`,
+        [JSON.stringify(projection.provenance??{}),existing.rows[0].id,companyId,accountId,workOrderId],
+      );
+    }else{
+      await client.query(
+        `INSERT INTO field_completion_blockers
+           (company_id,account_id,work_order_id,source_type,source_id,reason,blocking,resolved_at,provenance)
+         VALUES($1,$2,$3,$4,$5,$6,TRUE,NULL,$7)`,
+        [companyId,accountId,workOrderId,projection.source_type,sourceId,reason,JSON.stringify(projection.provenance??{})],
+      );
+    }
   }
 }
 
