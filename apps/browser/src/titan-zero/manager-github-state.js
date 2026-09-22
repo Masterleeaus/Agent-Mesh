@@ -17,7 +17,9 @@ function derive(input={}){
  const checksPending=required.some(x=>!['SUCCESS','PASSED','NEUTRAL','SKIPPED'].includes(clean(x.conclusion||x.status,40).toUpperCase()));
  const merged=Boolean(pr&&(pr.merged===true||pr.merged_at));
  const issueClosed=clean(issue.state,40).toUpperCase()==='CLOSED';
- const behindMain=input.behindMain===true||Boolean(input.compare&&Number(input.compare.behind_by)>0);\n const rebaseRequired=input.rebaseRequired===true;\n const baseMatchesMain=Boolean(mainSha&&baseSha&&mainSha===baseSha);
+ const behindMain=input.behindMain===true||Boolean(input.compare&&Number(input.compare.behind_by)>0)||Boolean(mainSha&&baseSha&&mainSha!==baseSha);
+ const rebaseRequired=input.rebaseRequired===true;
+ const baseMatchesMain=Boolean(mainSha&&baseSha&&mainSha===baseSha);
  let state='AVAILABLE';
  if(input.superseded===true)state='SUPERSEDED';
  else if(input.blocked===true)state='BLOCKED';
