@@ -2230,3 +2230,82 @@ SECURITY/TENANCY BOUNDARY CLARIFICATION
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-081
+
+### Finding
+The current `main` branch has undergone major product/canonical-document drift: repository identity and canonical docs describe **Dovetails FSM**, not the Titan Zero architecture tracked by the Agent Mesh roadmap and archaeology workspace.
+
+### Direct evidence
+- root `package.json` still names the package `titan-zero` and describes a Titan Zero Advanced Intelligence workforce/field-service operating system;
+- root `README.md` SHA `f650b1fad560ee78f9c9ecb68e645bb3a538b2f2` declares **Dovetails FSM** and makes `docs/canonical/*` authoritative;
+- `AGENTS.md` SHA `cac042dc94ccdd5855351dd82c5989478bab27a2` likewise instructs agents that Dovetails canonical docs control product direction;
+- `docs/canonical/ARCHITECTURE.md` SHA `bf6a891f0097332ecb14f8f0a2310b1b14269631` defines a Dovetails Next.js/Postgres system;
+- `docs/canonical/DOMAIN_MODEL.md` SHA `074def8446dd2a7753e75929061456f4739db144` defines Client → Property → Estimate → Job → Work Order → Visit → Invoice rather than the broader Titan Zero canonical architecture.
+
+### Archaeological significance
+This explains why expected Titan Zero audit/Signal/Decision/Workforce symbols were not discoverable in Pass 29. The current main branch being searched is not a clean representation of the Titan Zero baseline assumed by the roadmap issues.
+
+### Classification
+CRITICAL REPOSITORY/CANONICAL-BASELINE DRIFT
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-082
+
+### Finding
+Current main also uses `account_id` as its tenant isolation vocabulary, conflicting with the Titan Zero invariant that `company_id` is the only canonical tenant boundary.
+
+### Evidence
+`docs/canonical/ARCHITECTURE.md` states tables are account-scoped. `ai/INVARIANTS.md` SHA `f12b418b269137a9e77cae4a97559f2f9cc6c442` states the application sets `app.current_account_id` and every query scopes by `account_id`; it also warns the DB role is superuser/bypass-RLS so row-level security is not currently an effective isolation backstop.
+
+### Recovery judgment
+Do not reinterpret `account_id` as an independent Titan Zero tenant authority. If Dovetails code is to be converged into Titan Zero, its tenant identifier must enter through a compatibility adapter and normalize to canonical `company_id` before authorization/data/storage/execution.
+
+### Classification
+P0 TENANCY/CANONICAL-BOUNDARY DRIFT
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-083
+
+### Finding
+Because the current main branch's own `AGENTS.md` declares code/database migrations first and Dovetails canonical docs second, archaeology must not silently treat roadmap issue titles as proof that Titan Zero runtime code exists on main.
+
+### Consequence
+Future current-baseline comparisons require first resolving which branch/ref/tree is the actual Titan Zero implementation baseline. Until then:
+- historical donor findings remain valid evidence;
+- issue ownership remains coordination evidence;
+- implementation-presence claims on Agent-Mesh main must be treated cautiously;
+- absence of Titan symbols on main is now explained by baseline drift rather than assumed missing implementation.
+
+### Classification
+ARCHAEOLOGY METHODOLOGY CORRECTION
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-084
+
+### Finding
+The Dovetails main branch contains useful field-service implementation lineage but must be treated as a donor/descendant product branch, not allowed to redefine Titan Zero's canonical architecture by accident.
+
+### Evidence
+Its canonical model preserves client/property/job/work-order/visit/invoice, assessment/production intelligence, PostgreSQL worker/runtime and operational deployment details. These may be useful to field-service convergence, but they do not replace Zero/Go/Hub, AI Core, Decision, Model Council, Trust/Authority, Workforce, Business Reality, Personal Zero or canonical `company_id` doctrine.
+
+### Classification
+DONOR VALUE PRESENT / PRODUCT AUTHORITY CONFLICT
+
+### Confidence
+HIGH
