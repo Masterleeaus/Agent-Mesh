@@ -329,3 +329,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-051 | Repository-wide DecisionPacket/lifecycle discovery | GitHub default-branch code search + current Decision Engine/runtime source | decision-engine blob a86d862e2dde6a574a88158a5644f80e9a9cbf5d; runtime blob c485cf417e150e7ee8af801374a03eb7ab816cff | CURRENT | DIRECT SEARCH + SOURCE VERIFIED | No indexed DecisionPacket/DecisionObject/persistent-state lifecycle implementation found; current Decision Engine is a thin authority-neutral envelope. #59 remains canonical implementation owner. | YES |
+
+
+| INGEST-052 | #59 Library donor convergence scan | Library roadmap/recovery matrix/code-discovery ledger | Step25 archive SHA256 3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a | HISTORICAL DONOR / CURRENT ACTION | LIBRARY EVIDENCE VERIFIED | Preserve canonical Step-9 DecisionPacket; use Step25 canonical model/history + Observation→Learning semantics as donors; current Titan Decision runtime remains canonical owner and authority-neutral boundary. | YES |
