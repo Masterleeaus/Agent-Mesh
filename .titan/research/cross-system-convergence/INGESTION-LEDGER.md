@@ -248,3 +248,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-024 | Knowledge Authority call-site inspection | current main handover runtime + workforce export surface | current main | CURRENT | VERIFIED | Knowledge Authority functions appear only at their definitions in the inspected implementation and are re-exported by workforce.ts; no downstream call exists in this path. Repository-wide absence is not claimed. | NO |
+
+
+| INGEST-025 | Model Council/Nexus ↔ Knowledge Authority seam | current main Model Council, Nexus, intelligence export surface | blobs f989f8ba7e39ba0e807251dc625edc2c2d2672c2 / f7936d44dcf30fd9cb0d091af0efbc10fbcd501a / 8320eef651c334789a950163ed277238bd8311f6 | CURRENT | VERIFIED | Model Council/Nexus preserve generic evidence refs but do not validate Knowledge Authority use decisions/receipts. Exact convergence seam identified; no new engine required. | NO |
