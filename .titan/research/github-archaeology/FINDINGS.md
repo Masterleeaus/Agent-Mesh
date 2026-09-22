@@ -1243,3 +1243,64 @@ HIGH
 
 ### Recovery judgment
 Keep this separate from Titan Zero production Workforce/authority. It may inform Agent Mesh development coordination only; it must not be imported as customer runtime authority.
+
+
+---
+
+## FINDING-GH-041
+
+### Finding
+The long-unresolved Worksuite branch `copilot/integrate-aichatpromemory-v1-2` is confirmed as a highly stale donor branch (1 commit ahead / 559 behind main), and its visible AIChatProMemory payload is a small MagicAI personal-instructions extension rather than a sophisticated longitudinal memory engine.
+
+### Evidence
+Repository: `Masterleeaus/Worksuite-Saas---Project-Management-System_Laravel`
+Branch: `copilot/integrate-aichatpromemory-v1-2`
+Compare against main:
+- status: diverged;
+- ahead: 1;
+- behind: 559;
+- merge base: `e1d359c49e3893dc7546eef8af46e1cad5fc6289`.
+
+Direct donor files inspected:
+- `extension.json` SHA `dab88ad24cf2c46762b4caa9a63c7678a44e9094`;
+- `AIChatProMemoryServiceProvider.php` SHA `3b4e2c78ef06e3f3dffeb378ef94614069cff36d`;
+- `AIChatProMemoryController.php` SHA `0700cf8f412ad17bb91e51fd5ba23ad9e9ac157f`;
+- `UserChatInstruction.php` SHA `e620791dd505a0a8c8cd01a39eaae7787f808af4`;
+- migration SHA `ffcdcd3484ccad6e14b7d8ba0684689ee5f5e2e6`.
+
+### Verified capability
+The extension stores a per-user/per-chat-category free-text instruction override, exposes get/save/clear routes, falls back to category/admin instructions, supports unauthenticated guest state keyed by IP, and deletes old guest instructions after 90 days.
+
+### Security/architecture concerns
+- no `company_id` boundary;
+- guest identity is IP-address based;
+- no provenance/confidence/freshness/supersession model;
+- no Experience Memory tuple;
+- no outcome learning;
+- no authority separation beyond chat ownership check;
+- tied to MagicAI chat/category models.
+
+### Classification
+STALE BRANCH / LIMITED DONOR / NOT A LOST PERSONAL ZERO MEMORY ENGINE
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Do not merge or directly import this branch. The only useful semantic is explicit user-controlled instruction/preference override with clear/reset behavior. That is already conceptually covered by Personal Zero Understanding Memory (#768) and should be implemented through current TypeScript identity/privacy/company-context contracts rather than this extension.
+
+---
+
+## FINDING-GH-042
+
+### Finding
+The historical name “AIChatProMemory” materially overstates the donor's actual capability: it is instruction persistence, not memory learning.
+
+### Why it matters
+Archaeology must classify mechanisms by implemented behavior rather than repository/branch names. Treating this extension as a memory engine would introduce false lineage and could incorrectly justify a parallel Personal Zero memory subsystem.
+
+### Classification
+ARCHAEOLOGY CORRECTION / FALSE-POSITIVE ELIMINATED
+
+### Confidence
+HIGH
