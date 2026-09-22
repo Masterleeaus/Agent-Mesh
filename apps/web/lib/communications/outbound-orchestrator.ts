@@ -5,7 +5,9 @@ import {
   selectCommunicationProvider,
   type CommunicationEnvelope,
   type CommunicationProviderCandidate,
+  communicationRetryDecision,
   type CommunicationRateLimit,
+  type CommunicationRetryPolicy,
   type DeliveryReceipt,
   type OutboundCommunicationPolicy,
   type ProviderDeliveryResult,
@@ -19,6 +21,7 @@ export interface CommunicationProviderAdapter {
 export type GovernedOutboundResult =
   | { ok: false; denied: true; reason: string }
   | { ok: false; denied: false; reason: "no-provider"; receipt: DeliveryReceipt }
+  | { ok: false; denied: false; reason: "provider-failed"; provider_id: string; receipt: DeliveryReceipt; retry?: { next_attempt: number; delay_ms: number } }
   | { ok: true; provider_id: string; receipt: DeliveryReceipt };
 
 /**
@@ -33,6 +36,7 @@ export async function executeGovernedOutbound(input: {
   candidates: CommunicationProviderCandidate[];
   adapters: CommunicationProviderAdapter[];
   attempt?: number;
+  retry_policy?: CommunicationRetryPolicy;
 }): Promise<GovernedOutboundResult> {
   const message = assertCommunicationEnvelope(input.message);
   const gate = evaluateOutboundCommunicationGate({
@@ -72,13 +76,30 @@ export async function executeGovernedOutbound(input: {
   }
 
   const providerResult = await adapter.send(message);
+  const receipt = createDeliveryReceipt({
+    message,
+    result: providerResult,
+    attempt: input.attempt,
+  });
+  if (providerResult.ok) {
+    return { ok: true, provider_id: candidate.provider_id, receipt };
+  }
+
+  const retry = input.retry_policy
+    ? communicationRetryDecision({
+        attempt: input.attempt ?? 1,
+        retryable: true,
+        policy: input.retry_policy,
+      })
+    : null;
   return {
-    ok: providerResult.ok,
+    ok: false,
+    denied: false,
+    reason: "provider-failed",
     provider_id: candidate.provider_id,
-    receipt: createDeliveryReceipt({
-      message,
-      result: providerResult,
-      attempt: input.attempt,
-    }),
-  } as GovernedOutboundResult;
+    receipt,
+    ...(retry?.retry && retry.delay_ms !== undefined
+      ? { retry: { next_attempt: retry.next_attempt, delay_ms: retry.delay_ms } }
+      : {}),
+  };
 }
