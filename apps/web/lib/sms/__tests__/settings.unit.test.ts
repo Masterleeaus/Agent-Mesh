@@ -33,6 +33,24 @@ describe("resolveTenantSmsSettings", () => {
       webhookKey: undefined,
     });
   });
+  it("resolves and trims the tenant quiet-hours timezone", () => {
+    expect(resolveTenantSmsSettings({
+      sms_quiet_hours_start: 21,
+      sms_quiet_hours_end: 7,
+      sms_quiet_hours_timezone: "  Australia/Melbourne  ",
+    })).toMatchObject({
+      quietHours: { startHour: 21, endHour: 7 },
+      quietHoursTimeZone: "Australia/Melbourne",
+    });
+  });
+
+  it("does not invent a quiet-hours timezone", () => {
+    expect(resolveTenantSmsSettings({
+      sms_quiet_hours_start: 21,
+      sms_quiet_hours_end: 7,
+    }).quietHoursTimeZone).toBeUndefined();
+  });
+
   it("resolves a valid tenant quiet-hours window", () => {
     expect(resolveTenantSmsSettings({
       sms_quiet_hours_start: 21,
