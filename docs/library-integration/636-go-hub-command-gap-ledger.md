@@ -46,3 +46,23 @@ The frozen navigation target in the PWA plan is:
 This is close to, but not identical with, later product wording. Navigation labels must therefore be reconciled against the current repository implementation before any donor copy is made. Maps remain explicitly preserved.
 
 No code was copied from the PHP donors or the merge-pending PWA checkpoint in this pass.
+
+## Pass 3 — direct live implementation audit
+
+Direct branch reads confirm substantial PWA17-era implementation is already present under `apps/web/app/titan`; donor re-import would duplicate working systems.
+
+Confirmed live code:
+- `components/role-chat.tsx`: one chat-first shell for canonical `zero | go | hub`, company-scoped interaction/conversation state, generated UI, multimodal input, stream interruption/resume.
+- `components/role-details.tsx`: field job/detail workflow consuming the existing Go field and schedule runtimes.
+- `components/role-secondary-surfaces.tsx`: Go dispatch/team communications, Hub support, account/readiness/settings projections.
+- `runtime/go-field-runtime.mjs`: governed field transitions, offline queue, receipt application, cross-company/revision/device revalidation, issue signals.
+- `runtime/go-schedule-intelligence.mjs`: authority-neutral schedule risk/recovery intents.
+- `runtime/surface-contract.mjs`: company-scoped surface projections and Command Bus intents; mutations require server acceptance/receipts and explicitly do not self-authorise.
+
+Important convergence defects/gaps found:
+1. The runtime presentation registry uses the key `command`, while `RoleChat` and the canonical surface model use `zero`. This is an internal surface-key mismatch and must normalize Command presentation to canonical `zero`, not establish `command` as a second authority boundary.
+2. Expected standalone `hub-service-runtime.ts` and `command-decision-runtime.ts` from the older build plan are absent. This is not automatically a gap: Hub and owner behavior already exist in shared surface/chat components and should only gain separate runtime modules if concrete missing semantics require them.
+3. Expected `app-surfaces.tsx` and `workforce-surface.tsx` filenames are absent at probed paths. Existing role components may have superseded them; do not recreate them by filename alone.
+4. Go maps/navigation capability is already explicitly present as `maps.navigate`; maps must be retained.
+
+Decision: next implementation pass should fix the canonical `zero`/Command presentation-key mismatch with regression coverage before considering any donor feature import.
