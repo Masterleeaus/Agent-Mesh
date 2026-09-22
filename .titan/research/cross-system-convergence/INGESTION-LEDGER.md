@@ -272,3 +272,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-032 | #768 storage/ownership mapping | issue #768 latest implementation comment + agent/768 titan-platform storage index | commits d255b92, 5abe438; storage blob fc4dbb9ed90c92657341605019ac3dd066b68cf0 | ACTIVE IMPLEMENTATION | VERIFIED | Canonical Personal Zero owner selected as @titan-zero/titan-platform using existing storage repository contract. New DB/LocalBrain/duplicate stores/authority engine explicitly rejected. TASK-152 created; contract implementation is next. | YES |
+
+
+| INGEST-033 | #768 implementation slice 1 | issue #768 update + agent/768 Personal Zero contracts | contracts blob 158b67c84e4533d214a6eb3926526aa54bd9efbd; index blob b4628b4911fd45118953fed113497772c4ce0c81; commits f3908a2,46a1ec1,0d8ae47,2233287,7c7adda | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Canonical ONE/Zero, relationship, Understanding, Experience and CognitiveEvent contracts landed with evidence/verified-outcome/privacy/authority-neutral constraints. Repository service + isolation/revocation/cross-context tests remain. | YES |
