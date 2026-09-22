@@ -64,3 +64,5 @@ LAST UPDATED:
 
 COMPLETION ESTIMATE:
 Remaining research phases: broad Library family inventory; Personal Zero/cognition sweep; security/local-AI/environmental/operational sweeps; version/regression comparison; current-code parity verification; issue/action reconciliation; final handoff.
+
+- Pass 6 completed Local AI / Cost Sovereignty archaeology: current Intelligence Runtime is the canonical converged owner; only narrow context-budget/model-metadata/cost-receipt/data-residency gaps remain. #647 updated; no duplicate issue created.
