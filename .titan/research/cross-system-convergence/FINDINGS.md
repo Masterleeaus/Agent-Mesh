@@ -873,3 +873,21 @@ Do not modify Knowledge Authority into an execution authority and do not create 
 CURRENT / EXPLICIT INTEGRATION SEAM
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-041
+### Finding
+The current titan-platform Decision Engine surface is an authority-neutral envelope/descriptor, not the persistent evidence lifecycle that would itself close the Knowledge Authority → decision trace. This confirms #59 remains the appropriate lifecycle owner rather than adding logic to the runtime envelope.
+### Evidence
+Current main:
+- `packages/titan-platform/src/runtime.ts` blob `c485cf417e150e7ee8af801374a03eb7ab816cff` exposes `createDecisionEngineEnvelope` and the Decision Engine descriptor through the runtime surface.
+- `packages/titan-platform/src/ported/titan-runtime/decision-engine/index.ts` blob `a86d862e2dde6a574a88158a5644f80e9a9cbf5d` defines the runtime purpose as evidence-backed option evaluation/prediction/ranking/recommendation, but implementation only freezes the supplied envelope and marks it authority-neutral, non-executing and recommendation-not-authority.
+- No Knowledge Authority use decision/receipt validation or persistent DecisionPacket lifecycle is implemented in this envelope module.
+### Interpretation
+Do not overload the runtime envelope with a second Decision Engine. Preserve it as the canonical runtime boundary. The missing end-to-end evidence linkage belongs in the existing #59 DecisionPacket lifecycle/convergence lane: carry validated knowledge-use provenance into persistent decision evidence, temporal re-evaluation and downstream authority/execution receipts.
+### Classification
+CURRENT / IMPLEMENTED RUNTIME ENVELOPE; LIFECYCLE OWNER #59 REMAINS OPEN
+### Confidence
+HIGH
