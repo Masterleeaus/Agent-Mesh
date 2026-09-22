@@ -55,7 +55,7 @@ jobs:
           case "$TITLE" in "[$SUBGOAL]"*) ;; *) echo "Issue/subgoal mismatch or issue closed" >&2; exit 1 ;; esac
           MARKER="<!-- agent-execution-request:$ID -->"
           if gh api --paginate "repos/${{ github.repository }}/issues/$ISSUE/comments" --jq '.[].body' | grep -Fq "$MARKER"; then echo "Replay rejected: $ID" >&2; exit 1; fi
-          gh issue comment "$ISSUE" --repo "${{ github.repository }}" --body "$MARKER
+          BODY="$MARKER
 ### Agent Mesh execution accepted
 
 - Request: \`$ID\`
@@ -64,6 +64,9 @@ jobs:
 - Head: \`$EXPECTED\`
 
 This marker provides replay protection; it grants no merge or claim-release authority."
+          gh issue comment "$ISSUE" --repo "${{ github.repository }}" --body "$BODY"
+          COUNT="$(gh api --paginate "repos/${{ github.repository }}/issues/$ISSUE/comments" --jq '.[].body' | grep -Fc "$MARKER" || true)"
+          test "$COUNT" = "1" || { echo "Non-unique acceptance marker after write; refusing execution" >&2; exit 1; }
 
       - name: Execute deterministic registered operation
         shell: bash
@@ -72,6 +75,27 @@ This marker provides replay protection; it grants no merge or claim-release auth
           REQUEST="${{ steps.request.outputs.request }}"
           ID="$(jq -r '.request_id' "$REQUEST")"
           python3 .github/scripts/run-execution-request.py --file "$REQUEST" --receipt "/tmp/$ID.receipt.json"
+
+      - name: Record successful execution audit
+        if: ${{ success() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          REQUEST="${{ steps.request.outputs.request }}"
+          ID="$(jq -r '.request_id' "$REQUEST")"
+          ISSUE="$(jq -r '.issue_number' "$REQUEST")"
+          OP="$(jq -r '.operation' "$REQUEST")"
+          gh issue comment "$ISSUE" --repo "${{ github.repository }}" --body "<!-- agent-execution-receipt:$ID -->
+### Agent Mesh execution succeeded
+
+- Request: \`$ID\`
+- Operation: \`$OP\`
+- Workflow run: \`${{ github.run_id }}\`
+- Trigger SHA: \`${{ github.sha }}\`
+- Receipt artifact: \`agent-execution-receipt-${{ github.run_id }}\`
+
+This is an audit pointer only; it grants no merge or claim-release authority."
 
       - name: Create failure receipt
         if: ${{ failure() && steps.request.outputs.request_id != '' }}
