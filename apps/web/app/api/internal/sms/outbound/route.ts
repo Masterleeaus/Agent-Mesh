@@ -175,11 +175,6 @@ export async function POST(req: NextRequest) {
     correlationId = parsed.data.correlation_id ?? null;
   }
 
-  // Business SIM only (same rule as inbound n8n filter)
-  if (simNumber !== null && simNumber !== 1) {
-    return NextResponse.json({ skipped: true, reason: "non_business_sim", simNumber });
-  }
-
   const normalized = normalizePhone(phone) ?? phone;
 
   // The authenticated integration must identify the canonical company scope.
@@ -196,6 +191,12 @@ export async function POST(req: NextRequest) {
   if (!tenantSmsWebhookKeyMatches(smsSettings, req.headers.get("x-api-key"))) {
     logger.warn("Outbound SMS tenant webhook authentication rejected", { traceId, company_id: companyId });
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // SIM routing is tenant configuration, not a global assumption. Reject/skip only
+  // after the callback has authenticated to its canonical company.
+  if (simNumber !== null && smsSettings.simNumber !== undefined && simNumber !== smsSettings.simNumber) {
+    return NextResponse.json({ skipped: true, reason: "non_business_sim", simNumber });
   }
   const accountId = companyId; // legacy storage/input alias after canonical normalization
 
