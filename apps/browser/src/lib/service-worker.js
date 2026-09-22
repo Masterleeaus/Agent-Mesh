@@ -1962,10 +1962,15 @@ async function checkpointAgentMeshContinuation(snapshot,reason='manager-lifecycl
         authority:{claim_release:false,merge:false,ai:false}
     });
 }
+async function preflightAgentMeshWorkMutation(snapshot,kind='work-mutation'){
+    const gate=await bootstrapAgentMeshResume(snapshot);
+    if(!gate.ok||gate.mayMutate!==true)return {ok:false,mayMutate:false,reason:'resume-reconciliation-required',kind,bootstrap:gate.bootstrap||null,detail:gate.reason||null};
+    return {ok:true,mayMutate:true,kind,bootstrap:gate.bootstrap};
+}
 async function takeoverAgentMeshContinuation(snapshot,{fromExecutionSession=null,toExecutionSession,reason='SESSION_REPLACED'}={}){
     if(!toExecutionSession) return {ok:false,reason:'to-execution-session-required'};
-    const resumeGate=await bootstrapAgentMeshResume(snapshot);
-    if(!resumeGate.ok||resumeGate.mayMutate!==true) return {ok:false,reason:'resume-reconciliation-required',mayMutate:false,bootstrap:resumeGate.bootstrap||null};
+    const resumeGate=await preflightAgentMeshWorkMutation(snapshot,'continuation-takeover');
+    if(!resumeGate.ok) return resumeGate;
     const settings=await getSystemIntegrationSettings();
     if(!settings.bridgeEnabled||!settings.bridgeToken||!globalThis.CodeeTitanBridgeClient) return {ok:false,reason:'live-mesh-bridge-not-configured'};
     const value=snapshot&&typeof snapshot==='object'?snapshot:{},github=value.github||value.agentMesh||null;
@@ -2002,8 +2007,8 @@ async function runStoredManagerAISupervision(options={}){const live=await fetchL
 async function executeManagerAIPlan(options={}){
     const live=await fetchLiveManagerAISnapshot();
     const snapshot=live.snapshot||await getManagerAISnapshot();
-    const resumeGate=await bootstrapAgentMeshResume(snapshot);
-    if(!resumeGate.ok||resumeGate.mayMutate!==true){
+    const resumeGate=await preflightAgentMeshWorkMutation(snapshot,'manager-plan');
+    if(!resumeGate.ok){
         const out={schema:'titan-code.manager-ai-execution.v2',generatedAt:new Date().toISOString(),source:live.source,inspection:null,plan:null,executed:[],skipped:[{reason:'agent-mesh-resume-reconciliation-required',bootstrap:resumeGate.bootstrap||null,detail:resumeGate.reason||null}],authority:{ai:false,managerRules:true,githubMergeRequest:false,delete:false,mayMutate:false}};
         await chrome.storage.local.set({[MANAGER_AI_LAST_STORAGE_KEY]:out});return out;
     }
