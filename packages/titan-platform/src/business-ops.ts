@@ -1,3 +1,4 @@
+export * from "./field-defects.js";
 export * from "./field-permits.js";
 export * from "./warranty.js";
 import { classifyRisk, type TitanRiskAssessment } from "./intelligence.js";
