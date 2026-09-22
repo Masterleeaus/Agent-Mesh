@@ -63,3 +63,10 @@ test("projection seam rejects legacy tenant boundaries", () => {
     expires_at: "2099-09-22T08:30:00.000Z",
   }), /tenant_company_id-not-authoritative/);
 });
+
+
+test("canonical surfaces use the Titan operational accent palette", () => {
+  assert.equal(getDemoSurfaceProjection("zero").data.presentation.accent, "#d97706");
+  assert.equal(getDemoSurfaceProjection("go").data.presentation.accent, "#2563eb");
+  assert.equal(getDemoSurfaceProjection("hub").data.presentation.accent, "#16a34a");
+});
