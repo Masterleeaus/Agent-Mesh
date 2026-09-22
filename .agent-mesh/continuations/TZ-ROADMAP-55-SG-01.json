@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 3,
+    "current_pass": 4,
     "status": "ACTIVE"
   },
   "completed": [
@@ -25,15 +25,19 @@
     "Pass 2 regression assertions added to test-manager-ai-live-mesh-bridge.js",
     "Pass 3: added reusable agent-mesh-continuation runtime contract for durable checkpoints, takeover receipts and compact resume instructions",
     "Pass 3: takeover explicitly retains the canonical claim branch and treats conversation state as disposable",
-    "Pass 3: added test-agent-mesh-continuation.js covering context-limit takeover and GitHub-wins reconciliation rule"
+    "Pass 3: added test-agent-mesh-continuation.js covering context-limit takeover and GitHub-wins reconciliation rule",
+    "Pass 4: existing Titan Bridge now allowlists continuation.get, continuation.checkpoint and continuation.takeover actions",
+    "Pass 4: live Manager snapshot automatically emits a best-effort durable checkpoint through the existing Agent Mesh bridge",
+    "Pass 4: takeover helper preserves the same issue/subgoal/claim branch and explicitly cannot release claims or merge",
+    "Pass 4: regression assertions require continuation bridge wiring"
   ],
   "current_work": [
-    "Wire continuation checkpoints into live Manager/Agent Mesh events rather than relying on manual record updates"
+    "Implement durable Agent Mesh bridge-side checkpoint storage/validation and takeover receipts in repository control plane"
   ],
   "next_actions": [
-    "Expose continuation checkpoint/takeover through the existing Agent Mesh bridge",
-    "Persist checkpoint after significant lifecycle events",
-    "Add governed execution-request schema and Action"
+    "Add repository-side continuation schema/validator using GitHub facts as authority",
+    "Persist/verify takeover receipts",
+    "Then add governed execution-request schema and event-driven Action"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
