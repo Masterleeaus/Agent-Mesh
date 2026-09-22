@@ -30,3 +30,15 @@ export function resolveTenantSmsSettings(value: unknown): TenantSmsSettings {
     webhookKey,
   };
 }
+
+
+/** Constant-time comparison for tenant webhook credentials. */
+export function tenantSmsWebhookKeyMatches(settings: TenantSmsSettings, supplied: string | null): boolean {
+  if (!settings.webhookKey || !supplied) return false;
+  const expected = new TextEncoder().encode(settings.webhookKey);
+  const actual = new TextEncoder().encode(supplied);
+  if (expected.byteLength !== actual.byteLength) return false;
+  let mismatch = 0;
+  for (let i = 0; i < expected.byteLength; i += 1) mismatch |= expected[i] ^ actual[i];
+  return mismatch === 0;
+}
