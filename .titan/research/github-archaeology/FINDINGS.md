@@ -2309,3 +2309,98 @@ DONOR VALUE PRESENT / PRODUCT AUTHORITY CONFLICT
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-085
+
+### Finding
+The exact canonical-baseline pivot has been identified. Commit `09c72e357784fb5a588c33f912aba60a5fa8ce42` explicitly changed Agent-Mesh from the Titan Zero Agent Mesh baseline to Dovetails as the root base app.
+
+### Commit evidence
+Commit message:
+`Make Dovetails the base app; archive previous Titan system under titan/`
+
+GitHub compare resolves its immediate parent/base as:
+`3063eb6306879e54888e35fddad9e07596c41c2a`.
+
+At that parent:
+- `AGENTS.md` is explicitly `Titan Zero Agent Mesh V3 Execution Contract`;
+- `README.md` says the repository is the canonical Titan Zero source and that Merge84 source is on `main`;
+- `roadmap/INDEX.json` is authoritative Titan Zero roadmap state and explicitly defines one canonical TypeScript platform;
+- Titan Zero non-negotiables include canonical `company_id`, Zero/Go/Hub, Cost Sovereignty and Titan Code separation.
+
+### Classification
+LAST VERIFIED PRE-PIVOT TITAN ZERO BASELINE IDENTIFIED
+
+### Baseline ref
+`3063eb6306879e54888e35fddad9e07596c41c2a`
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-086
+
+### Finding
+The Dovetails pivot was deliberate repository surgery, not an unexplained gradual branding drift.
+
+### Evidence
+The pivot commit replaced root authority text, including approximately 307 deleted lines from the prior Titan Zero `AGENTS.md`, and imported/changed a very large field-service application surface. Follow-on commits explicitly say:
+- migrate Titan platform package into Dovetails workspace;
+- migrate Titan core runtime folders into Dovetails workspace;
+- migrate Titan capability folders into Dovetails workspace;
+- merge unique/additive Titan app changes into Dovetails;
+- wire Titan platform and portable MySQL runtime into Dovetails web app.
+
+### Interpretation
+The intended strategy appears to have been **Dovetails as a new base shell with Titan capability convergence**, followed shortly afterward by rebranding the resulting shell back to Titan Zero. However, root/canonical documentation was not fully reconciled back to Titan Zero authority.
+
+### Classification
+INTENTIONAL BASE-APP TRANSPLANT / INCOMPLETE CANONICAL RECONCILIATION
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-087
+
+### Finding
+Subsequent commits prove that the product was already being moved back toward Titan Zero branding after the Dovetails transplant, while Dovetails canonical docs remained at root.
+
+### Evidence
+Examples:
+- `d21e6d242aa2cf4b7f75737add707b21e66b2899` — merge donor marketing sites into Titan Zero web app and rebrand homepage;
+- `ce8286669314541a70bc2ed078ed55aeeb5bde8e` — rebrand PWA metadata and harden Titan Zero public indexing;
+- `dcb1db5c650facb296eea8394a1d49329bf2b508` — remove visible Dovetails branding from Titan Zero web shell;
+- `69b5e30b00cc72a1488fc6f3fb5a52bd94fe0acf` — rebrand Titan Zero login and product identity;
+- `9dd1042ec1a1435895e6cbebd4cf9045aa7af186` — remove legacy Dovetails identity from web design tokens.
+
+Direct inspection of `dcb1db5...` shows Dovetails UI branding changed to `T0` / `Titan Zero`.
+
+### Classification
+REBRAND-BACK EVIDENCE / DOC-AUTHORITY LAG
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-088
+
+### Finding
+For archaeology purposes, the correct two-tree comparison is now known:
+1. **Titan Zero pre-pivot implementation baseline:** `3063eb6306879e54888e35fddad9e07596c41c2a`.
+2. **Post-transplant current lineage:** current `main`, beginning with pivot `09c72e357784fb5a588c33f912aba60a5fa8ce42`.
+
+### Recovery rule
+Do not simply revert to the pre-pivot tree: substantial useful Dovetails field-service code and subsequent Titan integrations would be lost. Instead, use the pre-pivot ref as architecture/capability comparison evidence and converge missing Titan Zero systems into the stronger post-transplant application where appropriate.
+
+### Classification
+CANONICAL ARCHAEOLOGY BASELINE RESOLVED
+
+### Confidence
+VERY HIGH
