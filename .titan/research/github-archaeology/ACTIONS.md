@@ -1,0 +1,78 @@
+> Canonical shared multi-agent coordination copy. Detailed archaeology reports remain in `workspaces/github-archaeology/` until final consolidation.
+
+# GitHub Archaeology Action Index
+
+## ACTION-GH-001
+
+Type: DEEP SCAN
+Priority: P1
+Finding: FINDING-GH-007
+GitHub Issue: #765
+Status: ACTIVE
+Canonical Owner: Archaeology only; final implementation owner not yet selected.
+
+Summary:
+Search historical GitHub lineages for concrete Personal Zero understanding, Business Reality and continuous Evolution/reassessment mechanisms. Compare any recovered implementation against existing #153/#59/#642/#725 owners before proposing convergence.
+
+---
+
+## ACTION-GH-002
+
+Type: CONVERGE / SUPPORT EXISTING ACTION
+Priority: P1
+Finding: FINDING-GH-003, FINDING-GH-004
+GitHub Issues: #153 and #59
+Status: PROPOSED SUPPORT; no duplicate issue created.
+Canonical Owner: Knowledge Authority / Business Memory (#153) and Decision runtime (#59).
+
+Summary:
+Evaluate historical revision-aware recomposition, value-level provenance and stale-context rejection as donor semantics for existing canonical owners. Do not import the old Wizard/Vertical architecture as a parallel engine.
+
+---
+
+## ACTION-GH-003
+
+Type: NO NEW ACTION / VERIFY
+Priority: P1
+Finding: FINDING-GH-005
+GitHub Issues: #642, #50, #153
+Status: COVERED BY EXISTING ACTIONS unless a current bypass is demonstrated.
+Canonical Owner: governed intelligence/decision/execution path.
+
+Summary:
+Historical AI-proposal separation corroborates current authority rules. Only create additional work if code inspection finds an actual mutation/authority bypass.
+
+---
+
+## ACTION-GH-004
+
+Type: SUPPORT EXISTING ACTION
+Priority: P1
+Finding: FINDING-GH-006
+GitHub Issue: #153
+Status: EXISTING OWNER IDENTIFIED
+Canonical Owner: canonical company-scoped Business Memory & Knowledge runtime.
+
+Summary:
+Map the architectural concept of Experience Memory onto the existing canonical memory owner and strengthen missing contracts there rather than creating another memory subsystem.
+
+---
+
+## Deduplication note
+
+Before any new implementation issue is created, this agent will search current code, open issues, closed issues, other agent ACTIONS.md files when accessible, active claim refs and canonical owners. Issue #765 remains this agent's archaeology claim.
+
+
+---
+
+## ACTION-GH-005
+
+Type: COMPARE + CONVERGE
+Priority: P1
+Finding: FINDING-GH-010, FINDING-GH-011, FINDING-GH-012
+GitHub Issues: #153, #50, #59
+Status: PROPOSED SUPPORT; no duplicate issue created.
+Canonical Owner: Knowledge Authority / Business Memory with Decision and verified-outcome loops.
+
+Summary:
+Recover the historical distinction between durable facts and learned conditioning, plus verified/inferred/stale/contradicted state and user/company/site/customer/job memory scopes. Map these semantics into current canonical owners and the Personal Zero projection where appropriate. Legacy `tenant_id` must normalize to `company_id`; historical memory must never create execution authority.
