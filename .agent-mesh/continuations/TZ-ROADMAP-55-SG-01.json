@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 11,
+    "current_pass": 12,
     "status": "ACTIVE"
   },
   "completed": [
@@ -50,15 +50,18 @@
     "Pass 10: receipt upload now runs on success or failure, retaining auditable execution evidence for 90 days",
     "Pass 11: execution bridge no longer tail-selects one request from a multi-request push; changed request paths are deduplicated and exactly one request is required",
     "Pass 11: ambiguous zero/multiple execution-request pushes fail closed instead of silently skipping work",
-    "Pass 11: CI now guards deterministic single-request selection and failure-receipt wiring"
+    "Pass 11: CI now guards deterministic single-request selection and failure-receipt wiring",
+    "Pass 12: hardened execution acceptance by verifying the durable request marker is unique after write; ambiguous duplicate acceptance fails closed before execution",
+    "Pass 12: successful execution now writes a durable issue audit pointer containing request id, operation, workflow run id, trigger SHA and receipt artifact name",
+    "Pass 12: execution receipt discoverability now uses existing GitHub issue history plus immutable Actions artifacts; no parallel execution-state authority was introduced"
   ],
   "current_work": [
-    "Improve request concurrency/replay atomicity and receipt discoverability"
+    "Expose execution audit state through the existing Agent Mesh snapshot/Manager bridge"
   ],
   "next_actions": [
-    "Harden acceptance marker race handling",
-    "Add durable execution receipt/index lookup for takeover/resume",
-    "Expose execution state through existing Agent Mesh snapshot bridge"
+    "Extend existing agent_mesh.snapshot projection with execution request/receipt audit state",
+    "Keep GitHub issue comments and Actions artifacts authoritative; browser state remains projection only",
+    "Add tests for snapshot execution-state projection and takeover visibility"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
