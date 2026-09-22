@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { executeGovernedOutbound } from "../outbound-orchestrator";
+import { executeGovernedOutbound, executeGovernedOutboundWithFallback } from "../outbound-orchestrator";
 
 const message = {
   id: "msg-1",
@@ -91,5 +91,43 @@ describe("executeGovernedOutbound", () => {
     });
     expect(result).toMatchObject({ ok: false, reason: "provider-failed" });
     expect("retry" in result ? result.retry : undefined).toBeUndefined();
+  });
+
+  it("falls back to the next eligible provider and preserves attempt evidence", async () => {
+    const primary = vi.fn().mockResolvedValue({ ok: false, error_code: "primary-down" });
+    const fallback = vi.fn().mockResolvedValue({ ok: true, provider_message_id: "fallback-1" });
+    const { result, attempts } = await executeGovernedOutboundWithFallback({
+      message,
+      policy: allowed,
+      rate_limit: rate,
+      candidates: [
+        { provider_id: "primary", channel: "sms", available: true, funded: true, policy_allowed: true },
+        { provider_id: "unfunded", channel: "sms", available: true, funded: false, policy_allowed: true },
+        { provider_id: "fallback", channel: "sms", available: true, funded: true, policy_allowed: true },
+      ],
+      adapters: [
+        { provider_id: "primary", send: primary },
+        { provider_id: "unfunded", send: vi.fn() },
+        { provider_id: "fallback", send: fallback },
+      ],
+    });
+    expect(result).toMatchObject({ ok: true, provider_id: "fallback" });
+    expect(attempts.map((item) => [item.provider_id, item.receipt.state])).toEqual([
+      ["primary", "failed"],
+      ["fallback", "sent"],
+    ]);
+  });
+
+  it("never falls back across communication channels", async () => {
+    const email = vi.fn().mockResolvedValue({ ok: true });
+    const { result } = await executeGovernedOutboundWithFallback({
+      message,
+      policy: allowed,
+      rate_limit: rate,
+      candidates: [{ provider_id: "email-provider", channel: "email", available: true, funded: true, policy_allowed: true }],
+      adapters: [{ provider_id: "email-provider", send: email }],
+    });
+    expect(result).toMatchObject({ ok: false, reason: "no-provider" });
+    expect(email).not.toHaveBeenCalled();
   });
 });
