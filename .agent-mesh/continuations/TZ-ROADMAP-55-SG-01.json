@@ -153,15 +153,19 @@
     "Pass 20: audited current service-worker Agent Mesh bridge calls and confirmed all mutation actions are centralized in AGENT_MESH_MUTATION_POLICY/callAgentMeshMutation",
     "Pass 20: generic callTitanBridge rejects Agent Mesh mutations, preventing UI/other callers from bypassing governed mutation paths",
     "Pass 20: recover_agent, route_packet and continuation takeover are resume-gated; continuation checkpoint is explicitly continuity-record-only and cannot grant lifecycle authority",
-    "Pass 20: regression guards now fail if Manager Agent Mesh mutations stop using callAgentMeshMutation or generic bridge mutation denial disappears"
+    "Pass 20: regression guards now fail if Manager Agent Mesh mutations stop using callAgentMeshMutation or generic bridge mutation denial disappears",
+    "Pass 20: audited Agent Mesh bridge mutation call sites; current service worker centralizes recover, route, continuation checkpoint and takeover under AGENT_MESH_MUTATION_POLICY",
+    "Pass 20: generic callTitanBridge rejects all classified agent_mesh mutations so UI/model callers cannot bypass governed paths",
+    "Pass 20: unknown Agent Mesh mutations fail closed; recover/route/takeover are resume-gated while checkpoint remains continuity-record-only",
+    "Pass 20: regression guards lock the central policy, generic-bridge denial and governed Manager mutation path"
   ],
   "current_work": [
-    "Converge stale route_packet/packet terminology in Manager recovery path onto GitHub issue/subgoal semantics without creating a second routing system"
+    "Harden execution-request submission so allowlisted GitHub Action bridge requests use the same work identity/reconciliation semantics"
   ],
   "next_actions": [
-    "Inspect bridge/backend contract for agent_mesh.route_packet and existing issue/subgoal routing support",
-    "Prefer compatibility adapter at boundary rather than renaming internal GitHub-native state back to packet",
-    "Add tests that durable work identity remains issue/subgoal/claim branch"
+    "Inspect current execution request creation/submission path before adding code",
+    "Ensure expected head SHA and canonical claim branch are sourced from reconciled GitHub projection",
+    "Prevent arbitrary operation expansion and preserve fixed execution operation registry"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
