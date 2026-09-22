@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 20,
+    "current_pass": 21,
     "status": "ACTIVE"
   },
   "completed": [
@@ -142,15 +142,18 @@
     "Pass 20: audited Agent Mesh mutation call sites in Titan Code bridge/service worker and confirmed a single central callAgentMeshMutation gate handles Agent Mesh mutations",
     "Pass 20: identified and corrected an over-gating defect: durable continuation checkpoints must remain writable during reconciliation so the latest recovery context is not lost",
     "Pass 20: recover_agent, route_packet and continuation.takeover remain resume-gated; checkpoint is explicitly non-authoritative continuity recording",
-    "Pass 20: added regression guards for the mutation gate classification"
+    "Pass 20: added regression guards for the mutation gate classification",
+    "Pass 21: centralized Agent Mesh mutation semantics in one explicit policy map so future mutation actions cannot silently inherit the wrong resume behavior",
+    "Pass 21: recover_agent, route_packet and continuation.takeover are explicitly resume-gated; continuation.checkpoint is explicitly continuity-record-only so reconciliation can still preserve recovery context",
+    "Pass 21: regression guards lock all mutation classifications and require the canonical mutation path to derive gating from the policy"
   ],
   "current_work": [
-    "Audit Agent Mesh ↔ Titan Code language/contracts and bootstrap surfaces for schema drift and duplicate concepts"
+    "Converge replacement-agent bootstrap into compact prompt/context delivery for ChatGPT/Codex workers"
   ],
   "next_actions": [
-    "Compare bridge action names, continuation schemas and GitHub workflow contracts",
-    "Align naming with GitHub-native concepts where useful without changing GitHub terminology",
-    "Add contract drift tests"
+    "Inspect existing repository context/prompt assembly path and reuse it",
+    "Inject machine-readable Agent Mesh work context before user task without making retrieved text authoritative",
+    "Keep prompt compact and provenance-labelled"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
