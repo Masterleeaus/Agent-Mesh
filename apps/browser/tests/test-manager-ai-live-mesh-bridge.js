@@ -128,3 +128,8 @@ const directMeshCalls=(sw.match(/CodeeTitanBridgeClient\.call\([^\n]*agent_mesh\
 assert.strictEqual(directMeshCalls.length,0,'no ungoverned direct Agent Mesh mutation calls may bypass callAgentMeshMutation');
 assert(sw.includes('if (meshMutation) return { ok: false, reason: \'agent-mesh-mutation-requires-governed-path\''),'generic Titan bridge must reject ungoverned Agent Mesh mutations');
 assert(sw.includes("return callAgentMeshMutation(config,action,payload,snapshot)"),'all Manager Agent Mesh mutations must use governed mutation helper');
+
+const bridgeClient=fs.readFileSync('src/integration/titan-bridge-client.js','utf8');
+if(bridgeClient.includes("agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover'])")) throw new Error('checkpoint must not be resume-gated');
+if(!bridgeClient.includes("agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover")) throw new Error('work mutations must remain resume-gated');
+if(!sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover']).has(action)")) throw new Error('service-worker mutation gate classification missing');
