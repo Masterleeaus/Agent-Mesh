@@ -1,4 +1,7 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const recordDeliveryReceipt = vi.fn().mockResolvedValue(true);
+vi.mock("@/lib/communications-log", () => ({ recordDeliveryReceipt }));
 import { executeGovernedOutbound, executeGovernedOutboundWithFallback } from "../outbound-orchestrator";
 
 const message = {
@@ -24,6 +27,7 @@ const allowed = {
 const rate = { limit: 10, used: 0, resets_at: "2026-09-22T07:00:00.000Z" };
 
 describe("executeGovernedOutbound", () => {
+  beforeEach(() => recordDeliveryReceipt.mockClear());
   it("does not invoke providers when authority is denied", async () => {
     const send = vi.fn();
     const result = await executeGovernedOutbound({
@@ -35,6 +39,7 @@ describe("executeGovernedOutbound", () => {
     });
     expect(result).toMatchObject({ ok: false, denied: true, reason: "authority-required" });
     expect(send).not.toHaveBeenCalled();
+    expect(recordDeliveryReceipt).not.toHaveBeenCalled();
   });
 
   it("selects an eligible provider and emits canonical delivery evidence", async () => {
@@ -53,8 +58,10 @@ describe("executeGovernedOutbound", () => {
     expect(result).toMatchObject({
       ok: true,
       provider_id: "gateway",
+      persisted: true,
       receipt: { company_id: "company-1", state: "sent", provider_message_id: "provider-1" },
     });
+    expect(recordDeliveryReceipt).toHaveBeenCalledWith(expect.objectContaining({ company_id: "company-1", state: "sent" }));
   });
 
   it("returns bounded retry evidence after a retryable provider failure", async () => {
@@ -116,6 +123,7 @@ describe("executeGovernedOutbound", () => {
       ["primary", "failed"],
       ["fallback", "sent"],
     ]);
+    expect(recordDeliveryReceipt).toHaveBeenCalledTimes(2);
   });
 
   it("never falls back across communication channels", async () => {
