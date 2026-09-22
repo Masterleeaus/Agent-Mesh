@@ -13,9 +13,9 @@ Rule: Titan Zero remains authoritative. Donor code does not create a parallel ru
 | Certifications | shared workforce qualification owner / licensed trades | Retain authority; imported credential expiry/reminder + job requirement semantics |
 | Permits/inspections | Titan Field completion lifecycle | Imported bounded permit/inspection contracts, governed persistence/API and completion blockers |
 | Punch lists/defects | Titan Field completion/evidence | Imported defect verification semantics and completion blockers; critical deferral remains blocking |
-| Warranty/claims | no equivalent domain found | Imported bounded warranty/claim contracts; no invoice/job authority |
-| RFI | project/work-order/change-order/communications authorities | Imported bounded RFI contract; change order remains recommendation/reference only |
-| Submittals | project/document/evidence authorities | Imported bounded review/revision contract; document refs only |
+| Warranty/claims | no equivalent domain found | Imported bounded warranty/claim contracts; no invoice/job authority; related job/work-order ownership must be validated at a persistence/orchestration boundary before future runtime use |
+| RFI | project/work-order/change-order/communications authorities | Imported bounded RFI contract; change order remains recommendation/reference only; company-scoped project/work-order/change-order references require authoritative boundary validation before future persistence |
+| Submittals | project/document/evidence authorities | Imported bounded review/revision contract; document refs only; project/work-order/revision lineage requires authoritative boundary validation before future persistence |
 | Change orders | existing canonical change-order implementation | Retain Titan; donor implementation rejected |
 | Portal/auth/users | existing Titan auth/surfaces | Donor rejected |
 | AI/chat provider | Titan AI Core/provider registry | Donor rejected |
@@ -30,7 +30,8 @@ Rule: Titan Zero remains authoritative. Donor code does not create a parallel ru
 3. Verify migration 190/191 against current database/RLS conventions.
 4. Verify API route tests and transaction rollback behaviour.
 5. Confirm no remaining donor capability is superior and genuinely missing.
-6. Only then delete the consumed FieldServicePro donor tree and close #724.
+6. Warranty/RFI/submittal remain contract-only in #724. Do not add persistence/API merely to wire reference validation; when a canonical runtime boundary is introduced, it must call the exported company-scoped reference guard using ownership resolved by that authority.
+7. Only then delete the consumed FieldServicePro donor tree and close #724.
 
 ## Governance invariants
 
@@ -39,3 +40,8 @@ Rule: Titan Zero remains authoritative. Donor code does not create a parallel ru
 - Work-order completion remains owned by the existing canonical lifecycle.
 - Permit/inspection/defect records contribute bounded blockers; they do not own work-order state.
 - Existing Titan systems are retained whenever an equivalent authority already exists.
+
+
+## Cross-record reference decision
+
+The repository scan found no canonical #724 persistence/orchestration boundary for warranty, RFI, or submittal records. Their related IDs are therefore descriptive references only in this issue. The shared `business-reference-integrity` guard is intentionally not called from the pure builders because a caller-supplied `company_id` beside an ID is not evidence of ownership. Future persistence must resolve each related record through its canonical owner, construct company-scoped references from that authoritative result, and fail closed before storage or execution. This avoids creating a duplicate project/job/change-order authority solely for donor convergence.
