@@ -146,3 +146,7 @@ if(!sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_m
 
 if(!sw.includes("if(!snapshot||typeof snapshot!=='object') return {ok:false,reason:'agent-mesh-snapshot-required',mayMutate:false}")) throw new Error('mesh mutation must require snapshot');
 if(!sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover'])")) throw new Error('all mesh mutation actions must use central resume gate');
+
+const bc=fs.readFileSync('src/integration/titan-bridge-client.js','utf8');
+if(!bc.includes("const RESUME_GATED_MUTATIONS=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover'])")) throw new Error('bridge resume-gated mutation set incomplete');
+if(bc.includes("const RESUME_GATED_ACTIONS=new Set")) throw new Error('stale duplicate resume gate classification remains');
