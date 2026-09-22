@@ -330,3 +330,89 @@ HIGH for documented design; LOW-MEDIUM for runtime implementation until code/tes
 
 ### Related action
 Use as architecture evidence; do not create a parallel self-modifying engine.
+
+
+---
+
+## FINDING-GH-010
+
+### Finding
+`TitanPro` contains a substantially closer historical precursor to Personal Zero than the AIOX donor: a Titan memory architecture separating session, working, user, company, site and job memory, with explicit conditioning from repeated corrections, approvals and patterns.
+
+### Why it matters
+The historical design distinguishes facts from learned operating style. User memory stores preferences/habits/vocabulary/interaction patterns, while conditioning represents learned behavior such as autonomy tolerance, draft preference, review detail and workflow naming. This is directly relevant to Personal Zero understanding.
+
+### Evidence
+Repository: `Masterleeaus/TitanPro`
+Branch: `main`
+Commit/file SHA inspected: `de042fb1a29ebe68054cd58a398dadcf3eb53ea3`
+Path: `docs/04-AI/memory-architecture.md`
+Sections inspected: Memory Layers; Verified vs inferred memory; Conditioning vs memory; Storage and retrieval; Memory and evaluation; retention/contradiction handling.
+
+### Current Titan equivalent
+#153 is the canonical memory/knowledge owner. The new Personal Zero concept is broader than this historical memory architecture and must not become a duplicate memory store.
+
+### Classification
+HISTORICAL / SUPERIOR HISTORICAL semantics / PARTIAL precursor
+
+### Confidence
+HIGH
+
+### Related action
+ACTION-GH-005: compare user/company conditioning semantics against #153 and future Personal Zero projection/orchestration.
+
+---
+
+## FINDING-GH-011
+
+### Finding
+The historical Titan memory design explicitly separates verified, inferred, stale and contradicted memory and evaluates recalled context against actual outcomes.
+
+### Why it matters
+This is strong Titan-origin evidence for the pivot rule that inferred Personal Zero understanding must not silently rewrite authoritative Business Reality. It also provides an evolution feedback mechanism: recalled context → actual outcome → stale/contradiction detection → refinement.
+
+### Evidence
+Repository: `Masterleeaus/TitanPro`
+Branch: `main`
+Path: `docs/04-AI/memory-architecture.md`
+Direct statements include verified/inferred/stale/contradicted categories, replay of recalled memory, comparison to actual outcomes, stale-memory detection and contradiction tracking.
+
+### Current Titan equivalent
+#153 provenance/correction/supersession; #50 verified outcome loops; #59 re-evaluation.
+
+### Classification
+HISTORICAL / PARTIAL / SUPERIOR HISTORICAL semantics
+
+### Confidence
+HIGH
+
+### Related action
+Support existing #153/#50/#59 rather than create a parallel learning engine.
+
+---
+
+## FINDING-GH-012
+
+### Finding
+Worksuite TitanDocs contains a Titan Operational Memory Model with user, company, site, customer, job and channel scopes plus preference/instruction/relationship/exception/learned-pattern/user-correction categories and explicit verification levels.
+
+### Why it matters
+This provides a concrete earlier schema precursor for Personal Zero inputs and business-context memory. It explicitly states that operational memory may influence proposals/defaults/routing but must not silently bypass approvals, permissions, financial controls or compliance rules.
+
+### Evidence
+Repository: `Masterleeaus/Worksuite-Saas---Project-Management-System_Laravel`
+Branch: `main`
+File SHA: `4e0877109bf614a455781804622a6492091cea04`
+Path: `TitanDocs/docs/10-reference-architecture/Titan_Operational_Memory_Model.md`
+
+### Current Titan equivalent
+#153 is the canonical destination. Historical `tenant_id` is legacy and must normalize to canonical `company_id`; it must not be preserved as a new boundary.
+
+### Classification
+HISTORICAL / SPECIFICATION ONLY / PARTIAL precursor
+
+### Confidence
+HIGH
+
+### Related action
+Compare schema semantics with #153; never import legacy tenancy unchanged.
