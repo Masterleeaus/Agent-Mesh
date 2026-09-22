@@ -26,7 +26,9 @@ export function decideInferenceRoute(input: CostSovereigntyRequest): CostSoverei
   const allowed=[...(input.allowed_routes??ROUTES)].filter((r): r is InferenceRoute=>ROUTES.includes(r));
   if(allowed.length!==new Set(allowed).size) throw new Error("duplicate-inference-route");
   if(input.privacy_local_only && allowed.some(r=>r==="byo-cloud"||r==="titan-managed")) {
-    return Object.freeze({company_id,route:allowed.find(r=>r==="device")??allowed.find(r=>r==="customer-hosted")??"device",escalation_required:true,escalation_reason:"local-only-policy",titan_funded_fallback:false,authority_neutral:true,execution_authority:false});
+    const localRoute=allowed.find(r=>r==="device")??allowed.find(r=>r==="customer-hosted");
+    if(!localRoute) throw new Error("local-only-policy-has-no-local-route");
+    return Object.freeze({company_id,route:localRoute,escalation_required:true,escalation_reason:"local-only-policy",titan_funded_fallback:false,authority_neutral:true,execution_authority:false});
   }
   const requested=input.requested_route;
   if(requested && !allowed.includes(requested)) {
@@ -36,7 +38,7 @@ export function decideInferenceRoute(input: CostSovereigntyRequest): CostSoverei
   if(route==="titan-managed" && !input.titan_managed_entitled) {
     return Object.freeze({company_id,route:allowed.find(r=>r!=="titan-managed")??"device",escalation_required:true,escalation_reason:"titan-service-not-entitled",titan_funded_fallback:false,authority_neutral:true,execution_authority:false});
   }
-  if(route==="titan-managed" && !input.titan_metered_opt_in) {
+  if(route==="titan-managed" && !input.titan_managed_entitled && !input.titan_metered_opt_in) {
     return Object.freeze({company_id,route:allowed.find(r=>r!=="titan-managed")??"device",escalation_required:true,escalation_reason:"titan-metered-opt-in-required",titan_funded_fallback:false,authority_neutral:true,execution_authority:false});
   }
   return Object.freeze({company_id,route,escalation_required:false,escalation_reason:"none",titan_funded_fallback:false,authority_neutral:true,execution_authority:false});
