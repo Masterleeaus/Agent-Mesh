@@ -19,14 +19,20 @@ export interface SmsGatewayConfig {
   username?: string;
   password?: string;
   simNumber?: number;
+  /**
+   * Tenant-scoped sends must not inherit deployment-global provider credentials.
+   * Legacy callers may omit this flag while they are migrated.
+   */
+  allowEnvironmentFallback?: boolean;
 }
 
 function resolveSmsGatewayConfig(config?: SmsGatewayConfig) {
+  const allowEnvironmentFallback = config?.allowEnvironmentFallback !== false;
   return {
-    url: config?.url?.trim() || process.env.SMS_GATEWAY_URL?.trim(),
-    username: config?.username?.trim() || process.env.SMS_GATEWAY_USERNAME?.trim(),
-    password: config?.password?.trim() || process.env.SMS_GATEWAY_PASSWORD?.trim(),
-    simNumber: config?.simNumber ?? Number(process.env.SMS_GATEWAY_SIM_NUMBER || "1"),
+    url: config?.url?.trim() || (allowEnvironmentFallback ? process.env.SMS_GATEWAY_URL?.trim() : undefined),
+    username: config?.username?.trim() || (allowEnvironmentFallback ? process.env.SMS_GATEWAY_USERNAME?.trim() : undefined),
+    password: config?.password?.trim() || (allowEnvironmentFallback ? process.env.SMS_GATEWAY_PASSWORD?.trim() : undefined),
+    simNumber: config?.simNumber ?? (allowEnvironmentFallback ? Number(process.env.SMS_GATEWAY_SIM_NUMBER || "1") : undefined),
   };
 }
 
