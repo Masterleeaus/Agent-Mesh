@@ -71,3 +71,17 @@ Relevant findings:
 Workspace and issue claim baseline.
 Notes:
 Baseline used for specialist claim branch #763. Subsequent main changes must be considered before any future issue claim.
+
+
+---
+
+## SOURCE-LIB-001
+
+Type: Library master / direct source inspection
+Artifact: Titan Interaction Engine Master v10.12.0.zip
+Library path: /MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip
+Library file id: file_00000000602c81f58f5568b07af14d5f
+Recorded SHA-256: 481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219
+Verification: materialized and source-inspected during #763 archaeology
+Relevant paths: System/Cognition/Events/*; System/Cognition/Decision/DecisionRecorder.php; System/Cognition/Outcome/*; System/LocalIntelligence/Memory/BehavioralMemory.php; System/LocalIntelligence/Persona/BehavioralDriftTracker.php; System/Engines/Learning/Implementations/BehaviourLearningEngine.php; System/Engines/Learning/Implementations/PreferenceLearningEngine.php; System/LocalIntelligence/LocalBrain.php
+Supports: FINDING-GH-022 through FINDING-GH-026
