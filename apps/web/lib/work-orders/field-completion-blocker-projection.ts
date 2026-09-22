@@ -88,13 +88,13 @@ export async function syncInspectionCompletionBlockers(
   // Keep history in field_permit_inspections, but only the current inspection may
   // contribute an inspection blocker to canonical work-order completion.
   await client.query(
-    `UPDATE field_completion_blockers b
+    `UPDATE field_completion_blockers
         SET blocking=FALSE,resolved_at=COALESCE(resolved_at,CURRENT_TIMESTAMP),updated_at=CURRENT_TIMESTAMP
-      WHERE b.company_id=$1 AND b.account_id=$2 AND b.work_order_id=$3
-        AND b.source_type='inspection' AND b.source_id<>$4 AND b.blocking=TRUE
+      WHERE company_id=$1 AND account_id=$2 AND work_order_id=$3
+        AND source_type='inspection' AND source_id<>$4 AND blocking=TRUE
         AND EXISTS (
           SELECT 1 FROM field_permit_inspections i
-          WHERE i.id=b.source_id AND i.permit_id=$5 AND i.company_id=$1
+          WHERE i.id=field_completion_blockers.source_id AND i.permit_id=$5 AND i.company_id=$1
             AND i.account_id=$2 AND i.work_order_id=$3
         )`,
     [inspection.company_id,accountId,inspection.work_order_id,inspection.inspection_id,inspection.permit_id],
