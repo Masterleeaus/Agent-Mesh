@@ -345,3 +345,11 @@ Audited the canonical surface projection copy used by authenticated Command and 
 Replaced those greetings/suggestions with neutral capability-oriented copy that makes no business-state assertion. Added regression coverage preventing the canonical presentation from reintroducing the known demo names/job/health/decision claims.
 
 This removes another prototype-data leak without creating a second authenticated presentation model. Tests are committed but not execution-verified in this connector-only pass.
+
+## Pass 27 — fail-closed Hub installability
+
+Re-audited the PWA identities against actual authenticated routes. Go has a real authenticated `/app/go` route and can safely expose an install manifest. Hub still has no customer-auth boundary or `/hub` entry route, yet Pass 20 had introduced a Hub manifest whose `start_url` pointed at that nonexistent route.
+
+Removed the premature Hub manifest instead of fabricating a customer route/auth model. Updated base-manifest documentation to state that only authenticated/live install identities are exposed: Go is provisionable now; Hub remains reserved until its customer boundary exists.
+
+This corrects the earlier Pass 20 placeholder and keeps Hub fail-closed rather than advertising a broken install target.
