@@ -14,12 +14,31 @@ export type SendSmsResult =
   | { ok: true; messageId: string; raw?: unknown }
   | { ok: false; error: string; status?: number };
 
-export function isSmsGatewayConfigured(): boolean {
-  return Boolean(
-    process.env.SMS_GATEWAY_URL?.trim() &&
-      process.env.SMS_GATEWAY_USERNAME?.trim() &&
-      process.env.SMS_GATEWAY_PASSWORD?.trim()
-  );
+export interface SmsGatewayConfig {
+  url?: string;
+  username?: string;
+  password?: string;
+  simNumber?: number;
+  /**
+   * Tenant-scoped sends must not inherit deployment-global provider credentials.
+   * Legacy callers may omit this flag while they are migrated.
+   */
+  allowEnvironmentFallback?: boolean;
+}
+
+function resolveSmsGatewayConfig(config?: SmsGatewayConfig) {
+  const allowEnvironmentFallback = config?.allowEnvironmentFallback !== false;
+  return {
+    url: config?.url?.trim() || (allowEnvironmentFallback ? process.env.SMS_GATEWAY_URL?.trim() : undefined),
+    username: config?.username?.trim() || (allowEnvironmentFallback ? process.env.SMS_GATEWAY_USERNAME?.trim() : undefined),
+    password: config?.password?.trim() || (allowEnvironmentFallback ? process.env.SMS_GATEWAY_PASSWORD?.trim() : undefined),
+    simNumber: config?.simNumber ?? (allowEnvironmentFallback ? Number(process.env.SMS_GATEWAY_SIM_NUMBER || "1") : undefined),
+  };
+}
+
+export function isSmsGatewayConfigured(config?: SmsGatewayConfig): boolean {
+  const resolved = resolveSmsGatewayConfig(config);
+  return Boolean(resolved.url && resolved.username && resolved.password);
 }
 
 export async function sendSmsViaGateway(opts: {
@@ -27,11 +46,9 @@ export async function sendSmsViaGateway(opts: {
   message: string;
   /** Optional idempotency / correlation id */
   id?: string;
+  config?: SmsGatewayConfig;
 }): Promise<SendSmsResult> {
-  const url = process.env.SMS_GATEWAY_URL?.trim();
-  const username = process.env.SMS_GATEWAY_USERNAME?.trim();
-  const password = process.env.SMS_GATEWAY_PASSWORD?.trim();
-  const simNumber = Number(process.env.SMS_GATEWAY_SIM_NUMBER || "1");
+  const { url, username, password, simNumber } = resolveSmsGatewayConfig(opts.config);
 
   if (!url || !username || !password) {
     return {

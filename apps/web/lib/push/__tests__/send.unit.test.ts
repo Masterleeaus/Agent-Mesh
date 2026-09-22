@@ -15,6 +15,38 @@ const clientQuery = vi.fn(async (sql: string, params?: unknown[]) => {
     return { rows: [] };
   }
   return { rows: [] };
+  it("projects governed sends into canonical receipts and enforces company scope", async () => {
+    sendNotification.mockResolvedValue(undefined);
+    const result = await sendGovernedPushToUsers(
+      "acct-1",
+      ["u1"],
+      { title: "Hi" },
+      {
+        id: "msg-1",
+        company_id: "acct-1",
+        conversation_id: "conv-1",
+        correlation_id: "corr-1",
+      },
+    );
+    expect(result.sent).toBe(2);
+    expect(result.receipt.company_id).toBe("acct-1");
+    expect(result.receipt.channel).toBe("push");
+    expect(result.receipt.state).toBe("sent");
+
+    await expect(
+      sendGovernedPushToUsers(
+        "acct-1",
+        ["u1"],
+        { title: "Hi" },
+        {
+          id: "msg-2",
+          company_id: "acct-2",
+          conversation_id: "conv-2",
+          correlation_id: "corr-2",
+        },
+      ),
+    ).rejects.toThrow(/company_id/);
+  });
 });
 const release = vi.fn();
 
@@ -34,7 +66,7 @@ vi.mock("@/lib/push/vapid", () => ({
   isPushConfigured: () => true,
 }));
 
-import { sendPushToUsers } from "@/lib/push/send";
+import { sendGovernedPushToUsers, sendPushToUsers } from "@/lib/push/send";
 
 describe("sendPushToUsers", () => {
   beforeEach(() => {

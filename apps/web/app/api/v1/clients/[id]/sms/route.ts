@@ -7,6 +7,7 @@ import { logger } from "@/lib/logger";
 import { normalizePhone } from "@/lib/phone";
 import { isSmsGatewayConfigured, sendSmsViaGateway } from "@/lib/sms/gateway";
 import { resolveTenantSmsSettings } from "@/lib/sms/settings";
+import { evaluateOutboundCommunicationPolicy, isCommunicationQuietHour } from "@/lib/communications/contracts";
 import {
   findActiveJobForClient,
   logOutboundSms,
@@ -46,7 +47,13 @@ export const POST = withRole(
         { status: 403 }
       );
     }
-    const gatewayConfig = { simNumber: smsSettings.simNumber };
+    const gatewayConfig = {
+      url: smsSettings.gatewayUrl,
+      username: smsSettings.gatewayUsername,
+      password: smsSettings.gatewayPassword,
+      simNumber: smsSettings.simNumber,
+      allowEnvironmentFallback: false,
+    };
     if (!isSmsGatewayConfigured(gatewayConfig)) {
       return NextResponse.json(
         {
@@ -99,13 +106,66 @@ export const POST = withRole(
         { status: 404 }
       );
     }
-    if (!client.sms_consent) {
+    let quietHours = false;
+    if (smsSettings.quietHours) {
+      if (!smsSettings.quietHoursTimeZone) {
+        return NextResponse.json(
+          {
+            error: {
+              code: "SMS_POLICY_CONFIGURATION_ERROR",
+              message: "SMS quiet hours require sms_quiet_hours_timezone.",
+              traceId: session.traceId,
+            },
+          },
+          { status: 503 }
+        );
+      }
+      let recipientLocalHour: number;
+      try {
+        const hourPart = new Intl.DateTimeFormat("en-AU", {
+          timeZone: smsSettings.quietHoursTimeZone,
+          hour: "2-digit",
+          hourCycle: "h23",
+        }).formatToParts(new Date()).find((part) => part.type === "hour")?.value;
+        recipientLocalHour = Number(hourPart);
+        if (!Number.isInteger(recipientLocalHour)) throw new Error("missing local hour");
+      } catch {
+        return NextResponse.json(
+          {
+            error: {
+              code: "SMS_POLICY_CONFIGURATION_ERROR",
+              message: "SMS quiet-hours timezone is invalid.",
+              traceId: session.traceId,
+            },
+          },
+          { status: 503 }
+        );
+      }
+      quietHours = isCommunicationQuietHour(recipientLocalHour, {
+        start_hour: smsSettings.quietHours.startHour,
+        end_hour: smsSettings.quietHours.endHour,
+      });
+    }
+    const outboundPolicy = evaluateOutboundCommunicationPolicy({
+      consent: client.sms_consent ? "granted" : "denied",
+      opted_out: !client.sms_consent,
+      quiet_hours: quietHours,
+      channel_allowed: smsSettings.enabled,
+      privacy_allowed: true,
+      funding_allowed: true,
+      // This route is already bounded by withRole(["owner", "admin"]).
+      authority_allowed: true,
+    });
+    if (!outboundPolicy.allowed) {
       return NextResponse.json(
         {
           error: {
-            code: "SMS_OPTED_OUT",
+            code: "SMS_POLICY_DENIED",
+            reason: outboundPolicy.reason,
             message:
-              "This client has not consented to SMS (or opted out via STOP). Use phone/email, or ask them to reply START / re-opt in on booking.",
+              outboundPolicy.reason === "opted-out"
+                ? "This client has not consented to SMS (or opted out via STOP). Use phone/email, or ask them to reply START / re-opt in on booking."
+                : "Outbound SMS is not permitted by the current communications policy.",
             traceId: session.traceId,
           },
         },
