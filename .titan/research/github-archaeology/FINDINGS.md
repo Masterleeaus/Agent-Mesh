@@ -720,3 +720,104 @@ HIGH
 
 ### Recovery judgment
 Treat as a narrow operational donor for workforce credential/compliance evidence, not as a governance authority. Any adoption must add canonical `company_id` isolation and current evidence/provenance/authority contracts.
+
+
+---
+
+## FINDING-GH-023
+
+### Finding
+Historical `TitanPro` contains a detailed canonical Unified Inbox design that preserves one cross-channel operational thread while retaining source-channel truth.
+
+### Evidence
+Repository: `Masterleeaus/TitanPro`
+Branch: `main`
+Path: `docs/09-communications/Titan_Unified_Inbox.md`
+SHA: `02546d5021ce302043901c4f22a020dead3996b3`
+
+Recovered semantics include:
+- `company_id` scoped canonical thread/message models;
+- participant identity resolution across customer email/SMS/WhatsApp;
+- human, team, AI-triage and approval queues;
+- workflow-aware waiting/approval/resolved states;
+- AI drafts/suggestions that cannot bypass permissions or approval;
+- SLA timers, audit records and Signal events;
+- channel engines retain send ownership while inbox owns operator conversation operations.
+
+### Current Titan equivalent
+#234 canonical provider-neutral Communications & Channels runtime; #240 certification.
+
+### Classification
+HISTORICAL / SPECIFICATION / STRONG SEMANTIC DONOR
+
+### Confidence
+HIGH
+
+### Recovery judgment
+No separate inbox engine. Compare thread state, assignment/SLA, source-fidelity and audit semantics against #234.
+
+---
+
+## FINDING-GH-024
+
+### Finding
+Historical Titan communications architecture already specified purpose-separated consent, policy-driven channel selection, delivery receipts, idempotency, dead-letter handling and provider fallback.
+
+### Evidence
+Repository: `Masterleeaus/TitanPro`
+Branch: `main`
+Path: `docs/01-PWA/21-communications-voice-and-consent-architecture.md`
+SHA: `58cac4abb9c3fa76497f6ab626468a3698b8e809`
+Corroborating Worksuite document: `TitanDocs/docs/09-communications/Titan_Communications_Orchestration_and_Fallback_Model.md`.
+
+Important semantics:
+- separate operational vs marketing consent states;
+- consent states unknown/granted/denied/revoked/pending/provider-suppressed;
+- policy inputs include customer preference, consent, urgency, cost ceiling, time windows and failure fallback;
+- AI may draft/classify/summarize but cannot silently send;
+- queue-first delivery, retry, idempotency, dead-letter queue, duplicate suppression, receipt reconciliation and provider health;
+- voice session state remains distinct from stateless speech-provider execution.
+
+### Current Titan equivalent
+#234/#240 already cover consent, opt-out, quiet hours, provider-neutral routing, voice seams, receipts, retry/dedupe/fallback and Cost Sovereignty.
+
+### Classification
+HISTORICAL / SPECIFICATION / CURRENTLY CONVERGING
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Support #234; do not revive old app ownership names as parallel runtime boundaries.
+
+---
+
+## FINDING-GH-025
+
+### Finding
+Historical Titan product architecture contains a customer-continuity capability cluster that is broader than ordinary messaging: intent-to-work routing, complaint/warranty recovery, cross-channel conversation continuity, pre-dispatch readiness, satisfaction prediction and recovery workflow triggering.
+
+### Evidence
+Repository: `Masterleeaus/TitanPro`
+Branch: `main`
+Path: `resources/reference/titan/titan_bos_expanded_script.md`
+SHA: `7260a681ac7d9d3a498883bb4729f60743db9d3e`
+
+Examples:
+- intent detection for quote, urgent service, repeat booking, complaint recovery and warranty claims;
+- conversation continuation across SMS → email → portal → voice;
+- pre-dispatch access/pet/electricity/handover readiness;
+- satisfaction prediction intended to trigger recovery workflows;
+- evidence delivery streams and expectation alignment for relationship continuity.
+
+### Current Titan equivalent
+Communications mechanics map to #234. The broader customer relationship/recovery semantics do not yet have a dedicated open issue located in this pass.
+
+### Classification
+HISTORICAL / PRODUCT SPECIFICATION / POSSIBLE PARTIAL GAP
+
+### Confidence
+HIGH that the capability was specified; LOW-MEDIUM on implementation status.
+
+### Recovery judgment
+Do not create an issue yet. Next archaeology should search current Interaction, Hub/customer, Workflow, Workforce and Business Memory owners for semantic equivalence before declaring a lost capability.
