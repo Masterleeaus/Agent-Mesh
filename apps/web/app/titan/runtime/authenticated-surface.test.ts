@@ -42,3 +42,8 @@ test("session role cannot self-select another canonical surface", () => {
     /session-surface-not-authorised/,
   );
 });
+
+
+test("Hub cannot be derived from a staff authentication session", () => {
+  assert.throws(() => createAuthenticatedHubSurfaceProjection(), /hub-requires-customer-auth-boundary/);
+});
