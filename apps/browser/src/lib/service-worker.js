@@ -1943,11 +1943,17 @@ async function fetchLiveManagerAISnapshot(){
     checkpointAgentMeshContinuation(normalized,'live-snapshot').catch(()=>{});
     return {ok:true,source:'live',snapshot:normalized,health:normalized.health,capabilities:normalized.capabilities};
 }
+const AGENT_MESH_MUTATION_POLICY=Object.freeze({
+    'agent_mesh.recover_agent':'resume-gated',
+    'agent_mesh.route_packet':'resume-gated',
+    'agent_mesh.continuation.checkpoint':'continuity-record-only',
+    'agent_mesh.continuation.takeover':'resume-gated'
+});
 async function callAgentMeshMutation(config,action,payload,snapshot){
-    const allowed=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover']);
+    const allowed=new Set(Object.keys(AGENT_MESH_MUTATION_POLICY));
     if(!allowed.has(action)) return {ok:false,reason:'agent-mesh-mutation-not-allowlisted',mayMutate:false};
     if(!snapshot||typeof snapshot!=='object') return {ok:false,reason:'agent-mesh-snapshot-required',mayMutate:false};
-    const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover']).has(action);
+    const requiresGate=AGENT_MESH_MUTATION_POLICY[action]==='resume-gated';
     const gate=requiresGate?await preflightAgentMeshWorkMutation(snapshot,action):{ok:true,mayMutate:true,bootstrap:null};
     if(!gate.ok||gate.mayMutate!==true)return {ok:false,reason:'resume-reconciliation-required',mayMutate:false,bootstrap:gate.bootstrap||null};
     const gatedPayload=gate.bootstrap?{...payload,resume_gate:gate.bootstrap}:payload;
