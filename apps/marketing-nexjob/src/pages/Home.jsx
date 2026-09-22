@@ -13,10 +13,10 @@ const heroProofs = [
 ]
 
 const heroStats = [
-  { num: 'Revenue', label: 'Create & recover' },
-  { num: 'Cost', label: 'Reduce waste' },
-  { num: 'Time', label: 'Return to the team' },
-  { num: 'Cash', label: 'Accelerate collection' },
+  { num: '5–10%', label: 'Estimated revenue opportunity' },
+  { num: '3–5%', label: 'Estimated cost opportunity' },
+  { num: '4–6%', label: 'Estimated time-value opportunity' },
+  { num: '2–4%', label: 'Estimated cash-flow opportunity' },
 ]
 
 const trades = ['🧹 Cleaning', '🌿 Landscaping', '🏊 Pool Service', '💦 Pressure Washing', '🐛 Pest Control', '🪟 Window Cleaning', '🏠 Property Maintenance', '🚐 Mobile Services']
@@ -86,7 +86,7 @@ export default function Home() {
           </h1>
 
           <p className="text-lg text-nx-muted max-w-xl mx-auto mb-10 leading-relaxed">
-            Titan Zero combines a managed Advanced Intelligence workforce, software gap filling, resource optimisation and measurement around the systems you already use. We track value across revenue, cost, time, cash and resources — without requiring the owner to become an AI expert.
+            Titan Zero combines a managed Advanced Intelligence workforce, software gap filling, resource optimisation and measurement around the systems you already use. Our initial opportunity model targets an estimated 14–25% of annual revenue-equivalent value across revenue, cost, time, cash and resources. Your actual baseline and measured results determine the real opportunity.
           </p>
 
           <div className="flex justify-center gap-4 flex-wrap mb-8">
@@ -122,7 +122,12 @@ export default function Home() {
           <div className="text-center mb-10">
             <SectionLabel>Measured Value</SectionLabel>
             <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight">Five places Titan Zero looks for value.</h2>
-            <p className="text-nx-muted text-lg max-w-3xl mx-auto mt-3">The discovery process establishes a baseline first. Titan Zero then measures actual customer results rather than presenting generic percentages as guaranteed outcomes.</p>
+            <p className="text-nx-muted text-lg max-w-3xl mx-auto mt-3">These are planning ranges used to identify potential opportunity, not guaranteed savings or returns. Discovery establishes the customer baseline; Titan Zero then measures actual results against it.</p>
+          </div>
+          <div className="mb-7 bg-nx-surface border border-nx-border rounded-2xl p-6 text-center">
+            <div className="text-4xl sm:text-5xl font-black gradient-text">14–25%</div>
+            <p className="font-semibold mt-2">estimated annual revenue-equivalent opportunity</p>
+            <p className="text-xs text-nx-muted mt-2 max-w-2xl mx-auto">Planning estimate across revenue creation, cost reduction, recovered time and accelerated cash. Resource and environmental improvements are measured separately where practical to avoid double counting.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
             {[
