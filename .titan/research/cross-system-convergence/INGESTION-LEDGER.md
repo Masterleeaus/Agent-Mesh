@@ -287,3 +287,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-037 | #768 implementation slice 5 | issue #768 update + Personal Zero Learning Governor bridge | bridge blob b4dd6d4157d69797840578804b2409a0da5e12ee; index blob c572901d92dabd11a29287ddf518b79b6c0f02be; commits 720e225,24df60a,4cf4a96 | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Correction, Brier-error and verified-outcome learning now converge on proposal-only Learning Governor semantics with explicit authority/execution denial. | YES |
+
+
+| INGEST-038 | #768 implementation slice 6 | issue #768 update + Personal Zero state service | state-service blob 82b470c958194bac7f82742c1c79d81a3595dc87; commits 1558b64,2769a6f | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Correction, prediction-error and verified-outcome learning proposals are now persisted as relationship-scoped pending_review records after authority-neutral assertion. Revocation suppresses proposal access/new governed proposal creation. | YES |
