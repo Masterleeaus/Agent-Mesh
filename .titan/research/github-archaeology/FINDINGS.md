@@ -2999,3 +2999,78 @@ CONVERGENCE PATH IDENTIFIED / NO PARALLEL DISCOVERY ENGINE
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-117
+
+### Finding
+Current roadmap ownership for governed mutation/recovery is already well consolidated. #14 owns resumable governed execution, retry/compensation and the specific Workforce gateway → canonical Command Bus correction; #293 owns shared reliability/recovery/self-healing; #300 certifies it; #560 certifies the full chat→workforce→authority→Command Bus→mutation→Signal→Rewind path.
+
+### Classification
+CANONICAL OWNERSHIP EXISTS / NO NEW COMMAND BUS OR REWIND OWNER
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-118
+
+### Finding
+A separate current browser-agent runtime contains a high-quality **unknown-outcome action recovery pattern** that should be treated as a semantic donor for canonical mutation recovery, not as the business Command Bus/Rewind implementation.
+
+### Direct evidence
+`apps/browser/src/browser/agent-runtime/orchestration/action-journal.js` SHA `89602043...` implements a storage-backed write-ahead intent journal:
+- persist “dispatched” intent before side effect;
+- clear only after result is persisted;
+- if worker dies with pending intent, outcome is UNKNOWN;
+- recovery MUST NOT blindly replay;
+- re-perceive current state first;
+- explicit abandon only after recovery establishes a fresh state boundary.
+
+`resume-planner.js` SHA `d3eb25ce...` prioritizes unknown-outcome intents and chooses re-perception over replay, while distinguishing interrupted thinking and pending user questions.
+
+### Classification
+CURRENT DONOR / RECOVER SEMANTIC INTO #14/#293 WHERE APPLICABLE
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-119
+
+### Finding
+The browser recovery planner itself is **not Rewind**. `recovery.js` SHA `d9b355e...` is an LLM one-shot replan/abort mechanism for stuck browser automation. It may improve agent continuity, but it does not compensate committed business mutations or restore business state.
+
+### Architecture rule
+Keep three recovery concerns distinct:
+1. orchestration recovery/replanning after a stuck reasoning loop;
+2. unknown-outcome mutation recovery after interruption;
+3. business Rewind/compensation/restore after known committed changes.
+
+Conflating these would allow an AI replan mechanism to masquerade as authoritative business recovery.
+
+### Classification
+BOUNDARY CLARIFICATION / DO NOT PROMOTE BROWSER REPLAN TO REWIND
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-120
+
+### Finding
+The strongest reusable current recovery invariant is **“unknown outcome is not failure and not success.”** When a mutation may have reached an external system but the receipt was lost, replay is unsafe until current truth is re-established.
+
+### Convergence implication
+Canonical #14/#293 recovery should represent UNKNOWN/INDETERMINATE outcomes explicitly and require reconciliation/re-perception/provider lookup before retry. Only after reconciliation may the system mark completed, retry idempotently, compensate, escalate or abandon. Authority and company scope must be revalidated at that recovery boundary.
+
+### Classification
+RECOVER/HARDEN INVARIANT
+
+### Confidence
+VERY HIGH
