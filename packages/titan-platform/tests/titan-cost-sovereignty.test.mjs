@@ -13,6 +13,7 @@ test("cost sovereignty keeps inference local when local-only policy is set",()=>
 test("Titan-managed inference requires entitlement or explicit metered opt-in",()=>{
   assert.equal(decideInferenceRoute({company_id:"c1",allowed_routes:["titan-managed"],titan_managed_entitled:true}).escalation_required,false);
   assert.equal(decideInferenceRoute({company_id:"c1",allowed_routes:["titan-managed"],titan_metered_opt_in:true}).escalation_required,false);
+  assert.equal(decideInferenceRoute({company_id:"c1",allowed_routes:["titan-managed"],titan_metered_opt_in:false}).escalation_required,true);
   const d=decideInferenceRoute({company_id:"c1",allowed_routes:["titan-managed"]});
   assert.equal(d.escalation_reason,"titan-service-not-entitled");
   assert.equal(d.titan_funded_fallback,false);
