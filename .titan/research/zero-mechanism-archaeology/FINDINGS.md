@@ -2280,3 +2280,124 @@ TARGET OPERATION LIFECYCLE
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-104
+
+### Finding
+Physical and environmental inputs are evidence sources, not authority sources. Vision, maps/location, sensors, field observations, measurements and equipment context may update Reality candidates, Zero context and Decision evidence, but none may directly authorize consequential action.
+
+### Classification
+PHYSICAL-INTELLIGENCE INVARIANT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-105
+
+### Finding
+Titan Vision's field-service donor semantics correctly separate visible observation from inference: it may identify visible job evidence, damage/cleanliness/progress/equipment cues and missing views, but must not infer hidden defects, electrical/structural safety, contamination, code compliance or equipment functionality from appearance alone.
+
+### Classification
+IMPLEMENTED/DONOR SAFETY SEMANTIC
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-106
+
+### Finding
+Field evidence should preserve evidence type and provenance explicitly: observation, measurement, customer/person statement, sensor reading, map/location datum, image-derived inference and model inference must remain distinguishable. This prevents an inference from being promoted as a measured physical fact.
+
+### Classification
+EVIDENCE INTEGRITY REQUIREMENT
+
+### Confidence
+HIGH
+
+### Related action
+#633; #767; #768.
+
+---
+
+## FINDING-GH-107
+
+### Finding
+Physical/environmental observations should enter the same promotion boundary established for other Zero/Reality evidence: source/provenance → privacy/consent → freshness/integrity → candidate Reality/understanding → contradiction/verification → accepted/superseded state. Safety-critical observations require stronger evidence/assurance rather than faster automatic promotion.
+
+### Classification
+REALITY / ZERO CONVERGENCE RULE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-108
+
+### Finding
+Environmental intelligence is a cross-domain decision dimension, not a separate tenant/business platform. Environmental risk, compliance obligations, waste/water/energy/material/chemical use, remediation and environmental opportunities should feed shared Reality, Risk, Decision and Workforce contracts alongside financial, operational and physical-safety consequences.
+
+### Classification
+ENVIRONMENTAL ARCHITECTURE RULE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-109
+
+### Finding
+Location is sensitive contextual evidence. A map/location capability should expose purpose-minimised location/route/site context to the requesting workflow, not make continuous location globally available to Personal Zero or Workforce. Observation/retention/learning/egress permissions remain separate.
+
+### Classification
+PRIVACY / LOCATION REQUIREMENT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-110
+
+### Finding
+Equipment identification and condition assessment must distinguish identity/visible condition from functional or safety certification. Vision may suggest likely equipment identity or visible damage, but operational status, isolation, calibration, contamination or safety fitness require appropriate evidence/tests/authorised determination.
+
+### Classification
+PHYSICAL SAFETY REQUIREMENT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-111
+
+### Finding
+A safe physical-world decision flow is: **capture evidence → classify source/type/confidence → bind site/job/time/operation identity → update candidate Reality → assess physical/environmental risk → Decision/Assurance → current authority → Command Bus/workflow → human/worker/physical action → completion evidence/outcome**. Image/sensor confidence never shortcuts this chain.
+
+### Classification
+TARGET PHYSICAL EXECUTION SPINE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-112
+
+### Finding
+T0GM environmental/physical-safety oversight must consume governed cross-company signals only within explicit Titan/client authorization and must not weaken `company_id` isolation. Oversight is not a backdoor global business-data authority.
+
+### Classification
+OVERSIGHT / ISOLATION INVARIANT
+
+### Confidence
+HIGH
