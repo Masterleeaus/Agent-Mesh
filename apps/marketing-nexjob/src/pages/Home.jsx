@@ -6,28 +6,28 @@ import CTASection from '../components/CTASection'
 import { appRoutes } from '../config'
 
 const heroProofs = [
-  '75+ features included',
-  'AI at every tier',
-  'Set up in under 5 minutes',
-  'No credit card required',
+  'Works with the systems you already use',
+  'Managed workforce, not another dashboard to learn',
+  'Human authority for consequential actions',
+  'Built for field-service operations',
 ]
 
 const heroStats = [
-  { num: '75+', label: 'Features' },
-  { num: '$0', label: 'Setup fee' },
-  { num: '14 days', label: 'Free trial' },
-  { num: '20+', label: 'AI Agents Built In' },
+  { num: 'Lead', label: 'Capture & qualify' },
+  { num: 'Book', label: 'Schedule work' },
+  { num: 'Serve', label: 'Support the field' },
+  { num: 'Retain', label: 'Follow up & grow' },
 ]
 
-const trades = ['\u2744\ufe0f HVAC', '\ud83d\udd28 Handyman', '\u26a1 Electrical', '\ud83d\udebf Plumbing', '\ud83c\udf3f Landscaping', '\ud83e\uddf9 Cleaning', '\ud83c\udfd7\ufe0f Roofing', '\ud83c\udfa8 Painting']
+const trades = ['🧹 Cleaning', '🌿 Landscaping', '🏊 Pool Service', '💦 Pressure Washing', '🐛 Pest Control', '🪟 Window Cleaning', '🏠 Property Maintenance', '🚐 Mobile Services']
 
 const integrations = [
-  { name: 'QuickBooks', icon: '📗' },
-  { name: 'Stripe', icon: '💳' },
-  { name: 'Google Calendar', icon: '📅' },
-  { name: 'Twilio', icon: '📱' },
-  { name: 'Zapier', icon: '⚡' },
-  { name: 'Gmail', icon: '📧' },
+  { name: 'Your CRM', icon: '👥' },
+  { name: 'Your Calendar', icon: '📅' },
+  { name: 'Your Phone', icon: '📞' },
+  { name: 'Your Accounting', icon: '📗' },
+  { name: 'Your Messaging', icon: '💬' },
+  { name: 'Your Existing Apps', icon: '🔌' },
 ]
 
 const features = [
@@ -56,26 +56,13 @@ const aiFeatures = [
 ]
 
 const stats = [
-  { num: '3.2hrs', label: 'Average time saved per day' },
-  { num: '47%', label: 'Faster estimate-to-close' },
-  { num: '$15k', label: 'Avg annual fuel savings' },
-  { num: '99.9%', label: 'Uptime guarantee' },
+  { num: '24/7', label: 'Workforce availability where configured' },
+  { num: '1', label: 'Conversation-first operating surface' },
+  { num: '5', label: 'Core operating stages connected' },
+  { num: '0', label: 'Forced rip-and-replace migrations' },
 ]
 
-const testimonials = [
-  {
-    text: '"Before NexJob, I was running my HVAC business off a clipboard and three group chats. Now my techs get dispatched automatically, customers pay from a text before I even get back to the truck, and I actually know which jobs are making me money."',
-    initials: 'T', name: 'Todd', role: 'Owner, TLT HVAC \u00b7 Ohio',
-  },
-  {
-    text: '"We switched from Jobber to NexJob and saved over two grand a year \u2014 but honestly the AI is what sold me. I can take a photo of a roof, get a quote drafted in seconds, and send it to the homeowner before I\'m off the ladder."',
-    initials: 'N', name: 'Nick', role: 'Owner, CRCS Roofing \u00b7 Florida',
-  },
-  {
-    text: '"I\'m a one-man shop and NexJob makes me look like I have an office staff. The AI answers my texts after hours, books jobs onto my calendar, and sends invoices with a pay link the second I mark the job done."',
-    initials: 'D', name: 'Dan', role: 'Owner, Pipe Dreams Plumbing \u00b7 Kentucky',
-  },
-]
+const testimonials = []
 
 export default function Home() {
   return (
@@ -90,24 +77,24 @@ export default function Home() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 text-xs font-semibold text-nx-purple-light bg-purple-500/10 border border-purple-500/20 px-4 py-1.5 rounded-full mb-6">
             <span className="w-1.5 h-1.5 bg-nx-green rounded-full animate-pulse-dot" />
-            20+ AI Agents Included at Every Tier
+            Managed Advanced Intelligence Workforce
           </div>
 
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-            Run Your Entire<br />
-            Field Service on <span className="gradient-text">Autopilot</span>
+            Run field service with<br />
+            <span className="gradient-text">a team behind you.</span>
           </h1>
 
           <p className="text-lg text-nx-muted max-w-xl mx-auto mb-10 leading-relaxed">
-            AI-powered scheduling, dispatching, invoicing, and client management &mdash; built for trade pros who want to grow without the growing pains. Starting at $29/mo.
+            Titan Zero adds a managed Advanced Intelligence workforce to the systems you already use — helping handle enquiries, bookings, scheduling, customer communication, field coordination, follow-up, and operational admin.
           </p>
 
           <div className="flex justify-center gap-4 flex-wrap mb-8">
-            <ButtonPrimary size="lg" href={appRoutes.signup}>Start Free &mdash; 14 Days &rarr;</ButtonPrimary>
-            <ButtonOutline size="lg" href="https://cal.com/steve-guilkey-9ooniv/15min">Book a Demo</ButtonOutline>
+            <ButtonPrimary size="lg" href={appRoutes.signup}>Sign Up &rarr;</ButtonPrimary>
+            <ButtonOutline size="lg" href={appRoutes.login}>Login</ButtonOutline>
           </div>
 
-          <p className="text-xs text-nx-muted2 mb-8">No credit card &middot; All features unlocked &middot; Cancel anytime</p>
+          <p className="text-xs text-nx-muted2 mb-8">Chat &middot; Voice &middot; Camera &middot; Existing-system integration</p>
 
           {/* Inline Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-xl mx-auto mb-8">
@@ -145,7 +132,7 @@ export default function Home() {
             ))}
           </div>
           <p className="text-center text-xs font-medium text-nx-muted2 uppercase tracking-widest mt-8 mb-4">
-            Built for every trade
+            Field Services industries
           </p>
           <div className="flex justify-center items-center flex-wrap gap-8 opacity-50">
             {trades.map((t) => (
@@ -160,7 +147,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <SectionLabel>Features</SectionLabel>
           <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3 leading-tight">
-            Everything to run your<br />service business
+            One operating flow.<br />Less work falling between systems.
           </h2>
           <p className="text-nx-muted text-lg max-w-xl leading-relaxed">
             From the first quote to the final invoice \u2014 and every job, route, and payment in between.
@@ -188,13 +175,13 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: Content */}
           <div>
-            <SectionLabel>AI Engine</SectionLabel>
+            <SectionLabel>Managed Workforce</SectionLabel>
             <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3 leading-tight">
-              Your business runs itself.<br />
-              <span className="text-nx-purple-light">AI handles the rest.</span>
+              Your systems stay.<br />
+              <span className="text-nx-purple-light">Titan Zero fills the gaps.</span>
             </h2>
             <p className="text-nx-muted text-lg max-w-lg leading-relaxed mb-8">
-              NexJob's AI engine doesn't just make suggestions \u2014 it takes action. Smart dispatching, predictive scheduling, and automated follow-ups that work 24/7.
+              Titan Zero is designed to coordinate specialised workforce capabilities across your business while keeping authority, governance, and review boundaries explicit.
             </p>
             <div className="space-y-4">
               {aiFeatures.map((f) => (
@@ -248,7 +235,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
             <SectionLabel>Testimonials</SectionLabel>
-            <h2 className="text-4xl font-extrabold tracking-tight">Service pros love NexJob</h2>
+            <h2 className="text-4xl font-extrabold tracking-tight">Built around real field-service operations</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-12">
             {testimonials.map((t) => (
