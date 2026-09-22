@@ -3,6 +3,21 @@ import { getDatabaseDialect } from "@/lib/db";
 import { portableQuery, portableQueryOne } from "@/lib/db/portable";
 import type { DeliveryReceipt } from "@/lib/communications/contracts";
 
+export interface CanonicalLogCommunicationOpts {
+  company_id: string;
+  channel: "sms" | "email" | "phone";
+  direction: "outbound" | "inbound";
+  outcome: "sent" | "delivered" | "failed" | "no_answer" | "left_voicemail" | "replied" | "received";
+  clientId?: string | null;
+  bookingRequestId?: string | null;
+  jobId?: string | null;
+  visitId?: string | null;
+  bodyPreview?: string | null;
+  initiatedBy?: string | null;
+  externalId?: string | null;
+}
+
+/** Legacy input adapter only; accountId is normalized immediately to company_id. */
 export interface LogCommunicationOpts {
   accountId: string;
   channel: "sms" | "email" | "phone";
@@ -23,7 +38,30 @@ export interface LogCommunicationOpts {
  * callers link a communication to a job/visit later without database-specific
  * insert-result syntax.
  */
+export async function logCommunicationForCompany(
+  opts: CanonicalLogCommunicationOpts,
+): Promise<string | null> {
+  if (!opts.company_id.trim()) throw new Error("company_id is required");
+  return logCommunicationStorage({ ...opts, accountId: opts.company_id });
+}
+
 export async function logCommunication(opts: LogCommunicationOpts): Promise<string | null> {
+  return logCommunicationForCompany({
+    company_id: opts.accountId,
+    channel: opts.channel,
+    direction: opts.direction,
+    outcome: opts.outcome,
+    clientId: opts.clientId,
+    bookingRequestId: opts.bookingRequestId,
+    jobId: opts.jobId,
+    visitId: opts.visitId,
+    bodyPreview: opts.bodyPreview,
+    initiatedBy: opts.initiatedBy,
+    externalId: opts.externalId,
+  });
+}
+
+async function logCommunicationStorage(opts: LogCommunicationOpts): Promise<string | null> {
   if (opts.externalId) {
     const duplicate = await portableQuery<{ id: string }>(
       `SELECT id FROM communications_log WHERE account_id = $1 AND external_id = $2 LIMIT 1`,
