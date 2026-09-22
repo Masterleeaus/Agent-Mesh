@@ -547,3 +547,21 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** canonical execution can safely classify and reconcile UNKNOWN mutation outcomes without duplicate writes, while preserving existing Command Bus/Rewind ownership.
 - **Confidence:** VERY HIGH
 - **Status:** SUPPORT EXISTING OWNERS
+
+
+---
+
+## ACTION-GH-029 — Preserve canonical governed-command boundary; audit reachability and durable recovery around it
+
+- **Type:** DEEP SCAN / CONVERGE / REGRESSION
+- **Priority:** P0/P1
+- **Findings:** FINDING-GH-121–124 and ACTION-GH-028.
+- **Canonical owner:** #14; reliability #293; certification #300/#560.
+- **Retain:** `prepareGovernedCommandEnvelope`, replay/proof binding, current-authority checks, authoritative receipts and post-action verification.
+- **Audit next:** every consequential active mutation path, especially Workforce/Business Ops and provider adapters, to prove it traverses this boundary before execution.
+- **Recovery:** connect existing `RECOVERY_REQUIRED:execution-receipt-unknown` seam to durable UNKNOWN reconciliation and resumable execution state rather than defining a second receipt model.
+- **Security:** adapters may add provider/domain details but cannot weaken company_id, authority, approval, evidence, idempotency, proof, reversibility or execution-context bindings.
+- **Tests:** bypass mutation denied/quarantined; stale authority rejected at execution; proof/evidence/context substitution rejected; replay binding mismatch rejected; unknown receipt enters recovery; retry preserves original correlation and idempotency; failed/rejected command cannot emit accepted-change evidence.
+- **Acceptance Criteria:** representative consequential mutations prove one path through canonical governed envelope → execution → authoritative receipt → Signal/Assurance/verification → recovery/compensation when needed.
+- **Confidence:** VERY HIGH
+- **Status:** SUPPORT #14 / P0 BYPASS AUDIT
