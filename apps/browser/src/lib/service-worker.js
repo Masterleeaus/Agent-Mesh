@@ -1941,10 +1941,10 @@ async function fetchLiveManagerAISnapshot(){
     checkpointAgentMeshContinuation(normalized,'live-snapshot').catch(()=>{});
     return {ok:true,source:'live',snapshot:normalized,health:normalized.health,capabilities:normalized.capabilities};
 }
-async function callAgentMeshMutation(config,action,payload,snapshot,{bootstrapRequired=true}={}){
+async function callAgentMeshMutation(config,action,payload,snapshot){
     const allowed=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover']);
     if(!allowed.has(action)) return {ok:false,reason:'agent-mesh-mutation-not-allowlisted',mayMutate:false};
-    if(bootstrapRequired){const gate=await bootstrapAgentMeshResume(snapshot);if(!gate.ok||gate.mayMutate!==true)return {ok:false,reason:'resume-reconciliation-required',mayMutate:false,bootstrap:gate.bootstrap||null};}
+    const gate=await bootstrapAgentMeshResume(snapshot);if(!gate.ok||gate.mayMutate!==true)return {ok:false,reason:'resume-reconciliation-required',mayMutate:false,bootstrap:gate.bootstrap||null};
     return globalThis.CodeeTitanBridgeClient.call(config,action,payload);
 }
 async function checkpointAgentMeshContinuation(snapshot,reason='manager-lifecycle'){
@@ -1991,7 +1991,7 @@ async function takeoverAgentMeshContinuation(snapshot,{fromExecutionSession=null
         execution_resume:value.executionResume||value.execution_resume||null,
         head_sha:github.git?.headSha||github.claim?.headSha||null,
         authority:{same_claim_branch:true,claim_release:false,merge:false,ai:false}
-    },snapshot,{bootstrapRequired:false});
+    },snapshot);
 }
 async function getAgentMeshWorkContext(snapshot){
     const value=snapshot&&typeof snapshot==='object'?snapshot:{},githubProjection=value.githubProjection||null,raw=value.github||value.agentMesh||{};
