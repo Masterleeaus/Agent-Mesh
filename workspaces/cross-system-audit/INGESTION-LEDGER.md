@@ -323,3 +323,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-049 | #768 final scoped execution certification | Personal Zero Verification run 35788141465 / job 106949861698 | PR #770 head 8bc89997a6e7bfde21bbeb69b37ef66abbec4e47 | COMPLETE-IMPLEMENTATION/GOVERNANCE-PENDING | DIRECT EXECUTION EVIDENCE | Titan Platform typecheck PASS; scoped Personal Zero tests 52/52 PASS, 0 fail. TASK-152 implementation acceptance is satisfied. Claim Gate branch-format mismatch and unrelated global CI debt remain outside Personal Zero implementation scope. | YES |
+
+
+| INGEST-050 | Post-#768 downstream claim-state recheck | issues #153/#59/#37/#767 + branch search | all four OPEN; 0 comments; no agent/153, agent/59, agent/37, agent/767 branches | CURRENT | DIRECT ISSUE/BRANCH EVIDENCE | Four canonical downstream lanes remain unclaimed. Their issue contracts are reuse-first and must consume certified Personal Zero rather than duplicate it. | YES |
