@@ -176,3 +176,8 @@ if(!sw.includes("AGENT_MESH_MUTATION_POLICY=Object.freeze")) throw new Error('ce
 if(!sw.includes("agent-mesh-mutation-not-allowlisted")) throw new Error('unknown Agent Mesh mutations must fail closed');
 if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.checkpoint'")) throw new Error('continuation checkpoint must use governed mutation path');
 if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager Agent Mesh mutations must use governed mutation path');
+
+if(!sw.includes('AGENT_MESH_MUTATION_POLICY')) throw new Error('central Agent Mesh mutation policy missing');
+if(!sw.includes("agent-mesh-mutation-requires-governed-path")) throw new Error('generic bridge must deny direct Agent Mesh mutations');
+if(!sw.includes("'agent_mesh.continuation.checkpoint':'continuity-record-only'")) throw new Error('checkpoint must remain continuity-only rather than resume-gated work mutation');
+if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover must use governed Agent Mesh mutation path');
