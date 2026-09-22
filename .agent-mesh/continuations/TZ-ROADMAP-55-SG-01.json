@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 23,
+    "current_pass": 20,
     "status": "ACTIVE"
   },
   "completed": [
@@ -175,13 +175,18 @@
     "Pass 22: normalized active Manager dependency/routing payload around GitHub issue_number and subgoal_id before the legacy route_packet bridge boundary",
     "Pass 22: legacy packet identifier moved under an explicit compatibility object with authority:false; missing GitHub work identity now fails closed instead of routing by packet identity",
     "Pass 22: regression guards prevent legacy packet_id from returning as primary routing authority",
-    "Pass 23: Manager control-room and queue projections now expose GitHub-native presentation labels for Issues, Agent Branches, Pull Requests, Checks and Git main while retaining legacy labels only inside diagnostic compatibility projections"
+    "Pass 23: Manager control-room and queue projections now expose GitHub-native presentation labels for Issues, Agent Branches, Pull Requests, Checks and Git main while retaining legacy labels only inside diagnostic compatibility projections",
+    "Pass 20: audited current Agent Mesh bridge mutation call sites on the live claim branch; generic callTitanBridge now rejects direct agent_mesh mutation actions",
+    "Pass 20: Agent Mesh mutations are centralized through explicit AGENT_MESH_MUTATION_POLICY/callAgentMeshMutation allowlist; recover, route and takeover are resume-gated while checkpoint remains continuity-record-only",
+    "Pass 20: added regression guards preventing direct generic bridge mutation, non-allowlisted Agent Mesh mutation, or takeover bypass of the governed dispatcher"
   ],
-  "current_work": "Converge remaining Agent Mesh workflow execution and handoff presentation around the GitHub-native Issue/Branch/Pull Request/Checks model",
+  "current_work": [
+    "Replace stale packet terminology in Manager routing path with GitHub-native issue/subgoal routing semantics without breaking bridge compatibility"
+  ],
   "next_actions": [
-    "Audit continuation/workflow UI and generated handoff text for remaining active packet/delta/promotion terminology",
-    "Keep legacy donor/pre-Git artifact vocabulary confined to explicit compatibility/history fields",
-    "Verify the GitHub-native presentation layer does not alter durable lifecycle or authority"
+    "Inspect normalizeAgentMeshRoutingPayload and bridge route_packet contract",
+    "Keep route_packet only as compatibility adapter if backend still requires it; expose issue/subgoal/claim identity canonically",
+    "Remove any packet state from authority decisions and tests"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
