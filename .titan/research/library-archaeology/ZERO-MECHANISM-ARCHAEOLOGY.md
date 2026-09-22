@@ -96,3 +96,7 @@ Independently verify Decision Engine Step25 preference, observation, learning-lo
 
 ### ZM-010 — Decision Engine Step25 source-verified donor
 Direct inspection of the Step25 Library master verified implemented TypeScript mechanisms for observation, actor/company preference resolution, revisioned decision history and verified-outcome learning. The preference and learning outputs explicitly carry `authority_effect: none`. Learning requires verified outcome evidence, preserves historical decisions/evidence and updates future calibration through revisioned state. Persistent-state candidate inventory is donor archaeology only and must not be imported wholesale.
+
+
+### ZM-011 — Model Council epistemic challenge source-verified
+Direct inspection of Model Council v1.0.0-rc.2 verified proposer→critic→verifier→arbiter deliberation, pre/final Shield validation, escalation and hash-addressed advisory-only receipts. Strong donor semantics: challenge unsupported assumptions, verify against supplied evidence, preserve material disagreement/uncertainty, do not treat consensus as proof, escalate when consequential evidence is insufficient. Important gap: historical confidence is only an average of participant self-confidence; richer evidence-independence, blind-spot and calibrated-confidence semantics remain convergence work under #633/current architecture.
