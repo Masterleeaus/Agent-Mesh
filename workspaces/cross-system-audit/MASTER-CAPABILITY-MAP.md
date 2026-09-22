@@ -33,7 +33,7 @@ Current source is authoritative. Historical repositories are donor evidence unti
 | Revision history | Builder lifecycle and decision-history rewind semantics exist | Zero State / Rewind | Partial | Converge stronger history |
 | Rewind | Historical zero documents specify snapshots, snapshot items, restores, tombstones and conflicts | Rewind | Strong donor | Import + harden after comparison |
 | Business Reality | Current operational domain is strong, but a complete Reality authority with provenance/freshness/contradiction/temporal semantics is not verified | Reality | Partial | Deep scan |
-| Knowledge Authority | Workforce knowledge-authority runtime exists | Knowledge Authority | Partial | Verify reasoning consumption |
+| Knowledge Authority | Workforce knowledge-authority runtime exists | Knowledge Authority | Partial | Verify reasoning consumption | — reasoning-use gate/receipt IMPLEMENTED; downstream canonical reasoning consumer trace still PARTIAL
 | DecisionPacket | Decision engine and packet lineage exists in ported intelligence/runtime | Decision Engine | Implemented package layer | Trace outcomes |
 | Trust | Trust-aware decision gate and workforce authority ceilings exist | Titan Trust | Partial | Trace T0-T6 and handshake |
 | Three-way handshake | Pivot defines eligibility + human delegation + current Zero/system acceptance | Titan Trust / Authority | Not fully traced | P1 trace |
