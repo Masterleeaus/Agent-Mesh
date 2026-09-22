@@ -41,7 +41,7 @@ export default function Footer() {
               Titan Zero Field Services
             </Link>
             <p className="text-sm text-nx-muted mt-3 max-w-[280px] leading-relaxed">
-              Your business. Your Zero. Your team. A managed digital working intelligence and specialist workforce connected around your field-service business.
+              Every person can have their own Zero. Owners, staff and customers work through personal digital working intelligence connected to the appropriate business reality and a managed specialist workforce.
             </p>
             <a
               href="mailto:support@titanzero.io"
@@ -84,7 +84,7 @@ export default function Footer() {
 
         <div className="border-t border-nx-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-2">
           <p className="text-xs text-nx-muted2">© 2026 Titan Zero. All rights reserved.</p>
-          <p className="text-xs text-nx-muted2">Your business. Your Zero. Your team.</p>
+          <p className="text-xs text-nx-muted2">Different person. Different Zero. Same connected business.</p>
         </div>
       </div>
     </footer>
