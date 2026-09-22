@@ -123,3 +123,8 @@ for(const line of mutationLines){ if(!line.includes('execution.audit') && !line.
 if(!sw.includes("async function callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('central Agent Mesh mutation gate missing');
 if(!sw.includes("const gate=await bootstrapAgentMeshResume(snapshot)")) throw new Error('central mutation gate must reconcile resume state');
 if(!sw.includes("return globalThis.CodeeTitanBridgeClient.call(config,action,gatedPayload)")) throw new Error('governed mutation dispatch missing');
+
+const directMeshCalls=(sw.match(/CodeeTitanBridgeClient\.call\([^\n]*agent_mesh\.(?!snapshot|health|capabilities)/g)||[]);
+assert.strictEqual(directMeshCalls.length,0,'no ungoverned direct Agent Mesh mutation calls may bypass callAgentMeshMutation');
+assert(sw.includes('if (meshMutation) return { ok: false, reason: \'agent-mesh-mutation-requires-governed-path\''),'generic Titan bridge must reject ungoverned Agent Mesh mutations');
+assert(sw.includes("return callAgentMeshMutation(config,action,payload,snapshot)"),'all Manager Agent Mesh mutations must use governed mutation helper');
