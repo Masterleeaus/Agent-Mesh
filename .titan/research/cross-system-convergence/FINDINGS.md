@@ -1117,3 +1117,28 @@ The audit should now classify prediction scoring, stale-evidence suppression and
 ACTIVE IMPLEMENTATION / LEARNING-PRIVACY PRIMITIVES LANDED / CI PENDING
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-052
+### Finding
+#768 implementation slice 5 connects Personal Zero correction, prediction-error and verified-outcome learning to the existing Learning Governor path instead of creating a parallel learning authority.
+### Evidence
+Latest #768 update reports commits `720e225`, `24df60a`, `4cf4a96`.
+Direct inspection of `packages/titan-platform/src/personal-zero/learning-governor-bridge.ts`, blob `b4dd6d4157d69797840578804b2409a0da5e12ee`, verifies:
+- verified-outcome learning directly imports and calls existing workforce-evidence `createLearningProposal()`;
+- correction learning requires explicit `correction_of` and carries both current correction and prior evidence refs;
+- prediction-error learning is proposal-only and activates only at/above a configurable Brier threshold (default 0.25);
+- allowed Personal Zero adjustment classes are limited to ranking, recommendation weight, workflow preference and exception pattern;
+- every proposal requires Learning Governor review;
+- proposals hard-code `authority_granted:false`, `execution_permitted:false`, `grants_authority:false`, `authority_effect:false`;
+- an explicit assertion rejects any proposal that would claim authority.
+The Personal Zero index exports this bridge, blob `c572901d92dabd11a29287ddf518b79b6c0f02be`.
+Tests are committed but execution/CI evidence remains pending.
+### Interpretation
+The former Personal Zero Learning Governor gap is now substantially closed at source level by convergence onto the existing governor. This narrows #37: it should build bounded predictive trigger/policy adaptation and certification on top of this canonical evidence/proposal path, not implement another Personal Zero learning engine.
+### Classification
+ACTIVE IMPLEMENTATION / LEARNING GOVERNOR CONVERGENCE LANDED / CI PENDING
+### Confidence
+HIGH
