@@ -157,8 +157,8 @@ export function RoleChat({ role, onOpenDetails, projection: suppliedProjection, 
       setStreamState(session.interrupted ? "interrupted" : "idle");
       if (session.interrupted) resumeNeeded.current = true;
       conversation.reconcile(clientMessageId, true);
-      const workerText = requestedWorker ? `${requestedWorker} joined this conversation. I’ll keep the context here while they help.` : (projected.length ? "Updated from the authenticated interaction runtime." : "Request received. No live structured response was returned, so no business facts were inferred.");
       const projected = events.flatMap((event) => event.message ? [{ ...event.message, delivery_state: "accepted" as const }] : []);
+      const workerText = requestedWorker ? `${requestedWorker} joined this conversation. I’ll keep the context here while they help.` : (projected.length ? "Updated from the authenticated interaction runtime." : "Request received. No live structured response was returned, so no business facts were inferred.");
       const reply: ConversationRecord = { id: `reply-${clientMessageId}`, conversation_id: conversationId, company_id: projection.company_id, surface: role, from: "zero", text: workerText, created_at: new Date().toISOString(), delivery_state: "accepted" };
       setHistory(conversation.append([...projected, reply]));
     } catch {
