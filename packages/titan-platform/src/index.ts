@@ -12,3 +12,6 @@ export * from "./titan-builder/index.js";
 
 export { createTitanConnectorDescriptor, TITAN_CONNECTOR_CONTRACT } from "./ported/titan-connect/connector-contract.js";
 export type { ConnectorCapability, ConnectorPermission, ConnectorHealth, TitanConnectorDescriptor } from "./ported/titan-connect/connector-contract.js";
+
+export { negotiateTitanMcpHost, TITAN_MCP_HOST_CONTRACT } from "./ported/titan-connect/mcp-host-contract.js";
+export type { TitanMcpHostFeatures, TitanMcpHostNegotiation } from "./ported/titan-connect/mcp-host-contract.js";
