@@ -214,3 +214,6 @@ Actions affected:
 Conflicts:
 - Prevents overclaim that #761/#762 has already verified Authority Continuance.
 Needs re-ingestion: YES
+
+
+| INGEST-013 | Zero Mechanism Archaeology Personal Zero donor expansion | agent/763 / .titan/research/zero-mechanism-archaeology | FINDINGS sha 50e4d807f0fe8a0c6ac447806217ff408840d7b5; SOURCES sha aa8125c46d2a4d2ddf2663928ba27686d29aa711; STATUS sha 0a5a325568fdea97bdc26b54160fa27ca6fc9215 | IN PROGRESS | INGESTED | FINDING-GH-022..036: implemented Interaction Engine cognition donors, Phase10 specification-only distinction, implemented Decision Engine Step25 preference/history/verified-outcome learning donors | YES — source agent still in progress |
