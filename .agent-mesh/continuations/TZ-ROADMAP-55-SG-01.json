@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 9,
+    "current_pass": 10,
     "status": "ACTIVE"
   },
   "completed": [
@@ -44,15 +44,18 @@
     "Pass 8: successful execution emits immutable v1 receipt artifact with request SHA-256, validated head SHA, operation result and zero merge/claim-release/canonical-mutation authority",
     "Pass 9: execution validator now requires request_id and issue_number and returns them in normalized request identity",
     "Pass 9: execution workflow binds filename exactly to request_id, verifies the referenced issue is open and its title matches the subgoal",
-    "Pass 9: execution workflow writes an issue acceptance marker and rejects duplicate request_id markers, providing durable GitHub-backed replay protection without merge/claim-release authority"
+    "Pass 9: execution workflow writes an issue acceptance marker and rejects duplicate request_id markers, providing durable GitHub-backed replay protection without merge/claim-release authority",
+    "Pass 10: execution workflow now derives request identity immediately from the request filename for audit/failure handling",
+    "Pass 10: failed validation or execution emits a v1 FAILED receipt artifact containing request id, workflow run, trigger SHA, claim branch and explicit zero mutation/merge/claim-release authority",
+    "Pass 10: receipt upload now runs on success or failure, retaining auditable execution evidence for 90 days"
   ],
   "current_work": [
-    "Add failure receipts and improve request replay atomicity/concurrency scope"
+    "Strengthen execution request idempotency and concurrency around multiple requests in one push"
   ],
   "next_actions": [
-    "Emit durable failure receipt artifact on validation/handler failures",
-    "Use request-id-specific concurrency plus claim serialization where safe",
-    "Add execution audit summary and retention/index policy"
+    "Reject multi-request pushes or process every request deterministically instead of tail-only selection",
+    "Separate request-id replay identity from per-claim execution serialization",
+    "Add workflow/audit regression checks to CI"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
