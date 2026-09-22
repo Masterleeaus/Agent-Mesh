@@ -127,7 +127,12 @@ async function handleSmsKeyword(opts: {
   }
 
   let autoReplied = false;
-  const gatewayConfig = { simNumber };
+  const gatewayConfig = {
+    url: smsSettings.gatewayUrl,
+    username: smsSettings.gatewayUsername,
+    password: smsSettings.gatewayPassword,
+    simNumber,
+  };
   if (isSmsGatewayConfigured(gatewayConfig)) {
     const sendResult = await sendSmsViaGateway({ phone, message: reply, config: gatewayConfig });
     autoReplied = sendResult.ok;
