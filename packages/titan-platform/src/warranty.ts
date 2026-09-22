@@ -97,9 +97,9 @@ function optionalString(value: unknown): string | null {
 
 function isoDate(value: unknown, label: string): string {
   const normalized = requiredString(value, label);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized) || Number.isNaN(Date.parse(`${normalized}T00:00:00Z`))) {
-    throw new Error(`${label} must be an ISO date`);
-  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) throw new Error(label + ' must be an ISO date');
+  const parsed = new Date(normalized + 'T00:00:00Z');
+  if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0,10)!==normalized) throw new Error(label + ' must be an ISO date');
   return normalized;
 }
 
