@@ -296,3 +296,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-040 | #768 company-boundary hardening | issue #768 hardening update + Personal Zero state service | state-service blob d02577802179af08e7d1e6392a0ee04b4df30b13; commit 3c02a0d | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Personal Zero writes now recursively reject legacy tenant aliases and require context company_id to match record/outcome company before persistence, while retaining relationship/company isolation. | YES |
+
+
+| INGEST-041 | #768 cross-context sharing hardening | issue #768 update + Personal Zero contracts/state service | contracts blob 6dd6887bdc532a03c841e153b044e9223bfc8529; state blob 4e0480607a0c56a36e7aae40cfb9a862834a95a2; commits b8b52c5,8cf7370,58b1f2b,f9ec1e0 | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Consent ref, accepted-source subject/evidence validation, private-state denial, freshness checks and revision-safe revocation now govern source-side sharing. Target-company relationship acceptance remains intentionally unresolved. | YES |
