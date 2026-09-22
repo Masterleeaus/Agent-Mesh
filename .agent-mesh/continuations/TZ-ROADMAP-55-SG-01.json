@@ -13,25 +13,26 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 1,
+    "current_pass": 2,
     "status": "ACTIVE"
   },
   "completed": [
     "Multi-pass repository and Titan Code deep scan",
     "GitHub-native lifecycle and duplicate-authority map",
     "Canonical issue #734 and atomic claim branch established",
-    "Continuation/takeover requirements agreed"
+    "Continuation/takeover requirements agreed",
+    "Pass 2: live agent_mesh.snapshot now reuses canonical manager-github-state and manager-live-state to project GitHub lifecycle into Manager snapshot v3",
+    "Pass 2 regression assertions added to test-manager-ai-live-mesh-bridge.js"
   ],
   "current_work": [
-    "Establish durable continuation record",
-    "Establish GitHub-derived Manager state contract",
-    "Prepare governed execution bridge without arbitrary-shell authority"
+    "Implement automatic durable checkpoint and takeover receipt contract",
+    "Keep claim branch during context/session replacement"
   ],
   "next_actions": [
-    "Implement normalized GitHub Agent Mesh snapshot contract",
-    "Rewire manager-live-state to reconcile GitHub facts",
-    "Add automatic checkpoint/takeover receipt helpers",
-    "Add execution-request schema and guarded Action trigger"
+    "Add Agent Mesh continuation/checkpoint helper",
+    "Add takeover receipt schema/helper",
+    "Wire checkpoint updates to significant lifecycle events",
+    "Then implement governed execution-request bridge"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
