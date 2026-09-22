@@ -181,3 +181,7 @@ if(!sw.includes('AGENT_MESH_MUTATION_POLICY')) throw new Error('central Agent Me
 if(!sw.includes("agent-mesh-mutation-requires-governed-path")) throw new Error('generic bridge must deny direct Agent Mesh mutations');
 if(!sw.includes("'agent_mesh.continuation.checkpoint':'continuity-record-only'")) throw new Error('checkpoint must remain continuity-only rather than resume-gated work mutation');
 if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover must use governed Agent Mesh mutation path');
+
+if(!sw.includes("issue_number:Number(work.number)||null,subgoal_id:String(work.subgoal_id||target||'')")) throw new Error('Manager routing must use GitHub issue/subgoal identity');
+if(!sw.includes("legacy_packet_id:target||null")) throw new Error('legacy packet compatibility must remain adapter-only');
+if(sw.includes("payload={packet_id:target,mode:'manager_route_request'}")) throw new Error('active Manager routing must not use packet_id as primary identity');
