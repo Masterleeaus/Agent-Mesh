@@ -74,16 +74,16 @@ export default function Home() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 text-xs font-semibold text-nx-purple-light bg-blue-900/10 border border-blue-900/20 px-4 py-1.5 rounded-full mb-6">
             <span className="w-1.5 h-1.5 bg-nx-green rounded-full animate-pulse-dot" />
-            Managed Advanced Intelligence Workforce
+            Your business. Your Zero. Your team.
           </div>
 
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-            Recover hidden value across your field-service business.<br />
-            <span className="gradient-text">Then measure what changed.</span>
+            Your business. Your Zero.<br />
+            <span className="gradient-text">Your team.</span>
           </h1>
 
           <p className="text-lg text-nx-muted max-w-xl mx-auto mb-10 leading-relaxed">
-            Titan Zero combines a managed Advanced Intelligence workforce, software gap filling, resource optimisation and measurement around the systems you already use. Our initial opportunity model targets an estimated 14–25% of annual revenue-equivalent value across revenue, cost, time, cash and resources. Your actual baseline and measured results determine the real opportunity.
+            Titan Zero gives you a digital working intelligence that learns your business, works alongside you and coordinates an AI workforce to help run it. We connect it to the systems you already use, fill genuine gaps and manage the intelligence system for you.
           </p>
 
           <div className="flex justify-center gap-4 flex-wrap mb-8">
@@ -91,7 +91,8 @@ export default function Home() {
             <ButtonOutline size="lg" href={appRoutes.login}>Login</ButtonOutline>
           </div>
 
-          <p className="text-xs text-nx-muted2 mb-8">Chat &middot; Voice &middot; Camera &middot; Existing-system integration</p>
+          <p className="text-xs text-nx-muted2 mb-4">Not another chatbot. Not another dashboard. Not another piece of software your team has to learn.</p>
+          <p className="text-sm font-semibold mb-8">You don't need to become an AI expert. You just need to run your business.</p>
 
           {/* Inline Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-xl mx-auto mb-8">
@@ -111,6 +112,13 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="px-6 pb-24">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center bg-nx-surface border border-nx-border rounded-3xl p-8 sm:p-12">
+          <div><SectionLabel>Meet Your Zero</SectionLabel><h2 className="text-4xl sm:text-5xl font-extrabold mb-5">One + Zero + Team.</h2><p className="text-lg text-nx-muted leading-relaxed mb-5">You are One. Zero is your digital working intelligence. Behind Zero can be an entire team of specialist capabilities working for your business.</p><p className="text-nx-muted leading-relaxed">Zero develops an increasingly useful understanding of how your business works, what matters to you, your customers, team, systems, decisions and what has or hasn't worked before.</p></div>
+          <div className="space-y-3">{[['One','You remain the human principal.'],['Zero','Your persistent digital working intelligence.'],['Team','Specialist AI capabilities and people coordinated around the work.']].map(([t,d])=><div key={t} className="bg-nx-bg border border-nx-border rounded-xl p-5"><h3 className="font-bold text-nx-purple-light">{t}</h3><p className="text-sm text-nx-muted mt-1">{d}</p></div>)}<a href="/your-zero" className="inline-block mt-3 text-sm font-bold text-nx-purple-light hover:text-white">Meet Your Zero →</a></div>
         </div>
       </section>
 
