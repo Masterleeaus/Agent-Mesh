@@ -10,7 +10,6 @@ const industryLinks = [
 const navLinks = [
   { label: 'Home', path: '/' },
   { label: 'Your Zero', path: '/your-zero' },
-  { label: 'Features', path: '/features' },
   { label: 'Fully Managed', path: '/fully-managed' },
   { label: 'Investment', path: '/investment' },
   { label: 'Compare', path: '/compare' },
@@ -63,6 +62,7 @@ export default function Navbar() {
               Capabilities <ChevronDown size={14}/>
             </Link>
             <div className="absolute right-0 top-full mt-1 w-72 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
+              <Link to="/features" className={`block px-3 py-2.5 rounded-lg text-sm font-semibold ${pathname === '/features' ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>All Capabilities</Link>
               {capabilityLinks.map(([label,path])=><Link key={path} to={path} className={`block px-3 py-2.5 rounded-lg text-sm ${pathname === path ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>{label}</Link>)}
             </div>
           </div>
@@ -122,6 +122,7 @@ export default function Navbar() {
           ))}
           <div className="mt-3 border-t border-nx-border pt-3">
             <p className="px-3 py-2 text-xs uppercase tracking-widest text-nx-muted2">Capabilities</p>
+            <Link to="/features" onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm font-semibold rounded-lg ${pathname === '/features' ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>All Capabilities</Link>
             {capabilityLinks.map(([label,path])=><Link key={path} to={path} onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm rounded-lg ${pathname === path ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>{label}</Link>)}
           </div>
           <div className="mt-3 border-t border-nx-border pt-3">
