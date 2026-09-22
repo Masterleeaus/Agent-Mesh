@@ -97,3 +97,17 @@ Library file id: file_00000000846c8211866e205be276487d
 Verification: content retrieved through Library semantic search during #763; exact proposed implementation paths were searched and no separate Phase10 implementation archive was established in this pass.
 Relevant sections: Pass11 Cognitive Events; Pass12 Memory Truth Lifecycle; Pass18 Outcome-Based and Active Learning; Pass19 Device Intelligence; Pass20 Collective Learning; upgrade strategy/authority separation.
 Supports: FINDING-GH-027 through FINDING-GH-031.
+
+
+---
+
+## SOURCE-LIB-003
+
+Type: Library master / direct source inspection
+Artifact: Titan Decision Engine Master Step 25.zip
+Library file id: file_000000007b9881fa8029f640a3818749
+Library path: /MASTER Software/Masters/Platform/Titan Decision Engine/Titan Decision Engine Master Step 25.zip
+Recorded SHA-256: 3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a
+Verification: materialized and source-inspected during #763.
+Relevant paths: 10-observation-engine/runtime/observationEngine.ts; 17-preference-model/runtime/preferenceModel.ts; 24-decision-history/runtime/decisionHistory.ts; 25-learning-loop/runtime/learningLoop.ts; 04-capability-deobfuscation/PERSISTENT-STATE-CANDIDATES.json.
+Supports: FINDING-GH-032 through FINDING-GH-036.
