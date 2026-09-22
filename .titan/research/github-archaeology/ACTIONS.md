@@ -437,3 +437,20 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** every export from `packages/titan-platform/src/intelligence.ts` resolves to a real canonical implementation and preserved intelligence tests pass without duplicate engines.
 - **Confidence:** VERY HIGH
 - **Status:** READY FOR SOURCE RECOVERY
+
+
+---
+
+## ACTION-GH-023 — Deepen existing Model Council with recovered historical council semantics; do not replace it
+
+- **Type:** CONVERGE / IMPORT+HARDEN
+- **Priority:** P1
+- **Findings:** FINDING-GH-052–055, FINDING-GH-097–100
+- **Canonical owner:** existing `packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts` plus #642/#80/#633.
+- **Treatment:** Retain the current company-bound authority-neutral Model Council as canonical. Compare/import only missing superior semantics from TitanPro historical orchestration/evaluation designs.
+- **Candidate semantics:** participant/lens selection; sequential/parallel/hybrid topology; explicit contextual weighting; bounded critique; convergence/non-convergence; disagreement/severity; escalation; outcome-based weight/participation refinement.
+- **Hard boundaries:** consensus/recommendation/confidence/activation never grants authority; all votes/evidence remain `company_id` scoped; provider identity never authority.
+- **Tests:** cross-company vote rejection; deterministic repeatability; disagreement retained rather than hidden; high-risk challenge; insufficient convergence escalation; outcome refinement cannot increase authority; evidence independence.
+- **Acceptance Criteria:** current council gains any demonstrably superior missing semantics without introducing a second council or weakening existing authority/company boundaries.
+- **Confidence:** HIGH
+- **Status:** READY FOR SEMANTIC COMPARISON
