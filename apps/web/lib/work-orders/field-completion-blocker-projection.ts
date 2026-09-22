@@ -23,15 +23,25 @@ export async function syncFieldCompletionBlockerProjection(
 ): Promise<void> {
   const companyId=req(projection.company_id,"company_id"),workOrderId=req(projection.work_order_id,"work_order_id"),sourceId=req(projection.source_id,"source_id");
   const wanted=reasons(projection.reasons);
-  await client.query(
-    `UPDATE field_completion_blockers
-        SET blocking = FALSE, resolved_at = COALESCE(resolved_at, CURRENT_TIMESTAMP), updated_at = CURRENT_TIMESTAMP
-      WHERE company_id = $1 AND account_id = $2 AND work_order_id = $3
-        AND source_type = $4 AND source_id = $5
-        AND blocking = TRUE
-        AND NOT (reason = ANY($6::text[]))`,
-    [companyId, accountId, workOrderId, projection.source_type, sourceId, wanted],
-  );
+  if(wanted.length===0){
+    await client.query(
+      `UPDATE field_completion_blockers
+          SET blocking = FALSE, resolved_at = COALESCE(resolved_at, CURRENT_TIMESTAMP), updated_at = CURRENT_TIMESTAMP
+        WHERE company_id = $1 AND account_id = $2 AND work_order_id = $3
+          AND source_type = $4 AND source_id = $5 AND blocking = TRUE`,
+      [companyId, accountId, workOrderId, projection.source_type, sourceId],
+    );
+  }else{
+    const placeholders=wanted.map((_,i)=>`${i+6}`).join(',');
+    await client.query(
+      `UPDATE field_completion_blockers
+          SET blocking = FALSE, resolved_at = COALESCE(resolved_at, CURRENT_TIMESTAMP), updated_at = CURRENT_TIMESTAMP
+        WHERE company_id = $1 AND account_id = $2 AND work_order_id = $3
+          AND source_type = $4 AND source_id = $5 AND blocking = TRUE
+          AND reason NOT IN (${placeholders})`,
+      [companyId, accountId, workOrderId, projection.source_type, sourceId, ...wanted],
+    );
+  }
   for(const reason of wanted){
     await client.query(
       `INSERT INTO field_completion_blockers
