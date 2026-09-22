@@ -280,3 +280,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-130 — current main deterministic risk classification `packages/titan-platform/src/ported/titan-intelligence/core/risk-classification.ts`, SHA `c604b81cbd5a614b7ee3d6d6fefab9608528195a`.
 - SOURCE-GH-131 — Agent-Mesh commits `2a9b662...`, `6394463...`, `364bbaa...`, `71c3842...` show post-transplant Model Council convergence/hardening.
 - SOURCE-GH-132 — Agent-Mesh commits `647ae85...`, `1179072...`, `10ebc1f...` show post-transplant AI provider registry convergence/hardening.
+
+
+- SOURCE-GH-133 — current main `packages/titan-platform/src/ported/titan-runtime/contracts/schemas/DecisionPacket.schema.json`, SHA `1f482e924f4f799b852c903df78b8ace326b66d7`; company-bound authority-neutral DecisionPacket.
+- SOURCE-GH-134 — Agent-Mesh commit `40a5db11d923b9260e911be1718eea0e434ee82c`; locks DecisionPacket recommendations to no-authority schema.
+- SOURCE-GH-135 — current main `packages/titan-platform/src/workforce.ts`, SHA `98f77554d22f76aa1131a257a171c803bfa43979`; exports current Workforce Knowledge Authority capability.
+- SOURCE-GH-136 — Knowledge Authority convergence commits `3a27e462...`, `0767213...`, `389d864...`, `ab436cf...`.
+- SOURCE-GH-137 — current main `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts`, SHA `415ee5647bed8a54b60d4e18ee628c67316d97ee`; governed investigation, Business Discovery, installation planning and commissioning implementation.
