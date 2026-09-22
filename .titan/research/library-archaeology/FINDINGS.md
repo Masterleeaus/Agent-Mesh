@@ -458,3 +458,23 @@ HIGH.
 
 ### Related action
 ACTION-LIB-013.
+
+
+---
+
+## FINDING-LIB-017
+
+### Finding
+Rewind/recovery archaeology found strong distributed donor semantics and many current architectural dependencies, but no current-main implementation symbols for a canonical Rewind runtime. Verified donors include Builder versioned rollback, Forge release recovery, MCP recovery tools, Titan Code rollback/recovery ordering, OnboardingPro rollback decisions and workforce recovery contracts.
+
+### Classification
+CROSS-ENGINE CANONICAL CAPABILITY GAP / RECOVER DISTRIBUTED DONOR SEMANTICS.
+
+### Architectural conclusion
+Rewind should be one recovery/reversal evidence and orchestration contract, not another execution engine. Provider/domain/deployment/storage/offline owners retain their actual recovery primitives; Rewind classifies reversibility, preserves pre/post evidence, correlates governed compensation/restoration, verifies observed outcome and keeps immutable history.
+
+### Confidence
+HIGH.
+
+### Related action
+ACTION-LIB-014 / #771.
