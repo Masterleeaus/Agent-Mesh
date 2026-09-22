@@ -135,15 +135,18 @@
     "Pass 20: added regression assertions for generic mutation bypass prevention and governed-path presence",
     "Pass 20: audited Agent Mesh mutation call sites in the browser service worker and confirmed mesh mutations funnel through callAgentMeshMutation",
     "Pass 20: strengthened the central mesh mutation wrapper to require a snapshot and route recover, route, checkpoint and takeover through the same resume preflight",
-    "Pass 20: added regression guards preventing future mesh mutation paths from bypassing the central resume gate"
+    "Pass 20: added regression guards preventing future mesh mutation paths from bypassing the central resume gate",
+    "Pass 20: audited direct Agent Mesh mutation call sites and confirmed service-worker routes through central callAgentMeshMutation/preflight gate",
+    "Pass 20: aligned Titan Bridge resume-gated mutation classification to recover_agent, route_packet, continuation.checkpoint and continuation.takeover; removed stale duplicate classification that incorrectly listed codex.run",
+    "Pass 20: added regression guard preventing duplicate gate definitions and requiring all four Agent Mesh continuation/work mutation actions to use the canonical gate"
   ],
   "current_work": [
-    "Audit non-browser Agent Mesh/Titan Code mutation entrypoints and GitHub-side claim/execution workflows for equivalent bypasses"
+    "Audit non-browser Agent Mesh/ChatGPT-facing entrypoints for equivalent mutation bypasses and align terminology/contracts with GitHub where relevant"
   ],
   "next_actions": [
-    "Scan apps/browser and repository scripts/workflows for direct mutation calls or alternate recovery paths",
-    "Align any alternate path with the same canonical claim/head/resume contract",
-    "Add cross-surface invariants for ChatGPT app and Titan Code extension"
+    "Scan repository server/workflow/agent tooling for direct recover/route/write paths",
+    "Ensure ChatGPT and Titan Code use the same request/claim/continuation language",
+    "Add cross-surface contract tests before declaring continuation system complete"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
