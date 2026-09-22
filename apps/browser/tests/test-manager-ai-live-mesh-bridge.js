@@ -97,3 +97,6 @@ if(!sw.includes("const allowed=new Set(['agent_mesh.recover_agent','agent_mesh.r
 if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.checkpoint'")) throw new Error('checkpoint bypasses central mutation gate');
 if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover bypasses central mutation gate');
 if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager mutation bypasses central mutation gate');
+
+if(!sw.includes('agent-mesh-mutation-requires-governed-path')) throw new Error('generic bridge must not bypass Agent Mesh mutation gate');
+if(!sw.includes("typeof action === 'string' && action.startsWith('agent_mesh.')")) throw new Error('generic bridge Agent Mesh classification guard missing');
