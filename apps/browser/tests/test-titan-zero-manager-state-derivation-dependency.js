@@ -65,8 +65,12 @@ const stale=S.derive({packets:[{packet_id:'B',status:'AVAILABLE'}],claims:[{agen
 assert.strictEqual(stale.status,'STATE_DRIFT_DETECTED');
 assert(stale.drift.some(x=>x.code==='packet-claims-state-drift'));
 const snap=R.snapshot(st);const restored=R.restore(snap);
-assert.strictEqual(restored.schema,'titan-zero.manager.derived-state.v2');
+assert.strictEqual(restored.schema,'titan-zero.manager.derived-state.v3');
 assert.strictEqual(restored.restart.reconstructed,true);
 assert.strictEqual(restored.restart.integrityVerified,true);
 assert.throws(()=>R.restore({...snap,checksum:'0'.repeat(64)}));
 console.log('PASS test-titan-zero-manager-state-derivation-dependency');
+
+const gh={state:'ACTIVE',git:{mainSha:'a'.repeat(40),headSha:'b'.repeat(40),branch:'agent/TZ-ROADMAP-55-SG-01'},authority:{durableTruth:'github'}};
+const gst=S.derive({githubProjection:gh,liveReconciliation:{status:'CONSISTENT',failClosed:false,drift:[],github:gh},workItems:[{subgoal_id:'NEXT',priority:'P0',lifecycle:'AVAILABLE'},{subgoal_id:'ACTIVE',priority:'P0',lifecycle:'ACTIVE'}]});
+assert.strictEqual(gst.source,'github');assert.strictEqual(gst.lifecycle,'ACTIVE');assert.strictEqual(gst.queue.source,'github');assert.strictEqual(gst.queue.nextGlobal.subgoal_id,'NEXT');assert.strictEqual(gst.authority.claim,'git-branch-ref');
