@@ -36,6 +36,16 @@ Reports, issue bodies, and agent conclusions are evidence leads. Important findi
 - `packages/runtime/authority/delegation.mjs` — bounded delegation continuity, scope non-widening, ancestry/extinction checks.
 - `packages/runtime/authority/index.mjs` — canonical authority runtime exports.
 
+
+### Authority runtime immutable revisions
+- `packages/runtime/authority/autonomy.mjs` — blob `b612a27c19c8c7b6a4ef4c7418f5c40eb6eb309b`.
+- `packages/runtime/authority/authority-lease.mjs` — blob `ebf9e7278efc247929735a36220b058e94fa141e`.
+- `packages/runtime/authority/lease-control.mjs` — blob `b50c7bbdaf1674de50744e15b40fa6c242a06dc3`.
+- `packages/runtime/authority/delegation.mjs` — blob `70c4a9cf98caf514d01131008f85e02c92886659`.
+- `packages/runtime/authority/execution-boundary.mjs` — blob `c94b94d667e0892c192f8049ffaae03731d71f5f`.
+- `packages/runtime/authority/company-boundary.mjs` — blob `adee918d16d3ab5357191f67ac5e6e76b7e39b5b`.
+- `packages/runtime/authority/index.mjs` — blob `f2108f89e1666fe7e78f11da02ed914b1c9fe09a`.
+
 ## Current convergence/action evidence
 - #633 — completed AI/Decision/Intelligence convergence scope.
 - #640 — open earned Trust/autonomy lifecycle implementation.
