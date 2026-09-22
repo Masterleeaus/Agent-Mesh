@@ -6,8 +6,13 @@ import { appRoutes } from '../config'
 const navLinks = [
   { label: 'Home', path: '/' },
   { label: 'Features', path: '/features' },
+  { label: 'Fully Managed', path: '/fully-managed' },
   { label: 'Pricing', path: '/pricing' },
   { label: 'Industries', path: '/industries' },
+  { label: 'Privacy', path: '/privacy-architecture' },
+  { label: 'Costs', path: '/cost-sovereignty' },
+  { label: 'Environment', path: '/environmental-systems' },
+  { label: 'Compare', path: '/compare' },
   { label: 'About', path: '/about' },
 ]
 
@@ -85,8 +90,8 @@ export default function Navbar() {
             <a href={appRoutes.login} className="text-sm font-medium text-nx-muted py-2 text-center">
               Log In
             </a>
-            <a href={appRoutes.trial} className="text-sm font-semibold text-white bg-nx-purple py-2.5 rounded-lg text-center">
-              Open Titan Zero
+            <a href={appRoutes.signup} className="text-sm font-semibold text-white bg-nx-purple py-2.5 rounded-lg text-center">
+              Sign Up
             </a>
           </div>
         </div>
