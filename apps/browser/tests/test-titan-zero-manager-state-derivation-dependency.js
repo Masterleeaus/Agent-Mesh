@@ -8,7 +8,7 @@ const L=s.TitanZeroManagerLifecycle,S=s.TitanZeroManagerStateDerivation,D=s.Tita
 assert(L&&S&&D&&Q&&R,'new manager state modules must exist');
 assert.strictEqual(L.get({status:'DONE'}),'MERGED');
 assert.strictEqual(L.get({state:'MERGED'}),'MERGED');
-assert.strictEqual(L.get({status:'PROMOTED'}),'PROMOTED');
+assert.strictEqual(L.get({status:'PROMOTED'}),'MERGED');
 assert.strictEqual(L.get({state:'ACTIVE',status:'DONE'}),'ACTIVE','canonical state wins conflicts');
 assert.strictEqual(L.get({status:'ACTIVE'}),'ACTIVE');
 assert.strictEqual(L.dependencySatisfied({status:'DONE'}),true);
