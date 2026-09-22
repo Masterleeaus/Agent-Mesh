@@ -221,3 +221,8 @@ if(!sw.includes("if(!allowed.has(action)) return {ok:false,reason:'agent-mesh-mu
 if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover must use central mutation gate');
 if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager Agent Mesh mutations must use central gate');
 if(!sw.includes("compatibility:{legacy_packet_id:target||null,authority:false}")) throw new Error('legacy packet routing must be compatibility-only');
+
+if(!sw.includes("agent-mesh-mutation-requires-governed-path")) throw new Error('generic Titan Bridge must reject Agent Mesh mutations');
+if(!sw.includes("AGENT_MESH_MUTATION_POLICY=Object.freeze")) throw new Error('central Agent Mesh mutation policy missing');
+if(!sw.includes("agent-mesh-mutation-not-allowlisted")) throw new Error('unknown Agent Mesh mutations must fail closed');
+if(!sw.includes("callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager Agent Mesh mutations must use governed mutation path');
