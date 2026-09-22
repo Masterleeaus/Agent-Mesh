@@ -106,3 +106,6 @@ if(!bridge.includes("resume-reconciliation-required")) throw new Error('bridge m
 if(!sw.includes('preflightAgentMeshWorkMutation')) throw new Error('central Agent Mesh mutation preflight missing');
 if(!sw.includes('callAgentMeshMutation')) throw new Error('central Agent Mesh mutation wrapper missing');
 if(!sw.includes("allowed=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover'])")) throw new Error('Agent Mesh mutation allowlist changed unexpectedly');
+
+if(!bridge.includes("const RESUME_GATED_MUTATIONS=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover'])")) throw new Error('central resume gate must cover takeover mutation');
+if(!bridge.includes("resume.status!=='READY_TO_RESUME'")) throw new Error('bridge mutation gate must require READY_TO_RESUME');
