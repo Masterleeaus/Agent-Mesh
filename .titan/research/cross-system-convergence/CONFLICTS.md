@@ -61,3 +61,17 @@ Both are true only at different layers. #640 resolves IMPLEMENTATION OWNERSHIP. 
 
 ### Confidence
 HIGH
+
+
+---
+
+## CONFLICT-004 — Historical Personal Zero ownership vs current #768
+### Competing readings
+1. Earlier #763 archaeology reported no explicit canonical Personal Zero semantic owner.
+2. #768 now exists as the architecture convergence action for Personal Zero Understanding & Experience.
+### Resolution
+These statements refer to different repository/action revisions. The archaeology finding remains historically valid; #768 subsequently resolves the action-ownership gap. #768 does not by itself prove a production implementation owner has been selected or implemented.
+### Consequence
+Treat #763 as donor/evidence archaeology and #768 as current convergence architecture. Do not create another Personal Zero issue.
+### Confidence
+HIGH
