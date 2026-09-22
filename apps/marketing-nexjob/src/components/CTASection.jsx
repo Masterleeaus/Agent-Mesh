@@ -9,15 +9,15 @@ export default function CTASection({
   buttonHref,
   showDemo = true,
 }) {
-  // Default: link to Rails app signup if no explicit destination
+  // Default: route consequential actions into the canonical Titan Zero Command app
   const resolvedHref = buttonHref || (!buttonTo ? appRoutes.signup : undefined)
 
   return (
     <section className="py-24 px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-cyan-500/5 px-8 py-16 sm:px-12 text-center">
+        <div className="relative overflow-hidden rounded-2xl border border-blue-900/40 bg-gradient-to-br from-blue-950/50 to-slate-900/30 px-8 py-16 sm:px-12 text-center">
           {/* Glow */}
-          <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-purple-500/15 blur-3xl pointer-events-none" />
+          <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-blue-900/20 blur-3xl pointer-events-none" />
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 relative z-10">
             {title}
           </h2>
