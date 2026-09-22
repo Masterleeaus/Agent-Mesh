@@ -2164,3 +2164,69 @@ CONVERGENCE REQUIREMENT
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-078
+
+### Finding
+A direct current-repository search did not expose a clearly identifiable canonical TypeScript audit-record implementation by expected audit/signal/evidence symbols. Therefore the historical `tz_audit_log` tenancy defect cannot yet be marked closed from code evidence.
+
+### Verification performed
+Targeted Agent-Mesh code searches included:
+- `tz_audit_log`;
+- `company_id audit`;
+- `AuditRecord`, `auditEvent`, `audit_event`, `AuditService`;
+- signal/evidence/execution/governance receipt terminology.
+
+The repository search interface returned no implementation hits for these expected symbols. This is not proof the implementation is absent: it may use different names, live in generated/package paths not indexed by search, or remain roadmap work.
+
+### Current roadmap ownership
+Issue search confirms:
+- #423 Compliance, Audit & Governance workforce;
+- #430 its end-to-end certification;
+- #63 security/privacy/secrets and replay/recovery certification;
+- #642 consolidated MVP engine convergence.
+
+### Classification
+CURRENT IMPLEMENTATION NOT YET PROVEN / DO NOT CLAIM HISTORICAL GAP CLOSED
+
+### Confidence
+HIGH on search result; MEDIUM on implementation-state inference.
+
+---
+
+## FINDING-GH-079
+
+### Finding
+The correct archaeological treatment of the old `tz_audit_log` defect is a mandatory certification invariant rather than restoration of the old Laravel audit subsystem.
+
+### Required invariant
+Any tenant-owned event/evidence/receipt in current Titan Zero must either:
+1. carry canonical `company_id` directly; or
+2. be provably bound to a canonical parent object whose company scope is validated before persistence/query/replay.
+
+Pre-auth/global security telemetry may be company-null only where tenant context genuinely does not yet exist and must remain explicitly system-scoped.
+
+### Classification
+P0 CERTIFICATION INVARIANT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-080
+
+### Finding
+Audit convergence must distinguish business audit evidence from system-wide pre-auth security telemetry.
+
+### Reason
+The historical security pass correctly allowed some pre-auth records to exist without a company because IP/email/login-edge decisions can occur before tenant resolution. That exception must not leak into business AI, Signal, Decision, Workforce, finance, customer, job or approval evidence.
+
+### Classification
+SECURITY/TENANCY BOUNDARY CLARIFICATION
+
+### Confidence
+HIGH
