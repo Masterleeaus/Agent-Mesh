@@ -10,16 +10,18 @@ const industryLinks = [
 const navLinks = [
   { label: 'Home', path: '/' },
   { label: 'Your Zero', path: '/your-zero' },
-  { label: 'Fully Managed', path: '/fully-managed' },
   { label: 'Investment', path: '/investment' },
-  { label: 'Compare', path: '/compare' },
+]
+
+const howLinks = [
+  ['Fully Managed','/fully-managed'],
+  ['Existing Systems & Integrations','/existing-systems'],
+  ['Continuous Evolution','/continuous-evolution'],
 ]
 
 const capabilityLinks = [
   ['AI Workforce','/ai-workforce'],
   ['Intelligence & Decisions','/intelligence-decisions'],
-  ['Continuous Evolution','/continuous-evolution'],
-  ['Existing Systems & Integrations','/existing-systems'],
   ['Chat, Voice, Camera & Location','/real-world-intelligence'],
   ['Command, Go & Hub','/apps'],
   ['Privacy & Architecture','/privacy-architecture'],
@@ -27,6 +29,15 @@ const capabilityLinks = [
   ['Security, Evidence & Recovery','/security-recovery'],
   ['Measured Outcomes','/measured-outcomes'],
   ['Environmental Intelligence','/environmental-systems'],
+]
+
+const whyLinks = [
+  ['Compare','/compare'],
+  ['Privacy & Architecture','/privacy-architecture'],
+  ['Cost Sovereignty','/cost-sovereignty'],
+  ['Security, Evidence & Recovery','/security-recovery'],
+  ['About','/about'],
+  ['FAQ','/faq'],
 ]
 
 export default function Navbar() {
@@ -58,6 +69,14 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="relative group">
+            <Link to="/fully-managed" className={`text-sm font-medium px-3.5 py-2 rounded-lg inline-flex items-center gap-1 ${howLinks.some(([,p])=>pathname===p) ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
+              How Titan Works <ChevronDown size={14}/>
+            </Link>
+            <div className="absolute right-0 top-full mt-1 w-72 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
+              {howLinks.map(([label,path])=><Link key={path} to={path} className={`block px-3 py-2.5 rounded-lg text-sm ${pathname === path ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>{label}</Link>)}
+            </div>
+          </div>
+          <div className="relative group">
             <Link to="/features" className={`text-sm font-medium px-3.5 py-2 rounded-lg inline-flex items-center gap-1 ${capabilityLinks.some(([,p])=>pathname===p) ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
               Capabilities <ChevronDown size={14}/>
             </Link>
@@ -72,6 +91,14 @@ export default function Navbar() {
             </Link>
             <div className="absolute right-0 top-full mt-1 w-64 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
               {industryLinks.map(([label,slug])=><Link key={slug} to={`/industries/${slug}`} className={`block px-3 py-2.5 rounded-lg text-sm ${pathname === `/industries/${slug}` ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>{label}</Link>)}
+            </div>
+          </div>
+          <div className="relative group">
+            <Link to="/compare" className={`text-sm font-medium px-3.5 py-2 rounded-lg inline-flex items-center gap-1 ${whyLinks.some(([,p])=>pathname===p) ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
+              Why Titan Zero <ChevronDown size={14}/>
+            </Link>
+            <div className="absolute right-0 top-full mt-1 w-72 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
+              {whyLinks.map(([label,path])=><Link key={path} to={path} className={`block px-3 py-2.5 rounded-lg text-sm ${pathname === path ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>{label}</Link>)}
             </div>
           </div>
         </div>
@@ -121,6 +148,10 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="mt-3 border-t border-nx-border pt-3">
+            <p className="px-3 py-2 text-xs uppercase tracking-widest text-nx-muted2">How Titan Works</p>
+            {howLinks.map(([label,path])=><Link key={path} to={path} onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm rounded-lg ${pathname === path ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>{label}</Link>)}
+          </div>
+          <div className="mt-3 border-t border-nx-border pt-3">
             <p className="px-3 py-2 text-xs uppercase tracking-widest text-nx-muted2">Capabilities</p>
             <Link to="/features" onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm font-semibold rounded-lg ${pathname === '/features' ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>All Capabilities</Link>
             {capabilityLinks.map(([label,path])=><Link key={path} to={path} onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm rounded-lg ${pathname === path ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>{label}</Link>)}
@@ -129,6 +160,10 @@ export default function Navbar() {
             <p className="px-3 py-2 text-xs uppercase tracking-widest text-nx-muted2">Industries</p>
             <Link to="/industries" onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm rounded-lg ${pathname === '/industries' ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>Industries Overview</Link>
             {industryLinks.map(([label,slug])=><Link key={slug} to={`/industries/${slug}`} onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm rounded-lg ${pathname === `/industries/${slug}` ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>{label}</Link>)}
+          </div>
+          <div className="mt-3 border-t border-nx-border pt-3">
+            <p className="px-3 py-2 text-xs uppercase tracking-widest text-nx-muted2">Why Titan Zero</p>
+            {whyLinks.map(([label,path])=><Link key={path} to={path} onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm rounded-lg ${pathname === path ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>{label}</Link>)}
           </div>
           <div className="mt-3 flex flex-col gap-2">
             <a href={appRoutes.login} className="text-sm font-medium text-nx-muted py-2 text-center">
