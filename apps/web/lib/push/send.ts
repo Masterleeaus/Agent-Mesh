@@ -13,6 +13,7 @@
 import { Pool, type PoolClient } from "pg";
 import { getEnv } from "@/lib/env";
 import { logger } from "@/lib/logger";
+import { recordDeliveryReceipt } from "@/lib/communications-log";
 import { getWebPush, isPushConfigured } from "./vapid";
 import { buildPushPayload, type PushInput } from "./payload";
 import { ownerAndAdminUserIds } from "./recipients";
@@ -153,6 +154,7 @@ export async function sendPushToOwners(accountId: string, input: PushInput): Pro
 export interface GovernedPushResult {
   sent: number;
   receipt: DeliveryReceipt;
+  persisted: boolean;
 }
 
 /**
@@ -174,15 +176,14 @@ export async function sendGovernedPushToUsers(
     throw new Error("company_id must match the push account scope");
   }
   const sent = await sendPushToUsers(accountId, userIds, input);
-  return {
-    sent,
-    receipt: createDeliveryReceipt({
-      message: { ...communication, channel: "push" },
-      result:
-        sent > 0
-          ? { ok: true }
-          : { ok: false, error_code: "push-not-delivered" },
-      attempt,
-    }),
-  };
+  const receipt = createDeliveryReceipt({
+    message: { ...communication, channel: "push" },
+    result:
+      sent > 0
+        ? { ok: true }
+        : { ok: false, error_code: "push-not-delivered" },
+    attempt,
+  });
+  const persisted = await recordDeliveryReceipt(receipt);
+  return { sent, receipt, persisted };
 }
