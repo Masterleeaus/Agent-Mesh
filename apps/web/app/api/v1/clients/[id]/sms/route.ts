@@ -47,7 +47,12 @@ export const POST = withRole(
         { status: 403 }
       );
     }
-    const gatewayConfig = { simNumber: smsSettings.simNumber };
+    const gatewayConfig = {
+      url: smsSettings.gatewayUrl,
+      username: smsSettings.gatewayUsername,
+      password: smsSettings.gatewayPassword,
+      simNumber: smsSettings.simNumber,
+    };
     if (!isSmsGatewayConfigured(gatewayConfig)) {
       return NextResponse.json(
         {
