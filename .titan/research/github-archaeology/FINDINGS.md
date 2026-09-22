@@ -2757,3 +2757,96 @@ CURRENT PRODUCT-DIRECTION ALIGNMENT CONFIRMED
 
 ### Confidence
 VERY HIGH
+
+
+---
+
+## FINDING-GH-105
+
+### Finding
+The Decision lifecycle trace confirms that current Agent-Mesh does **not yet expose a verified persistent Decision Object/watch/temporal re-evaluation implementation** beyond the DecisionPacket contract. This is consistent with open issue #59, whose “Remaining work only” explicitly lists persistence, lifecycle state and watch/trigger/temporal re-evaluation.
+
+### Evidence
+Repository searches for DecisionObject, decision lifecycle/watch/trigger/reevaluation/supersession/outcome runtime did not identify a current canonical implementation. Issue #59 remains open and names these exact gaps while instructing reuse of existing decision-rights, authority, provenance and Interaction Engine foundations.
+
+### Classification
+CURRENT GAP CONFIRMED / ROADMAP OWNER ALREADY EXISTS
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-106
+
+### Finding
+TitanPro contains a strong historical **decision-envelope + durable runtime-state + trigger/recovery** semantic donor that maps directly to the missing portions of #59 without requiring restoration of the old Laravel automation stack.
+
+### Donor semantics
+`docs/06-automation/decision-envelopes.md` defines a bounded durable decision object with:
+- company_id;
+- source entity/signal refs;
+- decision type/outcome;
+- readiness separate from decision;
+- risk/confidence;
+- required approvals/policy gates;
+- context hash;
+- evidence refs;
+- idempotency key;
+- permitted/blocked next actions;
+- freshness/expiry;
+- derived envelope lineage after approval/policy change;
+- ProcessRecord current/prior envelope linkage;
+- replay comparison and recovery distinction between retrying same decision vs regenerating changed intent.
+
+`runtime-state-store.md` adds current-state + append-only transition history, correlation IDs, approval pause/resume, retries, escalation, recovery, next_run_at and duplicate suppression.
+
+`worked-engine-examples.md` adds temporal/suppression behavior: scheduled follow-up at +3 days, watcher for `complaint.opened`, cancellation if suppression arrives, replay with linked causation and reconstructed decision envelope.
+
+### Classification
+HISTORICAL SEMANTIC DONOR / DIRECT FIT FOR #59
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-107
+
+### Finding
+Historical TitanPro correctly separates **decision** from **execution readiness**. This is especially important for the current architecture: a recommendation may remain valid while execution is blocked by approval, changed evidence, expiry, policy, dependency or authority.
+
+### Convergence implication
+The future persistent Decision Object should not use one status field that conflates “what should happen” with “whether it may happen now.” Preserve:
+- decision/proposal state;
+- evidence/context revision;
+- readiness/authority state;
+- lifecycle/supersession state;
+- execution/outcome linkage.
+
+This strengthens the existing rule that learning, recommendation and consensus do not grant authority.
+
+### Classification
+RECOVER/HARDEN SEMANTIC
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-108
+
+### Finding
+Historical stuck-state/watch semantics are useful for Decision re-evaluation, but workflow truth must remain separate from Decision truth.
+
+### Evidence
+TitanPro `stuck-state-detection.md` supports real-time, scheduled and event-driven reevaluation when approvals, prerequisite signals, retries or downstream handoffs change. It explicitly says Titan Zero may explain/propose recovery but must not mutate workflow state outside legal transitions.
+
+### Convergence implication
+Decision watchers should subscribe to changed evidence/conditions and trigger reevaluation of the same decision lineage; they must not become a second workflow engine or mutate business reality directly.
+
+### Classification
+CONVERGE INTO #59 WATCH/TRIGGER LAYER / NO PARALLEL WORKFLOW AUTHORITY
+
+### Confidence
+VERY HIGH
