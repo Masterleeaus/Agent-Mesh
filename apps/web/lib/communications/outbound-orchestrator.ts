@@ -1,3 +1,4 @@
+import { recordDeliveryReceipt } from "@/lib/communications-log";
 import {
   assertCommunicationEnvelope,
   createDeliveryReceipt,
@@ -24,7 +25,7 @@ export type GovernedOutboundResult =
   | { ok: false; denied: false; reason: "provider-failed"; provider_id: string; receipt: DeliveryReceipt; retry?: { next_attempt: number; delay_ms: number } }
   | { ok: true; provider_id: string; receipt: DeliveryReceipt };
 
-export interface ProviderAttemptEvidence { provider_id: string; receipt: DeliveryReceipt; }
+export interface ProviderAttemptEvidence { provider_id: string; receipt: DeliveryReceipt; persisted: boolean; }
 
 /**
  * Canonical pre-provider orchestration seam. Authority is supplied by the
@@ -150,7 +151,8 @@ export async function executeGovernedOutboundWithFallback(input: {
       result: providerResult,
       attempt: input.attempt,
     });
-    attempts.push({ provider_id: candidate.provider_id, receipt });
+    const persisted = await recordDeliveryReceipt(receipt);
+    attempts.push({ provider_id: candidate.provider_id, receipt, persisted });
     if (providerResult.ok) {
       return {
         result: { ok: true, provider_id: candidate.provider_id, receipt },
