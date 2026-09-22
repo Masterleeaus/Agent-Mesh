@@ -76,3 +76,32 @@ Canonical Owner: Knowledge Authority / Business Memory with Decision and verifie
 
 Summary:
 Recover the historical distinction between durable facts and learned conditioning, plus verified/inferred/stale/contradicted state and user/company/site/customer/job memory scopes. Map these semantics into current canonical owners and the Personal Zero projection where appropriate. Legacy `tenant_id` must normalize to `company_id`; historical memory must never create execution authority.
+
+
+---
+
+## ACTION-GH-006
+
+Type: SUPPORTED EXISTING ACTION
+Priority: P1
+Finding: FINDING-GH-013
+GitHub Issue: #767
+Status: EXISTING ACTION
+Canonical Owner: canonical Evolution / Business Reality convergence selected by cross-agent archaeology.
+
+Summary:
+Do not create a GitHub-archaeology Reality/Evolution implementation issue. Contribute historical GitHub lineage and alternative-donor evidence to #767 where it materially strengthens or challenges the existing donor evidence.
+
+---
+
+## ACTION-GH-007
+
+Type: SUPPORTED EXISTING ACTION
+Priority: P1
+Finding: FINDING-GH-014, FINDING-GH-010, FINDING-GH-011, FINDING-GH-012
+GitHub Issue: #768
+Status: EXISTING ACTION
+Canonical Owner: Personal Zero Understanding & Experience contracts.
+
+Summary:
+Use TitanPro/Worksuite historical user/company conditioning, correction, verified-vs-inferred and scoped operational-memory evidence as supporting provenance for #768. Do not create a competing Personal Zero memory/runtime.
