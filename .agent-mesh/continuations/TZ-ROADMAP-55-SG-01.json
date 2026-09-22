@@ -119,15 +119,18 @@
     "Pass 20: regression guard added for the central mutation preflight and governed dispatch path",
     "Pass 20: audited the Titan Bridge mutation registry and classified recover_agent, route_packet and codex.run as resume-gated mutation actions",
     "Pass 20: added requiresResumeGate() beside the existing canonical mutation registry rather than creating a second authority system",
-    "Pass 20: preserved other generic workspace/repository mutations outside this classification because they are not inherently post-takeover Agent Mesh continuation mutations"
+    "Pass 20: preserved other generic workspace/repository mutations outside this classification because they are not inherently post-takeover Agent Mesh continuation mutations",
+    "Pass 20: audited all Titan Code service-worker Agent Mesh bridge calls; only read-only snapshot/health/capabilities calls and the governed callAgentMeshMutation remain",
+    "Pass 20: generic callTitanBridge explicitly rejects Agent Mesh mutations, preventing bypass of the governed path",
+    "Pass 20: regression test scans for direct Agent Mesh mutation calls and requires Manager mutations to use callAgentMeshMutation"
   ],
   "current_work": [
-    "Wire the resume-gated classification into the common bridge dispatch path and audit service-worker mutation callers"
+    "Harden the bridge itself so action classification cannot be bypassed by future service-worker code, then validate Titan Code/Agent Mesh language and contract alignment"
   ],
   "next_actions": [
-    "Inspect Titan Bridge call dispatcher and enforce bootstrap for RESUME_GATED_ACTIONS",
-    "Audit direct service-worker recover/route/codex calls",
-    "Add tests proving gated actions cannot dispatch without READY_TO_RESUME"
+    "Review Titan Bridge action classifier and mutation allowlist for exact canonical operation names",
+    "Add defense-in-depth rejection of unknown agent_mesh.* actions",
+    "Then run contract alignment pass across Agent Mesh and apps/browser"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
