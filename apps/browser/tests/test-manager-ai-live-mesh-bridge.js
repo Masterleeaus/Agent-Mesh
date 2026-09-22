@@ -185,3 +185,9 @@ if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.ta
 if(!sw.includes("issue_number:Number(work.number)||null,subgoal_id:String(work.subgoal_id||target||'')")) throw new Error('Manager routing must use GitHub issue/subgoal identity');
 if(!sw.includes("legacy_packet_id:target||null")) throw new Error('legacy packet compatibility must remain adapter-only');
 if(sw.includes("payload={packet_id:target,mode:'manager_route_request'}")) throw new Error('active Manager routing must not use packet_id as primary identity');
+
+if(!sw.includes("agent-mesh-mutation-requires-governed-path")) throw new Error('generic Titan Bridge path must reject Agent Mesh mutations');
+if(!sw.includes("const AGENT_MESH_MUTATION_POLICY=Object.freeze")) throw new Error('central Agent Mesh mutation policy missing');
+if(!sw.includes("agent-mesh-mutation-not-allowlisted")) throw new Error('unknown Agent Mesh mutations must fail closed');
+if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.checkpoint'")) throw new Error('continuation checkpoint must use governed Agent Mesh mutation path');
+if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('continuation takeover must use governed Agent Mesh mutation path');
