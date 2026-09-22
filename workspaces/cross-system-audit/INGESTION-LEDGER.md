@@ -278,3 +278,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-034 | #768 implementation slice 2 | issue #768 update + agent/768 Personal Zero state service | state-service blob 609e14f62c5830cf8000e2fb58102c34f9d0f81a; index blob 0bf22b13ca31a8a1261ea38322506eb644bc0def; commits 4938386,e2eca82,6300764 | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Repository-backed relationship/evidence/understanding lifecycle now enforces company/relationship match, revocation, cross-context rejection and supersession lineage using canonical storage. | YES |
+
+
+| INGEST-035 | #768 implementation slice 3 | issue #768 update + agent/768 Personal Zero state service | state-service blob 23122d55f5aa0a7136f9655f9ed62e6daaf83961; commits 00dc71f,0fc566b | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Experience + CognitiveEvent persistence and interaction/decision/workforce projections now exist. Verified actual outcomes require matching verified receipt evidence; revocation suppresses projections; outputs remain authority-neutral. | YES |
