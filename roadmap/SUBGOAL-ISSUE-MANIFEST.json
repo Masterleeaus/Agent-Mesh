@@ -5110,5 +5110,14 @@
     "status": "TODO",
     "priority": "P0",
     "mvp_required": true
+  },
+  {
+    "subgoal_id": "TZ-ROADMAP-55-SG-01",
+    "goal_id": "TZ-ROADMAP-55",
+    "goal_title": "Agent Mesh V4 GitHub-Native Continuity & Execution Bridge",
+    "title": "Converge Titan Code Manager with GitHub-native Agent Mesh lifecycle, durable takeover and governed execution bridge",
+    "status": "TODO",
+    "priority": "P0",
+    "mvp_required": true
   }
 ]
