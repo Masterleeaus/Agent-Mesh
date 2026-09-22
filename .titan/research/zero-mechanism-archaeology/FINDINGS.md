@@ -1408,3 +1408,118 @@ HIGH
 
 ### Related action
 #767; #768.
+
+
+---
+
+## FINDING-GH-052
+
+### Finding
+Direct inspection of Titan Knowledge Authority v0.12.0-alpha.4 verifies strong anti-poisoning primitives for authoritative knowledge: source/version lineage hashing, contradiction handling, stale/superseded claim semantics and company isolation. These should protect Zero inputs before durable understanding or experience promotion.
+
+### Evidence
+Library master: `/MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip`, recorded SHA-256 `7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c`. Relevant source includes `System/Services/KnowledgeContradictionService.php`, `System/Domain/Services/SourceVersionHasher.php`, lineage-policy and security tests.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+#633; #768; Shield.
+
+---
+
+## FINDING-GH-053
+
+### Finding
+Zero poisoning must be controlled at the promotion boundary, not only at model prompting. Untrusted observations, retrieved content, connected-system data and model outputs may be evidence candidates but must not become durable Understanding Memory, Experience lessons, Business Reality facts or executable instructions merely because an LLM accepted them.
+
+### Why it matters
+Prompt-injection filtering alone cannot protect a persistent intelligence. A poisoned observation that survives into memory can influence future sessions long after the original malicious content disappears.
+
+### Classification
+CROSS-SYSTEM SECURITY INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#153; #633; #768; Shield/Knowledge Authority.
+
+---
+
+## FINDING-GH-054
+
+### Finding
+The safest Zero-state promotion pipeline is: `untrusted observation → provenance/integrity classification → contradiction/freshness checks → candidate understanding/experience → Learning Governor → assurance/challenge when warranted → accepted/superseded durable state`. Authority remains outside this pipeline.
+
+### Why it matters
+This combines verified LocalBrain cognitive-event separation, Phase10 truth lifecycle, Knowledge Authority lineage/contradiction controls and Assurance challenge without inventing another security engine.
+
+### Classification
+TARGET CONVERGENCE PATTERN
+
+### Confidence
+HIGH
+
+### Related action
+#37; #633; #768.
+
+---
+
+## FINDING-GH-055
+
+### Finding
+Corrections are a privileged poisoning surface. A correction should be first-class learning evidence, but its identity, scope, provenance and current authority to correct that subject must be validated before it supersedes durable Zero state. A correction must not erase the prior evidence chain.
+
+### Why it matters
+This protects against compromised accounts, malicious connected tools and accidental corrections while retaining the strong LocalBrain principle that explicit correction is valuable learning evidence.
+
+### Classification
+SECURITY HARDENING REQUIREMENT
+
+### Confidence
+HIGH
+
+### Related action
+#768; Operation Identity; Shield; Rewind.
+
+---
+
+## FINDING-GH-056
+
+### Finding
+Evidence freshness and supersession are security controls as well as quality controls. Correct old information can become operationally dangerous when context changes; stale knowledge or experience must not silently dominate current Zero decisions.
+
+### Evidence
+Knowledge Authority lineage/stale/superseded semantics, OnboardingPro observation freshness, and Phase10 truth lifecycle converge on this requirement.
+
+### Classification
+CROSS-SYSTEM SECURITY INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#153; #633; #767; #768.
+
+---
+
+## FINDING-GH-057
+
+### Finding
+No single historical component provides a complete Zero-poisoning defence. Shield should own untrusted-instruction/security policy; Knowledge Authority owns source/version/provenance/contradiction quality; Operation Identity owns actor/session authenticity; Learning Governor owns promotion into learned state; Rewind owns recovery lineage; Trust/Assurance/Governance own consequential-action gates.
+
+### Why it matters
+Do not create a monolithic “Zero Poisoning Engine.” Compose existing owners and make their contracts explicit.
+
+### Classification
+OWNERSHIP / CONVERGENCE RULE
+
+### Confidence
+HIGH
+
+### Related action
+#37; #633; #761; #768 and canonical security owners.
