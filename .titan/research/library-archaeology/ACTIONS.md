@@ -1,0 +1,69 @@
+# Library Archaeology Actions
+
+## ACTION-LIB-001
+
+Type: IMPORT + HARDEN / CONVERGE
+Priority: P1
+Finding: FINDING-LIB-002
+GitHub Issue: #153
+Status: SUPPORTED EXISTING ACTION
+Canonical Owner: Business Memory / Experience contracts
+
+Summary:
+Recover OnboardingPro longitudinal strategy-memory and contextual anti-repeat semantics into the canonical TypeScript memory/experience implementation. Do not create another memory engine. Preserve company_id isolation, provenance, staleness/applicability and the rule that learning never creates authority.
+
+---
+
+## ACTION-LIB-002
+
+Type: RECOVER + CONVERGE
+Priority: P1
+Finding: FINDING-LIB-001, FINDING-LIB-003
+GitHub Issue: #767
+Status: CREATED
+Canonical Owner: Evolution / Reality lifecycle, integrated with existing canonical execution/governance owners
+
+Summary:
+Recover OnboardingPro Business Reality Graph, continuous observation, Nexus reassessment, semantic reconfiguration, verification, outcome measurement and rollback signals into one canonical Evolution/Reality flow. No parallel Reality Graph, observation engine, reconfiguration engine or authority path.
+
+---
+
+## ACTION-LIB-003
+
+Type: CONVERGE
+Priority: P1
+Finding: FINDING-LIB-004, FINDING-LIB-005, FINDING-LIB-006
+GitHub Issue: #633
+Status: SUPPORTED EXISTING ACTION
+Canonical Owner: AI / Decision / Intelligence convergence
+
+Summary:
+Converge superior Model Council, Knowledge Authority and Decision Engine donor semantics into current owners. Treat preference/observation/learning pieces as candidate Personal Zero inputs, not permission to create another Decision Engine.
+
+---
+
+## ACTION-LIB-004
+
+Type: EVIDENCE SUPPORT
+Priority: P1
+Finding: FINDING-LIB-003
+GitHub Issue: #759
+Status: SUPPORTED EXISTING ACTION
+Canonical Owner: architecture archaeology / observation trigger mapping
+
+Summary:
+Use the independently inspected OnboardingPro continuous-observation and Nexus implementation as Library-side evidence while preserving the distinction between historical donor evidence and current TypeScript parity.
+
+---
+
+## ACTION-LIB-005
+
+Type: EVIDENCE SUPPORT
+Priority: P1
+Finding: FINDING-LIB-001
+GitHub Issue: #761
+Status: SUPPORTED EXISTING ACTION
+Canonical Owner: Titan Trust / authority architecture
+
+Summary:
+Compare historical Trust evidence/receipt semantics against current earned-trust and three-way-handshake architecture. Never allow learning, prediction, consensus or historical trust code to bypass current authority.
