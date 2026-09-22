@@ -85,3 +85,15 @@ Recorded SHA-256: 481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a62
 Verification: materialized and source-inspected during #763 archaeology
 Relevant paths: System/Cognition/Events/*; System/Cognition/Decision/DecisionRecorder.php; System/Cognition/Outcome/*; System/LocalIntelligence/Memory/BehavioralMemory.php; System/LocalIntelligence/Persona/BehavioralDriftTracker.php; System/Engines/Learning/Implementations/BehaviourLearningEngine.php; System/Engines/Learning/Implementations/PreferenceLearningEngine.php; System/LocalIntelligence/LocalBrain.php
 Supports: FINDING-GH-022 through FINDING-GH-026
+
+
+---
+
+## SOURCE-LIB-002
+
+Type: Library historical architecture/upgrade plan
+Artifact: TitanZero_Phase10_Multi_Pass_Intelligence_Upgrade_Plan.md
+Library file id: file_00000000846c8211866e205be276487d
+Verification: content retrieved through Library semantic search during #763; exact proposed implementation paths were searched and no separate Phase10 implementation archive was established in this pass.
+Relevant sections: Pass11 Cognitive Events; Pass12 Memory Truth Lifecycle; Pass18 Outcome-Based and Active Learning; Pass19 Device Intelligence; Pass20 Collective Learning; upgrade strategy/authority separation.
+Supports: FINDING-GH-027 through FINDING-GH-031.
