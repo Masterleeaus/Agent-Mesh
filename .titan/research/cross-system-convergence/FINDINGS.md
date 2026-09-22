@@ -1354,3 +1354,23 @@ The two concrete Personal Zero compile defects from CSA-060 are fixed and execut
 PERSONAL ZERO TYPECHECK PASS / GLOBAL CI BLOCKED BY UNRELATED WORKER DEBT / UNIT TEST EVIDENCE STILL PENDING
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-062
+### Finding
+The repository already defines a scoped Titan Platform unit-test command, so #768 does not need a new test framework or Personal Zero-specific runner. The remaining certification gap is execution routing: run the existing package test script independently of the repository-wide worker typecheck blocker.
+### Evidence
+Direct inspection of `packages/titan-platform/package.json`, blob `642a0b5f0648781a591f38210828621074c48f56`, verifies:
+- package `@titan-zero/titan-platform@0.2.0`;
+- `typecheck`: `tsc -p tsconfig.json --noEmit`;
+- `test` and `test:unit`: compile Titan Platform to `.test-dist` and execute `node --test ./tests/*.test.mjs`;
+- `build`: scoped TypeScript build.
+The latest #768/PR #770 CI evidence already proves the package `typecheck` passes. Repository-wide CI reaches this package successfully, then aborts later on unrelated `services/worker` typecheck failures before test stages.
+### Interpretation
+Use the existing `@titan-zero/titan-platform test:unit` package script as the certification command. Do not introduce a second test harness and do not fix Worker debt under TASK-152. If no existing workflow can invoke this package script independently, the appropriate evidence action is the smallest repository-governed scoped CI route that runs the existing script, not new Personal Zero test architecture.
+### Classification
+EXISTING TEST OWNER/COMMAND VERIFIED / EXECUTION ROUTE GAP ONLY
+### Confidence
+HIGH
