@@ -52,7 +52,7 @@ export default function Navbar() {
             <Link to="/industries" className={`text-sm font-medium px-3.5 py-2 rounded-lg inline-flex items-center gap-1 ${pathname.startsWith('/industries') ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
               Industries <ChevronDown size={14}/>
             </Link>
-            <div className="absolute right-0 top-full mt-1 w-64 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
+            <div className="absolute right-0 top-full mt-1 w-64 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
               {industryLinks.map(([label,slug])=><Link key={slug} to={`/industries/${slug}`} className={`block px-3 py-2.5 rounded-lg text-sm ${pathname === `/industries/${slug}` ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>{label}</Link>)}
             </div>
           </div>
@@ -76,8 +76,12 @@ export default function Navbar() {
 
         {/* Mobile Toggle */}
         <button
+          type="button"
           className="xl:hidden text-nx-text"
           onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-navigation"
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
