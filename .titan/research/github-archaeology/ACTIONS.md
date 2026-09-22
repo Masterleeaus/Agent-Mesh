@@ -583,3 +583,21 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** one trace proves command → authoritative receipt → authoritative-state verification → Signal/Assurance projection → visible outcome, with recovery rather than success evidence on UNKNOWN/uncertain states.
 - **Confidence:** VERY HIGH
 - **Status:** SUPPORT EXISTING OWNERS
+
+
+---
+
+## ACTION-GH-031 — Harden Knowledge Authority module and reuse worker-memory mechanics without merging memory domains
+
+- **Type:** IMPORT+HARDEN / CONVERGE
+- **Priority:** P1
+- **Findings:** FINDING-GH-129–132
+- **Canonical owners:** Knowledge Authority current facade/#633; Business Memory #153; Personal Zero #768; Workforce worker memory remains workforce-scoped.
+- **Knowledge Authority:** extract or modularize the existing implementation from the quarantined handover bundle behind the current facade; preserve API and semantics; add strict TypeScript/schema tests rather than create another authority.
+- **Memory reuse:** share primitives/semantics for provenance, confidence, relevance, expiry, revocation, supersession, privacy/purpose and recall receipts where appropriate, but keep storage/ownership separate.
+- **Do not do:** do not make company+worker memory the Personal Zero store; do not let recalled memory become authoritative truth; do not let knowledge/memory grant authority.
+- **company_id:** mandatory for business/workforce knowledge and memory. Personal Zero may carry company_id as provenance/context relationship, not as ownership identity of One.
+- **Tests:** private knowledge cross-company denial; stale/contradicted knowledge blocked; superseded memory excluded; expired/revoked memory excluded; purpose/privacy filtering; memory recall requires current knowledge verification; no knowledge/memory path can produce execution authority.
+- **Acceptance Criteria:** one hardened Knowledge Authority implementation remains canonical; reusable memory mechanics are factored without collapsing Business Memory, Personal Zero, Workforce Memory or Business Reality.
+- **Confidence:** VERY HIGH
+- **Status:** SUPPORT EXISTING OWNERS
