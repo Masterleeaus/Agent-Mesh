@@ -1374,3 +1374,35 @@ Use the existing `@titan-zero/titan-platform test:unit` package script as the ce
 EXISTING TEST OWNER/COMMAND VERIFIED / EXECUTION ROUTE GAP ONLY
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-063
+### Finding
+The new scoped Personal Zero Verification workflow successfully reached and executed Titan Platform unit tests. Most directly observed Personal Zero tests pass, but one TASK-152 test has a concrete assertion mismatch; the package-wide suite also contains substantial unrelated historical Workforce test/build-output failures. #768 therefore has one known Personal Zero test repair remaining, not 111 Personal Zero defects.
+### Evidence
+PR #770 head `f1c0e37dafa30c1744dd083e9e506aa3debe4cb7`.
+Personal Zero Verification run `35787598460`, job `106948069220`:
+- Titan Platform typecheck: SUCCESS.
+- Titan Platform unit tests: FAILURE.
+- package summary: 541 tests, 428 pass, 111 fail, 2 skipped.
+Direct log inspection shows many failures are unrelated Workforce tests unable to import missing compiled `.test-dist/workforce-native/*` and `.test-dist/workforce-lifecycle/*` outputs, plus historical export assertions.
+The directly observed Personal Zero sequence shows passing tests for:
+- write APIs rejecting context-company mismatch;
+- nested legacy tenant aliases failing closed before Personal Zero persistence;
+- nested legacy aliases in verified-outcome path failing closed;
+- private evidence provider-egress restriction;
+- accepted-learning consumer projection behavior;
+- correction supersession lineage;
+- target acceptance requirement;
+- target revocation/expiry closing retrieval;
+- changed grant fingerprint invalidating prior acceptance;
+- persisted Personal Zero schema/version markers.
+One Personal Zero test fails: `personal-zero-state-service.test.mjs` “legacy tenant aliases fail closed through canonical repository”. Runtime correctly rejects the operation with `Error: Personal Zero context company mismatch`, but the test expects an error matching `/company_id|legacy tenant/i`. This is an assertion/message-contract mismatch, not evidence that the fail-closed behavior is absent.
+### Interpretation
+Repair the single Personal Zero assertion deliberately: either make the runtime error contract explicitly mention `company_id` if that is the canonical diagnostic convention, or update the test to accept the existing canonical context-company mismatch error if that message is intentional. Do not classify unrelated Workforce package failures as TASK-152 failures. For clean certification, the scoped workflow should execute the Personal Zero test files specifically (while still using the same compiled Titan Platform output), rather than requiring every historical Titan Platform Workforce test to pass.
+### Classification
+PERSONAL ZERO TESTS EXECUTED / ONE DIRECT TASK-152 ASSERTION FAILURE / PACKAGE-WIDE UNRELATED TEST DEBT
+### Confidence
+HIGH
