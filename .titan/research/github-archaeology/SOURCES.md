@@ -240,3 +240,11 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 
 - SOURCE-GH-101 — Agent-Mesh current repository targeted searches for `tz_audit_log`, audit-event/service/receipt symbols and company-scoped audit terminology; no implementation hit returned by repository search.
 - SOURCE-GH-102 — Agent-Mesh issue search confirms #423 Compliance/Audit/Governance, #430 certification, #63 security/privacy/replay certification and #642 engine convergence as current ownership surfaces.
+
+
+- SOURCE-GH-103 — Agent-Mesh root `package.json`, SHA `242c9c9c52f7c7cc1f6e99cf8c822fcd0a3982cf`; package still identifies `titan-zero`.
+- SOURCE-GH-104 — Agent-Mesh root `README.md`, SHA `f650b1fad560ee78f9c9ecb68e645bb3a538b2f2`; current main product identity and documentation hierarchy are Dovetails FSM.
+- SOURCE-GH-105 — Agent-Mesh `AGENTS.md`, SHA `cac042dc94ccdd5855351dd82c5989478bab27a2`; current execution contract makes Dovetails canonical docs authoritative.
+- SOURCE-GH-106 — Agent-Mesh `docs/canonical/ARCHITECTURE.md`, SHA `bf6a891f0097332ecb14f8f0a2310b1b14269631`; Dovetails runtime architecture and account-scoped tenancy.
+- SOURCE-GH-107 — Agent-Mesh `docs/canonical/DOMAIN_MODEL.md`, SHA `074def8446dd2a7753e75929061456f4739db144`; Dovetails field-service domain model.
+- SOURCE-GH-108 — Agent-Mesh `ai/INVARIANTS.md`, SHA `f12b418b269137a9e77cae4a97559f2f9cc6c442`; current account_id scoping and warning that production/dev DB superuser bypasses RLS.
