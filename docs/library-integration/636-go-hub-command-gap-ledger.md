@@ -277,3 +277,20 @@ Added dedicated manifest endpoints:
 Both use the dark slate theme and existing icon assets. No Command-specific PWA was created.
 
 The generic root manifest remains for compatibility in this pass; removing or repurposing it should be done only after checking current install/service-worker dependencies.
+
+## Pass 21 — service worker and base-manifest dependency audit
+
+Audited the service worker and root manifest before removing the legacy install identity.
+
+Findings:
+- `ServiceWorkerRegistrar` registers one origin-wide `/sw.js` only in production;
+- `sw.js` is network-only for fetches and does not cache a Command app shell, so Go/Hub manifest separation does not depend on a Command cache;
+- the worker also owns push notification handling and therefore must remain shared rather than being deleted with the old root install identity.
+
+Convergence:
+- changed the base Titan Zero manifest to `display: "browser"` with start URL `/app/command`, making it browser metadata rather than a separate installable Command PWA;
+- removed Command/Capture install shortcuts from that base manifest;
+- retained dedicated Go and Hub install manifests from Pass 20;
+- aligned the root viewport/base theme to slate (`#0f172a`) instead of orange. Orange remains available as a Command accent rather than the global PWA/browser identity.
+
+The shared service worker remains intact for installability support and push. No offline caching behavior was invented.
