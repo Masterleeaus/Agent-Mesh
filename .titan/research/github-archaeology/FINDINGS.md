@@ -632,3 +632,91 @@ HIGH
 
 ### Recovery judgment
 No new issue. Compare these historical trust-state/revocation/re-authentication semantics against #645/#302 and retain only missing details.
+
+
+---
+
+## FINDING-GH-020
+
+### Finding
+Historical `TitanPro` contains concrete vertical configuration evidence for environmental-adjacent field-service capabilities, but not a complete Environmental Intelligence system.
+
+### Evidence
+Repository: `Masterleeaus/TitanPro`
+Branch: `main`
+Path: `config/titan_verticals.php`
+SHA: `627c0a60cf06e147677e4a1aa6d9254dfba61d22`
+
+Verified examples include:
+- biohazard cleaning: hazard classification, PPE enforcement, chain-of-custody logging, waste-disposal certification and incident documentation;
+- pool maintenance: water chemistry, chemical logging and compliance tracking;
+- pressure cleaning: chemical-selection logging, water-usage estimation and before/after evidence;
+- solar cleaning: weather-gated scheduling and efficiency tracking.
+
+### Current Titan equivalent
+#769 owns the canonical Environmental Intelligence capability pack.
+
+### Classification
+HISTORICAL / PARTIAL DOMAIN PRECURSOR
+
+### Confidence
+HIGH
+
+### Recovery judgment
+This evidence strengthens #769's vertical lineage but does not justify a separate environmental engine. Recover useful domain vocabulary/checklist/evidence semantics through canonical Business Reality, Knowledge Authority, Risk, Decision, Workforce and evidence contracts.
+
+---
+
+## FINDING-GH-021
+
+### Finding
+Historical `zero` contains a ComplianceIQ donor with immutable evidence digests, tamper verification, RBAC, report review/sign-off, AI summaries and anomaly analysis.
+
+### Evidence
+Repository: `Masterleeaus/zero`
+Branch: `main`
+Paths:
+- `CodeToUse/Tenancy/compliance-auditing/ComplianceIQ/README.md` SHA `c7deda650b12783ff902a5372042b6638624ae3b`
+- `CodeToUse/Tenancy/compliance-auditing/ComplianceIQ/WORKFLOWS.md` SHA `1fd1083d0785b1edede191a1ae545b946b48ac2f`
+
+Lifecycle: Capture → Evidence Log → Filter → Report → Review → Sign-off.
+It stores immutable digests, recomputes hashes for tamper checks, records authorized sign-off, supports read-only Auditor access, and treats AI summary/anomaly analysis as enrichment.
+
+### Current Titan equivalent
+#423 owns canonical Compliance/Audit/Governance workforce capability; #430 owns end-to-end certification.
+
+### Classification
+HISTORICAL / IMPLEMENTED OR PARTIAL DONOR
+
+### Confidence
+HIGH for documented donor behavior; deeper implementation audit remains required before code reuse.
+
+### Recovery judgment
+Do not resurrect ComplianceIQ as a parallel audit ledger. Compare tamper-check, sign-off and evidence-digest mechanics against #423's canonical immutable evidence/provenance contracts.
+
+---
+
+## FINDING-GH-022
+
+### Finding
+Historical Worksuite contains implemented staff-compliance status logic for verified, expired, expiring and missing mandatory documents.
+
+### Evidence
+Repository: `Masterleeaus/Worksuite-Saas---Project-Management-System_Laravel`
+Branch: `main`
+Path: `Modules/StaffCompliance/Services/ComplianceDashboardService.php`
+SHA: `d76dd5581361789ccb509b6b13917ec49a5863e3`
+
+Verified logic computes per-worker expired/expiring/missing document sets and red/orange/yellow/green status.
+
+### Current Titan equivalent
+#423 is the broader canonical compliance workforce owner.
+
+### Classification
+HISTORICAL / IMPLEMENTED VERTICAL-OPERATIONS DONOR
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Treat as a narrow operational donor for workforce credential/compliance evidence, not as a governance authority. Any adoption must add canonical `company_id` isolation and current evidence/provenance/authority contracts.
