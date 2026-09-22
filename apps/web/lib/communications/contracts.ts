@@ -95,3 +95,33 @@ export function assertCommunicationEnvelope(
   if (value.participants.length === 0) throw new Error("at least one participant is required");
   return value;
 }
+
+
+export interface ProviderDeliveryResult {
+  ok: boolean;
+  provider_message_id?: string;
+  error_code?: string;
+}
+
+export function createDeliveryReceipt(params: {
+  message: Pick<CommunicationEnvelope,
+    "id" | "company_id" | "conversation_id" | "correlation_id" | "channel"
+  >;
+  result: ProviderDeliveryResult;
+  attempt?: number;
+  occurred_at?: string;
+}): DeliveryReceipt {
+  const { message, result } = params;
+  return {
+    company_id: message.company_id,
+    message_id: message.id,
+    conversation_id: message.conversation_id,
+    correlation_id: message.correlation_id,
+    channel: message.channel,
+    state: result.ok ? "sent" : "failed",
+    provider_message_id: result.provider_message_id,
+    attempt: Math.max(1, params.attempt ?? 1),
+    occurred_at: params.occurred_at ?? new Date().toISOString(),
+    error_code: result.error_code,
+  };
+}
