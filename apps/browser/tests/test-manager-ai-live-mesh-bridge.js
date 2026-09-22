@@ -24,3 +24,11 @@ live=L.reconcile({github:{issue:{number:734,subgoal_id:'TZ-ROADMAP-55-SG-01',sta
 assert.strictEqual(live.status,'STATE_DRIFT_DETECTED');assert.strictEqual(live.failClosed,true);assert(live.drift.includes('claim-branch-noncanonical'));
 live=L.reconcile({github:{issue:{number:734,subgoal_id:'TZ-ROADMAP-55-SG-01',state:'OPEN'},mainSha:'bad'}});
 assert.strictEqual(live.status,'STATE_DRIFT_DETECTED');assert(live.drift.includes('invalid-github-state-evidence'));
+
+if(!bridge.includes("agent_mesh.continuation.get")) throw new Error('continuation read action missing');
+if(!bridge.includes("agent_mesh.continuation.checkpoint")) throw new Error('continuation checkpoint action missing');
+if(!bridge.includes("agent_mesh.continuation.takeover")) throw new Error('continuation takeover action missing');
+if(!sw.includes('checkpointAgentMeshContinuation')) throw new Error('automatic Agent Mesh checkpoint hook missing');
+if(!sw.includes("checkpointAgentMeshContinuation(normalized,'live-snapshot')")) throw new Error('live snapshot checkpoint trigger missing');
+if(!sw.includes('takeoverAgentMeshContinuation')) throw new Error('Agent Mesh takeover bridge helper missing');
+if(!sw.includes('claim_release:false')) throw new Error('takeover/checkpoint must not release claim authority');
