@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function CommandPage() {
   const session = await getSession();
   if (!session) redirect("/login");
-  if (session.role === "tech") redirect("/app/my-work");
+  if (session.role === "tech") redirect("/app/go");
 
   const projection = createAuthenticatedSurfaceProjection(session, { surface: "zero" });
 
