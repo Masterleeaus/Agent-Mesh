@@ -817,3 +817,23 @@ The execution queue is still available for claiming. Any implementation of #768 
 EXECUTION QUEUE / UNCLAIMED + ARCHITECTURE CLARIFICATION
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-038
+### Finding
+Knowledge Authority is not merely registered: current main contains an implemented Workforce reasoning-consumption gate and receipt path. However, this source-level pass did not verify a downstream Decision Engine/Model Council caller consuming the resulting knowledge-use decision.
+### Evidence
+Current main:
+- `packages/titan-platform/src/workforce.ts` blob `98f77554d22f76aa1131a257a171c803bfa43979` exports `buildWorkforceKnowledgeAuthorityPacket`, `evaluateWorkforceKnowledgeUse`, `buildWorkforceKnowledgeUseReceipt`, and `summarizeWorkforceKnowledgeAuthority`.
+- Wrapper `packages/titan-platform/src/ported/titan-workforce/knowledge/workforce-knowledge-authority-runtime.ts` blob `7998e595becaf28938fce237df31a51cd2b1f073` delegates to the canonical handover runtime.
+- The handover runtime implements source identity, provenance, version, freshness, contradiction, jurisdiction, vertical and company-private/public scope checks.
+- `evaluateWorkforceKnowledgeUse` returns `ALLOW_FOR_REASONING` or `BLOCK`, explicitly sets `requires_independent_authority_decision:true`, `knowledge_is_not_authority:true`, `automatic_execution:false`, `execution_permitted:false`.
+- `buildWorkforceKnowledgeUseReceipt` records selected knowledge IDs, provenance refs, purpose, reasoning trace ref and authority decision ref while declaring the receipt is not execution authority.
+### Interpretation
+The prior gap wording “prove Knowledge Authority consumption by reasoning, not merely registered” is too broad. Reasoning-use consumption semantics are implemented. The remaining audit question is narrower: prove at least one canonical downstream reasoning/decision consumer is wired to this gate/receipt path end-to-end.
+### Classification
+CURRENT / IMPLEMENTED REASONING GATE; DOWNSTREAM CONSUMER TRACE PARTIAL
+### Confidence
+HIGH
