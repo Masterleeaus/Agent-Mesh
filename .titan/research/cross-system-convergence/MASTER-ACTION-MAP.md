@@ -580,3 +580,18 @@ Remaining action is governance-only:
 4. keep unrelated repository-wide Worker/package CI debt with its existing owners;
 5. merge/close #768 when governance permits;
 6. downstream #153/#59/#37/#767 must consume the canonical Personal Zero contracts rather than copy them.
+
+
+## Post-#768 downstream implementation handoff
+Current unclaimed canonical lanes:
+1. **#153 Business Memory/Knowledge** — company-wide memory owner. Reuse Worker Memory substrate and certified Personal Zero Experience/Understanding contracts only at explicit personal↔business boundaries; never make Business Memory the owner of ONE/Zero personal state.
+2. **#59 Decision lifecycle** — converge existing DecisionPacket/Decision Object/history/temporal evidence into one persistent lifecycle. Personal Zero may provide authority-neutral understanding/experience evidence, never decision authority.
+3. **#37 Predictive/outcome learning** — consume verified outcomes, #59 temporal state and #768 calibration/learning patterns where personal context applies. Do not copy Personal Zero's Learning Governor bridge or calibration model into a parallel engine.
+4. **#767 Evolution/Reality** — preserve Business Reality as company-owned authoritative model; consume Personal Zero observations/inferences only as provenance-bearing proposals/evidence. Never silently promote Zero inference into Business Reality.
+
+Dependency preference:
+- deep-scan/claim #153 and #59 first because #37 depends on #59 evidence and #767 explicitly depends on #153;
+- then #37/#767 can converge against stable memory/decision contracts;
+- all four must preserve `company_id`, provenance, authority neutrality of intelligence/learning, and existing Trust/Risk/Assurance/Command Bus gates.
+
+Do not create new issues for these already-owned lanes.
