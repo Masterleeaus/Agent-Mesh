@@ -7,7 +7,7 @@ const navLinks = [
   { label: 'Home', path: '/' },
   { label: 'Features', path: '/features' },
   { label: 'Fully Managed', path: '/fully-managed' },
-  { label: 'Pricing', path: '/pricing' },
+  { label: 'Investment', path: '/pricing' },
   { label: 'Industries', path: '/industries' },
   { label: 'Privacy', path: '/privacy-architecture' },
   { label: 'Costs', path: '/cost-sovereignty' },
