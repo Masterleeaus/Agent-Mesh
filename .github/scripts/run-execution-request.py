@@ -3,7 +3,8 @@
 import argparse,hashlib,json,os,subprocess
 from datetime import datetime,timezone
 from pathlib import Path
-from validate_execution_request import validate
+import importlib.util
+_spec=importlib.util.spec_from_file_location('validator',Path(__file__).with_name('validate-execution-request.py')); _v=importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_v); validate=_v.validate
 def run(a,check=True):
  p=subprocess.run(a,text=True,capture_output=True)
  if check and p.returncode: raise RuntimeError((p.stderr or p.stdout or "command failed").strip())
