@@ -50,3 +50,26 @@ Current source is authoritative. Historical repositories are donor evidence unti
 The repository already contains a substantial Titan platform layer. The main problem is not absence of AI infrastructure; it is incomplete connection of persistent personal intelligence, business reality, experience, learning, evolution, trust and authority.
 
 The primary archaeological target is therefore the missing loop, not another agent framework.
+
+
+## Authority Continuance — current verification update
+Status: SUBSTANTIALLY IMPLEMENTED at runtime; full Trust lifecycle certification pending.
+
+Verified current runtime semantics:
+- authority leases: fresh / stale / expired / revoked / suspended / unknown
+- expiry and freshness evaluation
+- current-decision supersession
+- delegation extinction
+- stale authority contraction
+- revoked/expired/suspended fail-closed execution
+- lease-control narrowing/revocation
+- no lease expiry extension beyond upstream authority
+- no local authority increase
+- bounded delegation depth and ancestry continuity
+- company/capability/workflow/context scope continuity
+- parent-chain expiry and inactivity propagation
+- history/seal continuity and anti-equivocation support
+- company_id boundary with legacy tenant fields rejected
+
+Boundary:
+This verifies Authority Continuance primitives in current code. It does not by itself certify Goal42's recursive system/user/downstream-agent handshake or all trust-tier promotion semantics.
