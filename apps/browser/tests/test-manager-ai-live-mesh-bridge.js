@@ -100,3 +100,9 @@ if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,
 
 if(!sw.includes('agent-mesh-mutation-requires-governed-path')) throw new Error('generic bridge must not bypass Agent Mesh mutation gate');
 if(!sw.includes("typeof action === 'string' && action.startsWith('agent_mesh.')")) throw new Error('generic bridge Agent Mesh classification guard missing');
+
+if(!bridge.includes('RESUME_GATED_MUTATIONS')) throw new Error('bridge resume-gated mutation registry missing');
+if(!bridge.includes("resume-reconciliation-required")) throw new Error('bridge must reject gated mutations without resume proof');
+if(!sw.includes('preflightAgentMeshWorkMutation')) throw new Error('central Agent Mesh mutation preflight missing');
+if(!sw.includes('callAgentMeshMutation')) throw new Error('central Agent Mesh mutation wrapper missing');
+if(!sw.includes("allowed=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover'])")) throw new Error('Agent Mesh mutation allowlist changed unexpectedly');
