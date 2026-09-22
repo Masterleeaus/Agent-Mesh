@@ -13,6 +13,10 @@ export type WarrantyLifecycleState = 'active' | 'expiring_soon' | 'expired' | 'v
 export type WarrantyClaimType = 'labor' | 'parts' | 'parts_and_labor';
 export type WarrantyClaimState = 'open' | 'approved' | 'denied' | 'completed';
 
+const COVERAGE_TYPES = new Set<WarrantyCoverageType>(['labor_only','parts_only','parts_and_labor','manufacturer','extended','custom']);
+const CLAIM_TYPES = new Set<WarrantyClaimType>(['labor','parts','parts_and_labor']);
+const CLAIM_STATES = new Set<WarrantyClaimState>(['open','approved','denied','completed']);
+
 export interface WarrantyProvenance {
   source: string;
   source_ref?: string | null;
@@ -150,6 +154,7 @@ export function buildTitanWarranty(input: TitanWarrantyInput, options: { as_of?:
     throw new Error('end_date must not precede start_date');
   }
   const voided = Boolean(optionalString(input.voided_reason));
+  if (!COVERAGE_TYPES.has(input.coverage_type)) throw new Error('unsupported coverage_type');
   return Object.freeze({
     schema: TITAN_WARRANTY_SCHEMA,
     warranty_id: requiredString(input.warranty_id, 'warranty_id'),
@@ -188,6 +193,8 @@ export function buildTitanWarranty(input: TitanWarrantyInput, options: { as_of?:
 export function buildTitanWarrantyClaim(input: TitanWarrantyClaimInput) {
   rejectLegacy(input);
   const state = input.state ?? 'open';
+  if (!CLAIM_TYPES.has(input.claim_type)) throw new Error('unsupported claim_type');
+  if (!CLAIM_STATES.has(state)) throw new Error('unsupported claim state');
   const labor_cost_cents = nonNegativeCents(input.labor_cost_cents, 'labor_cost_cents');
   const parts_cost_cents = nonNegativeCents(input.parts_cost_cents, 'parts_cost_cents');
   return Object.freeze({
