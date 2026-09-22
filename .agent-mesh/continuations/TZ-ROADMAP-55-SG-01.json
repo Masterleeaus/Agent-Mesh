@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 21,
+    "current_pass": 20,
     "status": "ACTIVE"
   },
   "completed": [
@@ -145,15 +145,19 @@
     "Pass 20: added regression guards for the mutation gate classification",
     "Pass 21: centralized Agent Mesh mutation semantics in one explicit policy map so future mutation actions cannot silently inherit the wrong resume behavior",
     "Pass 21: recover_agent, route_packet and continuation.takeover are explicitly resume-gated; continuation.checkpoint is explicitly continuity-record-only so reconciliation can still preserve recovery context",
-    "Pass 21: regression guards lock all mutation classifications and require the canonical mutation path to derive gating from the policy"
+    "Pass 21: regression guards lock all mutation classifications and require the canonical mutation path to derive gating from the policy",
+    "Pass 20: audited Agent Mesh bridge mutation call sites and confirmed/converged them behind a central governed mutation wrapper",
+    "Pass 20: generic Titan Bridge path rejects agent_mesh mutation actions; only explicit allowlisted governed paths may mutate",
+    "Pass 20: recover_agent, route_packet and continuation takeover are resume-gated; continuation checkpoint remains continuity-record-only and cannot grant lifecycle authority",
+    "Pass 20: regression guards prevent direct generic bridge mutation, unknown Agent Mesh mutation actions, or bypass of governed checkpoint/takeover/Manager paths"
   ],
   "current_work": [
-    "Converge replacement-agent bootstrap into compact prompt/context delivery for ChatGPT/Codex workers"
+    "Converge stale route_packet/packet terminology in Manager recovery onto GitHub issue/subgoal terminology without breaking bridge compatibility"
   ],
   "next_actions": [
-    "Inspect existing repository context/prompt assembly path and reuse it",
-    "Inject machine-readable Agent Mesh work context before user task without making retrieved text authoritative",
-    "Keep prompt compact and provenance-labelled"
+    "Inspect bridge/server implementation of agent_mesh.route_packet and recover_agent",
+    "Add compatibility adapter so user-facing/control-plane semantics use issue/subgoal while legacy packet is transport-only",
+    "Do not create a new routing system"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
