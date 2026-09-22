@@ -196,3 +196,21 @@ Actions affected:
 Conflicts:
 - Earlier 'no Personal Zero owner' finding remains historically correct for that scan but is superseded for action ownership by #768.
 Needs re-ingestion: YES
+
+
+## INGEST-012
+Agent/workspace: Trust/Authority archaeology #761 / PR #762
+Artifact: issue comments + PR diff
+Revision inspected: PR head 448a9d02d7dd6fb1129318937a787b1625a9c8de
+Agent status: IN PROGRESS / PR OPEN
+Ingestion status: PARTIAL
+Findings imported:
+- #762 is an evidence-generation workflow, not recovered evidence itself.
+- workflow_dispatch-only; generated Trust/Authority evidence is not present in the PR.
+- source-level review remains required for handshake and Authority Continuance.
+- Library archaeology comment identifies Titan Trust Master v2.1.0 and OnboardingPro v6 trust/evidence receipt donors.
+Actions affected:
+- Trust/Authority convergence packet
+Conflicts:
+- Prevents overclaim that #761/#762 has already verified Authority Continuance.
+Needs re-ingestion: YES
