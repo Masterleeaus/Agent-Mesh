@@ -1879,3 +1879,94 @@ RETIRE STORE / MIGRATE SEMANTICS ONLY
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-066
+
+### Finding
+The cleanly lineage contains a substantial PWA/edge-node architecture donor that closely anticipates current Titan Zero Go/Hub/Command delivery: role-specific surfaces over one canonical backend, offline queues, replay/idempotency, device identity/trust, staged evidence, conflict handling and revocation.
+
+### Direct evidence
+`docs/01-PWA/17-edge-node-and-pwa-runtime-contract.md` SHA `244abc24da9556ecdb103b22280f23ed52efe7ca` defines:
+- device shell, surface runtime, domain adapters, signal/runtime and trust/identity layers;
+- durable device registry with `company_id`, actor, device UUID, trust, capabilities and sync state;
+- bootstrap handshake and surface profiles;
+- outbox/inflight/inbox/dead-letter/replay queues;
+- idempotency keys, cursors and conflict markers;
+- staged camera/media evidence;
+- device revocation, trust downgrade and local wipe;
+- explicit rule that device trust never replaces authorization.
+
+### Classification
+STRONG HISTORICAL PWA/EDGE DONOR / CURRENT OWNER EXISTS
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-067
+
+### Finding
+The old nine-node product taxonomy is superseded, but several implementation semantics remain valuable. Current canonical user surfaces are `zero`, `go`, `hub`; `command` is an alias/owner-facing label that normalizes to `zero`.
+
+### Historical taxonomy
+cleanly docs used Titan Pro, Ground Zero, Titan Go, Zero Fuss, Titan Zero, ZeroPay, Titan Studio, Titan Solo and Titan Hello as separate named nodes/surfaces.
+
+### Current owner evidence
+Agent-Mesh #641 owns consolidated Go/Hub/Command PWA delivery; #690 explicitly owns Zero/Go/Hub canonical surface normalization and legacy Command/BOS alias containment; #636 owns Library Go/Hub/Command masters.
+
+### Recovery judgment
+Do not restore the nine-node navigation/product model. Map useful field/customer/owner/mobile/offline behaviors into canonical surfaces and shared engines.
+
+### Classification
+PRODUCT TAXONOMY RETIRED / SEMANTICS CONVERGE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-068
+
+### Finding
+Historical Titan Go is a strong field-execution semantic donor.
+
+### Evidence
+`docs/dashboards/titan-go.md` SHA `35b8326bf5326ae6a1fdf2a3075203780332b29b` specifies:
+- offline daily jobs and job cards;
+- access instructions;
+- checklists;
+- before/after photo evidence;
+- GPS/QR arrival/check-in;
+- notes/issues;
+- service-worker/background sync;
+- PPE/hazard/SWMS/compliance gates;
+- contextual AI guidance.
+
+### Current mapping
+These semantics belong to canonical `go`, #641/#636/#542, with business state remaining in canonical job/site/checklist/evidence/safety owners.
+
+### Classification
+RECOVER/COMPARE FIELD UX SEMANTICS
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-069
+
+### Finding
+The cleanly PWA data model reinforces an important convergence rule: surfaces must not invent private business objects. Go/Hub/Zero should project canonical company/customer/work/finance/signal objects and use surface-specific subsets.
+
+### Evidence
+`docs/01-PWA/09-canonical-data-model.md` SHA `1bf7a96325fa9fe38350651597fe23229a77b1c4` separates transactional truth, operational metadata, AI context and event/signal layers, and states `company_id` is the tenant boundary while `user_id` is actor/ownership context.
+
+### Classification
+CURRENT ARCHITECTURE CONFIRMED
+
+### Confidence
+HIGH
