@@ -20,7 +20,7 @@ function derive(input={}){
  const checks=arr(input.checks),required=checks.filter(x=>x&&x.required!==false);
  const checksFailed=required.some(x=>['FAILURE','FAILED','ERROR','CANCELLED','TIMED_OUT'].includes(clean(x.conclusion||x.status,40).toUpperCase()));
  const checksPending=required.some(x=>!['SUCCESS','PASSED','NEUTRAL','SKIPPED'].includes(clean(x.conclusion||x.status,40).toUpperCase()));
- const merged=Boolean(pr&&(pr.merged===true||pr.merged_at)),issueClosed=clean(issue.state,40).toUpperCase()==='CLOSED';
+ const merged=Boolean(pr&&Number(pr.number)>0&&(pr.merged===true||pr.merged_at)),issueClosed=clean(issue.state,40).toUpperCase()==='CLOSED';
  const compare=input.compare&&typeof input.compare==='object'?input.compare:{};
  const aheadBy=Number.isFinite(Number(compare.ahead_by))?Number(compare.ahead_by):null;
  const behindBy=Number.isFinite(Number(compare.behind_by))?Number(compare.behind_by):null;
