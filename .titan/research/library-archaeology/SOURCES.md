@@ -64,3 +64,20 @@ Path: repository root
 Inspected: YES
 Relevant findings: workspace placement
 Notes: No .titan directory existed on main when checked; therefore the user-requested fallback .titan/research/library-archaeology/ is being used.
+
+
+## SOURCE-LIB-007
+Library file: Titan-Zero-Offline-LocalBrain-FLAT-file-map.csv
+Version: Titan-Zero-Offline-LocalBrain-FULL-2026-08-03 lineage
+Archive: flattened file-map of cumulative source tree
+Inspected: YES — Pass 2 inventory evidence
+Relevant findings: FINDING-LIB-008
+Notes: Confirms later implementation artifacts including Phase-11 and Phase-14 reports/changelogs, CognitiveEvent, LocalIntelligenceMemory, episodic/semantic/user-action/user-preference migrations, offline cognitive-event outbox, memory store/reranker, persona drift, causal sync and vector clock. The file map proves path presence, not behaviour; source-level implementation inspection remains in progress.
+
+## SOURCE-LIB-008
+Library file: TitanZero_Phase10_BUILD_REPORT.md
+Version: Phase 10 Local Intelligence, 2026-07-29
+Archive: native Markdown
+Inspected: YES — Pass 2
+Relevant findings: FINDING-LIB-007, FINDING-LIB-008 lineage
+Notes: Confirms Phase-10 implemented baseline: Universal Wizard Engine, LocalBrain coordinator, TypeScript IndexedDB/AES-GCM offline companion, idempotent tenant-checked sync, deterministic cognitive/memory/learning/planning/retrieval/compliance implementations and strict TypeScript/device verification. Host integration remained explicitly unproven.
