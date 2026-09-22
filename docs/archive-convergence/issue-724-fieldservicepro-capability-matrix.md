@@ -45,3 +45,10 @@ Rule: Titan Zero remains authoritative. Donor code does not create a parallel ru
 ## Cross-record reference decision
 
 The repository scan found no canonical #724 persistence/orchestration boundary for warranty, RFI, or submittal records. Their related IDs are therefore descriptive references only in this issue. The shared `business-reference-integrity` guard is intentionally not called from the pure builders because a caller-supplied `company_id` beside an ID is not evidence of ownership. Future persistence must resolve each related record through its canonical owner, construct company-scoped references from that authoritative result, and fail closed before storage or execution. This avoids creating a duplicate project/job/change-order authority solely for donor convergence.
+
+
+## Deletion-readiness audit — 2026-09-22
+
+A final donor-path lookup on `agent/724` no longer resolves the previously scanned FieldServicePro model files (warranty, permit, RFI, submittal, punch-list, recurring-schedule), and repository code search returns no FieldServicePro donor implementation hits. This means the branch must not attempt a blind delete: the donor tree is already absent or moved relative to the earlier scan. Treat donor deletion as satisfied only after confirming branch/tree state at merge time; do not fabricate a delete commit.
+
+The capability comparison remains frozen above: canonical Titan owners were retained for work orders, dispatch, SLA, recurring execution, qualification authority, change orders, auth, AI/chat, reporting and tenancy. The bounded semantics imported under #724 are warranty/claims, permit/inspection completion evidence, defect verification, RFI, submittal review/revision, qualification credential expiry, recurring preferences and business-hours SLA calculation. No newly identified donor runtime authority is required.
