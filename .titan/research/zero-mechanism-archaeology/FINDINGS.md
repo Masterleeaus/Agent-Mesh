@@ -852,3 +852,130 @@ HIGH
 
 ### Related action
 #768; canonical `company_id` invariant.
+
+
+---
+
+## FINDING-GH-027
+
+### Finding
+The Phase10 Device Intelligence material is a mixed donor: the Phase10 upgrade plan contains strong architecture/specification for Personal Zero device intelligence, while the separately verified Interaction Engine v10.12.0 contains implementation of several prerequisite cognition mechanisms. This pass did not locate a separate Phase10 cumulative source archive proving that all Pass18/19 TypeScript device modules were implemented.
+
+### Why it matters
+Do not promote planned Phase10 device modules to implemented truth. Recover the semantics, but require source evidence before direct import claims.
+
+### Evidence
+Library source: `TitanZero_Phase10_Multi_Pass_Intelligence_Upgrade_Plan.md`.
+The plan explicitly describes Pass18 Outcome-Based and Active Learning and Pass19 Device Intelligence, including proposed TypeScript files `device-event-store.ts`, `device-working-memory.ts`, `device-preference-model.ts`, `device-learning-buffer.ts` and related modules. Library searches for these exact implementation paths returned the plan, not a separate implementation archive.
+
+### Current Titan equivalent
+#768 Personal Zero contracts plus current offline/device runtime; implementation ownership still requires convergence.
+
+### Classification
+SPECIFICATION ONLY for Pass18/19 device modules; donor semantics remain valuable.
+
+### Confidence
+HIGH
+
+### Related action
+#768; do not claim direct import until source archive is found.
+
+---
+
+## FINDING-GH-028
+
+### Finding
+Phase10 defines a particularly strong Personal Zero memory truth lifecycle: working, episodic, semantic and procedural memory are separated, with truth states `observed`, `confirmed`, `inferred`, `predicted`, `disputed`, `superseded`, `expired`, and `deleted`.
+
+### Why it matters
+This is directly compatible with #768's observation → candidate understanding → accepted/superseded understanding model and provides useful donor vocabulary for preventing inferred or stale personal information from becoming durable truth.
+
+### Evidence
+Library plan Pass12 — Memory Architecture and Truth Lifecycle. Required metadata includes source/evidence, confidence, first-observed/last-confirmed, expiry/decay, contradiction references, sensitivity, consent basis, model/rule version and visibility scope.
+
+### Current Titan equivalent
+Candidate semantics for Personal Zero Understanding Evidence/State; generic Business Memory remains #153.
+
+### Classification
+SUPERIOR HISTORICAL SPECIFICATION
+
+### Confidence
+HIGH
+
+### Related action
+#768.
+
+---
+
+## FINDING-GH-029
+
+### Finding
+Phase10 specifies explicit privacy/scope levels for personal intelligence: device-private, user-private, team, tenant/company and collective-safe, with local personal adaptation separated from business/team learning and global contribution.
+
+### Why it matters
+This gives Personal Zero a useful locality/privacy model without inventing a second tenant boundary. Canonical business tenancy must still normalize to `company_id`; user/device scope is subordinate visibility/locality context.
+
+### Evidence
+Phase10 Pass12 scope states and Pass19/20 device/collective responsibilities. Pass20 defaults global contribution to explicit opt-in and prohibits raw conversations, credentials and sensitive fields from global contribution.
+
+### Current Titan equivalent
+Candidate privacy/locality semantics for #768 plus Local Bridge/device-private state.
+
+### Classification
+SUPERIOR HISTORICAL SPECIFICATION
+
+### Confidence
+HIGH
+
+### Related action
+#768.
+
+---
+
+## FINDING-GH-030
+
+### Finding
+Phase10's Learning Governor design explicitly moves beyond pattern imitation: corrections and real downstream outcomes become learning signals, model updates require minimum evidence, updates are versioned/reversible, exceptional events must not dominate, and active learning asks the question expected to reduce uncertainty most.
+
+### Why it matters
+These are strong semantics for Zero's Learning Governor and for a proactive Zero that knows what it does not know. They also prevent one correction from silently becoming a universal rule.
+
+### Evidence
+Phase10 Pass18 — Outcome-Based and Active Learning. Proposed components include CorrectionSignal, OutcomeSignal, PredictionScorer, FeatureWeightUpdater, InformationGainCalculator, QuestionRanker, DriftDetector, ModelVersion/Registry/Rollback. Tests require prediction error reduction, exceptional-event resistance, local preference correction before tenant model, rollback and uncertainty reduction.
+
+### Current Titan equivalent
+#37 bounded predictive/outcome learning + #768 Personal Zero understanding/experience.
+
+### Classification
+SUPERIOR HISTORICAL SPECIFICATION
+
+### Confidence
+HIGH
+
+### Related action
+#37; #768.
+
+---
+
+## FINDING-GH-031
+
+### Finding
+Phase10 states the correct device/server authority split for Personal Zero: devices may hold personal preferences, recent working/episodic memory, drafts, local retrieval and personal model adjustments, while authoritative business records, permissions/approval, business memory, team learning, outcome evaluation, model registry/signing and shared orchestration remain server responsibilities.
+
+### Why it matters
+This supports device-first/private Zero without allowing offline intelligence to become an authority bypass.
+
+### Evidence
+Phase10 Pass19 explicitly requires “Core personal assistance works offline” and “Device intelligence cannot bypass server authority.” Its broader upgrade strategy states learning permission, visibility permission, recommendation permission, execution permission and approval authority are distinct.
+
+### Current Titan equivalent
+Candidate convergence semantics for #768 + canonical offline/Trust/Authority owners.
+
+### Classification
+SUPERIOR HISTORICAL SPECIFICATION
+
+### Confidence
+HIGH
+
+### Related action
+#768; #21; #725; Trust/Authority owners.
