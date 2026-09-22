@@ -156,3 +156,10 @@ export {
   type TitanWorkforceHierarchyReparentProposal,
   type TitanWorkforceHierarchyStateSnapshot,
 } from "./workforce-hierarchy/state-persistence.js";
+
+export {
+  buildWorkforceKnowledgeAuthorityPacket,
+  evaluateWorkforceKnowledgeUse,
+  buildWorkforceKnowledgeUseReceipt,
+  summarizeWorkforceKnowledgeAuthority,
+} from "./ported/titan-workforce/knowledge/workforce-knowledge-authority-runtime.js";
