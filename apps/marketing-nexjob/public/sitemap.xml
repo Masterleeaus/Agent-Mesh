@@ -100,4 +100,13 @@
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
+  <url><loc>https://titanzero.io/your-zero</loc></url>
+  <url><loc>https://titanzero.io/ai-workforce</loc></url>
+  <url><loc>https://titanzero.io/intelligence-decisions</loc></url>
+  <url><loc>https://titanzero.io/continuous-evolution</loc></url>
+  <url><loc>https://titanzero.io/existing-systems</loc></url>
+  <url><loc>https://titanzero.io/real-world-intelligence</loc></url>
+  <url><loc>https://titanzero.io/apps</loc></url>
+  <url><loc>https://titanzero.io/security-recovery</loc></url>
+  <url><loc>https://titanzero.io/measured-outcomes</loc></url>
 </urlset>
