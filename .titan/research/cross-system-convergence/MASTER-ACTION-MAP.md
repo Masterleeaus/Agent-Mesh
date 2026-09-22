@@ -237,3 +237,16 @@ Converge, rather than duplicate:
 - Model Council/Nexus evidence references where applicable;
 - current authority revalidation before protected execution;
 - execution/outcome receipts that can later feed #153/#37/#768 learning lanes.
+
+
+## Issue #153 reuse boundary
+Before implementing #153, preserve and reuse the current Workforce Pass 36 Worker Memory semantics instead of building another worker/agent memory engine:
+- provenance-bearing memory records;
+- confidence/relevance/recency recall ranking;
+- expiry, disputed/revoked/superseded states;
+- history-preserving supersession;
+- privacy classification and purpose filtering;
+- recall receipts linking reasoning, Knowledge verification and authority decisions;
+- memory-is-context/not-truth/not-authority invariants.
+
+#153 should provide the **company-wide canonical Business Memory owner** above/around these scoped views: shared ingestion/deduplication, company records, verified-outcome episodic memory, procedural memory, correction/retention/forgetting, stable retrieval APIs and OnboardingPro longitudinal/anti-repeat semantics. Worker-specific memory should remain a scoped projection/view, not a separate source of company truth.
