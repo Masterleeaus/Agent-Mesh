@@ -301,3 +301,8 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-145 — Agent-Mesh issue #767, canonical Business Reality/Evolution recovery/convergence target.
 - SOURCE-GH-146 — Agent-Mesh commit `3f7c3f8ffd18cf165206f3ed6deddc9d4c9fe62c`, “research(library): confirm Personal Zero owner gap.”
 - SOURCE-GH-147 — Agent-Mesh commits `93f06b2600faac271a17e4b547decba03bb07dbe` and `4450e857481ecc5d96086e994bde82f2a6e76647`; register Personal Zero convergence action and owner-selection checkpoint.
+
+
+- SOURCE-GH-148 — current main `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts`, SHA `415ee5647bed8a54b60d4e18ee628c67316d97ee`; evidence-backed investigation, Business Discovery, installation planning and commissioning baseline.
+- SOURCE-GH-149 — direct Agent-Mesh searches for OnboardingPro service names `BusinessRealityGraphService`, `ContinuousBusinessObservationService`, `BusinessReconfigurationService`, `NexusReassessmentService`, `OutcomeMeasurementService`, `RollbackDecisionService` returned no current implementation hits.
+- SOURCE-GH-150 — issue #767 remains the explicit canonical recovery owner for OnboardingPro Evolution/Reality mechanisms and forbids a second Reality/observation/reconfiguration/provisioning authority.
