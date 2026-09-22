@@ -120,3 +120,7 @@ Rewind v1.0.9 source verification supports evidence-driven recovery. Personal Ze
 
 ### ZM-016 — Zero privacy separates observation, memory, learning and egress
 Purpose-bound OnboardingPro consent plus LocalBrain/Phase10 privacy scopes imply a stronger Personal Zero rule: permission to observe a source does not automatically permit durable retention, learning, later retrieval, provider disclosure or action. Revocation must stop future observation/egress and propagate through caches/derived state subject to retention obligations. Provider routing must respect locality and never silently escalate private context to cloud inference. Decision/Workforce/Interaction consumers should receive purpose-minimised projections of Zero, not the complete personal model.
+
+
+### ZM-017 — Zero is provider-neutral and local-first
+Sovereign/Goal-13 evidence confirms the intended route order: device/local → trusted LAN/private node → Local Bridge/Ollama/customer-hosted → BYO provider → explicitly entitled Titan resource. Zero and Workforce request capabilities, never specific vendors. Routing evaluates privacy, locality, capability, entitlement, availability, cost and latency and records execution provenance. Offline/local operation never elevates authority. A current implementation gap remains: the scanned AI masters did not prove one canonical production Ollama/browser-local adapter/provider-independent routing contract, so Goal 51 convergence remains required.
