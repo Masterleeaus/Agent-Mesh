@@ -1,0 +1,11 @@
+import SectionLabel from '../components/SectionLabel'
+import CTASection from '../components/CTASection'
+const groups=[
+['Zero can see',['A customer can show damage.','A worker can show equipment.','A cleaner can document completed work.','A technician can show an unfamiliar component.','An environmental specialist can capture site evidence.']],
+['Zero can understand location',['Routing','Scheduling','Field operations','Service areas','Assets','Travel','Environmental context','Geographically distributed work']],
+['Zero can communicate',['Phone','Messaging','Email','In-app communication','Context continuity across supported channels']]
+]
+export default function RealWorldIntelligence(){return <><section className="pt-32 pb-16 px-6 text-center"><div className="max-w-5xl mx-auto"><SectionLabel>Real-World Intelligence</SectionLabel><h1 className="text-4xl sm:text-6xl font-extrabold mb-5">Chat. Voice. <span className="text-nx-purple-light">Camera.</span></h1><p className="text-lg text-nx-muted max-w-3xl mx-auto">Titan Zero isn't intended to make owners and field teams live inside administration dashboards. Chat with it. Talk to it. Show it.</p></div></section>
+<section className="px-6 pb-24"><div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-5">{groups.map(([t,items])=><div key={t} className="bg-nx-surface border border-nx-border rounded-2xl p-7"><h2 className="text-2xl font-bold mb-5">{t}</h2><div className="space-y-3">{items.map(x=><p key={x} className="text-sm text-nx-muted">{x}</p>)}</div></div>)}</div></section>
+<section className="py-20 px-6 border-y border-nx-border"><div className="max-w-5xl mx-auto text-center"><h2 className="text-4xl font-extrabold mb-5">Conversation when conversation is best.<br/><span className="text-nx-purple-light">Interface when interface is best.</span></h2><p className="text-lg text-nx-muted">When a visual interface is useful, Titan can generate the appropriate controls, evidence, choices or workflow rather than forcing every interaction through chat.</p></div></section>
+<CTASection title="Bring intelligence closer to the work." subtitle="Ask it, tell it or show it — with the appropriate context, evidence and authority around the interaction."/></>}
