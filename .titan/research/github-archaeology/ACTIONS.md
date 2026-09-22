@@ -194,3 +194,27 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** all useful donor semantics are either proven present in #353 or converged there; no second Dispatch domain/store/tenant boundary remains.
 - **Confidence:** HIGH
 - **Status:** READY FOR OWNER COMPARISON
+
+
+---
+
+## ACTION-GH-011 — Converge historical multi-core consensus semantics into canonical Model Council
+
+- **Type:** COMPARE / CONVERGE
+- **Priority:** P1
+- **Findings:** FINDING-GH-052, FINDING-GH-053, FINDING-GH-054, FINDING-GH-055
+- **Evidence:** TitanPro orchestration, weighting/consensus, specialist-core, evaluation and model-routing documents.
+- **Current State:** Current roadmap owns Model Council through #642/#80/#633, while historical TitanPro specifies detailed participation, weighting, critique, convergence, escalation, replay and outcome-refinement semantics.
+- **Gap:** Exact implementation parity in current TypeScript remains to be proven.
+- **Canonical Owner:** #642 MVP engine convergence; #80 Intelligence Runtime integration/test; #633 AI/Decision/Intelligence convergence.
+- **Proposed Treatment:** Compare current Model Council contracts/runtime against the historical semantics. Recover only missing semantics, not the old subsystem names or authority assumptions.
+- **Dependencies:** DecisionPacket/Decision Engine, Knowledge Authority/evidence, Governance/Risk/Assurance, Experience/Business Memory, Intelligence Router.
+- **company_id:** Council context/evidence and learned domain weighting must remain company-scoped where business-specific.
+- **Trust/Authority:** Consensus/confidence/weight never grants authority; execution still requires the effective authority envelope.
+- **Privacy/Security:** All participants consume governed context subsets; provider egress follows privacy/redaction policy.
+- **Cost Sovereignty:** Selective/hybrid participation and #647 routing prevent unnecessary multi-model cost.
+- **Migration:** Semantic convergence into current TypeScript Model Council; no historical PHP/doc runtime dependency.
+- **Tests:** hidden disagreement, conflicting evidence, low/high-risk threshold variation, deterministic replay, bounded critique, no infinite loops, escalation on unresolved conflict, outcome-refined weights remain governed, consensus cannot bypass denial, provider fallback cannot silently weaken privacy.
+- **Acceptance Criteria:** Canonical Model Council can expose who participated, evidence used, critique/disagreement, weighting basis, convergence status and escalation reason while remaining advisory to authority.
+- **Confidence:** HIGH
+- **Status:** READY FOR OWNER COMPARISON
