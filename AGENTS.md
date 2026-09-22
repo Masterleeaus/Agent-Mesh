@@ -68,44 +68,53 @@ If multiple options exist, choose the one with:
 
 ## Mandatory GitHub Issue Claim Protocol
 
-All implementation agents MUST establish ownership through GitHub before changing implementation files. GitHub is the durable development truth.
+All agents MUST claim an issue before implementation work. The canonical claim lock is the GitHub branch ref `agent/<subgoal-id>`.
 
-### Canonical claim authority
+### Authority
 
-- The atomic claim lock is the exact Git branch `agent/<subgoal-id>`, created from the required current `main` SHA.
-- Branch creation is the mutex: successful exact ref creation means the issue is claimed; an existing exact ref means another agent already owns it.
-- Do not bypass a collision with suffixes, worker names, timestamps, or alternate prefixes.
-- Issue comments, assignees, browser state, local JSON, Manager ledgers, and AI statements are projections/evidence only. They MUST NOT create or override claim authority.
-- A claim comment should record the agent/workspace identity, branch, issue/subgoal, and base `main` SHA after successful branch creation.
-- One agent should hold one implementation claim at a time unless an explicit Manager task requires otherwise.
+- **GitHub branch creation is the claim mutex.** Atomically creating the exact canonical ref `agent/<subgoal-id>` from the required current base SHA establishes the claim.
+- If that exact ref already exists, the issue is already claimed. Do not create a suffixed, worker-named, timestamped, or alternate-prefix branch; select another eligible issue.
+- `work/claims.json`, issue comments, browser state, local JSON, Manager ledgers, AI output, and GitHub assignees are projections/evidence only. They MUST NOT override the live GitHub ref.
+- Claim comments remain required coordination evidence, but they are **not** the lock authority.
+- Multiple agents sharing one GitHub identity does not change the mutex: the exact branch ref remains unique and atomic.
 
-### Before starting an issue
+### Before starting any issue
 
-1. Resolve the current required `main` SHA and confirm the issue is open and eligible.
-2. Check live GitHub refs and open PRs for the canonical `agent/<subgoal-id>` branch.
-3. Atomically create `agent/<subgoal-id>` from that resolved `main` SHA.
-4. If GitHub reports that the ref already exists, do not inspect or modify implementation files for that issue; select another eligible issue.
-5. After successful creation, record the claim on the issue for human/audit visibility.
-6. Reconcile Titan Code / Manager local projections from the resulting GitHub state before execution.
+1. Fetch the issue, current `main` SHA, live `agent/*` refs, relevant open PRs, and dependencies immediately before claiming.
+2. Confirm the issue is open, eligible, not completed/superseded, and has no canonical `agent/<subgoal-id>` ref or active PR.
+3. Atomically create `refs/heads/agent/<subgoal-id>` from the required current `main` SHA.
+4. If GitHub reports that the ref already exists, another agent won the claim. Select another eligible issue.
+5. After successful ref creation, post a claim comment recording the agent/workspace identity, issue/subgoal, canonical branch, and base `main` SHA.
+6. Re-read the branch and issue before mutation. GitHub remains authoritative if local/projected state disagrees.
 
 ### While working
 
-- Work only on the canonical claim branch.
-- Durable lifecycle is derived from GitHub facts: issue, branch/base/head SHAs, commits, checks, pull request, merge, and issue closure.
-- Local Manager revisions/generations may be retained only as subordinate cache or concurrency metadata.
-- AI recommendations, local ledgers, and issue comments cannot declare a claim, merge, completion, or canonical repository state.
-- Parent/meta issues must not be claimed when claimable child implementation issues exist.
-- Archive donor work must use its dedicated donor issues (for example #720-#724), not parent #66.
-
-### Pull request, merge, and completion
-
-- Agent work flows through `Issue -> Branch -> Commit -> Checks -> Pull Request -> Review -> Merge -> Issue Closed`.
+- One agent may hold only one implementation claim at a time unless an explicit Manager issue says otherwise.
+- Work only on the canonical claim branch. Never bypass a collision with a suffix, timestamp, worker name, or alternate prefix.
+- Commits, checks, and the canonical PR are evidence of progress; AI/Manager text cannot declare authoritative lifecycle state.
 - The canonical PR must target `main` and link its issue with `Closes #<issue-number>`.
-- Required checks and verification evidence determine readiness; model output does not.
-- GitHub PR merge is the canonical integration event. Do not use a parallel "promotion" operation as repository authority.
-- After merge/closure, claim branches may be released only through the repository's safe claim-release workflow after live GitHub state proves deletion is safe.
+- Parent/meta issues must not be claimed when claimable child implementation issues exist.
+- A branch that falls behind `main` is evaluated from Git ancestry/check evidence; local generation counters are metadata only.
 
-### Stale or interrupted work
+### Handoff / completion
 
-Do not silently steal or locally overwrite a claim. Reconstruct state from GitHub first. If a claim branch is stale, preserve evidence and use the Manager/safe-release process before another agent attempts the exact canonical branch.
+- Push work to the same canonical claim branch and use the canonical PR rather than creating a competing handoff branch.
+- If PR creation is temporarily unavailable, record durable handoff evidence on the issue while retaining the same claim branch.
+- Merge authority is GitHub plus the repository's Manager/merge gates and required checks. A model, local ledger, or comment cannot declare a merge.
+- After a verified merge, roadmap/issue reconciliation and safe claim-ref cleanup may run. Claim refs are deleted only when repository automation proves cleanup safe.
+- If work is abandoned before merge, record the reason and use the governed safe-release path; do not silently delete or steal a live claim ref.
+
+### Lifecycle projection
+
+Titan Code and Agent Mesh may project the lifecycle as:
+
+`AVAILABLE → CLAIMED → ACTIVE → VERIFYING → READY → PR_OPEN → MERGED → COMPLETED`
+
+Exceptional projections are `BLOCKED`, `FAILED`, `SUPERSEDED`, and `REBASE_REQUIRED`.
+
+These states MUST be derived from GitHub facts (issue, canonical claim branch, commits, checks, PR, merge and issue status). They are not an independent state machine.
+
+### Archive donor issues
+
+Archive donor work must use the dedicated donor issues (for example #720-#724) rather than claiming parent #66. Each donor issue is independently claimable.
 
