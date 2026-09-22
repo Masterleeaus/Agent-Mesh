@@ -200,3 +200,24 @@ Library file id: file_00000000da8481f88f914dfa72f73886
 Verification: direct Library inspection during #763.
 Relevant semantics: AI Core owns model capability/access contracts; Titan AI direct provider/BYO execution under Cost Sovereignty; Model Council governed escalation; local routes never silently fall back to Titan-funded inference. Recorded gap: no explicit production Ollama/browser-local adapter and no single provider-independent routing/access contract verified across the scanned masters.
 Supports: FINDING-GH-073 and convergence boundaries for GH-074/GH-077.
+
+
+---
+
+## SOURCE-LIB-011
+
+Type: Library canonical architecture evidence
+Artifact: TITAN-UNIFIED-ARCHITECTURE-CONSTITUTION.json
+Library file id: file_000000005ff881fabd94605a4943fd83
+Verification: direct Library inspection during #763.
+Relevant semantics: shared-surface contracts/capability registry/auth/company context/server-authoritative authority/interaction-task state/receipts; surface UI never determines authority; agents belong to Titan Zero rather than external model hosts; host adapters contain no business logic.
+Supports: FINDING-GH-078 through GH-084.
+
+## SOURCE-LIB-012
+
+Type: Library implementation/discovery evidence
+Artifact: README(5).md — Titan Mobile Ecosystem v0.27.0
+Library file id: file_000000004f8481fd8e6f7065bdd09a72
+Verification: direct Library inspection during #763.
+Relevant semantics: Hub and Go remain product PWAs while CRM/Interaction Engine/Mobile Core are infrastructure; Go bounded LocalBrain offline commands use encrypted/idempotent journal and reconcile after reconnect; Hub customer-scope handoff.
+Supports: FINDING-GH-085 and surface ownership separation.
