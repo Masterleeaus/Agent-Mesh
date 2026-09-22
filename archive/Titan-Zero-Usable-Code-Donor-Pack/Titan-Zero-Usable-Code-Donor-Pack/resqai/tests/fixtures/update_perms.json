@@ -1,1 +1,0 @@
-{"grants": [{"resource_name": "tickets", "resource_type": "datastore_table", "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]}, {"resource_name": "operations_log", "resource_type": "datastore_table", "permission_ids": ["datastore.record.read", "datastore.record.write", "datastore.table.read"]}]}

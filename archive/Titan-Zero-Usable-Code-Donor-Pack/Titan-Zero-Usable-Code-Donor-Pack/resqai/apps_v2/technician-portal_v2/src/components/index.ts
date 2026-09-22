@@ -1,1 +1,0 @@
-export { PermissionGuard } from './PermissionGuard';
