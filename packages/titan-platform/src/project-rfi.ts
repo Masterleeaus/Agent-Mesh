@@ -41,7 +41,10 @@ export function buildTitanProjectRfi(input:TitanProjectRfiInput,options:{as_of?:
  if(!IMPACTS.has(input.cost_impact)||!IMPACTS.has(input.schedule_impact))throw new Error('unsupported RFI impact');
  const date_submitted=dateOnly(input.date_submitted,'date_submitted'),date_required=input.date_required?dateOnly(input.date_required,'date_required'):null;
  const response_date=input.response_date?dateTime(input.response_date,'response_date'):null;
- if(['answered','closed'].includes(input.state)&&!opt(input.response))throw new Error('answered or closed RFI requires a response');
+ const response=opt(input.response),responded_by_ref=opt(input.responded_by_ref);
+ if(['answered','closed'].includes(input.state)&&(!response||!responded_by_ref||!response_date))throw new Error('answered or closed RFI requires response, responded_by_ref and response_date');
+ if(response_date&&Date.parse(response_date)<Date.parse(`${date_submitted}T00:00:00Z`))throw new Error('response_date must not precede date_submitted');
+ if(date_required&&Date.parse(`${date_required}T00:00:00Z`)<Date.parse(`${date_submitted}T00:00:00Z`))throw new Error('date_required must not precede date_submitted');
  const cost_impact_cents=input.cost_impact_cents==null?null:cents(input.cost_impact_cents,'cost_impact_cents');
  const schedule_impact_days=input.schedule_impact_days==null?null:days(input.schedule_impact_days,'schedule_impact_days');
  if(input.cost_impact==='confirmed'&&cost_impact_cents==null)throw new Error('confirmed cost impact requires cost_impact_cents');
@@ -51,7 +54,7 @@ export function buildTitanProjectRfi(input:TitanProjectRfiInput,options:{as_of?:
   schema:TITAN_PROJECT_RFI_SCHEMA,rfi_id:req(input.rfi_id,'rfi_id'),company_id:req(input.company_id,'company_id'),project_id:req(input.project_id,'project_id'),
   work_order_id:opt(input.work_order_id),phase_ref:opt(input.phase_ref),subject:req(input.subject,'subject'),question:req(input.question,'question'),context:opt(input.context),reference:opt(input.reference),
   submitted_by_ref:req(input.submitted_by_ref,'submitted_by_ref'),assigned_to_ref:opt(input.assigned_to_ref),directed_to:opt(input.directed_to),communication_thread_ref:opt(input.communication_thread_ref),
-  response:opt(input.response),responded_by_ref:opt(input.responded_by_ref),response_date,state:input.state,priority:input.priority,date_submitted,date_required,
+  response,responded_by_ref,response_date,state:input.state,priority:input.priority,date_submitted,date_required,
   cost_impact:input.cost_impact,cost_impact_cents,schedule_impact:input.schedule_impact,schedule_impact_days,related_change_order_id:opt(input.related_change_order_id),
   document_refs:Object.freeze([...(input.document_refs??[])].map(x=>req(x,'document_ref'))),notes:opt(input.notes),days_open:timing.days_open,is_overdue:timing.is_overdue,provenance:prov(input.provenance),
   related_change_order_is_reference_only:true as const,automatic_change_order_creation:false as const,automatic_change_order_approval:false as const,automatic_project_mutation:false as const,
