@@ -1806,3 +1806,76 @@ HIGH
 
 ### Boundary
 For Titan Zero production, the corresponding provider choice belongs to canonical Intelligence Router/Cost Sovereignty (#647), not Titan Code.
+
+
+---
+
+## FINDING-GH-063
+
+### Finding
+TitanNexus 0.19.0 genuinely contains a broad MarketingAgent capability catalogue, but direct handler inspection shows mixed maturity: several finance/job tools are declarative or draft-stage wrappers rather than complete business integrations.
+
+### Verified capability surface
+`Modules/TitanNexus/Agents/MarketingAgent/agent.manifest.json` SHA `c54f5dc98a8a91e36bc132c611e6f69fdd76fd3e` owns target discovery, lead enrichment, campaign strategy, outreach generation, follow-up sequencing, qualification and booking handoff, with explicit human approval for sending email/SMS, launching campaigns and booking handoff.
+
+`Modules/TitanNexus/module.json` SHA `3cbe78954ed770d80bb2cf203adaed035687559c` additionally advertises late-invoice follow-up, payment assist, job assist and omnichannel orchestration.
+
+### Direct handler reality
+- InvoiceFollowupTool SHA `4fd787b5b87217402fbab99a5e865007ec578676`: returns input plus description/approval flag; no demonstrated invoice-system mutation.
+- PaymentLinkTool SHA `84b60320afc57d0376d0f18994a8e57e54e43e68`: returns input plus description/approval flag; no demonstrated payment-provider call.
+- PaymentPlanTool SHA `7e43816e3831f051921819701afe60d77982a279`: human-approvable draft wrapper.
+- JobStatusAssistTool SHA `4c6957e23d35ab4802f976ce54ebd1318f1e5983`: draft message wrapper.
+- LeadScoringTool SHA `293faed545562e78bdf23932a409f8e4d0fb4117`: returns draft/approval-required envelope rather than a demonstrated scoring algorithm.
+
+### Classification
+MIXED-MATURITY DONOR / DO NOT EQUATE MANIFEST WITH IMPLEMENTATION
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-064
+
+### Finding
+TitanNexus's strongest recoverable semantics are workflow boundaries and approval-aware tool contracts, not the thin handler implementations.
+
+Useful semantics include:
+- discovery → enrichment → scoring/qualification → outreach → follow-up → booking handoff;
+- explicit approval before external communications/campaign launch/booking handoff;
+- overdue-invoice follow-up as a staged/draft action;
+- payment-plan suggestion separate from payment execution;
+- job-status communication derived from the canonical job source of truth.
+
+### Current owner mapping
+- lead discovery/scoring/qualification → #343 Sales & Revenue Growth;
+- campaigns/outreach → #373 Marketing;
+- booking/service handoff → #183 service lifecycle and relevant scheduling/reception owners;
+- invoice/payment follow-up → #263 Finance/Invoicing/Payments;
+- customer/job communications → #234 Communications and #363 Customer Care;
+- ROI/value attribution → #638.
+
+### Classification
+CONVERGE SEMANTICS / RETIRE TITANNEXUS DOMAIN OWNERSHIP
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-065
+
+### Finding
+TitanNexus's historical payment/job memory schema is not suitable as a canonical memory store.
+
+### Evidence
+`payment-memory.schema.json` SHA `ef43e9f28d5ac8eafc6765fe0198c7c95fcabc7f` stores invoice outcomes, payment preferences and job-update patterns using legacy `tenant_id`, with no provenance/confidence/freshness/supersession/governance semantics visible in the schema.
+
+### Recovery judgment
+Normalize useful facts into canonical `company_id` Business Memory/Personal Zero structures where appropriate; do not import this as a parallel memory database. Payment outcomes belong primarily to authoritative finance/business records, with memory retaining derived experience/preferences only where justified.
+
+### Classification
+RETIRE STORE / MIGRATE SEMANTICS ONLY
+
+### Confidence
+HIGH
