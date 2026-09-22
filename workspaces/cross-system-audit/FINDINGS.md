@@ -1265,3 +1265,28 @@ If source verification confirms the reported contract, the architecture should p
 ACTIVE IMPLEMENTATION / PROVISIONAL TARGET ACCEPTANCE CONTRACT / DIRECT SOURCE VERIFICATION PENDING
 ### Confidence
 MEDIUM
+
+
+---
+
+## FINDING-CSA-058
+### Finding
+The previously provisional #768 target-share acceptance is now directly source-verified, and the actual Personal Zero sharing read path enforces a two-sided source-grant + target-acceptance gate while preserving `company_id` repository isolation.
+### Evidence
+Latest #768 update reports commits `e632fb6`, `a208935`, `2181d84` plus dedicated two-sided tests.
+Direct inspection verifies:
+- `packages/titan-platform/src/personal-zero/share-acceptance.ts`, blob `97c9ebeb3efd7b8343ddbfe747db8fe288f4890f`, defines `TargetShareAcceptance` with grant fingerprint, ONE/Zero, target company/relationship, accepted subjects, purpose, independent expiry/revocation, `authority_neutral:true`, `execution_authority:false`;
+- `shareGrantFingerprint` binds grant ID, ONE/Zero, source company/relationship, target company/relationship, sorted subjects, purpose, consent ref and source-grant expiry;
+- validation fails closed for target revocation/expiry, grant ID/fingerprint mismatch, ONE/Zero mismatch, target company/relationship mismatch and purpose mismatch;
+- validation requires every source-granted subject to be included in target accepted subjects, so target acceptance cannot omit a source-granted subject while still validating;
+- `state-service.ts`, blob `cd56091410e2d277edfa82cef089a1c83435b842`, now requires a `TargetShareAcceptance` argument on `getSharedUnderstanding` and returns no shared state unless `validateTargetShareAcceptance` succeeds;
+- the read path separately checks source grant revocation/expiry, active source relationship, non-private evidence and evidence freshness;
+- target acceptance is transported as an artifact; the source repository does not read target-company storage;
+- Personal Zero index exports the acceptance contract, blob `ce539c5edeb3d15440a402007830d40c81f94c2c`.
+Tests are committed but execution/CI evidence remains pending.
+### Interpretation
+The architectural cross-company sharing gap identified in CSA-056/057 is closed at source level: sharing requires consent on the source side and an independently scoped target acceptance artifact. No second tenant boundary or cross-company repository read is needed. Remaining work is cryptographic/provenance transport assurance and executed certification, not another sharing architecture.
+### Classification
+SOURCE-VERIFIED IMPLEMENTATION / TWO-SIDED SHARING GATE LANDED / CI PENDING
+### Confidence
+HIGH
