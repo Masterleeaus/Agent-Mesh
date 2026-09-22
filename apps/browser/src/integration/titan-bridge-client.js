@@ -2,7 +2,7 @@
 'use strict';
 const DEFAULT_ENDPOINT='http://127.0.0.1:43127/v1/action';
 const READ_ACTIONS=new Set(['system.ping','system.capabilities','system.diagnostics','repo.status','repo.files','repo.search','file.read','file.previewWrite','local_ai.health','local_ai.models','local_ai.chat','agent_mesh.snapshot','agent_mesh.health','agent_mesh.events','agent_mesh.capabilities','agent_mesh.continuation.get','agent_mesh.execution.audit','codex.status']);
-const RESUME_GATED_MUTATIONS=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover']);
+const RESUME_GATED_MUTATIONS=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover']);
 const MUTATION_ACTIONS=new Set(['workspace.approve','repo.branch.create','file.write','command.run','local_ai.pull','agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover','codex.run']);
 const RESUME_GATED_ACTIONS=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','codex.run']);
 function requiresResumeGate(action){return RESUME_GATED_ACTIONS.has(String(action||''));}
