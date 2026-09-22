@@ -534,3 +534,20 @@ Remaining #768 evidence:
 3. record exact run/job/head SHA;
 4. keep Agent Claim Gate branch-format reconciliation separate;
 5. once scoped typecheck + tests pass and acceptance criteria remain satisfied, TASK-152 can be marked complete even if unrelated repository debt is tracked by its existing owner, subject to the repository's merge policy.
+
+
+## TASK-152 scoped test execution route
+Canonical certification command already exists:
+
+`pnpm --filter @titan-zero/titan-platform test:unit`
+
+(or repository-equivalent package invocation using the existing script).
+
+Rules:
+- use the existing package script unchanged where possible;
+- do not create a parallel Personal Zero test harness;
+- do not absorb `services/worker` debt;
+- prefer an existing scoped workflow/job if one is available;
+- if repository governance requires a CI artifact, add only the minimal scoped evidence route needed to invoke the existing package script;
+- capture head SHA, command, exit result, test counts/failures and logs;
+- only Personal Zero/TASK-152-attributable failures belong to #768.
