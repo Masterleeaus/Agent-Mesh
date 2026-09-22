@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 16,
+    "current_pass": 17,
     "status": "ACTIVE"
   },
   "completed": [
@@ -65,15 +65,18 @@
     "Pass 15: execution resume evidence remains non-authoritative for lifecycle advancement and regression tests cover status precedence and replay policy",
     "Pass 16: compact execution resume state now travels with checkpoints, takeover receipts and work context instead of transferring bulky audit history",
     "Pass 16: work context explicitly tells replacement agents not to replay succeeded or accepted-but-unresolved execution requests",
-    "Pass 16: tests verify same canonical claim branch takeover retains unresolved/succeeded execution hints without gaining lifecycle authority"
+    "Pass 16: tests verify same canonical claim branch takeover retains unresolved/succeeded execution hints without gaining lifecycle authority",
+    "Pass 17: converged bootstrap onto existing continuation/workContext machinery instead of creating a parallel context assembler",
+    "Pass 17: bootstrap returns one compact GitHub-first resume object containing issue, canonical claim, lifecycle context, progress and execution replay hints",
+    "Pass 17: bootstrap fails closed with RECONCILE_REQUIRED when checkpoint head differs from live GitHub head; mutation is denied until reconciliation"
   ],
   "current_work": [
-    "Converge agent bootstrap/resume entrypoint so a new agent can reconstruct issue context from GitHub plus continuation in one path"
+    "Expose bootstrap through existing Agent Mesh bridge/service worker resume entrypoint"
   ],
   "next_actions": [
-    "Locate existing bootstrap/context assembler before adding anything",
-    "Compose GitHub issue/branch/PR/check/continuation/execution resume into one compact machine context",
-    "Fail closed on branch/head mismatch and keep conversation disposable"
+    "Add read-only/bootstrap action or local wrapper using existing bridge surfaces, not a new gateway",
+    "Make replacement-agent resume invoke bootstrap before mutation",
+    "Guard that RECONCILE_REQUIRED cannot be bypassed by Manager/model output"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
