@@ -15,6 +15,7 @@ import { writeAssessmentContext } from "@/lib/estimates/assessment-context";
 import { MaterialsGenerator } from "@/app/app/estimates/components/MaterialsGenerator";
 import type { MaterialItem } from "@/app/app/estimates/components/MaterialsGenerator";
 import { buildAiMaterialsDelta } from "@/lib/estimates/materials-delta";
+import { browserAssessmentPhotoCanvas, prepareAssessmentPhoto } from "@/lib/media/prepare-assessment-photo";
 
 const TRADE_KEYS = Object.keys(ASSESSMENT_TRADE_LABELS) as AssessmentTradeKey[];
 
@@ -201,8 +202,12 @@ export function AssessmentForm({ visitId, jobId, jobTitle, clientId, propertyId,
         setUploadProgress(files.length > 1 ? `${i + 1} of ${files.length}` : null);
         const file = files[i];
         try {
+          // Adapted from the field-services-os donor: resize large browser-decodable
+          // assessment photos before using Titan's existing multipart media path.
+          // Unsupported formats (for example HEIC/HEIF/GIF) safely retain the original.
+          const uploadFile = await prepareAssessmentPhoto(file, browserAssessmentPhotoCanvas);
           const formData = new FormData();
-          formData.append("file", file);
+          formData.append("file", uploadFile);
           formData.append("category", "assessment");
           const res = await fetch(`/api/v1/visits/${visitId}/media`, { method: "POST", body: formData });
           const data = await res.json();
