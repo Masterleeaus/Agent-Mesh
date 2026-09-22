@@ -58,11 +58,14 @@ export async function syncFieldCompletionBlockerProjection(
         [JSON.stringify(projection.provenance??{}),existing.rows[0].id,companyId,accountId,workOrderId],
       );
     }else{
+      const blockerId=[companyId,workOrderId,projection.source_type,sourceId,reason]
+        .map(value=>encodeURIComponent(value))
+        .join(":");
       await client.query(
         `INSERT INTO field_completion_blockers
-           (company_id,account_id,work_order_id,source_type,source_id,reason,blocking,resolved_at,provenance)
-         VALUES($1,$2,$3,$4,$5,$6,TRUE,NULL,$7)`,
-        [companyId,accountId,workOrderId,projection.source_type,sourceId,reason,JSON.stringify(projection.provenance??{})],
+           (id,company_id,account_id,work_order_id,source_type,source_id,reason,blocking,resolved_at,provenance)
+         VALUES($1,$2,$3,$4,$5,$6,$7,TRUE,NULL,$8)`,
+        [blockerId,companyId,accountId,workOrderId,projection.source_type,sourceId,reason,JSON.stringify(projection.provenance??{})],
       );
     }
   }
