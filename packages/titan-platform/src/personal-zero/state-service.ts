@@ -79,7 +79,7 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
       return row;
     },
 
-    async promoteUnderstanding(context:StorageContextInput,input:Omit<UnderstandingState,"schema"|"version">){
+    async promoteUnderstanding(context:StorageContextInput,input:Omit<UnderstandingState,"schema"|"schema_version">){
       guardInput(input,"personal_zero.understanding");requireContextCompany(context,input.company_id);
       if(input.status!=="candidate"&&input.status!=="accepted")throw new Error("Promotion status must be candidate or accepted");
       if(!input.relationship_id)throw new Error("Company-scoped understanding requires relationship_id");
@@ -95,7 +95,7 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
       return repository.put(context,{module_id:MODULE_ID,collection:UNDERSTANDING,record_id:state.understanding_id,data:state});
     },
 
-    async correctUnderstanding(context:StorageContextInput,current_id:string,replacement:Omit<UnderstandingState,"schema"|"version">){
+    async correctUnderstanding(context:StorageContextInput,current_id:string,replacement:Omit<UnderstandingState,"schema"|"schema_version">){
       const priorRow=await repository.get(context,MODULE_ID,UNDERSTANDING,current_id);
       const prior=recordData<UnderstandingState>(priorRow);
       if(!priorRow||!prior)throw new Error("Understanding state not found");
