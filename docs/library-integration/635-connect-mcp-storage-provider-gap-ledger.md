@@ -55,3 +55,9 @@ No credential material, provider SDK, Local Bridge server, or duplicate inferenc
 Library evidence identifies encrypted credential storage, secret redaction, provider connection references and company-scoped access as mature donor semantics. The current connector descriptor already deliberately carries only an opaque credential_ref, so no vault or secret store was duplicated.
 
 Added the missing explicit TypeScript credential-reference contract: `credential-contract.ts`. It binds references to `company_id` and provider, rejects malformed references, and guarantees secret material is not represented in the contract. Added exports and focused regressions. Actual credential storage/resolution remains outside this descriptive contract and must be implemented only through the canonical governed security/storage path if a later repository audit proves a gap.
+
+## Pass 6 — cross-contract audit / defect fix
+
+Reviewed the accumulated #635 contracts together rather than adding another subsystem. Found one genuine defect in the Cost Sovereignty policy: its Titan-managed entitlement check made the explicit metered-opt-in path unreachable. Corrected the predicate so either entitlement or explicit metered opt-in permits Titan-managed routing; absent both, the route escalates without hidden Titan funding. Added regression coverage for explicit `titan_metered_opt_in: false`.
+
+Also verified the Connect, MCP host, credential-reference and Cost Sovereignty contracts remain descriptive/policy-only and do not create an execution gateway or authority path. No new runtime was introduced.
