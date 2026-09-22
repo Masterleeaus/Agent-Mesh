@@ -92,3 +92,8 @@ if(!sw.includes('callAgentMeshMutation(config,action,payload,snapshot)')) throw 
 if(sw.includes('bootstrapRequired=false')||sw.includes('bootstrapRequired:false')) throw new Error('Agent Mesh mutation bootstrap bypass option must not exist');
 if(!sw.includes("const allowed=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover'])")) throw new Error('Agent Mesh mutation allowlist missing');
 if(!sw.includes("const gate=await bootstrapAgentMeshResume(snapshot);if(!gate.ok||gate.mayMutate!==true)")) throw new Error('all allowlisted Agent Mesh mutations must pass resume bootstrap');
+
+if(!sw.includes("const allowed=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover'])")) throw new Error('Agent Mesh mutation allowlist missing');
+if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.checkpoint'")) throw new Error('checkpoint bypasses central mutation gate');
+if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover bypasses central mutation gate');
+if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager mutation bypasses central mutation gate');
