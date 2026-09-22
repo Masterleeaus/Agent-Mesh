@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole, type AuthSession } from "@/lib/auth/middleware";
 import { withPortableTransaction } from "@/lib/db/portable";
+import { canonicalCompanyIdFromSession } from "@/lib/auth/company-boundary";
 import { recordGovernedPermitState } from "@/lib/work-orders/field-governed-state";
 import { buildTitanFieldPermit } from "@titan-zero/titan-platform/business-ops";
 
 export const dynamic="force-dynamic";
 const schema=z.object({
- company_id:z.string().min(1),permit_id:z.string().min(1),permit_type:z.enum(["building","electrical","plumbing","mechanical","fire","excavation","environmental","occupancy","other"]),
+ permit_id:z.string().min(1),permit_type:z.enum(["building","electrical","plumbing","mechanical","fire","excavation","environmental","occupancy","other"]),
  state:z.enum(["not_applied","application_submitted","approved","active","inspection_required","inspection_passed","inspection_failed","expired","revoked"]),
  expiry_date:z.string().nullable().optional()
 });
