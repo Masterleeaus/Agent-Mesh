@@ -729,3 +729,30 @@ The remaining convergence work has explicit dependency order and should not be p
 ACTION SEQUENCING
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-033
+### Finding
+The apparent Current-System Blueprint evidence lanes #749, #751 and #757 are tooling pipelines, not completed blueprint/source-index research outputs.
+### Evidence
+#749 requests a read-only evidence-recovery GitHub Action and PR #750 describes a manually dispatched workflow whose results are uploaded as an artifact. #751 requests a deterministic source-index Action and PR #752 likewise generates the index as an artifact. #757/PR #758 was already verified as a manually dispatched blueprint validator. None of these issue/PR definitions is itself the generated evidence report.
+### Interpretation
+Do not count #749/#751/#757 as satisfying the finalization gate for a completed Current-System Blueprint. Their generated artifacts must be located/ingested if runs exist, or a separate completed blueprint workspace/report must be discovered.
+### Classification
+EVIDENCE PIPELINES / GENERATED RESULTS NOT YET INGESTED
+### Confidence
+HIGH
+
+## FINDING-CSA-034
+### Finding
+Library Archaeology is contributing verified donor evidence through #763 and Library-derived issue updates, but a distinct final COMPLETE Library Archaeology artifact has not yet been located by the cross-system auditor.
+### Evidence
+Search for the literal Library Archaeology label surfaced downstream architecture/integration issues rather than a final completed Library Archaeology report. The existing ingestion ledger already contains provisional #763 mechanism-archaeology findings and Library-derived donor evidence.
+### Interpretation
+Keep the finalization gate open. Do not treat provisional donor ingestion as equivalent to a final Library Archaeology completion state.
+### Classification
+FINALIZATION DEPENDENCY / NOT YET LOCATED
+### Confidence
+MEDIUM
