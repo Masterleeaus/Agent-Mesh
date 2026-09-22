@@ -215,3 +215,15 @@ Added focused regression coverage for the hardened interaction boundary:
 - legacy tenant authority is rejected at the interaction boundary.
 
 The test file is committed as coverage evidence, but was not executed in this connector-only pass; CI/runtime execution remains required before claiming it passes.
+
+## Pass 16 — prototype detail/secondary surface containment
+
+Audited Go/Hub detail, inbox and settings surfaces and confirmed they still embed prototype identities and operational facts, including demo company/customer names, job IDs, addresses, access codes, staff names, schedules, payment amounts and static messages.
+
+Added explicit containment:
+- `RoleDetails` accepts a demo flag and, in authenticated non-demo use, refuses to render prototype Go/Hub records;
+- authenticated non-demo detail state explains that prototype records are hidden and directs live data to the existing operational workspace;
+- `RoleInbox` and `RoleMore` now return the supplied canonical/live command node in non-demo mode rather than rendering static demo messages/settings;
+- demo rendering remains available for prototype/marketing contexts.
+
+No prototype job/customer/access/payment record should be promoted into authenticated operation through these components until a real scoped projection is injected.
