@@ -3224,3 +3224,87 @@ GAP NARROWED TO END-TO-END WIRING/CERTIFICATION
 
 ### Confidence
 VERY HIGH
+
+
+---
+
+## FINDING-GH-129
+
+### Finding
+Current Knowledge Authority implementation is real and substantially closes the basic knowledge-use control-plane gap.
+
+### Direct implementation
+`investigation-installation-handover.ts` implements company-bound knowledge packets with:
+- SHARED_PUBLIC vs COMPANY_PRIVATE scope;
+- source identity;
+- provenance refs;
+- source version/revision;
+- freshness FRESH/AGING/STALE/UNKNOWN;
+- contradiction NONE/POTENTIAL/CONFIRMED/UNRESOLVED;
+- jurisdiction and vertical applicability;
+- confidence;
+- explicit blockers and reasoning-use decisions;
+- knowledge-use receipts with provenance and reasoning trace refs;
+- repeated `knowledge_is_not_authority` / no automatic execution semantics.
+
+Stale/unknown, unresolved contradiction, missing provenance/source/version or jurisdiction/vertical mismatch blocks reasoning use.
+
+### Classification
+CURRENT KNOWLEDGE AUTHORITY FOUNDATION / RETAIN
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-130
+
+### Finding
+The “Knowledge Authority runtime” facade currently re-exports functions implemented inside the large quarantined `investigation-installation-handover.ts` bundle rather than owning an independent typed production module.
+
+`workforce-knowledge-authority-runtime.ts` is a thin `@ts-nocheck` re-export.
+
+### Consequence
+Semantics are implemented, but package ownership/modularity remains weaker than the conceptual architecture suggests. Convergence should extract/harden this implementation behind the existing facade rather than create a second Knowledge Authority.
+
+### Classification
+IMPLEMENTED / MODULARITY & PRODUCTION-HARDENING GAP
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-131
+
+### Finding
+The same current bundle contains a separate **worker memory** mechanism with useful semantics: provenance, confidence, relevance, privacy classification, purpose tags, expiry, ACTIVE/EXPIRED/SUPERSEDED/DISPUTED/REVOKED state, supersession history, recall filtering, recall receipts, and explicit “memory is context, not truth or authority.”
+
+### Boundary warning
+This is `company_id + worker_id` scoped workforce memory. It must **not** be promoted into Personal Zero simply because both involve memory. It is best treated as role/worker execution context or a donor of memory mechanics.
+
+### Classification
+CURRENT WORKFORCE MEMORY / PERSONAL ZERO DONOR MECHANICS ONLY
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-132
+
+### Finding
+Current worker-memory mechanics provide several concrete semantics worth reusing in #153/#768 without sharing ownership:
+- immutable/superseding history rather than silent overwrite;
+- expiry and revocation;
+- confidence + relevance thresholds;
+- privacy/purpose filtering;
+- provenance-required recall;
+- current Knowledge Authority verification required before treating recalled memory as usable current context;
+- independent authority decision always required.
+
+### Classification
+RECOVER SEMANTICS / KEEP MEMORY DOMAINS SEPARATE
+
+### Confidence
+VERY HIGH
