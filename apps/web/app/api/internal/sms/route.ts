@@ -20,6 +20,8 @@ const bodySchema = z.object({
   phone: z.string().min(7).max(20),
   message: z.string().min(1).max(2000),
   external_id: z.string().max(255).optional(),
+  company_id: z.string().uuid(),
+  owner_user_id: z.string().uuid(),
 });
 
 const ACTIVE_JOB_STATUSES = ["draft", "quoted", "scheduled", "in_progress"];
@@ -277,16 +279,24 @@ export async function POST(req: NextRequest) {
       { status: 422 }
     );
   }
-  const { phone: rawPhone, message, external_id } = parsed.data;
+  const { phone: rawPhone, message, external_id, company_id, owner_user_id } = parsed.data;
   const phone = normalizePhone(rawPhone) ?? rawPhone;
 
-  let accountId: string, userId: string;
-  try {
-    ({ accountId, userId } = await getOwnerContext());
-  } catch (err) {
-    logger.error("Failed to resolve owner context", err as Error, { traceId });
-    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  // The authenticated integration must carry canonical company scope.
+  // Validate the supplied owner identity inside that company; never discover
+  // tenant context by selecting the first owner in the database.
+  const owner = await queryOne<{ user_id: string }>(
+    `SELECT id AS user_id FROM users
+     WHERE id = $1 AND account_id = $2 AND role = 'owner'
+     LIMIT 1`,
+    [owner_user_id, company_id],
+  );
+  if (!owner) {
+    logger.warn("Inbound SMS owner/company scope rejected", { traceId, company_id });
+    return NextResponse.json({ error: "Invalid company owner scope" }, { status: 403 });
   }
+  const accountId = company_id; // legacy storage alias after canonical normalization
+  const userId = owner.user_id;
 
   // Idempotency: already-seen message → no re-action, no Claude call.
   // The unique index on (account_id, external_id) is the hard backstop.
