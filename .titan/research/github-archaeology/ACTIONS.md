@@ -491,3 +491,22 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** #59 can be implemented by extending the existing DecisionPacket into one persistent TypeScript Decision lifecycle using proven historical semantics, without introducing a second workflow/runtime truth model.
 - **Confidence:** VERY HIGH
 - **Status:** READY / OWNER EXISTS
+
+
+---
+
+## ACTION-GH-026 — Support #768 with ownership-safe Personal Zero donor decomposition; create no parallel memory runtime
+
+- **Type:** CONVERGE / COMPARE / RECOVER
+- **Priority:** P1
+- **Findings:** FINDING-GH-109–112 plus GH-010–012/GH-041–042.
+- **Canonical owner:** #768 Personal Zero; adjacent #153 Business Memory, #767 Business Reality/Evolution, Interaction Engine, canonical Authority/Governance.
+- **Objective:** For every historical memory/learning donor, classify each record/semantic by rightful owner before import: Personal Zero, Business Memory, Business Reality, Interaction/session state, or relationship/context.
+- **Identity rule:** One = human/account principal, not business owner. Do not bind Personal Zero identity to a company or role.
+- **company_id:** business-context evidence retains company_id; company_id remains the sole business tenant boundary but is not the identity of One.
+- **Privacy:** company relationship revocation removes company data/capabilities/authority without destroying unrelated personal state; no silent cross-company/context learning or provider egress.
+- **Authority:** learned preferences, experience, prediction accuracy and confidence never create authority.
+- **Tests:** worker in company A/customer in company B isolation; company relationship revocation; personal preference portability; company SOP cannot leak into personal state; personal correction cannot silently rewrite Business Reality; conversation history alone is not accepted understanding; cross-context learning requires explicit permission/provenance.
+- **Acceptance Criteria:** #768 receives a provenance-backed donor mapping with no duplicate Personal Zero/Business Memory/Reality/Interaction stores and one selected production owner.
+- **Confidence:** VERY HIGH
+- **Status:** SUPPORT EXISTING OWNER
