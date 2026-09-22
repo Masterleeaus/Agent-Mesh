@@ -74,7 +74,8 @@ function req(value: unknown,label:string):string { const v=String(value??'').tri
 function opt(value: unknown):string|null { const v=String(value??'').trim(); return v||null; }
 function dateOnly(value: unknown,label:string):string {
   const v=req(value,label);
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(v)||Number.isNaN(Date.parse(`${v}T00:00:00Z`))) throw new Error(`${label} must be an ISO date`);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new Error(`${label} must be an ISO date`);
+  const d=new Date(`${v}T00:00:00Z`); if(Number.isNaN(d.getTime())||d.toISOString().slice(0,10)!==v) throw new Error(`${label} must be an ISO date`);
   return v;
 }
 function prov(input:FieldPermitProvenance):Readonly<FieldPermitProvenance>{
