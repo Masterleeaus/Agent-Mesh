@@ -606,3 +606,21 @@ RESOLVED OWNERSHIP TRANSITION
 #763 remains archaeology/donor verification. #768 is the current convergence action. Implementation ownership inside the codebase must still be selected from existing canonical packages before coding.
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-024
+### Finding
+The complete recursive Trust handshake and free-to-predictive lifecycle are not yet verified as implemented in current main. The canonical implementation issue #640 remains OPEN with no implementation comments, and final certification #540 remains OPEN/TODO.
+### Evidence
+- #640 defines the required recursive gate as system readiness + explicit user delegation + required downstream agent acceptance, accumulated through hierarchy.
+- #640 also requires evidence-derived trust, class ceilings, EARNED_BUT_PLAN_LOCKED, refusal/pause/revocation/regression and path-scoped trust.
+- #540 is the retained final certification for free reactive → proactive Specialist → autonomous Manager → predictive Orchestrator lifecycle and downgrade/re-upgrade behavior.
+- Current runtime source independently verifies Authority Continuance primitives, but that is not equivalent to the full Goal42 Trust lifecycle.
+### Classification
+PARTIAL / PLANNED IMPLEMENTATION / NOT CERTIFIED
+### Confidence
+HIGH
+### Convergence
+Keep #640 as the sole implementation lane and #540 as certification. Do not infer recursive handshake completion from authority lease/delegation code alone.
