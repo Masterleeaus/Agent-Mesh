@@ -1,6 +1,6 @@
 import type { Client } from "pg";
 import { logger } from "./logger.js";
-import { invoiceFollowupEmailHtml } from "@ai-fsm/email-templates";
+import { invoiceFollowupEmailHtml } from "@titan-zero/email-templates";
 import { appUrl } from "./mailer.js";
 import { enqueueNotification } from "./notification/enqueue.js";
 import { PRIORITY } from "./notification/priority.js";
