@@ -299,3 +299,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-041 | #768 cross-context sharing hardening | issue #768 update + Personal Zero contracts/state service | contracts blob 6dd6887bdc532a03c841e153b044e9223bfc8529; state blob 4e0480607a0c56a36e7aae40cfb9a862834a95a2; commits b8b52c5,8cf7370,58b1f2b,f9ec1e0 | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Consent ref, accepted-source subject/evidence validation, private-state denial, freshness checks and revision-safe revocation now govern source-side sharing. Target-company relationship acceptance remains intentionally unresolved. | YES |
+
+
+| INGEST-042 | #768 target-share acceptance update | issue #768 latest comment; source-side Personal Zero files rechecked | reported commits 19fd012,89dddcc; existing contracts blob 6dd6887bdc532a03c841e153b044e9223bfc8529; existing state blob 4e0480607a0c56a36e7aae40cfb9a862834a95a2 | ACTIVE/PROVISIONAL | SOURCE AGENT REPORT; NEW ARTIFACT PATH/BLOB NOT YET RESOLVED | Reported target-side acceptance binds grant fingerprint and target relationship under target company context without cross-company repository reads. Must directly verify artifact before certification. | YES |
