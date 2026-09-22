@@ -139,3 +139,7 @@ const directMeshCalls=swSource.filter(line=>line.includes("CodeeTitanBridgeClien
 assert.strictEqual(directMeshCalls.length,1,'Agent Mesh direct bridge calls must remain read-only audit/snapshot paths; mutations must use governed wrapper');
 assert(sw.includes("function callAgentMeshMutation(config,action,payload,snapshot)"),'central Agent Mesh mutation wrapper missing');
 assert(sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover'])"),'all post-takeover mutation classes must remain resume-gated');
+
+if(!sw.includes("action.startsWith('agent_mesh.') && globalThis.CodeeTitanBridgeClient.classify?.(action) === 'mutation'")) throw new Error('generic Titan bridge must reject Agent Mesh mutations');
+if(!sw.includes("reason: 'agent-mesh-mutation-requires-governed-path'")) throw new Error('generic Agent Mesh mutation bypass must fail closed');
+if(!sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover']).has(action)")) throw new Error('governed Agent Mesh mutation gate missing');
