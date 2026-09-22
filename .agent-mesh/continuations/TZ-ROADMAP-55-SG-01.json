@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 21,
+    "current_pass": 20,
     "status": "ACTIVE"
   },
   "completed": [
@@ -167,15 +167,19 @@
     "Pass 20: added regression guards so direct/unknown mutation bypasses and accidental checkpoint over-gating cannot silently return",
     "Pass 21: active Manager dependency/routing payload now uses GitHub issue_number + subgoal_id as primary work identity",
     "Pass 21: legacy packet identity is retained only as legacy_packet_id at the adapter boundary for compatibility",
-    "Pass 21: regression guards reject packet_id as the primary Manager routing identity; branch claim remains ownership authority"
+    "Pass 21: regression guards reject packet_id as the primary Manager routing identity; branch claim remains ownership authority",
+    "Pass 20: audited service-worker Agent Mesh mutation call sites and confirmed they converge through a central allowlisted callAgentMeshMutation path",
+    "Pass 20: generic Titan Bridge calls reject Agent Mesh mutations, preventing callers from bypassing governed resume-aware mutation handling",
+    "Pass 20: mutation policy distinguishes resume-gated recover/route/takeover from continuity-record-only checkpoint, and unknown Agent Mesh mutations fail closed",
+    "Pass 20: regression guards now lock checkpoint/takeover to the governed mutation path and guard against generic bridge bypass"
   ],
   "current_work": [
-    "Converge remaining active Manager action names and UI terminology from packet language to GitHub-native issue/subgoal terms while preserving legacy adapter compatibility"
+    "Replace remaining legacy packet terminology in active Manager routing path with GitHub issue/subgoal terminology while preserving compatibility adapter only at boundary"
   ],
   "next_actions": [
-    "Inspect Manager supervisor/plan producers for RECHECK_DEPENDENCIES_OR_ROUTE_PACKET",
-    "Introduce GitHub-native action alias without breaking stored plans",
-    "Keep legacy packet names only at compatibility boundaries"
+    "Audit route_packet bridge/provider implementation and consumers",
+    "Normalize active routing payload to issue_number/subgoal_id before execution",
+    "Retain legacy packet_id only as compatibility input, never authority"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
