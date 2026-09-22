@@ -32,3 +32,90 @@
 Every P0/P1 action must include exact source evidence, current state, donor evidence where relevant, canonical owner, company_id handling, authority impact, privacy, security, cost sovereignty, migration, tests and acceptance criteria.
 
 No action may create a parallel engine when an existing canonical owner can contain the capability.
+
+
+# Live Reconciliation Addendum
+
+## IMPLEMENTATION PACKET — Personal Zero Understanding Convergence
+Status: NEEDS EVIDENCE — DO NOT IMPLEMENT YET
+Priority: P1 discovery / ownership resolution
+
+Contains:
+- durable human goals/priorities model
+- preferences and working-style model
+- responsibilities/relationships references
+- communication and decision-pattern understanding
+- behavioural observations with provenance/freshness/confidence
+- correction/supersession/retention
+- projection into Zero reasoning without authority effect
+
+Canonical owners to compose, not duplicate:
+- #153 Business Memory & Knowledge
+- #21 durable invocation context / handoff
+- #725 identity, working-state and cross-surface continuity
+- #37 bounded outcome learning
+- Trust/Authority current-decision runtime
+
+Source findings:
+- FINDING-CSA-013
+- FINDING-CSA-014
+- Zero Mechanism Archaeology Personal Understanding ownership analysis
+
+Hard invariants:
+- company_id remains the company boundary.
+- recalled identity/context has no authority effect.
+- learning/behaviour patterns do not grant authority.
+- current authority is revalidated before execution.
+- no second generic memory tree.
+- no per-surface Zero clone.
+
+Dependencies before implementation:
+- final GitHub archaeology
+- final Library archaeology
+- Current-System Blueprint ingestion
+- direct current-code search for any existing personal/user semantic model
+
+Issue treatment:
+No new implementation issue yet; ownership remains under evidence resolution.
+
+## IMPLEMENTATION PACKET — Experience and Learning Convergence
+Status: MERGE CANDIDATE / EXISTING OWNERS
+Priority: P1
+
+Contains:
+- verified outcome capture
+- longitudinal experience memory
+- contextual anti-repeat
+- stale/context-changed retest
+- confidence/applicability/expiry
+- bounded policy adaptation
+- authority-neutral learning
+
+Canonical owners:
+- #153 memory/knowledge
+- #37 predictive/outcome learning
+- #59 Decision runtime where decision re-evaluation is involved
+- Trust/Authority for permission, never memory/learning
+
+Treatment:
+CONVERGE into existing owners. Do not create a separate Experience database or self-expanding Learning authority.
+
+## IMPLEMENTATION PACKET — Governed Execution Continuity
+Status: VALID / CURRENT IMPLEMENTATION EXISTS
+Priority: P0 invariant preservation
+
+Contains:
+- company-bound current authority
+- stale/superseded authority rejection
+- context identity authority-effect false
+- Command Bus envelope
+- replay binding
+- authoritative execution receipt
+- receipt continuity/equivocation checks
+
+Current implementation:
+packages/runtime/authority/execution-boundary.mjs
+packages/runtime/authority/company-boundary.mjs
+
+Treatment:
+PRESERVE + CONNECT. Any Zero/Evolution/Experience implementation must consume these boundaries rather than bypass them.
