@@ -6,6 +6,7 @@ import type { Role } from "@ai-fsm/domain";
 
 export async function recordGovernedPermitState(client:DbClient,ctx:{accountId:string;company_id:string;actorId:string;traceId:string;role:Role},permit:{permit_id:string;work_order_id:string;permit_type:string;state:string;expiry_date?:string|null;completion_blockers:readonly string[];provenance?:Record<string,unknown>}){
  assertFieldMutationAuthority({role:ctx.role,actor_id:ctx.actorId,kind:"permit_state",next_state:permit.state});
+ await client.query(`SELECT id FROM work_orders WHERE id=$1 AND account_id=$2 FOR UPDATE`,[permit.work_order_id,ctx.accountId]);
  const idempotencyKey=String(permit.provenance?.idempotency_key??`${ctx.traceId}:permit:${permit.permit_id}`);
  const prior=await client.query<{id:string;state:string;expiry_date:string|null}>(`SELECT id,state,expiry_date FROM field_permits WHERE company_id=$1 AND idempotency_key=$2 LIMIT 1 FOR UPDATE`,[ctx.company_id,idempotencyKey]);
  if(prior.rows[0] && (prior.rows[0].id!==permit.permit_id || prior.rows[0].state!==permit.state || String(prior.rows[0].expiry_date??"")!==String(permit.expiry_date??""))) throw new Error("IDEMPOTENCY_KEY_PAYLOAD_CONFLICT");
@@ -20,6 +21,7 @@ export async function recordGovernedPermitState(client:DbClient,ctx:{accountId:s
 }
 export async function recordGovernedInspectionState(client:DbClient,ctx:{accountId:string;company_id:string;actorId:string;traceId:string;role:Role},inspection:{inspection_id:string;permit_id:string;work_order_id:string;inspection_date:string;result:string;provenance?:Record<string,unknown>}){
  assertFieldMutationAuthority({role:ctx.role,actor_id:ctx.actorId,kind:"inspection_result",next_state:inspection.result});
+ await client.query(`SELECT id FROM work_orders WHERE id=$1 AND account_id=$2 FOR UPDATE`,[inspection.work_order_id,ctx.accountId]);
  const idempotencyKey=String(inspection.provenance?.idempotency_key??`${ctx.traceId}:inspection:${inspection.inspection_id}`);
  const prior=await client.query<{id:string;result:string;inspection_date:string}>(`SELECT id,result,inspection_date FROM field_permit_inspections WHERE company_id=$1 AND idempotency_key=$2 LIMIT 1 FOR UPDATE`,[ctx.company_id,idempotencyKey]);
  if(prior.rows[0] && (prior.rows[0].id!==inspection.inspection_id || prior.rows[0].result!==inspection.result || String(prior.rows[0].inspection_date)!==String(inspection.inspection_date))) throw new Error("IDEMPOTENCY_KEY_PAYLOAD_CONFLICT");
@@ -34,6 +36,7 @@ export async function recordGovernedInspectionState(client:DbClient,ctx:{account
 }
 export async function recordGovernedDefectState(client:DbClient,ctx:{accountId:string;company_id:string;actorId:string;traceId:string;role:Role},defect:{defect_id:string;work_order_id:string;punch_list_id:string;severity:string;state:string;verified_by_ref?:string|null;verified_date?:string|null;defer_reason?:string|null;completion_blockers:readonly string[];provenance?:Record<string,unknown>}){
  assertFieldMutationAuthority({role:ctx.role,actor_id:ctx.actorId,kind:"defect_state",next_state:defect.state,severity:defect.severity,verified_by_ref:defect.verified_by_ref,verified_date:defect.verified_date,defer_reason:defect.defer_reason});
+ await client.query(`SELECT id FROM work_orders WHERE id=$1 AND account_id=$2 FOR UPDATE`,[defect.work_order_id,ctx.accountId]);
  const idempotencyKey=String(defect.provenance?.idempotency_key??`${ctx.traceId}:defect:${defect.defect_id}`);
  const prior=await client.query<{id:string;state:string;severity:string;verified_by_ref:string|null;verified_date:string|null;defer_reason:string|null}>(`SELECT id,state,severity,verified_by_ref,verified_date,defer_reason FROM field_defects WHERE company_id=$1 AND idempotency_key=$2 LIMIT 1 FOR UPDATE`,[ctx.company_id,idempotencyKey]);
  if(prior.rows[0] && (prior.rows[0].id!==defect.defect_id || prior.rows[0].state!==defect.state || prior.rows[0].severity!==defect.severity || String(prior.rows[0].verified_by_ref??"")!==String(defect.verified_by_ref??"") || String(prior.rows[0].verified_date??"")!==String(defect.verified_date??"") || String(prior.rows[0].defer_reason??"")!==String(defect.defer_reason??""))) throw new Error("IDEMPOTENCY_KEY_PAYLOAD_CONFLICT");
