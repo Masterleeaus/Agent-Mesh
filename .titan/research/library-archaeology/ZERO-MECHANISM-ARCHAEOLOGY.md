@@ -140,3 +140,7 @@ Consequential long-running work needs stable Operation Identity/provenance acros
 
 ### ZM-021 — Physical evidence informs Zero; sensors never grant authority
 Vision, maps/location, field observations, measurements, equipment context and environmental evidence enter Titan as typed/provenanced evidence. They may update candidate Business Reality/Zero context and Decision inputs only after privacy, freshness, integrity and verification controls. Visible image evidence must remain distinct from hidden-condition/safety/compliance inference. Environmental consequences participate in shared Risk/Decision/Workforce architecture rather than forming a parallel platform. Physical action still requires current assurance/authority and the governed execution path.
+
+
+### ZM-022 — Zero orchestrates business systems; it does not become them
+Canonical domain owners retain business truth: CRM owns customer/lead/opportunity/revenue-document state; Bookings/Quotes own their lifecycle; Field owns service requests/work orders/job execution/dispatch/evidence; Connect owns communications; Assets/Locker own asset/equipment/inventory state; Maps owns location capability; Workforce coordinates agents; Knowledge Authority owns governed knowledge; Command Bus governs consequential mutation. Zero and Business Reality consume authorised projections, reason across them and invoke owner capabilities. Reporting/generative UI remain projections. Adapters, agents and donor imports must never create a second customer/job/invoice/asset/inventory truth.
