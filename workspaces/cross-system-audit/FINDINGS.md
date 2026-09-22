@@ -1218,3 +1218,28 @@ The Personal Zero service now fail-closes earlier on the canonical `company_id` 
 ACTIVE HARDENING / COMPANY BOUNDARY FAIL-CLOSED / CI PENDING
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-056
+### Finding
+#768 cross-context sharing has been hardened into an explicit consent/provenance/freshness gate, while correctly leaving cross-company target acceptance as a separate broker/target-side contract instead of violating company isolation.
+### Evidence
+Latest #768 update reports commits `b8b52c5`, `8cf7370`, `58b1f2b`, `f9ec1e0`.
+Direct inspection verifies:
+- `contracts.ts`, blob `6dd6887bdc532a03c841e153b044e9223bfc8529`, requires `consent_ref` on ordinary cross-context grants and hard-codes `allow_personal_private:false`;
+- attempting ordinary personal-private sharing is rejected pending a stronger consent contract;
+- `state-service.ts`, blob `4e0480607a0c56a36e7aae40cfb9a862834a95a2`, requires grant subjects to correspond to accepted source-context understanding;
+- grant creation validates the accepted understanding's evidence lineage and rejects personal-private evidence;
+- retrieval rechecks grant expiry/revocation, active source relationship, non-private evidence and evidence freshness;
+- explicit revision-safe share-grant revocation is implemented;
+- source relationship revocation stops retrieval.
+The implementation intentionally does not inspect the target company's isolated repository to fake target-relationship liveness.
+Tests are committed; CI execution evidence remains pending.
+### Interpretation
+Source-side Personal Zero sharing is now materially governed. The remaining cross-company gap is not another memory or tenancy engine: it is a target-side acceptance/broker verification contract that can prove the named target relationship is live and consents to receipt without bypassing `company_id` isolation. This should compose with existing consent/governance/Command Bus boundaries where applicable.
+### Classification
+ACTIVE HARDENING / SOURCE-SIDE SHARING GOVERNED / TARGET ACCEPTANCE CONTRACT GAP
+### Confidence
+HIGH
