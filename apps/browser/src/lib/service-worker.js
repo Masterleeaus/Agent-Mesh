@@ -1942,6 +1942,8 @@ async function fetchLiveManagerAISnapshot(){
     return {ok:true,source:'live',snapshot:normalized,health:normalized.health,capabilities:normalized.capabilities};
 }
 async function checkpointAgentMeshContinuation(snapshot,reason='manager-lifecycle'){
+    const resumeGate=await bootstrapAgentMeshResume(snapshot);
+    if(!resumeGate.ok||resumeGate.mayMutate!==true) return {ok:false,reason:'resume-reconciliation-required',mayMutate:false,bootstrap:resumeGate.bootstrap||null};
     const settings=await getSystemIntegrationSettings();
     if(!settings.bridgeEnabled||!settings.bridgeToken||!globalThis.CodeeTitanBridgeClient) return {ok:false,reason:'live-mesh-bridge-not-configured'};
     const value=snapshot&&typeof snapshot==='object'?snapshot:{};
