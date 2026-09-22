@@ -119,3 +119,30 @@ Status: DEDUPLICATED
 
 Summary:
 The historical customer-continuity cluster is not a missing standalone system. Feed useful Titan Hello/Zero Fuss semantics into existing Customer Care, Communications, CRM/service lifecycle, Hub and Personal Zero owners. Do not recreate historical app-specific runtime authority.
+
+
+---
+
+## ACTION-GH-009
+
+Type: COMPARE + SUPPORT EXISTING
+Priority: P1
+Findings: FINDING-GH-030, FINDING-GH-031
+Canonical owners: #263, #270, #638
+Status: DEDUPLICATED
+
+Summary:
+Compare TitanPro's implemented cashflow forecast calculation and data-source handling against the canonical TypeScript Finance runtime. Recover only missing forecast semantics into #263; preserve company_id, evidence provenance and governed money mutation boundaries.
+
+---
+
+## ACTION-GH-010
+
+Type: COMPARE + SUPPORT EXISTING
+Priority: P1
+Findings: FINDING-GH-030, FINDING-GH-032, FINDING-GH-033
+Canonical owners: #343, #363, #373, #638, #716
+Status: DEDUPLICATED
+
+Summary:
+Treat NexusGrowth as a historical analytics donor, not a runtime owner. During current Sales/Customer Care/Marketing/ROI convergence, compare funnel, conversion, CLV, churn prediction, A/B, expansion scoring and ROI semantics and recover only gaps. Predictive outputs remain authority-neutral.
