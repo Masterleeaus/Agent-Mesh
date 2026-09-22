@@ -1,15 +1,21 @@
 const assert=require('assert'),fs=require('fs'),vm=require('vm'),path=require('path');
 const root=path.resolve(__dirname,'..'),s={console};s.globalThis=s;vm.createContext(s);
-for(const f of ['manager-workspace-ledger','manager-self-claim','manager-auto-rollover'])vm.runInContext(fs.readFileSync(path.join(root,'src/titan-zero',f+'.js'),'utf8'),s,{filename:f});
-const L=s.TitanZeroManagerWorkspaceLedger,R=s.TitanZeroManagerAutoRollover;
-let ledger=L.normalize({revision:8,generation:3,canonical:{artifact:'Titan-Code-CANONICAL.zip',sha256:'abc'},agents:{'Agent 6':{lane:'manager_core',working_generation:3,state:'ACTIVE',current_work_packet:'DONE',execution_active:true}},claims:[{agent:'Agent 6',packet:'DONE',state:'ACTIVE'}],packets:[{packet_id:'DONE',status:'ACTIVE',priority:'P0',owner_lane:'manager_core'},{packet_id:'NEXT',status:'AVAILABLE',priority:'P0',owner_lane:'bridge_only',roadmap_pass:2},{packet_id:'LATER',status:'AVAILABLE',priority:'P1',owner_lane:'manager_core',roadmap_pass:3}],history:{reset_event:{event:'ORIGINAL'},manager_events:[]}});
-ledger=R.rollover(ledger,8,'Agent 6','DONE',{updated_at:'2026-09-13T04:00:00Z',dependencyState:{byPacket:{NEXT:{eligible:true},LATER:{eligible:true}}}});
-assert.strictEqual(ledger.revision,9);
-assert.strictEqual(ledger.packets.find(p=>p.packet_id==='DONE').status,'CONVERGENCE_PENDING');
-assert.strictEqual(ledger.packets.find(p=>p.packet_id==='DONE').handoff.builder_wait_required,false);
-assert.strictEqual(ledger.agents['Agent 6'].current_work_packet,'NEXT');
-assert.strictEqual(ledger.agents['Agent 6'].state,'ACTIVE');
-assert.strictEqual(ledger.claims.find(c=>c.agent==='Agent 6'&&c.packet==='NEXT').state,'ACTIVE');
-assert.strictEqual(ledger.history.reset_event.event,'ORIGINAL');assert.ok(ledger.history.manager_events.some(x=>x.event==='PACKET_COMPLETE_AUTO_ROLLOVER'&&x.builder_waited_for_manager===false));
-assert.throws(()=>R.rollover(ledger,8,'Agent 6','NEXT',{}),/REVISION_CONFLICT/);
+for(const f of ['manager-self-claim','manager-auto-rollover'])vm.runInContext(fs.readFileSync(path.join(root,'src/titan-zero',f+'.js'),'utf8'),s,{filename:f});
+const R=s.TitanZeroManagerAutoRollover;
+const agent={lane:'manager_core',capabilities:['repo']};
+const issues=[
+ {number:723,subgoal_id:'SG723',state:'OPEN',priority:'P0',owner_lane:'manager_core',roadmap_pass:2},
+ {number:724,subgoal_id:'SG724',state:'OPEN',priority:'P1',owner_lane:'manager_core',roadmap_pass:3}
+];
+let p=R.plan('Agent 6',agent,{subgoal_id:'SG722'},issues,{claimBranches:[],openPRs:[],dependencyState:{byIssue:{SG723:{eligible:true},SG724:{eligible:true}}}});
+assert.strictEqual(p.next.subgoal_id,'SG723');
+assert.strictEqual(p.next_claim_branch,'agent/SG723');
+assert.strictEqual(p.action,'CREATE_GITHUB_CLAIM_REF');
+assert.strictEqual(p.localMutation,false);
+const req=R.claimRequest('Agent 6',agent,p,'a'.repeat(40));
+assert.strictEqual(req.ref,'refs/heads/agent/SG723');
+assert.strictEqual(req.operation,'CREATE_GITHUB_REF_ATOMICALLY');
+p=R.plan('Agent 6',agent,{subgoal_id:'SG722'},issues,{claimBranches:['agent/SG723','agent/SG724']});
+assert.strictEqual(p.next,null);assert.strictEqual(p.action,'WAIT_FOR_ELIGIBLE_ISSUE');
+assert.throws(()=>R.rollover(),/LOCAL_ROLLOVER_FORBIDDEN/);
 console.log('PASS test-titan-zero-manager-auto-rollover');
