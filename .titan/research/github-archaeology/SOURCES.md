@@ -164,3 +164,11 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-046 — Worksuite donor `System/Http/Controllers/AIChatProMemoryController.php`, SHA `0700cf8f412ad17bb91e51fd5ba23ad9e9ac157f`; direct get/save/clear instruction behavior.
 - SOURCE-GH-047 — Worksuite donor `System/Models/UserChatInstruction.php`, SHA `e620791dd505a0a8c8cd01a39eaae7787f808af4`; direct user/category and guest-IP persistence behavior.
 - SOURCE-GH-048 — Worksuite donor migration `2025_12_26_163811_add_user_chat_instructions_table.php`, SHA `ffcdcd3484ccad6e14b7d8ba0684689ee5f5e2e6`; schema confirms absence of company/provenance/experience semantics.
+
+
+- SOURCE-GH-049 — GitHub connector capability inspection: no tag/release listing action exposed in the available GitHub toolset; therefore no Git-tag existence claims are inferred from commit search.
+- SOURCE-GH-050 — `Masterleeaus/Titan-Builder` main, `package.json`, SHA `159022f3bc14d9f25cc06f0fb2b8a8cfe48d8bd8`; declares OpenBrowser/Titan Builder development line version 0.5.0.
+- SOURCE-GH-051 — `Masterleeaus/AI-Coding-Studio` main, `CHANGELOG.md`, SHA `3ee7ea91220d27a569cd2777a16a3d3aacf2434d`; Pass 01/02 architecture and 2.1.0 release-line evidence.
+- SOURCE-GH-052 — `Masterleeaus/TitanPro` main, `Modules/TitanNexus/CHANGELOG.md`, SHA `3180f19f92813ed8dd5aa44cb3be844c84b9a228`.
+- SOURCE-GH-053 — `Masterleeaus/TitanPro` main, `Modules/Dispatch/CHANGELOG.md`, SHA `c74ac901abdba98ac22e5e86b7a2b490e4da9862`.
+- SOURCE-GH-054 — `Masterleeaus/TitanPro` main, `Modules/CallingAgent/CHANGELOG.md`, SHA `6dd31999e7686767cd6cc8a7734574ba0e39082e`.
