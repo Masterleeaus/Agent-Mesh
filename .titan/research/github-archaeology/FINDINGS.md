@@ -821,3 +821,59 @@ HIGH that the capability was specified; LOW-MEDIUM on implementation status.
 
 ### Recovery judgment
 Do not create an issue yet. Next archaeology should search current Interaction, Hub/customer, Workflow, Workforce and Business Memory owners for semantic equivalence before declaring a lost capability.
+
+
+---
+
+## FINDING-GH-026
+
+### Finding
+The apparent customer-continuity gap in FINDING-GH-025 is not a lost subsystem. Current Agent-Mesh already has a canonical Customer Care, Retention & Rebooking convergence owner.
+
+### Evidence
+Repository: `Masterleeaus/Agent-Mesh`
+Open issues inspected:
+- #363 — canonical Customer Care, Retention & Rebooking workforce capability;
+- #370 — end-to-end certification;
+- #234 — Communications & Channels;
+- #183 — CRM/service lifecycle (referenced by #363);
+- #641 — Hub surface delivery;
+- #768 — Personal Zero, including Customer Zero context.
+
+#363 explicitly owns callback recovery, expectation updates, complaint intake, service recovery, rebooking, approved retention, churn/rebooking prevention, complaint escalation, repeat-contact prevention and verified customer outcome evidence.
+
+### Historical-to-current mapping
+- complaint recovery → #363;
+- cross-channel continuity → #234;
+- customer/service lifecycle → #183;
+- Hub support projection → #641;
+- personal customer preferences/appointments/support/approvals → #768 Customer Zero context;
+- compensation/refund/discount authority → Finance + canonical effective-authority path.
+
+### Classification
+CURRENT EQUIVALENT FOUND / NOT LOST
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Do not create a customer-continuity runtime or new issue. Historical Titan Hello/Zero Fuss semantics should be treated as product/capability provenance feeding existing owners.
+
+---
+
+## FINDING-GH-027
+
+### Finding
+The historical customer-continuity architecture is now demonstrably decomposed into canonical current owners rather than preserved as old application boundaries.
+
+### Why it matters
+Old names such as Titan Hello and Zero Fuss described useful operational moments, but reviving those application ownership boundaries would conflict with current architecture. The capability survives through Communications, Interaction/CRM, Workforce Customer Care, Hub and Personal Zero.
+
+### Classification
+ARCHITECTURAL CONVERGENCE / HISTORICAL APP BOUNDARIES RETIRED
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Preserve the capability chain and outcome semantics; retire historical runtime ownership assumptions.
