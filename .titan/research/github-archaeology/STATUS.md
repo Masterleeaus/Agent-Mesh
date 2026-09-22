@@ -26,10 +26,10 @@ COMPLETED:
 - Corrected the provisional tenancy concern: `company_id` is already the broader Titan Zero invariant; Dovetails `account_id` evidence is legacy/current implementation context.
 
 IN PROGRESS:
-- Search historical repositories/branches for Personal Zero precursors.
-- Search for general Business Reality/reality-model mechanisms.
-- Search for continuous Evolution/reassessment orchestration.
-- Compare recovered mechanisms against #153, #59, #642 and other canonical owners.
+- Continue repository/branch/tag/history archaeology across remaining high-value lineages.
+- Identify lost, unmerged, regressed and superior historical capabilities.
+- Contribute independent GitHub evidence to #767/#768 only when it adds evidence not already supplied by Library archaeology.
+- Build the required lost-capability register and exact-name final archaeology ledgers.
 
 NOT YET SCANNED:
 - Full branch-by-branch structural comparison across all 40 repositories.
