@@ -32,3 +32,8 @@ if(!sw.includes('checkpointAgentMeshContinuation')) throw new Error('automatic A
 if(!sw.includes("checkpointAgentMeshContinuation(normalized,'live-snapshot')")) throw new Error('live snapshot checkpoint trigger missing');
 if(!sw.includes('takeoverAgentMeshContinuation')) throw new Error('Agent Mesh takeover bridge helper missing');
 if(!sw.includes('claim_release:false')) throw new Error('takeover/checkpoint must not release claim authority');
+
+if(!bridge.includes("agent_mesh.execution.audit")) throw new Error('execution audit read action missing');
+if(!sw.includes('fetchAgentMeshExecutionAudit')) throw new Error('execution audit projection helper missing');
+if(!sw.includes("authority:'github-projection-only'")) throw new Error('execution audit must remain projection-only');
+if(!sw.includes('mayMerge:false') || !sw.includes('mayReleaseClaim:false')) throw new Error('execution audit must not gain merge/claim release authority');
