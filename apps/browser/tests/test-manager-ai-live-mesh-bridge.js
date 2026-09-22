@@ -43,3 +43,15 @@ if(!sw.includes('liveReconciliation,executionAudit')) throw new Error('execution
 const rr=fs.readFileSync('src/titan-zero/manager-restart-reconstruction.js','utf8');
 if(!rr.includes("mayAdvanceLifecycle:false")) throw new Error('execution audit must not advance lifecycle during restart');
 if(!rr.includes("authority:'github-projection-only'")) throw new Error('restart execution evidence must remain projection-only');
+
+const restartCtx={globalThis:{}};vm.createContext(restartCtx);
+vm.runInContext(fs.readFileSync('src/titan-zero/manager-restart-reconstruction.js','utf8'),restartCtx);
+const resume=restartCtx.globalThis.TitanZeroManagerRestartReconstruction.deriveExecutionResume([
+ {request_id:'done-1',status:'ACCEPTED'},{request_id:'done-1',status:'SUCCEEDED'},
+ {request_id:'fail-1',status:'FAILED'},{request_id:'pending-1',status:'ACCEPTED'}
+]);
+assert.deepStrictEqual(Array.from(resume.succeeded),['done-1']);
+assert.deepStrictEqual(Array.from(resume.failed),['fail-1']);
+assert.deepStrictEqual(Array.from(resume.unresolved),['pending-1']);
+assert.strictEqual(resume.replayPolicy,'DO_NOT_REPLAY_SUCCEEDED_OR_UNRESOLVED');
+assert.strictEqual(resume.mayAdvanceLifecycle,false);
