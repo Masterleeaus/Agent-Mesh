@@ -2153,3 +2153,130 @@ ARCHITECTURE ANTI-DUPLICATION RULE
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-095
+
+### Finding
+Operation Identity should be the stable provenance spine for consequential long-running work. It connects initiator/actor, `company_id`, capability, decision, authority context, command/execution, correlation/causation and downstream receipts without making the operation itself an authority owner.
+
+### Classification
+CANONICAL TRACEABILITY SEMANTIC
+
+### Confidence
+HIGH
+
+### Related action
+#21; #725; #761; Rewind.
+
+---
+
+## FINDING-GH-096
+
+### Finding
+Resuming an operation is not permission to resume its old authority. Every consequential continuation must re-evaluate current delegation, Trust/Autonomy eligibility, policy, risk, assurance, entitlement and relevant reality/context freshness before execution.
+
+### Classification
+AUTHORITY CONTINUANCE INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#761.
+
+---
+
+## FINDING-GH-097
+
+### Finding
+Long-running work needs separate stable operation identity and replaceable authority snapshots. The operation may remain the same mission while its authority narrows, expires, is revoked or requires fresh approval. Historical authority snapshots remain evidence only.
+
+### Classification
+IDENTITY / AUTHORITY SEPARATION
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-098
+
+### Finding
+Offline execution must contract to the explicitly safe cached envelope. Zero may use authorised cached knowledge, local inference, bounded offline commands, evidence capture and permitted queues; actions requiring fresh server/current authority must fail closed until reconnect.
+
+### Evidence
+Mobile ecosystem evidence verifies bounded LocalBrain offline commands through encrypted/idempotent journal and later reconciliation; current architecture explicitly states offline authority must remain bounded and fail closed where fresh authority is required.
+
+### Classification
+OFFLINE AUTHORITY INVARIANT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-099
+
+### Finding
+Queued work is a proposal/request to continue, not a pre-authorised future command. On reconnect, queued mutations should validate operation identity, replay/idempotency, company/actor, current authority, policy, target state/revision and relevant evidence freshness before canonical mutation.
+
+### Classification
+RECONNECT / REPLAY REQUIREMENT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-100
+
+### Finding
+Authority Continuance must detect execution-environment drift, not only explicit revocation. Material changes in business reality, target identity/state, risk, evidence, cost, time, user role, capability binding or system health can invalidate an earlier approval even when no one explicitly revoked it.
+
+### Classification
+CONTINUANCE HARDENING REQUIREMENT
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-101
+
+### Finding
+Rewind and Operation Identity should share lineage. Recovery must be able to identify the exact operation/decision/command/receipt chain, determine which internal state can be recomputed or superseded, and then re-enter current authority gates for any compensating action.
+
+### Classification
+RECOVERY / TRACEABILITY CONVERGENCE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-102
+
+### Finding
+Zero continuity should attach durable personal/experience context to operation references rather than embed mutable authority inside Personal Zero memory. Zero may remember that a mission exists, why it was started, prior decisions and outcomes; it must ask current authority machinery whether the next consequential step is still permitted.
+
+### Classification
+PERSONAL ZERO / OPERATION BOUNDARY
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-103
+
+### Finding
+A safe long-running operation lifecycle is: **create stable operation identity → capture current decision/evidence/authority references → execute bounded step → receipt/outcome → suspend/queue if necessary → refresh reality/evidence/authority on resume → continue, re-plan, escalate or terminate**. This avoids both lost continuity and stale-authority replay.
+
+### Classification
+TARGET OPERATION LIFECYCLE
+
+### Confidence
+HIGH
