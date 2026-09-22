@@ -178,3 +178,21 @@ Actions affected:
 Conflicts:
 - Strengthens and independently verifies mechanism-agent finding about recalled context having no authority effect.
 Needs re-ingestion: NO
+
+
+## INGEST-011
+Agent/workspace: Live issue/action reconciliation
+Artifact: #768 Personal Zero, #640 Earned Trust & Autonomy, #761 Trust/Authority Continuance archaeology
+Commit/version inspected: live issue state at this checkpoint
+Agent status: N/A
+Ingestion status: INGESTED
+Findings imported:
+- Personal Zero gap now has existing architecture action #768.
+- Trust recursive handshake has consolidated implementation owner #640.
+- #761 is evidence recovery for Trust handshake/Authority Continuance, not a competing implementation.
+Actions affected:
+- Personal Zero Understanding packet
+- Trust/Authority packet
+Conflicts:
+- Earlier 'no Personal Zero owner' finding remains historically correct for that scan but is superseded for action ownership by #768.
+Needs re-ingestion: YES
