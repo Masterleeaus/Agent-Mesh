@@ -89,15 +89,18 @@
     "Pass 20: added regression coverage that checkpoint is resume-gated and that all four current Agent Mesh mutation call-site families remain visible to the guard",
     "Pass 20: audited all Agent Mesh bridge call sites in the service worker; read-only snapshot/health/capabilities/execution-audit remain ungated reads while all discovered mutations are governed",
     "Pass 20: centralized Agent Mesh mutation preflight now allowlists recover, route, checkpoint and takeover and fails closed on unknown Agent Mesh mutations",
-    "Pass 20: checkpoint and Manager mutations require resume reconciliation; takeover retains its explicit pre-gate then uses the central caller without double-gating; regression guards prevent direct bypass"
+    "Pass 20: checkpoint and Manager mutations require resume reconciliation; takeover retains its explicit pre-gate then uses the central caller without double-gating; regression guards prevent direct bypass",
+    "Pass 20: audited all current service-worker Agent Mesh bridge call sites; reads remain ungated while mutations converge through callAgentMeshMutation",
+    "Pass 20: removed bootstrapRequired bypass entirely so every allowlisted Agent Mesh mutation must pass GitHub-first resume reconciliation",
+    "Pass 20: mutation allowlist is limited to recover_agent, route_packet, continuation checkpoint and takeover; regression guards reject any resume-gate bypass option"
   ],
   "current_work": [
-    "Converge stale route_packet/packet terminology in Manager recovery path onto GitHub issue/subgoal terminology without breaking bridge compatibility"
+    "Converge stale packet terminology in Manager routing without changing durable GitHub issue authority"
   ],
   "next_actions": [
-    "Inspect bridge/server implementation of agent_mesh.route_packet and recover_agent",
-    "Keep compatibility adapter if route_packet is externally required but normalize internal Manager vocabulary to issue/subgoal",
-    "Verify no legacy packet state becomes authority"
+    "Inspect route_packet bridge/backend semantics and Manager plan target source",
+    "Prefer issue/subgoal identifiers at Titan Code boundary while retaining compatibility adapter only if backend still requires packet_id",
+    "Add terminology regression guards so new Git-backed work does not reintroduce packet authority"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
