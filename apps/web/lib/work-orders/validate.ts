@@ -2,6 +2,7 @@ import type { PoolClient } from "pg";
 import {
   completionGateMessage,
   type CompletionCriterion,
+  type ExternalCompletionBlocker,
 } from "@ai-fsm/domain";
 
 export async function validateWorkOrderForeignKeys(
@@ -81,10 +82,11 @@ export async function validateWorkOrderCompletion(
   workOrderId: string,
   accountId: string,
   completionCriteria: CompletionCriterion[],
+  externalBlockers: ExternalCompletionBlocker[] = [],
 ): Promise<string | null> {
   const visitRes = await client.query<{ status: string }>(
     `SELECT status FROM visits WHERE work_order_id = $1 AND account_id = $2`,
     [workOrderId, accountId],
   );
-  return completionGateMessage(visitRes.rows, completionCriteria);
+  return completionGateMessage(visitRes.rows, completionCriteria, externalBlockers);
 }
