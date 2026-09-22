@@ -224,3 +224,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-016 | Evolution/Reality implementation readiness | #767 + current Nexus source | #767 OPEN/unclaimed; Nexus sha f7936d44dcf30fd9cb0d091af0efbc10fbcd501a | CURRENT CHECKPOINT | INGESTED | #767 has no branch/PR; current Nexus is an authority-neutral recommendation orchestrator, not the full Evolution/Reality lifecycle | YES |
+
+
+| INGEST-017 | Remaining convergence claim-state check | #768/#153/#37/#59/#767 | current GitHub issue comments + branch/PR searches | CURRENT CHECKPOINT | INGESTED | All five principal remaining convergence lanes are unclaimed; no implementation PRs found. agent/759 substring hit is not #59. | YES |
