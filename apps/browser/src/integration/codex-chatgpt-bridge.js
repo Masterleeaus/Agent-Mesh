@@ -8,7 +8,8 @@ function workContextText(context={}){if(!context||context.schema!=='titan-code.a
 function withWorkContext(task,context){const prefix=workContextText(context);return prefix?prefix+'\n\n'+String(task||''):String(task||'');}
 async function run(config,request={}){
  const c=await capabilities(config);if(!c.ok)return c;
- const payload={task:withWorkContext(request.task,request.workContext).slice(0,120000),cwd:String(request.cwd||'').slice(0,2000),mode:String(request.mode||'coding').slice(0,80),readOnly:request.readOnly!==false,metadata:{requestId:String(request.requestId||''),workerId:String(request.workerId||''),workContextSchema:String(request.workContext?.schema||'')}};
+ let workContext=request.workContext||null;if(!workContext&&request.injectAgentMeshWorkContext!==false){try{const snapshot=await global.getManagerAISnapshot?.();const resolved=await global.getAgentMeshWorkContext?.(snapshot);if(resolved?.ok)workContext=resolved.context;}catch(_error){}}
+ const payload={task:withWorkContext(request.task,workContext).slice(0,120000),cwd:String(request.cwd||'').slice(0,2000),mode:String(request.mode||'coding').slice(0,80),readOnly:request.readOnly!==false,metadata:{requestId:String(request.requestId||''),workerId:String(request.workerId||''),workContextSchema:String(workContext?.schema||'')}};
  if(!payload.task)return {ok:false,reason:'codex-task-required'};
  return bridge().call(config,'codex.run',payload);
 }
