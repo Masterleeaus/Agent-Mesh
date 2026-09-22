@@ -2,6 +2,7 @@ import { NextRequest,NextResponse } from "next/server";
 import { z } from "zod";
 import { withRole,type AuthSession } from "@/lib/auth/middleware";
 import { withPortableTransaction } from "@/lib/db/portable";
+import type { DbClient } from "@/lib/db-contract";
 import { canonicalCompanyIdFromSession } from "@/lib/auth/company-boundary";
 import { recordGovernedDefectState } from "@/lib/work-orders/field-governed-state";
 import { buildTitanFieldDefect } from "@titan-zero/titan-platform/business-ops";
@@ -19,7 +20,7 @@ export const POST=withRole(["owner","admin"],async(request:NextRequest,session:A
   const provenance={source:"titan-zero-field-api",recorded_at:new Date().toISOString(),idempotency_key:`${session.traceId}:defect:${parsed.data.defect_id}`,trace_id:session.traceId};
   const verified_by_ref=parsed.data.state==="verified"?session.userId:null;
   const defect=buildTitanFieldDefect({...parsed.data,company_id:canonicalCompanyIdFromSession(session.accountId),work_order_id:id,verified_by_ref,provenance});
-  await recordGovernedDefectState(client as any,{accountId:session.accountId,company_id:defect.company_id,actorId:session.userId,traceId:session.traceId,role:session.role},defect);
+  await recordGovernedDefectState(client as DbClient,{accountId:session.accountId,company_id:defect.company_id,actorId:session.userId,traceId:session.traceId,role:session.role},defect);
  });return NextResponse.json({data:{defect_id:parsed.data.defect_id,state:parsed.data.state}})}
  catch(e){const missing=e instanceof Error&&e.message==="WORK_ORDER_NOT_FOUND";return NextResponse.json({error:{code:missing?"NOT_FOUND":"MUTATION_REJECTED",message:missing?"Work order not found":"Defect mutation rejected",traceId:session.traceId}},{status:missing?404:422});}
 });
