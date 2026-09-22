@@ -128,15 +128,19 @@
     "Pass 20: bridge-client and service-worker gate classifications plus regression guards now agree",
     "Pass 20: audited service-worker Agent Mesh bridge call sites; read-only snapshot/health/capability/audit calls remain direct, while mutation actions route through callAgentMeshMutation",
     "Pass 20: centralized mutation wrapper is now regression-guarded so direct Agent Mesh mutation calls cannot silently bypass the resume gate",
-    "Pass 20: recover_agent, route_packet and continuation takeover remain explicitly resume-gated; checkpoint remains governed separately"
+    "Pass 20: recover_agent, route_packet and continuation takeover remain explicitly resume-gated; checkpoint remains governed separately",
+    "Pass 20: audited Agent Mesh mutation call sites in the browser service worker",
+    "Pass 20: confirmed generic callTitanBridge rejects every classified agent_mesh mutation, preventing a direct bridge bypass",
+    "Pass 20: confirmed recover_agent, route_packet and continuation.takeover pass through the GitHub-first resume gate; checkpoint remains governed and read-only surfaces remain separate",
+    "Pass 20: added regression assertions for generic mutation bypass prevention and governed-path presence"
   ],
   "current_work": [
-    "Run repository-wide continuation/Execution Bridge convergence audit beyond apps/browser"
+    "Complete broader Titan Code/Agent Mesh contract alignment and identify remaining takeover usability gaps"
   ],
   "next_actions": [
-    "Inspect workflows/scripts for duplicate claim, continuation or execution authority",
-    "Align GitHub-side validation terminology with Agent Mesh/Titan Code terminology",
-    "Then finish remaining high-value takeover reliability improvements"
+    "Audit bridge action naming against GitHub terminology and existing Titan Code terminology",
+    "Create compact takeover handoff artifact consumable by both ChatGPT and Titan Code/Codex",
+    "Then test end-to-end context replacement semantics"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
