@@ -1,0 +1,59 @@
+import { describe, expect, it, vi } from "vitest";
+import { executeGovernedOutbound } from "../outbound-orchestrator";
+
+const message = {
+  id: "msg-1",
+  company_id: "company-1",
+  conversation_id: "conv-1",
+  correlation_id: "corr-1",
+  channel: "sms" as const,
+  direction: "outbound" as const,
+  participants: [{ address: "+61400000000" }],
+  created_at: "2026-09-22T06:00:00.000Z",
+  provenance: { source: "command-bus", actor_id: "user-1" },
+};
+const allowed = {
+  consent: "granted" as const,
+  opted_out: false,
+  quiet_hours: false,
+  channel_allowed: true,
+  privacy_allowed: true,
+  funding_allowed: true,
+  authority_allowed: true,
+};
+const rate = { limit: 10, used: 0, resets_at: "2026-09-22T07:00:00.000Z" };
+
+describe("executeGovernedOutbound", () => {
+  it("does not invoke providers when authority is denied", async () => {
+    const send = vi.fn();
+    const result = await executeGovernedOutbound({
+      message,
+      policy: { ...allowed, authority_allowed: false },
+      rate_limit: rate,
+      candidates: [{ provider_id: "gateway", channel: "sms", available: true, funded: true, policy_allowed: true }],
+      adapters: [{ provider_id: "gateway", send }],
+    });
+    expect(result).toMatchObject({ ok: false, denied: true, reason: "authority-required" });
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("selects an eligible provider and emits canonical delivery evidence", async () => {
+    const send = vi.fn().mockResolvedValue({ ok: true, provider_message_id: "provider-1" });
+    const result = await executeGovernedOutbound({
+      message,
+      policy: allowed,
+      rate_limit: rate,
+      candidates: [
+        { provider_id: "down", channel: "sms", available: false, funded: true, policy_allowed: true },
+        { provider_id: "gateway", channel: "sms", available: true, funded: true, policy_allowed: true },
+      ],
+      adapters: [{ provider_id: "gateway", send }],
+    });
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(result).toMatchObject({
+      ok: true,
+      provider_id: "gateway",
+      receipt: { company_id: "company-1", state: "sent", provider_message_id: "provider-1" },
+    });
+  });
+});
