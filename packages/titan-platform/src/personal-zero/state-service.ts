@@ -2,6 +2,7 @@ import type { StorageContextInput, StorageRecord } from "../storage/index.js";
 import type { VerifiedOutcome } from "../workforce-evidence/contracts.js";
 import { proposeLearningFromCorrection, proposeLearningFromPredictionError, proposeLearningFromVerifiedOutcome, assertLearningProposalAuthorityNeutral, type PersonalZeroLearningProposal } from "./learning-governor-bridge.js";
 import { createLearningProposalRecord, reviewLearningProposal, supersedeLearningProposal, type LearningProposalRecord } from "./learning-review.js";
+import { createAcceptedLearningAdjustment, type LearningConsumer } from "./learning-consumption.js";
 import {
   createCompanyRelationship,
   createUnderstandingState,
@@ -169,6 +170,15 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
       requireRelationshipMatch(relationship,current.one_id,current.zero_id,current.company_id);
       const superseded=supersedeLearningProposal(current,{superseded_at:Number(clock()),reason});
       return repository.put(context,{module_id:MODULE_ID,collection:LEARNING_PROPOSALS,record_id:proposal_id,expected_revision:row.version,data:superseded});
+    },
+
+    async getAcceptedLearning(context:StorageContextInput,relationship_id:string,consumer:LearningConsumer){
+      const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,relationship_id));
+      if(!relationship||relationship.status!=="active")return [];
+      const rows=await repository.list(context,{module_id:MODULE_ID,collection:LEARNING_PROPOSALS});
+      return rows.map(r=>recordData<LearningProposalRecord>(r))
+        .filter((p):p is LearningProposalRecord=>Boolean(p&&p.status==="accepted"&&p.company_id===relationship.company_id&&p.one_id===relationship.one_id&&p.zero_id===relationship.zero_id&&p.relationship_id===relationship_id))
+        .map(p=>createAcceptedLearningAdjustment(p,consumer));
     },
 
     async putCrossContextShareGrant(context:StorageContextInput,input:Omit<CrossContextShareGrant,"authority_neutral">){
