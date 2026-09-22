@@ -19,3 +19,8 @@ const resume=C.resumeInstructions(cp);
 assert(resume.instructions.some(x=>x.includes('GitHub wins')));
 assert.deepStrictEqual(Array.from(resume.do_not_repeat),[]);
 console.log('PASS test-agent-mesh-continuation');
+
+const bootReady=C.bootstrap({checkpoint:cp,github:{state:'ACTIVE',git:{mainSha:'c'.repeat(40),baseSha:'c'.repeat(40),headSha:'a'.repeat(40),branch:cp.claim_branch}}});
+assert.strictEqual(bootReady.status,'READY_TO_RESUME');assert.strictEqual(bootReady.failClosed,false);assert.strictEqual(bootReady.authority.mayMerge,false);
+const bootMoved=C.bootstrap({checkpoint:cp,github:{state:'ACTIVE',git:{mainSha:'c'.repeat(40),baseSha:'c'.repeat(40),headSha:'b'.repeat(40),branch:cp.claim_branch}}});
+assert.strictEqual(bootMoved.status,'RECONCILE_REQUIRED');assert.strictEqual(bootMoved.failClosed,true);assert.strictEqual(bootMoved.authority.mayMutate,false);assert.strictEqual(bootMoved.reason,'checkpoint-head-differs-from-github');
