@@ -624,3 +624,30 @@ PARTIAL / PLANNED IMPLEMENTATION / NOT CERTIFIED
 HIGH
 ### Convergence
 Keep #640 as the sole implementation lane and #540 as certification. Do not infer recursive handshake completion from authority lease/delegation code alone.
+
+
+---
+
+## FINDING-CSA-025
+### Finding
+The designated Blueprint validation lane #757 / PR #758 currently contains only a read-only workflow definition, not a completed blueprint evidence report.
+### Evidence
+PR #758 is OPEN and unmerged at head 409344b50d990284a1d677ff0fc2a3db38896703. Its only changed file is .github/workflows/titan-zero-blueprint-evidence-validator.yml. The workflow is workflow_dispatch-only and generates reports as Actions artifacts rather than committing them.
+### Interpretation
+The workflow is a useful evidence-classification pipeline, but its heuristic term matches are not source-level proof and there is no committed generated report to ingest at this checkpoint.
+### Classification
+EVIDENCE PIPELINE / RESULTS PENDING
+### Confidence
+HIGH
+
+## FINDING-CSA-026
+### Finding
+The designated Continuous Observation / Reality / Nexus lane #759 / PR #760 likewise contains an evidence-generation workflow rather than proof that the co-evolution chain is wired end-to-end.
+### Evidence
+PR #760 is OPEN and unmerged at head aa59cbf0f392e910c1b7d158619ec90522245c4d. Its only changed file is .github/workflows/titan-zero-observation-nexus-trigger-map.yml. The workflow explicitly warns that term presence does not prove lifecycle wiring. Library archaeology independently reports implemented OnboardingPro v6 donor services, but not current TypeScript parity.
+### Interpretation
+#767 remains the convergence action for Evolution/Reality donor recovery. #759 is an evidence map and must not be treated as a current implementation owner.
+### Classification
+EVIDENCE PIPELINE / HISTORICAL DONOR SUPPORT / CURRENT PARITY UNVERIFIED
+### Confidence
+HIGH
