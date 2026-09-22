@@ -182,3 +182,14 @@ Removed remaining demo transcript/status leakage from the mounted authenticated 
 - demo fallback remains available for isolated prototype/demo rendering.
 
 This does not yet claim that all generated cards contain live business data: several role-specific card bodies are still prototype content and must be replaced by injected live projections before they are represented as live operational facts.
+
+## Pass 13 — fail closed on prototype business facts
+
+Hardened authenticated Command/Go so prototype business values are no longer presented as live facts:
+- authenticated mode no longer creates `demoPresentationIntent` cards;
+- authenticated initial response is neutral and directs users to live interaction or existing operational details;
+- when the authenticated interaction runtime returns no structured/live message, the UI explicitly says no business facts were inferred;
+- prototype generated UI remains available only in explicit demo mode;
+- authenticated generated-card area now waits for live runtime output rather than rendering hard-coded operational values.
+
+This removes the highest-risk presentation mismatch while preserving the generated-UI contract for later live projection wiring.
