@@ -25,3 +25,9 @@ test('legacy tenant aliases fail closed',()=>{
  assert.throws(()=>buildTitanProjectRfi({...base,account_id:'legacy'}),/legacy tenant boundary/);
  assert.deepEqual(deriveRfiTiming({state:'closed',date_submitted:'2026-09-10',response_date:'2026-09-15T00:00:00Z',date_required:'2026-09-12',as_of:'2026-09-22'}),{days_open:5,is_overdue:false});
 });
+test('RFI response lifecycle and chronology fail closed',()=>{
+ assert.throws(()=>buildTitanProjectRfi({...base,state:'answered',response:'ok',response_date:'2026-09-18T12:00:00Z'}),/responded_by_ref/);
+ assert.throws(()=>buildTitanProjectRfi({...base,state:'answered',response:'ok',responded_by_ref:'user\/2'}),/response_date/);
+ assert.throws(()=>buildTitanProjectRfi({...base,state:'answered',response:'ok',responded_by_ref:'user\/2',response_date:'2026-09-09T12:00:00Z'}),/must not precede date_submitted/);
+ assert.throws(()=>buildTitanProjectRfi({...base,date_required:'2026-09-09'}),/date_required must not precede date_submitted/);
+});
