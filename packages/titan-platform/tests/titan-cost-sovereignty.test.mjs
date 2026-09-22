@@ -19,6 +19,12 @@ test("Titan-managed inference requires entitlement or explicit metered opt-in",(
   assert.equal(d.titan_funded_fallback,false);
 });
 
+test("cost sovereignty does not create an implicit Titan-funded fallback",()=>{
+  const d=decideInferenceRoute({company_id:"c1",allowed_routes:["titan-managed"],titan_managed_entitled:false,titan_metered_opt_in:false});
+  assert.equal(d.escalation_required,true);
+  assert.equal(d.titan_funded_fallback,false);
+});
+
 test("cost sovereignty requires company_id and never grants authority",()=>{
   assert.throws(()=>decideInferenceRoute({company_id:""}),/company_id-required/);
   const d=decideInferenceRoute({company_id:"c1",allowed_routes:["device"]});
