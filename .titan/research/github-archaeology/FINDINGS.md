@@ -473,3 +473,62 @@ HIGH
 
 ### Related action
 Support #768 with FINDING-GH-010 through FINDING-GH-012.
+
+
+---
+
+## FINDING-GH-015
+
+### Finding
+Historical `Titancore` V1.9 contains a concrete provider-neutral AI gateway and provider registry with local inference support, failover, health checks and usage/cost telemetry.
+
+### Evidence
+Repository: `Masterleeaus/Titancore`
+Branch: `main`
+Paths:
+- `TitanCore_V1.9/AI/Providers/provider.json` (SHA `c08a7d54639203d138776afca3e5422df785078e`)
+- `TitanCore_V1.9/Services/TitanCoreModelGateway.php` (SHA `f76ae50e96a3ace6ff02932557ccb47c6fc84a67`)
+
+Verified mechanisms:
+- registry for OpenAI, Anthropic, Local/Ollama-compatible, TitanAI/MagicAI proxy and null providers;
+- local adapter explicitly supports Ollama, LM Studio and llama.cpp without API key;
+- explicit provider override/default/failover routing;
+- chat + embedding failover chains;
+- configurable failure statuses, backoff and circuit breaker;
+- provider/model/token/latency usage logging;
+- context includes `company_id`, user, agent and feature;
+- safe null providers when no usable provider is configured.
+
+### Current Titan equivalent
+#647 owns Device/Distributed Intelligence Runtime and Cost Sovereignty; #80 owns final integration/certification.
+
+### Classification
+HISTORICAL / IMPLEMENTED DONOR / PARTIAL CURRENT EQUIVALENT
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Do not resurrect TitanCore's PHP gateway. Compare its proven failover/circuit-breaker/local-provider/null-provider/usage-receipt semantics against #647. Port only missing semantics into canonical TypeScript provider routing.
+
+---
+
+## FINDING-GH-016
+
+### Finding
+The historical TitanCore provider manifest is an early concrete Cost Sovereignty precursor, but its routing policy is weaker than current Titan Zero policy.
+
+### Evidence
+The local provider has no API-key requirement and cost tracking disabled, while cloud providers support cost tracking and failover. The gateway records provider/model/token/latency metadata.
+
+### Current comparison
+#647 is materially stronger: privacy/egress filtering precedes provider selection and mandates the order on-device → local/customer-hosted → BYO → customer service → Titan-managed entitled → explicit metered add-on.
+
+### Classification
+HISTORICAL / ALREADY SURPASSED IN POLICY / USEFUL IMPLEMENTATION DONOR
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Harvest implementation techniques only. Do not downgrade #647's current privacy/cost/authority policy to the older gateway model.
