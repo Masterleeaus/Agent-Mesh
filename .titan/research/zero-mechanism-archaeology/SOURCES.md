@@ -178,3 +178,25 @@ Recorded SHA-256: af34846d59c4b2ee21c90af924afb76be3a88187cf0ca7c162fe9ac0770c95
 Verification: physical source materialized and relevant evidence/readiness/recovery mechanisms inspected during #763; prior architecture evidence records physical SHA verification.
 Relevant paths: System/Audit/RewindEvidenceAssembler.php; System/Certification/RewindHostReadinessReport.php; restore/recovery contracts and tests within the master.
 Supports: FINDING-GH-058 through FINDING-GH-063 together with Decision Engine revision history, Knowledge Authority lineage and Phase10 truth-lifecycle evidence.
+
+
+---
+
+## SOURCE-LIB-009
+
+Type: Library architecture specification
+Artifact: Titan-Sovereign-Design-Spec-v1.md
+Library file id: file_00000000270481faa235c2177a26b936
+Library path: Titan-Sovereign-Design-Spec-v1.md
+Verification: direct Library text inspection during #763.
+Relevant semantics: provider-neutral replaceable models; local/private data retention; device identity != authority; current-device → LAN/private → BYO → Titan-paid routing; local Ollama/private RAG; capability-bound node execution; provenance/receipts.
+Supports: FINDING-GH-071, GH-072, GH-074 through GH-077.
+
+## SOURCE-LIB-010
+
+Type: Library roadmap discovery evidence
+Artifact: LBR-P1-G13-DISCOVERY-001.json
+Library file id: file_00000000da8481f88f914dfa72f73886
+Verification: direct Library inspection during #763.
+Relevant semantics: AI Core owns model capability/access contracts; Titan AI direct provider/BYO execution under Cost Sovereignty; Model Council governed escalation; local routes never silently fall back to Titan-funded inference. Recorded gap: no explicit production Ollama/browser-local adapter and no single provider-independent routing/access contract verified across the scanned masters.
+Supports: FINDING-GH-073 and convergence boundaries for GH-074/GH-077.
