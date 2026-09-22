@@ -25,3 +25,8 @@ test('cross-company and legacy boundaries fail closed',()=>{
  assert.throws(()=>assessWorkerQualification({company_id:'c1',required_tags:['electrical-license'],credentials:[other]}),/company_id must match/);
  assert.throws(()=>buildTitanQualificationCredential({...base,account_id:'legacy'}),/legacy tenant boundary/);
 });
+test('credential evidence is normalized and required evidence fails closed',()=>{
+ const c=buildTitanQualificationCredential({...base,evidence_refs:['document/licence-1','document/licence-1']},{as_of:'2026-09-22'});
+ assert.deepEqual(c.evidence_refs,['document/licence-1']);
+ assert.throws(()=>buildTitanQualificationCredential({...base,is_required:true,evidence_refs:[]},{as_of:'2026-09-22'}),/requires at least one evidence_ref/);
+});
