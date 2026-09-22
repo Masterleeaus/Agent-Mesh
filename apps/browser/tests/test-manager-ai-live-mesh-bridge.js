@@ -77,3 +77,8 @@ const checkpointGateIndex=sw.indexOf("async function checkpointAgentMeshContinua
 const checkpointCallIndex=sw.indexOf("'agent_mesh.continuation.checkpoint'",checkpointGateIndex);
 const checkpointResumeIndex=sw.indexOf("const resumeGate=await bootstrapAgentMeshResume(snapshot);",checkpointGateIndex);
 if(checkpointResumeIndex<checkpointGateIndex||checkpointResumeIndex>checkpointCallIndex) throw new Error('checkpoint mutation must pass resume gate before bridge call');
+
+const checkpointFn=sw.slice(sw.indexOf('async function checkpointAgentMeshContinuation'),sw.indexOf('async function takeoverAgentMeshContinuation'));
+if(!checkpointFn.includes('bootstrapAgentMeshResume(snapshot)')||!checkpointFn.includes("reason:'resume-reconciliation-required'")) throw new Error('continuation checkpoint must also be resume-gated');
+const mutationCalls=(sw.match(/agent_mesh\.(?:continuation\.checkpoint|continuation\.takeover|recover_agent|route_packet)/g)||[]);
+if(mutationCalls.length<4) throw new Error('expected Agent Mesh mutation call sites missing');
