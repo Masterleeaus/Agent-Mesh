@@ -353,3 +353,14 @@ Re-audited the PWA identities against actual authenticated routes. Go has a real
 Removed the premature Hub manifest instead of fabricating a customer route/auth model. Updated base-manifest documentation to state that only authenticated/live install identities are exposed: Go is provisionable now; Hub remains reserved until its customer boundary exists.
 
 This corrects the earlier Pass 20 placeholder and keeps Hub fail-closed rather than advertising a broken install target.
+
+## Pass 28 — Go PWA identity and service-worker boundary
+
+Audited the remaining live installable surface after Hub was made fail-closed.
+
+Hardened Titan Go's existing manifest rather than creating another shell:
+- added a stable PWA `id` of `/app/go`, so the installed Go identity is not inferred only from a mutable start URL;
+- aligned its manifest theme color with Go's canonical deep-blue accent `#2563eb`;
+- retained `/app/` scope because Go deliberately links into the mature authenticated field routes under that prefix.
+
+Clarified the shared service-worker contract: it supplies installability and web push across the web tier, but does not imply offline readiness or separate Command/Hub runtimes. No cache/offline strategy was invented under this issue.
