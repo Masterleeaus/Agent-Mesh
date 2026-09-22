@@ -60,10 +60,12 @@
   --color-blue-500:  #3b82f6;
   --color-blue-100:  #dbeafe;
   --color-blue-50:   #eff6ff;
-  --color-violet-600:#7c3aed;
-  --color-violet-100:#ede9fe;
-  --color-rose-600:  #e11d48;
-  --color-rose-100:  #ffe4e6;
+  /* Compatibility aliases: purple/pink are intentionally removed from the
+     Titan palette. Existing semantic consumers resolve to operational blue/red. */
+  --color-violet-600:var(--color-blue-600);
+  --color-violet-100:var(--color-blue-100);
+  --color-rose-600:  var(--color-red-600);
+  --color-rose-100:  var(--color-red-100);
 
   /* -------------------------------------------------------------------------
      Color — Semantic Aliases
