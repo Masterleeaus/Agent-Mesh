@@ -100,3 +100,5 @@ const unavailable=S.derive({packets:[]});assert.strictEqual(unavailable.source,'
 const legacy=S.derive({allowLegacyProjection:true,packets:[],claims:[],agents:[],deltas:[],handoffs:[],verification:[]});assert.strictEqual(legacy.source,'legacy-projection');
 const qUnavailable=Q.project({});assert.strictEqual(qUnavailable.source,'unavailable');assert.strictEqual(qUnavailable.nextGlobal,null);
 const lUnavailable=L.reconcile({});assert.strictEqual(lUnavailable.source,'unavailable');assert.strictEqual(lUnavailable.failClosed,true);
+
+assert.strictEqual(legacy.diagnosticOnly,true);assert.strictEqual(legacy.migration.legacyInputsNeverAuthoritative,true);assert.strictEqual(legacy.queue.nextGlobal,null);assert.deepStrictEqual(legacy.queue.nextByLane,{});assert.strictEqual(legacy.queue.authority.mayUnlockDependency,false);assert.strictEqual(legacy.queue.authority.mayAdvanceLifecycle,false);
