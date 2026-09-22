@@ -56,4 +56,16 @@ The capability comparison remains frozen above: canonical Titan owners were reta
 
 ## Merge-base verification — 2026-09-22
 
-`agent/724` is currently **108 commits ahead and 60 commits behind `main`**, with merge base `2200800e40aa8b38d25974460157d52db3db7187`. The #724 diff is bounded to the FieldServicePro convergence files listed by GitHub compare, but the branch is materially stale relative to main. Do not close or merge #724 until it is rebased/merged onto current main and conflicts are resolved against the newer canonical implementation. After reconciliation, rerun the platform/web verification suite. This is a merge-safety blocker, not a reason to duplicate newer main functionality into this branch manually.
+The branch was reconciled with main through sync PR #747. Subsequent repository activity has moved main ahead again, so final merge/closure must perform one last main-to-`agent/724` reconciliation immediately before CI verification. Do not duplicate newer main functionality manually.
+
+## Final verification status — 2026-09-22
+
+Static convergence review is complete across the 40-file #724 diff. No FieldServicePro donor runtime remains in the branch diff; the only FieldServicePro-named artifact is this convergence matrix. Regression coverage now includes RFI response identity/chronology, submittal reviewer identity/chronology, qualification evidence integrity, permit/defect blockers, API contracts, authority checks and business-reference integrity.
+
+Outstanding closure gates are deliberately narrow:
+1. reconcile the latest main delta;
+2. obtain actual platform/web typecheck and test results (the connector currently reports no workflow/status run for the branch tip);
+3. validate migrations 190/191 in the repository's real database migration environment, especially work_orders foreign-key type alignment and dialect-specific DDL;
+4. only close #724 after those executable checks succeed.
+
+Runtime SQL uses the portable transaction adapter; migration DDL is not claimed to be cross-dialect until that executable verification exists.
