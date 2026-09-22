@@ -317,3 +317,25 @@ Next verification target:
 - actual outcomes cannot enter Experience without verified outcome references;
 - cognitive/understanding/experience state never elevates Trust or execution authority;
 - CI/check evidence before classifying #768 complete.
+
+
+## Issue #768 slice-2 verification
+Preserve the landed repository-backed Personal Zero state service.
+
+Verified source-level behavior:
+- canonical storage only;
+- strict company/relationship identity match;
+- revocation blocks new relationship-scoped understanding and hides revoked context;
+- evidence cannot cross relationship/company context;
+- correction preserves supersession lineage;
+- service is explicitly authority-neutral.
+
+Remaining audit targets before #768 completion:
+- executed CI/test evidence for the committed negative tests;
+- ExperienceRecord persistence/retrieval and verified-outcome linkage;
+- CognitiveEvent chronology persistence/retrieval;
+- consumer retrieval integration for Decision/Interaction/Workforce;
+- privacy/locality/egress integration beyond contract-level fail-closed behavior;
+- relationship revocation effects on all Personal Zero record types;
+- Trust/Autonomy non-elevation tests;
+- final merge/certification evidence.
