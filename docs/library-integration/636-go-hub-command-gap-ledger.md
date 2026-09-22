@@ -326,3 +326,14 @@ Found and fixed a concrete compile defect introduced in Pass 19: `authenticated-
 Also cross-checked the surface-contract legacy-tenant assertion against the implementation. An intermediate edit attempted to rename the expected error, but the implementation correctly still emits `tenant_company_id-not-authoritative`; the test was restored to that actual contract in the same pass.
 
 The web package uses Vitest, while these files use Node's test/assert APIs; no connector shell is available here, so this pass does not claim execution success. The immediate static missing-symbol defect is fixed.
+
+## Pass 25 — per-surface visual identity convergence
+
+Audited the canonical surface projection itself after the shared-token palette cleanup. The chat-first surfaces still carried older ad-hoc accent hex values, so their generated/runtime presentation could diverge from the canonical Titan palette.
+
+Aligned the existing single surface contract rather than adding a theme layer:
+- Zero / Command → operational orange `#d97706`;
+- Go → deep operational blue `#2563eb`;
+- Hub → operational green `#16a34a`.
+
+Added contract coverage locking these surface accents. This preserves the shared black/slate foundation while giving each existing surface a clear secondary identity. Tests are committed but not execution-verified in this connector-only pass.
