@@ -92,3 +92,7 @@ Classification for Pass18/19 device modules: specification until source implemen
 ## Next archaeology
 
 Independently verify Decision Engine Step25 preference, observation, learning-loop and persistent-state mechanisms; then reconcile them against #633 and #768 without creating a parallel Decision Engine.
+
+
+### ZM-010 — Decision Engine Step25 source-verified donor
+Direct inspection of the Step25 Library master verified implemented TypeScript mechanisms for observation, actor/company preference resolution, revisioned decision history and verified-outcome learning. The preference and learning outputs explicitly carry `authority_effect: none`. Learning requires verified outcome evidence, preserves historical decisions/evidence and updates future calibration through revisioned state. Persistent-state candidate inventory is donor archaeology only and must not be imported wholesale.
