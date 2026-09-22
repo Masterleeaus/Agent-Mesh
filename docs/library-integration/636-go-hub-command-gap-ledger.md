@@ -265,3 +265,15 @@ Hardened the authenticated surface adapter:
 No fake Hub route or customer session was introduced. Prototype Hub UI remains isolated until the real customer identity boundary exists.
 
 Test coverage is committed but was not executed in this connector-only pass.
+
+## Pass 20 — PWA identity split
+
+Audited installability metadata. The web app had one generic Titan Zero manifest starting at `/app`, which conflicts with the product rule that provisionable PWAs are Go and Hub while Command remains the owner/base surface.
+
+Added dedicated manifest endpoints:
+- **Titan Go** starts at `/app/go` and is bound to the authenticated Go entry;
+- **Titan Hub** reserves the customer PWA identity at `/hub`, but no Hub page/auth route was fabricated; customer authentication remains blocked by Pass 19.
+
+Both use the dark slate theme and existing icon assets. No Command-specific PWA was created.
+
+The generic root manifest remains for compatibility in this pass; removing or repurposing it should be done only after checking current install/service-worker dependencies.
