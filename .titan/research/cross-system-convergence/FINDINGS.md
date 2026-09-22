@@ -1312,3 +1312,24 @@ Do not add more Personal Zero architecture merely to keep #768 active. TASK-152 
 SOURCE/DOCUMENTATION ACCEPTANCE COMPLETE / EXECUTION CERTIFICATION BLOCKER
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-060
+### Finding
+PR #770 produced real execution evidence and exposed two concrete Personal Zero TypeScript defects plus a separate claim-gate workflow mismatch; TASK-152/#768 is therefore correctly still incomplete.
+### Evidence
+PR #770 is open/draft from `agent/768` at head `e7012e06ff235b89c4318efcc99bdd39ce573413`.
+GitHub Actions run `35785912940` (Titan Zero CI) completed FAILURE. Job `106942553885` reached strict non-web typecheck and failed in `@titan-zero/titan-platform`:
+1. `src/personal-zero/contracts.ts` UnderstandingState declares duplicate `version` identifiers: persisted schema version `version:1` conflicts with the existing semantic/state `version:number` field (TS2300/TS2717).
+2. `src/personal-zero/learning-governor-bridge.ts` returns a learning proposal whose `proposed_adjustments` is inferred as `readonly string[]`, incompatible with the canonical restricted union `readonly ("ranking"|"recommendation_weight"|"workflow_preference"|"exception_pattern")[]` (TS2719).
+Because strict typecheck failed, Titan Platform tests/build steps were skipped; there is still no passing unit-test evidence.
+Separately, Agent Claim Gate run `35785912932`, job `106942553720`, failed because the validator expects `agent/<subgoal-id>` in roadmap subgoal form and rejects `agent/768`. This is a workflow/claim-protocol mismatch distinct from the Personal Zero compile defects.
+Manager Review Readiness passed; Manager Review Queue was cancelled.
+### Interpretation
+This is exactly the value of the execution gate: source inspection looked complete, but CI found concrete integration defects. Fix the two TypeScript errors first, rerun CI, then address/route the claim-gate mismatch according to AGENTS/manager workflow rather than weakening the claim validator ad hoc.
+### Classification
+EXECUTION-VERIFIED FAILURE / TWO PERSONAL ZERO TYPE ERRORS / CLAIM-GATE WORKFLOW MISMATCH
+### Confidence
+HIGH
