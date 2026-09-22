@@ -10,9 +10,12 @@ const intake=G.TitanZeroManagerDeltaIntake.create({packetId:'P1',agent:'Agent 1'
 assert.equal(intake.changedFiles[0],'a.js'); assert.equal(intake.changedFiles[1],'b.js');
 assert.throws(()=>G.TitanZeroManagerDeltaIntake.create({packetId:'P1',deltaSha256:'bad',baseSha256:parent}),/sha256/);
 const plan=G.TitanZeroManagerConvergencePlan.build({intake,identityValid:true,hashValid:true,dependenciesSatisfied:true,supervisorVerdict:'PASS',baseMatches:true,hotspotCollision:false,regressionPassed:true});
-assert.equal(plan.decision,'CLEAN_FORWARD_PORT'); assert.equal(plan.readyForPromotionGate,true);
+assert.equal(plan.decision,'CLEAN_FORWARD_PORT'); assert.equal(plan.readyForPullRequestGate,true); assert.equal(plan.authority.merge,'github-pr-merge');
 const blocked=G.TitanZeroManagerConvergencePlan.build({intake,identityValid:true,hashValid:true,dependenciesSatisfied:true,supervisorVerdict:'FAIL',baseMatches:true,hotspotCollision:false,regressionPassed:true});
-assert.equal(blocked.readyForPromotionGate,false); assert.equal(blocked.decision,'BLOCKED');
+assert.equal(blocked.readyForPullRequestGate,false); assert.equal(blocked.decision,'BLOCKED');
+const mergeGate=G.TitanZeroManagerPromotionGate.evaluate({identityValid:true,ancestryValid:true,dependenciesSatisfied:true,hotspotsResolved:true,supervisorVerified:true,regressionPassed:true,reconstructionVerified:true,prOpen:true,checksPassed:true,reviewApproved:true});
+assert.equal(mergeGate.allowed,true);assert.equal(mergeGate.action,'GITHUB_PR_MERGE_ALLOWED');assert.equal(mergeGate.authority.managerAI,false);
+const draftGate=G.TitanZeroManagerPromotionGate.evaluate({identityValid:true,ancestryValid:true,dependenciesSatisfied:true,hotspotsResolved:true,supervisorVerified:true,regressionPassed:true,reconstructionVerified:true,prOpen:true,checksPassed:true,reviewApproved:true,prDraft:true});assert.equal(draftGate.allowed,false);assert(draftGate.failed.includes('prDraft'));
 const candidate=G.TitanZeroManagerBaselineAdvance.create({currentBaselineSha256:parent,candidateSha256:next,parentSha256:parent,artifact:'candidate.zip',convergenceDecision:'CLEAN_FORWARD_PORT',promotionGate:{allowed:true},supervisorVerdict:'PASS',regressionPassed:true,reconstructionVerified:true});
 assert.equal(candidate.status,'READY_FOR_COORDINATOR_PROMOTION'); assert.equal(candidate.canonical,false);
 assert.throws(()=>G.TitanZeroManagerBaselineAdvance.create({currentBaselineSha256:parent,candidateSha256:next,parentSha256:'d'.repeat(64),artifact:'x',convergenceDecision:'CLEAN_FORWARD_PORT',promotionGate:{allowed:true},supervisorVerdict:'PASS',regressionPassed:true,reconstructionVerified:true}),/parent/);
