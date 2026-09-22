@@ -418,3 +418,23 @@ HIGH.
 
 ### Related action
 ACTION-LIB-011.
+
+
+---
+
+## FINDING-LIB-015
+
+### Finding
+Mobile/PWA archaeology confirms Titan Zero Apps, Titan Go and Titan Hub have verified Library masters, while current main already contains a recovered shared Flutter implementation and substantial offline, Hub privacy, maps/location/evidence and generated-UI infrastructure. The historical mobile family is therefore not lost; it is partially converged into current canonical mobile/surface ownership.
+
+### Classification
+HISTORICAL VERIFIED DONORS / CURRENT RECOVERED IMPLEMENTATION / PARTIAL CONVERGENCE.
+
+### Architectural conclusion
+Do not restore old Go/Hub/Zero app cores wholesale. Shared Surface SDK/mobile integration remains #542; PWA product delivery remains #641; #636 is donor convergence. Preserve maps, camera/location, evidence capture and offline/reconnect behavior while replacing demo/local action paths with canonical Core/Interaction/governed execution.
+
+### Confidence
+HIGH.
+
+### Related action
+ACTION-LIB-012.
