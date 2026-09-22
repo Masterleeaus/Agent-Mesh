@@ -95,15 +95,18 @@
     "Pass 20: mutation allowlist is limited to recover_agent, route_packet, continuation checkpoint and takeover; regression guards reject any resume-gate bypass option",
     "Pass 20: audited every current Agent Mesh bridge mutation call site in the service worker and confirmed recover, route, checkpoint and takeover all flow through callAgentMeshMutation",
     "Pass 20: central Agent Mesh mutation allowlist rejects unknown mutation actions and re-runs GitHub-first resume bootstrap before bridge execution",
-    "Pass 20: regression guards now fail if checkpoint, takeover or Manager mutation paths bypass the central mutation gate"
+    "Pass 20: regression guards now fail if checkpoint, takeover or Manager mutation paths bypass the central mutation gate",
+    "Pass 20: audited service-worker Agent Mesh bridge call sites and found the generic message bridge could bypass the dedicated mutation governance helper",
+    "Pass 20: generic callTitanBridge now rejects Agent Mesh mutation actions; mesh mutations must use governed paths with resume preflight",
+    "Pass 20: continuation/recovery/route/Manager paths continue through callAgentMeshMutation and GitHub-first resume checks; regression guards added"
   ],
   "current_work": [
-    "Converge stale packet terminology in Manager recovery/routing bridge without changing underlying compatibility contracts prematurely"
+    "Audit Titan Code bridge client and any non-browser Agent Mesh runtime endpoints for equivalent generic mutation bypasses"
   ],
   "next_actions": [
-    "Inspect agent_mesh.route_packet provider/bridge contract and Manager plan terminology",
-    "Introduce GitHub-native issue/subgoal naming at Titan Code boundary while preserving compatibility adapter if backend still expects packet_id",
-    "Remove duplicate RUN_MANAGER_AI_SUPERVISION message handler discovered during audit if safe"
+    "Inspect all Agent Mesh bridge/server action dispatchers",
+    "Ensure mutation classification is enforced server-side as well as browser-side",
+    "Add cross-layer contract test for read vs mutation action boundaries"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
