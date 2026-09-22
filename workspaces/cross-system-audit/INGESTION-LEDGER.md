@@ -311,3 +311,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-045 | PR #770 CI execution evidence | PR #770 + workflow runs/jobs/logs | head e7012e06ff235b89c4318efcc99bdd39ce573413; Titan CI run 35785912940/job 106942553885; claim gate run 35785912932/job 106942553720 | ACTIVE/FAILED-CERTIFICATION | DIRECT EXECUTION EVIDENCE | Titan Platform typecheck fails on duplicate UnderstandingState version field and learning proposal adjustment typing; tests skipped. Claim gate separately rejects agent/768 naming as non-subgoal form. | YES |
+
+
+| INGEST-046 | PR #770 post-fix CI | workflow run 35786535672 / job 106944907831 | head 43d73b7f0092ed795563f6999a1dc8169fda625b; fixes 3834aab,ccc10ff,5c167f4,43d73b7 | ACTIVE/PARTIAL-CERTIFICATION | DIRECT EXECUTION EVIDENCE | titan-platform typecheck now passes. Recursive CI then fails in services/worker on unrelated missing dependencies/API mismatches, so titan-platform tests are skipped. | YES |
