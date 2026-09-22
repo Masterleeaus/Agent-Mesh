@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 17,
+    "current_pass": 18,
     "status": "ACTIVE"
   },
   "completed": [
@@ -68,15 +68,18 @@
     "Pass 16: tests verify same canonical claim branch takeover retains unresolved/succeeded execution hints without gaining lifecycle authority",
     "Pass 17: converged bootstrap onto existing continuation/workContext machinery instead of creating a parallel context assembler",
     "Pass 17: bootstrap returns one compact GitHub-first resume object containing issue, canonical claim, lifecycle context, progress and execution replay hints",
-    "Pass 17: bootstrap fails closed with RECONCILE_REQUIRED when checkpoint head differs from live GitHub head; mutation is denied until reconciliation"
+    "Pass 17: bootstrap fails closed with RECONCILE_REQUIRED when checkpoint head differs from live GitHub head; mutation is denied until reconciliation",
+    "Pass 18: exposed the existing continuation bootstrap through the existing Titan Code service-worker surface as bootstrapAgentMeshResume; no new gateway/bridge was created",
+    "Pass 18: resume mutation is permitted only when canonical bootstrap returns READY_TO_RESUME; mismatches and runtime errors fail closed with mayMutate false",
+    "Pass 18: regression guards require the fail-closed bootstrap entrypoint and prevent Manager/model output from bypassing GitHub reconciliation"
   ],
   "current_work": [
-    "Expose bootstrap through existing Agent Mesh bridge/service worker resume entrypoint"
+    "Integrate bootstrap gate into actual replacement-agent/takeover mutation path rather than exposing it only as callable entrypoint"
   ],
   "next_actions": [
-    "Add read-only/bootstrap action or local wrapper using existing bridge surfaces, not a new gateway",
-    "Make replacement-agent resume invoke bootstrap before mutation",
-    "Guard that RECONCILE_REQUIRED cannot be bypassed by Manager/model output"
+    "Locate takeover/recovery message handlers and mutation dispatch path",
+    "Require bootstrapAgentMeshResume before post-takeover mutation",
+    "Preserve read-only inspection when reconciliation is required"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
