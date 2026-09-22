@@ -284,3 +284,40 @@ Recover the event/outcome/learning semantics into canonical TypeScript owners. U
 
 ### Related action
 ACTION-LIB-006; GitHub #763.
+
+
+---
+
+## FINDING-LIB-010
+
+### Finding
+Current-main semantic-owner exhaustion shows the historical LocalBrain family is only partially regressed. Modern TypeScript owners already preserve device/local execution availability, model/provider locality routing, privacy/egress constraints, durable interaction state and conservative offline restart/recovery. The missing cluster is specifically cognition-to-learning/experience semantics.
+
+### Why it matters
+This prevents a damaging wholesale LocalBrain import. Titan Zero should recover only the missing cognitive-event/outcome/learning mechanisms and attach them to current canonical owners.
+
+### Evidence
+Current main:
+- packages/titan-platform/src/intelligence-runtime/device-runtime.ts
+- packages/titan-platform/src/intelligence-runtime/index.ts
+- packages/titan-platform/src/intelligence.ts
+- packages/runtime/interaction-engine/conversation-state-runtime.mjs
+- packages/offline/README.md and current offline recovery package
+Historical comparison:
+- SOURCE-LIB-009 / Titan Interaction Engine Master v10.12.0
+
+### Current Titan equivalent
+Surviving owners:
+- Intelligence Runtime: device/model/provider/locality availability and governed routing.
+- Interaction Engine: conversation/session/context persistence.
+- Offline runtime: checkpoint/recovery/replay evidence.
+No current equivalent found for CognitiveEvent chronology, first-class correction events, prediction-to-outcome linkage/scoring, behavioural transition memory, adaptive prediction-error reweighting, user preference learning or persona-drift evidence.
+
+### Classification
+PARTIAL / REGRESSION for cognition-learning semantics; CURRENT for device/routing/offline/conversation responsibilities.
+
+### Confidence
+HIGH for inspected current owners; MEDIUM-HIGH that the listed learning semantics are absent after exact and semantic tree checks.
+
+### Related action
+ACTION-LIB-006. Do not import historical device/runtime/offline components that current owners already supersede.
