@@ -476,3 +476,54 @@ HIGH
 
 ### Related action
 #640 implementation; #761 evidence recovery; #540 final certification.
+
+
+---
+
+## FINDING-CSA-017
+
+### Finding
+PR #762 does not yet provide recovered Trust/Authority results; it only adds a workflow that would generate heuristic evidence when manually dispatched.
+
+### Why it matters
+The existence of #762 must not be mistaken for proof that Authority Continuance or the recursive handshake is fully implemented. Its own workflow warning says transition enforcement, handshake semantics and Authority Continuance still require source-level review.
+
+### Evidence
+- PR #762 is OPEN and unmerged; head agent/761 at 448a9d02d7dd6fb1129318937a787b1625a9c8de.
+- Only changed file: .github/workflows/titan-trust-authority-evidence.yml.
+- Workflow trigger is workflow_dispatch only.
+- Generated artifacts are not committed by the PR.
+- Workflow explicitly labels keyword presence as evidence only, not proof of enforcement.
+- Issue #761 comments add Library archaeology evidence for Titan Trust Master v2.1.0 and OnboardingPro v6 trust/evidence receipt donors, but require comparison against current Goal42 semantics.
+
+### Classification
+EVIDENCE PIPELINE / RESULTS PENDING
+
+### Confidence
+HIGH
+
+### Related action
+Keep #761 ingestion provisional until generated output and source-level verification are available. Preserve #640 as implementation owner.
+
+---
+
+## FINDING-CSA-018
+
+### Finding
+Library archaeology has already surfaced at least two Trust donor lineages through issue #761 coordination: Titan Trust Master v2.1.0 and OnboardingPro v6 trust/evidence receipt components.
+
+### Why it matters
+These donors are comparative evidence for #640/#761, not justification for resurrecting a second Trust authority path.
+
+### Evidence
+- Issue #761 comment records Library Archaeology Pass 1 verification.
+- The comment explicitly requires comparison with current Goal42/recursive-handshake semantics and separation of learning/evidence from authority.
+
+### Classification
+HISTORICAL DONOR EVIDENCE / PROVISIONAL
+
+### Confidence
+MEDIUM pending direct final Library archaeology ingestion
+
+### Related action
+Compare donor semantics during final Trust convergence; import only superior missing semantics.
