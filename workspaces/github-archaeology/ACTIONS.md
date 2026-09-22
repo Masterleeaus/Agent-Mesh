@@ -59,3 +59,18 @@ Map the architectural concept of Experience Memory onto the existing canonical m
 ## Deduplication note
 
 Before any new implementation issue is created, this agent will search current code, open issues, closed issues, other agent ACTIONS.md files when accessible, active claim refs and canonical owners. Issue #765 remains this agent's archaeology claim.
+
+
+---
+
+## ACTION-GH-005
+
+Type: COMPARE + CONVERGE
+Priority: P1
+Finding: FINDING-GH-010, FINDING-GH-011, FINDING-GH-012
+GitHub Issues: #153, #50, #59
+Status: PROPOSED SUPPORT; no duplicate issue created.
+Canonical Owner: Knowledge Authority / Business Memory with Decision and verified-outcome loops.
+
+Summary:
+Recover the historical distinction between durable facts and learned conditioning, plus verified/inferred/stale/contradicted state and user/company/site/customer/job memory scopes. Map these semantics into current canonical owners and the Personal Zero projection where appropriate. Legacy `tenant_id` must normalize to `company_id`; historical memory must never create execution authority.
