@@ -215,3 +215,9 @@ if(!sw.includes("const AGENT_MESH_MUTATION_POLICY=Object.freeze")) throw new Err
 if(!sw.includes("agent_mesh.continuation.checkpoint':'continuity-record-only'")) throw new Error('checkpoint must remain continuity-only, not work authority');
 if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover must use governed Agent Mesh mutation path');
 if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager mutations must use governed Agent Mesh mutation path');
+
+if(!sw.includes('AGENT_MESH_MUTATION_POLICY')) throw new Error('central Agent Mesh mutation policy missing');
+if(!sw.includes("if(!allowed.has(action)) return {ok:false,reason:'agent-mesh-mutation-not-allowlisted',mayMutate:false}")) throw new Error('unknown Agent Mesh mutations must fail closed');
+if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover must use central mutation gate');
+if(!sw.includes("const result=await callAgentMeshMutation(config,action,payload,snapshot)")) throw new Error('Manager Agent Mesh mutations must use central gate');
+if(!sw.includes("compatibility:{legacy_packet_id:target||null,authority:false}")) throw new Error('legacy packet routing must be compatibility-only');
