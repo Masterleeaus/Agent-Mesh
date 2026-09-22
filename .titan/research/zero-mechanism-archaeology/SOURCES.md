@@ -150,3 +150,17 @@ Recorded SHA-256: a2330f9826e6da15612e8a782d3f71203dccab0636c7da26302d7a19ee6b7f
 Verification: physical SHA previously verified in Library architecture evidence; materialized and relevant Reality/observation/reconfiguration source inspected during #763.
 Relevant families: System/RealityGraph; System/Observation; evidence-authority/discovery services; System/Reconfiguration; Nexus reassessment/provisioning; outcome/rollback/learning services.
 Supports: FINDING-GH-047 through FINDING-GH-051.
+
+
+---
+
+## SOURCE-LIB-007
+
+Type: Library master / direct source inspection
+Artifact: Titan Knowledge Authority Master v0.12.0-alpha.4.zip
+Library file id: file_00000000172c81fab7f3a239d09ab2e1
+Library path: /MASTER Software/Masters/Platform/Knowledge Authority/Titan Knowledge Authority Master v0.12.0-alpha.4.zip
+Recorded SHA-256: 7462e6f48d46117c52e04b1b6dd8d0bef0046d85403815f203ab73f89b43aa4c
+Verification: physical source materialized and relevant lineage/contradiction/security mechanisms inspected during #763; prior architecture evidence records physical SHA verification.
+Relevant paths: System/Services/KnowledgeContradictionService.php; System/Domain/Services/SourceVersionHasher.php; tests/Unit/SourceVersionLineagePolicyTest.php; tests/Security/KnowledgeAuthorityPolicyTest.php.
+Supports: FINDING-GH-052 through FINDING-GH-057 together with previously verified LocalBrain, Phase10, OnboardingPro and Assurance sources.
