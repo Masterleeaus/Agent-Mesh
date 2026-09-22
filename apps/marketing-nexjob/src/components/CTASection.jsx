@@ -2,15 +2,15 @@ import { ButtonPrimary, ButtonOutline } from './Button'
 import { appRoutes } from '../config'
 
 export default function CTASection({
-  title = 'Ready to run your business on autopilot?',
-  subtitle = 'Join thousands of trade pros who stopped juggling spreadsheets and started growing their businesses.',
-  buttonText = 'Start Free Trial',
+  title = 'Ready to put a managed workforce behind your business?',
+  subtitle = 'Keep the systems that work, fill the software gaps, and let Titan Zero manage the Advanced Intelligence system around your operation.',
+  buttonText = 'Sign Up',
   buttonTo,
   buttonHref,
   showDemo = true,
 }) {
   // Default: link to Rails app signup if no explicit destination
-  const resolvedHref = buttonHref || (!buttonTo ? appRoutes.trial : undefined)
+  const resolvedHref = buttonHref || (!buttonTo ? appRoutes.signup : undefined)
 
   return (
     <section className="py-24 px-6">
@@ -29,9 +29,7 @@ export default function CTASection({
               {buttonText} <span>&rarr;</span>
             </ButtonPrimary>
             {showDemo && (
-              <ButtonOutline size="lg" href="https://cal.com/steve-guilkey-9ooniv/15min">
-                Book a Demo
-              </ButtonOutline>
+              <ButtonOutline size="lg" to="/fully-managed">How Fully Managed Works</ButtonOutline>
             )}
           </div>
         </div>
