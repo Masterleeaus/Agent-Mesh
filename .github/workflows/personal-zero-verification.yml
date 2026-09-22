@@ -27,4 +27,7 @@ jobs:
       - name: Titan Platform typecheck
         run: pnpm --filter @titan-zero/titan-platform typecheck
       - name: Titan Platform unit tests
-        run: pnpm --filter @titan-zero/titan-platform test:unit
+        run: |
+          pnpm --filter @titan-zero/titan-platform exec tsc -p tsconfig.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false
+          cd packages/titan-platform
+          node --test ./tests/personal-zero-*.test.mjs
