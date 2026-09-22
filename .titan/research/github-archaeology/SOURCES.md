@@ -182,3 +182,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-060 — TitanPro `Modules/CallingAgent/AI/Agents/PersonaResolver.php`, SHA `829346ed56ab97b069f2156d288df24328763f05`; direct reception-persona implementation.
 - SOURCE-GH-061 — TitanPro `Modules/CallingAgent/Services/Calendar/CalendarProviderManager.php`, SHA `7ddb43cf0339782d9a42199fa9ee2023a50a7850`; direct Google/Outlook/CalDAV provider manager.
 - SOURCE-GH-062 — Agent-Mesh current owner dedup search: #234 Communications & Channels, #333 Reception & Customer Access, #363 Customer Care/Retention, #343 Sales & Revenue Growth.
+
+
+- SOURCE-GH-063 — TitanPro `Modules/Dispatch/Actions/Update/RescheduleDispatchAppointmentAction.php`, SHA `cd7d6b19135a5591964d71d649740e50afb1cc7c`; direct rescheduling/work-order synchronization implementation.
+- SOURCE-GH-064 — TitanPro `Modules/Dispatch/Services/Analytics/DispatchKpiService.php`, SHA `a91252721abe6be8147a392b7f397bc33579f15b`; direct dispatch KPI implementation.
+- SOURCE-GH-065 — TitanPro `Modules/Dispatch/Database/Migrations/2026_05_13_000700_create_dispatch_quality_and_sla_tables.php`, SHA `f7c957e336fc9b1dc5ad6f1cbd99a367fa69c2d9`; direct SLA/checklist/exception schema.
+- SOURCE-GH-066 — TitanPro `Modules/Dispatch/Routes/api.php`; search inspection confirms schedule, reschedule, technician recommendation, assignment status, route build and resequence API surfaces.
+- SOURCE-GH-067 — Agent-Mesh owner dedup search: #353 Scheduling/Dispatch/Capacity, #360 certification and #183 CRM/service-execution lifecycle.
