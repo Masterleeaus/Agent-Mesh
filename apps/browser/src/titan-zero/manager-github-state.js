@@ -24,10 +24,11 @@ function derive(input={}){
  else if(input.failed===true||checksFailed)state='FAILED';
  else if(merged&&issueClosed)state='COMPLETED';
  else if(merged)state='MERGED';
+ else if(input.rebaseRequired===true)state='REBASE_REQUIRED';
+ else if(pr&&clean(pr.state,40).toUpperCase()==='OPEN'&&required.length===0)state='PR_OPEN';
  else if(pr&&clean(pr.state,40).toUpperCase()==='OPEN'&&!checksPending)state='READY';
  else if(pr&&clean(pr.state,40).toUpperCase()==='OPEN'&&checksPending)state='VERIFYING';
- else if(pr)state='PR_OPEN';
- else if(input.rebaseRequired===true)state='REBASE_REQUIRED';
+ else if(pr&&clean(pr.state,40).toUpperCase()==='OPEN')state='PR_OPEN';
  else if(claimExists&&headSha&&baseSha&&headSha!==baseSha)state='ACTIVE';
  else if(claimExists)state='CLAIMED';
  return freeze({schema:SCHEMA,state,issue:Object.freeze({number:Number(issue.number)||null,subgoal_id:clean(issue.subgoal_id,160)||null,state:clean(issue.state,40)||null}),git:Object.freeze({mainSha,baseSha,headSha,branch:branch||null,expectedClaimBranch:expected||null,claimExists,behindMain}),pr:pr?Object.freeze({number:Number(pr.number)||null,state:clean(pr.state,40)||null,merged}):null,checks:Object.freeze({required:required.length,pending:checksPending,failed:checksFailed}),authority:Object.freeze({durableTruth:'github',claim:'git-branch-ref',baseline:'git-main-sha',merge:'github-pr-merge',localProjectionOnly:true})});
