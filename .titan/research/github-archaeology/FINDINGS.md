@@ -1034,3 +1034,100 @@ HIGH
 
 ### Recovery judgment
 Historical prediction modules are evidence/algorithm donors. Prediction confidence never grants execution authority; consequential actions still require canonical effective authority, Risk/Assurance/Governance and Command Bus.
+
+
+---
+
+## FINDING-GH-034
+
+### Finding
+Titan Builder contains a modern TypeScript transactional file-operation implementation with precondition hashes, rollback snapshots, backup journals and automatic rollback on partial failure.
+
+### Evidence
+Repository: `Masterleeaus/Titan-Builder`
+Branch: `main`
+Path: `src/operations/index.ts`
+Current search revision: `3163e9724cd6640e1b39a913d883f5aad139ba40`
+
+Verified implementation includes:
+- stateful operation planning against virtual snapshots;
+- hash/kind preconditions checked immediately before mutation;
+- transaction journals with prepared/applying/committed/rolling_back/rolled_back/rollback_failed states;
+- per-target and parent snapshots;
+- file backups;
+- automatic rollback after operation failure;
+- rollback failure evidence;
+- project-root/path/symlink safety checks;
+- explicit tracking of possible external effects.
+
+### Current Titan equivalent
+#14 owns canonical governed execution graph, failure/retry and idempotent compensation; #293 owns shared reliability/recovery/Rewind. Titan Builder is private development tooling and must not become a production dependency.
+
+### Classification
+CURRENT PRIVATE DEVELOPMENT IMPLEMENTATION / SEMANTIC DONOR
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Harvest transactional invariants and test patterns only where production TypeScript execution lacks them. Do not connect Titan Builder runtime to Titan Zero production.
+
+---
+
+## FINDING-GH-035
+
+### Finding
+Historical TitanCore implemented two distinct rollback patterns: per-tool compensating rollback and pre-upgrade DB/file snapshot restoration.
+
+### Evidence
+Repository: `Masterleeaus/TitanPro`
+Branch: `main`
+Paths:
+- `Modules/TitanCore/Contracts/AI/ToolRollbackContract.php` SHA `0e41792ff3e73ccb0c91baf66832dc49dfccf8de`;
+- `Modules/TitanCore/Services/Upgrade/UpgradeRollbackRunner.php` SHA `8870d4d5168a66514a9c25b438a26c7e9a223503`.
+
+The tool contract receives original parameters plus execution result to locate/reverse a specific side effect. Upgrade rollback restores snapshotted DB rows and source files.
+
+### Current Titan equivalent
+#14 explicitly owns idempotent compensation for reversible actions and terminal handling for irreversible failures. #293/#300 own shared recovery, backup/restore verification and certification. #330 covers deployment/upgrade/rollback runbook certification.
+
+### Classification
+HISTORICAL / IMPLEMENTED DONOR / CURRENT EQUIVALENT FOUND
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Compare compensation metadata and snapshot-restore receipts against #14/#293. Do not revive PHP rollback authority.
+
+---
+
+## FINDING-GH-036
+
+### Finding
+Historical `zero` process configuration explicitly linked lifecycle state, approval checkpoints, audit-on-every-transition and memory snapshots to Rewind eligibility.
+
+### Evidence
+Repository: `Masterleeaus/zero`
+Branch: `main`
+Path: `config/titan_process.php`
+SHA: `91fe151b0b94cd8704b3cd0933001dbabb4bf7ba`
+
+Verified semantics:
+- canonical tenant key was already `company_id`;
+- processed state can enter rewinding;
+- approval checkpoints are explicit lifecycle states;
+- every transition can emit Signal and audit evidence;
+- process completion can create a TitanMemory snapshot specifically for rewind-compatible checkpoints.
+
+### Current Titan equivalent
+#14 execution graph/compensation, #293 Rewind/recovery, #642 governed engine convergence and #560 E2E certification.
+
+### Classification
+HISTORICAL / STRONG REWIND LINEAGE
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Preserve the relationship between governed lifecycle transitions, evidence, checkpoints and rewind. Current architecture should keep memory/knowledge ownership separate from recovery snapshots; a recovery checkpoint must not become a second memory authority.
