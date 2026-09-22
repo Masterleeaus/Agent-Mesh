@@ -150,3 +150,10 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-036 — `Masterleeaus/TitanPro` main, `Modules/TitanCore/Services/Upgrade/UpgradeRollbackRunner.php`, SHA `8870d4d5168a66514a9c25b438a26c7e9a223503`; direct implementation inspection.
 - SOURCE-GH-037 — `Masterleeaus/zero` main, `config/titan_process.php`, SHA `91fe151b0b94cd8704b3cd0933001dbabb4bf7ba`; direct file inspection.
 - SOURCE-GH-038 — Agent-Mesh #14 governed execution/compensation, #293/#300 reliability/recovery, #642/#560 engine convergence/certification and #330 upgrade/rollback certification; direct open-issue inspection.
+
+
+- SOURCE-GH-039 — `Masterleeaus/clean` main, `.titan/documentation/status/phase-completion.md`, SHA `baca0717fde6dacd1a4c20c6bfc83b2310762341`; direct completion/merge evidence for Phases 1–4.
+- SOURCE-GH-040 — `Masterleeaus/clean` main, `app/TitanOS/Knowledge/Services/TitanKnowledgeServiceProvider.php`, SHA `6dff21233e63e0f9d3021196783e5c6c7acf5737`; direct implementation registration evidence.
+- SOURCE-GH-041 — `Masterleeaus/clean` main, `app/TitanOS/Foundation/DurableExecution/DurableExecutor.php`, SHA `f1a79251758382c4432fb33178307727c8d4152c`; direct checkpoint/trace implementation inspection.
+- SOURCE-GH-042 — `Masterleeaus/clean` main, `app/TitanOS/Safety/Recovery/RecoveryManager.php`, SHA `812924be803669b56b670b3fed57e42bb10a22a4`; direct recovery/savepoint implementation inspection.
+- SOURCE-GH-043 — `Masterleeaus/clean` main, `app/TitanOS/Execution/OwnershipLocks/OwnershipLockManager.php`, SHA `78dd5b8e9c8a32bc1aa35bfd64d881042343bd25`; direct lock implementation inspection.
