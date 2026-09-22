@@ -1885,3 +1885,138 @@ HIGH
 
 ### Related action
 TZ-ROADMAP-51-SG-04/05/06/07; #647.
+
+
+---
+
+## FINDING-GH-078
+
+### Finding
+The unified architecture constitution verifies that Titan surfaces share contracts, capability registry, authentication/company context, server-authoritative authority, interaction/task state, receipts and generative-UI envelope. A surface is a projection/experience boundary, not a separate intelligence or authority owner.
+
+### Classification
+CANONICAL ARCHITECTURE EVIDENCE
+
+### Confidence
+HIGH
+
+### Related action
+#725; #768; TZ-ROADMAP-43.
+
+---
+
+## FINDING-GH-079
+
+### Finding
+Command, Go and Hub must not fork agent identity or Personal Zero. The same canonical agent/Zero identity can persist across surfaces while each surface receives only the role-, company-, customer- and purpose-authorised projection appropriate to that context.
+
+### Why it matters
+Continuity should follow the person without carrying owner-level context into worker/customer surfaces or customer context into unrelated company contexts.
+
+### Classification
+IDENTITY / SURFACE INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#725; #768; TZ-ROADMAP-43.
+
+---
+
+## FINDING-GH-080
+
+### Finding
+Interaction Engine owns durable conversation/session/task context; Personal Zero owns durable understanding/experience; Workforce owns organisational capability/agent coordination. Conversation history and worker-local memory may contribute evidence to Zero but must not become competing Personal Zero stores.
+
+### Classification
+OWNERSHIP BOUNDARY
+
+### Confidence
+HIGH
+
+### Related action
+#21; #153; #725; #768.
+
+---
+
+## FINDING-GH-081
+
+### Finding
+The workforce is a capability/control plane behind Zero, not the user's primary mental model. Zero should delegate to managers/specialists/workers through canonical capability IDs and governed bindings while preserving one interaction context and returning receipts/outcomes for experience learning.
+
+### Evidence
+Current architecture states the workforce is organisational/control plane; Interaction Engine donor contains shared CapabilityRegistry/CapabilityRoutingEngine and outcome linkage; unified constitution requires same capability registry across surfaces/hosts.
+
+### Classification
+WORKFORCE / ZERO CONVERGENCE RULE
+
+### Confidence
+HIGH
+
+### Related action
+Workforce successor goals; #768.
+
+---
+
+## FINDING-GH-082
+
+### Finding
+Surface UI must never determine authority. Effective authority remains the minimum of current entitlement, desired/delegated/earned authority and policy/governance/assurance/risk/context ceilings. Moving the same Zero or agent from Go to Command cannot itself raise authority.
+
+### Classification
+AUTHORITY INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#761; #725; TZ-ROADMAP-43.
+
+---
+
+## FINDING-GH-083
+
+### Finding
+Cross-surface handoff should carry references, not duplicate state: canonical person/agent identity, company_id, actor, surface/purpose, authority ceiling/reference, interaction/task IDs, relevant Zero projection/version, correlation/causation IDs and provenance/receipt links. Resume must revalidate identity, company and current authority.
+
+### Classification
+HANDOFF / CONTINUITY REQUIREMENT
+
+### Confidence
+HIGH
+
+### Related action
+#21; #725; #768.
+
+---
+
+## FINDING-GH-084
+
+### Finding
+Host/model plugins and browser extensions follow the same rule as product surfaces: adapters expose Titan capabilities but do not own agents, Zero state, business logic or authority. Agents belong to Titan Zero, not ChatGPT, Claude, Copilot or another host.
+
+### Classification
+HOST-INDEPENDENCE INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#725; #768; Titan MCP/Connect.
+
+---
+
+## FINDING-GH-085
+
+### Finding
+Offline surface continuity is bounded. Go/Hub/Command may use encrypted/idempotent local state and bounded local intelligence, but reconnect must reconcile/revalidate canonical state and authority. Offline state must not become a parallel canonical Personal Zero.
+
+### Classification
+OFFLINE CONTINUITY INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#21; #725; #768; TZ-ROADMAP-43.
