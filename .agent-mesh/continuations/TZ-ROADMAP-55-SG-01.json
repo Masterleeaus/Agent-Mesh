@@ -109,15 +109,19 @@
     "Pass 20: audited live Titan Code Agent Mesh mutation call sites and found the bridge client resume-gate mismatch",
     "Pass 20: all Agent Mesh mutations, including checkpoint, are now classified as resume-gated at the bridge client",
     "Pass 20: service-worker mutation wrapper now passes the validated READY_TO_RESUME bootstrap receipt into the bridge client",
-    "Pass 20: regression guards prevent future bypass of the resume gate"
+    "Pass 20: regression guards prevent future bypass of the resume gate",
+    "Pass 20: audited all visible agent_mesh mutation call sites in Titan Code service worker and found the existing centralized callAgentMeshMutation gate",
+    "Pass 20: all governed Agent Mesh mutations now flow through the centralized GitHub-first resume preflight; direct generic callTitanBridge rejects agent_mesh mutations",
+    "Pass 20: fixed a concrete resume-gate variable bug where the mutation payload referenced undefined resumeGate instead of the validated gate",
+    "Pass 20: added regression guards preventing bypass and requiring the validated resume gate in mutation payloads"
   ],
   "current_work": [
-    "Continue mutation-path audit across repository-side workflows and Agent Mesh control scripts"
+    "Audit the broader Titan Code browser/Agent Mesh action dispatch paths and GitHub-side mutation endpoints for equivalent bypasses"
   ],
   "next_actions": [
-    "Audit claim/recovery/execution workflow triggers for equivalent stale-SHA or branch bypasses",
-    "Ensure execution requests cannot be used as a second mutation path around browser resume gate",
-    "Add central documentation/contract tests tying Titan Code and Agent Mesh mutation semantics"
+    "Inspect all action dispatchers that can invoke agent_mesh or repository mutations",
+    "Separate claim/bootstrap operations from post-takeover work mutations",
+    "Add a single reusable mutation authorization contract only where an existing path genuinely bypasses it"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
