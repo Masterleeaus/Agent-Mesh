@@ -1,0 +1,69 @@
+name: Agent Continuation Receipt
+
+on:
+  push:
+    branches:
+      - "agent/**"
+    paths:
+      - ".agent-mesh/continuation-requests/**.json"
+  workflow_dispatch:
+    inputs:
+      request_file:
+        description: "Continuation request JSON under .agent-mesh/continuation-requests/"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: agent-continuation-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            REQUEST="${{ inputs.request_file }}"
+          else
+            REQUEST="$(jq -r '.commits[].added[], .commits[].modified[]' "$GITHUB_EVENT_PATH" 2>/dev/null | grep '^.agent-mesh/continuation-requests/.*\.json$' | tail -n 1 || true)"
+          fi
+          case "$REQUEST" in
+            .agent-mesh/continuation-requests/*.json) ;;
+            *) echo "No valid continuation request in triggering event" >&2; exit 1 ;;
+          esac
+          echo "request=$REQUEST" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout triggering claim branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Validate branch and record receipt
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BRANCH="${{ github.ref_name }}"
+          case "$BRANCH" in
+            agent/TZ-G00-SG-*|agent/TZ-ROADMAP-*-SG-*) ;;
+            *) echo "Continuation requests require a canonical claim branch" >&2; exit 1 ;;
+          esac
+          REQUEST="${{ steps.request.outputs.request }}"
+          SUBGOAL="$(jq -r '.subgoal_id // empty' "$REQUEST")"
+          CLAIM="$(jq -r '.claim_branch // empty' "$REQUEST")"
+          KIND="$(jq -r '.kind // "checkpoint"' "$REQUEST")"
+          test "$CLAIM" = "$BRANCH"
+          test "$BRANCH" = "agent/$SUBGOAL"
+          case "$KIND" in checkpoint|takeover) ;; *) echo "Invalid continuation kind" >&2; exit 1 ;; esac
+          python3 .github/scripts/record-agent-continuation.py --file "$REQUEST" --kind "$KIND"
