@@ -277,3 +277,16 @@ Reusable current contracts to inspect/compose:
 - independent authority evaluation.
 
 Do **not** promote these company-scoped identities into ONE. ONE/Zero must remain persistent outside any single company relationship. Relationship revocation removes company access/authority; portable personal state remains separately classified/provenanced. `company_id` remains the only company tenant boundary.
+
+
+## Updated execution queue after #768 claim
+Active:
+- #768 — Personal Zero Understanding & Experience convergence, claimed on `agent/768`.
+
+Still unclaimed:
+1. #153 — company-wide Business Memory/Knowledge convergence.
+2. #59 — persistent DecisionPacket/Decision Object lifecycle and temporal re-evaluation.
+3. #37 — bounded verified-outcome learning and predictive certification.
+4. #767 — Business Reality/Evolution lifecycle around existing Nexus.
+
+Coordination rule: allow #768 to proceed against stable existing contracts; the four unclaimed lanes must reuse its published contracts when relevant but must not block by inventing duplicate identity/memory/authority abstractions.
