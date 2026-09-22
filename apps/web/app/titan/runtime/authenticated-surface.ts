@@ -34,3 +34,12 @@ export function createAuthenticatedSurfaceProjection(
     expires_at,
   });
 }
+
+
+/**
+ * Hub is a customer boundary and must never be derived from a staff SessionPayload.
+ * A future customer-auth adapter must supply an independently verified company and customer actor.
+ */
+export function createAuthenticatedHubSurfaceProjection(): never {
+  throw new TypeError("hub-requires-customer-auth-boundary");
+}
