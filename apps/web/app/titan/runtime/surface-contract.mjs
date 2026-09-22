@@ -67,16 +67,25 @@ function rejectLegacy(input) {
   }
 }
 
-export function getDemoSurfaceProjection(surface) {
+export function createSurfaceProjection(input) {
+  rejectLegacy(input);
+  const surface = required(input?.surface, "canonical-surface");
   if (!(surface in presentation)) throw new TypeError("canonical-surface-required");
+  const company_id = required(input?.company_id, "company-id");
+  const actor_id = required(input?.actor_id, "actor-id");
+  const revision = required(input?.revision, "projection-revision");
+  const issued_at = required(input?.issued_at, "projection-issued-at");
+  const expires_at = required(input?.expires_at, "projection-expires-at");
+  if (!Number.isFinite(Date.parse(issued_at))) throw new TypeError("projection-issued-at-invalid");
+  if (!Number.isFinite(Date.parse(expires_at))) throw new TypeError("projection-expires-at-invalid");
   return Object.freeze({
     schema_version: SURFACE_CONTRACT_VERSION,
-    company_id: "demo_001",
+    company_id,
     surface,
-    actor_id: `${surface}-demo-actor`,
-    revision: "merge77-demo-rev-1",
-    issued_at: "2026-09-16T04:00:00.000Z",
-    expires_at: "2099-09-16T04:00:00.000Z",
+    actor_id,
+    revision,
+    issued_at,
+    expires_at,
     capabilities: capabilities[surface].map((capability) => Object.freeze({
       ...capability,
       operations: Object.freeze([...capability.operations]),
@@ -86,6 +95,18 @@ export function getDemoSurfaceProjection(surface) {
     authority_neutral: true,
     identity_grants_authority: false,
     cached_state_grants_authority: false,
+  });
+}
+
+export function getDemoSurfaceProjection(surface) {
+  if (!(surface in presentation)) throw new TypeError("canonical-surface-required");
+  return createSurfaceProjection({
+    company_id: "demo_001",
+    surface,
+    actor_id: `${surface}-demo-actor`,
+    revision: "merge77-demo-rev-1",
+    issued_at: "2026-09-16T04:00:00.000Z",
+    expires_at: "2099-09-16T04:00:00.000Z",
   });
 }
 
