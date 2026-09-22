@@ -257,3 +257,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-027 | #59 Decision lifecycle scope verification | issue #59 + current titan-platform Decision Engine + likely DecisionPacket paths | current GitHub/main | OPEN GAP | VERIFIED | #59 explicitly owns persistent DecisionPacket/Decision Object state, durable entity/correlation links and temporal re-evaluation. Current located runtime remains envelope-only; no separate implementation found at inspected likely paths. | YES |
+
+
+| INGEST-028 | #153 current memory substrate trace | issue #153 + current workforce Pass 36 Worker Memory + privacy/evidence controls | handover blob 415ee5647bed8a54b60d4e18ee628c67316d97ee | CURRENT/PARTIAL | VERIFIED | Worker-scoped memory already implements provenance, confidence/relevance, expiry, supersession, purpose/privacy filtering, recall receipts and non-authority semantics. Reuse beneath canonical company-wide Business Memory; do not create per-agent parallel memory. | NO |
