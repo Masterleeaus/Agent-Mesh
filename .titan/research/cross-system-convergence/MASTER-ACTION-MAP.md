@@ -610,3 +610,22 @@ Before implementation:
 7. consume certified Personal Zero evidence only as authority-neutral context;
 8. ensure re-evaluation/recommendation never grants authority;
 9. certify cross-company denial, stale evidence, supersession, temporal trigger and authority-bound execution handoff.
+
+
+## Issue #59 donor composition
+Do not import a whole historical Decision Engine.
+
+Converge:
+- **Canonical Step-9 DecisionPacket** — preserve as the packet contract.
+- **Step25 canonical decision model/history** — recover lifecycle, history, observation/context/evidence/options/constraints/comparison/ranking/confidence and verified-learning semantics.
+- **Step25 persistent-state candidates** — deep-scan and import only state that belongs to Decision lifecycle; Personal Zero state remains #768 and Business Memory remains #153.
+- **Phia donor** — generalize observation, alternatives/comparison and opportunity-discovery behavior where provider/domain neutral.
+- **Current Titan Decision Engine runtime** — retain canonical runtime identity and authority-neutral recommendation boundary.
+- **Interaction Engine** — owns conversation/session state; Decision lifecycle links to it rather than duplicating it.
+- **DecisionPlane/Governance/Risk/Assurance/Autonomy/Command Bus** — remain authority/execution gates.
+- **Signal/Rewind/verified outcomes** — feed re-evaluation and learning without making learning authority.
+
+Minimum #59 lifecycle:
+`OBSERVE → CONTEXT/EVIDENCE → OPTIONS/CONSTRAINTS → COMPARE/RANK → DECISIONPACKET → GOVERNED AUTHORITY HANDOFF → WATCH/ACT/WAIT → OUTCOME → HISTORY/SUPERSESSION → RE-EVALUATE`.
+
+Persist stable company-scoped Decision Object identity, correlation/entity links, lifecycle state, evidence/provenance refs, watch conditions, revisions/supersession and verified outcome refs. Never persist authority merely because a recommendation was selected.
