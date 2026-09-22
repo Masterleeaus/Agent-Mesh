@@ -193,3 +193,15 @@ Hardened authenticated Command/Go so prototype business values are no longer pre
 - authenticated generated-card area now waits for live runtime output rather than rendering hard-coded operational values.
 
 This removes the highest-risk presentation mismatch while preserving the generated-UI contract for later live projection wiring.
+
+## Pass 14 — interaction transport truthfulness
+
+Audited the mounted chat interaction path and found no production `InteractionTransport` implementation wired into `RoleChat`. The client previously synthesized the user's own message as an accepted interaction event when no transport existed, which could make an unwired runtime look partially live.
+
+Hardened the canonical interaction client:
+- no configured transport now returns no server events;
+- it no longer fabricates a scoped accepted interaction event;
+- authenticated RoleChat therefore falls through to the explicit “no live structured response” state added in Pass 13;
+- local optimistic conversation state remains available, but is not evidence of server acceptance or AI output.
+
+A real production transport remains required before Command/Go chat can claim live AI responses.
