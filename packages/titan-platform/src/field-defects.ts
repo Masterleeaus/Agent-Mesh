@@ -38,7 +38,7 @@ export function defectBlocksWorkOrderCompletion(input:{severity:FieldDefectSever
   // Completion by the worker is not independent verification.
   if(input.state==='completed') reasons.push('DEFECT_COMPLETED_NOT_VERIFIED');
   if(input.state==='rejected') reasons.push('DEFECT_REJECTED');
-  if(input.severity==='critical' && !['verified','deferred'].includes(input.state)) reasons.push('CRITICAL_DEFECT_UNRESOLVED');
+  if(input.severity==='critical' && input.state!=='verified') reasons.push('CRITICAL_DEFECT_UNRESOLVED');
   if(input.state==='verified' && (!opt(input.verified_by_ref)||!input.verified_date)) reasons.push('VERIFICATION_EVIDENCE_INCOMPLETE');
   return Object.freeze({blocked:reasons.length>0,reasons:Object.freeze([...new Set(reasons)])});
 }
@@ -67,6 +67,7 @@ export function buildTitanPunchList(input:TitanPunchListInput){
   const company_id=req(input.company_id,'company_id'),punch_list_id=req(input.punch_list_id,'punch_list_id'),work_order_id=req(input.work_order_id,'work_order_id');
   const items=Object.freeze(input.items.map(raw=>{if(req(raw.company_id,'item.company_id')!==company_id)throw new Error('item company_id must match punch list company_id');if(req(raw.punch_list_id,'item.punch_list_id')!==punch_list_id)throw new Error('item punch_list_id must match punch_list_id');if(req(raw.work_order_id,'item.work_order_id')!==work_order_id)throw new Error('item work_order_id must match punch list work_order_id');return buildTitanFieldDefect(raw)}));
   const blockers=[...new Set(items.flatMap(x=>x.completion_blockers))];
+  if(input.state==='accepted' && items.some(x=>x.state!=='verified')) blockers.push('PUNCH_LIST_ACCEPTED_WITH_UNVERIFIED_ITEMS');
   const verified=items.filter(x=>x.state==='verified').length;
   return Object.freeze({
     schema:TITAN_PUNCH_LIST_SCHEMA,punch_list_id,company_id,work_order_id,project_id:opt(input.project_id),visit_id:opt(input.visit_id),title:req(input.title,'title'),description:opt(input.description),
