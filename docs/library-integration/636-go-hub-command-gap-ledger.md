@@ -337,3 +337,11 @@ Aligned the existing single surface contract rather than adding a theme layer:
 - Hub → operational green `#16a34a`.
 
 Added contract coverage locking these surface accents. This preserves the shared black/slate foundation while giving each existing surface a clear secondary identity. Tests are committed but not execution-verified in this connector-only pass.
+
+## Pass 26 — authenticated presentation truthfulness
+
+Audited the canonical surface projection copy used by authenticated Command and Go. Although demo conversation history/cards were already gated, the shared presentation contract itself still contained prototype assertions such as named users/customers, a specific Hartwell job, confirmed access/routes, business health and a fixed decision count. Because authenticated projections reuse this presentation contract, those statements could appear as live facts.
+
+Replaced those greetings/suggestions with neutral capability-oriented copy that makes no business-state assertion. Added regression coverage preventing the canonical presentation from reintroducing the known demo names/job/health/decision claims.
+
+This removes another prototype-data leak without creating a second authenticated presentation model. Tests are committed but not execution-verified in this connector-only pass.
