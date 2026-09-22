@@ -1,13 +1,14 @@
-// Central config for the NexJob marketing site
-// All auth-related URLs point to the Rails app
+// Titan Zero Field Service marketing destination contract.
+// This standalone marketing surface routes consequential product actions
+// into the canonical Titan Zero Command application.
 
-const APP_URL = import.meta.env.VITE_APP_URL || 'http://localhost:3001'
+const APP_URL = import.meta.env.VITE_APP_URL || 'https://titanzero.io'
 
 export const appRoutes = {
-  login: `${APP_URL}/users/sign_in`,
-  signup: `${APP_URL}/users/sign_up`,
-  dashboard: `${APP_URL}/dashboard`,
-  trial: `${APP_URL}/users/sign_up?plan=pro&trial=true`,
+  login: `${APP_URL}/app`,
+  signup: `${APP_URL}/app`,
+  dashboard: `${APP_URL}/app`,
+  trial: `${APP_URL}/app`,
 }
 
 export default APP_URL
