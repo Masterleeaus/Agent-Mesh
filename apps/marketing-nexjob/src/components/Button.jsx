@@ -9,7 +9,7 @@ export function ButtonPrimary({ children, to, href, onClick, size = 'md', classN
     lg: 'text-base px-8 py-3 rounded-xl',
   }
 
-  // External link (to Rails app, etc.)
+  // External destination such as the canonical Titan Zero Command application
   if (href) {
     return (
       <a href={href} className={`${base} ${sizes[size]} ${className}`}>
