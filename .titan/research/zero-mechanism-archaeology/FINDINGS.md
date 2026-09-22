@@ -979,3 +979,121 @@ HIGH
 
 ### Related action
 #768; #21; #725; Trust/Authority owners.
+
+
+---
+
+## FINDING-GH-032
+
+### Finding
+Direct inspection of `Titan Decision Engine Master Step 25.zip` verifies implemented TypeScript donors for observation, actor/company preferences, revisioned decision history and verified-outcome learning. These mechanisms are real source code, not only architecture prose.
+
+### Evidence
+Library master: `/MASTER Software/Masters/Platform/Titan Decision Engine/Titan Decision Engine Master Step 25.zip`
+Recorded SHA-256: `3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a`.
+Directly inspected:
+- `10-observation-engine/runtime/observationEngine.ts`
+- `17-preference-model/runtime/preferenceModel.ts`
+- `24-decision-history/runtime/decisionHistory.ts`
+- `25-learning-loop/runtime/learningLoop.ts`
+- `04-capability-deobfuscation/PERSISTENT-STATE-CANDIDATES.json`.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+#633; #768.
+
+---
+
+## FINDING-GH-033
+
+### Finding
+Step25's preference model is a strong Personal Zero donor because it explicitly separates company preferences from actor preferences and resolves effective preferences without giving them authority effect.
+
+### Evidence
+`17-preference-model/runtime/preferenceModel.ts` builds company/actor-scoped preference sets, rejects cross-company preference sets, resolves active preferences using scope/source/confidence/strength, and returns `authority_effect: "none"`.
+
+### Why it matters
+This is a concrete pattern for Personal Zero preferences: actor-specific understanding can override/shadow company defaults for recommendation/ranking purposes while remaining company-scoped and authority-neutral.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+#768; #633.
+
+---
+
+## FINDING-GH-034
+
+### Finding
+Step25's learning loop only learns from verified outcomes with verification references, preserves historical evidence/decisions, produces revisioned learning state, and explicitly has no authority effect.
+
+### Evidence
+`25-learning-loop/runtime/learningLoop.ts`:
+- rejects cross-company learning;
+- requires `outcome.verified`;
+- requires `verification_refs`;
+- calculates forecast error/bias, assumption reliability, recommendation success and Brier calibration;
+- increments a learning revision;
+- reports `historical_evidence_rewritten:false`, `historical_decision_rewritten:false`, `authority_effect:"none"`.
+
+### Why it matters
+This is an unusually clean donor for Zero's Learning Governor: learning updates future calibration rather than rewriting history or creating authority.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+#37; #633; #768.
+
+---
+
+## FINDING-GH-035
+
+### Finding
+Step25's decision history provides immutable-style revision lineage: each snapshot is hashed, revisions supersede prior history IDs, cross-company history is rejected, and chain integrity can be verified.
+
+### Evidence
+`24-decision-history/runtime/decisionHistory.ts`.
+
+### Why it matters
+The mechanism is useful for Personal Zero understanding/experience revisions: corrected understanding should supersede prior state without deleting the historical chain.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED
+
+### Confidence
+HIGH
+
+### Related action
+#768; Rewind/provenance owners.
+
+---
+
+## FINDING-GH-036
+
+### Finding
+The Step25 persistent-state candidate inventory is archaeology evidence, not a ready Personal Zero state model. It mostly identifies storage keys in the historical Phia-derived donor such as onboarding flags, recently viewed items, muted sites, whitelist state and identifiers.
+
+### Why it matters
+Do not import this storage model wholesale. Its value is evidence that persistent behavioural/product state existed; Personal Zero should use canonical #21/#725 persistence and only recover semantically useful state after privacy/ownership review.
+
+### Classification
+HISTORICAL DONOR / RESEARCH ARTIFACT
+
+### Confidence
+HIGH
+
+### Related action
+#21; #725; #768.
