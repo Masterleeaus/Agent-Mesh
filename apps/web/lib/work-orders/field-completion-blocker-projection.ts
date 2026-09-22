@@ -45,14 +45,14 @@ export async function syncFieldCompletionBlockerProjection(
 }
 
 export async function syncPermitCompletionBlockers(
-  client:PoolClient,accountId:string,
+  client:DbClient,accountId:string,
   permit:{company_id:string;work_order_id:string;permit_id:string;completion_blockers:readonly string[];provenance?:Record<string,unknown>},
 ):Promise<void>{
   await syncFieldCompletionBlockerProjection(client,accountId,{company_id:permit.company_id,work_order_id:permit.work_order_id,source_type:"permit",source_id:permit.permit_id,reasons:permit.completion_blockers,provenance:permit.provenance});
 }
 
 export async function syncInspectionCompletionBlockers(
-  client:PoolClient,accountId:string,
+  client:DbClient,accountId:string,
   inspection:{company_id:string;work_order_id:string;permit_id:string;inspection_id:string;result:string;provenance?:Record<string,unknown>},
 ):Promise<void>{
   const result=String(inspection.result).trim();
@@ -76,7 +76,7 @@ export async function syncInspectionCompletionBlockers(
 }
 
 export async function syncDefectCompletionBlockers(
-  client:PoolClient,accountId:string,
+  client:DbClient,accountId:string,
   defect:{company_id:string;work_order_id:string;defect_id:string;completion_blockers:readonly string[];provenance?:Record<string,unknown>},
 ):Promise<void>{
   await syncFieldCompletionBlockerProjection(client,accountId,{company_id:defect.company_id,work_order_id:defect.work_order_id,source_type:"defect",source_id:defect.defect_id,reasons:defect.completion_blockers,provenance:defect.provenance});
