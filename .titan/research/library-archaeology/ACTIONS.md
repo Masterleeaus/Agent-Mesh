@@ -97,3 +97,18 @@ Canonical Owner: split across existing Intelligence Runtime, Interaction Engine,
 
 Summary:
 Explicitly reject wholesale LocalBrain recovery. Retain current TypeScript device/runtime routing, conversation persistence and offline recovery. Recover only missing cognitive-event chronology, correction/preference evidence, outcome linkage/scoring and adaptive experience-learning semantics after canonical Personal Zero owner selection. Keep #153 company Business Memory separate from private Personal Zero state.
+
+
+---
+
+## ACTION-LIB-008
+
+Type: DEFINE CANONICAL CONTRACT + CONVERGE
+Priority: P0
+Finding: FINDING-LIB-009, FINDING-LIB-010
+GitHub Issue: #768
+Status: OPEN
+Canonical Owner: to be selected by #768 after storage/evidence/provenance inspection.
+
+Summary:
+Define Personal Zero Understanding Memory + Experience Memory as a distinct authority-neutral production contract. Reuse current Intelligence Runtime, Interaction Engine and Offline owners; keep #153 Business Memory and #767 Business Reality separate. Recover only missing cognition chronology, correction/preference evidence, decision/action/outcome linkage, prediction calibration and adaptive learning semantics.
