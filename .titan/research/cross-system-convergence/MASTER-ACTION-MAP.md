@@ -264,3 +264,16 @@ Required closed loop:
 `verified decision/action → measured outcome → quality/confidence/calibration update → bounded policy adaptation → predictive trigger → governed workflow → new verified outcome`.
 
 Certification must measure false positives, missed interventions and calibration, and prove adaptation cannot silently widen authority, company scope, communications, spend or provider-cost permissions.
+
+
+## Issue #768 active-claim handoff
+#768 is now actively claimed on `agent/768`; do not duplicate its implementation.
+
+Reusable current contracts to inspect/compose:
+- Workforce human identity vs AI identity separation;
+- company relationship/role/team/assignment scopes;
+- external actor/customer/supplier/contractor/partner relationship status and expiry;
+- scoped participation/evidence/workflow/approval/handover permissions;
+- independent authority evaluation.
+
+Do **not** promote these company-scoped identities into ONE. ONE/Zero must remain persistent outside any single company relationship. Relationship revocation removes company access/authority; portable personal state remains separately classified/provenanced. `company_id` remains the only company tenant boundary.
