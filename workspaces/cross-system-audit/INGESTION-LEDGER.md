@@ -308,3 +308,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-044 | #768 TASK-152 completion audit | issue #768 completion audit + Personal Zero contracts/state service | contracts blob bcf006be3f7c0d21501504e560f2fc89a3080f99; state blob f7b693a04f1999f5a3ae2a98d7927f4232669666; commits 138752a,ad65007,bbf5bac,e7012e0 | ACTIVE/FINAL-CERTIFICATION | DIRECT SOURCE VERIFIED; EXECUTION EVIDENCE PENDING | Explicit persisted schema/version markers and constructor enforcement close contract-version gap; donor/rejected-duplicate provenance documented. Only actual Titan Platform typecheck/unit-test PASS evidence remains before TASK-152/#768 completion. | YES |
+
+
+| INGEST-045 | PR #770 CI execution evidence | PR #770 + workflow runs/jobs/logs | head e7012e06ff235b89c4318efcc99bdd39ce573413; Titan CI run 35785912940/job 106942553885; claim gate run 35785912932/job 106942553720 | ACTIVE/FAILED-CERTIFICATION | DIRECT EXECUTION EVIDENCE | Titan Platform typecheck fails on duplicate UnderstandingState version field and learning proposal adjustment typing; tests skipped. Claim gate separately rejects agent/768 naming as non-subgoal form. | YES |
