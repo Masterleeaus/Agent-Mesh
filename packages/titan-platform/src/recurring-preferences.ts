@@ -9,7 +9,7 @@ export interface TitanRecurringPreferencesInput{
 }
 function rejectLegacy(v:unknown,path="input"):void{if(!v||typeof v!=="object")return;if(Array.isArray(v)){v.forEach((x,i)=>rejectLegacy(x,`${path}[${i}]`));return}for(const[k,x]of Object.entries(v as Record<string,unknown>)){if(LEGACY_KEYS.has(k))throw new Error(`${path}.${k} is a legacy tenant boundary; company_id is required`);rejectLegacy(x,`${path}.${k}`)}}
 function req(v:unknown,n:string){const s=String(v??"").trim();if(!s)throw new Error(`${n} is required`);return s}
-function date(v:unknown,n:string){const s=req(v,n);if(!/^\d{4}-\d{2}-\d{2}$/.test(s)){throw new Error(`${n} must be an ISO date`)}const d=new Date(`${s}T00:00:00Z`);if(d.toISOString().slice(0,10)!==s)throw new Error(`${n} must be an ISO date`);return s}
+function date(v:unknown,n:string){const s=req(v,n);if(!/^\d{4}-\d{2}-\d{2}$/.test(s)){throw new Error(`${n} must be an ISO date`)}const d=new Date(`${s}T00:00:00Z`);if(Number.isNaN(d.getTime())||d.toISOString().slice(0,10)!==s)throw new Error(`${n} must be an ISO date`);return s}
 export function buildTitanRecurringPreferences(input:TitanRecurringPreferencesInput){
  rejectLegacy(input);const company_id=req(input.company_id,"company_id"),schedule_id=req(input.schedule_id,"schedule_id");
  if(input.preferred_weekday&&!DAYS.has(input.preferred_weekday))throw new Error("unsupported preferred_weekday");
