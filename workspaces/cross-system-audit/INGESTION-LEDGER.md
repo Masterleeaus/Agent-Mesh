@@ -242,3 +242,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-022 | Remaining convergence claim-state + #768 clarification | #153/#37/#59/#767/#768 current issues, comments, branch searches, PR searches | current GitHub state | UNCLAIMED | VERIFIED | All five lanes remain unclaimed. #768 now explicitly defines ONE as persistent human principal, Zero portability across relationships, company_id-only company tenancy, non-portable authority and no silent cross-context leakage. | YES |
+
+
+| INGEST-023 | Knowledge Authority reasoning-consumption source trace | workforce.ts + workforce knowledge authority wrapper + handover runtime | current main blobs 98f77554d22f76aa1131a257a171c803bfa43979 / 7998e595becaf28938fce237df31a51cd2b1f073 | CURRENT | VERIFIED | Reasoning-use ALLOW/BLOCK gate and provenance receipt are implemented and explicitly authority-neutral. Downstream Decision/Model Council caller wiring remains to be proven. | NO |
