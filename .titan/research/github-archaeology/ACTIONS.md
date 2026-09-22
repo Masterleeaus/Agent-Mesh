@@ -262,3 +262,24 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** browser AI and local AI are two selectable reasoning providers over one governed execution plane; no duplicate Local Bridge/tool authority exists.
 - **Confidence:** HIGH
 - **Status:** GAP VERIFIED / OWNER MAPPED
+
+
+---
+
+## ACTION-GH-014 — Converge TitanNexus MarketingAgent semantics, not its thin legacy handlers
+
+- **Type:** COMPARE / CONVERGE / RETIRE
+- **Priority:** P1
+- **Findings:** FINDING-GH-063, FINDING-GH-064, FINDING-GH-065
+- **Current State:** TitanNexus exposes a useful end-to-end growth/collections/customer-update workflow and approval-aware tool manifests, but direct finance/job/scoring handlers are mostly draft wrappers.
+- **Canonical Owners:** #343 Sales; #373 Marketing; #263 Finance; #234 Communications; #363 Customer Care; #183 service lifecycle; #638 ROI/value attribution; #153/#768 for governed memory where applicable.
+- **Proposed Treatment:** Compare current TS owner implementations against the workflow/tool-contract semantics. Recover missing orchestration, approval boundaries and handoffs; do not port thin PHP wrappers merely because manifests advertise the capability.
+- **company_id:** Replace all legacy `tenant_id` memory fields at ingestion with canonical `company_id`.
+- **Trust/Authority:** scoring, copy, follow-up, payment-plan and job-message outputs are recommendations/drafts until effective authority permits action.
+- **Privacy/Security:** finance/customer/job context minimized to task need; communications respect consent/channel policy.
+- **Cost Sovereignty:** AI generation routes through canonical provider policy.
+- **Migration:** migrate useful workflow semantics and historical preference/outcome facts only; no TitanNexus-owned memory/finance/job authority.
+- **Tests:** no manifest-only capability marked implemented; approval required where configured; finance source-of-truth consistency; booking handoff idempotency; cross-company isolation; legacy tenant normalization; communications consent; payment suggestion cannot execute payment.
+- **Acceptance Criteria:** every TitanNexus capability is either proven present in canonical owners, converged there, or explicitly retired as scaffold; no duplicate MarketingAgent domain authority remains.
+- **Confidence:** HIGH
+- **Status:** READY FOR OWNER COMPARISON
