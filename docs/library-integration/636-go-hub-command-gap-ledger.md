@@ -294,3 +294,15 @@ Convergence:
 - aligned the root viewport/base theme to slate (`#0f172a`) instead of orange. Orange remains available as a Command accent rather than the global PWA/browser identity.
 
 The shared service worker remains intact for installability support and push. No offline caching behavior was invented.
+
+## Pass 22 — palette convergence
+
+Audited the shared design-token source. The main Titan identity was already moving toward black/slate + Command orange, but legacy violet and rose primitives were still present and used by semantic status consumers.
+
+Removed purple/pink from the effective Titan palette without breaking legacy token consumers:
+- legacy violet compatibility aliases now resolve to operational blue;
+- legacy rose compatibility aliases now resolve to operational red;
+- existing semantic names remain stable, avoiding a broad component rewrite;
+- black/slate foundations, operational blue/green/orange/red and Command orange remain the intended palette.
+
+This is a token-level convergence pass; it avoids duplicating theme systems or mass-editing components.
