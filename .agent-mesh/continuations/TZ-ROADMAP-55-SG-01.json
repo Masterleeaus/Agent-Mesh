@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 7,
+    "current_pass": 8,
     "status": "ACTIVE"
   },
   "completed": [
@@ -38,15 +38,18 @@
     "Pass 6: Agent Mesh CI now self-tests record-agent-continuation.py",
     "Pass 7: added execution-request v1 JSON schema with explicit operation allowlist and no generic command operation",
     "Pass 7: added validate-execution-request.py; rejects arbitrary shell/script/code/exec payloads, noncanonical claims, missing expected head SHA, and self-granted merge/claim-release authority",
-    "Pass 7: CI now self-tests validator and validates execution-request schema JSON"
+    "Pass 7: CI now self-tests validator and validates execution-request schema JSON",
+    "Pass 8: added path-triggered agent-execution-bridge.yml with exact triggering-commit checkout, live claim ref verification, expected-head SHA gate and per-claim concurrency",
+    "Pass 8: added deterministic run-execution-request.py operation registry; no request-provided commands are executed",
+    "Pass 8: successful execution emits immutable v1 receipt artifact with request SHA-256, validated head SHA, operation result and zero merge/claim-release/canonical-mutation authority"
   ],
   "current_work": [
-    "Implement event-driven execution workflow and deterministic operation handlers"
+    "Harden execution bridge replay protection, request identity and durable receipt indexing"
   ],
   "next_actions": [
-    "Add path-triggered execution workflow",
-    "Revalidate expected head SHA against live claim ref before execution",
-    "Implement first deterministic handlers and durable execution receipt"
+    "Add request-id replay/idempotency protection",
+    "Bind request filename/request_id/issue to live GitHub issue",
+    "Add failure receipts and audit summary without granting write authority"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
