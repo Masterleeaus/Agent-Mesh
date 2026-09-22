@@ -25,6 +25,9 @@ CREATE TABLE IF NOT EXISTS field_completion_blockers (
 CREATE INDEX IF NOT EXISTS idx_field_completion_blockers_open
   ON field_completion_blockers (company_id, work_order_id, blocking, resolved_at);
 
--- Cross-record boundary validation is enforced by the governed mutation layer
--- inside the same transaction for PostgreSQL and MySQL. Avoid dialect-specific
--- trigger functions here; company_id remains the canonical boundary.
+-- IMPORTANT: this migration is currently PostgreSQL-oriented. The portable
+-- runtime mutation layer also supports MySQL, but schema DDL must be emitted
+-- through the repository's dialect-specific migration path before enabling
+-- these tables on MySQL. Do not treat runtime SQL portability as DDL portability.
+-- Cross-record boundary validation remains enforced transactionally by the
+-- governed mutation layer; company_id is the canonical boundary.
