@@ -1,7 +1,7 @@
 (function attachTitanBridgeClient(global){
 'use strict';
 const DEFAULT_ENDPOINT='http://127.0.0.1:43127/v1/action';
-const READ_ACTIONS=new Set(['system.ping','system.capabilities','system.diagnostics','repo.status','repo.files','repo.search','file.read','file.previewWrite','local_ai.health','local_ai.models','local_ai.chat','agent_mesh.snapshot','agent_mesh.health','agent_mesh.events','agent_mesh.capabilities','agent_mesh.continuation.get','codex.status']);
+const READ_ACTIONS=new Set(['system.ping','system.capabilities','system.diagnostics','repo.status','repo.files','repo.search','file.read','file.previewWrite','local_ai.health','local_ai.models','local_ai.chat','agent_mesh.snapshot','agent_mesh.health','agent_mesh.events','agent_mesh.capabilities','agent_mesh.continuation.get','agent_mesh.execution.audit','codex.status']);
 const MUTATION_ACTIONS=new Set(['workspace.approve','repo.branch.create','file.write','command.run','local_ai.pull','agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover','codex.run']);
 function normalizeConfig(input={}){return Object.freeze({enabled:input.enabled!==false,endpoint:String(input.endpoint||DEFAULT_ENDPOINT).trim(),token:String(input.token||'').trim(),workspace:String(input.workspace||'').trim()});}
 function publicConfig(config){return Object.freeze({...config,token:config.token?'configured':''});}
