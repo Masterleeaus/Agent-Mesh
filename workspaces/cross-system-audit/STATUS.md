@@ -29,7 +29,9 @@ IN PROGRESS:
 - Cross-reference specialist agent workspaces without taking over their missions.
 - Upgrade provisional gap claims to source-verified findings.
 - Resolve current architecture/documentation mismatch.
-- Continue Trust/Authority, Personal Zero Understanding, Reality and Evolution integration tracing.
+- Independently verified the current Authority/Command Bus execution boundary, including authority-neutral context, current-decision validation, company binding and authoritative receipts.
+- Discovered and ingested the IN PROGRESS Zero Mechanism Archaeology workspace on agent/763.
+- Continue Personal Zero Understanding ownership resolution, Reality/Evolution integration tracing, and changed-agent re-ingestion.
 - Consume further #765 specialist archaeology as its targeted Personal Zero/Reality/Evolution phase progresses.
 
 NOT YET SCANNED:
@@ -61,4 +63,4 @@ LAST UPDATED:
 agent/766 checkpoint after ingesting the current GitHub archaeology coordination workspace and deduplicating owners/actions.
 
 COMPLETION ESTIMATE:
-Remaining phases: Blueprint ingestion when available; GitHub archaeology re-ingestion as it advances; Library archaeology ingestion when available; cross-source reconciliation; gap/duplicate/orphan audit; action packet reconciliation; final source verification; final convergence map. Finalization is gated on designated research agents reaching COMPLETE.
+Remaining phases: Blueprint ingestion when available; GitHub + mechanism archaeology re-ingestion as they advance; Library archaeology ingestion when available; Personal Zero owner verification; cross-source gap/duplicate/orphan audit; final action packet reconciliation; final source verification; final convergence map. Finalization remains gated on designated research agents reaching COMPLETE.
