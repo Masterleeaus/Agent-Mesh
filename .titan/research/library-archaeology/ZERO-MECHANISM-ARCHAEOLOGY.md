@@ -104,3 +104,7 @@ Direct inspection of Model Council v1.0.0-rc.2 verified proposer→critic→veri
 
 ### ZM-012 — Assurance hardens Council epistemics
 Assurance design separates confidence, evidence independence and evidence sufficiency; penalises correlated failure, stale/missing evidence and unresolved disagreement; requires independent first-pass analysis and adversarial challenge for consequential cases; and permits explicit `insufficient_evidence` / `material_disagreement` outcomes. Deterministic failures cannot be overridden by model consensus. Investigation should be a bounded evidence-acquisition loop through Knowledge Authority, not a new authority or decision engine. Dedicated Investigation Workforce implementation was not verified in this pass.
+
+
+### ZM-013 — Reality, Zero and Authority must remain separate
+OnboardingPro v6 source inspection confirms a reusable business-evolution lifecycle but not a reason to merge Business Reality and Personal Zero. Canonical flow: Reality informs → Zero understands → Decision recommends → Trust/Assurance/Governance evaluate → current delegated authority permits → Command Bus executes. Business changes can trigger candidate Zero revisions; Zero observations can trigger Business Discovery verification; neither silently rewrites the other. Observation, preference, learning, confidence, recommendation and reality change never mint authority.
