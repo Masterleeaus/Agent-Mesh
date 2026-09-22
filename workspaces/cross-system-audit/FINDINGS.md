@@ -756,3 +756,20 @@ Keep the finalization gate open. Do not treat provisional donor ingestion as equ
 FINALIZATION DEPENDENCY / NOT YET LOCATED
 ### Confidence
 MEDIUM
+
+
+---
+
+## FINDING-CSA-035
+### Finding
+The three Blueprint evidence PRs are still open, unmerged and not mergeable at this checkpoint, so their workflow definitions are not present on current main and cannot have produced authoritative current-main evidence merely by existing as PRs.
+### Evidence
+- PR #750: open, unmerged, head agent/749 at `2c1521410cf8094f32253a1a29dfcacad1a71c4b`; adds only the manually dispatched architecture-evidence workflow.
+- PR #752: open, unmerged, head agent/751 at `c75e2631a56b3d0a44a59dba2fb7c43bf753f01b`; adds only the source-evidence-index workflow.
+- PR #758: open, unmerged, head agent/757 at `409344b50d990284a1d677ff0fc2a3db38896703`; adds only the blueprint-evidence-validator workflow.
+### Interpretation
+These PRs are useful tooling donors, but they should not block or substitute for direct source verification in this audit. Their eventual generated artifacts can be ingested as supplemental evidence after execution.
+### Classification
+UNMERGED EVIDENCE TOOLING
+### Confidence
+HIGH
