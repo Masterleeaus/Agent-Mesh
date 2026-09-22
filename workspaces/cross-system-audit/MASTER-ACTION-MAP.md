@@ -190,3 +190,13 @@ Suggested convergence order based on dependencies, not importance ranking:
 5. #767 — connect the full Evolution/Reality loop around canonical Nexus, memory, decision, learning and authority boundaries.
 
 Parallel work is safe only where contracts are already stable. Do not create substitute issues for these lanes.
+
+
+## ONE / Zero portability constraint for #768
+Before claiming/implementing Personal Zero, preserve the latest #768 clarification:
+- ONE is the persistent human principal; Zero belongs to ONE rather than to a company.
+- Company relationships are revocable contexts and must not become a second tenant boundary.
+- `company_id` remains the only canonical company multi-tenant boundary; never use fake `company_id = personal`.
+- Personal/company/shared/derived data requires explicit ownership/portability classification and provenance.
+- Portable experience/capability evidence may inform future contexts, but execution authority never transfers; Trust/delegation must be re-established.
+- Cross-context retrieval/learning must fail closed against silent employer/customer/personal leakage.
