@@ -5,16 +5,7 @@ const L=s.TitanZeroManagerWorkspaceLedger,C=s.TitanZeroManagerSelfClaim,V=s.Tita
 let ledger=L.normalize({revision:4,generation:7,canonical:{artifact:'CANONICAL.zip',sha256:'abc'},agents:{'Agent 6':{lane:'manager_core',capabilities:['manager']}},claims:[],packets:[],history:{reset_event:{event:'ORIGINAL'},manager_events:[]}});
 ledger=L.commit(ledger,4,d=>{d.history.manager_events.push({event:'reset'});return d;},{updated_by:'test',updated_at:'2026-09-13T00:00:00Z'});assert.strictEqual(ledger.revision,5);assert.strictEqual(ledger.history.reset_event.event,'ORIGINAL');assert.strictEqual(ledger.history.manager_events.at(-1).event,'reset');assert.throws(()=>L.commit(ledger,4,d=>d),/REVISION_CONFLICT/);
 
-const promoted=L.promote(ledger,5,{name:'Titan-Code-CANONICAL.zip',sha256:'d'.repeat(64),verified:true,library_file_id:'libfile_123',file_id:'file_456',version_id:'ver_789',current_version_number:12},{updated_by:'test',updated_at:'2026-09-13T00:01:00Z'});
-assert.strictEqual(promoted.canonical.library_file_id,'libfile_123');
-assert.strictEqual(promoted.canonical.file_id,'file_456');
-assert.strictEqual(promoted.canonical.version_id,'ver_789');
-assert.strictEqual(promoted.canonical.current_version_number,12);
-assert.strictEqual(promoted.canonical.generation,promoted.generation);
-assert.strictEqual(promoted.canonical.sha256,'d'.repeat(64));
-assert.deepStrictEqual(JSON.parse(JSON.stringify(promoted.canonical.materialization)),{strategy:'DIRECT_LIBRARY_REF',library_file_id:'libfile_123',current_version_number:12,file_id:'file_456',version_id:'ver_789',search_required:false});
-assert.throws(()=>L.promote(ledger,5,{name:'Titan-Code-CANONICAL.zip',sha256:'e'.repeat(64),verified:true},{updated_by:'test'}),/CANONICAL_ARTIFACT_IDENTITY_REQUIRED/);
-assert.strictEqual(L.assertGeneration(ledger,7),true);assert.throws(()=>L.assertGeneration(ledger,6),/REBASE_REQUIRED/);
+assert.throws(()=>L.promote(ledger,5,{}),/LOCAL_PROMOTION_FORBIDDEN/);
 const packets=[{packet_id:'OWN',status:'AVAILABLE',priority:'P1',owner_lane:'browser_intelligence',roadmap_pass:2},{packet_id:'BEST',status:'AVAILABLE',priority:'P0',owner_lane:'manager_core',roadmap_pass:1}];
 let pick=C.select({lane:'browser_intelligence',capabilities:[]},packets,{claims:[],dependencyState:{byPacket:{OWN:{eligible:true},BEST:{eligible:true}}}});assert.strictEqual(pick.selected.packet_id,'BEST');
 assert.throws(()=>C.claim('Agent 6',{lane:'browser_intelligence'},pick.selected,5,7),/LOCAL_CLAIM_FORBIDDEN/);
