@@ -284,3 +284,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-036 | #768 implementation slice 4 | issue #768 update + agent/768 Personal Zero state/contracts | state-service blob ee156d98b7405a0144b5f919dc5d2656ab08bdfc; contracts blob bb268e67abeb837ca5fb054927e030129c0f326b; commits 2114048,ba73236 | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Same-relationship Brier calibration, stale-evidence suppression, retention primitive and explicit purpose/subject-scoped cross-context sharing now exist and remain authority-neutral. | YES |
+
+
+| INGEST-037 | #768 implementation slice 5 | issue #768 update + Personal Zero Learning Governor bridge | bridge blob b4dd6d4157d69797840578804b2409a0da5e12ee; index blob c572901d92dabd11a29287ddf518b79b6c0f02be; commits 720e225,24df60a,4cf4a96 | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Correction, Brier-error and verified-outcome learning now converge on proposal-only Learning Governor semantics with explicit authority/execution denial. | YES |
