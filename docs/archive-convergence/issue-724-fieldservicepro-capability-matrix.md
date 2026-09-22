@@ -52,3 +52,8 @@ The repository scan found no canonical #724 persistence/orchestration boundary f
 A final donor-path lookup on `agent/724` no longer resolves the previously scanned FieldServicePro model files (warranty, permit, RFI, submittal, punch-list, recurring-schedule), and repository code search returns no FieldServicePro donor implementation hits. This means the branch must not attempt a blind delete: the donor tree is already absent or moved relative to the earlier scan. Treat donor deletion as satisfied only after confirming branch/tree state at merge time; do not fabricate a delete commit.
 
 The capability comparison remains frozen above: canonical Titan owners were retained for work orders, dispatch, SLA, recurring execution, qualification authority, change orders, auth, AI/chat, reporting and tenancy. The bounded semantics imported under #724 are warranty/claims, permit/inspection completion evidence, defect verification, RFI, submittal review/revision, qualification credential expiry, recurring preferences and business-hours SLA calculation. No newly identified donor runtime authority is required.
+
+
+## Merge-base verification — 2026-09-22
+
+`agent/724` is currently **108 commits ahead and 60 commits behind `main`**, with merge base `2200800e40aa8b38d25974460157d52db3db7187`. The #724 diff is bounded to the FieldServicePro convergence files listed by GitHub compare, but the branch is materially stale relative to main. Do not close or merge #724 until it is rebased/merged onto current main and conflicts are resolved against the newer canonical implementation. After reconciliation, rerun the platform/web verification suite. This is a merge-safety blocker, not a reason to duplicate newer main functionality into this branch manually.
