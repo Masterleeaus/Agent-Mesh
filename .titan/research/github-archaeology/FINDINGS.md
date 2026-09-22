@@ -1534,3 +1534,104 @@ HARDEN DURING CONVERGENCE
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-052
+
+### Finding
+TitanPro contains a coherent historical precursor for today's Model Council: selective specialist participation, sequential/parallel/hybrid reasoning, explicit context-sensitive weighting, structured critique, convergence detection, disagreement exposure and escalation.
+
+### Evidence
+Repository: `Masterleeaus/TitanPro`, branch `main`.
+
+`docs/04-AI/orchestration.md` SHA `f0acf3476a6edb171181f39b733938007e092c62` defines:
+- selective specialist participation rather than invoking every core;
+- sequential, parallel and hybrid orchestration;
+- context-dependent weights;
+- bounded critique;
+- convergence/non-convergence conditions;
+- escalation to confirmation, draft-only, human review, denial, more context or expanded participation;
+- audit of participants, sequence, weights, critiques, convergence and fallback;
+- explicit cost/latency discipline.
+
+`docs/04-AI/weighting-and-consensus.md` SHA `bda664184804597402412007d1d8cc85f1cc01a5` defines:
+- action, risk, confidence, evidence and presentation consensus;
+- risk-dependent consensus thresholds;
+- dominant/supporting cores, critique summary, agreement strength and unresolved conflicts;
+- replayability from the same context, participants, weights, critique flow and governance state.
+
+### Classification
+HISTORICAL ARCHITECTURE / STRONG MODEL COUNCIL SEMANTIC DONOR
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-053
+
+### Finding
+The historical multi-core design already contains the key separation required by the current Titan Zero pivot: consensus is reasoning alignment, not permission, and specialist/model confidence must never create execution authority.
+
+### Evidence
+The weighting/consensus design explicitly states that governance may still require review, draft-only mode, denial or capability blocking even when consensus is strong. Specialist cores reason; governance governs; provider routing remains separate.
+
+### Current owner
+Current Agent-Mesh issues #642 and #80 explicitly include Model Council in canonical engine/intelligence convergence. #633 is the Library AI/Decision/Intelligence convergence owner.
+
+### Classification
+CURRENT PRINCIPLE CONFIRMED / CONVERGE INTO EXISTING MODEL COUNCIL
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Do not recreate historical Logic/Finance/Creator/Entropy cores as separate authorities. Recover their useful roles as council lenses/participants only where the current Model Council lacks equivalent challenge, domain weighting or uncertainty semantics.
+
+---
+
+## FINDING-GH-054
+
+### Finding
+TitanPro's historical Evaluation design provides a strong feedback loop for Model Council refinement without violating the rule that learning is not authority.
+
+### Evidence
+`docs/04-AI/evaluation.md` SHA `c3b72fd0b538ec3fe7463a508e3b83957e4dafd6` evaluates:
+- reasoning/factual/governance/routing/consensus/outcome quality;
+- hallucination and consistency risk;
+- accepted/edited/rejected/rework/business outcome signals;
+- whether core weighting correlated with good or bad outcomes;
+- whether disagreements predicted real review needs;
+- refinement suggestions for routing, weighting, memory and governance thresholds.
+
+### Classification
+HISTORICAL EVALUATION / EXPERIENCE-LEARNING DONOR
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Outcome evidence may refine future council participation/weights, but changes must remain governed, explainable and reversible. Evaluation cannot grant authority.
+
+---
+
+## FINDING-GH-055
+
+### Finding
+Historical Model Routing already separated cognitive participation from provider/model execution and anticipated privacy-first local/server/external routing, redaction, fallback and cost/latency policy.
+
+### Evidence
+`docs/04-AI/model-routing.md` SHA `04a4a2cabdee5eebb54074b2e6cb94d2e1cc55bf`.
+
+It describes private/client node → server node → approved external frontier routes, privacy constraints, cost envelopes, latency/channel fit, redaction/minimisation, traceable fallback and provider execution remaining in Titan Core.
+
+### Current owner
+#647 now provides the stronger canonical Cost Sovereignty/device/provider routing direction.
+
+### Classification
+HISTORICAL PRECURSOR / CURRENT OWNER STRONGER
+
+### Confidence
+HIGH
