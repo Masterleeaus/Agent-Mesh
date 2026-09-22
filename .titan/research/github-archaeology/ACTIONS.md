@@ -400,3 +400,22 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** a file-backed capability-loss matrix identifies exactly what survived the transplant and what still needs convergence, allowing later agents to work from evidence rather than repository-name assumptions.
 - **Confidence:** VERY HIGH
 - **Status:** READY
+
+
+---
+
+## ACTION-GH-021 — Normalize Dovetails host account identity at Titan company boundary
+
+- **Type:** P0 SECURITY/AUTHORITY / CONVERGE
+- **Priority:** P0
+- **Findings:** FINDING-GH-090, FINDING-GH-092
+- **Evidence:** `apps/web/lib/titan/workforce-command-gateway.ts` versus canonical Titan `company_id` contracts.
+- **Canonical owner:** existing identity/company-boundary/authentication architecture; do not create a second tenant system.
+- **Objective:** ensure Dovetails-era `session.accountId` is explicitly resolved/normalized to canonical Titan `company_id` before any Titan workforce risk assessment, authorization, projection, header propagation, storage or execution.
+- **Required treatment:** preserve host/session compatibility input only if needed; expose canonical `company_id` downstream; fail closed when mapping is absent/ambiguous; do not equate an account owner/user with company ownership.
+- **Security:** cross-company mismatch must fail; user/account identity cannot grant business authority.
+- **Migration:** compatibility adapter may accept historical account identifiers only at ingress and must emit `company_id`.
+- **Tests:** account→company normalization, wrong-company rejection, missing mapping, user/account owner distinct from company, header correctness, workforce command isolation, legacy alias cannot bypass canonical boundary.
+- **Acceptance Criteria:** no Titan runtime receives `accountId` as an implicit tenant authority; all business-scoped Titan execution receives validated `company_id`.
+- **Confidence:** VERY HIGH
+- **Status:** READY
