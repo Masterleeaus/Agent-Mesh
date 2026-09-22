@@ -211,3 +211,17 @@ Status: EVIDENCE ADDED TO #642
 
 Summary:
 Port only missing Titan Signal donor semantics into the canonical TypeScript accepted-change/evidence path: versioned event identity, company/provenance/correlation fields, durable lease/retry/dedupe delivery, anomaly evidence packaging, duplicate alert suppression, correction/supersession history and replay-safe integration. Signal/event receipt never grants authority and failed/rejected commands cannot emit accepted-change evidence.
+
+
+---
+
+## ACTION-LIB-016
+
+Type: SELECTIVE WISDOM DONOR CONVERGENCE / FORESIGHT HOLD
+Priority: P1
+Finding: FINDING-LIB-019
+GitHub Issues: #393, #400, #642, #153, #768
+Status: EVIDENCE ADDED TO #393
+
+Summary:
+Converge verified Wisdom prediction/recommendation/outcome-learning semantics into canonical Decision Intelligence: versioned evidence-backed forecasts, explicit hypothetical scenarios, recommendation expected outcomes, authoritative outcome linkage, calibration/error evidence and outcome-driven confidence adaptation. Preserve immutable forecast history, uncertainty and causality limits. Do not reconstruct Titan Foresight until a physical executable donor is recovered.
