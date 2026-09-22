@@ -239,3 +239,63 @@ Use as supporting evidence only. Do not duplicate the implementation assignment 
 ## SUPERSESSION NOTE
 
 FINDING-GH-002 remains accurate for the exact initial paths inspected, but it is superseded for repository-wide workspace discovery by FINDING-GH-007. A broader canonical archaeology workspace is now known to exist through issue #765; it is another agent's assigned workspace and therefore is not adopted here.
+
+
+---
+
+## FINDING-GH-009
+
+### Finding
+PR #764 is currently blocked by a mismatch between the written AGENTS.md issue-number claim protocol and the active Agent Claim Gate implementation. The live gate rejects `agent/763` and requires a roadmap-style subgoal identifier such as `agent/TZ-ROADMAP-31-SG-01`.
+
+### Why it matters
+The research branch followed the documented issue claim pattern used for #763, but repository automation currently enforces a narrower branch-name contract. This is a workflow/governance mismatch, not evidence that another agent owns #763.
+
+### Evidence
+- Repository: Masterleeaus/Agent-Mesh
+- PR: #764
+- Workflow run: 35720805322 — Agent Claim Gate
+- Job: 106723001131
+- Failure: `CLAIM-GATE ERROR: claim branch must be exactly agent/<subgoal-id>, for example agent/TZ-ROADMAP-31-SG-01`
+- Canonical branch still exists: `agent/763`.
+
+### Current Titan equivalent
+Agent Mesh claim governance.
+
+### Classification
+REGRESSION
+
+### Confidence
+HIGH
+
+### Related action
+Requires Manager/convergence review of documentation vs validator contract; no competing claim branch created.
+
+---
+
+## FINDING-GH-010
+
+### Finding
+The PR's general Titan Zero CI failure is outside this research change. Typechecking reaches the worker package and fails on unresolved package/module dependencies and workflow-events test/export mismatches.
+
+### Why it matters
+The read-only archaeology files do not modify these worker sources. The failure must not be misreported as validation failure of the archaeology logic.
+
+### Evidence
+- PR: #764
+- Workflow run: 35720805235 — Titan Zero CI
+- Job: 106723095303
+- Failing step: Strict non-web typecheck
+- Examples: missing `@ai-fsm/email-templates`, `mysql2/promise`, `@ai-fsm/log`, `@ai-fsm/domain/promise-capture`; `workflowEventOutboxInternals` export mismatch.
+
+### Current Titan equivalent
+Repository dependency/typecheck convergence debt.
+
+### Classification
+CURRENT
+
+### Confidence
+HIGH
+
+### Related action
+Do not create a duplicate issue from this specialist workspace unless deduplication confirms no existing dependency-closure work.
