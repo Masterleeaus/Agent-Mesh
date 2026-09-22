@@ -7,7 +7,7 @@ STATUS:
 IN PROGRESS
 
 CURRENT PHASE:
-Shared evidence workspace established; PR/CI verification completed. Detailed source-level recovery and verification remain in progress, with generated archaeology output blocked on workflow dispatch.
+Canonical ownership mapping for Experience Memory, Learning, durable context and persistent working state is complete at issue/evidence level. Historical Personal Understanding/Behavioural Model archaeology is now the unresolved focus.
 
 COMPLETED:
 - Inspected repository execution contract in AGENTS.md.
@@ -19,9 +19,9 @@ COMPLETED:
 - Opened PR #764.
 
 IN PROGRESS:
-- Deep source/history inspection of mechanism candidates.
-- Verification of current versus historical implementations.
-- Building detailed donor-to-canonical-owner findings.
+- Historical search for Personal Understanding / Behavioural Model donors.
+- Direct source verification of current authority/context implementation evidence.
+- Verification of current versus historical mechanism candidates.
 
 NOT YET SCANNED:
 - Full two-year Git history at source level.
