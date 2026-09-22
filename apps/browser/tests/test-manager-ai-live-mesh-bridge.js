@@ -195,3 +195,10 @@ if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.ta
 if(!sw.includes('normalizeAgentMeshRoutingPayload')) throw new Error('GitHub-native routing normalizer missing');
 if(!sw.includes("compatibility:{legacy_packet_id:target||null,authority:false}")) throw new Error('legacy packet identity must be compatibility-only and non-authoritative');
 if(sw.includes("payload={issue_number:Number(work.number)||null,subgoal_id:String(work.subgoal_id||target||''),mode:'manager_route_request',legacy_packet_id:target||null}")) throw new Error('legacy packet id leaked into primary routing payload');
+
+if(!sw.includes("agent-mesh-mutation-requires-governed-path")) throw new Error('generic Titan Bridge must reject direct Agent Mesh mutations');
+if(!sw.includes("agent-mesh-mutation-not-allowlisted")) throw new Error('Agent Mesh mutation dispatcher must be explicit allowlist');
+if(!sw.includes("'agent_mesh.continuation.checkpoint':'continuity-record-only'")) throw new Error('continuation checkpoint policy must remain record-only');
+if(!sw.includes("'agent_mesh.recover_agent':'resume-gated'")) throw new Error('recover_agent must remain resume-gated');
+if(!sw.includes("'agent_mesh.route_packet':'resume-gated'")) throw new Error('route mutation must remain resume-gated');
+if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('takeover must use governed mutation dispatcher');
