@@ -224,3 +224,9 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-090 — cleanly `docs/01-PWA/09-canonical-data-model.md`, SHA `1bf7a96325fa9fe38350651597fe23229a77b1c4`; canonical object families and surface projection rule.
 - SOURCE-GH-091 — cleanly `docs/dashboards/titan-go.md`, SHA `35b8326bf5326ae6a1fdf2a3075203780332b29b`; field-worker offline/checklist/evidence/safety workflow.
 - SOURCE-GH-092 — Agent-Mesh issue search: #641/#636/#542/#549/#550 current PWA owners, #690 Zero/Go/Hub normalization, #645 Edge Fabric, #725 cross-surface continuity.
+
+
+- SOURCE-GH-093 — cleanly `docs/01-PWA/24-security-identity-device-trust-and-tenant-boundary.md`, SHA `8bf4e285832d00295f25bf4ddd2672147f238e20`; principal domains, company boundary, device trust/revocation, token strategy, audit and approval gating.
+- SOURCE-GH-094 — cleanly `docs/01-PWA/11-security-identity-and-governance.md`, SHA `6a0fda59fe92b1af8cee9d151878540f9f2a1238`; security layers, company/user distinction, approval pipeline, secret management and zero-trust doctrine.
+- SOURCE-GH-095 — cleanly `docs/07-workflows/guards.md`, SHA `2ec6dc1a6341aa88304db237d1c0e8a7e0c41192`; deterministic guard contracts and allow/deny/approval/recovery outcomes.
+- SOURCE-GH-096 — Agent-Mesh issue search: #302 security/identity/session/credential hardening; #574 distributed identity never grants authority; #725 cross-surface identity; #645 Edge Fabric.
