@@ -101,3 +101,5 @@ export function routeTitanBusinessOpsAgent(commandId: TitanBusinessOpsAgentComma
   if (!command) return routeOperationalRole("", "");
   return routeOperationalRole(command.description, command.domain);
 }
+
+export * from "./business-reference-integrity";
