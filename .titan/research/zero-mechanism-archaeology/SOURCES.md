@@ -344,3 +344,24 @@ Library file id: file_00000000cb6c81f58e2486f05de9d668
 Verification: direct Library inspection during #763.
 Relevant semantics: Titan Oversight/T0GM is builder/install/system oversight for Titan-controlled or explicitly client-authorized environments; not ordinary company administration; must not weaken company isolation; oversight spans security, governance, finance, operations, privacy/legal, environment, physical safety, anomalies, causal intelligence, irreversible actions and system-level issues.
 Supports: T0GM convergence and naming.
+
+
+---
+
+## SOURCE-LIB-025
+
+Type: Direct source-verified Library master
+Artifact: /MASTER Software/Masters/Operations/OnboardingPro/OnboardingPro Master v6.0.0-rc.4.zip
+Library file id: file_00000000c7b881fa8981a4b822265833
+SHA256: a2330f9826e6da15612e8a782d3f71203dccab0636c7da26302d7a19ee6b7f42
+Verification: materialized and extracted during #763; implementation source read directly.
+Inspected internal paths:
+- System/Learning/LongitudinalStrategyMemoryService.php
+- System/Learning/LongitudinalStrategyMemoryService.php/AntiRepeatDecisionService.php
+- System/Learning/LongitudinalStrategyMemoryService.php/AntiRepeatDecisionService.php/ExperimentComparisonService.php
+- System/Execution/InterventionExecutionLifecycleService.php/OutcomeMeasurementService.php
+- System/Execution/InterventionExecutionLifecycleService.php/OutcomeMeasurementService.php/RollbackDecisionService.php
+- System/Reconfiguration/BusinessConfigurationDiffer.php
+- System/Reconfiguration/BusinessConfigurationDiffer.php/BusinessReconfigurationService.php
+Relevant semantics: company-scoped strategy memory; intervention fingerprinting; context/freshness-aware anti-repeat; baseline/observed delta measurement; unintended-effect/reversibility rollback trigger; semantic configuration diff; exact approval fingerprint; idempotent provisioning; verification receipt/history.
+Supports: FINDING-GH-131 through GH-139.
