@@ -1243,3 +1243,25 @@ Source-side Personal Zero sharing is now materially governed. The remaining cros
 ACTIVE HARDENING / SOURCE-SIDE SHARING GOVERNED / TARGET ACCEPTANCE CONTRACT GAP
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-057
+### Finding
+#768 reports a cross-company target-acceptance handshake contract that closes the previously identified target-liveness design gap without allowing source-side repository reads across `company_id`; however, this pass could not yet independently resolve the new artifact path/blob from branch inspection, so the finding remains provisional pending direct source verification.
+### Evidence
+Latest #768 issue update reports commits `19fd012`, `89dddcc` plus target-acceptance tests and states that:
+- target side issues a `TargetShareAcceptance` only after validating its relationship inside its own company context;
+- acceptance binds the exact grant fingerprint, ONE/Zero, target company/relationship, purpose and accepted subjects;
+- material grant changes invalidate prior acceptance;
+- target acceptance has independent expiry/revocation;
+- acceptance is authority-neutral and grants no execution authority;
+- the source Personal Zero repository does not cross `company_id` to inspect target storage; a broker/transport carries the acceptance artifact.
+Direct fetch of the previously known Personal Zero contracts/state-service still shows source-side sharing only (contracts blob `6dd6887bdc532a03c841e153b044e9223bfc8529`; state-service blob `4e0480607a0c56a36e7aae40cfb9a862834a95a2`). Searches/probes in this pass did not expose the newly reported target-acceptance file on the connector, so its implementation details are not yet independently certified.
+### Interpretation
+If source verification confirms the reported contract, the architecture should preserve it as the cross-company handshake artifact rather than introduce cross-tenant reads or a second tenant boundary. Until then, treat the issue comment as strong provisional implementation evidence, not completed audit proof.
+### Classification
+ACTIVE IMPLEMENTATION / PROVISIONAL TARGET ACCEPTANCE CONTRACT / DIRECT SOURCE VERIFICATION PENDING
+### Confidence
+MEDIUM
