@@ -250,3 +250,17 @@ Before implementing #153, preserve and reuse the current Workforce Pass 36 Worke
 - memory-is-context/not-truth/not-authority invariants.
 
 #153 should provide the **company-wide canonical Business Memory owner** above/around these scoped views: shared ingestion/deduplication, company records, verified-outcome episodic memory, procedural memory, correction/retention/forgetting, stable retrieval APIs and OnboardingPro longitudinal/anti-repeat semantics. Worker-specific memory should remain a scoped projection/view, not a separate source of company truth.
+
+
+## Issue #37 implementation-ready boundary
+Implement #37 as a bounded adaptation/certification layer, not another intelligence or authority engine. Reuse:
+- #59 persistent decision/evidence lifecycle and temporal state;
+- #153 verified-outcome/Business Memory records;
+- #768 Personal Zero experience only where personal context is legitimately in scope;
+- current Trust/Autonomy, Risk/Assurance, Command Bus and rollback/recovery controls;
+- historical Step25/LocalBrain/Foresight calibration semantics where superior.
+
+Required closed loop:
+`verified decision/action → measured outcome → quality/confidence/calibration update → bounded policy adaptation → predictive trigger → governed workflow → new verified outcome`.
+
+Certification must measure false positives, missed interventions and calibration, and prove adaptation cannot silently widen authority, company scope, communications, spend or provider-cost permissions.
