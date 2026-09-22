@@ -141,3 +141,17 @@ Canonical Owner: Environmental Intelligence vertical capability pack over shared
 
 Summary:
 Implement evidence-backed environmental schemas/capabilities for energy, water, waste, chemicals/materials, emissions/activity evidence, incidents, monitoring, improvement opportunities and jurisdiction overlays. Reuse canonical Reality/Knowledge/Risk/Decision/Signal/Workforce/Experience/Command paths. Do not create a separate environmental platform or duplicate engines.
+
+
+---
+
+## ACTION-LIB-011
+
+Type: HARDEN EXISTING OWNER / REJECT DUPLICATE SECURITY ENGINE
+Priority: P0
+Finding: FINDING-LIB-014
+GitHub Issues: #302, #310
+Status: EVIDENCE ADDED TO #302
+
+Summary:
+Do not resurrect Titan Locker/Shield/auth/policy/evidence systems as parallel runtimes. Preserve fail-closed authorization, company+actor/device/session binding, secret rotation/revocation/least privilege, secret exclusion from prompts/logs/telemetry/projections, replay/stale-session denial, privileged-role rejection for untrusted callers, and object-ownership authorization. Certify through #310.
