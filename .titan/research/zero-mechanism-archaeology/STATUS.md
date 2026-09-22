@@ -50,3 +50,7 @@ LAST UPDATED:
 
 COMPLETION ESTIMATE:
 Several research phases remain: current-system mapping, historical mechanism recovery, candidate verification, cross-source deduplication, and final handoff.
+
+
+## Privacy / consent checkpoint
+Verified convergence semantics for purpose-bound consent, separate observe/retain/learn/retrieve/egress permissions, revocation propagation, locality-aware inference routing, privacy-class normalization and purpose-minimised Zero projections. Next target: Cost Sovereignty + Local Bridge/Ollama/provider independence and its interaction with Personal Zero privacy/availability. Status remains IN PROGRESS.
