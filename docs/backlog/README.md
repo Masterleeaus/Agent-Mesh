@@ -95,7 +95,7 @@ tasks in `docs/archive/backlog-done/`.
 
 ## Task index
 
-Next available ID: **TASK-151**.
+Next available ID: **TASK-152**.
 
 Wave 0b 2026-08-05 closed 079/080; Wave 0a 2026-08-05 closed false In Progress: 046, 053, 068, 071, 078.
 Truth pass 2026-08-05: fixed ID collisions (ledger/T&M/terms had reused 081–083),
@@ -135,6 +135,7 @@ closed in tests; owner-flow AC still open.
 | TASK-148 | [Geofence-anchored stops + home fence](TASK-148-geofence-anchored-stops.md) | 007 | Done |
 | TASK-149 | [Park (Bluetooth disconnect) → confirm location](TASK-149-park-arrival-prompt.md) | 007 | Done |
 | TASK-150 | [Hold the stop until Bluetooth / zone / different property](TASK-150-hold-until-vehicle.md) | 007 | In Progress |
+| TASK-151 | [ResQAI customer-care convergence](TASK-151-resqai-customer-care-convergence.md) | 005 | In Progress |
 | TASK-001 | Vehicle Mileage Sessions | 001 | Done |
 | TASK-002 | Vehicle Session Recovery | 001 | Done |
 | TASK-003 | Wrong Vehicle Correction | 001 | Done |
