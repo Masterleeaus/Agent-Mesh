@@ -49,8 +49,9 @@ async function handleSmsKeyword(opts: {
   externalId?: string;
   existing: { id: string; name: string; sms_consent: boolean } | null;
   traceId: string;
+  simNumber?: number;
 }): Promise<NextResponse> {
-  const { accountId, phone, message, keyword, externalId, existing, traceId } = opts;
+  const { accountId, phone, message, keyword, externalId, existing, traceId, simNumber } = opts;
   const reply = replyForSmsKeyword(keyword);
 
   let clientId: string | null = existing?.id ?? null;
@@ -126,8 +127,9 @@ async function handleSmsKeyword(opts: {
   }
 
   let autoReplied = false;
-  if (isSmsGatewayConfigured()) {
-    const sendResult = await sendSmsViaGateway({ phone, message: reply });
+  const gatewayConfig = { simNumber };
+  if (isSmsGatewayConfigured(gatewayConfig)) {
+    const sendResult = await sendSmsViaGateway({ phone, message: reply, config: gatewayConfig });
     autoReplied = sendResult.ok;
     if (sendResult.ok) {
       await logOutboundSms({
@@ -367,6 +369,7 @@ export async function POST(req: NextRequest) {
         ? { id: existing.id, name: existing.name, sms_consent: existing.sms_consent }
         : null,
       traceId,
+      simNumber: smsSettings.simNumber,
     });
   }
 
