@@ -380,3 +380,23 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** one documented Titan Zero implementation ref/tree is named as the comparison baseline, and all future archaeology can distinguish current Titan Zero implementation from Dovetails donor/descendant code.
 - **Confidence:** VERY HIGH
 - **Status:** BLOCKS RELIABLE CURRENT-BASELINE CERTIFICATION
+
+
+---
+
+## ACTION-GH-020 — Build pre-pivot vs post-transplant Titan Zero capability-loss matrix
+
+- **Type:** DEEP SCAN / COMPARE / CONVERGE / REGRESSION
+- **Priority:** P0/P1
+- **Findings:** FINDING-GH-081 through FINDING-GH-088
+- **Baseline:** `3063eb6306879e54888e35fddad9e07596c41c2a`
+- **Pivot:** `09c72e357784fb5a588c33f912aba60a5fa8ce42`
+- **Current:** live `main`
+- **Objective:** Compare pre-pivot Titan Zero packages/services/apps/architecture against post-transplant current tree and classify every material Titan capability as retained, migrated, improved, duplicated, archived-only, deleted/lost, renamed, or still donor-only.
+- **Required focus:** AI Core, Decision/DecisionPacket, Model Council, Knowledge Authority, Signal, Command Bus, Trust/Authority, Risk/Assurance/Governance, Rewind, Workforce, Business Reality, Personal Zero/memory, Interaction/Interface runtime, Builder, Edge/Local Bridge/Ollama, Zero/Go/Hub, storage, communications, finance, scheduling/field operations.
+- **company_id:** identify every post-transplant `account_id` path crossing Titan capability boundaries and specify normalization to canonical `company_id`.
+- **Treatment:** preserve stronger Dovetails field-service implementation; recover lost Titan platform semantics; retire duplicate/archive authorities; restore Titan Zero canonical docs/control-plane authority separately from donor domain docs.
+- **Tests:** capability reachability before/after, tenant-boundary compatibility, surface aliases, authority path, package import/build graph, no duplicate engines, regression tests for recovered systems.
+- **Acceptance Criteria:** a file-backed capability-loss matrix identifies exactly what survived the transplant and what still needs convergence, allowing later agents to work from evidence rather than repository-name assumptions.
+- **Confidence:** VERY HIGH
+- **Status:** READY
