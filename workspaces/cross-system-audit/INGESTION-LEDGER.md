@@ -326,3 +326,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-050 | Post-#768 downstream claim-state recheck | issues #153/#59/#37/#767 + branch search | all four OPEN; 0 comments; no agent/153, agent/59, agent/37, agent/767 branches | CURRENT | DIRECT ISSUE/BRANCH EVIDENCE | Four canonical downstream lanes remain unclaimed. Their issue contracts are reuse-first and must consume certified Personal Zero rather than duplicate it. | YES |
+
+
+| INGEST-051 | Repository-wide DecisionPacket/lifecycle discovery | GitHub default-branch code search + current Decision Engine/runtime source | decision-engine blob a86d862e2dde6a574a88158a5644f80e9a9cbf5d; runtime blob c485cf417e150e7ee8af801374a03eb7ab816cff | CURRENT | DIRECT SEARCH + SOURCE VERIFIED | No indexed DecisionPacket/DecisionObject/persistent-state lifecycle implementation found; current Decision Engine is a thin authority-neutral envelope. #59 remains canonical implementation owner. | YES |
