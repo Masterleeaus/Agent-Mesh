@@ -283,3 +283,24 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** every TitanNexus capability is either proven present in canonical owners, converged there, or explicitly retired as scaffold; no duplicate MarketingAgent domain authority remains.
 - **Confidence:** HIGH
 - **Status:** READY FOR OWNER COMPARISON
+
+
+---
+
+## ACTION-GH-015 — Compare and converge cleanly PWA/edge semantics into canonical Go/Hub/Zero surfaces
+
+- **Type:** IMPORT + HARDEN / CONVERGE / RETIRE LEGACY TAXONOMY
+- **Priority:** P1
+- **Findings:** FINDING-GH-066, FINDING-GH-067, FINDING-GH-068, FINDING-GH-069
+- **Current State:** Historical cleanly architecture has detailed device/offline/sync/field semantics; current roadmap owns consolidated Go/Hub/Command delivery and canonical Zero/Go/Hub normalization.
+- **Canonical Owners:** #641, #636, #542, #549, #550, #690; #645 for Edge Fabric; #725 for cross-surface identity/state.
+- **Proposed Treatment:** Compare current TypeScript surface/edge implementation against the historical runtime contract. Port only missing/superior queue, bootstrap, evidence, revocation, conflict and field UX semantics. Retire the old nine-node product taxonomy.
+- **company_id:** Mandatory on device registrations, envelopes, cached business records and replay validation.
+- **Trust/Authority:** Device trust affects offline/delegated behavior but never creates authorization; privileged approvals/money/permission changes require server validation.
+- **Privacy/Security:** encrypted sensitive cache where supported, device revocation/wipe, bounded offline datasets, evidence hashes, actor/device provenance.
+- **Cost Sovereignty:** local/offline processing should reduce unnecessary network/AI calls; AI provider routing remains canonical #647 policy.
+- **Migration:** old Titan Pro/Ground Zero/Zero Fuss/ZeroPay/etc. surface names map into canonical Zero/Go/Hub and domain engines; no parallel business stores.
+- **Tests:** offline outbox replay, duplicate idempotency, stale version conflict, cross-company envelope rejection, revoked device, trust downgrade, staged media hash, partial upload recovery, privileged offline action rejection, Go field workflow, canonical alias normalization.
+- **Acceptance Criteria:** canonical surfaces retain useful historical offline/edge behavior without resurrecting obsolete node boundaries or duplicating domain state.
+- **Confidence:** HIGH
+- **Status:** READY FOR OWNER COMPARISON
