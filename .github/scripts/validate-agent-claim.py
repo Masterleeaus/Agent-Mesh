@@ -198,6 +198,21 @@ def validate_pull_request():
     if not repo or not token:
         fail("GITHUB_REPOSITORY/GH_TOKEN unavailable")
 
+    claim_ref = run_json(["gh", "api", f"repos/{repo}/git/ref/heads/{head}"])
+    claim_sha = ((claim_ref.get("object") or {}).get("sha") or "").lower()
+    pr_head_sha = str(pr.get("head", {}).get("sha") or "").lower()
+    if not re.fullmatch(r"[0-9a-f]{40}", claim_sha):
+        fail(f"canonical claim branch {head} does not resolve to a valid Git commit")
+    if pr_head_sha and claim_sha != pr_head_sha:
+        fail(f"PR head SHA {pr_head_sha} does not match canonical claim branch {head} at {claim_sha}")
+    main_ref = run_json(["gh", "api", f"repos/{repo}/git/ref/heads/main"])
+    main_sha = str(((main_ref.get("object") or {}).get("sha")) or "").lower()
+    if not re.fullmatch(r"[0-9a-f]{40}", main_sha):
+        fail("main does not resolve to a valid Git commit")
+    ancestry = run(["gh", "api", f"repos/{repo}/compare/{main_sha}...{claim_sha}", "--jq", ".status"], check=False)
+    if ancestry.returncode != 0 or ancestry.stdout.strip() not in {"ahead", "identical"}:
+        fail(f"canonical claim branch {head} is not based on current main ancestry: {ancestry.stdout.strip() or ancestry.stderr.strip()}")
+
     issue = run_json([
         "gh", "api", f"repos/{repo}/issues/{issue_number}"
     ])
