@@ -1194,3 +1194,27 @@ No Personal Zero learning executor is needed. Canonical consumer systems remain 
 ACTIVE IMPLEMENTATION / GOVERNED LEARNING LIFECYCLE CLOSED AT SOURCE LEVEL / CI PENDING
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-055
+### Finding
+#768 hardening now enforces the canonical company boundary and legacy-tenant rejection directly at Personal Zero write/service boundaries, rather than relying only on downstream storage rejection.
+### Evidence
+Latest #768 hardening update reports commit `3c02a0d` plus focused hardening tests.
+Direct inspection of `packages/titan-platform/src/personal-zero/state-service.ts`, blob `d02577802179af08e7d1e6392a0ee04b4df30b13`, verifies:
+- Personal Zero imports canonical storage `assertNoLegacyStorageBoundary`;
+- `guardInput` recursively rejects legacy tenant boundary fields in Personal Zero payloads;
+- `requireContextCompany` requires write-context `company_id` to equal the record/outcome company before persistence;
+- relationship, understanding evidence/state, Experience, CognitiveEvent and verified-outcome learning write paths invoke these guards;
+- existing relationship identity/company checks remain in place;
+- source-company context is explicitly checked for cross-context share creation/retrieval;
+- private-evidence provider-egress denial remains encoded in the Personal Zero contracts.
+The implementation reports negative tests for context-company mismatch, nested legacy aliases, verified-outcome legacy aliases and personal-private egress denial; execution/CI evidence remains pending.
+### Interpretation
+The Personal Zero service now fail-closes earlier on the canonical `company_id` boundary and legacy tenant aliases, strengthening #648/#72 convergence rather than creating a competing tenancy abstraction. Audit should still inspect read/review/calibration/share paths for consistent context-company checks during final certification.
+### Classification
+ACTIVE HARDENING / COMPANY BOUNDARY FAIL-CLOSED / CI PENDING
+### Confidence
+HIGH
