@@ -362,3 +362,21 @@ Treat NexusGrowth as a historical analytics donor, not a runtime owner. During c
 - **Acceptance Criteria:** an executable certification test proves no tenant-owned evidence path can persist or return without validated canonical company scope.
 - **Confidence:** HIGH
 - **Status:** CURRENT CODE LOCATION STILL NEEDS RUNTIME/PACKAGE INVENTORY
+
+
+---
+
+## ACTION-GH-019 — Resolve Agent-Mesh main vs Titan Zero canonical-baseline drift before further implementation certification
+
+- **Type:** P0 DEEP SCAN / REGRESSION / CANONICAL BASELINE RECOVERY
+- **Priority:** P0
+- **Findings:** FINDING-GH-081, FINDING-GH-082, FINDING-GH-083, FINDING-GH-084
+- **Problem:** Agent-Mesh root package metadata still says Titan Zero, while README/AGENTS/canonical docs and tenant vocabulary now describe Dovetails FSM. This makes implementation archaeology ambiguous and can cause agents to certify the wrong product.
+- **Proposed Treatment:** Identify the commit/branch where Titan Zero TypeScript canonical architecture was last intact; compare that tree with current main and active convergence branches; classify Dovetails changes as intentional donor integration, accidental canonical replacement, or repository reuse; then restore one explicit authoritative Titan Zero baseline without discarding reusable field-service work.
+- **company_id:** Titan Zero remains canonical. Any Dovetails `account_id` compatibility input must normalize to `company_id` before authorization/data/storage/execution.
+- **Trust/Authority:** no product-doc or donor branch may silently redefine authority contracts.
+- **Safety:** do not rewrite main or delete Dovetails code during archaeology. First produce commit/branch evidence and a convergence plan.
+- **Tests/Certification:** canonical product-name scan; tenant-boundary scan; package/runtime inventory; branch/commit comparison; roadmap-to-code owner map; verify Zero/Go/Hub and core engine locations; verify Dovetails field-service features are retained as donor/domain capabilities rather than product authority.
+- **Acceptance Criteria:** one documented Titan Zero implementation ref/tree is named as the comparison baseline, and all future archaeology can distinguish current Titan Zero implementation from Dovetails donor/descendant code.
+- **Confidence:** VERY HIGH
+- **Status:** BLOCKS RELIABLE CURRENT-BASELINE CERTIFICATION
