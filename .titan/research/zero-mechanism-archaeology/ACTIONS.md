@@ -133,7 +133,7 @@ Canonical identity/working-state/cross-surface continuity. Reuse for Zero contin
 
 ---
 
-## ACTION-GH-003
+## ACTION-GH-003B
 
 Type: FURTHER ARCHAEOLOGY BEFORE IMPLEMENTATION
 Priority: P1
@@ -158,7 +158,7 @@ Status:
 PROPOSED / UNCLAIMED IN BRANCH SEARCH AT THIS CHECKPOINT
 
 Purpose:
-Define one canonical Personal Zero Understanding & Experience contract layer, reusing current TypeScript evidence/storage/context owners and recovering only missing semantics from verified historical donors. This supersedes the need for ACTION-GH-003 to propose a new implementation issue; ACTION-GH-003 remains archaeology-only for donor verification.
+Define one canonical Personal Zero Understanding & Experience contract layer, reusing current TypeScript evidence/storage/context owners and recovering only missing semantics from verified historical donors. This supersedes the need for ACTION-GH-003 to propose a new implementation issue; ACTION-GH-003/ACTION-GH-003B remain archaeology-only for donor verification.
 
 
 ---
@@ -202,5 +202,5 @@ Need: one production provider-independent capability/routing contract for device
 
 ### ACTION-GH-011 — Final #763 handoff housekeeping
 Owner: #763
-Status: IN PROGRESS
-Need: finish source/index backfill, resolve duplicate ACTION-GH-003 naming in this file, capture current-repo references where possible, and prepare final archaeology handoff. Do not create implementation systems in #763.
+Status: READY FOR FINAL CHECKPOINT
+Need: only final source/index backfill and handoff/closure decision remain. Do not create implementation systems in #763.
