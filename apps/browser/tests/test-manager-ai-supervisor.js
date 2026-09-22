@@ -10,5 +10,5 @@ if(!S) throw new Error('Manager AI supervisor missing');
 const inspection=S.inspect({agents:{a:{state:'ACTIVE',heartbeat_stale:true,last_error:'boom'},b:{state:'ACTIVE',errors:[{x:1}]}},packets:[{packet_id:'P1',status:'BLOCKED',priority:'P0'}],deltas:[{status:'READY'}],findings:[{status:'OPEN'}]});
 if(inspection.summary.stale!==1||inspection.summary.erroring!==2||inspection.summary.blockedPackets!==1) throw new Error('inspection summary mismatch');
 const plan=S.deterministicPlan(inspection); if(plan.steps.length<3) throw new Error('recovery plan too small');
-if(S.status().authority.promote!==false) throw new Error('AI supervisor promotion authority violation');
+if(S.status().authority.githubMergeRequest!==false) throw new Error('AI supervisor GitHub merge authority violation');
 console.log('Manager AI supervisor tests OK');
