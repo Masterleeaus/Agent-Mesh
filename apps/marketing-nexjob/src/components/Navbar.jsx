@@ -21,7 +21,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 font-extrabold text-xl tracking-tight">
           <span className="w-2 h-2 bg-nx-purple rounded-full animate-pulse-dot" />
-          NexJob
+          Titan Zero <span className="text-nx-muted font-medium">Field Service</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -41,7 +41,7 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* CTA — linked to Rails app */}
+        {/* CTA — linked to Titan Zero Command */}
         <div className="hidden md:flex items-center gap-3">
           <a
             href={appRoutes.login}
@@ -53,7 +53,7 @@ export default function Navbar() {
             href={appRoutes.trial}
             className="text-sm font-semibold text-white bg-nx-purple hover:bg-nx-purple-dark px-5 py-2 rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/30"
           >
-            Start Free Trial
+            Open Titan Zero
           </a>
         </div>
 
@@ -86,7 +86,7 @@ export default function Navbar() {
               Log In
             </a>
             <a href={appRoutes.trial} className="text-sm font-semibold text-white bg-nx-purple py-2.5 rounded-lg text-center">
-              Start Free Trial
+              Open Titan Zero
             </a>
           </div>
         </div>
