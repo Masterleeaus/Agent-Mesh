@@ -100,3 +100,7 @@ Direct inspection of the Step25 Library master verified implemented TypeScript m
 
 ### ZM-011 — Model Council epistemic challenge source-verified
 Direct inspection of Model Council v1.0.0-rc.2 verified proposer→critic→verifier→arbiter deliberation, pre/final Shield validation, escalation and hash-addressed advisory-only receipts. Strong donor semantics: challenge unsupported assumptions, verify against supplied evidence, preserve material disagreement/uncertainty, do not treat consensus as proof, escalate when consequential evidence is insufficient. Important gap: historical confidence is only an average of participant self-confidence; richer evidence-independence, blind-spot and calibrated-confidence semantics remain convergence work under #633/current architecture.
+
+
+### ZM-012 — Assurance hardens Council epistemics
+Assurance design separates confidence, evidence independence and evidence sufficiency; penalises correlated failure, stale/missing evidence and unresolved disagreement; requires independent first-pass analysis and adversarial challenge for consequential cases; and permits explicit `insufficient_evidence` / `material_disagreement` outcomes. Deterministic failures cannot be overridden by model consensus. Investigation should be a bounded evidence-acquisition loop through Knowledge Authority, not a new authority or decision engine. Dedicated Investigation Workforce implementation was not verified in this pass.
