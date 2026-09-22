@@ -269,3 +269,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-031 | Remaining convergence claim-state after #768 claim | issues/branches #153, #59, #37, #767 | current GitHub checkpoint | OPEN/UNCLAIMED | VERIFIED | Four principal implementation lanes remain open with zero comments and no canonical agent/<issue> claim branches found. #768 is now separately active. | YES |
+
+
+| INGEST-032 | #768 storage/ownership mapping | issue #768 latest implementation comment + agent/768 titan-platform storage index | commits d255b92, 5abe438; storage blob fc4dbb9ed90c92657341605019ac3dd066b68cf0 | ACTIVE IMPLEMENTATION | VERIFIED | Canonical Personal Zero owner selected as @titan-zero/titan-platform using existing storage repository contract. New DB/LocalBrain/duplicate stores/authority engine explicitly rejected. TASK-152 created; contract implementation is next. | YES |
