@@ -4,7 +4,7 @@ const presentation = Object.freeze({
   go: Object.freeze({
     name: "Titan Go",
     audience: "Field staff",
-    accent: "#31d18b",
+    accent: "#2563eb",
     heading: "What do you need next?",
     greeting: "Morning, Alex. Your first job is ready. The Access Failure Prevention Specialist has confirmed entry and the route is clear.",
     prompt: "Ask about today’s work, a customer, or what to do next…",
@@ -13,7 +13,7 @@ const presentation = Object.freeze({
   hub: Object.freeze({
     name: "Titan Hub",
     audience: "Customers",
-    accent: "#63a1ff",
+    accent: "#16a34a",
     heading: "How can I help with your service?",
     greeting: "Hi Sam. Your service is confirmed for tomorrow at 9:00 AM and arrival updates are on.",
     prompt: "Ask about a booking, quote, invoice, or your service…",
@@ -22,7 +22,7 @@ const presentation = Object.freeze({
   zero: Object.freeze({
     name: "Titan Command",
     audience: "Owners & managers",
-    accent: "#94a3b8",
+    accent: "#d97706",
     heading: "What needs your decision?",
     greeting: "Good evening, Jason. Your business is healthy. Two decisions need you.",
     prompt: "Ask anything about your business…",
