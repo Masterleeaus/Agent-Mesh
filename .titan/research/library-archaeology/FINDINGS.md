@@ -438,3 +438,23 @@ HIGH.
 
 ### Related action
 ACTION-LIB-012.
+
+
+---
+
+## FINDING-LIB-016
+
+### Finding
+Browser archaeology found multiple implemented/proven extension donors with valuable browser-control mechanisms, but Titan Code itself is not a production donor application. The recoverable unit is a bounded set of browser primitives: semantic-first operation, WebMCP/site capability packs, accessibility/DOM/CDP/visual evidence, cross-tab session primitives, page-context capture, governed action verification, restart recovery and least-privilege MV3 lifecycle patterns.
+
+### Classification
+HISTORICAL IMPLEMENTED DONORS / SELECTIVE EXTRACTION REQUIRED.
+
+### Architectural conclusion
+Titan Code remains private development-only. #643 is the canonical production Titan Browser Node owner; #637 is the donor extraction lane. Production Browser Node must use Surface SDK/Capability Registry/Command Bus/node contracts and must not import Titan Code Plan Runner, Agent Mesh, repository/coding intelligence, developer workspaces, private AI workforce management, duplicate provider routing or business-domain authority.
+
+### Confidence
+HIGH.
+
+### Related action
+ACTION-LIB-013.
