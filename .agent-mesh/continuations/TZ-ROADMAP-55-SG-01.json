@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 2,
+    "current_pass": 3,
     "status": "ACTIVE"
   },
   "completed": [
@@ -22,17 +22,18 @@
     "Canonical issue #734 and atomic claim branch established",
     "Continuation/takeover requirements agreed",
     "Pass 2: live agent_mesh.snapshot now reuses canonical manager-github-state and manager-live-state to project GitHub lifecycle into Manager snapshot v3",
-    "Pass 2 regression assertions added to test-manager-ai-live-mesh-bridge.js"
+    "Pass 2 regression assertions added to test-manager-ai-live-mesh-bridge.js",
+    "Pass 3: added reusable agent-mesh-continuation runtime contract for durable checkpoints, takeover receipts and compact resume instructions",
+    "Pass 3: takeover explicitly retains the canonical claim branch and treats conversation state as disposable",
+    "Pass 3: added test-agent-mesh-continuation.js covering context-limit takeover and GitHub-wins reconciliation rule"
   ],
   "current_work": [
-    "Implement automatic durable checkpoint and takeover receipt contract",
-    "Keep claim branch during context/session replacement"
+    "Wire continuation checkpoints into live Manager/Agent Mesh events rather than relying on manual record updates"
   ],
   "next_actions": [
-    "Add Agent Mesh continuation/checkpoint helper",
-    "Add takeover receipt schema/helper",
-    "Wire checkpoint updates to significant lifecycle events",
-    "Then implement governed execution-request bridge"
+    "Expose continuation checkpoint/takeover through the existing Agent Mesh bridge",
+    "Persist checkpoint after significant lifecycle events",
+    "Add governed execution-request schema and Action"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
