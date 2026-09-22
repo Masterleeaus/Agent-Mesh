@@ -60,3 +60,7 @@ if(!sw.includes('bootstrapAgentMeshResume')) throw new Error('Agent Mesh resume 
 if(!sw.includes("bootstrap.status==='READY_TO_RESUME'")) throw new Error('resume mutation must require READY_TO_RESUME');
 if(!sw.includes("mayMutate:false,reason:")) throw new Error('resume bootstrap errors must fail closed');
 if(!sw.includes('globalThis.bootstrapAgentMeshResume=bootstrapAgentMeshResume')) throw new Error('resume bootstrap not exposed through existing service worker surface');
+
+if(!sw.includes("reason:'resume-reconciliation-required',mayMutate:false")) throw new Error('takeover must fail closed behind resume bootstrap');
+if(!sw.includes("reason:'agent-mesh-resume-reconciliation-required'")) throw new Error('Manager mutation execution must be gated by resume reconciliation');
+if(!sw.includes("authority:{ai:false,managerRules:true,githubMergeRequest:false,delete:false,mayMutate:false}")) throw new Error('blocked Manager execution must explicitly deny mutation authority');
