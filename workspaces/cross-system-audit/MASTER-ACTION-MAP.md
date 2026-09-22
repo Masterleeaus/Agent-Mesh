@@ -406,3 +406,22 @@ Remaining audit targets:
 - execute CI/tests;
 - finish retention/provider-egress/share-revocation integration;
 - certify Trust/Autonomy non-elevation and merge.
+
+
+## Issue #768 slices 7-8 governed consumption
+Personal Zero learning now ends at a read-only accepted-learning projection. Preserve this boundary.
+
+Canonical flow:
+`correction/prediction error/verified outcome → proposal → pending review → evidenced accepted/rejected/superseded → read-only Interaction/Decision/Workforce projection`.
+
+Do not implement direct Personal Zero mutation of consumer state.
+
+Remaining #768 work:
+- execute CI/tests and retain evidence;
+- verify integrated consumers actually treat accepted-learning projections as advisory/read-only;
+- certify no Trust/Autonomy/entitlement/delegation/governance mutation path exists;
+- finish retention deletion/enforcement and provider-egress/share-target revocation hardening;
+- verify restart/revision/idempotency behavior;
+- merge and final issue certification.
+
+Cross-owner consequence: #37 can consume accepted/calibrated learning evidence for bounded predictive triggers, while #59/Interaction/Workforce retain their own current-state/authority evaluation.
