@@ -8,6 +8,9 @@
 export interface DbQueryResult<T = Record<string, unknown>> {
   rows: T[];
   rowCount?: number | null;
+  /** MySQL/MariaDB DML adapters expose affectedRows instead of rowCount. */
+  affectedRows?: number;
+  insertId?: number | string;
 }
 
 export interface DbClient {
