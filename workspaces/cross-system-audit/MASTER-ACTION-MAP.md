@@ -209,3 +209,13 @@ Do not build another Knowledge Authority engine. Preserve the implemented gate a
 3. persist/propagate the knowledge-use receipt/provenance reference into the reasoning/DecisionPacket evidence chain;
 4. keep the independent authority decision after knowledge use;
 5. add negative tests for blocked/stale/contradicted/cross-company knowledge and prove blocked knowledge cannot influence protected execution.
+
+
+## Decision lifecycle evidence composition for #59
+Preserve `createDecisionEngineEnvelope` as the canonical authority-neutral runtime boundary. Do not create another Decision Engine. In #59, compose the persistent DecisionPacket/evidence lifecycle so that knowledge-backed decisions can retain:
+- Knowledge Authority use decision/receipt reference;
+- exact knowledge/provenance/version/freshness evidence references;
+- Model Council/Nexus reasoning evidence references where used;
+- temporal re-evaluation when evidence becomes stale, contradicted or superseded;
+- independent current authority decision and governed execution receipt.
+A blocked Knowledge Authority decision must not become valid merely because a model/council recommends the same action.
