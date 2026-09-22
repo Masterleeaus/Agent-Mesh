@@ -202,3 +202,74 @@ MEDIUM-HIGH; further historical and current-code comparison required.
 
 ### Related action
 Current archaeology phase under #765.
+
+
+---
+
+## FINDING-GH-010
+
+### Finding
+The historical `zero` repository contains a concrete canonical TitanMemory implementation wired to Signal and Rewind, with company-scoped store/recall/forget/summarize/snapshot/context hydration and MCP memory tools.
+
+### Why it matters
+This is stronger implementation evidence than branch-name archaeology and is a direct historical precursor to persistent Zero context. It should be compared with #153 rather than resurrected as a second memory system.
+
+### Evidence
+Repository: `Masterleeaus/zero`
+Commit: `61db48c38d990de010587144cfe601a4b487dd03`
+Commit title: `feat: TitanMemory + Process/Signal Contracts + Rewind-Compatible AI Context (Prompt 3)`
+Implementation visible in commit diff:
+- `App\Titan\Core\TitanMemoryService`
+- `VectorMemoryAdapter`
+- `MemoryRecallTool`
+- `MemoryStoreTool`
+- `ProcessContract`
+- `SignalContract`
+The service explicitly scopes operations by `company_id`, integrates MemoryManager, KnowledgeManager, SessionHandoff, Rewind and audit trail.
+
+### Current Titan equivalent
+#153 is the canonical Business Memory/Knowledge owner; #293 owns Rewind/recovery; #642 owns governed engine convergence.
+
+### Classification
+HISTORICAL / IMPLEMENTED / PARTIAL
+
+### Confidence
+HIGH
+
+### Related action
+Support #153 comparison; do not create a parallel TitanMemory runtime.
+
+---
+
+## FINDING-GH-011
+
+### Finding
+The historical `zero` repository contains durable business-reality building blocks for premises/site state: structured hazards, site access profiles, occupancy, facilities/assets, inspection history, service events, meter readings/anomaly state and recurring service plans.
+
+### Why it matters
+This is concrete evidence that a Business Reality model should probably compose authoritative domain state rather than become a monolithic new “Reality Engine.” The historical implementation shows reality as typed, company-scoped domain records with lifecycle/history.
+
+### Evidence
+Repository: `Masterleeaus/zero`
+Commit: `70e21c70ddb07ff69571bf616bfa19070c817e4c`
+Commit title: `feat: implement facility+asset+inspection+service plan extraction (Stages A-I)`
+Verified diff includes:
+- `SiteAsset` with lifecycle/condition/service relationships;
+- `AssetServiceEvent` history;
+- `InspectionInstance`, items/responses/events;
+- structured hazard/site-access memory;
+- meter thresholds/readings/anomaly flags;
+- service plans and generated service visits/jobs;
+- pervasive `company_id` scoping in inspected models.
+
+### Current Titan equivalent
+Current Dovetails domain/property history is a narrower current reality source. General Titan Zero Business Reality ownership remains unresolved, but this evidence argues for composition over canonical domain/event sources.
+
+### Classification
+HISTORICAL / IMPLEMENTED / PARTIAL
+
+### Confidence
+HIGH
+
+### Related action
+ACTION-GH-001 / ongoing Business Reality owner-resolution scan.
