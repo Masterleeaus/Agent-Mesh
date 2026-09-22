@@ -183,3 +183,17 @@ Status: EVIDENCE ADDED TO #637
 
 Summary:
 Extract only production-safe browser primitives from verified Library extension/Titan Code donors: semantic-first operation, unified browser observation evidence, governed propose-authorize-act-verify loop, cross-tab/workspace session support, source-linked page capture, capability-pack adapters, crash/restart journaling and least-privilege MV3 lifecycle patterns. Keep all Titan Code development-only systems out of production.
+
+
+---
+
+## ACTION-LIB-014
+
+Type: RECOVER CANONICAL CROSS-ENGINE RUNTIME CONTRACT
+Priority: P0
+Finding: FINDING-LIB-017
+GitHub Issue: #771
+Status: OPEN
+
+Summary:
+Define/converge canonical Titan Rewind semantics from verified distributed donors. Distinguish retry, replay, restore, reversal and compensation; classify reversible/compensatable/irreversible/unknown actions; require checkpoints/receipts/observed-state verification; preserve immutable history; revalidate authority for recovery; integrate existing provider, Storage, Edge, Evolution and Experience owners without replacing them.
