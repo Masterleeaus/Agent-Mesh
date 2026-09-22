@@ -365,3 +365,44 @@ Inspected internal paths:
 - System/Reconfiguration/BusinessConfigurationDiffer.php/BusinessReconfigurationService.php
 Relevant semantics: company-scoped strategy memory; intervention fingerprinting; context/freshness-aware anti-repeat; baseline/observed delta measurement; unintended-effect/reversibility rollback trigger; semantic configuration diff; exact approval fingerprint; idempotent provisioning; verification receipt/history.
 Supports: FINDING-GH-131 through GH-139.
+
+
+---
+
+## SOURCE-GH-004
+
+Repository: Masterleeaus/Agent-Mesh
+Resource: Issue #763
+Inspected: YES — final closure audit 2026-09-23
+State: OPEN
+Purpose: canonical archaeology work item; implementation work routed elsewhere.
+
+## SOURCE-GH-005
+
+Repository: Masterleeaus/Agent-Mesh
+Resource: PR #764 — Add mechanism-first Zero archaeology Action
+Inspected: YES — final closure audit 2026-09-23
+State: OPEN
+Head at audit: 62565a6f81ff674e7c9a4c61e4703bff86f3191f
+Body relation: Closes #763
+Notes: diff is research-only archaeology workflow/evidence workspace; PR cannot currently close #763 because required checks/handoff are not green.
+
+## SOURCE-GH-006
+
+Repository: Masterleeaus/Agent-Mesh
+Resource: PR #764 head check suite
+Inspected: YES — final closure audit 2026-09-23
+Observed at head 62565a6f81ff674e7c9a4c61e4703bff86f3191f:
+- Manager Review Readiness / readiness: SUCCESS
+- Agent Claim Gate / validate: FAILURE
+- Titan Zero CI / validate: FAILURE
+- Manager Handoff / handoff: FAILURE
+Notes: prior source-level investigation established claim-gate branch-format mismatch and unrelated worker/typecheck CI debt; do not misclassify those as archaeology-content failures without new evidence.
+
+## SOURCE-GH-007
+
+Repository: Masterleeaus/Agent-Mesh
+Resource: compare main...agent/763
+Inspected: YES — final closure audit 2026-09-23
+Observed: diverged; 76 commits ahead, 86 behind; merge base cb1ab5e507588ea35bb624a2a97ce22e04b4ac4c; main base at audit 83258dddf10ac19e68d63310c7f15bf9c60cc852.
+Notes: branch requires manager-controlled reconciliation before integration; archaeology agent must not blindly merge a stale/diverged research branch.
