@@ -891,3 +891,20 @@ Do not overload the runtime envelope with a second Decision Engine. Preserve it 
 CURRENT / IMPLEMENTED RUNTIME ENVELOPE; LIFECYCLE OWNER #59 REMAINS OPEN
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-042
+### Finding
+Issue #59 explicitly confirms that persistent Decision Object/DecisionPacket lifecycle, durable entity/correlation state and temporal re-evaluation are remaining work, while the directly located current titan-platform Decision Engine implementation is only the authority-neutral envelope. No separate DecisionPacket implementation was located at the inspected likely titan-platform paths.
+### Evidence
+- #59 is OPEN with 0 comments and states “Remaining work only”: converge one canonical DecisionPacket runtime/orchestrator; persist Decision Object state and durable entity/correlation links; track lifecycle without duplicating Interaction Engine state; add watch/trigger/temporal re-evaluation; preserve company_id/authority/provenance; add integration tests.
+- Current `packages/titan-platform/src/ported/titan-runtime/decision-engine/index.ts` blob `a86d862e2dde6a574a88158a5644f80e9a9cbf5d` remains the thin authority-neutral envelope verified in CSA-041.
+- Direct fetches of likely titan-platform DecisionPacket/decision implementation paths did not locate another implementation in this pass.
+### Interpretation
+#59 is not merely a cleanup ticket: it is the explicit open owner for the missing durable decision lifecycle. Implement by converging existing decision-rights, authority, provenance and Interaction Engine state foundations, not by creating a parallel Decision Engine.
+### Classification
+OPEN CANONICAL GAP / EXISTING OWNER #59
+### Confidence
+HIGH for #59 scope and inspected paths; repository-wide absence beyond inspected paths is not claimed.
