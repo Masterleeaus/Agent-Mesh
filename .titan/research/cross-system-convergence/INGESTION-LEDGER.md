@@ -290,3 +290,6 @@ Needs re-ingestion: YES
 
 
 | INGEST-038 | #768 implementation slice 6 | issue #768 update + Personal Zero state service | state-service blob 82b470c958194bac7f82742c1c79d81a3595dc87; commits 1558b64,2769a6f | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Correction, prediction-error and verified-outcome learning proposals are now persisted as relationship-scoped pending_review records after authority-neutral assertion. Revocation suppresses proposal access/new governed proposal creation. | YES |
+
+
+| INGEST-039 | #768 slices 7-8 | issue #768 updates + learning review/consumption/state service | review blob 4c8fa477ccc655a4f626ebd71efe34828f543f9b; consumption blob ed691615ec70bcc9da7df01d59b85386946b6e26; state blob 130a239b261fd1f9a4ca892a69b27c9c5c96c515 | ACTIVE/PROVISIONAL | VERIFIED SOURCE; CI PENDING | Evidenced accept/reject/supersede lifecycle and read-only accepted-learning projections for Interaction/Decision/Workforce now exist. Application/execution authority remains false. | YES |
