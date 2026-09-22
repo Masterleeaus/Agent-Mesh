@@ -116,15 +116,18 @@
     "Pass 20: added regression guards preventing bypass and requiring the validated resume gate in mutation payloads",
     "Pass 20: audited current Titan Code Agent Mesh mutation paths; direct agent_mesh mutations are blocked by callTitanBridge and governed mutation calls route through callAgentMeshMutation",
     "Pass 20: central callAgentMeshMutation now performs GitHub-first resume reconciliation before recover, route, checkpoint or takeover operations",
-    "Pass 20: regression guard added for the central mutation preflight and governed dispatch path"
+    "Pass 20: regression guard added for the central mutation preflight and governed dispatch path",
+    "Pass 20: audited the Titan Bridge mutation registry and classified recover_agent, route_packet and codex.run as resume-gated mutation actions",
+    "Pass 20: added requiresResumeGate() beside the existing canonical mutation registry rather than creating a second authority system",
+    "Pass 20: preserved other generic workspace/repository mutations outside this classification because they are not inherently post-takeover Agent Mesh continuation mutations"
   ],
   "current_work": [
-    "Audit Agent Mesh server/workflow-side mutation entrypoints and claim lifecycle for equivalent bypasses"
+    "Wire the resume-gated classification into the common bridge dispatch path and audit service-worker mutation callers"
   ],
   "next_actions": [
-    "Inspect bridge/server handlers for agent_mesh.recover_agent, route_packet, checkpoint and takeover",
-    "Require request-side identity and authority validation server-side, not only browser-side",
-    "Add cross-surface contract tests so Titan Code and Agent Mesh enforce the same mutation rules"
+    "Inspect Titan Bridge call dispatcher and enforce bootstrap for RESUME_GATED_ACTIONS",
+    "Audit direct service-worker recover/route/codex calls",
+    "Add tests proving gated actions cannot dispatch without READY_TO_RESUME"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
