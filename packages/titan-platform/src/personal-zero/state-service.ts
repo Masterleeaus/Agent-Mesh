@@ -7,6 +7,7 @@ import { validateTargetShareAcceptance, type TargetShareAcceptance } from "./sha
 import {
   createCompanyRelationship,
   createUnderstandingState,
+  createUnderstandingEvidence,
   type CompanyRelationship,
   type UnderstandingEvidence,
   type UnderstandingState,
@@ -63,21 +64,22 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
       return repository.put(context,{module_id:MODULE_ID,collection:RELATIONSHIPS,record_id:relationship_id,expected_revision:row.version,data:revoked});
     },
 
-    async putUnderstandingEvidence(context:StorageContextInput,input:UnderstandingEvidence){
+    async putUnderstandingEvidence(context:StorageContextInput,input:Omit<UnderstandingEvidence,"schema"|"version">){
       guardInput(input,"personal_zero.understanding_evidence");requireContextCompany(context,input.company_id);
       if(!input.relationship_id)throw new Error("Company-scoped understanding evidence requires relationship_id");
       const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
       if(!relationship)throw new Error("Personal Zero relationship not found");
       requireRelationshipMatch(relationship,input.one_id,input.zero_id,input.company_id);
-      const row=await repository.put(context,{module_id:MODULE_ID,collection:EVIDENCE,record_id:input.understanding_evidence_id,data:input});
+      const evidenceRecord=createUnderstandingEvidence(input);
+      const row=await repository.put(context,{module_id:MODULE_ID,collection:EVIDENCE,record_id:evidenceRecord.understanding_evidence_id,data:evidenceRecord});
       if(input.correction_of){
-        const proposal=assertLearningProposalAuthorityNeutral(proposeLearningFromCorrection(input));
-        await repository.put(context,{module_id:MODULE_ID,collection:LEARNING_PROPOSALS,record_id:"correction:"+input.understanding_evidence_id,data:createLearningProposalRecord(proposal,{proposal_id:"correction:"+input.understanding_evidence_id,created_at:Number(clock())})});
+        const proposal=assertLearningProposalAuthorityNeutral(proposeLearningFromCorrection(evidenceRecord));
+        await repository.put(context,{module_id:MODULE_ID,collection:LEARNING_PROPOSALS,record_id:"correction:"+evidenceRecord.understanding_evidence_id,data:createLearningProposalRecord(proposal,{proposal_id:"correction:"+evidenceRecord.understanding_evidence_id,created_at:Number(clock())})});
       }
       return row;
     },
 
-    async promoteUnderstanding(context:StorageContextInput,input:UnderstandingState){
+    async promoteUnderstanding(context:StorageContextInput,input:Omit<UnderstandingState,"schema"|"version">){
       guardInput(input,"personal_zero.understanding");requireContextCompany(context,input.company_id);
       if(input.status!=="candidate"&&input.status!=="accepted")throw new Error("Promotion status must be candidate or accepted");
       if(!input.relationship_id)throw new Error("Company-scoped understanding requires relationship_id");
@@ -93,7 +95,7 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
       return repository.put(context,{module_id:MODULE_ID,collection:UNDERSTANDING,record_id:state.understanding_id,data:state});
     },
 
-    async correctUnderstanding(context:StorageContextInput,current_id:string,replacement:UnderstandingState){
+    async correctUnderstanding(context:StorageContextInput,current_id:string,replacement:Omit<UnderstandingState,"schema"|"version">){
       const priorRow=await repository.get(context,MODULE_ID,UNDERSTANDING,current_id);
       const prior=recordData<UnderstandingState>(priorRow);
       if(!priorRow||!prior)throw new Error("Understanding state not found");
@@ -105,7 +107,7 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
       return next;
     },
 
-    async putExperience(context:StorageContextInput,input:ExperienceRecord,verifiedOutcome?:Readonly<{company_id:string;outcome_id:string;verified:boolean;receipt_refs:readonly string[]}>){
+    async putExperience(context:StorageContextInput,input:Omit<ExperienceRecord,"schema"|"version">,verifiedOutcome?:Readonly<{company_id:string;outcome_id:string;verified:boolean;receipt_refs:readonly string[]}>){
       guardInput(input,"personal_zero.experience");guardInput(verifiedOutcome,"personal_zero.verified_outcome");requireContextCompany(context,input.company_id);
       if(!input.relationship_id)throw new Error("Company-scoped experience requires relationship_id");
       const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
