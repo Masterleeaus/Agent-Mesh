@@ -150,3 +150,7 @@ if(!sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_m
 const bc=fs.readFileSync('src/integration/titan-bridge-client.js','utf8');
 if(!bc.includes("const RESUME_GATED_MUTATIONS=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover'])")) throw new Error('bridge resume-gated mutation set incomplete');
 if(bc.includes("const RESUME_GATED_ACTIONS=new Set")) throw new Error('stale duplicate resume gate classification remains');
+
+if(!bridge.includes("agent_mesh.continuation.takeover")) throw new Error('takeover must remain resume-gated');
+if(bridge.includes("const RESUME_GATED_MUTATIONS=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint'")) throw new Error('continuation checkpoint must not be blocked by reconciliation');
+if(!sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover']).has(action)")) throw new Error('Agent Mesh mutation gate set drifted');
