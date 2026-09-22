@@ -194,3 +194,14 @@ Evidence: workforce recovery policy requires checkpoint before consequential act
 Library file: Titan-Zero-Library-Archaeology prompt (Pasted markdown 20260922-105857)
 Classification: ARCHAEOLOGY MISSION SPECIFICATION.
 Evidence: explicitly requires search for rollback, undo, rewind, revisions, snapshots, immutable history, audit trails, event sourcing, compensation, recovery, transaction history and temporal state, compared with current Titan Rewind.
+
+
+## SOURCE-LIB-028
+Library file: ARCHITECTURE-ROADMAP-TARGET-ARCHITECTURE-PASS01.json
+Classification: PHYSICALLY VERIFIED DONOR MAPPING.
+Evidence: Titan Signal Engine Master v0.20.0-rc.8.4, SHA 3d3fa53a94186340babf116222bff1725ef5e95a9c362dfef80090091cfc4a4a. Verified paths include SignalDeliverySchedulerContract, SignalDeliveryLeaseManager, SignalEvent, SignalAnomalyContract, SignalAnomaly and signal.anomaly.detected.v1 schema. Mapping conclusion: anomaly/exception detection is distributed across Signal, Workforce, Assurance and Governance; converge signals rather than creating another detector.
+
+## SOURCE-LIB-029
+Library file: WORKFORCE-ARCHITECTURE.json
+Classification: CURRENT ARCHITECTURE SPECIFICATION.
+Evidence: Decision Intelligence anomaly workflow requires baseline comparison, source provenance/freshness, duplicate suppression, evidence packaging, confidence/uncertainty, separation of observation from inference/recommendation, and explicitly lists failure patterns including stale-data false anomalies, repeated alerts and correlation stated as cause.
