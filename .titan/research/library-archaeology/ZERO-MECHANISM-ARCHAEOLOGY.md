@@ -108,3 +108,7 @@ Assurance design separates confidence, evidence independence and evidence suffic
 
 ### ZM-013 — Reality, Zero and Authority must remain separate
 OnboardingPro v6 source inspection confirms a reusable business-evolution lifecycle but not a reason to merge Business Reality and Personal Zero. Canonical flow: Reality informs → Zero understands → Decision recommends → Trust/Assurance/Governance evaluate → current delegated authority permits → Command Bus executes. Business changes can trigger candidate Zero revisions; Zero observations can trigger Business Discovery verification; neither silently rewrites the other. Observation, preference, learning, confidence, recommendation and reality change never mint authority.
+
+
+### ZM-014 — Zero poisoning is a promotion-boundary problem
+Knowledge Authority source verification adds source/version hashing, contradiction, stale/superseded and isolation controls to the previously verified cognitive-event and learning pipeline. Untrusted observations/model outputs/connected data may become evidence candidates but never durable Zero state or instructions directly. Preferred composition: Shield secures untrusted instructions; Knowledge Authority validates provenance/contradictions; Operation Identity validates actors; Learning Governor controls promotion; Rewind preserves recovery lineage; Trust/Assurance/Governance gate consequential action. Do not build a duplicate monolithic Zero Poisoning Engine.
