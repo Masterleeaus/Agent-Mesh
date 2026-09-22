@@ -355,3 +355,21 @@ Remaining convergence/certification targets:
 - verify multi-company same-Zero isolation and portable-state classification;
 - verify correction/supersession and outcome lineage under repository revisions/restarts;
 - merge/final certification and update dependent #153/#59/#37/#767 consumers to use the canonical contracts rather than copying them.
+
+
+## Issue #768 slice-4 verification
+Preserve the new calibration/freshness/sharing primitives; do not duplicate them in #37 or another Personal Zero subsystem.
+
+Cross-owner rule:
+- #768 owns personal prediction/outcome evidence and Brier calibration;
+- #37 may consume that verified/calibrated evidence for bounded predictive policy adaptation, but must not create a second Personal Zero prediction-memory store;
+- #153 may consume/share memory through explicit classified/provenanced contracts, not silently absorb personal state;
+- #767 Business Reality must not receive Personal Zero understanding without an explicit valid sharing/consent path.
+
+Remaining #768 checks:
+- executed tests/CI;
+- explicit share-grant target relationship validation and revocation path review;
+- retention enforcement/deletion behavior beyond primitive definition;
+- provider-egress enforcement at actual consumer/provider boundary;
+- Trust/Autonomy non-elevation certification;
+- merge/final issue completion evidence.
