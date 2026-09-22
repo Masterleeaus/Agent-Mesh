@@ -201,15 +201,19 @@
     "Pass 20: audited every Agent Mesh bridge mutation call site in the current service worker and bridge client",
     "Pass 20: all work mutations converge through central callAgentMeshMutation policy; generic callTitanBridge rejects Agent Mesh mutations and unknown mesh mutations fail closed",
     "Pass 20: recover_agent, route_packet and continuation.takeover are resume-gated; continuation.checkpoint is continuity-record-only; legacy packet routing is compatibility metadata with authority false",
-    "Pass 20: regression guards lock these mutation boundaries against future bypass"
+    "Pass 20: regression guards lock these mutation boundaries against future bypass",
+    "Pass 20: audited Agent Mesh bridge mutations and confirmed they converge through a central AGENT_MESH_MUTATION_POLICY/callAgentMeshMutation governed path",
+    "Pass 20: generic callTitanBridge now rejects Agent Mesh mutation actions, preventing callers from bypassing resume governance",
+    "Pass 20: recover_agent, route_packet and continuation takeover are resume-gated; checkpoint remains continuity-record-only; unknown Agent Mesh mutations fail closed",
+    "Pass 20: regression guards lock the governed-path requirement and Manager execution routing"
   ],
   "current_work": [
-    "Replace remaining legacy packet terminology in active Manager routing surfaces with GitHub issue/subgoal terminology while retaining compatibility adapters only"
+    "Harden mutation identity binding so governed calls cannot target a different issue/subgoal/branch than the reconciled snapshot"
   ],
   "next_actions": [
-    "Audit active route_packet action contract and bridge host implementation",
-    "Introduce canonical issue/subgoal route naming if host supports it, retaining route_packet only as compatibility adapter",
-    "Update tests and UI-facing Manager terminology without changing GitHub authority"
+    "Bind payload issue/subgoal/claim branch to bootstrap work identity where applicable",
+    "Reject cross-issue or cross-branch mutation payloads before bridge dispatch",
+    "Add tests for target substitution attempts"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
