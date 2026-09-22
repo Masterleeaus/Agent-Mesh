@@ -73,3 +73,17 @@ Verified current runtime semantics:
 
 Boundary:
 This verifies Authority Continuance primitives in current code. It does not by itself certify Goal42's recursive system/user/downstream-agent handshake or all trust-tier promotion semantics.
+
+
+## Trust lifecycle verification update
+Authority Continuance primitives are source-verified in current runtime, but the broader earned-Trust lifecycle is not certified complete.
+
+Current issue evidence:
+- #640 OPEN: canonical implementation lane for evidence-derived trust, class ceilings, recursive system/user/downstream acceptance handshake, plan gating, revocation/regression and path-scoped trust.
+- #540 OPEN/TODO: final free-to-predictive lifecycle and downgrade/re-upgrade certification.
+- #761/#762: evidence-recovery lane, not implementation proof.
+
+Therefore:
+- Authority Continuance: SUBSTANTIALLY IMPLEMENTED runtime primitives.
+- Recursive three-way/recursive handshake: NOT YET VERIFIED COMPLETE.
+- Full trust-tier/autonomy progression: NOT YET CERTIFIED.
