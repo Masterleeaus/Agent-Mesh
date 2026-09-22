@@ -5,12 +5,18 @@ import {
   type CompanyRelationship,
   type UnderstandingEvidence,
   type UnderstandingState,
+  createExperienceRecord,
+  createCognitiveEvent,
+  type ExperienceRecord,
+  type CognitiveEvent,
 } from "./contracts.js";
 
 const MODULE_ID="personal-zero";
 const RELATIONSHIPS="relationships";
 const EVIDENCE="understanding-evidence";
 const UNDERSTANDING="understanding";
+const EXPERIENCES="experiences";
+const COGNITIVE_EVENTS="cognitive-events";
 
 type Repository=Readonly<{
   put(context:StorageContextInput,input:Readonly<{module_id:string;collection:string;record_id:string;expected_revision?:number;data?:unknown}>):Promise<StorageRecord>;
@@ -75,6 +81,42 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
       const superseded=createUnderstandingState({...prior,status:"superseded",updated_at:Number(clock())});
       await repository.put(context,{module_id:MODULE_ID,collection:UNDERSTANDING,record_id:current_id,expected_revision:priorRow.version,data:superseded});
       return next;
+    },
+
+    async putExperience(context:StorageContextInput,input:ExperienceRecord,verifiedOutcome?:Readonly<{company_id:string;outcome_id:string;verified:boolean;receipt_refs:readonly string[]}>){
+      if(!input.relationship_id)throw new Error("Company-scoped experience requires relationship_id");
+      const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
+      if(!relationship)throw new Error("Personal Zero relationship not found");
+      requireRelationshipMatch(relationship,input.one_id,input.zero_id,input.company_id);
+      if(input.actual_outcome!=null){
+        if(!verifiedOutcome||!verifiedOutcome.verified||verifiedOutcome.company_id!==input.company_id||verifiedOutcome.outcome_id!==input.verified_outcome_ref||verifiedOutcome.receipt_refs.length===0)throw new Error("Verified outcome proof required for actual outcome");
+      }
+      const experience=createExperienceRecord(input);
+      return repository.put(context,{module_id:MODULE_ID,collection:EXPERIENCES,record_id:experience.experience_id,data:experience});
+    },
+
+    async appendCognitiveEvent(context:StorageContextInput,input:Omit<CognitiveEvent,"authority_neutral"|"execution_authority">){
+      if(!input.relationship_id)throw new Error("Company-scoped cognitive event requires relationship_id");
+      const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,input.relationship_id));
+      if(!relationship)throw new Error("Personal Zero relationship not found");
+      requireRelationshipMatch(relationship,input.one_id,input.zero_id,input.company_id);
+      const event=createCognitiveEvent(input);
+      return repository.put(context,{module_id:MODULE_ID,collection:COGNITIVE_EVENTS,record_id:event.event_id,data:event});
+    },
+
+    async getConsumerProjection(context:StorageContextInput,relationship_id:string,consumer:"interaction"|"decision"|"workforce"){
+      const relationship=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,relationship_id));
+      if(!relationship||relationship.status!=="active")return null;
+      const [understandingRows,experienceRows,eventRows]=await Promise.all([
+        repository.list(context,{module_id:MODULE_ID,collection:UNDERSTANDING}),
+        repository.list(context,{module_id:MODULE_ID,collection:EXPERIENCES}),
+        repository.list(context,{module_id:MODULE_ID,collection:COGNITIVE_EVENTS}),
+      ]);
+      const same=<T extends {one_id:string;zero_id:string;company_id:string;relationship_id:string|null}>(x:T|null):x is T=>Boolean(x&&x.one_id===relationship.one_id&&x.zero_id===relationship.zero_id&&x.company_id===relationship.company_id&&x.relationship_id===relationship_id);
+      const understanding=understandingRows.map(r=>recordData<UnderstandingState>(r)).filter(s=>same(s)&&s.status==="accepted");
+      const experiences=experienceRows.map(r=>recordData<ExperienceRecord>(r)).filter(same);
+      const events=eventRows.map(r=>recordData<CognitiveEvent>(r)).filter(same);
+      return Object.freeze({protocol:"titan.personal-zero.projection.v1",consumer,company_id:relationship.company_id,one_id:relationship.one_id,zero_id:relationship.zero_id,relationship_id,understanding:Object.freeze(understanding),experiences:Object.freeze(experiences),cognitive_events:Object.freeze(events),authority_refs:Object.freeze([...relationship.authority_refs]),authority_neutral:true,execution_authority:false});
     },
 
     async listUnderstanding(context:StorageContextInput,relationship_id:string){
