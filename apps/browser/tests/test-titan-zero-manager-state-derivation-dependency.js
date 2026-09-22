@@ -2,7 +2,7 @@ const assert=require('assert'),fs=require('fs'),vm=require('vm'),path=require('p
 const root=path.resolve(__dirname,'..');const s={console};s.globalThis=s;vm.createContext(s);
 const load=r=>vm.runInContext(fs.readFileSync(path.join(root,r),'utf8'),s,{filename:r});
 [
-'manager-lifecycle','manager-eligibility','manager-live-state','manager-state-derivation','manager-dependency-engine','manager-queue-state','manager-restart-reconstruction'
+'manager-lifecycle','manager-eligibility','manager-github-state','manager-live-state','manager-state-derivation','manager-dependency-engine','manager-queue-state','manager-restart-reconstruction'
 ].forEach(n=>load(`src/titan-zero/${n}.js`));
 const L=s.TitanZeroManagerLifecycle,S=s.TitanZeroManagerStateDerivation,D=s.TitanZeroManagerDependencyEngine,Q=s.TitanZeroManagerQueueState,R=s.TitanZeroManagerRestartReconstruction;
 assert(L&&S&&D&&Q&&R,'new manager state modules must exist');
@@ -66,9 +66,13 @@ assert.strictEqual(stale.status,'STATE_DRIFT_DETECTED');
 assert(stale.drift.some(x=>x.code==='packet-claims-state-drift'));
 const snap=R.snapshot(st);const restored=R.restore(snap);
 assert.strictEqual(restored.schema,'titan-zero.manager.derived-state.v3');
-assert.strictEqual(restored.restart.reconstructed,true);
-assert.strictEqual(restored.restart.integrityVerified,true);
+assert.strictEqual(restored.restart.reconstructed,false);
+assert.strictEqual(restored.restart.cacheIntegrityVerified,true);
+assert.strictEqual(restored.restart.githubReconciliationRequired,true);
+assert.strictEqual(restored.failClosed,true);
 assert.throws(()=>R.restore({...snap,checksum:'0'.repeat(64)}));
+const rebuilt=R.reconstruct(snap,{issue:{number:734,subgoal_id:'TZ-ROADMAP-55-SG-01',state:'OPEN'},mainSha:'a'.repeat(40),baseSha:'a'.repeat(40),headSha:'b'.repeat(40),branch:'agent/TZ-ROADMAP-55-SG-01',claimBranchExists:true,pr:{number:737,state:'OPEN',headBranch:'agent/TZ-ROADMAP-55-SG-01',baseBranch:'main'}});
+assert.strictEqual(rebuilt.restart.reconstructed,true);assert.strictEqual(rebuilt.restart.githubReconciled,true);assert.strictEqual(rebuilt.restart.localClaimsAuthoritative,false);assert.strictEqual(rebuilt.github.git.branch,'agent/TZ-ROADMAP-55-SG-01');assert.strictEqual(rebuilt.authority.durableTruth,'github');
 console.log('PASS test-titan-zero-manager-state-derivation-dependency');
 
 const gh={state:'ACTIVE',git:{mainSha:'a'.repeat(40),headSha:'b'.repeat(40),branch:'agent/TZ-ROADMAP-55-SG-01'},authority:{durableTruth:'github'}};
