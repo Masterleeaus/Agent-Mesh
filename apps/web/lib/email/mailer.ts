@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
+import { recordDeliveryReceipt } from "@/lib/communications-log";
 import {
   createDeliveryReceipt,
   type CommunicationEnvelope,
@@ -54,8 +55,8 @@ export interface GovernedEmailOptions extends SendOptions {
 }
 
 export type GovernedEmailResult =
-  | { ok: true; receipt: DeliveryReceipt }
-  | { ok: false; error: string; receipt: DeliveryReceipt };
+  | { ok: true; receipt: DeliveryReceipt; persisted: boolean }
+  | { ok: false; error: string; receipt: DeliveryReceipt; persisted: boolean };
 
 export async function sendEmail(opts: SendOptions): Promise<{ ok: boolean; error?: string }> {
   if (!isEmailConfigured()) {
@@ -102,7 +103,8 @@ export async function sendGovernedEmail(opts: GovernedEmailOptions): Promise<Gov
       : { ok: false, error_code: "email-provider-failed" },
     attempt,
   });
+  const persisted = await recordDeliveryReceipt(receipt);
   return result.ok
-    ? { ok: true, receipt }
-    : { ok: false, error: result.error ?? "Email send failed", receipt };
+    ? { ok: true, receipt, persisted }
+    : { ok: false, error: result.error ?? "Email send failed", receipt, persisted };
 }
