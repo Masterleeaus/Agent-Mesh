@@ -146,3 +146,18 @@ Canonical owners:
 
 Treatment:
 CONVERGE + VERIFY. Do not create another Trust state machine or handshake issue. Authority Continuance evidence remains subject to #761's incomplete archaeology.
+
+
+## Evolution / Reality implementation readiness
+Status: EXISTING ACTION #767 / UNCLAIMED / NOT IMPLEMENTED
+Priority: P1
+
+Verified current primitive:
+- packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts provides deterministic, company-scoped, authority-neutral Nexus recommendation orchestration.
+
+Do not replace Nexus.
+
+#767 should recover/connect only the missing lifecycle semantics after deep-scanning current owners:
+Observation → Reality provenance/facts → freshness/change detection → reassessment → proposal → governed reconfiguration → verification → outcome/rollback → learning.
+
+Implementation must preserve #767 boundaries: Business Reality separate from Personal Zero, company_id only, no Zero inference rewrite of authoritative Reality, and consequential mutation through canonical authority/governance/Command Bus.
