@@ -49,3 +49,9 @@ Deep-scan of Library evidence confirms Titan AI/Titan AI Core/Model Council alre
 The concrete missing provider-neutral TypeScript semantic was an explicit cost-sovereignty decision contract. Added cost-sovereignty.ts with canonical company_id, device/customer-hosted/BYO/Titan route vocabulary, local-only enforcement, explicit Titan entitlement or metered opt-in requirements, and an unconditional titan_funded_fallback=false guarantee. It is policy/decision metadata only and grants no execution authority. Added regression coverage and exports.
 
 No credential material, provider SDK, Local Bridge server, or duplicate inference runtime was introduced. Local Bridge/Ollama remain provider/runtime implementations behind the canonical policy layer.
+
+## Pass 5 — Credential-reference security convergence
+
+Library evidence identifies encrypted credential storage, secret redaction, provider connection references and company-scoped access as mature donor semantics. The current connector descriptor already deliberately carries only an opaque credential_ref, so no vault or secret store was duplicated.
+
+Added the missing explicit TypeScript credential-reference contract: `credential-contract.ts`. It binds references to `company_id` and provider, rejects malformed references, and guarantees secret material is not represented in the contract. Added exports and focused regressions. Actual credential storage/resolution remains outside this descriptive contract and must be implemented only through the canonical governed security/storage path if a later repository audit proves a gap.
