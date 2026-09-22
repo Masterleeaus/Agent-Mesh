@@ -4,53 +4,65 @@ AGENT MISSION:
 Mechanism-first archaeology for Titan Zero: identify historical and current building blocks that can contribute to HUMAN=ONE / DIGITAL WORKING INTELLIGENCE=ZERO, without overfitting to the word “Zero”.
 
 STATUS:
-IN PROGRESS
+IN PROGRESS — SYNTHESIS / HANDOFF PREPARATION
 
 CURRENT PHASE:
-Personal Zero architecture gap is now linked to existing issue #768. Historical donor verification is focused on LocalBrain v10.12.0, Phase10 Device Intelligence, OnboardingPro v6 and Decision Engine Step25.
+Cross-source synthesis after direct verification of the highest-value Personal Zero, Decision, Council, Knowledge, Reality, Rewind, privacy/locality, physical/environmental, business-system, Titan Oversight and OnboardingPro Evolution donors.
 
 COMPLETED:
-- Inspected repository execution contract in AGENTS.md.
-- Confirmed no existing canonical .titan/research workspace was present in the inspected paths.
-- Established isolated specialist workspace.
-- Created coordination files.
-- Created GitHub issue #763 and canonical claim branch agent/763.
-- Implemented read-only mechanism-first archaeology workflow.
-- Opened PR #764.
+- Repository execution/claim contract inspected; isolated #763 workspace established.
+- Issue #763, branch agent/763 and PR #764 established.
+- Read-only mechanism-first archaeology workflow implemented.
+- Personal Zero canonical owner gap mapped to #768 rather than a duplicate implementation.
+- Direct donor verification completed for LocalBrain / Interaction Engine v10.12.0.
+- Phase10 memory/truth/local-device design classified as mixed implemented/spec evidence.
+- Direct Decision Engine Step25 preference, observation, history and verified-outcome learning inspected.
+- Direct Model Council v1.0.0-rc.2 governed deliberation/receipt implementation inspected.
+- Assurance evidence-independence design mapped.
+- OnboardingPro Reality/Observation and Business↔Zero boundaries mapped.
+- Knowledge Authority poisoning/promotion controls mapped.
+- Rewind recovery/irreversibility semantics mapped.
+- Privacy/consent and Cost Sovereignty/local-first semantics mapped.
+- Workforce/surface ownership and one governed execution spine mapped.
+- Operation Identity + Authority Continuance mapped.
+- Physical/environmental intelligence and evidence boundaries mapped.
+- Business-system canonical ownership / anti-duplication boundaries mapped.
+- T0GM converged conceptually to Titan Oversight with strict company isolation.
+- Direct OnboardingPro v6 strategy-memory, anti-repeat, outcome, rollback and reconfiguration source verification completed.
+- Shared mirror maintained at .titan/research/library-archaeology/ZERO-MECHANISM-ARCHAEOLOGY.md through ZM-024.
 
-IN PROGRESS:
-- Independently verify the four Personal Zero donor families recorded by #768.
-- Direct source verification of current authority/context implementation evidence.
-- Verification of current versus historical mechanism candidates.
+SYNTHESIS RESULT:
+The archaeology does not support creating a monolithic new Zero engine. The strongest architecture is a composition of canonical owners:
+- #768 Personal Zero Understanding + Experience contracts.
+- #153 Business Memory / governed business knowledge-memory.
+- #767 Business Reality + Evolution convergence.
+- #37 bounded verified-outcome learning / Learning Governor semantics.
+- #633 Decision / Model Council / Knowledge Authority intelligence convergence.
+- #21 and #725 durable context, identity, handoff and cross-surface continuity.
+- Titan Trust / Autonomy / Risk / Assurance / Governance / Shield for current authority and safety.
+- Command Bus + canonical business-domain owners for consequential mutation.
+- Rewind for evidence-driven recovery.
+- AI Core / Cost Sovereignty / Local Bridge for provider-neutral inference execution.
 
-NOT YET SCANNED:
-- Full two-year Git history at source level.
-- All historical branches and deleted implementations.
-- Library/connected historical evidence outside the repository tree.
-- Detailed component-level verification of the highest-value memory/learning candidates.
+REMAINING GAPS / UNRESOLVED:
+1. Current TypeScript parity is not yet certified for all recovered OnboardingPro v6 Evolution semantics: exact-proposal approval fingerprinting, anti-repeat/retest, outcome measurement and recovery linkage.
+2. One canonical production provider-independent local/Ollama/browser-local routing contract was not proven by scanned implementation evidence.
+3. Personal Zero #768 requires implementation ownership/package selection and production schemas; archaeology should not create a second owner.
+4. Business Reality/Evolution #767 still needs convergence of verified donor mechanisms without retaining OnboardingPro as parallel authority.
+5. Historical full-Git traversal remains incomplete because the workflow_dispatch-only archaeology Action cannot be started with the exposed GitHub connector.
+6. Claim-gate protocol mismatch for branch agent/763 remains unresolved.
+7. Existing unrelated Titan Zero CI worker dependency/typecheck debt remains outside #763.
 
 BLOCKERS:
-- PR #764 claim gate fails because the repository validator accepts only roadmap-style `agent/<subgoal-id>` branch names (example `agent/TZ-ROADMAP-31-SG-01`), while this research issue was claimed as `agent/763` under the written AGENTS.md issue-number protocol.
-- Titan Zero CI also fails in pre-existing worker dependency/typecheck areas unrelated to this read-only research change: unresolved @ai-fsm/email-templates, mysql2/promise, @ai-fsm/log, @ai-fsm/domain/promise-capture, plus workflow-events test/export mismatches.
-- The archaeology workflow itself is workflow_dispatch-only and cannot be started by the currently exposed GitHub connector; its generated heuristic report therefore remains uninspected.
+- PR #764 claim gate expects roadmap-style agent/<subgoal-id> while written research claim used agent/763.
+- Archaeology workflow is workflow_dispatch-only and cannot be freshly dispatched by the exposed connector.
+- Unrelated pre-existing worker dependency/typecheck failures remain outside this research issue.
 
-MAJOR ARTIFACTS CREATED:
-- .titan/research/zero-mechanism-archaeology/STATUS.md
-- .titan/research/zero-mechanism-archaeology/FINDINGS.md
-- .titan/research/zero-mechanism-archaeology/ACTIONS.md
-- .titan/research/zero-mechanism-archaeology/SOURCES.md
-- .github/workflows/titan-zero-mechanism-archaeology.yml
+HANDOFF READINESS:
+HIGH. Findings GH-001 through GH-139 plus SOURCE-LIB-001 through SOURCE-LIB-025 provide a durable mechanism map and direct-source provenance for the major donor families. #763 should remain open until the final source/index housekeeping and handoff checkpoint are completed; do not mark COMPLETE yet.
 
-ISSUES CREATED/UPDATED:
-- #763 — mechanism-first Zero archaeology
-- #764 — PR implementing the archaeology Action
+NEXT TARGET:
+Final source/index housekeeping and handoff: reconcile action IDs/statuses, backfill missing GitHub/current-repo provenance where available, produce concise ownership/gap matrix, and identify exactly which remaining work belongs to existing issues rather than #763.
 
 LAST UPDATED:
-2026-09-22 — CI/claim-gate verification checkpoint
-
-COMPLETION ESTIMATE:
-Several research phases remain: current-system mapping, historical mechanism recovery, candidate verification, cross-source deduplication, and final handoff.
-
-
-## Privacy / consent checkpoint
-Verified convergence semantics for purpose-bound consent, separate observe/retain/learn/retrieve/egress permissions, revocation propagation, locality-aware inference routing, privacy-class normalization and purpose-minimised Zero projections. Next target: Cost Sovereignty + Local Bridge/Ollama/provider independence and its interaction with Personal Zero privacy/availability. Status remains IN PROGRESS.
+2026-09-23 — synthesis checkpoint.
