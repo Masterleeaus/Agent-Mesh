@@ -425,3 +425,14 @@ Remaining #768 work:
 - merge and final issue certification.
 
 Cross-owner consequence: #37 can consume accepted/calibrated learning evidence for bounded predictive triggers, while #59/Interaction/Workforce retain their own current-state/authority evaluation.
+
+
+## Issue #768 company-boundary hardening
+Personal Zero now directly composes the canonical storage boundary guard. Preserve this; do not add a Personal Zero-specific tenancy abstraction.
+
+Final certification should explicitly verify:
+- all mutating paths fail closed on context/company mismatch, including calibration, proposal review/supersession and sharing;
+- all nested legacy `tenant_id` / `tenant_company_id` / `workspace_tenant_id` inputs are rejected;
+- read paths cannot use a mismatched context to reveal another company's Personal Zero state;
+- personal-private provider egress remains denied at actual provider/consumer integration;
+- #648/#72 remains the repository-wide company-boundary owner; #768 is a compliant consumer, not a new owner.
