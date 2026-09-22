@@ -205,3 +205,13 @@ Hardened the canonical interaction client:
 - local optimistic conversation state remains available, but is not evidence of server acceptance or AI output.
 
 A real production transport remains required before Command/Go chat can claim live AI responses.
+
+## Pass 15 — interaction boundary regression coverage
+
+Added focused regression coverage for the hardened interaction boundary:
+- canonical alias normalization is covered (`command/owner → zero`, `field → go`, `customer → hub`);
+- no-transport behavior is asserted fail-closed;
+- returned transport events are filtered by exact `company_id`, conversation and canonical surface;
+- legacy tenant authority is rejected at the interaction boundary.
+
+The test file is committed as coverage evidence, but was not executed in this connector-only pass; CI/runtime execution remains required before claiming it passes.
