@@ -155,3 +155,17 @@ Status: EVIDENCE ADDED TO #302
 
 Summary:
 Do not resurrect Titan Locker/Shield/auth/policy/evidence systems as parallel runtimes. Preserve fail-closed authorization, company+actor/device/session binding, secret rotation/revocation/least privilege, secret exclusion from prompts/logs/telemetry/projections, replay/stale-session denial, privileged-role rejection for untrusted callers, and object-ownership authorization. Certify through #310.
+
+
+---
+
+## ACTION-LIB-012
+
+Type: CONVERGE EXISTING MOBILE OWNERS / REJECT DUPLICATE APP CORES
+Priority: P0
+Finding: FINDING-LIB-015
+GitHub Issues: #636, #542, #641, #121, #120
+Status: EVIDENCE ADDED TO #636
+
+Summary:
+Treat verified Titan Zero/Go/Hub Library masters as donors only. Retain recovered shared Flutter/offline/maps/evidence/generated-UI foundations; finish canonical Surface SDK/Core transport, Go and Command projections, PWA install identities and native release/device certification through existing owners. No second mobile runtime or per-surface business authority.
