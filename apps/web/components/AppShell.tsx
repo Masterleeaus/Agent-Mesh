@@ -77,6 +77,7 @@ interface NavSection {
 
 // The office overview/dashboard. Labelled "Overview" (not "Today") so it reads
 // as the numbers screen and doesn't compete with the My Day field surface.
+const NAV_COMMAND:    NavItem = { href: "/app/command",      label: "Command",    Icon: IconDashboard };
 const NAV_TODAY:      NavItem = { href: "/app",              label: "Overview",   Icon: IconDashboard };
 // EPIC-006 Phase 5: the field surface. Owners can switch into it; pure admins
 // (who don't do field work) and the all-techs list never see it here.
@@ -118,17 +119,17 @@ export function getNavSections(role: Role, view: "office" | "field" = "field"): 
   if (role === "tech") {
     const myDay: NavItem = { href: "/app/my-work", label: "My Day", Icon: IconMyDay };
     const visits: NavItem = { href: "/app/visits", label: "Visits", Icon: IconVisits };
-    return [{ label: "", items: [myDay, visits, NAV_DAY_REVIEW] }];
+    return [{ label: "", items: [{ href: "/app/go", label: "Go", Icon: IconMyDay }, myDay, visits, NAV_DAY_REVIEW] }];
   }
 
   // EPIC-006 Phase 5: pure admins never see the field home.
   if (role === "admin") {
-    return buildHubSections(NAV_TODAY);
+    return buildHubSections(NAV_COMMAND);
   }
 
   // Owner: sidebar reflects the ACTIVE workspace so the two homes never sit
   // side-by-side (TASK-058 follow-up). Shared business destinations stay in both.
-  const home = view === "office" ? NAV_TODAY : NAV_MY_DAY;
+  const home = view === "office" ? NAV_COMMAND : NAV_MY_DAY;
   return buildHubSections(home);
 }
 
@@ -138,24 +139,24 @@ export function getNavSections(role: Role, view: "office" | "field" = "field"): 
  */
 export function getBottomNavItems(role: Role): NavItem[] {
   if (role === "tech") {
-    const myDay: NavItem = { href: "/app/my-work", label: "My Day", Icon: IconMyDay };
-    const visits: NavItem = { href: "/app/visits", label: "Visits", Icon: IconVisits };
-    return [myDay, visits];
+    const go: NavItem = { href: "/app/go", label: "Go", Icon: IconMyDay, activePrefixes: ["/app/go"] };
+    const active: NavItem = { href: "/app/my-work", label: "Active", Icon: IconVisits, activePrefixes: ["/app/my-work", "/app/visits"] };
+    return [go, active];
   }
 
   const home: NavItem =
     role === "owner"
       ? {
-          href: "/app/my-work",
-          label: "Home",
+          href: "/app/command",
+          label: "Command",
           Icon: IconMyDay,
-          activePrefixes: ["/app/my-work", "/app/day-review", "/app/timeline", "/app/capture"],
+          activePrefixes: ["/app/command"],
         }
       : {
-          href: "/app",
-          label: "Home",
+          href: "/app/command",
+          label: "Command",
           Icon: IconDashboard,
-          activePrefixes: ["/app/day-review", "/app/timeline", "/app/capture"],
+          activePrefixes: ["/app/command"],
         };
 
   const work: NavItem = {
@@ -245,7 +246,7 @@ export function AppShell({ role, userName, reviewPending, children }: AppShellPr
   const isAdminOrOwner = role === "owner" || role === "admin";
   // Logo goes to each role's home: My Day for field roles, the office dashboard
   // for pure admins (who get bounced there from My Day anyway).
-  const homeHref = role === "admin" ? "/app" : "/app/my-work";
+  const homeHref = role === "tech" ? "/app/go" : "/app/command";
 
   const { summary: attention, refresh: refreshAttention } = useAttentionSummary(isAdminOrOwner);
 
