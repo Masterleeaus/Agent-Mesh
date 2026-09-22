@@ -8,7 +8,9 @@ test('Signal prioritisation is deterministic and company scoped',()=>{
   {id:'a',company_id:'company-1',kind:'risk',priority:5,confidence:.8},
   {id:'x',company_id:'company-2',kind:'risk',priority:99,confidence:1},
  ];
- assert.deepEqual(prioritizeSignals(signals,'company-1').map(s=>s.id),['a','b']);
+ assert.throws(()=>prioritizeSignals(signals,'company-1'),/signal-company-mismatch/);
+ const local=signals.filter(s=>s.company_id==='company-1');
+ assert.deepEqual(prioritizeSignals(local,'company-1').map(s=>s.id),['a','b']);
 });
 
 test('Signal normalization never confers authority',()=>{
