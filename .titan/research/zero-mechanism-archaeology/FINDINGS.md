@@ -1638,3 +1638,128 @@ HIGH
 
 ### Related action
 Rewind; #768.
+
+
+---
+
+## FINDING-GH-064
+
+### Finding
+OnboardingPro v6's purpose-bound discovery consent is the strongest verified historical donor for Zero observation consent. Consent should bind purpose, source/scope, provenance, lifecycle/expiry and revocation rather than operate as a one-time global “AI access” switch.
+
+### Classification
+SUPERIOR HISTORICAL / IMPLEMENTED DONOR
+
+### Confidence
+HIGH
+
+### Related action
+#767; #768; privacy architecture.
+
+---
+
+## FINDING-GH-065
+
+### Finding
+Zero requires separate permissions for observing, retaining, learning from, retrieving, and externally disclosing information. Permission to read a source for a bounded task does not automatically permit durable personal modelling or later provider egress.
+
+### Why it matters
+This prevents purpose creep: `can observe ≠ can remember ≠ can learn ≠ can share ≠ can act`.
+
+### Classification
+PRIVACY INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#768; Intelligence Runtime; Storage/Privacy policy.
+
+---
+
+## FINDING-GH-066
+
+### Finding
+Consent revocation must propagate forward into future processing. Revocation should stop new observation and disallowed retrieval/egress immediately, invalidate affected caches/projections where policy requires, and trigger retention/deletion/supersession handling for derived Zero state according to provenance and applicable policy.
+
+### Important boundary
+Revocation should not falsify immutable audit/evidence history where lawful retention is required; retained audit material must become unavailable for ordinary inference if its processing purpose is no longer valid.
+
+### Classification
+TARGET PRIVACY HARDENING
+
+### Confidence
+HIGH
+
+### Related action
+#768; Rewind; Storage Fabric; Knowledge Authority.
+
+---
+
+## FINDING-GH-067
+
+### Finding
+Provider routing is a privacy decision as well as a cost/capability decision. The distributed-intelligence architecture already defines a preferred locality order—device/local → customer-controlled → Local Bridge/Ollama → BYO provider → customer-owned service → explicitly entitled Titan-managed → explicit metered add-on—and explicitly forbids silent escalation from private/local processing to cloud AI.
+
+### Why it matters
+Zero's persistent personal context makes silent provider fallback especially dangerous. Every inference should be able to explain where it ran and what data left the trusted boundary.
+
+### Classification
+TARGET ARCHITECTURE / STRONG SPECIFICATION
+
+### Confidence
+HIGH
+
+### Related action
+#647; #768; Intelligence Runtime.
+
+---
+
+## FINDING-GH-068
+
+### Finding
+Privacy classification must travel with Zero evidence and derived state. The LocalBrain donor already demonstrates `user_private`; Phase10 defines device-private/user-private/team/tenant/collective-safe scopes. These are useful semantics, but canonical TypeScript contracts should normalize them into one privacy/locality policy rather than importing parallel taxonomies.
+
+### Classification
+CONVERGENCE REQUIREMENT
+
+### Confidence
+HIGH
+
+### Related action
+#768; #647.
+
+---
+
+## FINDING-GH-069
+
+### Finding
+Data minimisation should occur before model/provider invocation. Retrieval for Decision, Workforce or Interaction should produce a purpose-specific projection of Zero state, not expose the complete personal model by default.
+
+### Why it matters
+A persistent Zero may accumulate far more sensitive context than any single worker or model needs. Context minimisation/redaction is therefore a core Zero boundary, not an optimisation.
+
+### Classification
+PRIVACY / SECURITY INVARIANT
+
+### Confidence
+HIGH
+
+### Related action
+#768; Intelligence Runtime; Shield.
+
+---
+
+## FINDING-GH-070
+
+### Finding
+Personal Zero needs transparent provenance-driven correction/deletion semantics: users should be able to understand important durable understanding, correct it, and have corrections propagate through supersession/recomputation without silently granting authority or erasing required lineage.
+
+### Classification
+TARGET ARCHITECTURE
+
+### Confidence
+HIGH
+
+### Related action
+#768; Rewind; Knowledge Authority.
