@@ -26,7 +26,7 @@ export type EquipmentHealthAlert = Readonly<{
 }>;
 
 const DEFAULT_RULES: readonly EquipmentHealthRule[] = Object.freeze([
-  { rule_id: "engine-temperature-high", metric: "engine_temperature_c", severity: "critical", operator: "gt", threshold: 105, recommended_action: "Inspect the cooling system and verify coolant levels." },
+  { rule_id: "engine-temperature-high", metric: "engine_temperature_c", severity: "critical", operator: "gte", threshold: 105, recommended_action: "Inspect the cooling system and verify coolant levels." },
   { rule_id: "hydraulic-pressure-low", metric: "hydraulic_pressure_psi", severity: "warning", operator: "lt", threshold: 1800, recommended_action: "Inspect hydraulic fluid, filters, and pressure sensors." },
   { rule_id: "battery-voltage-low", metric: "battery_voltage", severity: "warning", operator: "lt", threshold: 11.8, recommended_action: "Test the battery and charging-system connections." },
   { rule_id: "connectivity-degraded", metric: "connectivity", severity: "warning", operator: "eq", threshold: "degraded", recommended_action: "Check the telemetry gateway and network connection." },
@@ -47,7 +47,7 @@ function observed(input: EquipmentTelemetryReading, metric: EquipmentHealthRule[
 function matches(value: number | string, rule: EquipmentHealthRule): boolean {
   if (rule.operator === "eq") return String(value) === String(rule.threshold);
   if (typeof value !== "number" || typeof rule.threshold !== "number" || !Number.isFinite(value)) return false;
-  return rule.operator === "gt" ? value > rule.threshold : value < rule.threshold;
+  if (rule.operator === "gt") return value > rule.threshold;\n  if (rule.operator === "gte") return value >= rule.threshold;\n  if (rule.operator === "lte") return value <= rule.threshold;\n  return value < rule.threshold;
 }
 
 /**
@@ -69,7 +69,7 @@ export function evaluateEquipmentTelemetryHealth(
   const alerts: EquipmentHealthAlert[] = [];
   for (const rule of rules) {
     const value = observed(input, rule.metric);
-    if (value !== null && matches(value, rule)) {
+    // FieldFlow treats zero hydraulic pressure/battery as an inactive/offline reading, not a low-value alert.\n    const donorZeroSuppressed = (rule.metric === "hydraulic_pressure_psi" || rule.metric === "battery_voltage") && value === 0;\n    if (value !== null && !donorZeroSuppressed && matches(value, rule)) {
       alerts.push(Object.freeze({
         rule_id: rule.rule_id,
         severity: rule.severity,
