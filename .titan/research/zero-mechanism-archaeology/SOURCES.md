@@ -136,3 +136,17 @@ Library file id: file_0000000007b081f79529b34ef49f0633
 Verification: relevant workflow, scoring, statuses, testing and completion sections inspected during #763.
 Relevant semantics: immutable evidence packet; independent first-pass analysis; deterministic validation; typed disagreement; adversarial challenge; confidence/independence/evidence-sufficiency separation; correlated-failure penalties; insufficient-evidence/material-disagreement states; human gates; outcome calibration without silent tenant-data training.
 Supports: FINDING-GH-042 through FINDING-GH-046.
+
+
+---
+
+## SOURCE-LIB-006
+
+Type: Library master / direct source inspection
+Artifact: OnboardingPro Master v6.0.0-rc.4.zip
+Library file id: file_00000000c7b881fa8981a4b822265833
+Library path: /MASTER Software/Masters/Operations/OnboardingPro/OnboardingPro Master v6.0.0-rc.4.zip
+Recorded SHA-256: a2330f9826e6da15612e8a782d3f71203dccab0636c7da26302d7a19ee6b7f42
+Verification: physical SHA previously verified in Library architecture evidence; materialized and relevant Reality/observation/reconfiguration source inspected during #763.
+Relevant families: System/RealityGraph; System/Observation; evidence-authority/discovery services; System/Reconfiguration; Nexus reassessment/provisioning; outcome/rollback/learning services.
+Supports: FINDING-GH-047 through FINDING-GH-051.
