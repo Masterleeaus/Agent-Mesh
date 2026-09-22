@@ -7,7 +7,7 @@ describe("field mutation authority",()=>{
  });
  it("requires independent verifier identity",()=>{
   expect(()=>assertFieldMutationAuthority({role:"admin",actor_id:"u1",kind:"defect_state",next_state:"verified",verified_by_ref:"u2"})).toThrow(/authorized verifier/);
-  expect(()=>assertFieldMutationAuthority({role:"admin",actor_id:"u1",kind:"defect_state",next_state:"verified",verified_by_ref:"u1"})).not.toThrow();
+  expect(()=>assertFieldMutationAuthority({role:"admin",actor_id:"u1",kind:"defect_state",next_state:"verified",verified_by_ref:"u1",verified_date:"2026-09-22"})).not.toThrow();
  });
  it("keeps critical deferral owner-only and reasoned",()=>{
   expect(()=>assertFieldMutationAuthority({role:"admin",actor_id:"u1",kind:"defect_state",next_state:"deferred",severity:"critical",defer_reason:"awaiting engineer"})).toThrow(/owner/);
