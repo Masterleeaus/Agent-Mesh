@@ -189,22 +189,46 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
         .map(p=>createAcceptedLearningAdjustment(p,consumer));
     },
 
-    async putCrossContextShareGrant(context:StorageContextInput,input:Omit<CrossContextShareGrant,"authority_neutral">){
+    async putCrossContextShareGrant(context:StorageContextInput,input:Omit<CrossContextShareGrant,"authority_neutral"|"allow_personal_private"> & {allow_personal_private?:false}){
       guardInput(input,"personal_zero.share_grant");
       const grant=createCrossContextShareGrant(input);
       if(context.company_id!==grant.source_company_id)throw new Error("Share grant must be created from source company context");
       const source=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,grant.source_relationship_id));
       if(!source)throw new Error("Source relationship not found");
       requireRelationshipMatch(source,grant.one_id,grant.zero_id,grant.source_company_id);
+      const evidenceRows=await repository.list(context,{module_id:MODULE_ID,collection:EVIDENCE});
+      const states=await repository.list(context,{module_id:MODULE_ID,collection:UNDERSTANDING});
+      const accepted=states.map(r=>recordData<UnderstandingState>(r)).filter((x):x is UnderstandingState=>Boolean(x&&x.relationship_id===grant.source_relationship_id&&x.status==="accepted"&&grant.subject_refs.includes(x.subject)));
+      for(const subject of grant.subject_refs){
+        const matching=accepted.filter(x=>x.subject===subject);
+        if(!matching.length)throw new Error("Share grant subject is not accepted in source context");
+        for(const state of matching)for(const ref of state.evidence_refs){
+          const evidence=evidenceRows.map(r=>recordData<UnderstandingEvidence>(r)).find(e=>e?.understanding_evidence_id===ref);
+          if(!evidence||evidence.relationship_id!==grant.source_relationship_id)throw new Error("Share grant evidence lineage invalid");
+          if(evidence.privacy_class==="personal_private")throw new Error("personal_private understanding requires a stronger consent contract");
+        }
+      }
       return repository.put(context,{module_id:MODULE_ID,collection:SHARE_GRANTS,record_id:grant.grant_id,data:grant});
+    },
+
+    async revokeCrossContextShareGrant(context:StorageContextInput,grant_id:string){
+      const row=await repository.get(context,MODULE_ID,SHARE_GRANTS,grant_id);
+      const grant=recordData<CrossContextShareGrant>(row);
+      if(!row||!grant)throw new Error("Share grant not found");
+      requireContextCompany(context,grant.source_company_id);
+      const revoked=createCrossContextShareGrant({...grant,revoked_at:Number(clock())});
+      return repository.put(context,{module_id:MODULE_ID,collection:SHARE_GRANTS,record_id:grant_id,expected_revision:row.version,data:revoked});
     },
 
     async getSharedUnderstanding(context:StorageContextInput,source_company_id:string,grant_id:string,now=Date.now()){
       if(context.company_id!==source_company_id)throw new Error("Shared understanding lookup must use source company context");
       const grant=recordData<CrossContextShareGrant>(await repository.get(context,MODULE_ID,SHARE_GRANTS,grant_id));
       if(!grant||grant.source_company_id!==source_company_id||grant.revoked_at!=null||(grant.expires_at!=null&&grant.expires_at<=now))return [];
-      const rows=await repository.list(context,{module_id:MODULE_ID,collection:UNDERSTANDING});
-      return rows.map(r=>recordData<UnderstandingState>(r)).filter((state):state is UnderstandingState=>Boolean(state&&state.relationship_id===grant.source_relationship_id&&state.status==="accepted"&&grant.subject_refs.includes(state.subject)));
+      const source=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,grant.source_relationship_id));
+      if(!source||source.status!=="active")return [];
+      const [rows,evidenceRows]=await Promise.all([repository.list(context,{module_id:MODULE_ID,collection:UNDERSTANDING}),repository.list(context,{module_id:MODULE_ID,collection:EVIDENCE})]);
+      const evidence=new Map(evidenceRows.map(r=>recordData<UnderstandingEvidence>(r)).filter((e):e is UnderstandingEvidence=>Boolean(e)).map(e=>[e.understanding_evidence_id,e]));
+      return rows.map(r=>recordData<UnderstandingState>(r)).filter((state):state is UnderstandingState=>Boolean(state&&state.relationship_id===grant.source_relationship_id&&state.status==="accepted"&&grant.subject_refs.includes(state.subject)&&state.evidence_refs.some(ref=>{const e=evidence.get(ref);return e&&e.privacy_class!=="personal_private"&&isFresh(e.fresh_until,now)})));
     },
 
     async getConsumerProjection(context:StorageContextInput,relationship_id:string,consumer:"interaction"|"decision"|"workforce"){
