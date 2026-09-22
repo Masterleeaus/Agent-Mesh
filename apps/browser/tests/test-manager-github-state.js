@@ -9,6 +9,10 @@ x=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:main,base
 assert.strictEqual(x.state,'CLAIMED');assert.strictEqual(x.authority.claim,'git-branch-ref');
 x=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:main,baseSha:main,headSha:head,branch:'agent/SG722',claimBranchExists:true});
 assert.strictEqual(x.state,'ACTIVE');
+x=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:main,baseSha:main,headSha:head,branch:'agent/SG722',claimBranchExists:true,pr:{number:900,state:'OPEN'},checks:[]});
+assert.strictEqual(x.state,'PR_OPEN');
+x=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:'c'.repeat(40),baseSha:main,headSha:head,branch:'agent/SG722',claimBranchExists:true,pr:{number:900,state:'OPEN'},checks:[{required:true,status:'PENDING'}],rebaseRequired:true});
+assert.strictEqual(x.state,'REBASE_REQUIRED');
 x=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:main,baseSha:main,headSha:head,branch:'agent/SG722',claimBranchExists:true,pr:{number:900,state:'OPEN'},checks:[{required:true,status:'PENDING'}]});
 assert.strictEqual(x.state,'VERIFYING');
 x=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:main,baseSha:main,headSha:head,branch:'agent/SG722',claimBranchExists:true,pr:{number:900,state:'OPEN'},checks:[{required:true,conclusion:'SUCCESS'}]});
