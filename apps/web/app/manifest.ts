@@ -4,7 +4,9 @@ import type { MetadataRoute } from "next";
  * Base web-app metadata for the owner/browser experience.
  *
  * This is intentionally NOT an installable Command PWA identity. Provisionable
- * install identities are exposed by the dedicated Go and Hub manifests.
+ * install identities are exposed only when their authenticated route exists.
+ * Go is currently provisionable; Hub remains reserved until a customer-auth
+ * boundary and real /hub entry route are implemented.
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
