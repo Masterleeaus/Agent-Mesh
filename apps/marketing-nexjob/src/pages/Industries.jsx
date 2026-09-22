@@ -26,7 +26,7 @@ export default function Industries() {
             <span className="text-nx-purple-light">Configured for your industry.</span>
           </h1>
           <p className="text-lg text-nx-muted max-w-xl mx-auto leading-relaxed">
-            Titan Zero uses a shared operational core, then adapts workforce capabilities, knowledge and workflows for each field-service industry.
+            Titan Zero connects a shared business operating core with personal Zeros for the people around it. Owners, managers, field staff and customers can each have a Zero adapted to their role, while industry knowledge, workflows and specialist capabilities are configured for the work.
           </p>
         </div>
       </section>
@@ -58,8 +58,8 @@ export default function Industries() {
       </section>
 
       <CTASection
-        title="Build Titan Zero around your field-service business."
-        subtitle="We assess the operation, retain useful systems, fill genuine gaps and configure the managed workforce around your workflows."
+        title="One business. Many people. A Zero for each."
+        subtitle="We connect the business reality, retain useful systems, fill genuine gaps and configure personal Zero experiences plus the specialist workforce around your industry."
       />
     </>
   )
