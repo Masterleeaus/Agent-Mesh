@@ -64,3 +64,7 @@ agent/766 checkpoint after ingesting the current GitHub archaeology coordination
 
 COMPLETION ESTIMATE:
 Remaining phases: Blueprint ingestion when available; GitHub + mechanism archaeology re-ingestion as they advance; Library archaeology ingestion when available; Personal Zero owner verification; cross-source gap/duplicate/orphan audit; final action packet reconciliation; final source verification; final convergence map. Finalization remains gated on designated research agents reaching COMPLETE.
+
+
+### Latest verification checkpoint
+Direct current-main source review confirms Authority Continuance is substantially implemented in packages/runtime/authority via authority leases, lease controls, delegation extinction/continuity, supersession, expiry/freshness contraction and fail-closed execution eligibility. The remaining Trust uncertainty is primarily end-to-end Goal42 handshake/progression integration and certification, not absence of continuance primitives.
