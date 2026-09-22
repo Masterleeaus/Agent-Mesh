@@ -1,0 +1,208 @@
+name: Agent Mesh Execution Bridge
+
+on:
+  push:
+    branches:
+      - "agent/**"
+    paths:
+      - ".agent-mesh/execution-requests/**.json"
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: agent-execution-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve execution request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t REQUESTS < <(jq -r '.commits[].added[], .commits[].modified[]' "$GITHUB_EVENT_PATH" 2>/dev/null | grep '^.agent-mesh/execution-requests/.*\.json
+
+      - name: Checkout exact triggering commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Validate request and live claim
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUEST="${{ steps.request.outputs.request }}"
+          ID="$(jq -r '.request_id // empty' "$REQUEST")"
+          test "$REQUEST" = ".agent-mesh/execution-requests/$ID.json"
+          python3 .github/scripts/validate-execution-request.py --file "$REQUEST" >/tmp/request.json
+          SUBGOAL="$(jq -r '.subgoal_id' /tmp/request.json)"
+          CLAIM="$(jq -r '.claim_branch' /tmp/request.json)"
+          EXPECTED="$(jq -r '.expected_head_sha' /tmp/request.json)"
+          ISSUE="$(jq -r '.issue_number' /tmp/request.json)"
+          test "$CLAIM" = "${{ github.ref_name }}"
+          test "$CLAIM" = "agent/$SUBGOAL"
+          LIVE="$(gh api "repos/${{ github.repository }}/git/ref/heads/$CLAIM" --jq '.object.sha')"
+          test "$LIVE" = "$EXPECTED"
+          test "${{ github.sha }}" = "$EXPECTED"
+          TITLE="$(gh issue view "$ISSUE" --repo "${{ github.repository }}" --json title,state --jq 'select(.state=="OPEN") | .title')"
+          case "$TITLE" in "[$SUBGOAL]"*) ;; *) echo "Issue/subgoal mismatch or issue closed" >&2; exit 1 ;; esac
+          MARKER="<!-- agent-execution-request:$ID -->"
+          if gh api --paginate "repos/${{ github.repository }}/issues/$ISSUE/comments" --jq '.[].body' | grep -Fq "$MARKER"; then echo "Replay rejected: $ID" >&2; exit 1; fi
+          BODY="$MARKER
+### Agent Mesh execution accepted
+
+- Request: \`$ID\`
+- Operation: \`$(jq -r '.operation' /tmp/request.json)\`
+- Claim: \`$CLAIM\`
+- Head: \`$EXPECTED\`
+
+This marker provides replay protection; it grants no merge or claim-release authority."
+          gh issue comment "$ISSUE" --repo "${{ github.repository }}" --body "$BODY"
+          COUNT="$(gh api --paginate "repos/${{ github.repository }}/issues/$ISSUE/comments" --jq '.[].body' | grep -Fc "$MARKER" || true)"
+          test "$COUNT" = "1" || { echo "Non-unique acceptance marker after write; refusing execution" >&2; exit 1; }
+
+      - name: Execute deterministic registered operation
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUEST="${{ steps.request.outputs.request }}"
+          ID="$(jq -r '.request_id' "$REQUEST")"
+          python3 .github/scripts/run-execution-request.py --file "$REQUEST" --receipt "/tmp/$ID.receipt.json"
+
+      - name: Record successful execution audit
+        if: ${{ success() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          REQUEST="${{ steps.request.outputs.request }}"
+          ID="$(jq -r '.request_id' "$REQUEST")"
+          ISSUE="$(jq -r '.issue_number' "$REQUEST")"
+          OP="$(jq -r '.operation' "$REQUEST")"
+          gh issue comment "$ISSUE" --repo "${{ github.repository }}" --body "<!-- agent-execution-receipt:$ID -->
+### Agent Mesh execution succeeded
+
+- Request: \`$ID\`
+- Operation: \`$OP\`
+- Workflow run: \`${{ github.run_id }}\`
+- Trigger SHA: \`${{ github.sha }}\`
+- Receipt artifact: \`agent-execution-receipt-${{ github.run_id }}\`
+
+This is an audit pointer only; it grants no merge or claim-release authority."
+
+      - name: Create failure receipt
+        if: ${{ failure() && steps.request.outputs.request_id != '' }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          rid=os.environ["RID"]
+          payload={"schema":"titan-agent-mesh-execution-receipt/v1","request_id":rid,"status":"FAILED","workflow_run_id":os.environ["RUN_ID"],"trigger_sha":os.environ["TRIGGER_SHA"],"claim_branch":os.environ["CLAIM_BRANCH"],"authority":{"merge":False,"release_claim":False,"canonical_mutation":False},"recorded_at":datetime.now(timezone.utc).isoformat()}
+          open(f"/tmp/{rid}.failure.receipt.json","w").write(json.dumps(payload,indent=2)+"\\n")
+          PY
+        env:
+          RID: ${{ steps.request.outputs.request_id }}
+          RUN_ID: ${{ github.run_id }}
+          TRIGGER_SHA: ${{ github.sha }}
+          CLAIM_BRANCH: ${{ github.ref_name }}
+
+      - name: Upload immutable execution receipt artifact
+        if: ${{ always() && steps.request.outputs.request_id != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-execution-receipt-${{ github.run_id }}
+          path: /tmp/*.receipt.json
+          if-no-files-found: warn
+          retention-days: 90
+ | sort -u || true)
+          if [ "${#REQUESTS[@]}" -ne 1 ]; then
+            echo "Exactly one execution request is permitted per push; found ${#REQUESTS[@]}." >&2
+            printf 'request=%s\n' "${REQUESTS[@]:-}" >&2
+            exit 1
+          fi
+          REQUEST="${REQUESTS[0]}"
+          case "$REQUEST" in .agent-mesh/execution-requests/*.json) ;; *) echo "No valid execution request" >&2; exit 1 ;; esac
+          echo "request=$REQUEST" >> "$GITHUB_OUTPUT"
+          ID="$(basename "$REQUEST" .json)"
+          echo "request_id=$ID" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout exact triggering commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Validate request and live claim
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUEST="${{ steps.request.outputs.request }}"
+          ID="$(jq -r '.request_id // empty' "$REQUEST")"
+          test "$REQUEST" = ".agent-mesh/execution-requests/$ID.json"
+          python3 .github/scripts/validate-execution-request.py --file "$REQUEST" >/tmp/request.json
+          SUBGOAL="$(jq -r '.subgoal_id' /tmp/request.json)"
+          CLAIM="$(jq -r '.claim_branch' /tmp/request.json)"
+          EXPECTED="$(jq -r '.expected_head_sha' /tmp/request.json)"
+          ISSUE="$(jq -r '.issue_number' /tmp/request.json)"
+          test "$CLAIM" = "${{ github.ref_name }}"
+          test "$CLAIM" = "agent/$SUBGOAL"
+          LIVE="$(gh api "repos/${{ github.repository }}/git/ref/heads/$CLAIM" --jq '.object.sha')"
+          test "$LIVE" = "$EXPECTED"
+          test "${{ github.sha }}" = "$EXPECTED"
+          TITLE="$(gh issue view "$ISSUE" --repo "${{ github.repository }}" --json title,state --jq 'select(.state=="OPEN") | .title')"
+          case "$TITLE" in "[$SUBGOAL]"*) ;; *) echo "Issue/subgoal mismatch or issue closed" >&2; exit 1 ;; esac
+          MARKER="<!-- agent-execution-request:$ID -->"
+          if gh api --paginate "repos/${{ github.repository }}/issues/$ISSUE/comments" --jq '.[].body' | grep -Fq "$MARKER"; then echo "Replay rejected: $ID" >&2; exit 1; fi
+          gh issue comment "$ISSUE" --repo "${{ github.repository }}" --body "$MARKER
+### Agent Mesh execution accepted
+
+- Request: \`$ID\`
+- Operation: \`$(jq -r '.operation' /tmp/request.json)\`
+- Claim: \`$CLAIM\`
+- Head: \`$EXPECTED\`
+
+This marker provides replay protection; it grants no merge or claim-release authority."
+
+      - name: Execute deterministic registered operation
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUEST="${{ steps.request.outputs.request }}"
+          ID="$(jq -r '.request_id' "$REQUEST")"
+          python3 .github/scripts/run-execution-request.py --file "$REQUEST" --receipt "/tmp/$ID.receipt.json"
+
+      - name: Create failure receipt
+        if: ${{ failure() && steps.request.outputs.request_id != '' }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          rid=os.environ["RID"]
+          payload={"schema":"titan-agent-mesh-execution-receipt/v1","request_id":rid,"status":"FAILED","workflow_run_id":os.environ["RUN_ID"],"trigger_sha":os.environ["TRIGGER_SHA"],"claim_branch":os.environ["CLAIM_BRANCH"],"authority":{"merge":False,"release_claim":False,"canonical_mutation":False},"recorded_at":datetime.now(timezone.utc).isoformat()}
+          open(f"/tmp/{rid}.failure.receipt.json","w").write(json.dumps(payload,indent=2)+"\\n")
+          PY
+        env:
+          RID: ${{ steps.request.outputs.request_id }}
+          RUN_ID: ${{ github.run_id }}
+          TRIGGER_SHA: ${{ github.sha }}
+          CLAIM_BRANCH: ${{ github.ref_name }}
+
+      - name: Upload immutable execution receipt artifact
+        if: ${{ always() && steps.request.outputs.request_id != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-execution-receipt-${{ github.run_id }}
+          path: /tmp/*.receipt.json
+          if-no-files-found: warn
+          retention-days: 90
