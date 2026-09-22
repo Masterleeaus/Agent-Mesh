@@ -26,7 +26,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 font-extrabold text-xl tracking-tight">
           <span className="w-2 h-2 bg-nx-purple rounded-full animate-pulse-dot" />
-          Titan Zero <span className="text-nx-muted font-medium">Field Service</span>
+          Titan Zero <span className="text-nx-muted font-medium">Field Services</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -56,7 +56,7 @@ export default function Navbar() {
           </a>
           <a
             href={appRoutes.signup}
-            className="text-sm font-semibold text-white bg-nx-purple hover:bg-nx-purple-dark px-5 py-2 rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/30"
+            className="text-sm font-semibold text-white bg-nx-purple hover:bg-nx-purple-dark px-5 py-2 rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-900/30"
           >
             Sign Up
           </a>
