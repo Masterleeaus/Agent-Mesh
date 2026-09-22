@@ -217,3 +217,7 @@ Needs re-ingestion: YES
 
 
 | INGEST-013 | Zero Mechanism Archaeology Personal Zero donor expansion | agent/763 / .titan/research/zero-mechanism-archaeology | FINDINGS sha 50e4d807f0fe8a0c6ac447806217ff408840d7b5; SOURCES sha aa8125c46d2a4d2ddf2663928ba27686d29aa711; STATUS sha 0a5a325568fdea97bdc26b54160fa27ca6fc9215 | IN PROGRESS | INGESTED | FINDING-GH-022..036: implemented Interaction Engine cognition donors, Phase10 specification-only distinction, implemented Decision Engine Step25 preference/history/verified-outcome learning donors | YES — source agent still in progress |
+
+
+| INGEST-014 | Blueprint validation lane | #757 / PR #758 | head 409344b50d990284a1d677ff0fc2a3db38896703 | IN PROGRESS / PR OPEN | PARTIAL | Read-only workflow only; generated validation artifact not committed/available in branch; heuristic evidence is not proof | YES |
+| INGEST-015 | Observation / Reality / Nexus evidence lane | #759 / PR #760 | head aa59cbf0f392e910c1b7d158619ec90522245c4d | IN PROGRESS / PR OPEN | PARTIAL | Read-only workflow only; generated trigger-map artifact not committed/available in branch; OnboardingPro donor evidence supports #767 but current parity remains unverified | YES |
