@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 18,
+    "current_pass": 19,
     "status": "ACTIVE"
   },
   "completed": [
@@ -71,15 +71,18 @@
     "Pass 17: bootstrap fails closed with RECONCILE_REQUIRED when checkpoint head differs from live GitHub head; mutation is denied until reconciliation",
     "Pass 18: exposed the existing continuation bootstrap through the existing Titan Code service-worker surface as bootstrapAgentMeshResume; no new gateway/bridge was created",
     "Pass 18: resume mutation is permitted only when canonical bootstrap returns READY_TO_RESUME; mismatches and runtime errors fail closed with mayMutate false",
-    "Pass 18: regression guards require the fail-closed bootstrap entrypoint and prevent Manager/model output from bypassing GitHub reconciliation"
+    "Pass 18: regression guards require the fail-closed bootstrap entrypoint and prevent Manager/model output from bypassing GitHub reconciliation",
+    "Pass 19: actual takeover mutation now requires bootstrapAgentMeshResume to return READY_TO_RESUME/mayMutate before continuation takeover can be written",
+    "Pass 19: Manager AI mutation execution is gated by the same GitHub-first resume bootstrap; reconciliation failure returns an explicit non-mutating execution result",
+    "Pass 19: regression guards ensure Manager/model planning cannot bypass resume reconciliation or self-grant mutation authority"
   ],
   "current_work": [
-    "Integrate bootstrap gate into actual replacement-agent/takeover mutation path rather than exposing it only as callable entrypoint"
+    "Harden recovery/route mutation semantics so read-only supervision remains available while all Agent Mesh writes share the same GitHub reconciliation boundary"
   ],
   "next_actions": [
-    "Locate takeover/recovery message handlers and mutation dispatch path",
-    "Require bootstrapAgentMeshResume before post-takeover mutation",
-    "Preserve read-only inspection when reconciliation is required"
+    "Audit remaining Agent Mesh mutation calls in Titan Code service worker",
+    "Centralize mutation preflight around existing bootstrap rather than duplicating checks",
+    "Keep health/snapshot/context reads available when mutation preflight fails"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
