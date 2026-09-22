@@ -2656,3 +2656,104 @@ CURRENT CANONICAL SEMANTICS CONFIRMED
 
 ### Confidence
 VERY HIGH
+
+
+---
+
+## FINDING-GH-101
+
+### Finding
+Current Titan Zero has a real company-bound DecisionPacket contract, but direct evidence in this pass proves the **packet schema**, not yet the full persistent Decision Object/watch/trigger/reevaluation lifecycle described by current issue #59.
+
+### Direct evidence
+`packages/titan-platform/src/ported/titan-runtime/contracts/schemas/DecisionPacket.schema.json` SHA `1f482e924f4f799b852c903df78b8ace326b66d7` requires:
+- packet_id and company_id;
+- domain/subject/observation;
+- evidence and evidence_state;
+- recommended_actions;
+- risk and urgency;
+- source_provider/source_revision;
+- generated_at;
+- authority_neutral=true;
+- execution_authority=false;
+- recommendation_is_authority=false.
+
+Commit `40a5db11...` explicitly locked DecisionPacket recommendations to a no-authority schema.
+
+### Classification
+CURRENT CONTRACT IMPLEMENTED / FULL DECISION LIFECYCLE NOT YET PROVEN IN THIS PASS
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-102
+
+### Finding
+Knowledge Authority is no longer merely roadmap/spec work. Current main exports a converged Workforce Knowledge Authority capability through `packages/titan-platform/src/workforce.ts`.
+
+### Evidence
+Current workforce facade SHA `98f77554d22f76aa1131a257a171c803bfa43979` exports:
+- `buildWorkforceKnowledgeAuthorityPacket`;
+- `evaluateWorkforceKnowledgeUse`;
+- `buildWorkforceKnowledgeUseReceipt`;
+- `summarizeWorkforceKnowledgeAuthority`.
+
+Commit lineage:
+- `3a27e462...` harden Knowledge Authority source identity;
+- `0767213...` add Library parity regressions;
+- `389d864...` update #633 convergence ledger;
+- `ab436cf...` export converged Knowledge Authority capability.
+
+### Classification
+CURRENT IMPLEMENTATION / ACTIVE CONVERGENCE CONFIRMED
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-103
+
+### Finding
+The current Workforce implementation contains a substantial governed business-discovery → installation-planning → commissioning lineage that survived/converged through the transplant and aligns strongly with Titan Zero's managed-service operating model.
+
+### Direct evidence
+`investigation-installation-handover.ts` SHA `415ee5647bed8a54b60d4e18ee628c67316d97ee` implements:
+- evidence-backed investigation findings/recommendations;
+- unresolved risk ownership;
+- required capabilities;
+- commissioning gates;
+- deterministic Business Discovery compilation across processes, people, systems, devices, documents, objectives and risks;
+- installation specification generation;
+- deterministic installation DAG planning;
+- policy/authority review;
+- capability/workforce/integration/device/data preparation;
+- test/verification;
+- rollback preparation;
+- commissioning review.
+
+It rejects legacy tenant aliases and requires `company_id`. It repeatedly asserts that discovery, handover, readiness, installation planning and recommendations do not grant authority or automatically provision/activate workforce.
+
+### Classification
+STRONG CURRENT MANAGED-SERVICE IMPLEMENTATION / RETAIN
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-104
+
+### Finding
+This business-discovery/installation pipeline is a concrete current implementation of the product direction “implement an AI workforce into an existing business architecture, fill gaps, verify, then commission,” rather than a generic SaaS onboarding flow.
+
+### Architecture fit
+The runtime explicitly inventories existing systems/devices/documents/processes, compiles required capabilities, plans integrations and workforce setup, requires governed execution/rollback and verifies commissioning gates. This should remain a canonical deployment/evolution input rather than being replaced by a dashboard-first onboarding subsystem.
+
+### Classification
+CURRENT PRODUCT-DIRECTION ALIGNMENT CONFIRMED
+
+### Confidence
+VERY HIGH
