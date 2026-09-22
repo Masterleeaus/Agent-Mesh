@@ -23,7 +23,7 @@ COMPLETED:
 - Discovered the later 03-Aug Offline LocalBrain cumulative tree proving at least Phase-11 cognitive events and Phase-14 authority work progressed into implementation.
 
 IN PROGRESS:
-- Older Personal Zero / cognition / memory / preference / experience lineage — Phase-10 plan fully read; Aug-03 Offline LocalBrain implementation lineage discovered and now under source-level audit.
+- Older Personal Zero / cognition / memory / preference / experience lineage — source-level v10.12.0 audit now verifies cognitive-event, outcome-linking, behavioural memory, adaptive learning, preference and device/offline mechanisms; current semantic-owner exhaustion remains.
 - Wider Library inventory and version comparison.
 - Current TypeScript parity checks for regression candidates.
 - Cross-agent workspace inspection as other research workspaces appear.
@@ -55,7 +55,7 @@ ISSUES CREATED/UPDATED:
 - #759 UPDATED — continuous observation / Nexus evidence.
 - #761 UPDATED — historical Trust evidence.
 - #767 CREATED — recover OnboardingPro Evolution and Reality capabilities.
-- #763 UPDATED — added Pass-2 Personal Zero / Offline LocalBrain lineage evidence; no competing archaeology issue created.
+- #763 UPDATED — Pass-2 lineage evidence plus Pass-3 source-level cognition/outcome/learning verification; no competing implementation issue created.
 
 LAST UPDATED:
 2026-09-22 — Pass 2 checkpoint: Phase-10 plan fully inspected; Aug-03 Offline LocalBrain implementation lineage discovered; #763 updated.
