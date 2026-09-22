@@ -36,3 +36,11 @@ export const riskRequiresElevatedAuthorisation = riskRequiresElevatedAuthorisati
 
 
 export * from "./intelligence-runtime/index.js";
+
+export { AIProviderRegistry, AI_PROVIDER_ROUTING_POLICY } from "./ported/titan-ai-core/provider-registry.js";
+
+export { normalizeSignal, prioritizeSignals, SIGNAL_POLICY } from "./ported/titan-intelligence/signal/index.js";
+
+export { buildModelCouncilRecommendation, MODEL_COUNCIL_POLICY } from "./ported/titan-intelligence/model-council/index.js";
+
+export { createNexusOrchestration, NEXUS_POLICY } from "./ported/titan-intelligence/nexus/index.js";
