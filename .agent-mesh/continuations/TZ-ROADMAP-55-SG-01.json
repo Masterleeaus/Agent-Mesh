@@ -92,15 +92,18 @@
     "Pass 20: checkpoint and Manager mutations require resume reconciliation; takeover retains its explicit pre-gate then uses the central caller without double-gating; regression guards prevent direct bypass",
     "Pass 20: audited all current service-worker Agent Mesh bridge call sites; reads remain ungated while mutations converge through callAgentMeshMutation",
     "Pass 20: removed bootstrapRequired bypass entirely so every allowlisted Agent Mesh mutation must pass GitHub-first resume reconciliation",
-    "Pass 20: mutation allowlist is limited to recover_agent, route_packet, continuation checkpoint and takeover; regression guards reject any resume-gate bypass option"
+    "Pass 20: mutation allowlist is limited to recover_agent, route_packet, continuation checkpoint and takeover; regression guards reject any resume-gate bypass option",
+    "Pass 20: audited every current Agent Mesh bridge mutation call site in the service worker and confirmed recover, route, checkpoint and takeover all flow through callAgentMeshMutation",
+    "Pass 20: central Agent Mesh mutation allowlist rejects unknown mutation actions and re-runs GitHub-first resume bootstrap before bridge execution",
+    "Pass 20: regression guards now fail if checkpoint, takeover or Manager mutation paths bypass the central mutation gate"
   ],
   "current_work": [
-    "Converge stale packet terminology in Manager routing without changing durable GitHub issue authority"
+    "Converge stale packet terminology in Manager recovery/routing bridge without changing underlying compatibility contracts prematurely"
   ],
   "next_actions": [
-    "Inspect route_packet bridge/backend semantics and Manager plan target source",
-    "Prefer issue/subgoal identifiers at Titan Code boundary while retaining compatibility adapter only if backend still requires packet_id",
-    "Add terminology regression guards so new Git-backed work does not reintroduce packet authority"
+    "Inspect agent_mesh.route_packet provider/bridge contract and Manager plan terminology",
+    "Introduce GitHub-native issue/subgoal naming at Titan Code boundary while preserving compatibility adapter if backend still expects packet_id",
+    "Remove duplicate RUN_MANAGER_AI_SUPERVISION message handler discovered during audit if safe"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
