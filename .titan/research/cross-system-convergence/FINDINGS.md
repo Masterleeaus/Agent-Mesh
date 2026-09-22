@@ -1168,3 +1168,29 @@ The next architectural boundary is proposal review/application/audit through the
 ACTIVE IMPLEMENTATION / DURABLE GOVERNED LEARNING PROPOSALS / CI PENDING
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-054
+### Finding
+#768 slices 7–8 complete the source-level governed Personal Zero learning lifecycle from durable proposal review through read-only accepted-learning consumption by Interaction, Decision and Workforce, without granting application or execution authority.
+### Evidence
+Latest #768 updates report slice-7 commits `1904aef`, `3e9314f`, `4d7731a` plus lifecycle tests, and slice-8 commits `3e359fd`, `31da837`, `c3e87f7` plus consumption tests.
+Direct inspection verifies:
+- `learning-review.ts`, blob `4c8fa477ccc655a4f626ebd71efe34828f543f9b`, defines `pending_review → accepted | rejected | superseded`, persists reviewer/evidence/reason/time, and hard-codes `applied:false`, `application_authority:false`;
+- only pending proposals may be accepted/rejected, preventing silent re-acceptance of rejected proposals;
+- review requires evidence;
+- `learning-consumption.ts`, blob `ed691615ec70bcc9da7df01d59b85386946b6e26`, allows only accepted proposals and rejects any proposal claiming applied/application authority;
+- accepted-learning projections are read-only and hard-code `authority_neutral:true`, `execution_authority:false`, `mutation_permitted:false`;
+- accepted-learning output exposes evidence/review lineage and permitted adjustment names but deliberately does not expose Personal Zero authority refs;
+- `state-service.ts`, blob `130a239b261fd1f9a4ca892a69b27c9c5c96c515`, scopes review/supersession/consumption through the active relationship; revoked relationships therefore expose no accepted-learning projection.
+Tests are committed but CI execution evidence remains pending.
+### Interpretation
+The source-level Personal Zero learning lifecycle is now substantially closed:
+`evidence/outcome → proposal → durable pending review → evidenced accept/reject/supersede → read-only consumer projection`.
+No Personal Zero learning executor is needed. Canonical consumer systems remain responsible for governed application. Remaining #768 work is certification/hardening rather than another learning architecture.
+### Classification
+ACTIVE IMPLEMENTATION / GOVERNED LEARNING LIFECYCLE CLOSED AT SOURCE LEVEL / CI PENDING
+### Confidence
+HIGH
