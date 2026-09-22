@@ -13,7 +13,7 @@
   },
   "plan": {
     "total_passes": 26,
-    "current_pass": 20,
+    "current_pass": 21,
     "status": "ACTIVE"
   },
   "completed": [
@@ -164,15 +164,18 @@
     "Pass 20: regression guards lock generic bridge denial, central allowlist and governed Manager/checkpoint paths",
     "Pass 20: audited live Agent Mesh bridge mutation call sites and confirmed they now converge through a centralized AGENT_MESH_MUTATION_POLICY/callAgentMeshMutation path",
     "Pass 20: generic callTitanBridge denies direct Agent Mesh mutation actions, unknown Agent Mesh mutations fail closed, recover/route/takeover are resume-gated, and checkpoint remains continuity-record-only",
-    "Pass 20: added regression guards so direct/unknown mutation bypasses and accidental checkpoint over-gating cannot silently return"
+    "Pass 20: added regression guards so direct/unknown mutation bypasses and accidental checkpoint over-gating cannot silently return",
+    "Pass 21: active Manager dependency/routing payload now uses GitHub issue_number + subgoal_id as primary work identity",
+    "Pass 21: legacy packet identity is retained only as legacy_packet_id at the adapter boundary for compatibility",
+    "Pass 21: regression guards reject packet_id as the primary Manager routing identity; branch claim remains ownership authority"
   ],
   "current_work": [
-    "Converge stale packet terminology in active Manager recovery/routing bridge paths onto GitHub-native issue/subgoal language without breaking compatibility"
+    "Converge remaining active Manager action names and UI terminology from packet language to GitHub-native issue/subgoal terms while preserving legacy adapter compatibility"
   ],
   "next_actions": [
-    "Inspect agent_mesh.route_packet bridge contract and callers",
-    "Add issue/subgoal-native routing payload with legacy packet compatibility only at adapter boundary",
-    "Keep GitHub branch claim as sole ownership authority"
+    "Inspect Manager supervisor/plan producers for RECHECK_DEPENDENCIES_OR_ROUTE_PACKET",
+    "Introduce GitHub-native action alias without breaking stored plans",
+    "Keep legacy packet names only at compatibility boundaries"
   ],
   "do_not_repeat": [
     "Do not create another Agent Mesh gateway",
