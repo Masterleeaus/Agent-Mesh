@@ -1474,3 +1474,63 @@ RECOVER/HARDEN SEMANTICS INTO EXISTING OWNERS
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-049
+
+### Finding
+TitanPro Dispatch release-line claims are backed by real scheduling, rescheduling, KPI and SLA/checklist/exception implementation, making Dispatch a verified donor rather than documentation-only history.
+
+### Direct implementation verified
+Repository: `Masterleeaus/TitanPro`, `Modules/Dispatch`.
+
+- `Actions/Update/RescheduleDispatchAppointmentAction.php` SHA `cd7d6b19135a5591964d71d649740e50afb1cc7c`: rebuilds a schedule window, validates the target technician/window, updates appointment + work order and emits `WorkOrderScheduled`.
+- `Services/Analytics/DispatchKpiService.php` SHA `a91252721abe6be8147a392b7f397bc33579f15b`: reports work-order and appointment counts/statuses over a date window.
+- `Database/Migrations/2026_05_13_000700_create_dispatch_quality_and_sla_tables.php` SHA `f7c957e336fc9b1dc5ad6f1cbd99a367fa69c2d9`: company-aware SLA policies, work-order checklists/items and dispatch exceptions.
+- API routes expose technician recommendations, schedule, appointment reschedule, assignment status, route build and route resequence.
+
+### Classification
+IMPLEMENTED HISTORICAL DONOR / CURRENT OWNER EXISTS
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-050
+
+### Finding
+The canonical current owner for historical Dispatch capability is #353 Scheduling, Dispatch & Capacity, with #360 certification and #183 service-execution lifecycle adjacent. Therefore the old Dispatch module boundary should be retired while superior mechanics are compared and converged.
+
+### Capability mapping
+- schedule conflict/window validation → #353;
+- reschedule + work-order state update → #353 + #183;
+- technician recommendation/assignment → #353;
+- route build/resequence/recalculation → #353;
+- capacity/KPI signals → #353 and current intelligence/signal paths;
+- SLA policies/exceptions → #353 plus canonical Risk/Assurance/Governance where consequential;
+- field checklist projection → service lifecycle / Go surface rather than Dispatch-owned UI.
+
+### Classification
+CONVERGE / DO NOT RESTORE DISPATCH AS PARALLEL DOMAIN
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Compare the donor implementation against current TypeScript #353 before deletion. Recover only missing/superior mechanics behind canonical schedule/job/worker contracts.
+
+---
+
+## FINDING-GH-051
+
+### Finding
+The historical Dispatch schema already used `company_id` for SLA/checklist/exception records, but allowed it to be nullable. Current Titan Zero must harden this lineage: business-scoped dispatch state requires the canonical `company_id` boundary and must fail closed rather than silently become global.
+
+### Classification
+HARDEN DURING CONVERGENCE
+
+### Confidence
+HIGH
