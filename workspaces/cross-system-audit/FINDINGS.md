@@ -773,3 +773,19 @@ These PRs are useful tooling donors, but they should not block or substitute for
 UNMERGED EVIDENCE TOOLING
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-CSA-036
+### Finding
+The designated GitHub Archaeology and Zero Mechanism/Library-derived archaeology agents are still explicitly IN PROGRESS at their latest directly inspected status revisions.
+### Evidence
+- `agent/765:workspaces/github-archaeology/STATUS.md` blob `eeb589bf72844561c540791e0320997d5cbf3055`: STATUS IN PROGRESS; several research phases remain, including full branch/tag/history archaeology and final lost-capability handoff.
+- `agent/763:.titan/research/zero-mechanism-archaeology/STATUS.md` blob `8df6d1c246c05cbd6539f1e145935b2419ddabd1`: STATUS IN PROGRESS; several research phases remain and the workflow artifact has not been run/inspected.
+### Interpretation
+The cross-system audit must not finalize yet. Existing findings can be used provisionally and independently verified, but the finalization gate requires re-ingestion after these specialist agents publish COMPLETE/final revisions.
+### Classification
+FINALIZATION GATE / SOURCE AGENTS STILL IN PROGRESS
+### Confidence
+HIGH
