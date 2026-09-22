@@ -2563,3 +2563,96 @@ RECOVERABLE TEST ORACLE / IMPLEMENTATION LOCATION REQUIRED
 
 ### Confidence
 HIGH
+
+
+---
+
+## FINDING-GH-097
+
+### Finding
+The intelligence dependency gap from Pass 33 was a **file-extension resolution mistake in archaeology, not missing current implementation**. The facade imports `.js` specifiers while the TypeScript source files exist as `.ts`, which is normal for ESM TypeScript builds that emit JavaScript.
+
+### Direct current implementation verified
+- Model Council: `packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts` SHA `f989f8ba7e39ba0e807251dc625edc2c2d2672c2`;
+- Signal: `.../signal/index.ts` SHA `847a14df1b68278330971a97c05d679d0f606e15`;
+- Nexus: `.../nexus/index.ts` SHA `f7936d44dcf30fd9cb0d091af0efbc10fbcd501a`;
+- AI Core provider registry: `.../titan-ai-core/provider-registry.ts` SHA `7e5d9f996c9225672ca0c5973ace97376210b07f`;
+- deterministic risk classification: `.../core/risk-classification.ts` SHA `c604b81cbd5a614b7ee3d6d6fefab9608528195a`.
+
+### Classification
+PASS-33 FALSE POSITIVE CORRECTED / IMPLEMENTATION PRESENT
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-098
+
+### Finding
+Commit history shows these intelligence implementations were actively hardened on 22 Sep 2026 after the transplant, rather than merely copied as stale archive code.
+
+### Evidence
+Model Council commits:
+- `2a9b662...` add canonical recommendation convergence;
+- `6394463...` harden consensus authority boundary;
+- `364bbaa...` enforce company boundary on votes;
+- `71c3842...` add company-isolation/authority tests.
+
+AI provider registry commits include:
+- `647ae85...` canonical provider locality registry;
+- `1179072...` reject legacy tenant authority;
+- `10ebc1f...` harden company/authority boundaries.
+
+### Classification
+CURRENT ACTIVE CONVERGENCE / NOT LOST
+
+### Confidence
+VERY HIGH
+
+---
+
+## FINDING-GH-099
+
+### Finding
+The current Model Council implementation is real and correctly authority-neutral, but it is materially thinner than the strongest historical TitanPro council semantics recovered in FINDING-GH-052–055.
+
+### Current implementation
+It provides:
+- company-bound votes;
+- deterministic ordering;
+- recommendation grouping;
+- count + summed-confidence consensus;
+- explicit `consensus_is_authority:false` and no execution authority.
+
+### Historical semantics not directly evidenced in this implementation
+- selective specialist participation;
+- sequential/parallel/hybrid council topology;
+- explicit contextual participant weighting;
+- bounded critique/challenge rounds;
+- convergence/non-convergence criteria beyond winning recommendation grouping;
+- disagreement exposure/severity;
+- escalation outcomes;
+- outcome-driven refinement of participation/weights.
+
+### Classification
+IMPLEMENTED CURRENT CORE / HISTORICAL SEMANTIC DEEPENING AVAILABLE
+
+### Confidence
+HIGH
+
+---
+
+## FINDING-GH-100
+
+### Finding
+Signal, Nexus, provider registry and risk classification also preserve the key Titan Zero architectural boundary: intelligence can classify, prioritize, recommend, orchestrate or route, but cannot manufacture business authority.
+
+### Evidence
+Current modules explicitly expose authority-neutral/no-execution-authority policy. Risk classification is deterministic and company-bound; provider routing is locality-aware and company-scoped; Signal rejects cross-company prioritization; Nexus is company/correlation-bound.
+
+### Classification
+CURRENT CANONICAL SEMANTICS CONFIRMED
+
+### Confidence
+VERY HIGH
