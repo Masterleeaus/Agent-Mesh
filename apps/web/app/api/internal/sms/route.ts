@@ -409,10 +409,16 @@ export async function POST(req: NextRequest) {
     ? await getClientContext(accountId, existing.id)
     : { openEstimates: [], recentJobs: [], recentMessages: [] };
   const ai = await classifySms({ message, phone, context });
+  const classifiedRouting = routeInboundCommunication(inboundEnvelope, {
+    kind: ai.is_business ? (ai.confidence === "low" ? "review" : "business") : "ignored",
+    confidence: ai.confidence,
+    intent: ai.message_type,
+    requires_human_review: ai.confidence === "low",
+  });
 
   if (!ai.is_business) {
     logger.info("SMS not business — skipping", { traceId, phone, type: ai.message_type });
-    return NextResponse.json({ skipped: true, reason: "not_business", routing: inboundRouting });
+    return NextResponse.json({ skipped: true, reason: "not_business", routing: classifiedRouting });
   }
 
   // Resolve the client (create now if new)
@@ -521,5 +527,6 @@ export async function POST(req: NextRequest) {
     needs_review: needsReview,
     notification,
     reply: ai.reply,
+    routing: classifiedRouting,
   });
 }
