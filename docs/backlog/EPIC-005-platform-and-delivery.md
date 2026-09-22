@@ -55,6 +55,14 @@ Acceptance Criteria:
 - [ ] Donor provenance and rejected duplicates are documented.
 - [ ] Titan Platform typecheck/unit tests for the new contracts pass.
 
+Implementation provenance:
+- Canonical owner: `@titan-zero/titan-platform/personal-zero`, persisted through the existing Titan `createCompanyRepository`; no second database or tenant boundary.
+- Archaeology donors reviewed: LocalBrain / Titan Interaction Engine v10.12.0, Phase10 Device Intelligence, Decision Engine Step25, Model Council, Knowledge Authority, Titan Rewind, and OnboardingPro v6 longitudinal strategy/reconfiguration/outcome learning.
+- Reused semantics only: cognitive-event chronology, explicit correction evidence, prediction/outcome calibration, provenance/confidence/freshness, supersession, verified outcomes, purpose-bound sharing, and authority-neutral learning proposals.
+- Explicitly rejected duplicates: LocalBrain runtime resurrection, second conversation/session store, second Business Memory store, second Business Reality graph, second Decision/Learning Governor, Personal Zero authority engine, new Personal Zero database, and Titan Code runtime dependency.
+- Authority remains external: Personal Zero understanding, learning, accepted-learning projections and cross-context sharing never grant execution authority.
+- Cross-company sharing preserves storage isolation through source consent plus a target acceptance artifact; neither company repository reads the other company's state.
+
 Notes:
 - GitHub architecture owner: #768.
 - Archaeology handoff: #763 / ZM-025..ZM-027.
