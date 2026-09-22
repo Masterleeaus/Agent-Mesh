@@ -299,3 +299,95 @@ HIGH
 
 ### Related action
 Do not create a duplicate issue from this specialist workspace unless deduplication confirms no existing dependency-closure work.
+
+
+---
+
+## FINDING-GH-011
+
+### Finding
+The active roadmap already defines one canonical company-scoped Business Memory & Knowledge runtime in issue #153, and that issue explicitly incorporates verified OnboardingPro v6 donor semantics for longitudinal strategy/experience memory and anti-repeat decisions. A separate Zero-specific memory implementation would therefore risk becoming a parallel memory engine.
+
+### Why it matters
+Mechanism archaeology has identified a concrete canonical convergence owner for a major part of the future Zero's experience-memory capability. The correct architectural question is how Personal Zero experience/understanding projects onto or consumes canonical memory contracts—not whether to build another generic memory store.
+
+### Evidence
+- Repository: Masterleeaus/Agent-Mesh
+- Issue: #153 — [TZ-ROADMAP-03] Finish canonical company-scoped Business Memory & Knowledge runtime
+- Issue requires one company-scoped memory/knowledge runtime and explicitly says not to create parallel memory systems per agent or surface.
+- Verified donor components recorded in #153:
+  - `System/Learning/LongitudinalStrategyMemoryService.php`
+  - `System/Learning/AntiRepeatDecisionService.php`
+  - `System/Persistence/Models/StrategyMemory.php`
+  - strategy-memory migration
+  - `System/Execution/OutcomeMeasurementService.php`
+  - `System/Execution/RollbackDecisionService.php`
+  - longitudinal strategy-memory and related learning tests.
+- Donor source identified by #153: OnboardingPro Master v6.0.0-rc.4.zip in Titan Zero Library.
+
+### Current Titan equivalent
+Canonical Business Memory & Knowledge runtime / Knowledge Authority contracts (#153), with Decision/Experience integration.
+
+### Classification
+PARTIAL
+
+### Confidence
+HIGH for ownership/convergence direction; MEDIUM for donor implementation details until the donor source is independently inspected in this specialist mission.
+
+### Related action
+SUPPORTED EXISTING ACTION #153. Do not create a duplicate memory runtime.
+
+---
+
+## FINDING-GH-012
+
+### Finding
+The verified donor description in #153 distinguishes useful experience-learning semantics from authority: failed or harmful interventions can inform anti-repeat behavior, while stale evidence or materially changed context can permit a controlled retest. The same issue explicitly prohibits learned behavior from elevating authority.
+
+### Why it matters
+This is a strong candidate semantic foundation for Zero Experience Memory: remember what was tried, in what context, what happened, confidence/applicability/expiry, and avoid repeating materially similar harmful actions—without converting learned patterns into permission.
+
+### Evidence
+- Issue #153 donor recovery section.
+- `LongitudinalStrategyMemoryService.php`: verified intervention outcomes, action fingerprints, context, delta, confidence, harm, applicability, expiry.
+- `AntiRepeatDecisionService.php`: blocks materially similar failed/harmful interventions; permits controlled retest when evidence is stale or business context materially changes.
+- Required verification in #153 includes context-sensitive anti-repeat, stale-memory retest, outcome classification, confidence/applicability expiry, correction/supersession/retention, and no authority elevation from learned behavior.
+
+### Current Titan equivalent
+Business Memory / Experience contracts; prospective Personal Zero Experience Memory consumer/projection.
+
+### Classification
+SUPERIOR HISTORICAL
+
+### Confidence
+MEDIUM until direct source inspection confirms the issue's donor summary.
+
+### Related action
+#153; #763 archaeology verification.
+
+---
+
+## FINDING-GH-013
+
+### Finding
+Predictive/outcome learning already has a canonical bounded implementation/certification lane in issue #37. It requires verified action/outcome evidence to feed policy adaptation and predictive triggers while explicitly preventing predictive/learned behavior from bypassing Trust/Autonomy, Risk/Assurance or Command Bus authority.
+
+### Why it matters
+A future Zero Learning Governor should converge with this bounded learning lane rather than invent an independent self-expanding autonomy mechanism.
+
+### Evidence
+- Repository: Masterleeaus/Agent-Mesh
+- Issue: #37 — [TZ-ROADMAP-02] Finish bounded predictive triggers, outcome learning & autonomy-safety certification
+- Issue requires verified outcomes, bounded policy adaptation, calibration measurement, rollback/compensation, refusal/escalation, and proof that learning cannot expand authority/spend/communications/provider cost/company scope.
+
+### Current Titan equivalent
+Canonical predictive/outcome learning and autonomy-safety lane (#37).
+
+### Classification
+CURRENT
+
+### Confidence
+HIGH
+
+### Related action
+SUPPORTED EXISTING ACTION #37. Zero Learning Governor must preserve these authority ceilings.
