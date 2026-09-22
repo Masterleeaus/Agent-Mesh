@@ -418,3 +418,58 @@ HIGH
 
 ### Related action
 Compare schema semantics with #153; never import legacy tenancy unchanged.
+
+
+---
+
+## FINDING-GH-013
+
+### Finding
+Cross-agent issue evidence now resolves the previously unknown Business Reality/Evolution ownership gap: issue #767 already defines the canonical convergence target using verified OnboardingPro v6 donor components.
+
+### Why it matters
+GitHub archaeology must not create a competing Reality Graph, observation engine, reconfiguration engine or Evolution runtime. Historical GitHub evidence should now be evaluated as supporting/rejecting donor evidence for #767.
+
+### Evidence
+Repository: `Masterleeaus/Agent-Mesh`
+Issues inspected: #767, #759, #753.
+#767 identifies implemented donor components including `ContinuousBusinessObservationService`, `BusinessRealityGraphService`, `BusinessRealityFactService`, `BusinessConfigurationDiffer`, `BusinessReconfigurationService`, Nexus reassessment/provisioning services, consent, outcome measurement and rollback decision services.
+
+### Current Titan equivalent
+Canonical convergence action: #767. Read-only trigger/evidence mapping: #759.
+
+### Classification
+CURRENT ACTION / HISTORICAL DONOR VERIFIED BY OTHER AGENT
+
+### Confidence
+HIGH for issue ownership; donor implementation evidence is attributed to Library archaeology rather than independently recounted as GitHub proof.
+
+### Related action
+Support #767 with GitHub lineage evidence only; do not duplicate.
+
+---
+
+## FINDING-GH-014
+
+### Finding
+Cross-agent issue evidence resolves the Personal Zero ownership gap: #768 already defines the canonical Understanding + Experience contract convergence target.
+
+### Why it matters
+The TitanPro/Worksuite historical conditioning and operational-memory evidence recovered by this GitHub archaeology should support #768 rather than produce a new Personal Zero subsystem or issue.
+
+### Evidence
+Repository: `Masterleeaus/Agent-Mesh`
+Issue inspected: #768.
+Adjacent owners recorded there: Interaction Engine, Intelligence Runtime, #153 Business Memory, #767 Business Reality/Evolution, and Trust/Assurance/Governance/Autonomy/Command Bus.
+
+### Current Titan equivalent
+#768 Personal Zero Understanding & Experience contracts.
+
+### Classification
+CURRENT ACTION / PARTIAL architecture convergence
+
+### Confidence
+HIGH
+
+### Related action
+Support #768 with FINDING-GH-010 through FINDING-GH-012.
