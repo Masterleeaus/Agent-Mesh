@@ -113,3 +113,7 @@ if(!bridge.includes("resume.status!=='READY_TO_RESUME'")) throw new Error('bridg
 const bc=fs.readFileSync('src/integration/titan-bridge-client.js','utf8');
 if(!bc.includes("agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover")) throw new Error('all Agent Mesh mutations must be resume-gated');
 if(!sw.includes('const gatedPayload={...payload,resume_gate:resumeGate.bootstrap}')) throw new Error('validated resume gate must reach bridge mutation client');
+
+if(!sw.includes("const gatedPayload={...payload,resume_gate:gate.bootstrap}")) throw new Error('Agent Mesh mutation must receive validated resume gate');
+if(sw.includes("resume_gate:resumeGate.bootstrap")) throw new Error('stale undefined resumeGate reference remains');
+if(!sw.includes("preflightAgentMeshWorkMutation(snapshot")) throw new Error('central mutation preflight missing');
