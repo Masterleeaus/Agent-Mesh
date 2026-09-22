@@ -532,3 +532,103 @@ HIGH
 
 ### Recovery judgment
 Harvest implementation techniques only. Do not downgrade #647's current privacy/cost/authority policy to the older gateway model.
+
+
+---
+
+## FINDING-GH-017
+
+### Finding
+`TitanPro` documents an AEGIS governance precursor with explicit policy/risk/capability/confirmation gates, safe modes, cross-domain contradiction checks, auditable allow/draft/confirm/deny outcomes, and provider-route governance.
+
+### Evidence
+Repository: `Masterleeaus/TitanPro`
+Branch: `main`
+Path: `docs/04-AI/aegis-core.md`
+SHA: `8eeda3623ba7e65e8e8220950755a5da344220a1`
+Status in source: Draft v1.
+
+### Important recovered semantics
+- undeclared capabilities fail closed;
+- role, company/tenant, channel, confirmation and cross-domain consistency are checked before execution;
+- safe modes include draft-only, explanation-only, no-external-provider, no-customer-comms, no-financial-action and review-all;
+- ambiguity biases toward constrained output/confirmation rather than silent execution;
+- governance records approvals, denials, escalations, overrides and conflicts.
+
+### Current Titan equivalent
+Current Governance/Risk/Assurance/Trust/Autonomy/Command Bus architecture supersedes AEGIS as a standalone authority. Existing Trust convergence includes #640/#761; security identity #302.
+
+### Classification
+HISTORICAL / SPECIFICATION / SEMANTIC DONOR
+
+### Confidence
+HIGH for documented design; no runtime implementation claim from this file.
+
+### Recovery judgment
+Do not resurrect AEGIS as another governance engine. Preserve any missing fail-closed safe-mode, contradiction and explicit denial-reason semantics in canonical governance owners.
+
+---
+
+## FINDING-GH-018
+
+### Finding
+Historical `cleanly` architecture already specified a governed signal/backfeed pattern that keeps intelligence informed without giving read-model or advisory systems hidden write authority.
+
+### Evidence
+Repository: `Masterleeaus/cleanly`
+Branch: `main`
+Path: `docs/01-PWA/18-signal-envelope-and-event-backfeed-contract.md`
+SHA: `6dc757c77112efb9db5533915f08c8e0e428c33a`
+
+### Important recovered semantics
+- offline PWA/outbox replay and idempotency;
+- direct/review/deny/stage/split decision classes;
+- backfeed enriches read models/intelligence rather than mutating source-of-truth tables;
+- AI emits proposals/critiques/summaries/prioritization/anomaly hints, not silent operational writes;
+- replay, audit and approval are mandatory;
+- execution outcomes become new signals/learning evidence.
+
+### Current Titan equivalent
+Signal/Command Bus plus #645 Edge/offline lifecycle and canonical authority engines.
+
+### Classification
+HISTORICAL / SPECIFICATION / PARTIAL CURRENT EQUIVALENT
+
+### Confidence
+HIGH
+
+### Recovery judgment
+Use as lineage evidence for Signal/backfeed/offline semantics; do not create a second event bus.
+
+---
+
+## FINDING-GH-019
+
+### Finding
+Historical `cleanly` security architecture contains a detailed device-trust and identity precursor aligned with current Edge Fabric direction.
+
+### Evidence
+Repository: `Masterleeaus/cleanly`
+Branch: `main`
+Path: `docs/01-PWA/24-security-identity-device-trust-and-tenant-boundary.md`
+SHA: `8bf4e285832d00295f25bf4ddd2672147f238e20`
+
+### Important recovered semantics
+- explicit `company_id` tenant boundary and user_id as actor rather than tenant;
+- first-class device identity with key fingerprint, trust, handshake/sync, revocation and risk state;
+- device trust states untrusted/registered/verified/high_trust/restricted/revoked;
+- high-risk actions may require recent re-authentication, high-trust device or human approval;
+- AI/system identities must remain auditable rather than silently impersonating users;
+- revocation, token rotation, risky-action re-authentication and replay after restoration without widened access.
+
+### Current Titan equivalent
+#645 Edge Fabric and #302 security identity/session/credential hardening.
+
+### Classification
+HISTORICAL / SPECIFICATION / CURRENTLY CONVERGING
+
+### Confidence
+HIGH
+
+### Recovery judgment
+No new issue. Compare these historical trust-state/revocation/re-authentication semantics against #645/#302 and retain only missing details.
