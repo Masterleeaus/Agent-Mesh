@@ -1207,3 +1207,108 @@ HIGH
 
 ### Related action
 #633; Trust/Assurance/Rewind owners.
+
+
+---
+
+## FINDING-GH-042
+
+### Finding
+The later Titan Assurance architecture substantially hardens the older Model Council epistemic model by separating confidence from independence and evidence sufficiency, explicitly penalising correlated failure, missing/stale evidence and unresolved disagreement.
+
+### Evidence
+Library artifact `Titan-AI-Assurance-Engine-Upgrade-Prompt.md` defines separate confidence, independence and evidence-sufficiency outputs and scoring factors including provider/model-family/role independence, evidence quality/coverage, historical calibration, unresolved-disagreement, missing-data, correlated-failure and stale-evidence penalties.
+
+### Classification
+HISTORICAL DESIGN DONOR / TARGET SEMANTICS
+
+### Confidence
+HIGH
+
+### Related action
+#633; Assurance convergence.
+
+---
+
+## FINDING-GH-043
+
+### Finding
+The Assurance design explicitly protects against false consensus: independent first-pass analysis hides peer answers, deterministic validation cannot be overridden by model agreement, disagreements are typed, and High/Critical cases require adversarial challenge of the leading recommendation.
+
+### Why it matters
+This directly addresses the Zero failure mode where several models repeat the same mistake or inherit the same assumption. Agreement is evidence about reasoning convergence, not proof of truth.
+
+### Evidence
+Assurance phases 3–7 in `Titan-AI-Assurance-Engine-Upgrade-Prompt.md`.
+
+### Classification
+SUPERIOR HISTORICAL SPECIFICATION
+
+### Confidence
+HIGH
+
+### Related action
+#633.
+
+---
+
+## FINDING-GH-044
+
+### Finding
+The Assurance architecture makes uncertainty operational rather than cosmetic. It defines `insufficient_evidence`, `material_disagreement`, `policy_blocked`, `expired` and `superseded` as legitimate terminal/intermediate states and requires external actions to fail closed when assurance is insufficient.
+
+### Why it matters
+Zero must be allowed to say “I do not know enough” and stop/escalate instead of manufacturing certainty or converting low-confidence synthesis into execution.
+
+### Classification
+SUPERIOR HISTORICAL SPECIFICATION
+
+### Confidence
+HIGH
+
+### Related action
+#633; Trust/Assurance/Command Bus.
+
+---
+
+## FINDING-GH-045
+
+### Finding
+The target investigation loop is architecturally clear but this pass did not verify a dedicated implemented Investigation Workforce runtime: insufficient evidence should identify explicit evidence gaps, seek genuinely independent sources, retain investigation provenance/receipts, return evidence through Knowledge Authority, then reconsider the decision.
+
+### Why it matters
+Do not create an unrestricted research agent or parallel decision system. Investigation is a bounded evidence-acquisition stage feeding the existing Knowledge Authority → Council/Decision path.
+
+### Evidence
+Current Titan Zero architecture artifact and #763 archaeology brief describe targeted investigation, source diversity, investigation receipts and return-to-decision. Library search did not establish a dedicated implementation master in this pass.
+
+### Classification
+SPECIFICATION / IMPLEMENTATION NOT VERIFIED
+
+### Confidence
+MEDIUM-HIGH
+
+### Related action
+#633; Knowledge Authority; Workforce capability mapping.
+
+---
+
+## FINDING-GH-046
+
+### Finding
+Assurance outcome learning is explicitly calibration-oriented and consent-bounded: real outcomes should update task/vertical model reliability, but tenant data must not silently become training data.
+
+### Why it matters
+This connects Model Council/Assurance performance to Experience Memory and the Learning Governor while preserving privacy and the rule that learning does not create authority.
+
+### Evidence
+Assurance Phase 10 and completion criteria require outcome calibration without silent training on tenant data.
+
+### Classification
+SUPERIOR HISTORICAL SPECIFICATION
+
+### Confidence
+HIGH
+
+### Related action
+#37; #633; #768.
