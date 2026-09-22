@@ -332,3 +332,8 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-166 — current main `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts`, SHA `415ee5647bed8a54b60d4e18ee628c67316d97ee`; Knowledge Authority source/provenance/version/freshness/contradiction/jurisdiction/vertical control plane and knowledge-use receipts.
 - SOURCE-GH-167 — same current handover bundle, worker-memory runtime with provenance/confidence/relevance/privacy/purpose/expiry/supersession/revocation/recall receipts and memory-not-truth/not-authority invariants.
 - SOURCE-GH-168 — current main `packages/titan-platform/src/workforce.ts`, SHA `98f77554d22f76aa1131a257a171c803bfa43979`; exports Knowledge Authority functions through the Titan Workforce facade.
+
+
+- SOURCE-GH-169 — current main `packages/titan-platform/src/ported/titan-workforce/handover/investigation-installation-handover.ts`, SHA `415ee5647bed8a54b60d4e18ee628c67316d97ee`; worker-memory implementation and local exports.
+- SOURCE-GH-170 — current main `packages/titan-platform/src/workforce.ts`, SHA `98f77554d22f76aa1131a257a171c803bfa43979`; top-level Workforce facade exports Knowledge Authority but not Worker Memory.
+- SOURCE-GH-171 — direct current repository searches for `buildWorkforceWorkerMemorySnapshot`, `recallWorkforceWorkerMemory`, and `buildWorkforceWorkerMemoryRecallReceipt` found no verified external consumer path.
