@@ -3,7 +3,7 @@ import { z } from "zod";
 import { withRole, type AuthSession } from "@/lib/auth/middleware";
 import { withPortableTransaction } from "@/lib/db/portable";
 import { recordGovernedPermitState } from "@/lib/work-orders/field-governed-state";
-import { buildTitanFieldPermit } from "../../../../../../../../packages/titan-platform/src/field-permits";
+import { buildTitanFieldPermit } from "@titan-zero/titan-platform/business-ops";
 
 export const dynamic="force-dynamic";
 const schema=z.object({
