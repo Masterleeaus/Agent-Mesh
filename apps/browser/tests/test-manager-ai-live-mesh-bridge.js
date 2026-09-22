@@ -191,3 +191,7 @@ if(!sw.includes("const AGENT_MESH_MUTATION_POLICY=Object.freeze")) throw new Err
 if(!sw.includes("agent-mesh-mutation-not-allowlisted")) throw new Error('unknown Agent Mesh mutations must fail closed');
 if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.checkpoint'")) throw new Error('continuation checkpoint must use governed Agent Mesh mutation path');
 if(!sw.includes("return callAgentMeshMutation(config,'agent_mesh.continuation.takeover'")) throw new Error('continuation takeover must use governed Agent Mesh mutation path');
+
+if(!sw.includes('normalizeAgentMeshRoutingPayload')) throw new Error('GitHub-native routing normalizer missing');
+if(!sw.includes("compatibility:{legacy_packet_id:target||null,authority:false}")) throw new Error('legacy packet identity must be compatibility-only and non-authoritative');
+if(sw.includes("payload={issue_number:Number(work.number)||null,subgoal_id:String(work.subgoal_id||target||''),mode:'manager_route_request',legacy_packet_id:target||null}")) throw new Error('legacy packet id leaked into primary routing payload');
