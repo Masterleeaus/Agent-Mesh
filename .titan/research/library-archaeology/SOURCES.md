@@ -125,3 +125,14 @@ Library file: Pasted markdown(20260922-131634).md
 Relevant section: Environmental Intelligence.
 Classification: CURRENT ARCHITECTURE DESCRIPTION / SPECIFICATION, not implementation evidence.
 Evidence: environmental risk, compliance, resource efficiency, environmental opportunity, specialist environmental workforce and cross-domain analysis.
+
+
+## SOURCE-LIB-015
+Library file: SUBGOAL-CODE-MAP.json
+Classification: VERIFIED DISCOVERY / CODE-MAPPING EVIDENCE.
+Security evidence includes physically retrieved/SHA-verified Titan Locker and verified Titan Trust/Command Bus paths. Recorded conclusion: fail-closed authorization, approval, risk/governance gates and authority-policy contracts already exist; converge rather than create another policy engine.
+
+## SOURCE-LIB-016
+Library file: Titan-Chatbot-Field-Services-MVP-Extraction-Scaffold-Prompt.md
+Classification: HISTORICAL SECURITY REMEDIATION SPECIFICATION.
+Useful negative contracts: no public secret serialization; public callers forced to user role; privileged roles server-created only; file/conversation operations bind chatbot/session/conversation/customer context rather than ID-only authorization; company context derives from trusted host context.
