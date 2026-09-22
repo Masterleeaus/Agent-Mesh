@@ -197,3 +197,8 @@ Notes: Concrete company-scoped business-state/history mechanisms; evidence for c
 - SOURCE-GH-071 — TitanPro `docs/04-AI/evaluation.md`, SHA `c3b72fd0b538ec3fe7463a508e3b83957e4dafd6`; outcome/evaluation/refinement semantics.
 - SOURCE-GH-072 — TitanPro `docs/04-AI/model-routing.md`, SHA `04a4a2cabdee5eebb54074b2e6cb94d2e1cc55bf`; privacy/cost/latency/local-server-external routing precursor.
 - SOURCE-GH-073 — Agent-Mesh current owner search: #642 and #80 explicitly include Model Council; #633 owns AI/Decision/Intelligence convergence.
+
+
+- SOURCE-GH-074 — AI Coding Studio `docs/agents/agent-2-local-bridge-report.md`, SHA `50e8efe6f69abd891b9a523a94627161efc541e9`; hardened Local Bridge protocol/risk/approval/path/secret-filter lineage and explicit implementation limitations.
+- SOURCE-GH-075 — Titan Builder `pid.md`, SHA `410f437b09ca268f813268d0db4016a8a4576023`; OpenBrowser browser-provider/local Node architecture, project context, diff/apply workflow and browser subscription path.
+- SOURCE-GH-076 — Titan Builder main search evidence: `browser-extension/bridge-trust.ts`, `browser-extension/README.md`, workspace/security audit records; authenticated loopback, separated credentials, local companion, preconditions and rollback controls.
