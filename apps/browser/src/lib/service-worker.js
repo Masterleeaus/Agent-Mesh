@@ -1922,7 +1922,44 @@ async function fetchLiveManagerAISnapshot(){
         : null;
     const normalized={schema:'titan-code.manager-snapshot.v3',...value,githubProjection,liveReconciliation,live:true,health:health.ok?health.result:null,capabilities:capabilities.ok?capabilities.result:null,fetchedAt:new Date().toISOString()};
     await chrome.storage.local.set({[MANAGER_AI_SNAPSHOT_STORAGE_KEY]:normalized,[MANAGER_AI_LIVE_STORAGE_KEY]:{ok:true,fetchedAt:normalized.fetchedAt,health:normalized.health,capabilities:normalized.capabilities}});
+    // Best-effort durable checkpoint. Failure never grants authority or blocks read-only supervision.
+    checkpointAgentMeshContinuation(normalized,'live-snapshot').catch(()=>{});
     return {ok:true,source:'live',snapshot:normalized,health:normalized.health,capabilities:normalized.capabilities};
+}
+async function checkpointAgentMeshContinuation(snapshot,reason='manager-lifecycle'){
+    const settings=await getSystemIntegrationSettings();
+    if(!settings.bridgeEnabled||!settings.bridgeToken||!globalThis.CodeeTitanBridgeClient) return {ok:false,reason:'live-mesh-bridge-not-configured'};
+    const value=snapshot&&typeof snapshot==='object'?snapshot:{};
+    const github=value.github||value.agentMesh||null;
+    if(!github?.issue?.number||!github?.issue?.subgoal_id) return {ok:false,reason:'github-work-identity-missing'};
+    const config={enabled:settings.bridgeEnabled,endpoint:settings.bridgeEndpoint,token:settings.bridgeToken,workspace:settings.bridgeWorkspace};
+    return globalThis.CodeeTitanBridgeClient.call(config,'agent_mesh.continuation.checkpoint',{
+        issue_number:github.issue.number,
+        subgoal_id:github.issue.subgoal_id,
+        claim_branch:github.claim?.branch||github.branch||('agent/'+github.issue.subgoal_id),
+        base_sha:github.claim?.baseSha||github.git?.baseSha||null,
+        head_sha:github.git?.headSha||github.claim?.headSha||null,
+        main_sha:github.git?.mainSha||null,
+        lifecycle:value.githubProjection?.state||github.lifecycle||null,
+        checkpoint_reason:String(reason||'manager-lifecycle').slice(0,120),
+        source:'titan-code-manager',
+        authority:{claim_release:false,merge:false,ai:false}
+    });
+}
+async function takeoverAgentMeshContinuation(snapshot,{fromExecutionSession=null,toExecutionSession,reason='SESSION_REPLACED'}={}){
+    if(!toExecutionSession) return {ok:false,reason:'to-execution-session-required'};
+    const settings=await getSystemIntegrationSettings();
+    if(!settings.bridgeEnabled||!settings.bridgeToken||!globalThis.CodeeTitanBridgeClient) return {ok:false,reason:'live-mesh-bridge-not-configured'};
+    const value=snapshot&&typeof snapshot==='object'?snapshot:{},github=value.github||value.agentMesh||null;
+    if(!github?.issue?.number||!github?.issue?.subgoal_id) return {ok:false,reason:'github-work-identity-missing'};
+    const config={enabled:settings.bridgeEnabled,endpoint:settings.bridgeEndpoint,token:settings.bridgeToken,workspace:settings.bridgeWorkspace};
+    return globalThis.CodeeTitanBridgeClient.call(config,'agent_mesh.continuation.takeover',{
+        issue_number:github.issue.number,subgoal_id:github.issue.subgoal_id,
+        claim_branch:github.claim?.branch||github.branch||('agent/'+github.issue.subgoal_id),
+        from_execution_session:fromExecutionSession,to_execution_session:toExecutionSession,reason,
+        head_sha:github.git?.headSha||github.claim?.headSha||null,
+        authority:{same_claim_branch:true,claim_release:false,merge:false,ai:false}
+    });
 }
 async function managerAIWatchSweep(){try{const live=await fetchLiveManagerAISnapshot();const snapshot=live.snapshot||await getManagerAISnapshot();const inspection=globalThis.TitanCodeManagerAISupervisor.inspect(snapshot);const plan=globalThis.TitanCodeManagerAISupervisor.deterministicPlan(inspection);await chrome.storage.local.set({[MANAGER_AI_LAST_STORAGE_KEY]:{schema:'titan-code.manager-ai-watch.v2',generatedAt:new Date().toISOString(),inspection,deterministicPlan:plan,watchdog:true,source:live.source,bridgeReason:live.reason||null,health:live.health||null}});}catch(error){console.warn('[Codee] Manager AI watchdog failed:',error);}}
 async function runStoredManagerAISupervision(options={}){const live=await fetchLiveManagerAISnapshot();const snapshot=live.snapshot||await getManagerAISnapshot();const result=await globalThis.TitanCodeManagerAISupervisor.advise(snapshot,options);await chrome.storage.local.set({[MANAGER_AI_LAST_STORAGE_KEY]:{...result,source:live.source,bridgeReason:live.reason||null,health:live.health||null}});return {...result,source:live.source,bridgeReason:live.reason||null,health:live.health||null};}
