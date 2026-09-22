@@ -77,3 +77,17 @@ Fixed the concrete owner-surface mismatch in `surface-contract.mjs`:
 - Go `maps.navigate` capability remains intact
 
 Added focused Node regression coverage in `runtime/surface-contract.test.mjs`.
+
+## Pass 5 — legacy shell vs canonical PWA convergence audit
+
+A second live application shell exists at `apps/web/components/AppShell.tsx` and `apps/web/app/app/*`. It is a mature legacy/office field-service UI with sidebar hubs and mobile shortcuts such as Overview/My Day/Capture/Work/People/Money. It is not the same information architecture as the chat-first Titan Go/Hub/Command surface under `app/titan`.
+
+Key findings:
+- `/app` still opens the legacy owner dashboard and AppShell rather than the chat-first owner/Command projection.
+- Tech navigation still exposes My Day/Visits rather than the target Go Chat/Active/Schedule/Comms/Ready shell.
+- No standalone `/go`, `/hub` or `/command` routes were found at the expected root paths.
+- The marketing site links “Open Command” to `/app`, which currently lands on the legacy dashboard.
+- The legacy shell contains substantial useful domain workflows and must not be deleted or rewritten; these should become destinations/projections behind the chat-first role shells.
+- This confirms #636 is a convergence/routing problem, not a need to import another app core.
+
+Implementation rule: preserve the existing domain pages and mature AppShell functionality, but make canonical Zero/Go/Hub chat-first surfaces the primary role entry experience and expose legacy domain pages as secondary destinations. Do not create a fourth app or duplicate business logic.
