@@ -76,3 +76,5 @@ Remaining research phases: broad Library family inventory; Personal Zero/cogniti
 - Pass 10 completed Browser/Titan Code archaeology. Multiple proven browser donors exist, but Titan Code remains private development-only. #637 updated with a strict production-safe extraction set feeding canonical Titan Browser Node #643; no duplicate browser runtime created.
 
 - Pass 11 completed Rewind/Recovery archaeology. Distributed verified donors and current dependencies exist, but no canonical current-main Rewind implementation symbols were found. #771 created to recover one cross-engine Rewind contract without duplicating execution/provider/storage/offline recovery owners.
+
+- Pass 12 completed Titan Signal archaeology. Verified Signal Engine event/anomaly/delivery donors exist; current canonical ownership is already #642/#73 plus distributed integrations. #642 updated with donor-parity requirements; no duplicate Signal engine/issue created.
