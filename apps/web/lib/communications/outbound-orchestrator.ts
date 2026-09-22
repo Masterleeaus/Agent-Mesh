@@ -1,4 +1,5 @@
 import { recordDeliveryReceipt } from "@/lib/communications-log";
+import { CommunicationReplayGuard } from "./idempotency";
 import {
   assertCommunicationEnvelope,
   createDeliveryReceipt,
@@ -21,11 +22,14 @@ export interface CommunicationProviderAdapter {
 
 export type GovernedOutboundResult =
   | { ok: false; denied: true; reason: string }
+  | { ok: false; denied: false; reason: "duplicate" }
   | { ok: false; denied: false; reason: "no-provider"; receipt: DeliveryReceipt; persisted: boolean }
   | { ok: false; denied: false; reason: "provider-failed"; provider_id: string; receipt: DeliveryReceipt; persisted: boolean; retry?: { next_attempt: number; delay_ms: number } }
   | { ok: true; provider_id: string; receipt: DeliveryReceipt; persisted: boolean };
 
 export interface ProviderAttemptEvidence { provider_id: string; receipt: DeliveryReceipt; persisted: boolean; }
+
+const outboundReplayGuard = new CommunicationReplayGuard();
 
 /**
  * Canonical pre-provider orchestration seam. Authority is supplied by the
@@ -42,11 +46,17 @@ export async function executeGovernedOutbound(input: {
   retry_policy?: CommunicationRetryPolicy;
 }): Promise<GovernedOutboundResult> {
   const message = assertCommunicationEnvelope(input.message);
+  if (!outboundReplayGuard.claim(message)) {
+    return { ok: false, denied: false, reason: "duplicate" };
+  }
   const gate = evaluateOutboundCommunicationGate({
     policy: input.policy,
     rate_limit: input.rate_limit,
   });
-  if (!gate.allowed) return { ok: false, denied: true, reason: gate.reason };
+  if (!gate.allowed) {
+    outboundReplayGuard.release(message);
+    return { ok: false, denied: true, reason: gate.reason };
+  }
 
   const candidate = selectCommunicationProvider(
     input.candidates.filter((item) => item.channel === message.channel),
