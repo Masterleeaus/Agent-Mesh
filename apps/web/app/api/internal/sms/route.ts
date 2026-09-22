@@ -26,22 +26,6 @@ const bodySchema = z.object({
 
 const ACTIVE_JOB_STATUSES = ["draft", "quoted", "scheduled", "in_progress"];
 
-// ── owner account discovery (cached) ───────────────────────────────────────
-let _accountId: string | null = null;
-let _userId: string | null = null;
-async function getOwnerContext(): Promise<{ accountId: string; userId: string }> {
-  if (_accountId && _userId) return { accountId: _accountId, userId: _userId };
-  const row = await queryOne<{ account_id: string; user_id: string }>(
-    `SELECT a.id AS account_id, u.id AS user_id
-     FROM accounts a JOIN users u ON u.account_id = a.id
-     WHERE u.role = 'owner' ORDER BY u.created_at LIMIT 1`
-  );
-  if (!row) throw new Error("No owner account found in database");
-  _accountId = row.account_id;
-  _userId = row.user_id;
-  return { accountId: _accountId, userId: _userId };
-}
-
 /** Match all client rows for a phone (E.164 or last-10 national). */
 function phoneMatchParams(phone: string): { phone: string; digits: string; last10: string } {
   const digits = phone.replace(/\D/g, "");
