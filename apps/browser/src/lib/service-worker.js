@@ -1981,7 +1981,7 @@ async function executeManagerAIPlan(options={}){
         const result=await globalThis.CodeeTitanBridgeClient.call(config,action,payload);
         if(result.ok) executed.push({step,action,result}); else skipped.push({step,action,reason:result.reason||'manager-action-failed'});
     }
-    const out={schema:'titan-code.manager-ai-execution.v1',generatedAt:new Date().toISOString(),source:live.source,inspection,plan,executed,skipped,authority:{ai:false,managerRules:true,canonicalPromotion:false,delete:false}};
+    const out={schema:'titan-code.manager-ai-execution.v1',generatedAt:new Date().toISOString(),source:live.source,inspection,plan,executed,skipped,authority:{ai:false,managerRules:true,githubMergeRequest:false,delete:false}};
     await chrome.storage.local.set({[MANAGER_AI_LAST_STORAGE_KEY]:out});
     return out;
 }
