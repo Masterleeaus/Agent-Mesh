@@ -217,3 +217,24 @@ export function canLinkDocuments(role: Role): boolean {
 export function canUpdateChecklist(role: Role): boolean {
   return hasRole(role, ["owner", "admin", "tech"]);
 }
+
+
+/** Record permit administration state. Field techs may supply evidence but cannot authoritatively pass inspections. */
+export function canManageFieldPermits(role: Role): boolean {
+  return hasRole(role, ["owner", "admin"]);
+}
+
+/** Record an authoritative inspection result. */
+export function canRecordFieldInspectionResult(role: Role): boolean {
+  return hasRole(role, ["owner", "admin"]);
+}
+
+/** Independently verify completed defects. */
+export function canVerifyFieldDefects(role: Role): boolean {
+  return hasRole(role, ["owner", "admin"]);
+}
+
+/** Defer a critical defect. Kept owner-only because this can remove a close-out blocker. */
+export function canDeferCriticalFieldDefect(role: Role): boolean {
+  return role === "owner";
+}
