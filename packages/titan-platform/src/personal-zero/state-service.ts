@@ -3,6 +3,7 @@ import type { VerifiedOutcome } from "../workforce-evidence/contracts.js";
 import { proposeLearningFromCorrection, proposeLearningFromPredictionError, proposeLearningFromVerifiedOutcome, assertLearningProposalAuthorityNeutral, type PersonalZeroLearningProposal } from "./learning-governor-bridge.js";
 import { createLearningProposalRecord, reviewLearningProposal, supersedeLearningProposal, type LearningProposalRecord } from "./learning-review.js";
 import { createAcceptedLearningAdjustment, type LearningConsumer } from "./learning-consumption.js";
+import { validateTargetShareAcceptance, type TargetShareAcceptance } from "./share-acceptance.js";
 import {
   createCompanyRelationship,
   createUnderstandingState,
@@ -220,10 +221,12 @@ export function createPersonalZeroStateService({repository,clock=()=>Date.now()}
       return repository.put(context,{module_id:MODULE_ID,collection:SHARE_GRANTS,record_id:grant_id,expected_revision:row.version,data:revoked});
     },
 
-    async getSharedUnderstanding(context:StorageContextInput,source_company_id:string,grant_id:string,now=Date.now()){
+    async getSharedUnderstanding(context:StorageContextInput,source_company_id:string,grant_id:string,targetAcceptance:TargetShareAcceptance,now=Date.now()){
+      guardInput(targetAcceptance,"personal_zero.target_share_acceptance");
       if(context.company_id!==source_company_id)throw new Error("Shared understanding lookup must use source company context");
       const grant=recordData<CrossContextShareGrant>(await repository.get(context,MODULE_ID,SHARE_GRANTS,grant_id));
       if(!grant||grant.source_company_id!==source_company_id||grant.revoked_at!=null||(grant.expires_at!=null&&grant.expires_at<=now))return [];
+      if(!validateTargetShareAcceptance(grant,targetAcceptance,now))return [];
       const source=recordData<CompanyRelationship>(await repository.get(context,MODULE_ID,RELATIONSHIPS,grant.source_relationship_id));
       if(!source||source.status!=="active")return [];
       const [rows,evidenceRows]=await Promise.all([repository.list(context,{module_id:MODULE_ID,collection:UNDERSTANDING}),repository.list(context,{module_id:MODULE_ID,collection:EVIDENCE})]);
