@@ -102,3 +102,5 @@ const qUnavailable=Q.project({});assert.strictEqual(qUnavailable.source,'unavail
 const lUnavailable=L.reconcile({});assert.strictEqual(lUnavailable.source,'unavailable');assert.strictEqual(lUnavailable.failClosed,true);
 
 assert.strictEqual(legacy.diagnosticOnly,true);assert.strictEqual(legacy.migration.legacyInputsNeverAuthoritative,true);assert.strictEqual(legacy.queue.nextGlobal,null);assert.deepStrictEqual(legacy.queue.nextByLane,{});assert.strictEqual(legacy.queue.authority.mayUnlockDependency,false);assert.strictEqual(legacy.queue.authority.mayAdvanceLifecycle,false);
+
+const legacy=S.deriveLegacy({packets:[{packet_id:'X',status:'AVAILABLE'}]});assert.strictEqual(legacy.authority.mayClaim,false);assert.strictEqual(legacy.authority.mayUnlockDependency,false);assert.strictEqual(legacy.authority.mayComplete,false);assert.strictEqual(legacy.authority.mayRequestMerge,false);assert.throws(()=>S.assertAuthoritative(legacy),/REQUIRES_GITHUB/);const gh=S.deriveGithub({githubProjection:{state:'ACTIVE',git:{branch:'agent/X',mainSha:'a'.repeat(40),headSha:'b'.repeat(40)}}});assert.strictEqual(S.assertAuthoritative(gh),gh);
