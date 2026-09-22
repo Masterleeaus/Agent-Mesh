@@ -124,3 +124,7 @@ Purpose-bound OnboardingPro consent plus LocalBrain/Phase10 privacy scopes imply
 
 ### ZM-017 — Zero is provider-neutral and local-first
 Sovereign/Goal-13 evidence confirms the intended route order: device/local → trusted LAN/private node → Local Bridge/Ollama/customer-hosted → BYO provider → explicitly entitled Titan resource. Zero and Workforce request capabilities, never specific vendors. Routing evaluates privacy, locality, capability, entitlement, availability, cost and latency and records execution provenance. Offline/local operation never elevates authority. A current implementation gap remains: the scanned AI masters did not prove one canonical production Ollama/browser-local adapter/provider-independent routing contract, so Goal 51 convergence remains required.
+
+
+### ZM-018 — One Zero, projected across surfaces and workforce
+Command/zero, Go, Hub, model hosts and browser surfaces must not fork Personal Zero, agents or authority. Interaction Engine owns conversation/session/task context; Personal Zero owns durable personal understanding/experience; Workforce owns organisational capability coordination. Surfaces receive purpose/role-authorised projections of the same canonical identities and state, and handoffs carry references/provenance rather than cloned stores. Surface/host identity never raises authority; reconnect/resume revalidates current identity, company and authority.
