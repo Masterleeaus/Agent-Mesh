@@ -143,3 +143,6 @@ assert(sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agen
 if(!sw.includes("action.startsWith('agent_mesh.') && globalThis.CodeeTitanBridgeClient.classify?.(action) === 'mutation'")) throw new Error('generic Titan bridge must reject Agent Mesh mutations');
 if(!sw.includes("reason: 'agent-mesh-mutation-requires-governed-path'")) throw new Error('generic Agent Mesh mutation bypass must fail closed');
 if(!sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.takeover']).has(action)")) throw new Error('governed Agent Mesh mutation gate missing');
+
+if(!sw.includes("if(!snapshot||typeof snapshot!=='object') return {ok:false,reason:'agent-mesh-snapshot-required',mayMutate:false}")) throw new Error('mesh mutation must require snapshot');
+if(!sw.includes("const requiresGate=new Set(['agent_mesh.recover_agent','agent_mesh.route_packet','agent_mesh.continuation.checkpoint','agent_mesh.continuation.takeover'])")) throw new Error('all mesh mutation actions must use central resume gate');
