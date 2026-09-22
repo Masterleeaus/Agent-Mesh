@@ -35,7 +35,10 @@ export function buildTitanProjectSubmittal(input:TitanProjectSubmittalInput,opti
  if(revision_number>1&&!previous_submittal_id)throw new Error('revisions after 1 require previous_submittal_id');
  if(revision_number===1&&previous_submittal_id)throw new Error('revision 1 cannot reference previous_submittal_id');
  const date_submitted=dateOnly(input.date_submitted,'date_submitted'),date_required=input.date_required?dateOnly(input.date_required,'date_required'):null,date_reviewed=input.date_reviewed?dateOnly(input.date_reviewed,'date_reviewed'):null;
- if(['approved','approved_as_noted','revise_and_resubmit','rejected'].includes(input.state)&&!date_reviewed)throw new Error('review outcome requires date_reviewed');
+ const reviewer_ref=opt(input.reviewer_ref);
+ if(['approved','approved_as_noted','revise_and_resubmit','rejected'].includes(input.state)&&(!date_reviewed||!reviewer_ref))throw new Error('review outcome requires reviewer_ref and date_reviewed');
+ if(date_reviewed&&Date.parse(`${date_reviewed}T00:00:00Z`)<Date.parse(`${date_submitted}T00:00:00Z`))throw new Error('date_reviewed must not precede date_submitted');
+ if(date_required&&Date.parse(`${date_required}T00:00:00Z`)<Date.parse(`${date_submitted}T00:00:00Z`))throw new Error('date_required must not precede date_submitted');
  if(input.state==='approved_as_noted'&&!opt(input.review_comments))throw new Error('approved_as_noted requires review_comments');
  if(input.state==='revise_and_resubmit'&&!opt(input.review_comments))throw new Error('revise_and_resubmit requires review_comments');
  const quantity=input.quantity==null?null:int(input.quantity,'quantity',0),unit_cost_cents=input.unit_cost_cents==null?null:int(input.unit_cost_cents,'unit_cost_cents',0);
@@ -45,7 +48,7 @@ export function buildTitanProjectSubmittal(input:TitanProjectSubmittalInput,opti
   schema:TITAN_PROJECT_SUBMITTAL_SCHEMA,submittal_id:req(input.submittal_id,'submittal_id'),company_id:req(input.company_id,'company_id'),project_id:req(input.project_id,'project_id'),
   work_order_id:opt(input.work_order_id),phase_ref:opt(input.phase_ref),title:req(input.title,'title'),description:opt(input.description),spec_section:opt(input.spec_section),submittal_type:input.submittal_type,
   manufacturer:opt(input.manufacturer),model_number:opt(input.model_number),product_description:opt(input.product_description),quantity,unit_cost_cents,total_cost_cents,alternatives_considered:opt(input.alternatives_considered),
-  submitted_by_ref:req(input.submitted_by_ref,'submitted_by_ref'),submitted_to:opt(input.submitted_to),reviewer_ref:opt(input.reviewer_ref),communication_thread_ref:opt(input.communication_thread_ref),
+  submitted_by_ref:req(input.submitted_by_ref,'submitted_by_ref'),submitted_to:opt(input.submitted_to),reviewer_ref,communication_thread_ref:opt(input.communication_thread_ref),
   state:input.state,review_comments:opt(input.review_comments),revision_number,previous_submittal_id,date_submitted,date_required,date_reviewed,
   lead_time_days:input.lead_time_days==null?null:int(input.lead_time_days,'lead_time_days',0),delivery_date:input.delivery_date?dateOnly(input.delivery_date,'delivery_date'):null,
   document_refs:Object.freeze(input.document_refs.map(x=>req(x,'document_ref'))),notes:opt(input.notes),days_in_review:timing.days_in_review,is_overdue:timing.is_overdue,provenance:prov(input.provenance),
