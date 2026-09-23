@@ -1,0 +1,136 @@
+name: Titan Trust Authority Evidence Recovery
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recover-trust-authority:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Recover Trust and Authority lifecycle evidence
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess,re,json,collections
+
+          out=Path("trust-authority-evidence")
+          out.mkdir(exist_ok=True)
+          files=subprocess.check_output(["git","ls-files"],text=True).splitlines()
+          eligible=[f for f in files if f.endswith((".ts",".tsx",".mts",".cts",".js",".jsx",".sql",".md",".json",".yaml",".yml"))]
+
+          def read(f):
+            try:return Path(f).read_text(errors="ignore")[:1200000]
+            except:return ""
+          content={f:read(f) for f in eligible}
+
+          concepts={
+            "trust-tier":r"Titan Trust|trust tier|trustTier|tier transition|trust progression",
+            "three-way-handshake":r"three.?way|3.?way|handshake|human.*agent.*system|agent.*system.*human",
+            "earn":r"\bEARN\b|earn trust",
+            "delegate":r"\bDELEGATE\b|delegat",
+            "accept":r"\bACCEPT\b|accept.*authority",
+            "execute":r"\bEXECUTE\b|execution authority|execute action",
+            "verify":r"\bVERIFY\b|verification gate|post.?execution",
+            "revoke":r"\bREVOKE\b|revok|withdraw.*authority",
+            "continuance":r"Authority Continuance|continuance|authority.*renew|authority.*expiry|authority.*freshness",
+            "scope":r"scope|scope.*boundary|bounded authority",
+            "company-boundary":r"company_id|companyId",
+            "legacy-tenant":r"tenant_id|tenant_company_id|tenantId",
+            "risk":r"\bRisk\b|risk gate|risk assessment",
+            "assurance":r"\bAssurance\b|assurance gate",
+            "governance":r"\bGovernance\b|governance gate",
+            "rewind":r"\bRewind\b|rollback|reversal|compensation|undo",
+            "irreversible":r"irreversible|irreversib",
+            "autonomy":r"autonom|trusted automation|predictive",
+            "consent":r"consent|approval|human approval",
+            "command":r"CommandBus|Command Bus|command bus",
+          }
+
+          hits=collections.defaultdict(list)
+          for f,t in content.items():
+            for k,p in concepts.items():
+              if re.search(p,t,re.I|re.S): hits[k].append(f)
+
+          lifecycle=[
+            ("EARN","earn"),("DELEGATE","delegate"),("ACCEPT","accept"),
+            ("EXECUTE","execute"),("VERIFY","verify"),("REVOKE","revoke")
+          ]
+
+          # Detect files that mention multiple lifecycle stages, useful for finding actual transition logic.
+          transition_candidates=[]
+          for f,t in content.items():
+            present=[label for label,key in lifecycle if re.search(concepts[key],t,re.I|re.S)]
+            if len(present)>=2:
+              transition_candidates.append({"path":f,"stages":present})
+
+          # Search for explicit tier-like enums/constants.
+          tier_values=collections.defaultdict(set)
+          for f,t in content.items():
+            if not re.search(concepts["trust-tier"],t,re.I): continue
+            for m in re.finditer(r"""(?:tier|level|stage|state)\s*[:=]\s*['"]([^'"]{2,80})['"]""",t,re.I):
+              tier_values[f].add(m.group(1))
+
+          # Authority-sensitive files missing obvious tenant boundary signal.
+          authority_scope_gaps=[]
+          for f,t in content.items():
+            if not re.search(r"authority|delegat|execute|permission|autonom",t,re.I): continue
+            if "company_id" not in t and "companyId" not in t:
+              authority_scope_gaps.append(f)
+
+          md=[
+            "# Titan Trust → Authority Continuance Evidence","",
+            "> Read-only recovery. Keyword presence does not prove that a transition is correctly enforced. No new trust semantics are inferred here.","",
+            f"Commit: `{subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()}`","",
+            "## Trust / Authority concept matrix","",
+            "| Concept | Matching files | Status |","|---|---:|---|"
+          ]
+          for k in concepts:
+            md.append(f"| {k} | {len(hits[k])} | {'EVIDENCE FOUND' if hits[k] else 'UNRESOLVED'} |")
+
+          md += ["","## Three-way handshake evidence"]
+          md += [f"- `{f}`" for f in hits["three-way-handshake"][:100]] or ["- **UNRESOLVED**"]
+
+          md += ["","## Lifecycle transition candidates","",
+                 "| File | Detected stages |","|---|---|"]
+          for x in sorted(transition_candidates,key=lambda x:(-len(x["stages"]),x["path"]))[:200]:
+            md.append(f"| `{x['path']}` | {', '.join(x['stages'])} |")
+          if not transition_candidates: md.append("| - | No multi-stage candidates found |")
+
+          md += ["","## Explicit tier-like values"]
+          for f,vals in sorted(tier_values.items()):
+            md.append(f"- `{f}`: {', '.join(sorted(vals))}")
+          if not tier_values: md.append("- No explicit tier-like literals extracted.")
+
+          md += ["","## Authority-sensitive paths without obvious company boundary evidence"]
+          md += [f"- `{f}`" for f in authority_scope_gaps[:200]] or ["- None found by heuristic."]
+
+          md += ["","## Concept evidence paths"]
+          for k in concepts:
+            md += ["",f"### {k}"]
+            md += [f"- `{f}`" for f in hits[k][:100]] or ["- **UNRESOLVED**"]
+
+          (out/"Titan-Trust-Authority-Continuance-Evidence.md").write_text("\n".join(md)+"\n")
+          (out/"trust-authority-evidence.json").write_text(json.dumps({
+            "concept_hits":hits,
+            "lifecycle_transition_candidates":transition_candidates,
+            "tier_values":{k:sorted(v) for k,v in tier_values.items()},
+            "authority_scope_gaps":authority_scope_gaps,
+            "lifecycle_required":["EARN","DELEGATE","ACCEPT","EXECUTE","VERIFY","REVOKE"],
+            "warning":"Evidence map only; transition enforcement, three-way handshake semantics, and authority continuance require source-level review."
+          },indent=2,default=list))
+
+      - name: Upload Trust evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: titan-zero-trust-authority-evidence-${{ github.sha }}
+          path: trust-authority-evidence/
+          retention-days: 30
+          if-no-files-found: error
