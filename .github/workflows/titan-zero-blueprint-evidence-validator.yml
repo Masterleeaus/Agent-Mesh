@@ -1,0 +1,157 @@
+name: Titan Zero Blueprint Evidence Validator
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-blueprint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate architecture evidence coverage
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess,re,json,collections
+
+          out=Path("blueprint-evidence-validation")
+          out.mkdir(exist_ok=True)
+          tracked=subprocess.check_output(["git","ls-files"],text=True).splitlines()
+          docs=[f for f in tracked if f.endswith(".md")]
+          source=[f for f in tracked if f.endswith((".ts",".tsx",".mts",".cts",".sql"))]
+
+          def read(f):
+            try: return Path(f).read_text(errors="ignore")[:1000000]
+            except: return ""
+
+          content={f:read(f) for f in tracked if f.endswith((".md",".ts",".tsx",".mts",".cts",".sql",".json",".yaml",".yml"))}
+
+          requirements=[
+            ("Product definition",r"managed|workforce|business operating|existing business|existing system"),
+            ("Your Zero",r"Your Zero|zero synthesis|zero-synthesis|persistent.*zero|personal.*zero"),
+            ("Reality layer",r"Reality|BusinessReality|observation|evidence|provenance"),
+            ("Authority layer",r"Authority|authority continuance|delegat|permission|execution authority"),
+            ("Titan Trust",r"Titan Trust|trust tier|trusted automation|autonomous|predictive"),
+            ("Three-way trust handshake",r"three.?way|3.?way|handshake"),
+            ("Authority lifecycle",r"EARN|DELEGATE|ACCEPT|EXECUTE|VERIFY|REVOKE"),
+            ("Zero Core potential state",r"potential state|zero-synthesis|synthesis"),
+            ("Evolution / reconfiguration",r"BusinessReconfiguration|reconfigur|continuous business observation|ContinuousBusinessObservation"),
+            ("Model Council",r"Model Council|ModelCouncil|council"),
+            ("Decision Engine",r"DecisionPacket|Decision Engine|DecisionEngine"),
+            ("Epistemic separation",r"fact.*inference|inference.*recommendation|recommendation.*decision|confidence|INSUFFICIENT EVIDENCE"),
+            ("Experience / anti-repeat",r"AntiRepeat|anti.?repeat|experience memory|LongitudinalStrategyMemory"),
+            ("Rewind",r"Rewind|rollback|reversal|compensat"),
+            ("Knowledge Authority",r"Knowledge Authority|KnowledgeAuthority|provenance"),
+            ("Workforce",r"workforce|capability registry|capability binding"),
+            ("Interaction Engine",r"Interaction Engine|InteractionEngine"),
+            ("Interface Runtime",r"Interface Runtime|InterfaceRuntime|generative UI"),
+            ("Visual Runtime",r"Visual Runtime|VisualRuntime"),
+            ("Titan Builder",r"Titan Builder|TitanBuilder"),
+            ("Signal",r"\bSignal\b"),
+            ("Prime",r"\bPrime\b"),
+            ("Nexus",r"\bNexus\b"),
+            ("Forge",r"\bForge\b"),
+            ("Command Bus",r"Command Bus|CommandBus"),
+            ("Operation Identity",r"Operation Identity|OperationIdentity"),
+            ("Local Bridge / Ollama",r"Local Bridge|LocalBridge|Ollama"),
+            ("Cost Sovereignty",r"Cost Sovereignty|cost sovereignty"),
+            ("Consent / privacy",r"consent|privacy"),
+            ("Security / Shield",r"\bShield\b|security"),
+            ("Business systems",r"CRM|booking|quote|dispatch|payment|finance|inventory|marketing"),
+            ("T0GM",r"T0GM|God Mode|oversight"),
+          ]
+
+          def evidence_class(f):
+            p=f.lower()
+            if "docs/canonical/" in p: return "CANONICAL DOC"
+            if re.search(r"(^|/)(archive|library)(/|$)|onboardingpro|titan-onboarding|docs/archive|docs/generated",p): return "DONOR/HISTORICAL"
+            if f in source: return "CURRENT IMPLEMENTATION"
+            return "SUPPORTING"
+
+          rows=[]
+          details={}
+          for name,pat in requirements:
+            hits=[]
+            rx=re.compile(pat,re.I|re.S)
+            for f,t in content.items():
+              if rx.search(t):
+                hits.append((f,evidence_class(f)))
+            classes={c for _,c in hits}
+            if "CURRENT IMPLEMENTATION" in classes: status="IMPLEMENTED EVIDENCE"
+            elif "CANONICAL DOC" in classes: status="CANONICAL DOC EVIDENCE"
+            elif "DONOR/HISTORICAL" in classes: status="DONOR/HISTORICAL ONLY"
+            elif hits: status="SUPPORTING ONLY"
+            else: status="UNRESOLVED"
+            rows.append((name,status,len(hits)))
+            details[name]=hits[:50]
+
+          # Hard invariant checks.
+          tenant_legacy=[]
+          company=[]
+          for f in source:
+            t=content.get(f,"")
+            if re.search(r"tenant_id|tenant_company_id",t): tenant_legacy.append(f)
+            if "company_id" in t: company.append(f)
+
+          conflation=[]
+          for f in source:
+            t=content.get(f,"")
+            # Candidate only: a single unit mentioning all three deserves manual boundary review.
+            if re.search(r"reality|observation|evidence",t,re.I) and re.search(r"\bzero\b|synthesis|memory",t,re.I) and re.search(r"authority|execute|permission|delegat",t,re.I):
+              conflation.append(f)
+
+          authority_without_trust=[]
+          for f in source:
+            t=content.get(f,"")
+            if re.search(r"execute|execution|authority|permission|autonom",t,re.I) and not re.search(r"trust|continuance|delegat|governance|assurance",t,re.I):
+              authority_without_trust.append(f)
+
+          md=["# Titan Zero Blueprint Evidence Validation","",
+              "> Evidence coverage is not proof of correctness. Missing evidence remains unresolved; donor evidence does not become canonical automatically.","",
+              f"Commit: `{subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()}`","",
+              "## Coverage matrix","",
+              "| Required concept | Evidence status | Matching files |","|---|---|---:|"]
+          for r in rows: md.append(f"| {r[0]} | **{r[1]}** | {r[2]} |")
+
+          md += ["","## Tenancy invariant review","",
+                 f"- Current source files containing `company_id`: **{len(company)}**",
+                 f"- Current source files containing legacy `tenant_id` / `tenant_company_id`: **{len(tenant_legacy)}**"]
+          md += [f"  - `{f}`" for f in tenant_legacy[:100]]
+
+          md += ["","## Reality / Zero / Authority boundary review candidates",""]
+          md += [f"- `{f}`" for f in conflation[:100]] or ["- No same-file heuristic candidates found."]
+
+          md += ["","## Authority paths lacking obvious Trust/continuance signals",""]
+          md += [f"- `{f}`" for f in authority_without_trust[:100]] or ["- No heuristic candidates found."]
+
+          md += ["","## Evidence details"]
+          for name,_,_ in rows:
+            md += ["",f"### {name}"]
+            if details[name]:
+              for f,c in details[name]: md.append(f"- {c}: `{f}`")
+            else: md.append("- **UNRESOLVED — no matching tracked evidence.**")
+
+          (out/"Titan-Zero-Blueprint-Evidence-Validation.md").write_text("\n".join(md)+"\n")
+          (out/"validation.json").write_text(json.dumps({
+            "requirements":[{"name":a,"status":b,"matching_files":c} for a,b,c in rows],
+            "legacy_tenant_files":tenant_legacy,
+            "company_id_files":company,
+            "reality_zero_authority_review_candidates":conflation,
+            "authority_without_trust_candidates":authority_without_trust,
+            "evidence_details":details
+          },indent=2))
+
+      - name: Upload validation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: titan-zero-blueprint-evidence-validation-${{ github.sha }}
+          path: blueprint-evidence-validation/
+          retention-days: 30
+          if-no-files-found: error
