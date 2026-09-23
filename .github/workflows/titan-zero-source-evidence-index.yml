@@ -1,0 +1,151 @@
+name: Titan Zero Source Evidence Index
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'services/**'
+      - 'src/**'
+      - 'docs/**'
+      - 'ai/**'
+      - 'archive/**'
+      - 'library/**'
+
+permissions:
+  contents: read
+
+jobs:
+  source-index:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate evidence-oriented source index
+        shell: python
+        run: |
+          from pathlib import Path
+          import re, subprocess
+
+          out = Path("source-evidence-index")
+          out.mkdir(exist_ok=True)
+          tracked = subprocess.check_output(["git","ls-files"], text=True).splitlines()
+
+          systems = {
+            "Your Zero": r"zero|identity|profile|memory|learning|wisdom|context|synthesis",
+            "Reality": r"reality|observation|evidence|provenance|fact|freshness",
+            "Authority / Trust": r"authority|trust|delegat|continuance|autonomy|assurance|governance|risk",
+            "Decision Intelligence": r"decision|council|convergence|divergence|blind.?spot|causal|confidence|uncertainty",
+            "Onboarding / Discovery": r"onboard|discovery|reconfigur|diagnostic|competitor|benchmark|opportunit|intervention|outcome|longitudinal",
+            "Rewind": r"rewind|rollback|reversal|compensation|supersed",
+            "Workforce": r"workforce|worker|capability.?registry|capability.?binding|handoff|escalat",
+            "Interaction / UI": r"interaction|interface|visual|builder|voice|vision|camera|omnichannel",
+            "Core Coordination": r"signal|prime|nexus|forge|command.?bus|operation.?identity",
+            "Local / Cost": r"local.?bridge|ollama|offline|cost.?sovereignty|provider|routing",
+            "Security / Privacy": r"shield|locker|security|consent|privacy|signing|injection|poison",
+            "Business Systems": r"crm|customer|lead|quote|booking|job|dispatch|schedule|payment|finance|ledger|payroll|inventory|purchas|marketing|review|maps",
+          }
+
+          sections = {
+            "Your Zero":"5/7/14/17-20",
+            "Reality":"6/12/13/15",
+            "Authority / Trust":"31-33",
+            "Decision Intelligence":"21-24",
+            "Onboarding / Discovery":"8-12/26-30",
+            "Rewind":"34",
+            "Workforce":"39/41",
+            "Interaction / UI":"47-53",
+            "Core Coordination":"40/42-45",
+            "Local / Cost":"37-38",
+            "Security / Privacy":"35-36",
+            "Business Systems":"55-56",
+          }
+
+          rows=[]
+          for f in tracked:
+            p=Path(f)
+            lower=f.lower()
+            if not any(lower.endswith(x) for x in (".ts",".tsx",".md",".json",".sql",".yaml",".yml",".js",".jsx")):
+              continue
+            try:
+              text=p.read_text(errors="ignore")[:500000]
+            except Exception:
+              continue
+            hay=(f+"\n"+text).lower()
+            matched=[]
+            for name, pat in systems.items():
+              if re.search(pat, hay, re.I):
+                matched.append(name)
+            if not matched:
+              continue
+
+            if re.search(r"(^|/)(archive|library)(/|$)|onboardingpro|titan-onboarding", lower):
+              evidence="HISTORICAL/DONOR CANDIDATE"
+            elif re.search(r"docs/generated|docs/archive", lower):
+              evidence="HISTORICAL/EVIDENCE"
+            elif re.search(r"docs/canonical", lower):
+              evidence="CANONICAL DOCUMENTATION"
+            elif lower.endswith((".ts",".tsx",".sql")):
+              evidence="CURRENT IMPLEMENTATION CANDIDATE"
+            else:
+              evidence="SUPPORTING EVIDENCE"
+
+            tenant="company_id" if "company_id" in text else ("legacy-alias-hit" if re.search(r"tenant_id|tenant_company_id", text) else "")
+            authority="authority-sensitive" if re.search(r"authority|delegat|trust|autonom|execute|permission", text, re.I) else ""
+            priority="HIGH" if evidence in ("CURRENT IMPLEMENTATION CANDIDATE","HISTORICAL/DONOR CANDIDATE") else "MEDIUM"
+            for name in matched:
+              rows.append((f,name,evidence,sections[name],tenant,authority,priority))
+
+          rows.sort(key=lambda r:(0 if r[6]=="HIGH" else 1,r[1],r[0]))
+          md=[
+            "# Titan Zero — Source Evidence Index (Generated)",
+            "",
+            "> Evidence-discovery artifact only. Classification is a candidate for human/agent verification; filenames or keyword matches do not establish architectural authority.",
+            "",
+            f"Commit: `{subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()}`",
+            "",
+            "| Path | System | Evidence class | Blueprint sections | Tenancy signal | Authority signal | Inspection |",
+            "|---|---|---|---|---|---|---|",
+          ]
+          for r in rows:
+            vals=[str(x).replace("|","\\|") for x in r]
+            md.append("| "+" | ".join(vals)+" |")
+          (out/"Titan-Zero-Zero-Convergence-Relevant-File-Index.md").write_text("\n".join(md)+"\n")
+
+          # Exact high-value symbol inventory for deeper follow-up.
+          symbols=[
+            "AdaptiveOnboardingEngine","BusinessKnowledgeGapResolver","EvidenceAuthorityService",
+            "ContinuousBusinessObservationService","ObservationChangeDetector","ObservationFreshnessPolicy",
+            "CompetitorDiscoveryService","CompetitorIdentityResolutionService","CompetitiveBenchmarkingService",
+            "MarketPatternService","BusinessRealityGraphService","BusinessRealityFactService",
+            "WholeBusinessDiagnosticService","ConstraintDiagnosisService","OpportunityIntelligenceService",
+            "OpportunityEvidenceService","BusinessImpactScoringService","InterventionPrioritisationService",
+            "InterventionExecutionLifecycleService","OutcomeMeasurementService","LongitudinalStrategyMemoryService",
+            "ExperimentComparisonService","AntiRepeatDecisionService","BusinessReconfigurationService",
+            "BusinessConfigurationDiffer","DecisionPacket"
+          ]
+          exact=["# Exact symbol evidence",""]
+          for sym in symbols:
+            hits=[]
+            for f in tracked:
+              p=Path(f)
+              if p.suffix.lower() not in {".ts",".tsx",".js",".jsx",".md",".json",".sql"}: continue
+              try: t=p.read_text(errors="ignore")
+              except: continue
+              if sym in t: hits.append(f)
+            exact.append(f"## {sym}")
+            exact.extend([f"- `{h}`" for h in hits] or ["- NOT FOUND IN CURRENT TRACKED TREE"])
+            exact.append("")
+          (out/"exact-symbol-evidence.md").write_text("\n".join(exact))
+
+      - name: Upload source evidence index
+        uses: actions/upload-artifact@v4
+        with:
+          name: titan-zero-source-evidence-index-${{ github.sha }}
+          path: source-evidence-index/
+          retention-days: 30
+          if-no-files-found: error
