@@ -7,6 +7,69 @@ workflow.
 
 ## Active tasks
 
+# TASK-152: Personal Zero Understanding & Experience contracts
+
+Status:
+In Progress
+
+Phase:
+cross-cutting
+
+Problem:
+Titan Zero has durable Interaction state, canonical company-scoped storage, evidence/provenance, verified outcomes, Learning Governor boundaries, privacy controls and authority contracts, but it does not yet have one canonical production owner for One's portable personal understanding and experience. Historical donors contain useful semantics, but importing LocalBrain or another memory/runtime would duplicate current systems and risk mixing personal understanding with Business Memory, Business Reality, conversation state or authority.
+
+Business Value:
+One — the human principal using Titan Zero — can carry an evidence-backed Zero across permitted work, customer and future personal contexts. Zero can remember corrections, preferences and experience, learn from verified outcomes and become more useful without silently leaking company data or gaining authority.
+
+Scope:
+- Add a small canonical Personal Zero contract/state module inside `@titan-zero/titan-platform`, built on the existing Titan storage repository rather than a new database.
+- Define One/principal identity separately from company membership/role and define stable Zero identity independent of a single company relationship.
+- Define company/context relationship records that reference role/capability/data-visibility/authority context without owning those systems.
+- Define versioned Understanding Evidence, candidate/accepted/superseded Understanding State, Experience Record and Cognitive Event contracts.
+- Preserve provenance, confidence, freshness, correction/supersession, retention/expiry/deletion metadata and immutable lineage.
+- Link experience to Decision/action/expected outcome/verified actual outcome/unintended effects/lesson/future applicability by references.
+- Consume verified outcome references; learning/calibration outputs remain proposal/authority-neutral.
+- Define retrieval projections for Interaction, Decision and Workforce consumers without copying their state.
+- Enforce local/private/restricted-context egress metadata and explicit cross-context sharing policy.
+- Add negative tests for company/context leakage, relationship revocation, legacy tenant aliases and learning/authority escalation.
+- Record donor provenance and rejected duplicate-runtime decisions.
+
+Out of Scope:
+- Rebuilding LocalBrain, Interaction Engine, Business Memory, Business Reality, Decision Engine, Learning Governor, Trust/Autonomy, Command Bus or provider routing.
+- Employer-owned employee profiling or CRM customer-record ownership.
+- A second persistence engine/database.
+- Personal-life product UI or monetization implementation; only preserve future-compatible contracts.
+- Titan Code runtime dependency.
+
+Acceptance Criteria:
+- [ ] One canonical `@titan-zero/titan-platform` Personal Zero owner uses the existing storage repository.
+- [ ] One/principal and Zero identities survive company relationship changes without carrying revoked company data/authority.
+- [ ] Understanding Evidence/State, Experience Record and Cognitive Event contracts are versioned and provenance-preserving.
+- [ ] Raw observation promotes only through candidate to accepted/superseded understanding; correction preserves lineage.
+- [ ] Verified outcomes can update experience/calibration evidence but cannot grant/elevate authority.
+- [ ] Personal/private and company-context isolation have negative tests, including worker-in-company-A/customer-in-company-B leakage.
+- [ ] Relationship revocation removes company accessibility/authority references without deleting unrelated personal state.
+- [ ] Restricted/private context cannot silently egress to cloud/provider.
+- [ ] Stable retrieval projections exist for Interaction, Decision and Workforce consumers.
+- [ ] `company_id` remains the only company tenant boundary; legacy tenant aliases are rejected.
+- [ ] Donor provenance and rejected duplicates are documented.
+- [ ] Titan Platform typecheck/unit tests for the new contracts pass.
+
+Implementation provenance:
+- Canonical owner: `@titan-zero/titan-platform/personal-zero`, persisted through the existing Titan `createCompanyRepository`; no second database or tenant boundary.
+- Archaeology donors reviewed: LocalBrain / Titan Interaction Engine v10.12.0, Phase10 Device Intelligence, Decision Engine Step25, Model Council, Knowledge Authority, Titan Rewind, and OnboardingPro v6 longitudinal strategy/reconfiguration/outcome learning.
+- Reused semantics only: cognitive-event chronology, explicit correction evidence, prediction/outcome calibration, provenance/confidence/freshness, supersession, verified outcomes, purpose-bound sharing, and authority-neutral learning proposals.
+- Explicitly rejected duplicates: LocalBrain runtime resurrection, second conversation/session store, second Business Memory store, second Business Reality graph, second Decision/Learning Governor, Personal Zero authority engine, new Personal Zero database, and Titan Code runtime dependency.
+- Authority remains external: Personal Zero understanding, learning, accepted-learning projections and cross-context sharing never grant execution authority.
+- Cross-company sharing preserves storage isolation through source consent plus a target acceptance artifact; neither company repository reads the other company's state.
+
+Notes:
+- GitHub architecture owner: #768.
+- Archaeology handoff: #763 / ZM-025..ZM-027.
+- Existing foundations to reuse: `packages/titan-platform/src/storage/*`, Interaction conversation-state runtime, reality provenance evidence, workforce verified-outcome contracts/Learning Governor bridge, privacy-data settings and runtime authority contracts.
+- Personal Zero must remain authority-neutral: Understanding ≠ Learning ≠ Recommendation ≠ Decision ≠ Authority.
+
+
 # TASK-122: Backup hardening — uploads + encrypted .env alongside the DB dump
 
 Status:
