@@ -4,9 +4,7 @@
 
 Titan Zero is an experimental full-stack platform for exploring how intelligent software workforces can operate inside real businesses without treating model output as execution authority.
 
-The repository combines a production-oriented field-service application with a broader TypeScript platform layer covering workforce orchestration, decision and intelligence runtimes, authority boundaries, offline operation, interface runtimes, connectors, and business operations.
-
-The current field-service implementation is **Dovetails FSM**: a residential handyman and home-maintenance operating system built around property history, customer relationships, estimating, job execution, and durable service records.
+The repository combines a production-oriented business operations application with a broader TypeScript platform layer covering workforce orchestration, decision and intelligence runtimes, authority boundaries, offline operation, interface runtimes, connectors, and business operations.
 
 ## Why this project exists
 
@@ -59,13 +57,9 @@ The architecture supports routing intelligence work according to capability and 
 
 ### Business operations
 
-The repository is not only an AI orchestration experiment. It contains a working business application and supporting domain packages for operational workflows such as customers, properties, estimates, jobs, inventory, money, onboarding, revenue journeys, notifications, and service operations.
+The repository is not only an AI orchestration experiment. It contains a working operational application and supporting domain packages for workflows such as customers, properties, estimates, jobs, inventory, money, onboarding, revenue journeys, notifications, and service operations.
 
-## Dovetails FSM
-
-Dovetails FSM is the current field-service application implemented in this repository. It focuses on residential handyman and home-maintenance workflows and provides a concrete operational environment in which the broader Titan Zero architecture can be exercised.
-
-Its canonical product documentation remains under `docs/canonical/` and should be treated as the source of truth for Dovetails-specific behaviour.
+These operational workflows provide a concrete environment in which the broader Titan Zero architecture can be exercised and tested.
 
 ## Architecture at a glance
 
@@ -174,15 +168,15 @@ The repository also contains CI workflows and baseline checks for the web applic
 
 ## Documentation hierarchy
 
-Because this repository contains both active implementation and a substantial research/convergence history, documentation has an explicit authority order:
+Because this repository contains active implementation alongside substantial research and convergence history, documentation has an explicit authority order:
 
 1. Code and database migrations are the implemented truth.
-2. `docs/canonical/` is authoritative for the current Dovetails product, domain, workflow, and application architecture.
+2. `docs/canonical/` contains authoritative current product, domain, workflow, and application architecture documentation.
 3. `docs/contracts/` and `docs/working/` contain supporting implementation material.
 4. `ai/` provides compact agent-facing context.
 5. `docs/archive/` and `docs/generated/` contain historical or generated evidence and are not active product instructions.
 
-Canonical Dovetails documents:
+Canonical documents include:
 
 - [Product Vision](docs/canonical/PRODUCT_VISION.md)
 - [Domain Model](docs/canonical/DOMAIN_MODEL.md)
@@ -200,4 +194,4 @@ It is an evolving platform and research codebase rather than a packaged public S
 
 **Active development.**
 
-The repository is being progressively converged around the Titan Zero platform architecture while Dovetails FSM remains the current concrete field-service implementation.
+The repository is being progressively converged around the Titan Zero platform architecture and its governed Advanced Intelligence workforce model.
