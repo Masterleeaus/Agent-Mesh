@@ -1,11 +1,12 @@
-name: Agent 3 Workforce Verification
+name: Canonical Workforce Verification
 on:
-  push:
-    branches: [agent/workforce-task-convergence]
   pull_request:
     paths:
+      - 'services/workforce/**'
       - 'packages/workforce/**'
+      - 'pnpm-workspace.yaml'
       - '.github/workflows/agent3-workforce.yml'
+  workflow_dispatch:
 jobs:
   workforce:
     runs-on: ubuntu-latest
