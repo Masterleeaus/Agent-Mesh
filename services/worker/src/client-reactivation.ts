@@ -1,6 +1,6 @@
-import type { Client } from "pg";
+import type { DatabaseClient } from "./db-client.js";
 import { logger } from "./logger.js";
-import { clientReactivationHtml } from "@ai-fsm/email-templates";
+import { clientReactivationHtml } from "@titan-zero/email-templates";
 import type { AutomationRow, RunResult } from "./automations/types.js";
 import { enqueueNotification } from "./notification/enqueue.js";
 import { PRIORITY } from "./notification/priority.js";
@@ -10,73 +10,66 @@ interface InactiveClient {
   account_id: string;
   name: string | null;
   email: string;
-  months_since_last_job: number;
+  last_job_at: string | null;
 }
 
-export async function findDueClientReactivations(client: Client): Promise<AutomationRow[]> {
+export async function findDueClientReactivations(client: DatabaseClient): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
-    `SELECT id, account_id, type, config, enabled, next_run_at::text
+    `SELECT id, account_id, type, config, enabled, next_run_at
      FROM automations
      WHERE type = 'client_reactivation'
        AND enabled = true
-       AND next_run_at <= now()`
+       AND next_run_at <= $1`,
+    [new Date().toISOString()]
   );
   return rows;
 }
 
 export async function findInactiveClients(
-  client: Client,
+  client: DatabaseClient,
   automation: AutomationRow
 ): Promise<InactiveClient[]> {
   const daysInactive = (automation.config as { days_inactive?: number }).days_inactive ?? 180;
-  const year = new Date().getFullYear();
-
+  const cutoff = new Date(Date.now() - daysInactive * 86_400_000).toISOString();
   const { rows } = await client.query<InactiveClient>(
-    `SELECT c.id, c.account_id, c.name,
-            c.email,
-            EXTRACT(MONTH FROM (now() - MAX(j.updated_at)))::int AS months_since_last_job
+    `SELECT c.id, c.account_id, c.name, c.email, MAX(j.updated_at) AS last_job_at
      FROM clients c
      LEFT JOIN jobs j ON j.client_id = c.id AND j.account_id = c.account_id AND j.status = 'completed'
-     WHERE c.account_id = $1
-       AND c.email IS NOT NULL
-       AND NOT EXISTS (
-         SELECT 1 FROM audit_log al
-         WHERE al.entity_type = 'client_reactivation'
-           AND al.entity_id = c.id
-           AND al.account_id = c.account_id
-           AND (al.new_value->>'year')::int = $3
-       )
+     WHERE c.account_id = $1 AND c.email IS NOT NULL
      GROUP BY c.id, c.account_id, c.name, c.email
-     HAVING MAX(j.updated_at) < now() - ($2 || ' days')::interval
-         OR MAX(j.updated_at) IS NULL
-     ORDER BY MAX(j.updated_at) ASC NULLS FIRST
+     HAVING MAX(j.updated_at) < $2 OR MAX(j.updated_at) IS NULL
+     ORDER BY MAX(j.updated_at) ASC
      LIMIT 50`,
-    [automation.account_id, daysInactive, year]
+    [automation.account_id, cutoff]
   );
-
   return rows;
 }
 
-async function emitClientReactivation(
-  client: Client,
-  inactive: InactiveClient,
-  automationId: string
-): Promise<boolean> {
-  const year = new Date().getFullYear();
+function monthsSince(date: string | null): number {
+  if (!date) return 12;
+  const then = new Date(date);
+  if (Number.isNaN(then.getTime())) return 1;
+  return Math.max(1, Math.floor((Date.now() - then.getTime()) / (30.4375 * 86_400_000)));
+}
 
-  const { rowCount } = await client.query(
-    `SELECT 1 FROM audit_log
-     WHERE entity_type = 'client_reactivation'
-       AND entity_id = $1
-       AND account_id = $2
-       AND (new_value->>'year')::int = $3
-     LIMIT 1`,
-    [inactive.id, inactive.account_id, year]
+async function alreadyReactivatedThisYear(client: DatabaseClient, inactive: InactiveClient, year: number): Promise<boolean> {
+  const { rows } = await client.query<{ new_value: string | Record<string, unknown> | null }>(
+    `SELECT new_value FROM audit_log WHERE entity_type = 'client_reactivation' AND entity_id = $1 AND account_id = $2`,
+    [inactive.id, inactive.account_id]
   );
-  if (rowCount && rowCount > 0) return false;
+  return rows.some(({ new_value }) => {
+    try {
+      const value = typeof new_value === "string" ? JSON.parse(new_value) : new_value;
+      return Number((value as Record<string, unknown> | null)?.year) === year;
+    } catch { return false; }
+  });
+}
 
+async function emitClientReactivation(client: DatabaseClient, inactive: InactiveClient, automationId: string): Promise<boolean> {
+  const year = new Date().getFullYear();
+  if (await alreadyReactivatedThisYear(client, inactive, year)) return false;
+  const months = monthsSince(inactive.last_job_at);
   if (inactive.name) {
-    const months = Math.max(1, inactive.months_since_last_job);
     const enqueueResult = await enqueueNotification(client, {
       accountId: inactive.account_id,
       clientId: inactive.id,
@@ -84,10 +77,7 @@ async function emitClientReactivation(
       priority: PRIORITY.LOW,
       toAddress: inactive.email,
       subject: `We'd love to work with you again, ${inactive.name.split(" ")[0]}!`,
-      htmlBody: clientReactivationHtml({
-        clientName: inactive.name,
-        monthsSinceLastService: months,
-      }),
+      htmlBody: clientReactivationHtml({ clientName: inactive.name, monthsSinceLastService: months }),
       idempotencyKey: `client_reactivation:${inactive.id}:${year}`,
       entityType: "client",
       entityId: inactive.id,
@@ -98,50 +88,19 @@ async function emitClientReactivation(
       return false;
     }
   }
-
   await client.query(
-    `INSERT INTO audit_log
-       (account_id, entity_type, entity_id, action, actor_id, old_value, new_value)
+    `INSERT INTO audit_log (account_id, entity_type, entity_id, action, actor_id, old_value, new_value)
      VALUES ($1, 'client_reactivation', $2, 'insert', $3, NULL, $4)`,
-    [
-      inactive.account_id,
-      inactive.id,
-      automationId,
-      JSON.stringify({
-        automation_id: automationId,
-        client_name: inactive.name,
-        months_since_last_job: inactive.months_since_last_job,
-        year,
-        queued_at: new Date().toISOString(),
-      }),
-    ]
+    [inactive.account_id, inactive.id, automationId, JSON.stringify({ automation_id: automationId, client_name: inactive.name, months_since_last_job: months, year, queued_at: new Date().toISOString() })]
   );
   return true;
 }
 
-export async function processClientReactivation(
-  client: Client,
-  automation: AutomationRow
-): Promise<RunResult> {
-  const result: RunResult = {
-    automationId: automation.id,
-    accountId: automation.account_id,
-    sent: 0,
-    skipped: 0,
-    errors: 0,
-  };
-
-  const inactiveClients = await findInactiveClients(client, automation);
-  for (const inactive of inactiveClients) {
-    try {
-      const emitted = await emitClientReactivation(client, inactive, automation.id);
-      if (emitted) result.sent++;
-      else result.skipped++;
-    } catch (error) {
-      result.errors++;
-      logger.error("client-reactivation: failed to emit", error, { clientId: inactive.id });
-    }
+export async function processClientReactivation(client: DatabaseClient, automation: AutomationRow): Promise<RunResult> {
+  const result: RunResult = { automationId: automation.id, accountId: automation.account_id, sent: 0, skipped: 0, errors: 0 };
+  for (const inactive of await findInactiveClients(client, automation)) {
+    try { (await emitClientReactivation(client, inactive, automation.id)) ? result.sent++ : result.skipped++; }
+    catch (error) { result.errors++; logger.error("client-reactivation: failed to emit", error, { clientId: inactive.id }); }
   }
-
   return result;
 }
