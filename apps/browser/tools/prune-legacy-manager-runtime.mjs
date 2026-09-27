@@ -8,8 +8,14 @@ const workerPath = path.join(root, 'src/lib/service-worker.js');
 let source = fs.readFileSync(workerPath, 'utf8');
 const before = source;
 
-// Repair the one malformed seam produced by the first prune attempt.
+// Repair malformed function seams produced by the original one-shot prune.
 source = source.replace('\n(options = {}) {\n', '\nasync function getMcpInspectorPayload(options = {}) {\n');
+if (!source.includes('async function getTitanZeroStatus() {') && source.includes('\n    const ready = await ensureTitanZeroRegistered();')) {
+  source = source.replace(
+    '\n    const ready = await ensureTitanZeroRegistered();',
+    '\nasync function getTitanZeroStatus() {\n    const ready = await ensureTitanZeroRegistered();'
+  );
+}
 
 const stillHasManagerRuntime = [
   "'../titan-zero/agent-mesh-role-topology.js'",
@@ -55,8 +61,11 @@ for (const forbidden of [
 ]) {
   if (source.includes(forbidden)) throw new Error(`Legacy manager runtime token remains: ${forbidden}`);
 }
-if (!source.includes('async function getMcpInspectorPayload(options = {}) {')) {
-  throw new Error('MCP inspector function signature is missing after prune');
+for (const required of [
+  'async function getMcpInspectorPayload(options = {}) {',
+  'async function getTitanZeroStatus() {'
+]) {
+  if (!source.includes(required)) throw new Error(`Required Browser Node function seam is missing: ${required}`);
 }
 
 if (source === before) {
