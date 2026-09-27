@@ -8,11 +8,11 @@ assert.strictEqual(L.reconcile({packet:{packet_id:'X',status:'AVAILABLE'},claim:
 assert.strictEqual(D.decide({identityValid:true,hashValid:true,dependenciesSatisfied:true,supervisorVerdict:'PASS',baseMatches:true,hotspotCollision:false}).decision,'CLEAN_FORWARD_PORT');assert.strictEqual(D.decide({identityValid:true,hashValid:true,dependenciesSatisfied:true,supervisorVerdict:'FAIL'}).decision,'BLOCKED');
 const ok={managerAuthorized:true,identityValid:true,ancestryValid:true,hashValid:true,dependenciesSatisfied:true,hotspotsResolved:true,supervisorVerified:true,regressionPassed:true,reconstructionVerified:true};assert.strictEqual(G.evaluate(ok).allowed,true);assert.strictEqual(G.evaluate({...ok,supervisorVerified:false}).allowed,false);
 const proj=R.project({baselineSha256:sha,claims:[{status:'ACTIVE'}],deltas:[{status:'READY'}],supervisorFindings:[],drift:[]});assert.strictEqual(proj.health,'HEALTHY');assert.strictEqual(proj.activeClaims,1);
-console.log('PASS test-titan-zero-manager-core-state-and-gates');
 
 const Idle=s.TitanZeroManagerIdleSweep;assert.throws(()=>Idle.sweep(),/LOCAL_IDLE_SWEEP_FORBIDDEN/);
 const ip=Idle.plan({mainSha:'a'.repeat(40),workItems:[{subgoal_id:'SG-NEXT',priority:'P0',lifecycle:'AVAILABLE'}],agents:[{id:'agent-1',state:'AVAILABLE',execution_active:false}]},{mainSha:'a'.repeat(40)});
 assert.equal(ip.mutatesLocalState,false);assert.equal(ip.assignments[0].status,'CANDIDATE_ONLY');assert.equal(ip.assignments[0].claim_request.operation,'CREATE_GITHUB_REF_ATOMICALLY');assert.equal(ip.assignments[0].claim_request.expected_absent,true);assert.equal(ip.authority.lifecycleAdvance,false);
 
 // Legacy queue/completion evidence must never unlock GitHub-authoritative eligibility.
-const E=s.TitanZeroManagerEligibility;assert.strictEqual(E.evaluate({dependencies:['DEP']},{completedPackets:['DEP'],githubCompletedPackets:[],authority:{durableTruth:'github'}}).eligible,false);assert.strictEqual(E.evaluate({dependencies:['DEP']},{githubCompletedPackets:['DEP'],authority:{durableTruth:'github'}}).eligible,true);
+assert.strictEqual(E.evaluate({dependencies:['DEP']},{completedPackets:['DEP'],githubCompletedPackets:[],authority:{durableTruth:'github'}}).eligible,false);assert.strictEqual(E.evaluate({dependencies:['DEP']},{githubCompletedPackets:['DEP'],authority:{durableTruth:'github'}}).eligible,true);
+console.log('PASS test-titan-zero-manager-core-state-and-gates');
