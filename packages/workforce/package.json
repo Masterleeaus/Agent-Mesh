@@ -2,9 +2,14 @@
   "name": "@titan-zero/workforce-legacy",
   "private": true,
   "version": "0.1.0",
-  "description": "Legacy compatibility workforce implementation. Non-authoritative; production consumers must use services/workforce (@titan-zero/workforce).",
+  "description": "RETIRED legacy workforce implementation. Non-authoritative and excluded from the production workspace; production consumers must use services/workforce (@titan-zero/workforce).",
   "type": "module",
   "exports": { ".": "./src/index.ts" },
+  "titanZero": {
+    "status": "retired",
+    "production": false,
+    "canonicalOwner": "services/workforce"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
