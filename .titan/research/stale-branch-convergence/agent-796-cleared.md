@@ -1,0 +1,1 @@
+`agent/796` was audited and reconciled against current main on 2026-09-28. Its stale overlapping implementation is superseded by current canonical main and should not be reapplied.
