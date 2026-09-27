@@ -179,7 +179,7 @@ async function callGovernedMcpTool(connectionId, name, args) {
     return globalThis.CodeeMcpGovernanceGateway.call(adapter, String(connectionId || '').slice(0, 240), String(name || '').slice(0, 240), args && typeof args === 'object' ? args : {});
 }
 
-(options = {}) {
+async function getMcpInspectorPayload(options = {}) {
     if (!globalThis.CodeeMcpInspector) throw new Error('Codee MCP inspector runtime is unavailable');
     const runtime = globalThis.CodeeMcpRuntime;
     if (!runtime) return globalThis.CodeeMcpInspector.build({ generatedAt: new Date().toISOString(), connections: [], discoveries: {}, approvals: [], receipts: [] });
