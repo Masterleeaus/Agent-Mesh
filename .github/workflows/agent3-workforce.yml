@@ -1,10 +1,17 @@
-name: Agent 3 Workforce Verification
+name: Workforce Verification
 on:
   push:
-    branches: [agent/workforce-task-convergence]
+    branches:
+      - agent/workforce-task-convergence
+      - agent/runtime-work-correlation
+    paths:
+      - 'packages/workforce/**'
+      - 'services/workforce/**'
+      - '.github/workflows/agent3-workforce.yml'
   pull_request:
     paths:
       - 'packages/workforce/**'
+      - 'services/workforce/**'
       - '.github/workflows/agent3-workforce.yml'
 jobs:
   workforce:
