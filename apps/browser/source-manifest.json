@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1056,
+  "fileCount": 1058,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -2260,8 +2260,8 @@
     },
     {
       "path": "src/lib/service-worker.js",
-      "bytes": 261230,
-      "sha256": "481eb312b4be66fc74fc4569c17b368ab37e34210aa6560a8ecc31a1ace800b6"
+      "bytes": 259703,
+      "sha256": "11ec055b72827483c68877b4ee92aeb5ac929170b2209422376f18014e5c7b94"
     },
     {
       "path": "src/lib/titan-zero-host-integration.js",
@@ -3327,6 +3327,11 @@
       "path": "tests/test-browser-navigation-pass11.cjs",
       "bytes": 1332,
       "sha256": "fdc8f161182bcd2df5030bd7751530df8f4f7bebdb9f4cfdddfd2ea4cbab0483"
+    },
+    {
+      "path": "tests/test-browser-node-runtime-scope-pass22.js",
+      "bytes": 2572,
+      "sha256": "62597c82c31a33b53828efdcedb08ccc0c08593bbc6752e3b409468c41cfa516"
     },
     {
       "path": "tests/test-browser-observability-pass14.cjs",
@@ -5272,6 +5277,11 @@
       "path": "tools/generate-source-manifest.mjs",
       "bytes": 1676,
       "sha256": "678948639231452dbd05e94ff40f81c511f98c92f29c8dfe7a48f641464da702"
+    },
+    {
+      "path": "tools/prune-development-runtime-pass22.mjs",
+      "bytes": 3408,
+      "sha256": "ad4c1cb0778aea904d9295752e0af7c1a41a41803720b64ffe4abd5009b16b71"
     },
     {
       "path": "tools/test-worker-vm-preload.cjs",

@@ -46,27 +46,7 @@ if (typeof importScripts === 'function') {
             '../browser/browser-observability.js',
             '../browser/browser-developer-inspection.js',
             'browser-host-integration.js',
-            '../repository/repository-policy.js',
-            '../repository/repository-inventory.js',
-            '../repository/repository-search.js',
-            '../repository/symbol-index.js',
-            '../repository/dependency-graph.js',
-            '../repository/laravel-tracer.js',
-            '../repository/migration-guard.js',
-            '../repository/diff-engine.js',
-            '../repository/impact-engine.js',
-            '../repository/change-set.js',
-            '../repository/rollback-planner.js',
-            '../repository/mutation-envelope.js',
-            '../repository/command-policy.js',
-            '../repository/test-selector.js',
-            '../repository/verification-planner.js',
-            '../repository/dependency-analyzer.js',
-            '../repository/git-intelligence.js',
-            '../repository/log-analyzer.js',
-            '../repository/error-classifier.js',
             '../integration/host-capabilities.js',
-            '../integration/repository-host-adapter.js',
             '../integration/mcp-adapter.js',
             '../integration/mcp-governance-gateway.js',
             'mcp-inspector.js',
@@ -82,12 +62,7 @@ if (typeof importScripts === 'function') {
             '../integration/titan-mcp-runtime.js',
             '../integration/artifact-verification-adapter.js',
             '../integration/remote-context-broker.js',
-            '../catalog/repository-prompts.js',
-            '../catalog/repository-skills.js',
-            '../catalog/repository-profiles.js',
-            '../repository/repository-coding-pack.js',
             '../integration/receiver-adapter.js',
-            'repository-host-integration.js',
             '../titan-zero/titan-zero-core-profile.js',
             '../titan-zero/titan-zero-snapshot-policy.js',
             '../titan-zero/titan-zero-project-detector.js',
@@ -117,10 +92,6 @@ if (typeof importScripts === 'function') {
             '../titan-zero/titan-zero-risk-rules.js',
             '../titan-zero/titan-zero-error-classifier.js',
             '../titan-zero/titan-zero-knowledge.js',
-            '../titan-zero/titan-zero-development-prompts.js',
-            '../titan-zero/titan-zero-development-skills.js',
-            '../titan-zero/titan-zero-development-profiles.js',
-            '../titan-zero/titan-zero-developer-pack.js',
             '../titan-zero/titan-zero-receiver-adapter.js',
             'titan-zero-host-integration.js',
             '../workforce/personal-workforce.js',
@@ -253,7 +224,7 @@ let titanAnalysisMutationQueue = Promise.resolve();
 let repositoryAnalysisMutationQueue = Promise.resolve();
 let preferencesMutationQueue = Promise.resolve();
 
-const CURRENT_NAVIGATION_VIEWS = Object.freeze(['dashboard','runner','plans','history','artifacts','intelligence','workforce','repository','titan-zero','browser','connections','mcp','repository-host','prompts','skills','knowledge','settings','diagnostics','about']);
+const CURRENT_NAVIGATION_VIEWS = Object.freeze(['dashboard','runner','plans','history','artifacts','intelligence','workforce','browser','connections','mcp','knowledge','settings','diagnostics','about']);
 
 function initializeNavigationRegistry() {
     if (!globalThis.CodeeNavigationRegistry || !globalThis.CodeeNavigationReadiness) {
