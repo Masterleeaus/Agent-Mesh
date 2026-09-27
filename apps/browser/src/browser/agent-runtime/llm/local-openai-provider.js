@@ -60,7 +60,7 @@ export function createLocalOpenAIProvider(config = {}) {
     const ctl = new AbortController();
     const timer = setTimeout(() => ctl.abort(), AVAILABILITY_TIMEOUT_MS);
     try {
-      const res = await fetch(`${baseUrl}/models`, { signal: ctl.signal });
+      const res = await globalThis.CodeeApprovedNetworkTransport.request(`${baseUrl}/models`, { signal: ctl.signal });
       clearTimeout(timer);
       if (res.ok) return { state: "ready" };
       const snippet = await safeReadText(res);
@@ -194,7 +194,7 @@ export function createLocalOpenAIProvider(config = {}) {
       // AND tool-use supersedes JSON-mode anyway.
     };
 
-    const response = await fetch(`${baseUrl}/chat/completions`, {
+    const response = await globalThis.CodeeApprovedNetworkTransport.request(`${baseUrl}/chat/completions`, {
       method: "POST",
       headers: buildHeaders(),
       body: JSON.stringify(body),
@@ -300,7 +300,7 @@ export function createLocalOpenAIProvider(config = {}) {
   }
 
   async function fetchNonStreaming({ messages, signal, onThought, rawText, onParseFailure }) {
-    const response = await fetch(`${baseUrl}/chat/completions`, {
+    const response = await globalThis.CodeeApprovedNetworkTransport.request(`${baseUrl}/chat/completions`, {
       method: "POST",
       headers: buildHeaders(),
       body: JSON.stringify(buildBody({ messages, stream: false })),
@@ -334,7 +334,7 @@ export function createLocalOpenAIProvider(config = {}) {
   }
 
   async function fetchStreaming({ messages, signal, onToken, onThought, rawText, onParseFailure }) {
-    const response = await fetch(`${baseUrl}/chat/completions`, {
+    const response = await globalThis.CodeeApprovedNetworkTransport.request(`${baseUrl}/chat/completions`, {
       method: "POST",
       headers: buildHeaders(),
       body: JSON.stringify(buildBody({ messages, stream: true })),

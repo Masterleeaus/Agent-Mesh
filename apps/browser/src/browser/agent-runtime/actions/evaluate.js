@@ -9,7 +9,7 @@
  * with the exact code preview, regardless of mode or grants.
  *
  * Defaults:
- *   - awaitPromise: true   so `await fetch(...)` style expressions resolve
+ *   - awaitPromise: true   so `await globalThis.CodeeApprovedNetworkTransport.request(...)` style expressions resolve
  *     before the call returns, and the agent gets the value rather than a
  *     pending Promise marker.
  *   - returnByValue: true  so the result comes back JSON-serialised instead

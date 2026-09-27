@@ -315,7 +315,7 @@ export function createGeminiProvider(config = {}) {
     };
 
     const url = `${GEMINI_BASE}/${encodeURIComponent(config.model)}:generateContent`;
-    const response = await fetch(url, {
+    const response = await globalThis.CodeeApprovedNetworkTransport.request(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -368,7 +368,7 @@ export function createGeminiProvider(config = {}) {
 
   async function fetchNonStreaming({ body, signal, rawText, onParseFailure }) {
     const url = `${GEMINI_BASE}/${encodeURIComponent(config.model)}:generateContent`;
-    const response = await fetch(url, {
+    const response = await globalThis.CodeeApprovedNetworkTransport.request(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -400,7 +400,7 @@ export function createGeminiProvider(config = {}) {
 
   async function fetchStreaming({ body, signal, onToken, onThought, rawText, onParseFailure }) {
     const url = `${GEMINI_BASE}/${encodeURIComponent(config.model)}:streamGenerateContent?alt=sse`;
-    const response = await fetch(url, {
+    const response = await globalThis.CodeeApprovedNetworkTransport.request(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -76,7 +76,7 @@ async function loadCatalog() {
 
   catalogPromise = (async () => {
     try {
-      const res = await fetch(MODELS_URL);
+      const res = await globalThis.CodeeApprovedNetworkTransport.request(MODELS_URL);
       if (!res.ok) {
         console.warn("[OpenRouter] model catalog HTTP", res.status);
         sharedCatalog = { at: Date.now(), map: null };
@@ -198,7 +198,7 @@ export function createOpenRouterProvider(config = {}) {
   }
 
   async function fetchStreaming({ messages, schema, signal, onToken, onThought, rawText, thinking, onParseFailure }) {
-    const response = await fetch(OPENROUTER_URL, {
+    const response = await globalThis.CodeeApprovedNetworkTransport.request(OPENROUTER_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -338,7 +338,7 @@ export function createOpenRouterProvider(config = {}) {
       body.reasoning = { effort: thinking.effort };
     }
 
-    const response = await fetch(OPENROUTER_URL, {
+    const response = await globalThis.CodeeApprovedNetworkTransport.request(OPENROUTER_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -404,7 +404,7 @@ export function createOpenRouterProvider(config = {}) {
   }
 
   async function fetchNonStreaming({ messages, schema, signal, onThought, rawText, thinking, onParseFailure }) {
-    const response = await fetch(OPENROUTER_URL, {
+    const response = await globalThis.CodeeApprovedNetworkTransport.request(OPENROUTER_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
