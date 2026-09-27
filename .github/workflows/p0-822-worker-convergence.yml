@@ -26,17 +26,20 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import os
           root = Path('services/worker/src')
-          for p in root.glob('*.ts'):
+          db_file = root / 'db-client.ts'
+          for p in root.rglob('*.ts'):
               text = p.read_text()
               text = text.replace('@ai-fsm/email-templates', '@titan-zero/email-templates')
               text = text.replace('@ai-fsm/domain/promise-capture', '@titan-zero/domain/promise-capture')
-              if not p.name.endswith('.test.ts'):
-                  text = text.replace('import type { Client } from "pg";', 'import type { DatabaseClient } from "./db-client.js";')
+              if not p.name.endswith('.test.ts') and 'import type { Client } from "pg";' in text:
+                  rel = os.path.relpath(db_file, p.parent).replace('\\', '/')
+                  rel = rel[:-3] + '.js'
+                  if not rel.startswith('.'):
+                      rel = './' + rel
+                  text = text.replace('import type { Client } from "pg";', f'import type {{ DatabaseClient }} from "{rel}";')
                   text = text.replace('client: Client', 'client: DatabaseClient')
-              p.write_text(text)
-          for p in root.glob('*.test.ts'):
-              text = p.read_text().replace('@ai-fsm/domain/promise-capture', '@titan-zero/domain/promise-capture')
               p.write_text(text)
           PY
           cat > services/worker/src/workflow-events.ts <<'TS'
