@@ -2260,8 +2260,8 @@
     },
     {
       "path": "src/lib/service-worker.js",
-      "bytes": 261193,
-      "sha256": "91b00ab9f6641046072e5561d784a202534bd06bf220624fe728cbd61cddca0a"
+      "bytes": 261231,
+      "sha256": "ce7f829b690ecb1f72775cd86cf9ae69fc8696457ce7acb142cf1e53d762f507"
     },
     {
       "path": "src/lib/titan-zero-host-integration.js",
@@ -5275,8 +5275,8 @@
     },
     {
       "path": "tools/prune-legacy-manager-runtime.mjs",
-      "bytes": 2522,
-      "sha256": "0f5dcaeee8106053e4a5aee8832ef0898e08483df54d1b35730fed8325c9dc9a"
+      "bytes": 2952,
+      "sha256": "484d61cd84c58c252fc2d3fd919dadd45b5c499a79eba116fc78495251037e81"
     },
     {
       "path": "tools/test-worker-vm-preload.cjs",
