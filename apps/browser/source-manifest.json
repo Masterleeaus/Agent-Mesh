@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1060,
+  "fileCount": 1061,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -2265,8 +2265,8 @@
     },
     {
       "path": "src/lib/service-worker.js",
-      "bytes": 261167,
-      "sha256": "30f65f1e0795d70b1901f8011a4fb8093e0363210071283d7c51d24f75de42b1"
+      "bytes": 260834,
+      "sha256": "4f77c5e367fb50ef366f042c2e7b59be13b62df509bf38c589d7ff3940f6e782"
     },
     {
       "path": "src/lib/titan-zero-host-integration.js",
@@ -3332,6 +3332,11 @@
       "path": "tests/test-browser-navigation-pass11.cjs",
       "bytes": 1332,
       "sha256": "fdc8f161182bcd2df5030bd7751530df8f4f7bebdb9f4cfdddfd2ea4cbab0483"
+    },
+    {
+      "path": "tests/test-browser-node-no-devpack-startup.js",
+      "bytes": 1726,
+      "sha256": "b4a5dbad5bf333d5d1588d7984d2687091b0ac815dab54f1d60a7c9a7179fd91"
     },
     {
       "path": "tests/test-browser-node-postmerge-prune.js",
@@ -4480,8 +4485,8 @@
     },
     {
       "path": "tests/test-repository-service-worker-api.js",
-      "bytes": 821,
-      "sha256": "18aa6c3deb3b85d7e56f5b3d1f81e0e484bb1e6f9e08d3bfa771e05455271592"
+      "bytes": 1136,
+      "sha256": "fc933a546c595e3ee24826179a3b4235fb4c3668f59677972a34bb344ae8ca9f"
     },
     {
       "path": "tests/test-repository-settings-invalidate-context.js",
@@ -4510,8 +4515,8 @@
     },
     {
       "path": "tests/test-repository-worker-real-runtime.js",
-      "bytes": 2389,
-      "sha256": "6c9ef035a3d648ea0c2c5be5aeb0e5762fed35d0020afc05a7447b8bd351ffae"
+      "bytes": 2603,
+      "sha256": "4fc54fc4a8a73e9dcac10106feec814df0ec23b00f3c138989136e04c25726fd"
     },
     {
       "path": "tests/test-retry-budgets-v216.js",
@@ -4860,8 +4865,8 @@
     },
     {
       "path": "tests/test-titan-status-pack-isolation.js",
-      "bytes": 1796,
-      "sha256": "2b107b16097397e2a4fde39405f85959202302e2c4861c8a971e9a4a0a87c716"
+      "bytes": 1847,
+      "sha256": "69466be8a4d1bf4427f17bf353ed6a41aeec1bbea4cea0a8b60d5a973628eb24"
     },
     {
       "path": "tests/test-titan-test-matrix-extension-scope.js",
@@ -5090,8 +5095,8 @@
     },
     {
       "path": "tests/test-titan-zero-worker-import-runtime.js",
-      "bytes": 2263,
-      "sha256": "83b5b0a01bc4fc1462dd7137a0b9d740a3e8c6435fdef024325c598c87a0df9c"
+      "bytes": 2816,
+      "sha256": "7fccf95fccfed2b8d26a94b6e63baf787b456cb564d1d02707d0e98bfdd9a765"
     },
     {
       "path": "tests/test-unified-verifier-v216.js",
