@@ -1,0 +1,134 @@
+name: Titan Zero Observation Nexus Trigger Map
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  map-triggers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Recover observation, reality and reassessment evidence
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess,re,json,collections
+
+          out=Path("observation-nexus-trigger-map")
+          out.mkdir(exist_ok=True)
+          files=subprocess.check_output(["git","ls-files"],text=True).splitlines()
+          eligible=[f for f in files if f.endswith((".ts",".tsx",".mts",".cts",".sql",".md",".json",".yaml",".yml"))]
+
+          def read(f):
+            try: return Path(f).read_text(errors="ignore")[:1000000]
+            except: return ""
+
+          content={f:read(f) for f in eligible}
+          concepts={
+            "continuous-observation":r"ContinuousBusinessObservation|continuous.*observation|observation service|observeBusiness",
+            "reality-graph":r"BusinessRealityGraph|reality graph|reality fact|BusinessRealityFact",
+            "change-detection":r"ObservationChangeDetector|change detector|change detected|material change",
+            "freshness":r"ObservationFreshnessPolicy|freshness|stale|expires_at|valid_until",
+            "nexus":r"\bNexus\b|nexus",
+            "reassessment":r"reassess|re-evaluat|reevaluat|recompute|replan|reconfigure",
+            "trigger-event":r"trigger|event|event_type|eventType|publish|subscribe|emit\(|dispatch",
+            "intervention":r"InterventionExecutionLifecycle|intervention",
+            "outcome":r"OutcomeMeasurement|outcome measurement|outcome",
+            "longitudinal-memory":r"LongitudinalStrategyMemory|longitudinal|strategy memory",
+            "zero-learning":r"zero.*learn|learn.*zero|zero.*memory|experience memory|anti.?repeat",
+            "authority-gate":r"authority|trust|continuance|delegat|permission|governance|assurance",
+            "command-bus":r"CommandBus|Command Bus|command bus",
+            "signal":r"\bSignal\b|signal",
+          }
+
+          hits=collections.defaultdict(list)
+          for f,t in content.items():
+            for k,p in concepts.items():
+              if re.search(p,t,re.I|re.S): hits[k].append(f)
+
+          # Find files where key lifecycle concepts intersect; these are the best source-level inspection targets.
+          intersections=[]
+          keys=list(concepts)
+          for f,t in content.items():
+            present=[k for k,p in concepts.items() if re.search(p,t,re.I|re.S)]
+            if len(present)>=3 and any(k in present for k in ("continuous-observation","reality-graph","nexus","reassessment")):
+              intersections.append({"path":f,"concepts":present})
+
+          # Extract likely event/trigger names from code without pretending they are canonical.
+          event_names=collections.defaultdict(set)
+          patterns=[
+            re.compile(r"""(?:eventType|event_type|type|topic|name)\s*[:=]\s*['"]([^'"]{3,100})['"]"""),
+            re.compile(r"""(?:emit|publish|dispatch)\s*\(\s*['"]([^'"]{3,100})['"]""")
+          ]
+          for f,t in content.items():
+            if not re.search(concepts["trigger-event"],t,re.I): continue
+            for pat in patterns:
+              for m in pat.finditer(t):
+                val=m.group(1)
+                if re.search(r"business|zero|reality|observation|change|outcome|intervention|nexus|decision|job|customer|authority",val,re.I):
+                  event_names[f].add(val)
+
+          # Desired co-evolution chain from the blueprint, mapped only to evidence presence.
+          chain=[
+            ("Observe business","continuous-observation"),
+            ("Update Reality","reality-graph"),
+            ("Detect material change","change-detection"),
+            ("Check evidence freshness","freshness"),
+            ("Trigger reassessment","trigger-event"),
+            ("Nexus coordinates reassessment","nexus"),
+            ("Reassess/reconfigure","reassessment"),
+            ("Gate execution authority","authority-gate"),
+            ("Execute intervention","intervention"),
+            ("Measure outcome","outcome"),
+            ("Store longitudinal experience","longitudinal-memory"),
+            ("Update Zero learning","zero-learning"),
+          ]
+
+          md=["# Continuous Observation → Reality → Nexus Reassessment Evidence Map","",
+              "> This is evidence recovery, not a proposed runtime. Presence of terms does not prove the lifecycle is wired end-to-end.","",
+              f"Commit: `{subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()}`","",
+              "## Co-evolution chain coverage","",
+              "| Stage | Evidence concept | Matching files | Status |","|---|---|---:|---|"]
+          for stage,key in chain:
+            n=len(hits[key])
+            md.append(f"| {stage} | {key} | {n} | {'EVIDENCE FOUND' if n else 'UNRESOLVED'} |")
+
+          md += ["","## High-value intersection files",""]
+          for x in sorted(intersections,key=lambda x:(-len(x["concepts"]),x["path"]))[:150]:
+            md.append(f"- `{x['path']}` — {', '.join(x['concepts'])}")
+          if not intersections: md.append("- None found.")
+
+          md += ["","## Candidate event / trigger names",""]
+          for f,names in sorted(event_names.items()):
+            md.append(f"### `{f}`")
+            for n in sorted(names): md.append(f"- `{n}`")
+          if not event_names: md.append("- No candidate names extracted.")
+
+          md += ["","## Concept evidence paths"]
+          for k in concepts:
+            md += ["",f"### {k}"]
+            md += [f"- `{f}`" for f in hits[k][:100]] or ["- **UNRESOLVED**"]
+
+          (out/"Continuous-Observation-Reality-Nexus-Trigger-Map.md").write_text("\n".join(md)+"\n")
+          (out/"trigger-map.json").write_text(json.dumps({
+            "concept_hits":hits,
+            "intersection_files":intersections,
+            "candidate_events":{k:sorted(v) for k,v in event_names.items()},
+            "chain":[{"stage":s,"concept":k,"matching_files":len(hits[k]),"resolved":bool(hits[k])} for s,k in chain],
+            "warning":"Evidence only; end-to-end wiring and authority semantics require source-level verification."
+          },indent=2,default=list))
+
+      - name: Upload trigger evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: titan-zero-observation-nexus-trigger-map-${{ github.sha }}
+          path: observation-nexus-trigger-map/
+          retention-days: 30
+          if-no-files-found: error
