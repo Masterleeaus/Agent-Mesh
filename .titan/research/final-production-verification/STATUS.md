@@ -1,6 +1,6 @@
 # Final Production Verification — Status
 
-Status: IN PROGRESS — FIRST CANONICAL CLEANING E2E PROVEN; RELEASE GATES REMAIN
+Status: IN PROGRESS — BACKEND CLEANING E2E PROVEN; ZERO PRODUCTION TRANSPORT REMAINS BLOCKING
 Role: Agent 4 — final convergence auditor
 Canonical branch scanned: `main`
 
@@ -12,38 +12,51 @@ Canonical acceptance path:
 
 `ONE → ZERO → Interaction Engine → Context/Memory → Workforce → WorkItem → Persistent Agent Runtime → Decision → Risk → Authority → ExecutionGateway → Native/MCP/Browser Node → Verification → Evidence → Verified Outcome → ZERO`
 
-## Pass 1 findings
+## Proven executable evidence
 
-1. Current main already contains extensive Agent Mesh/convergence, CI baseline and verification machinery. Reuse it.
-2. Root scripts provide generic `gate` and `gate:fast`, but there is no canonical `verify:titan` production-readiness command yet.
-3. The existing full `scripts/gate.sh` is still PostgreSQL-centred for integration/E2E: it starts an ephemeral `postgres:16` container, provisions PostgreSQL runtime roles and starts the web surface against `DATABASE_URL`.
-4. That gate therefore does **not** prove the newer canonical SQLite-first runtime/persistence architecture.
-5. No repository test/search hit initially demonstrated the primary cleaning-business acceptance scenario `Emma is sick tomorrow. Sort it out.`
-6. Final verification must not be declared from architecture or generic CI alone.
+### Pass 4 — Agent 1 convergence
 
-## Pass 4 executable evidence
+Focused workflow `36301314908` passed with the exact relevant Agent 1 PR #801 fixes staged for verification:
 
-The focused `Agent 4 Final Production Verification` workflow reached a completely green architecture chain with the exact relevant Agent 1 PR #801 fixes staged temporarily for verification:
+- cleaning-business SQLite convergence: **1/1**;
+- canonical `services/workforce`: **3/3**;
+- duplicate/older `packages/workforce`: **14/14** after preserving StorageClient native `?` bindings;
+- persistent Agent Runtime + SQLite RunStore: **14/14**;
+- current-main ExecutionGateway contracts: **5/5**.
 
-- cleaning-business SQLite convergence scenario: **1/1 passed**;
-- canonical `services/workforce`: **3/3 passed**;
-- duplicate/older `packages/workforce`: **14/14 passed** after correcting StorageClient native `?` parameter preservation;
-- persistent Agent Runtime + SQLite RunStore: **14/14 passed**;
-- current-main ExecutionGateway contracts: **5/5 passed**.
+### Pass 5 — Agent 2 convergence
 
-This proves the first real SQLite-backed cleaning-business path through persistent work, runtime, governed execution, verified business mutation, evidence, company isolation and restart persistence. It does **not** yet prove the entire production composition root or live providers.
+Focused workflow `36301767065` passed with PR #799's hardened execution contract staged on the Agent 1 composition:
+
+- cleaning convergence using independent canonical post-action reread: **1/1**;
+- `services/workforce`: **4/4**;
+- `packages/workforce`: **14/14**;
+- Agent Runtime + SQLite RunStore: **14/14**;
+- hardened ExecutionGateway/MCP/Browser contracts: **8/8**.
+
+This proves provider acknowledgement need not and must not self-certify the business outcome. The cleaning harness now independently re-reads company-scoped visit state before accepting success.
+
+## Pass 6 — Zero production composition audit
+
+Agent 3 PR #798 correctly replaces fabricated Zero pulse values with company-scoped live queries and removes the dead GET chat form. Its own remaining-gap ledger explicitly confirms that authenticated Zero chat -> Interaction Engine -> WorkItem -> persistent run -> governed execution is still missing.
+
+No canonical production Zero transport was found on current `main` that proves an authenticated chat submission reaches `TitanAgentRuntime`. Therefore backend convergence is green but the real product front door is **not yet production-certified**.
+
+Agent 4 added `ZERO-PRODUCTION-GATE.md` defining the executable acceptance contract and posted the same requirements to PR #798. Agent 3 remains the implementation owner; Agent 4 will not create a competing Zero/runtime path.
 
 ## Current release gates
 
-1. Agent 1 PR #801 must converge without duplicating ownership; Agent 4 temporary copies are verification-only.
-2. Resolve the duplicate `@titan-zero/workforce` packages so exactly one workforce implementation is canonical.
-3. Preserve native SQLite `?` bindings in `StorageClient` or eliminate every remaining native-placeholder caller as part of deliberate convergence.
-4. Reconcile the stale root `pnpm-lock.yaml` so frozen-lockfile CI works again.
-5. Verify Agent 2 PR #799's stricter independent provider verification/idempotency contract end to end.
-6. Prove Zero chat -> persistent runtime in production composition, not only component composition.
-7. Prove restart during approval and consequential execution, duplicate suppression across restart/process boundaries, and live native/MCP/Browser Node provider outcomes.
-8. Prove full application boot on canonical SQLite without PostgreSQL dependency.
+1. Agent 1 PR #801 must converge without duplicate ownership.
+2. Agent 2 PR #799 must converge without duplicate ownership.
+3. Agent 3 must implement and prove authenticated Zero chat -> persistent runtime production transport, approval/restart/resume, and verified outcome projection.
+4. Resolve the duplicate `@titan-zero/workforce` packages so exactly one implementation is canonical.
+5. Preserve native SQLite `?` bindings in `StorageClient` or deliberately eliminate every native-placeholder caller.
+6. Reconcile the stale root `pnpm-lock.yaml` so frozen-lockfile CI works again.
+7. Prove durable atomic duplicate suppression across process crashes/restarts.
+8. Bind and certify live native/MCP/Browser Node providers.
+9. Prove full application boot on canonical SQLite without PostgreSQL dependency.
+10. Add one meaningful `verify:titan` production-readiness command only after these constituent checks are real.
 
 ## Completion gate
 
-Do not mark READY until executable evidence demonstrates the canonical path, tenant isolation, restart recovery, authority enforcement, durable idempotency, independently verified outcomes, Zero production wiring and SQLite-only boot.
+Do not mark READY until executable evidence demonstrates the canonical path from the real Zero entrypoint, tenant isolation, restart recovery, authority enforcement, durable idempotency, independently verified outcomes, and SQLite-only boot.
