@@ -1,0 +1,68 @@
+{
+  "goal_id": "TZ-ROADMAP-55",
+  "priority": "P0",
+  "title": "Agent Mesh V4 GitHub-Native Continuity & Execution Bridge",
+  "objective": "Converge Titan Code Manager with the existing GitHub-native Agent Mesh lifecycle, durable takeover and governed execution bridge without creating parallel execution or authority architecture.",
+  "status": "PLANNED",
+  "affinity_tags": ["agent-mesh", "github", "continuity", "execution-bridge"],
+  "preferred_predecessors": ["TZ-ROADMAP-54"],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "unified_architecture_contract_required": true,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "claimable": true,
+  "reuse_first": true,
+  "library_reuse_refs": ["Titan Code Manager", "Agent Mesh V3", "GitHub main"],
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "subgoal_id": "TZ-ROADMAP-55-SG-01",
+      "title": "Converge Titan Code Manager with GitHub-native Agent Mesh lifecycle, durable takeover and governed execution bridge",
+      "status": "TODO",
+      "subgoal_order": 1,
+      "priority": "P0",
+      "mvp_required": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "claimable": true,
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; implementation-heavy; cumulative checkpoints normally every 4-6 passes",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan current GitHub main, Agent Mesh lifecycle and Titan Code Manager integrations first; converge rather than duplicate.",
+      "library_reuse_refs": ["Titan Code Manager", "Agent Mesh V3", "GitHub main"],
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "PENDING_ASSESSMENT",
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "capability_ids": []
+      },
+      "target_architecture_audit": {
+        "status": "NO_STATIC_CONTRADICTION_DETECTED",
+        "preserve_completed_evidence": true
+      },
+      "architecture_ref": "ARCHREF::TZ-ROADMAP-55-SG-01",
+      "capability_refs": ["workforce.coordinate", "command.execute", "authority.evaluate", "evidence.record", "recovery.rewind"]
+    }
+  ]
+}
