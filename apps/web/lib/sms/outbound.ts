@@ -1,6 +1,11 @@
 import { query, queryOne } from "@/lib/db";
-import { logCommunication } from "@/lib/communications-log";
+import { logCommunication, recordDeliveryReceipt } from "@/lib/communications-log";
 import { normalizePhone } from "@/lib/phone";
+import {
+  createDeliveryReceipt,
+  type CommunicationEnvelope,
+  type DeliveryReceipt,
+} from "@/lib/communications/contracts";
 
 export type OutboundSmsOutcome = "sent" | "delivered" | "failed";
 
@@ -107,4 +112,50 @@ export async function updateOutboundSmsOutcome(
     [accountId, externalId, outcome]
   );
   return rows.length > 0;
+}
+
+
+/**
+ * Project an SMS gateway lifecycle event into the canonical delivery evidence
+ * contract. Provider callbacks remain evidence only and cannot confer authority.
+ */
+export function smsDeliveryReceipt(opts: {
+  communication: Pick<
+    CommunicationEnvelope,
+    "id" | "company_id" | "conversation_id" | "correlation_id"
+  >;
+  outcome: OutboundSmsOutcome;
+  externalId?: string | null;
+  attempt?: number;
+  occurredAt?: string;
+}): DeliveryReceipt {
+  const receipt = createDeliveryReceipt({
+    message: { ...opts.communication, channel: "sms" },
+    result:
+      opts.outcome === "failed"
+        ? { ok: false, provider_message_id: opts.externalId ?? undefined, error_code: "sms-provider-failed" }
+        : { ok: true, provider_message_id: opts.externalId ?? undefined },
+    attempt: opts.attempt,
+    occurred_at: opts.occurredAt,
+  });
+  return opts.outcome === "delivered" ? { ...receipt, state: "delivered" } : receipt;
+}
+
+
+/**
+ * Canonical callback path for provider delivery evidence. The company scope
+ * carried by the communication is authoritative; provider callbacks cannot
+ * select or widen tenant scope.
+ */
+export async function persistSmsDeliveryOutcome(opts: {
+  communication: Pick<
+    CommunicationEnvelope,
+    "id" | "company_id" | "conversation_id" | "correlation_id"
+  >;
+  outcome: OutboundSmsOutcome;
+  externalId?: string | null;
+  attempt?: number;
+  occurredAt?: string;
+}): Promise<boolean> {
+  return recordDeliveryReceipt(smsDeliveryReceipt(opts));
 }

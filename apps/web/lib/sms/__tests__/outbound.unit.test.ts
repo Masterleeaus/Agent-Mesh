@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mockQuery = vi.fn();
 const mockQueryOne = vi.fn();
 const mockLogCommunication = vi.fn();
+const mockRecordDeliveryReceipt = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   query: (...args: unknown[]) => mockQuery(...args),
@@ -11,6 +12,7 @@ vi.mock("@/lib/db", () => ({
 
 vi.mock("@/lib/communications-log", () => ({
   logCommunication: (...args: unknown[]) => mockLogCommunication(...args),
+  recordDeliveryReceipt: (...args: unknown[]) => mockRecordDeliveryReceipt(...args),
 }));
 
 describe("logOutboundSms", () => {
@@ -60,5 +62,75 @@ describe("updateOutboundSmsOutcome", () => {
     mockQuery.mockResolvedValue([]);
     const { updateOutboundSmsOutcome } = await import("../outbound");
     expect(await updateOutboundSmsOutcome("acct", "missing", "failed")).toBe(false);
+  });
+});
+
+
+describe("smsDeliveryReceipt", () => {
+  it("normalizes delivered and failed provider callbacks", async () => {
+    const { smsDeliveryReceipt } = await import("../outbound");
+    const communication = {
+      id: "msg-1",
+      company_id: "acct",
+      conversation_id: "conv-1",
+      correlation_id: "corr-1",
+    };
+
+    expect(smsDeliveryReceipt({
+      communication,
+      outcome: "delivered",
+      externalId: "provider-1",
+      occurredAt: "2026-09-22T02:00:00.000Z",
+    })).toMatchObject({
+      company_id: "acct",
+      channel: "sms",
+      state: "delivered",
+      provider_message_id: "provider-1",
+    });
+
+    expect(smsDeliveryReceipt({
+      communication,
+      outcome: "failed",
+      externalId: "provider-2",
+      occurredAt: "2026-09-22T02:01:00.000Z",
+    })).toMatchObject({
+      company_id: "acct",
+      channel: "sms",
+      state: "failed",
+      error_code: "sms-provider-failed",
+      provider_message_id: "provider-2",
+    });
+  });
+});
+
+
+describe("persistSmsDeliveryOutcome", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("persists delivery evidence using canonical company scope", async () => {
+    mockRecordDeliveryReceipt.mockResolvedValue(true);
+    const { persistSmsDeliveryOutcome } = await import("../outbound");
+    const updated = await persistSmsDeliveryOutcome({
+      communication: {
+        id: "msg-1",
+        company_id: "company-1",
+        conversation_id: "conv-1",
+        correlation_id: "corr-1",
+      },
+      outcome: "delivered",
+      externalId: "provider-1",
+    });
+    expect(updated).toBe(true);
+    expect(mockRecordDeliveryReceipt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        company_id: "company-1",
+        message_id: "msg-1",
+        channel: "sms",
+        state: "delivered",
+        provider_message_id: "provider-1",
+      }),
+    );
   });
 });

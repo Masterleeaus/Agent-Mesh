@@ -11,34 +11,24 @@ import { detectSmsKeyword, replyForSmsKeyword, type SmsKeyword } from "@/lib/sms
 import { SMS_CONSENT_TEXT } from "@/lib/sms/consent";
 import { isSmsGatewayConfigured, sendSmsViaGateway } from "@/lib/sms/gateway";
 import { logOutboundSms } from "@/lib/sms/outbound";
+import { normalizeInboundProviderEvent, routeInboundCommunication } from "@/lib/communications/inbound";
+import { resolveTenantSmsSettings, tenantSmsWebhookKeyMatches } from "@/lib/sms/settings";
 
 export const dynamic = "force-dynamic";
 
-const SMS_KEY = process.env.SMS_INTERNAL_KEY;
 
 const bodySchema = z.object({
   phone: z.string().min(7).max(20),
   message: z.string().min(1).max(2000),
   external_id: z.string().max(255).optional(),
+  company_id: z.string().uuid(),
+  owner_user_id: z.string().uuid(),
+  conversation_id: z.string().min(1).max(255),
+  correlation_id: z.string().min(1).max(255),
+  provider_id: z.string().min(1).max(255).default("sms-gateway"),
 });
 
 const ACTIVE_JOB_STATUSES = ["draft", "quoted", "scheduled", "in_progress"];
-
-// ── owner account discovery (cached) ───────────────────────────────────────
-let _accountId: string | null = null;
-let _userId: string | null = null;
-async function getOwnerContext(): Promise<{ accountId: string; userId: string }> {
-  if (_accountId && _userId) return { accountId: _accountId, userId: _userId };
-  const row = await queryOne<{ account_id: string; user_id: string }>(
-    `SELECT a.id AS account_id, u.id AS user_id
-     FROM accounts a JOIN users u ON u.account_id = a.id
-     WHERE u.role = 'owner' ORDER BY u.created_at LIMIT 1`
-  );
-  if (!row) throw new Error("No owner account found in database");
-  _accountId = row.account_id;
-  _userId = row.user_id;
-  return { accountId: _accountId, userId: _userId };
-}
 
 /** Match all client rows for a phone (E.164 or last-10 national). */
 function phoneMatchParams(phone: string): { phone: string; digits: string; last10: string } {
@@ -59,8 +49,9 @@ async function handleSmsKeyword(opts: {
   externalId?: string;
   existing: { id: string; name: string; sms_consent: boolean } | null;
   traceId: string;
+  simNumber?: number;
 }): Promise<NextResponse> {
-  const { accountId, phone, message, keyword, externalId, existing, traceId } = opts;
+  const { accountId, phone, message, keyword, externalId, existing, traceId, simNumber } = opts;
   const reply = replyForSmsKeyword(keyword);
 
   let clientId: string | null = existing?.id ?? null;
@@ -136,8 +127,15 @@ async function handleSmsKeyword(opts: {
   }
 
   let autoReplied = false;
-  if (isSmsGatewayConfigured()) {
-    const sendResult = await sendSmsViaGateway({ phone, message: reply });
+  const gatewayConfig = {
+    url: smsSettings.gatewayUrl,
+    username: smsSettings.gatewayUsername,
+    password: smsSettings.gatewayPassword,
+    simNumber,
+    allowEnvironmentFallback: false,
+  };
+  if (isSmsGatewayConfigured(gatewayConfig)) {
+    const sendResult = await sendSmsViaGateway({ phone, message: reply, config: gatewayConfig });
     autoReplied = sendResult.ok;
     if (sendResult.ok) {
       await logOutboundSms({
@@ -260,10 +258,6 @@ function buildNotification(
 export async function POST(req: NextRequest) {
   const traceId = randomUUID();
 
-  if (!SMS_KEY || req.headers.get("x-api-key") !== SMS_KEY) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   let body: unknown;
   try {
     body = await req.json();
@@ -277,16 +271,60 @@ export async function POST(req: NextRequest) {
       { status: 422 }
     );
   }
-  const { phone: rawPhone, message, external_id } = parsed.data;
+  const { phone: rawPhone, message, external_id, company_id, owner_user_id, conversation_id, correlation_id, provider_id } = parsed.data;
+
+  // Bind webhook authentication to the canonical company before any company-scoped
+  // lookup or side effect. A credential for one company cannot authorize another.
+  const account = await queryOne<{ settings: unknown }>(
+    `SELECT settings FROM accounts WHERE id = $1 LIMIT 1`,
+    [company_id],
+  );
+  const smsSettings = resolveTenantSmsSettings(account?.settings);
+  if (!tenantSmsWebhookKeyMatches(smsSettings, req.headers.get("x-api-key"))) {
+    logger.warn("Inbound SMS tenant webhook authentication rejected", { traceId, company_id });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const phone = normalizePhone(rawPhone) ?? rawPhone;
 
-  let accountId: string, userId: string;
-  try {
-    ({ accountId, userId } = await getOwnerContext());
-  } catch (err) {
-    logger.error("Failed to resolve owner context", err as Error, { traceId });
-    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  // The authenticated integration must carry canonical company scope.
+  // Validate the supplied owner identity inside that company; never discover
+  // tenant context by selecting the first owner in the database.
+  const owner = await queryOne<{ user_id: string }>(
+    `SELECT id AS user_id FROM users
+     WHERE id = $1 AND account_id = $2 AND role = 'owner'
+     LIMIT 1`,
+    [owner_user_id, company_id],
+  );
+  if (!owner) {
+    logger.warn("Inbound SMS owner/company scope rejected", { traceId, company_id });
+    return NextResponse.json({ error: "Invalid company owner scope" }, { status: 403 });
   }
+  const accountId = company_id; // legacy storage alias after canonical normalization
+  const userId = owner.user_id;
+
+  // Normalize provider evidence before any business classification or side effects.
+  // Routing preserves identity and explicitly carries no execution authority.
+  const inboundEnvelope = normalizeInboundProviderEvent({
+    company_id,
+    message_id: external_id ?? traceId,
+    conversation_id,
+    correlation_id,
+    channel: "sms",
+    participants: [{ address: phone }],
+    body: message,
+    occurred_at: new Date().toISOString(),
+    provider_id,
+  });
+  const inboundRouting = routeInboundCommunication({
+    message: inboundEnvelope,
+    classification: {
+      kind: "review",
+      confidence: "low",
+      intent: "unclassified-sms",
+      requires_human_review: true,
+    },
+  });
 
   // Idempotency: already-seen message → no re-action, no Claude call.
   // The unique index on (account_id, external_id) is the hard backstop.
@@ -337,6 +375,7 @@ export async function POST(req: NextRequest) {
         ? { id: existing.id, name: existing.name, sms_consent: existing.sms_consent }
         : null,
       traceId,
+      simNumber: smsSettings.simNumber,
     });
   }
 
@@ -391,10 +430,19 @@ export async function POST(req: NextRequest) {
     ? await getClientContext(accountId, existing.id)
     : { openEstimates: [], recentJobs: [], recentMessages: [] };
   const ai = await classifySms({ message, phone, context });
+  const classifiedRouting = routeInboundCommunication({
+    message: inboundEnvelope,
+    classification: {
+      kind: ai.is_business ? (ai.confidence === "low" ? "review" : "business") : "ignored",
+      confidence: ai.confidence,
+      intent: ai.message_type,
+      requires_human_review: ai.confidence === "low",
+    },
+  });
 
   if (!ai.is_business) {
     logger.info("SMS not business — skipping", { traceId, phone, type: ai.message_type });
-    return NextResponse.json({ skipped: true, reason: "not_business" });
+    return NextResponse.json({ skipped: true, reason: "not_business", routing: classifiedRouting });
   }
 
   // Resolve the client (create now if new)
@@ -503,5 +551,6 @@ export async function POST(req: NextRequest) {
     needs_review: needsReview,
     notification,
     reply: ai.reply,
+    routing: classifiedRouting,
   });
 }

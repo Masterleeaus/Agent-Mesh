@@ -55,7 +55,7 @@ function getClient(): Anthropic {
 
 const CLASSIFY_TOOL: Anthropic.Tool = {
   name: "classify_sms",
-  description: "Classify an inbound SMS to the Dovetails business line and extract intake fields.",
+  description: "Classify an inbound SMS to a business line and extract intake fields.",
   input_schema: {
     type: "object",
     properties: {
@@ -82,7 +82,7 @@ const CLASSIFY_TOOL: Anthropic.Tool = {
       reply: {
         type: "string",
         description:
-          "Warm, professional reply under 160 chars, signed 'Nick @ Dovetails'. Use the customer's history when relevant.",
+          "Warm, professional reply under 160 chars. Do not invent a business, owner, location, or signature. Use the customer's history when relevant.",
       },
       target_estimate_id: {
         type: ["string", "null"],
@@ -97,7 +97,7 @@ const CLASSIFY_TOOL: Anthropic.Tool = {
   },
 };
 
-const SYSTEM_PROMPT = `You are the intake assistant for Dovetails Services LLC, a handyman and woodworking business owned by Nick Garon in New England. You read inbound SMS to the business line and classify them so the right action is taken. Be accurate and concise. Use the customer's history (provided) to write informed replies and to link approvals/questions to the correct open estimate. Always call the classify_sms tool.`;
+const SYSTEM_PROMPT = `You are a provider-neutral business SMS intake assistant. Read inbound SMS to the business line and classify them so the right workflow can review or handle them. Be accurate and concise. Use only the supplied customer history and message; never invent a business name, owner, location, trade, or signature. Classification is informational and does not grant execution authority. Always call the classify_sms tool.`;
 
 /**
  * Safe fallback when the model is unavailable or errors. Marked `low` confidence
@@ -114,7 +114,7 @@ function fallback(message: string): SmsClassification {
     job_type: "custom",
     description: message.slice(0, 200),
     urgency: "flexible",
-    reply: "Thanks for reaching out — I'll follow up shortly. — Nick @ Dovetails",
+    reply: "Thanks for reaching out — we'll follow up shortly.",
     target_estimate_id: null,
   };
 }
@@ -176,7 +176,7 @@ export async function classifySms(params: {
       )
         ? (raw.urgency as SmsClassification["urgency"])
         : "flexible",
-      reply: raw.reply ?? "Thanks for reaching out — I'll follow up shortly. — Nick @ Dovetails",
+      reply: raw.reply ?? "Thanks for reaching out — we'll follow up shortly.",
       target_estimate_id: targetEstimateId,
     };
   } catch {

@@ -1,5 +1,11 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
+import { recordDeliveryReceipt } from "@/lib/communications-log";
+import {
+  createDeliveryReceipt,
+  type CommunicationEnvelope,
+  type DeliveryReceipt,
+} from "@/lib/communications/contracts";
 
 let _transporter: Transporter | null = null;
 
@@ -40,6 +46,18 @@ export interface SendOptions {
   attachments?: EmailAttachment[];
 }
 
+export interface GovernedEmailOptions extends SendOptions {
+  communication: Pick<
+    CommunicationEnvelope,
+    "id" | "company_id" | "conversation_id" | "correlation_id"
+  >;
+  attempt?: number;
+}
+
+export type GovernedEmailResult =
+  | { ok: true; receipt: DeliveryReceipt; persisted: boolean }
+  | { ok: false; error: string; receipt: DeliveryReceipt; persisted: boolean };
+
 export async function sendEmail(opts: SendOptions): Promise<{ ok: boolean; error?: string }> {
   if (!isEmailConfigured()) {
     return { ok: false, error: "Email not configured (SMTP_HOST/SMTP_USER/SMTP_PASS missing)" };
@@ -68,4 +86,25 @@ export async function sendEmail(opts: SendOptions): Promise<{ ok: boolean; error
 
 export function appUrl(): string {
   return (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+}
+
+
+/**
+ * Canonical email adapter. Existing callers can keep using sendEmail while
+ * governed communications use this wrapper to receive normalized evidence.
+ */
+export async function sendGovernedEmail(opts: GovernedEmailOptions): Promise<GovernedEmailResult> {
+  const { communication, attempt, ...email } = opts;
+  const result = await sendEmail(email);
+  const receipt = createDeliveryReceipt({
+    message: { ...communication, channel: "email" },
+    result: result.ok
+      ? { ok: true }
+      : { ok: false, error_code: "email-provider-failed" },
+    attempt,
+  });
+  const persisted = await recordDeliveryReceipt(receipt);
+  return result.ok
+    ? { ok: true, receipt, persisted }
+    : { ok: false, error: result.error ?? "Email send failed", receipt, persisted };
 }

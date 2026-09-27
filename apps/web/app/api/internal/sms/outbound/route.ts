@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { randomUUID } from "crypto";
-import { queryOne } from "@/lib/db";
 import { logger } from "@/lib/logger";
+import { queryOne } from "@/lib/db";
+import { resolveTenantSmsSettings, tenantSmsWebhookKeyMatches } from "@/lib/sms/settings";
 import { normalizePhone } from "@/lib/phone";
 import {
   findActiveJobForClient,
   findClientByPhone,
   logOutboundSms,
-  updateOutboundSmsOutcome,
+  persistSmsDeliveryOutcome,
   type OutboundSmsOutcome,
 } from "@/lib/sms/outbound";
 
 export const dynamic = "force-dynamic";
 
-const SMS_KEY = process.env.SMS_INTERNAL_KEY;
 
 /**
  * Accept either a flat body (from n8n after extraction) or a raw SMS Gateway
@@ -27,17 +27,11 @@ const flatSchema = z.object({
   external_id: z.string().max(255).optional().nullable(),
   outcome: z.enum(["sent", "delivered", "failed"]).optional(),
   sim_number: z.number().int().optional().nullable(),
+  company_id: z.string().uuid(),
+  communication_id: z.string().min(1).max(255).optional().nullable(),
+  conversation_id: z.string().min(1).max(255).optional().nullable(),
+  correlation_id: z.string().min(1).max(255).optional().nullable(),
 });
-
-async function getOwnerAccountId(): Promise<string> {
-  const row = await queryOne<{ account_id: string }>(
-    `SELECT a.id AS account_id
-     FROM accounts a JOIN users u ON u.account_id = a.id
-     WHERE u.role = 'owner' ORDER BY u.created_at LIMIT 1`
-  );
-  if (!row) throw new Error("No owner account found");
-  return row.account_id;
-}
 
 function extractFromGatewayEnvelope(body: unknown): {
   phone: string;
@@ -45,6 +39,10 @@ function extractFromGatewayEnvelope(body: unknown): {
   external_id: string | null;
   outcome: OutboundSmsOutcome;
   simNumber: number | null;
+  companyId: string | null;
+  communicationId: string | null;
+  conversationId: string | null;
+  correlationId: string | null;
 } | null {
   if (!body || typeof body !== "object") return null;
   const b = body as Record<string, unknown>;
@@ -85,6 +83,15 @@ function extractFromGatewayEnvelope(body: unknown): {
     payload.messageId ?? payload.id ?? b.external_id ?? b.id ?? ""
   ).trim();
 
+  const companyIdRaw = payload.company_id ?? b.company_id;
+  const communicationIdRaw = payload.communication_id ?? b.communication_id;
+  const conversationIdRaw = payload.conversation_id ?? b.conversation_id;
+  const correlationIdRaw = payload.correlation_id ?? b.correlation_id;
+  const companyId = typeof companyIdRaw === "string" && companyIdRaw.trim() ? companyIdRaw.trim() : null;
+  const communicationId = typeof communicationIdRaw === "string" && communicationIdRaw.trim() ? communicationIdRaw.trim() : null;
+  const conversationId = typeof conversationIdRaw === "string" && conversationIdRaw.trim() ? conversationIdRaw.trim() : null;
+  const correlationId = typeof correlationIdRaw === "string" && correlationIdRaw.trim() ? correlationIdRaw.trim() : null;
+
   const simRaw = payload.simNumber ?? b.sim_number;
   const simNumber =
     typeof simRaw === "number"
@@ -102,6 +109,10 @@ function extractFromGatewayEnvelope(body: unknown): {
     external_id: messageId || null,
     outcome,
     simNumber: Number.isFinite(simNumber as number) ? (simNumber as number) : null,
+    companyId,
+    communicationId,
+    conversationId,
+    correlationId,
   };
 }
 
@@ -110,10 +121,6 @@ function extractFromGatewayEnvelope(body: unknown): {
 // or a simplified n8n payload. Does NOT create jobs or call Claude.
 export async function POST(req: NextRequest) {
   const traceId = randomUUID();
-
-  if (!SMS_KEY || req.headers.get("x-api-key") !== SMS_KEY) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
 
   let body: unknown;
   try {
@@ -128,14 +135,27 @@ export async function POST(req: NextRequest) {
   let externalId: string | null;
   let outcome: OutboundSmsOutcome;
   let simNumber: number | null;
+  let companyId: string | null;
+  let communicationId: string | null;
+  let conversationId: string | null;
+  let correlationId: string | null;
 
   const fromEnvelope = extractFromGatewayEnvelope(body);
   if (fromEnvelope) {
+    const companyScope = z.string().uuid().safeParse(fromEnvelope.companyId);
+    if (!companyScope.success) {
+      return NextResponse.json({ error: "Valid company_id is required" }, { status: 422 });
+    }
+    fromEnvelope.companyId = companyScope.data;
     phone = fromEnvelope.phone;
     message = fromEnvelope.message;
     externalId = fromEnvelope.external_id;
     outcome = fromEnvelope.outcome;
     simNumber = fromEnvelope.simNumber;
+    companyId = fromEnvelope.companyId;
+    communicationId = fromEnvelope.communicationId;
+    conversationId = fromEnvelope.conversationId;
+    correlationId = fromEnvelope.correlationId;
   } else {
     const parsed = flatSchema.safeParse(body);
     if (!parsed.success) {
@@ -149,26 +169,55 @@ export async function POST(req: NextRequest) {
     externalId = parsed.data.external_id ?? null;
     outcome = parsed.data.outcome ?? "sent";
     simNumber = parsed.data.sim_number ?? null;
-  }
-
-  // Business SIM only (same rule as inbound n8n filter)
-  if (simNumber !== null && simNumber !== 1) {
-    return NextResponse.json({ skipped: true, reason: "non_business_sim", simNumber });
+    companyId = parsed.data.company_id;
+    communicationId = parsed.data.communication_id ?? null;
+    conversationId = parsed.data.conversation_id ?? null;
+    correlationId = parsed.data.correlation_id ?? null;
   }
 
   const normalized = normalizePhone(phone) ?? phone;
 
-  let accountId: string;
-  try {
-    accountId = await getOwnerAccountId();
-  } catch (err) {
-    logger.error("outbound SMS: owner context", err as Error, { traceId });
-    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  // The authenticated integration must identify the canonical company scope.
+  // Never infer tenant identity from the first owner in a multi-company system.
+  if (!companyId) {
+    logger.warn("outbound SMS callback missing company scope", { traceId, externalId });
+    return NextResponse.json({ error: "company_id is required" }, { status: 422 });
+  }
+  const account = await queryOne<{ settings: unknown }>(
+    `SELECT settings FROM accounts WHERE id = $1 LIMIT 1`,
+    [companyId],
+  );
+  const smsSettings = resolveTenantSmsSettings(account?.settings);
+  if (!tenantSmsWebhookKeyMatches(smsSettings, req.headers.get("x-api-key"))) {
+    logger.warn("Outbound SMS tenant webhook authentication rejected", { traceId, company_id: companyId });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Delivery/failure updates for a message we already logged as sent
+  // SIM routing is tenant configuration, not a global assumption. Reject/skip only
+  // after the callback has authenticated to its canonical company.
+  if (simNumber !== null && smsSettings.simNumber !== undefined && simNumber !== smsSettings.simNumber) {
+    return NextResponse.json({ skipped: true, reason: "non_business_sim", simNumber });
+  }
+  const accountId = companyId; // legacy storage/input alias after canonical normalization
+
+  // Delivery/failure callbacks must preserve canonical message/conversation identity.
   if (externalId && (outcome === "delivered" || outcome === "failed")) {
-    const updated = await updateOutboundSmsOutcome(accountId, externalId, outcome);
+    if (!communicationId || !conversationId || !correlationId) {
+      return NextResponse.json(
+        { error: "communication_id, conversation_id and correlation_id are required for delivery callbacks" },
+        { status: 422 },
+      );
+    }
+    const updated = await persistSmsDeliveryOutcome({
+      communication: {
+        id: communicationId,
+        company_id: companyId,
+        conversation_id: conversationId,
+        correlation_id: correlationId,
+      },
+      outcome,
+      externalId,
+    });
     if (updated) {
       logger.info("outbound SMS outcome updated", { traceId, externalId, outcome });
       return NextResponse.json({ updated: true, outcome, external_id: externalId });
@@ -200,9 +249,7 @@ export async function POST(req: NextRequest) {
 
   if (externalId && commsId === null) {
     // Duplicate send event — if this is a later status, try update
-    if (outcome === "delivered" || outcome === "failed") {
-      await updateOutboundSmsOutcome(accountId, externalId, outcome);
-    }
+    // Delivery callbacks were already normalized through canonical receipt persistence above.
     return NextResponse.json({ duplicate: true, external_id: externalId });
   }
 
