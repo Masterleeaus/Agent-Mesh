@@ -25,11 +25,13 @@ const files = walk(root).sort((a,b)=>a.rel.localeCompare(b.rel)).map(({rel,full}
   const bytes=fs.readFileSync(full);
   return { path:rel, bytes:bytes.length, sha256:crypto.createHash('sha256').update(bytes).digest('hex') };
 });
+const sourceDateEpoch = Number(process.env.SOURCE_DATE_EPOCH || 0);
+const generatedAt = new Date(Number.isFinite(sourceDateEpoch) && sourceDateEpoch > 0 ? sourceDateEpoch * 1000 : 0).toISOString();
 const manifest = {
   schema: 1,
   product: 'Titan Zero Browser Node',
   version: JSON.parse(fs.readFileSync(path.join(root,'manifest.json'),'utf8')).version,
-  generatedAt: new Date().toISOString(),
+  generatedAt,
   algorithm: 'sha256',
   excludes: [OUT, '*.zip', '.git/**', 'node_modules/**', '.tmp/**'],
   fileCount: files.length,
