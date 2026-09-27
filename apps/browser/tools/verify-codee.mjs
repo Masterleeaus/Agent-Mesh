@@ -46,6 +46,8 @@ function walk(dir, predicate = () => true) {
 function relative(file) { return path.relative(root, file).replaceAll(path.sep, '/'); }
 
 const MAX_PARALLEL_TESTS = Math.max(2, Math.min(8, Number(process.env.CODEE_VERIFY_JOBS) || 8));
+const TEST_WORKER_VM_PRELOAD = path.join(root, 'tools', 'test-worker-vm-preload.cjs');
+const TEST_NODE_OPTIONS = [process.env.NODE_OPTIONS || '', `--require=${TEST_WORKER_VM_PRELOAD}`].filter(Boolean).join(' ');
 async function runNodeTestsParallel(relativeFiles, label) {
   let next = 0;
   const errors = [];
@@ -55,7 +57,11 @@ async function runNodeTestsParallel(relativeFiles, label) {
       if (index >= relativeFiles.length) return;
       const file = relativeFiles[index];
       const result = await new Promise(resolve => {
-        const child = spawn(process.execPath, [file], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
+        const child = spawn(process.execPath, [file], {
+          cwd: root,
+          stdio: ['ignore', 'pipe', 'pipe'],
+          env: { ...process.env, NODE_OPTIONS: TEST_NODE_OPTIONS }
+        });
         let stdout = '', stderr = '';
         child.stdout.on('data', chunk => { if (stdout.length < 2 * 1024 * 1024) stdout += chunk; });
         child.stderr.on('data', chunk => { if (stderr.length < 2 * 1024 * 1024) stderr += chunk; });
@@ -97,14 +103,14 @@ await runNodeTestsParallel(repoTests.map(name => path.join('tests', 'donor-repos
 const workforceRunner = path.join(root, 'tests', 'donor-workforce', 'run-all.js');
 if (fs.existsSync(workforceRunner)) {
   const before = failures;
-  const result = run(process.execPath, [path.relative(root, workforceRunner)]);
+  const result = run(process.execPath, [path.relative(root, workforceRunner)], { env: { ...process.env, NODE_OPTIONS: TEST_NODE_OPTIONS } });
   if (result.status !== 0) fail('donor-workforce/run-all.js');
   if (failures === before) pass('donor-workforce suite');
 }
 
 // 2) JavaScript syntax. Equivalent to `node --check` for every JS file.
 const jsFiles = [path.join(root, 'src'), path.join(root, 'tests'), path.join(root, 'tools')]
-  .flatMap(dir => fs.existsSync(dir) ? walk(dir, file => file.endsWith('.js') || file.endsWith('.mjs')) : [])
+  .flatMap(dir => fs.existsSync(dir) ? walk(dir, file => file.endsWith('.js') || file.endsWith('.mjs') || file.endsWith('.cjs')) : [])
   .sort();
 async function runSyntaxChecksParallel(files) {
   let next = 0;
@@ -186,16 +192,16 @@ try {
 // 5) service-worker importScripts load order references.
 try {
   const workerPath = path.join(root, manifest?.background?.service_worker || 'src/lib/service-worker.js');
+  const workerDir = path.dirname(workerPath);
   const worker = fs.readFileSync(workerPath, 'utf8');
   // Module workers may bootstrap ESM sidecars with static imports while legacy
-  // Titan Code authorities continue to load through importScripts.
+  // runtime authorities continue to load through importScripts.
   const moduleImports = [...worker.matchAll(/^\s*import\s+(?:[^'"]+?\s+from\s+)?['"]([^'"]+\.js)['"];?/gm)]
     .map(match => match[1]);
   const missingModuleImports = moduleImports.filter(ref => !fs.existsSync(path.resolve(workerDir, ref)));
   if (missingModuleImports.length) fail(`module worker imports missing: ${missingModuleImports.join(', ')}`);
   else if (moduleImports.length) pass(`${moduleImports.length} module worker imports`);
   const importBlockMatches = [...worker.matchAll(/importScripts\(([^;]+?)\);/gs)];
-  const workerDir = path.dirname(workerPath);
   const imports = [];
   for (const match of importBlockMatches) {
     for (const str of match[1].matchAll(/['"]([^'"]+\.js)['"]/g)) imports.push(str[1]);
