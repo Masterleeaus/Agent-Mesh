@@ -19,3 +19,9 @@ Next pass will use available repository CI/check results where possible and add/
 
 - `node --import ./services/workforce/node_modules/tsx/dist/loader.mjs --test services/workforce/src/index.test.ts services/workforce/src/sqlite-store.test.ts`: **4 passed, 0 failed**. Direct Node loader avoids the restricted `/tmp` IPC socket used by the tsx CLI.
 - `services/workforce/node_modules/.bin/tsc --noEmit -p services/workforce/tsconfig.json`: passed.
+
+## Pass 4 executed
+
+- `node --import ./node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/loader.mjs --test apps/web/lib/db/sqlite-params.test.ts`: **2 passed, 0 failed** using Node's SQLite implementation for real binding behavior.
+- Web `tsc --noEmit`: fails on existing workspace/domain module resolution and missing `better-sqlite3` declarations, among broader errors. No web typecheck success claimed.
+- Pinned pnpm 9 offline lockfile resolution: failed due uncached `object-assign` metadata. Lockfile remains unchanged.

@@ -26,3 +26,7 @@ Runtime restart and failure paths tested and fixed. Full production certificatio
 ## Pass 3
 
 File backed workforce restart, worker registry, dependencies, references, expired lease recovery and company isolation pass. The existing approval wait transition was repaired. Production bootstrap and memory recovery remain open.
+
+## Pass 4
+
+The web SQLite client now binds numbered placeholders in occurrence order, including repeats, with an unbound-parameter failure. Full web typecheck and whole-stack SQLite boot are still not certified.

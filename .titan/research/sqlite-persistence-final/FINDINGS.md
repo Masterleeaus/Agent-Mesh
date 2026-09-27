@@ -20,3 +20,8 @@
 
 11. `WorkforceService.claim` attempted `READY -> WAITING_APPROVAL` after an unsatisfied authority check, but its transition table rejected that path. Added the transition; authority remains mandatory.
 12. Reopening a SQLite workforce file preserves worker registration, blocked dependency, context/evidence references and an expired claimed lease; recovery returns the item to READY without executing it.
+
+## Pass 4
+
+13. `apps/web/lib/db/sqlite.ts` previously replaced each `$n` with `?` but passed the original parameter array. Repeated or out-of-order parameters bound incorrectly or raised a parameter-count error. The existing client now expands values in SQL occurrence order and rejects unbound indices.
+14. Web legacy `lib/db.ts` and `lib/push/send.ts` still instantiate PostgreSQL pools, and many routes import the legacy layer. This remains a whole-stack SQLite-only startup gap; converting these paths requires endpoint-level SQL and behavioural review.

@@ -27,3 +27,7 @@ No claim of complete SQLite-only certification is made until integration tests e
 ## Pass 2
 
 Fresh `pnpm install --frozen-lockfile` fails because the root `better-sqlite3` declaration is absent from the committed lockfile. Regenerating with local pnpm 11 introduced broad unrelated lockfile drift and was reverted. Native addon install also attempted to fetch Node 24 headers unavailable in this environment. Existing local bindings allowed the focused tests to run.
+
+## Pass 4
+
+The web SQLite adapter now preserves numbered placeholder semantics for `$2,$1,$2` and rejects missing bindings. Pinned pnpm 9 offline lockfile resolution failed on missing cached metadata for `object-assign`; online resolution was too slow and stopped without a lockfile change. `pnpm install --offline --ignore-scripts --no-frozen-lockfile` restored dependencies for pure tests but does not produce a usable native SQLite addon on a fresh checkout. Its generated pnpm 11 lockfile was reverted.

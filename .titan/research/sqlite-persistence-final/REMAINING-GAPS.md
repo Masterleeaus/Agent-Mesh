@@ -22,3 +22,7 @@ After Pass 1:
 ## Pass 3 follow-up
 
 Workforce restart has focused proof, but production wiring, memory persistence, full SQLite boot and consequential effect recovery remain unverified.
+
+## Pass 4 follow-up
+
+Legacy web PostgreSQL call sites, root lockfile repair with pinned pnpm 9, fresh native SQLite install, durable production bootstrap and whole-stack boot remain open. The parameter fix does not make those routes portable by itself.
