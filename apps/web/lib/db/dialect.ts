@@ -1,6 +1,7 @@
+import type { DatabaseDialect } from "@/lib/db-contract";
 import { getEnv } from "../env";
 
-export type DatabaseDialect = "sqlite" | "postgres" | "mysql";
+export type { DatabaseDialect } from "@/lib/db-contract";
 
 export function inferDatabaseDialect(databaseUrl: string): DatabaseDialect {
   const explicit = (process.env.DATABASE_DIALECT ?? process.env.DB_DIALECT)?.trim().toLowerCase();
