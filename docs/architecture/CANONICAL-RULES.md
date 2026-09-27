@@ -5,10 +5,25 @@ These are guardrails for every agent and PR.
 - `company_id` is the only canonical multi-tenant boundary. Legacy tenant fields may exist only as compatibility inputs and must normalize before authorization, storage or execution.
 - Canonical product surfaces are `zero`, `go`, and `hub`. Aliases are compatibility/branding only.
 - Shared capability and business logic belongs in Core/shared runtimes, not duplicated in surface adapters.
-- Command Bus is the mutation authority for consequential governed execution.
-- Identity, capability, intelligence and authority are separate concerns.
-- Device-first, privacy-first and cost-sovereignty ordering must be preserved.
+- The Business Evidence Ledger is the primary factual history for consequential business state. Material current-state views are deterministic projections/folds with provenance to accepted evidence; databases/caches/UI projections are not truth merely because they are current.
+- Evidence history is append-only after acceptance. Correction, supersession, rollback, compensation and recovery create new evidence; they never rewrite factual history.
+- Provider acknowledgement is not a verified outcome. Consequential execution must reach observed-state verification before Titan records a verified business outcome.
+- Command Bus / ExecutionGateway remains the mutation authority for consequential governed execution.
+- Identity, capability, intelligence, infrastructure privilege and authority are separate concerns. Host/root/admin, provider, model, node, device, surface or agent identity alone never grants business authority.
+- Capability discovery, simulation/counterfactuals, recommendations, predictions, consensus and registration/activation never create execution authority.
+- Factual and counterfactual histories are strictly separated; simulated history cannot silently become factual history.
+- One, Personal Zero, Business Reality, Business Memory/Knowledge and Workforce are distinct architectural concerns and must not be collapsed into each other.
+- DirectAdmin is the first Titan Server Node deployment/control-plane adapter. It hosts and exposes governed infrastructure/application capabilities but is not a fourth business surface, second Titan core or canonical business truth store.
+- Infrastructure materializes Titan but never defines Business Node identity or factual history. Titan must remain recoverable onto another supported substrate.
+- Device-first, privacy-first and Cost Sovereignty ordering must be preserved.
 - Reuse or extend canonical capabilities, workforce identities and contracts before creating new ones.
+- Titan Constitution invariants must fail closed and cannot be overridden by plugins, hosts, providers, interfaces or workforce agents.
+- Rewind/recovery is evidence-driven reconstruction/compensation, not a parallel execution engine.
+- A Titan Capsule is a portable, versioned, verifiable rehydration package; recovery must preserve immutable history while revalidating present authority and credentials.
+- Federation may coordinate sovereign Titan nodes only through explicit identity, consent, evidence and authority contracts; it must never weaken `company_id` isolation.
 - Titan Code is private development/operations tooling and must never become a Titan Zero customer runtime dependency.
 - Architecture/workforce specifications are referenced by the roadmap; large duplicate copies do not belong inside roadmap subgoals.
 - Completed work is evidence, not future work. Roadmap entries and issues should describe what remains.
+
+Canonical architecture target: `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md`.
+Roadmap phase convergence map: `roadmap/PHASE-MAP-V3.md`.
