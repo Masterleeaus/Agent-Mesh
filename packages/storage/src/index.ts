@@ -27,6 +27,10 @@ export function normalizeCompanyContext(input: { company_id?: string; tenant_com
 }
 
 function sqliteSql(sql: string, params: readonly unknown[]): { sql: string; params: unknown[] } {
+  const numbered = /\$(\d+)/g;
+  if (!numbered.test(sql)) return { sql, params: [...params] };
+  if (sql.includes("?")) throw new Error("mixed sqlite parameter styles are not supported");
+
   const expanded: unknown[] = [];
   const text = sql.replace(/\$(\d+)/g, (_match, rawIndex: string) => {
     const index = Number(rawIndex) - 1;
