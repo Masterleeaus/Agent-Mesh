@@ -5,13 +5,12 @@ import { EXECUTION_CLASSES, ExecutionError } from './execution-gateway.mjs';
  * every invocation still enters ExecutionGateway with an approved authority result.
  */
 export class McpCapabilityAdapter {
-  constructor({ company_id, serverId, client, mappings = {}, verifyOutcome }) {
+  constructor({ company_id, serverId, client, mappings = {} }) {
     if (!company_id || !serverId || !client) throw new ExecutionError('INVALID_MCP_ADAPTER', 'MCP adapter requires company_id, serverId and client');
     this.company_id = company_id;
     this.serverId = serverId;
     this.client = client;
     this.mappings = new Map(Object.entries(mappings));
-    this.verifyOutcome = verifyOutcome;
   }
 
   async discover() {
@@ -35,17 +34,15 @@ export class McpCapabilityAdapter {
       capabilities: [capability],
       execute: async (request) => {
         if (request.company_id !== this.company_id) throw new ExecutionError('MCP_COMPANY_SCOPE', 'MCP server is scoped to another company');
-        const result = await this.client.callTool(externalTool, request.input ?? {}, { signal: request.signal, timeout: request.timeout_ms });
-        if (!result || typeof result !== 'object' || result.isError === true) throw new ExecutionError('MCP_PROVIDER_FAILURE', 'MCP tool failed or returned a malformed result');
+        const result = await this.client.callTool(externalTool, request.input ?? {});
         return {
           external_ref: result?.requestId ?? result?.id ?? null,
-          acknowledgement: true,
+          verified: result?.isError !== true && result?.verified === true,
+          verification: result?.verification ?? null,
+          result,
         };
       },
-      verify: async (raw, request) => {
-        if (typeof this.verifyOutcome !== 'function') return false;
-        return this.verifyOutcome({ capability, externalTool, external_ref: raw.external_ref, request, client: this.client });
-      },
+      verify: async (raw) => raw?.verified === true,
     };
   }
 }
