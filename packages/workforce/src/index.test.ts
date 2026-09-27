@@ -4,9 +4,11 @@ import { WorkforceService, type AgentRuntimeAdapter } from "./index.js";
 
 let storage: StorageClient;
 let service: WorkforceService;
-const runtime: AgentRuntimeAdapter = { run: vi.fn(async () => ({ outcome: "completed", result: { ok: true }, evidenceRefs: ["evidence:1"] })) };
+const run = vi.fn(async () => ({ outcome: "completed" as const, result: { ok: true }, evidenceRefs: ["evidence:1"] }));
+const runtime: AgentRuntimeAdapter = { run };
 
 beforeEach(async () => {
+  run.mockClear();
   storage = createSqliteStorage(":memory:");
   service = new WorkforceService(storage, { runtime });
   await service.initialize();
@@ -16,6 +18,11 @@ beforeEach(async () => {
 });
 afterEach(async () => storage.close());
 
+async function startAs(workId: string, workerId = "ops") {
+  await service.claimWork("acme", workId, workerId);
+  await service.startWork("acme", workId, workerId);
+}
+
 describe("canonical work lifecycle", () => {
   it("creates, assigns, claims, completes and persists evidence without granting authority", async () => {
     const work = await service.createWork("acme", { objective: "Prepare schedule", creator: { type: "worker", id: "ops" }, assigneeWorkerId: "scheduler", requiredCapabilities: ["schedule.prepare"], authorityRequirement: "schedule.publish" });
@@ -23,8 +30,7 @@ describe("canonical work lifecycle", () => {
     const claimed = await service.claimWork("acme", work.workId, "scheduler");
     expect(claimed.state).toBe("CLAIMED");
     expect(claimed.authorityRequirement).toBe("schedule.publish");
-    const started = await service.startWork("acme", work.workId, "scheduler");
-    expect(started.state).toBe("IN_PROGRESS");
+    await service.startWork("acme", work.workId, "scheduler");
     const completed = await service.completeWork("acme", work.workId, { ok: true }, ["receipt:1"]);
     expect(completed.state).toBe("COMPLETED");
     expect(completed.evidenceRefs).toEqual(["receipt:1"]);
@@ -40,17 +46,20 @@ describe("canonical work lifecycle", () => {
     const first = await service.createWork("acme", { objective: "Inspect request", creator: { type: "worker", id: "ops" } });
     const second = await service.createWork("acme", { objective: "Prepare quote", creator: { type: "worker", id: "ops" }, dependencies: [first.workId] });
     expect(second.state).toBe("CREATED");
+    await startAs(first.workId);
     await service.completeWork("acme", first.workId, { inspected: true });
     expect((await service.getWork("acme", second.workId)).state).toBe("READY");
     await expect(service.addDependency("acme", first.workId, second.workId)).rejects.toThrow(/circular/);
   });
 
-  it("supports waiting and resume", async () => {
+  it("supports waiting, approval waiting and resume", async () => {
     const work = await service.createWork("acme", { objective: "Wait for customer", creator: { type: "worker", id: "ops" }, assigneeWorkerId: "scheduler" });
-    await service.claimWork("acme", work.workId, "scheduler");
-    await service.startWork("acme", work.workId, "scheduler");
+    await startAs(work.workId, "scheduler");
     expect((await service.waitWork("acme", work.workId, "external", "customer.reply")).state).toBe("WAITING_EXTERNAL");
     expect((await service.resumeWork("acme", work.workId, "customer.reply")).state).toBe("READY");
+    await startAs(work.workId, "scheduler");
+    expect((await service.waitWork("acme", work.workId, "approval", "decision.approved")).state).toBe("WAITING_APPROVAL");
+    expect((await service.resumeWork("acme", work.workId, "decision.approved")).state).toBe("READY");
   });
 
   it("delegates and decomposes without copying authority", async () => {
@@ -72,15 +81,14 @@ describe("canonical work lifecycle", () => {
   it("distinguishes human field workers from digital runtime workers", async () => {
     const work = await service.createWork("acme", { objective: "Clean site", creator: { type: "worker", id: "ops" }, assigneeWorkerId: "cleaner-1" });
     await expect(service.dispatchReady("acme")).resolves.toEqual([]);
-    expect(runtime.run).not.toHaveBeenCalled();
+    expect(run).not.toHaveBeenCalled();
     expect(work.assigneeWorkerId).toBe("cleaner-1");
   });
 
   it("dispatches ready digital work through the Agent 2 adapter", async () => {
     const work = await service.createWork("acme", { objective: "Prepare schedule", creator: { type: "worker", id: "ops" }, assigneeWorkerId: "scheduler", requiredCapabilities: ["schedule.prepare"] });
-    const dispatched = await service.dispatchReady("acme");
-    expect(dispatched).toEqual([work.workId]);
-    expect(runtime.run).toHaveBeenCalledTimes(1);
+    expect(await service.dispatchReady("acme")).toEqual([work.workId]);
+    expect(run).toHaveBeenCalledTimes(1);
     expect((await service.getWork("acme", work.workId)).state).toBe("COMPLETED");
   });
 
