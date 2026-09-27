@@ -136,7 +136,6 @@ export class ZeroWorkforceRuntimeDispatcher {
     const normalized = this.normalize(input);
     const runtimeEvents: ZeroRuntimeEvent[] = [];
 
-    // Subscribe before create/start/resume so fast runtime events cannot be lost.
     const unsubscribe = this.runtime.events.subscribe((event) => {
       if (event.company_id !== normalized.company_id) return;
       if (event.conversation_id && event.conversation_id !== normalized.conversation_id) return;
@@ -144,9 +143,7 @@ export class ZeroWorkforceRuntimeDispatcher {
     });
 
     try {
-      if (normalized.continuation_token) {
-        return await this.resume(normalized, runtimeEvents);
-      }
+      if (normalized.continuation_token) return await this.resume(normalized, runtimeEvents);
       return await this.start(normalized, runtimeEvents);
     } finally {
       unsubscribe();
@@ -228,9 +225,7 @@ export class ZeroWorkforceRuntimeDispatcher {
     if (!recoverable || recoverable.run_id !== continuation.run_id) throw new Error("zero-continuation-run-not-found");
     if (recoverable.agent_id !== work.assignee) throw new Error("zero-continuation-agent-conflict");
 
-    if (waitingWorkStates.has(work.state)) {
-      await this.workforce.resume(input.company_id, work.work_id, input.actor_id);
-    }
+    if (waitingWorkStates.has(work.state)) await this.workforce.resume(input.company_id, work.work_id, input.actor_id);
     const refreshed = await this.store.get(input.company_id, work.work_id);
     if (!refreshed) throw new Error("zero-continuation-work-not-found");
     if (refreshed.state === "READY") await this.workforce.claim(input.company_id, work.work_id, work.assignee);
@@ -313,7 +308,7 @@ export class ZeroWorkforceRuntimeDispatcher {
     runtimeEvents: ZeroRuntimeEvent[],
     run?: { run_id: string; state: string; agent_id: WorkerId },
   ): ZeroWorkforceDispatchResult {
-    const events = runtimeEvents.map((event, index) => ({
+    const events: ZeroWorkforceDispatchEvent[] = runtimeEvents.map((event, index) => ({
       ...event,
       id: event.event_id ?? `${event.run_id ?? work.work_id}:${index}`,
       kind: event.type,
