@@ -1,0 +1,1 @@
+Current-main reconciliation parent for stale `agent/796`. Canonical main wins conflicting implementation changes; stale branch history is retained through merge ancestry.
