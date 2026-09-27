@@ -1792,6 +1792,7 @@ function sanitizeTitanAnalysisForStorage(analysis) {
 }
 
 async function analyzeTitanZeroSnapshot(snapshot, options = {}) {
+async function getTitanZeroStatus() {
     const ready = await ensureTitanZeroRegistered();
     const analysis = globalThis.CodeeTitanZeroHostIntegration.analyze(snapshot, ready.settings, options);
     const safeSummary = sanitizeTitanAnalysisForStorage(analysis);
