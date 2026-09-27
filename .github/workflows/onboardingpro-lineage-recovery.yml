@@ -1,0 +1,117 @@
+name: OnboardingPro Lineage Recovery
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  recover-lineage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Recover and compare lineage
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess, re, collections, json
+
+          out=Path("onboardingpro-lineage")
+          out.mkdir(exist_ok=True)
+          tracked=subprocess.check_output(["git","ls-files"],text=True).splitlines()
+
+          name_re=re.compile(r'onboarding.?pro|titan.?onboarding|onboardingpro|onboarding-pro',re.I)
+          current=[f for f in tracked if name_re.search(f)]
+
+          # History is essential because donor generations may have been deleted or moved.
+          hist=subprocess.run(
+            ["git","log","--all","--name-status","--date=iso-strict",
+             "--pretty=format:COMMIT|%H|%ad|%s"],
+            text=True,capture_output=True,check=True).stdout.splitlines()
+
+          relevant=[]
+          current_commit=None
+          for line in hist:
+            if line.startswith("COMMIT|"):
+              current_commit=line
+            elif name_re.search(line):
+              relevant.append((current_commit,line))
+
+          (out/"current-lineage-paths.txt").write_text("\n".join(current)+"\n")
+          (out/"historical-lineage-paths.txt").write_text(
+            "\n".join(f"{c}\n{p}" for c,p in relevant)+"\n")
+
+          symbols=[
+            "AdaptiveOnboardingEngine","BusinessKnowledgeGapResolver","EvidenceAuthorityService",
+            "ContinuousBusinessObservationService","ObservationChangeDetector","ObservationFreshnessPolicy",
+            "CompetitorDiscoveryService","CompetitorIdentityResolutionService","CompetitiveBenchmarkingService",
+            "MarketPatternService","BusinessRealityGraphService","BusinessRealityFactService",
+            "WholeBusinessDiagnosticService","ConstraintDiagnosisService","OpportunityIntelligenceService",
+            "OpportunityEvidenceService","BusinessImpactScoringService","InterventionPrioritisationService",
+            "InterventionExecutionLifecycleService","OutcomeMeasurementService","LongitudinalStrategyMemoryService",
+            "ExperimentComparisonService","AntiRepeatDecisionService","BusinessReconfigurationService",
+            "BusinessConfigurationDiffer"
+          ]
+
+          # Search every reachable revision for exact donor symbols, not filenames alone.
+          revs=subprocess.check_output(["git","rev-list","--all"],text=True).splitlines()
+          evidence={s:[] for s in symbols}
+          path_versions=collections.defaultdict(set)
+          for rev in revs[:3000]:
+            tree=subprocess.run(["git","ls-tree","-r","--name-only",rev],text=True,capture_output=True).stdout.splitlines()
+            candidates=[p for p in tree if name_re.search(p)]
+            for p in candidates:
+              path_versions[p].add(rev)
+              blob=subprocess.run(["git","show",f"{rev}:{p}"],text=True,capture_output=True,errors="ignore").stdout
+              for s in symbols:
+                if s in blob and len(evidence[s])<25:
+                  evidence[s].append({"rev":rev,"path":p})
+
+          md=[
+            "# OnboardingPro / Titan Onboarding Lineage Evidence",
+            "",
+            "> Evidence recovery only. Historical presence does not make a donor canonical.",
+            "",
+            f"Current commit: `{subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()}`",
+            "",
+            "## Current tracked lineage paths",
+          ]
+          md += [f"- `{p}`" for p in current] or ["- None found by lineage-name match."]
+          md += ["","## Exact capability evidence across reachable history"]
+          for s in symbols:
+            md += ["",f"### {s}"]
+            if evidence[s]:
+              for e in evidence[s]:
+                state="CURRENT PATH" if e["path"] in current else "HISTORICAL/DONOR PATH"
+                md.append(f"- {state}: `{e['path']}` @ `{e['rev'][:12]}`")
+            else:
+              md.append("- UNRESOLVED: exact symbol not found in scanned lineage paths/revisions.")
+          (out/"OnboardingPro-Lineage-Evidence.md").write_text("\n".join(md)+"\n")
+
+          # Build a generation/path comparison without claiming semantic superiority.
+          compare=["# Lineage Path Comparison","","| Path | Reachable revisions | Current? | Evidence class |","|---|---:|---|---|"]
+          for p,revs_for_path in sorted(path_versions.items()):
+            is_current=p in current
+            cls="CURRENT IMPLEMENTATION/DONOR CANDIDATE" if is_current else "HISTORICAL DONOR CANDIDATE"
+            compare.append(f"| `{p}` | {len(revs_for_path)} | {'yes' if is_current else 'no'} | {cls} |")
+          (out/"lineage-comparison.md").write_text("\n".join(compare)+"\n")
+
+          (out/"machine-readable.json").write_text(json.dumps({
+            "current_paths":current,
+            "symbols":evidence,
+            "historical_path_count":len(path_versions),
+            "warning":"Evidence only; canonicality and superiority require source-level review."
+          },indent=2))
+
+      - name: Upload lineage evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: onboardingpro-lineage-evidence-${{ github.sha }}
+          path: onboardingpro-lineage/
+          retention-days: 30
+          if-no-files-found: error
