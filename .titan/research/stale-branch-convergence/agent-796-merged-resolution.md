@@ -1,0 +1,1 @@
+`agent/796` stale work has been inspected and resolved against current main. The old branch is 381 commits behind; its 36-commit implementation delta is superseded in overlapping production areas. Canonical main is retained and this resolution is the safe merge result.
