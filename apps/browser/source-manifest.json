@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1058,
+  "fileCount": 1061,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -1244,6 +1244,11 @@
       "sha256": "fe980f3aacf62abf8a5560dd4208e89a6b0c76398115c6e1fb33aad5a23972a1"
     },
     {
+      "path": "public/branding/titan-zero-browser-node.svg",
+      "bytes": 416,
+      "sha256": "8d1f66248c976ba2145b55df5412a67d81449a8b87ccc1fb2dde13d9ef4d4762"
+    },
+    {
       "path": "public/icons/icon-128.png",
       "bytes": 24022,
       "sha256": "f4c7dc51e61f8555dc7f18eb998f0f27a98f9aaa215502bdd203cbc8dbcf3ed7"
@@ -2260,8 +2265,8 @@
     },
     {
       "path": "src/lib/service-worker.js",
-      "bytes": 259703,
-      "sha256": "11ec055b72827483c68877b4ee92aeb5ac929170b2209422376f18014e5c7b94"
+      "bytes": 261167,
+      "sha256": "30f65f1e0795d70b1901f8011a4fb8093e0363210071283d7c51d24f75de42b1"
     },
     {
       "path": "src/lib/titan-zero-host-integration.js",
@@ -2405,8 +2410,8 @@
     },
     {
       "path": "src/sidebar/sidebar.html",
-      "bytes": 75400,
-      "sha256": "00e07fa97fefc28e582bb1a55f5cd4849442f597569a899d6b0bb892856d5898"
+      "bytes": 75585,
+      "sha256": "93cc88a5d486da77bde746abccbd939e6f82fac1f546fbe9b69e3a0086245f82"
     },
     {
       "path": "src/sidebar/sidebar.js",
@@ -3329,9 +3334,14 @@
       "sha256": "fdc8f161182bcd2df5030bd7751530df8f4f7bebdb9f4cfdddfd2ea4cbab0483"
     },
     {
+      "path": "tests/test-browser-node-product-surface-pass23.js",
+      "bytes": 1395,
+      "sha256": "c53912e94c844daadd521ef7977632f00a97e32236c8669f581eabd53b2d42c6"
+    },
+    {
       "path": "tests/test-browser-node-runtime-scope-pass22.js",
-      "bytes": 2572,
-      "sha256": "62597c82c31a33b53828efdcedb08ccc0c08593bbc6752e3b409468c41cfa516"
+      "bytes": 1454,
+      "sha256": "7023c2c4da2f4ef4a2450cf3f655edd629666103958654005dedaac569d66a68"
     },
     {
       "path": "tests/test-browser-observability-pass14.cjs",
@@ -5272,6 +5282,11 @@
       "path": "TITAN-ZERO-BROWSER-NODE.md",
       "bytes": 4160,
       "sha256": "e9655c12e482144ffadf35d0b6ccbdd2d068969f57b328f85da036929bd0c380"
+    },
+    {
+      "path": "tools/apply-browser-node-surface-pass23.mjs",
+      "bytes": 5332,
+      "sha256": "eb7740d837076643947a8d6ba9e6b7057a205614b31ae5e808ce899431b41e34"
     },
     {
       "path": "tools/generate-source-manifest.mjs",
