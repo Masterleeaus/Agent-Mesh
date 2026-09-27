@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1061,
+  "fileCount": 1060,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -2410,8 +2410,8 @@
     },
     {
       "path": "src/sidebar/sidebar.html",
-      "bytes": 75585,
-      "sha256": "93cc88a5d486da77bde746abccbd939e6f82fac1f546fbe9b69e3a0086245f82"
+      "bytes": 75606,
+      "sha256": "bcb05cfaf5dcabe7cc5968c01dfe953cdc93b47bad8ac348097bf114599b75ac"
     },
     {
       "path": "src/sidebar/sidebar.js",
@@ -3585,8 +3585,8 @@
     },
     {
       "path": "tests/test-dashboard-ui-pass3.js",
-      "bytes": 2030,
-      "sha256": "5458b3c1185d10fc6961bc7ec0952caa4d2f12ac8a38959c1a108f4857a8b972"
+      "bytes": 2184,
+      "sha256": "6374e8436b3362aa95e1797f9b6bce99a22da5013a371c7da459104e06f59467"
     },
     {
       "path": "tests/test-debugging-plan-generator-v281.js",
@@ -4585,8 +4585,8 @@
     },
     {
       "path": "tests/test-sidebar-neon-branding.js",
-      "bytes": 1362,
-      "sha256": "1ff76cbb59a29b9ed9db249405945fabc17fd398e53ec8c06970fe022afbd390"
+      "bytes": 1455,
+      "sha256": "044a837c7d2e8d18d77cb3965257fc5a24b506f9d0392f8188a5a1f2b0682ae9"
     },
     {
       "path": "tests/test-sidebar-rebind-state-adoption.js",
@@ -5285,18 +5285,13 @@
     },
     {
       "path": "tools/apply-browser-node-surface-pass23.mjs",
-      "bytes": 5332,
-      "sha256": "eb7740d837076643947a8d6ba9e6b7057a205614b31ae5e808ce899431b41e34"
+      "bytes": 5877,
+      "sha256": "e96d641018ad1792cef47c28b7c112b4477728820696b877d338498ffcd433df"
     },
     {
       "path": "tools/generate-source-manifest.mjs",
       "bytes": 1676,
       "sha256": "678948639231452dbd05e94ff40f81c511f98c92f29c8dfe7a48f641464da702"
-    },
-    {
-      "path": "tools/prune-development-runtime-pass22.mjs",
-      "bytes": 3408,
-      "sha256": "ad4c1cb0778aea904d9295752e0af7c1a41a41803720b64ffe4abd5009b16b71"
     },
     {
       "path": "tools/test-worker-vm-preload.cjs",
