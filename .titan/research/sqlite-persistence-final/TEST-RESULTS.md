@@ -14,3 +14,8 @@ Next pass will use available repository CI/check results where possible and add/
 - `pnpm install --frozen-lockfile`: failed (root `better-sqlite3` missing from lockfile).
 - `pnpm install --no-frozen-lockfile`: failed due ignored native build scripts; generated lockfile drift reverted.
 - `pnpm exec tsc --noEmit -p services/workforce/tsconfig.json`: blocked by pnpm install policy before typechecking.
+
+## Pass 3 executed
+
+- `node --import ./services/workforce/node_modules/tsx/dist/loader.mjs --test services/workforce/src/index.test.ts services/workforce/src/sqlite-store.test.ts`: **4 passed, 0 failed**. Direct Node loader avoids the restricted `/tmp` IPC socket used by the tsx CLI.
+- `services/workforce/node_modules/.bin/tsc --noEmit -p services/workforce/tsconfig.json`: passed.

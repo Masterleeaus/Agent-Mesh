@@ -13,3 +13,7 @@
 ## Pass 2
 
 A reopened file backed RunStore rejects cross-company lookups. Its unscoped `recoverable()` remains available to a trusted supervisor; no production supervisor caller was found. Broader conversation, memory, authority and web query isolation remains unverified.
+
+## Pass 3
+
+Reopened workforce storage returns no work item or worker from another company for the same IDs. The restart test verifies these negative lookups.

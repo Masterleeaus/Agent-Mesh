@@ -15,3 +15,8 @@
 8. The in-memory reference RunStore passed `structuredClone` to `Array.map`, causing recovery to throw on Node 24.
 9. After a verified tool result, the runtime did not transition from `WAITING_TOOL` to `RUNNING`, ending a multi-turn run without a result. An unverified execution outcome escaped the failure transition because a nested promise was returned without awaiting it. Both paths are fixed and covered by existing runtime tests.
 10. Repository search found declarations of `SqliteRunStore` and `SqliteWorkforceStore` but no non-test callers; production wiring remains unproven.
+
+## Pass 3
+
+11. `WorkforceService.claim` attempted `READY -> WAITING_APPROVAL` after an unsatisfied authority check, but its transition table rejected that path. Added the transition; authority remains mandatory.
+12. Reopening a SQLite workforce file preserves worker registration, blocked dependency, context/evidence references and an expired claimed lease; recovery returns the item to READY without executing it.

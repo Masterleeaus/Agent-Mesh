@@ -22,3 +22,7 @@ Production bootstrap wiring for durable runtime/workforce/memory, restart recove
 ## Pass 2 (agent/796)
 
 Runtime restart and failure paths tested and fixed. Full production certification remains pending because no non-test bootstrap caller of the durable runtime/workforce stores was found.
+
+## Pass 3
+
+File backed workforce restart, worker registry, dependencies, references, expired lease recovery and company isolation pass. The existing approval wait transition was repaired. Production bootstrap and memory recovery remain open.

@@ -18,3 +18,7 @@ After Pass 1:
 - Wire and certify the existing SQLite run and workforce stores in the production composition root; coordinate with concurrent Zero/E2E agents.
 - Reconcile the lockfile using repository pnpm 9 and allow the trusted `better-sqlite3` native build in CI.
 - Run file backed workforce/memory recovery, full SQLite-only boot and cross-company business queries before claiming production certification.
+
+## Pass 3 follow-up
+
+Workforce restart has focused proof, but production wiring, memory persistence, full SQLite boot and consequential effect recovery remain unverified.
