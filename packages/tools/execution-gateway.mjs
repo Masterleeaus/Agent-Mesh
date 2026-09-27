@@ -67,9 +67,15 @@ export class ExecutionGateway {
       if (raw?.state === EXECUTION_STATES.WAITING_MFA || raw?.state === EXECUTION_STATES.WAITING_USER_AUTH) {
         return this.record(request, provider, raw.state, raw, startedAt);
       }
-      const verified = provider.verify ? await provider.verify(raw, request) : raw?.verified === true;
+      const verification = provider.verify
+        ? await provider.verify(raw, request)
+        : { verified: raw?.verified === true, source: 'provider-result' };
+      const verified = verification === true || verification?.verified === true;
       if (!verified) throw new ExecutionError('OUTCOME_UNVERIFIED', 'Provider interaction completed but business outcome was not verified');
-      const result = await this.record(request, provider, EXECUTION_STATES.SUCCEEDED, raw, startedAt);
+      const result = await this.record(request, provider, EXECUTION_STATES.SUCCEEDED, {
+        ...raw,
+        verification: verification === true ? { verified: true } : verification,
+      }, startedAt);
       this.completed.set(key, result);
       return result;
     } catch (error) {
