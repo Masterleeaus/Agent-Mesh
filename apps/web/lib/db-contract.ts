@@ -1,9 +1,9 @@
 /**
  * Database-portable contract used by domain/services code.
  *
- * Deliberately structural: PostgreSQL PoolClient satisfies this today, while a
- * MySQL/MariaDB adapter can satisfy the same contract without leaking pg types
- * through the Business Ops codebase.
+ * Deliberately structural: PostgreSQL PoolClient and Titan's SQLite/MySQL
+ * adapters satisfy this contract without leaking provider-specific client
+ * types through the Business Ops codebase.
  */
 export interface DbQueryResult<T = Record<string, unknown>> {
   rows: T[];
@@ -15,10 +15,11 @@ export interface DbClient {
   query<T = Record<string, unknown>>(text: string, params?: unknown[]): Promise<DbQueryResult<T>>;
 }
 
-export type DatabaseDialect = "postgres" | "mysql";
+export type DatabaseDialect = "sqlite" | "postgres" | "mysql";
 
 export function normalizeDatabaseDialect(value: string | undefined): DatabaseDialect {
   const normalized = (value ?? "postgres").trim().toLowerCase();
+  if (normalized === "sqlite") return "sqlite";
   if (normalized === "postgres" || normalized === "postgresql") return "postgres";
   if (normalized === "mysql" || normalized === "mariadb") return "mysql";
   throw new Error(`Unsupported DATABASE_DIALECT: ${value}`);
@@ -26,9 +27,8 @@ export function normalizeDatabaseDialect(value: string | undefined): DatabaseDia
 
 /**
  * Resolve the database dialect from an explicit setting first, then from the
- * DATABASE_URL protocol. This keeps local PostgreSQL installs working while a
- * standalone Titan Business Ops deployment can use mysql:// / mariadb://
- * without needing an extension-specific bootstrap step.
+ * DATABASE_URL protocol. SQLite is canonical for local/runtime deployment,
+ * while PostgreSQL remains the compatibility default when no URL is supplied.
  */
 export function resolveDatabaseDialect(
   explicit: string | undefined,
@@ -38,11 +38,12 @@ export function resolveDatabaseDialect(
   if (databaseUrl) {
     try {
       const protocol = new URL(databaseUrl).protocol.toLowerCase();
+      if (protocol === "file:" || protocol === "sqlite:") return "sqlite";
       if (protocol === "mysql:" || protocol === "mariadb:") return "mysql";
       if (protocol === "postgres:" || protocol === "postgresql:") return "postgres";
     } catch {
-      // Fall through to the existing PostgreSQL default; env validation will
-      // report malformed URLs at the connection boundary.
+      // Fall through to the compatibility default; env validation reports
+      // malformed URLs at the connection boundary.
     }
   }
   return "postgres";
