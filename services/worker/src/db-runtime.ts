@@ -1,5 +1,5 @@
-import { Client as PgClient } from "pg";
-import mysql, { type PoolConnection } from "mysql2/promise";
+import type { Client as PgConnection } from "pg";
+import type { PoolConnection } from "mysql2/promise";
 import Database from "better-sqlite3";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
@@ -53,7 +53,7 @@ class SqliteWorkerClient implements WorkerDatabaseClient {
 
 class PgWorkerClient implements WorkerDatabaseClient {
   readonly dialect: DatabaseDialect = "postgres";
-  constructor(private readonly client: PgClient) {}
+  constructor(private readonly client: PgConnection) {}
   async query<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<DatabaseQueryResult<T>> {
     const result = await this.client.query(text, params);
     return { rows: result.rows as T[], rowCount: result.rowCount };
@@ -88,6 +88,7 @@ export async function createWorkerDatabaseClient(databaseUrl?: string): Promise<
   }
   if (!databaseUrl) throw new Error("DATABASE_URL is required for non-SQLite worker storage");
   if (dialect === "mysql") {
+    const { default: mysql } = await import("mysql2/promise");
     const pool = mysql.createPool({ uri: databaseUrl, connectionLimit: Number(process.env.WORKER_DB_POOL_SIZE ?? "2"), enableKeepAlive: true, decimalNumbers: true });
     const connection = await pool.getConnection();
     const client = new MysqlWorkerClient(connection);
@@ -95,6 +96,7 @@ export async function createWorkerDatabaseClient(databaseUrl?: string): Promise<
     client.close = async () => { await close(); await pool.end(); };
     return client;
   }
+  const { Client: PgClient } = await import("pg");
   const pg = new PgClient({ connectionString: databaseUrl });
   await pg.connect();
   pg.on("error", () => { /* surfaced by query/reconnect path */ });
