@@ -1229,11 +1229,6 @@
       "sha256": "6b8319f7dfffd29e64c024a922251ce88d633f023a45bd07804826a517e8fad8"
     },
     {
-      "path": "package-lock.json",
-      "bytes": 729,
-      "sha256": "c05e9a45e6557dee9bf520b6d23755cb30c955e08b7b9382770dc17af6833070"
-    },
-    {
       "path": "package.json",
       "bytes": 1075,
       "sha256": "cd93db5cc7c3095420fc23e5583604d268c5df602635239772008ee124e5aea2"
@@ -3337,6 +3332,11 @@
       "path": "tests/test-browser-node-no-devpack-startup.js",
       "bytes": 1726,
       "sha256": "b4a5dbad5bf333d5d1588d7984d2687091b0ac815dab54f1d60a7c9a7179fd91"
+    },
+    {
+      "path": "tests/test-browser-node-no-legacy-manager-runtime.js",
+      "bytes": 1181,
+      "sha256": "d3dd0cc2693e5d194f89e480dd0d5b7e6ae4decd8cb766e3769db70150e14945"
     },
     {
       "path": "tests/test-browser-node-postmerge-prune.js",
