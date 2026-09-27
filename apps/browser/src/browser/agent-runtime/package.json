@@ -1,5 +1,0 @@
-{
-  "type": "module",
-  "private": true,
-  "description": "ES-module boundary for the imported Titan Code browser agent runtime."
-}

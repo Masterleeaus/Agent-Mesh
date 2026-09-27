@@ -1,38 +1,59 @@
-# Titan Zero Platform
+# Titan Zero Field Service Workforce
 
-> Advanced Intelligence workforce and business operating platform with governed multi-agent execution, decision intelligence, offline capabilities, and full-stack operational workflows.
+> A governed Advanced Intelligence workforce and field-service operating platform for real businesses.
 
-Titan Zero is an experimental full-stack platform for exploring how intelligent software workforces can operate inside real businesses without treating model output as execution authority.
+Titan Zero Field Service Workforce is a full-stack TypeScript platform for coordinating intelligent digital workers across field-service operations while keeping business authority explicit, constrained, and auditable.
 
-The repository combines a production-oriented business operations application with a broader TypeScript platform layer covering workforce orchestration, decision and intelligence runtimes, authority boundaries, offline operation, interface runtimes, connectors, and business operations.
+The repository combines a working field-service operating system with a broader platform layer covering workforce orchestration, decision intelligence, authority boundaries, offline operation, interface runtimes, connectors, business workflows, and deployment infrastructure.
+
+## What it demonstrates
+
+- Multi-tier intelligent workforce architecture
+- Managers, supervisors, agents, and atomic workers
+- Delegation envelopes and authority ceilings
+- Approval gates and escalation chains
+- Decision and intelligence runtimes
+- Deterministic risk classification
+- Signal prioritisation and Model Council recommendations
+- Nexus orchestration
+- Local/offline capabilities
+- Provider and inference routing
+- MCP and connector contracts
+- Business operations and field-service workflows
+- Full-stack TypeScript application architecture
+- PostgreSQL, Redis, Docker, testing, and CI
 
 ## Why this project exists
 
 Most AI applications stop at chat, recommendations, or isolated agents. Titan Zero explores the harder systems problem: how to coordinate multiple intelligent workers, tools, interfaces, business processes, and data while keeping authority explicit and auditable.
 
-Core design concerns include:
+A central architectural rule is that intelligence is not authority. Predictions, recommendations, consensus, registration, and activation do not automatically grant permission to execute actions.
 
-- separating intelligence and recommendations from execution authority;
-- enforcing a canonical `company_id` business boundary;
-- coordinating managers, supervisors, agents, and atomic workers;
-- delegating work through constrained authority envelopes;
-- escalating decisions through approval gates;
-- retaining audit and state-recovery evidence;
-- routing work across local and external intelligence providers;
-- supporting offline and device-aware operation;
-- exposing business capabilities through reusable platform contracts.
-
-## Platform capabilities
-
-### Governed intelligent workforce
+## Governed workforce
 
 The workforce layer models a hierarchy of managers, supervisors, standalone agents, and atomic workers. It includes role routing, manager objectives and policies, supervisor coordination, agent bindings, worker task planning, delegation envelopes, escalation chains, approval gates, audit events, state snapshots, and knowledge-authority checks.
 
-A key invariant is that registering or activating an intelligent worker does **not** automatically grant it execution authority.
+This allows intelligent workers to participate in business operations without silently acquiring unrestricted execution rights.
 
-### Intelligence and decision systems
+## Field-service operations
 
-The platform contains reusable intelligence/runtime components for:
+The operational application provides a concrete environment for the workforce architecture. Its domain includes capabilities such as:
+
+- customer and account management;
+- property and service history;
+- estimating and job workflows;
+- scheduling and operational coordination;
+- inventory;
+- financial and money-domain primitives;
+- onboarding;
+- notifications;
+- revenue journeys;
+- service operations;
+- background processing and automation support.
+
+## Intelligence and decision systems
+
+Reusable platform components include:
 
 - deterministic risk classification;
 - signal normalisation and prioritisation;
@@ -43,28 +64,22 @@ The platform contains reusable intelligence/runtime components for:
 - intelligence runtime contracts;
 - evidence-aware business decisions.
 
-These systems are designed so that intelligence can inform action without silently becoming permission to act.
+These systems are designed so intelligence can inform action without becoming implicit permission to act.
 
-### Runtime and interface layer
+## Runtime and interface layer
 
 Titan Zero includes runtime contracts for company-scoped execution, visual interfaces, interface discovery and registries, local state, capability negotiation, fallback planning, resource integrity, compatibility checks, and offline caching.
 
-The platform also contains Prime runtime integration, Titan Builder components, connector contracts, MCP host negotiation, credential references, and inference-routing policies.
+The platform also includes Prime runtime integration, Titan Builder components, connector contracts, MCP host negotiation, credential references, and inference-routing policies.
 
-### Cost and deployment sovereignty
+## Cost and deployment sovereignty
 
 The architecture supports routing intelligence work according to capability and cost policy rather than assuming a single model provider. This provides a foundation for local models, customer-controlled providers, and external services to coexist behind explicit contracts.
 
-### Business operations
-
-The repository is not only an AI orchestration experiment. It contains a working operational application and supporting domain packages for workflows such as customers, properties, estimates, jobs, inventory, money, onboarding, revenue journeys, notifications, and service operations.
-
-These operational workflows provide a concrete environment in which the broader Titan Zero architecture can be exercised and tested.
-
-## Architecture at a glance
+## Architecture
 
 ```text
-Titan Zero Platform
+Titan Zero Field Service Workforce
 |
 +-- apps/web                 Next.js operational web application
 +-- services/worker          Background jobs and automation support
@@ -84,7 +99,7 @@ Titan Zero Platform
 |   +-- ...                  Additional bounded capability packages
 +-- db/migrations            SQL schema and migration history
 +-- infra                    Docker/deployment configuration
-+-- docs                     Canonical and supporting documentation
++-- docs                     Architecture and implementation documentation
 +-- ai                       Compact agent-facing project context
 ```
 
@@ -130,7 +145,7 @@ The repository is primarily TypeScript and uses a modern full-stack toolchain in
 
 The codebase is organised as a monorepo. Application surfaces live under `apps/`, asynchronous processing under `services/`, reusable capabilities under `packages/`, persistence under `db/`, and deployment infrastructure under `infra/`.
 
-The `packages/titan-platform` package is the clearest entry point for the broader Titan Zero architecture. It exports workforce, intelligence, business-operation, runtime, offline, builder, connector, MCP, and cost-sovereignty capabilities.
+`packages/titan-platform` is a central entry point for the Titan Zero architecture. It exposes workforce, intelligence, business-operation, runtime, offline, builder, connector, MCP, and cost-sovereignty capabilities.
 
 ## Quick start
 
@@ -168,21 +183,13 @@ The repository also contains CI workflows and baseline checks for the web applic
 
 ## Documentation hierarchy
 
-Because this repository contains active implementation alongside substantial research and convergence history, documentation has an explicit authority order:
+Because the repository contains active implementation alongside substantial research and convergence history, documentation has an explicit authority order:
 
 1. Code and database migrations are the implemented truth.
-2. `docs/canonical/` contains authoritative current product, domain, workflow, and application architecture documentation.
+2. `docs/canonical/` contains current product, domain, workflow, and application architecture documentation.
 3. `docs/contracts/` and `docs/working/` contain supporting implementation material.
 4. `ai/` provides compact agent-facing context.
-5. `docs/archive/` and `docs/generated/` contain historical or generated evidence and are not active product instructions.
-
-Canonical documents include:
-
-- [Product Vision](docs/canonical/PRODUCT_VISION.md)
-- [Domain Model](docs/canonical/DOMAIN_MODEL.md)
-- [Workflow](docs/canonical/WORKFLOW.md)
-- [Architecture](docs/canonical/ARCHITECTURE.md)
-- [Roadmap](docs/canonical/ROADMAP.md)
+5. `docs/archive/` and `docs/generated/` contain historical or generated evidence.
 
 ## Portfolio context
 
@@ -194,4 +201,4 @@ It is an evolving platform and research codebase rather than a packaged public S
 
 **Active development.**
 
-The repository is being progressively converged around the Titan Zero platform architecture and its governed Advanced Intelligence workforce model.
+Titan Zero Field Service Workforce is being progressively converged into a governed Advanced Intelligence workforce capable of supporting increasingly broad field-service business operations.

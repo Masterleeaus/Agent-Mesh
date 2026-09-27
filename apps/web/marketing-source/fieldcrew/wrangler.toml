@@ -1,8 +1,0 @@
-name = "fieldcrewai"
-compatibility_date = "2024-01-01"
-pages_build_output_dir = "_site"
-
-# Secrets — set via Cloudflare dashboard or `wrangler secret put`:
-#   HUBSPOT_ACCESS_TOKEN
-#   CLAUDE_WEBHOOK_URL   (pin: set when Claude agent is wired up)
-
