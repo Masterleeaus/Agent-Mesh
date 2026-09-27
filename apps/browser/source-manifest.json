@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1062,
+  "fileCount": 1061,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -5297,11 +5297,6 @@
       "path": "tools/generate-source-manifest.mjs",
       "bytes": 1676,
       "sha256": "678948639231452dbd05e94ff40f81c511f98c92f29c8dfe7a48f641464da702"
-    },
-    {
-      "path": "tools/prune-browser-node-devpacks.mjs",
-      "bytes": 2329,
-      "sha256": "8156c164f7061a58280e892d03a47a78e6c484391ccb6d3f25f63c49095a601e"
     },
     {
       "path": "tools/test-worker-vm-preload.cjs",
