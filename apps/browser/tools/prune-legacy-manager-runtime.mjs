@@ -8,24 +8,40 @@ const workerPath = path.join(root, 'src/lib/service-worker.js');
 let source = fs.readFileSync(workerPath, 'utf8');
 const before = source;
 
-const removeExact = (pattern, label) => {
-  const next = source.replace(pattern, '');
-  if (next === source) throw new Error(`Expected ${label} block was not found`);
-  source = next;
-};
+// Repair the one malformed seam produced by the first prune attempt.
+source = source.replace('\n(options = {}) {\n', '\nasync function getMcpInspectorPayload(options = {}) {\n');
 
-source = source
-  .split('\n')
-  .filter((line) => !/\.\.\/titan-zero\/(?:agent-mesh-role-topology|manager-[^']+)\.js'/.test(line))
-  .join('\n');
+const stillHasManagerRuntime = [
+  "'../titan-zero/agent-mesh-role-topology.js'",
+  "'../titan-zero/manager-control-plane.js'",
+  "const MANAGER_AI_WATCH_ALARM='MANAGER_AI_WATCH';",
+  "message.action === 'GET_MANAGER_AI_STATUS'",
+  'TitanCodeManagerAISupervisor'
+].some((token) => source.includes(token));
 
-removeExact(/async function fetchAgentMeshExecutionAudit\([\s\S]*?\nasync function getMcpInspectorPayload/, 'Agent Mesh execution audit');
-source = source.replace('async function getMcpInspectorPayload', 'async function getMcpInspectorPayload');
+if (stillHasManagerRuntime) {
+  source = source
+    .split('\n')
+    .filter((line) => !/\.\.\/titan-zero\/(?:agent-mesh-role-topology|manager-[^']+)\.js'/.test(line))
+    .join('\n');
 
-removeExact(/const MANAGER_AI_WATCH_ALARM='MANAGER_AI_WATCH';[\s\S]*?\nasync function getTitanZeroStatus\(\) \{/, 'legacy Manager AI runtime');
-source = source.replace(/\n\s*if \(message\.action === 'GET_MANAGER_AI_STATUS'\)[\s\S]*?\n\s*if \(message\.action === 'GET_TITAN_ZERO_STATUS'\) \{/, "\n\n    if (message.action === 'GET_TITAN_ZERO_STATUS') {");
-source = source.replace(/\nensureManagerAIWatchAlarm\(\)\.catch\([^\n]+\);\n/, '\n');
-source = source.replace(/\n\s*if \(alarm\.name === MANAGER_AI_WATCH_ALARM\) \{\s*managerAIWatchSweep\(\);\s*return;\s*\}/, '');
+  source = source.replace(
+    /async function fetchAgentMeshExecutionAudit\([\s\S]*?\n(?=async function getMcpInspectorPayload)/,
+    ''
+  );
+
+  source = source.replace(
+    /const MANAGER_AI_WATCH_ALARM='MANAGER_AI_WATCH';[\s\S]*?\n(?=async function getTitanZeroStatus\(\) \{)/,
+    ''
+  );
+
+  source = source.replace(
+    /\n\s*if \(message\.action === 'GET_MANAGER_AI_STATUS'\)[\s\S]*?\n\s*(?=if \(message\.action === 'GET_TITAN_ZERO_STATUS'\) \{)/,
+    '\n\n    '
+  );
+  source = source.replace(/\nensureManagerAIWatchAlarm\(\)\.catch\([^\n]+\);\n/, '\n');
+  source = source.replace(/\n\s*if \(alarm\.name === MANAGER_AI_WATCH_ALARM\) \{\s*managerAIWatchSweep\(\);\s*return;\s*\}/, '');
+}
 
 for (const forbidden of [
   'MANAGER_AI_WATCH_ALARM',
@@ -39,7 +55,13 @@ for (const forbidden of [
 ]) {
   if (source.includes(forbidden)) throw new Error(`Legacy manager runtime token remains: ${forbidden}`);
 }
+if (!source.includes('async function getMcpInspectorPayload(options = {}) {')) {
+  throw new Error('MCP inspector function signature is missing after prune');
+}
 
-if (source === before) throw new Error('Prune produced no changes');
+if (source === before) {
+  console.log('Legacy Agent Mesh/Manager runtime already pruned; no worker changes required.');
+  process.exit(0);
+}
 fs.writeFileSync(workerPath, source);
-console.log('Pruned legacy Agent Mesh/Manager runtime from Browser Node worker.');
+console.log('Repaired/pruned legacy Agent Mesh/Manager runtime from Browser Node worker.');
