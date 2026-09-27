@@ -1,4 +1,4 @@
-import { buildNativeGovernance, applyNativeGovernanceHeaders } from "./governance";
+import { buildNativeGovernance, applyNativeGovernanceHeaders, assertNativeExecutionAuthority } from "./governance";
 import type { AuthSession } from "@/lib/auth/middleware";
 import {
   buildTitanSchedulingPlan,
@@ -48,6 +48,8 @@ export async function executeNativeSchedulingAction(
   if (input.dryRun || plan.operation === null) {
     return { dryRun: Boolean(input.dryRun), executed: false, plan, governance } as const;
   }
+
+  assertNativeExecutionAuthority(plan);
 
   const source = new URL(request.url);
   const path = materializePath(plan.operation.path, plan.entity_id);
