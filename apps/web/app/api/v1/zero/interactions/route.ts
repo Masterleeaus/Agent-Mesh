@@ -26,20 +26,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const company_id = String(body.company_id ?? "").trim();
+  // Tenant scope is server-owned. `company_id` in the request body is accepted
+  // only as a legacy compatibility assertion and is never used as authority.
+  const company_id = session.accountId;
+  const requested_company_id = String(body.company_id ?? "").trim();
   const conversation_id = String(body.conversation_id ?? "").trim();
   const text = String(body.text ?? "").trim();
   const client_message_id = String(body.client_message_id ?? "").trim();
   const requested_agent_id = String(body.requested_agent_id ?? "").trim() || undefined;
   const continuation_token = String(body.continuation_token ?? "").trim() || undefined;
 
-  if (!company_id || !conversation_id || !text || !client_message_id) {
+  if (!conversation_id || !text || !client_message_id) {
     return NextResponse.json({ error: "Missing required interaction fields" }, { status: 400 });
   }
   if (body.surface !== "zero") {
     return NextResponse.json({ error: "Zero surface required" }, { status: 400 });
   }
-  if (company_id !== session.accountId) {
+  if (requested_company_id && requested_company_id !== company_id) {
     return NextResponse.json({ error: "Cross-company interaction rejected" }, { status: 403 });
   }
 
