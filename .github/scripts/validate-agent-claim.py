@@ -12,6 +12,7 @@ MANIFEST = ROOT / "roadmap" / "SUBGOAL-ISSUE-MANIFEST.json"
 GOALS_DIR = ROOT / "roadmap" / "goals"
 SUBGOAL_RE = re.compile(r"^(TZ-(?:G00|ROADMAP-\d+)-SG-\d+)$")
 BRANCH_RE = re.compile(r"^agent/(TZ-(?:G00|ROADMAP-\d+)-SG-\d+)$")
+CANONICAL_GOAL_IDS = {"TZ-G00"} | {f"TZ-ROADMAP-{i:02d}" for i in range(1, 55)}
 
 
 def fail(message: str) -> None:
@@ -37,6 +38,10 @@ def validate_roadmap_integrity():
         gid = item.get("goal_id")
         if not isinstance(sid, str) or not SUBGOAL_RE.match(sid):
             errors.append(f"invalid subgoal_id in manifest: {sid!r}")
+            continue
+        if gid not in CANONICAL_GOAL_IDS:
+            # Ignore stale/non-canonical manifest rows. Canonical roadmap authority is
+            # the goal-file set below; historical Agent Mesh claims must not expand it.
             continue
         if sid in seen:
             errors.append(f"duplicate manifest subgoal_id: {sid}")
@@ -85,7 +90,7 @@ def validate_roadmap_integrity():
             errors.append(f"duplicate goal_id across goal files: {gid}")
         goal_file_ids.add(gid)
 
-    expected_goal_ids = {"TZ-G00"} | {f"TZ-ROADMAP-{i:02d}" for i in range(1, 55)}
+    expected_goal_ids = CANONICAL_GOAL_IDS
     missing_goals = sorted(expected_goal_ids - goal_file_ids)
     extra_goals = sorted(goal_file_ids - expected_goal_ids)
     if missing_goals:
@@ -100,7 +105,7 @@ def validate_roadmap_integrity():
 
     print(
         f"Roadmap integrity OK: {len(goal_file_ids)} goals, "
-        f"{len(seen)} manifest subgoals."
+        f"{len(seen)} canonical manifest subgoals."
     )
     return seen
 
@@ -170,7 +175,7 @@ def validate_pull_request():
 
     item = manifest_by_id.get(sid)
     if not item:
-        fail(f"{sid} is not present in roadmap/SUBGOAL-ISSUE-MANIFEST.json")
+        fail(f"{sid} is not present in the canonical roadmap manifest")
 
     status = str(item.get("status") or "").upper()
     if status in {"COMPLETE", "SUPERSEDED", "SUPERSEDED_BY_ARCHITECTURE"}:
