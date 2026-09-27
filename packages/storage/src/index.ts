@@ -1,4 +1,6 @@
 import Database from "better-sqlite3";
+import { mkdirSync } from "node:fs";
+import { dirname } from "node:path";
 
 export type StorageDialect = "sqlite" | "postgres" | "mysql";
 export interface QueryResult<T = Record<string, unknown>> { rows: T[]; rowCount: number; }
@@ -24,9 +26,25 @@ export function normalizeCompanyContext(input: { company_id?: string; tenant_com
   return requireCompanyId(input.company_id ?? input.tenant_company_id ?? input.tenant_id);
 }
 
-function sqliteSql(sql: string): string { return sql.replace(/\$(\d+)/g, "?$1"); }
+function sqliteSql(sql: string, params: readonly unknown[]): { sql: string; params: unknown[] } {
+  const expanded: unknown[] = [];
+  const text = sql.replace(/\$(\d+)/g, (_match, rawIndex: string) => {
+    const index = Number(rawIndex) - 1;
+    if (index < 0 || index >= params.length) throw new Error(`sqlite parameter $${rawIndex} is not bound`);
+    expanded.push(params[index]);
+    return "?";
+  });
+  return { sql: text, params: expanded };
+}
+
+function ensureSqliteParent(filename: string): void {
+  if (filename === ":memory:" || filename.startsWith("file:")) return;
+  const parent = dirname(filename);
+  if (parent && parent !== ".") mkdirSync(parent, { recursive: true });
+}
 
 export function createSqliteStorage(filename = process.env.SQLITE_PATH ?? ".titan/data/titan-zero.db"): StorageClient {
+  ensureSqliteParent(filename);
   const db = new Database(filename);
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
@@ -36,12 +54,13 @@ export function createSqliteStorage(filename = process.env.SQLITE_PATH ?? ".tita
   const client: StorageClient = {
     dialect: "sqlite",
     async query<T>(sql: string, params: readonly unknown[] = []) {
-      const statement = db.prepare(sqliteSql(sql));
+      const rewritten = sqliteSql(sql, params);
+      const statement = db.prepare(rewritten.sql);
       if (statement.reader) {
-        const rows = statement.all(...params) as T[];
+        const rows = statement.all(...rewritten.params) as T[];
         return { rows, rowCount: rows.length };
       }
-      const result = statement.run(...params);
+      const result = statement.run(...rewritten.params);
       return { rows: [], rowCount: result.changes };
     },
     async transaction<T>(fn: (tx: StorageClient) => Promise<T>) {
