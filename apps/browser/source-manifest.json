@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1057,
+  "fileCount": 1056,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -5267,11 +5267,6 @@
       "path": "TITAN-ZERO-BROWSER-NODE.md",
       "bytes": 4160,
       "sha256": "e9655c12e482144ffadf35d0b6ccbdd2d068969f57b328f85da036929bd0c380"
-    },
-    {
-      "path": "tools/apply-browser-node-network-convergence.mjs",
-      "bytes": 2173,
-      "sha256": "e2e78ffdd7249d317043777da11da9d2a35c474cd6498a8f9bea72ac04cc569d"
     },
     {
       "path": "tools/generate-source-manifest.mjs",
