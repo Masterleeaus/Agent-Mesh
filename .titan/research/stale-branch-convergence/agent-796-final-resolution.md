@@ -1,0 +1,1 @@
+Final resolution: `agent/796` was deeply compared with current main (36 commits ahead of its old base, 381 commits behind current main). Its production areas are superseded by later canonical convergence. Preserve main; record reconciliation; clear stale branch.
