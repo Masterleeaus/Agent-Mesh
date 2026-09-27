@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import type { DbClient } from "@/lib/db-contract";
-import { isFieldDeliverableTaskLabel } from "@ai-fsm/domain";
+import { isFieldDeliverableTaskLabel } from "@titan-zero/domain";
 import type { WorkOrderTask } from "./task-time";
 import { mirrorTasksToCompletionCriteria, tasksToCriteria } from "./task-time";
 

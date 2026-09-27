@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { withRole } from "@/lib/auth/middleware";
-import { createTitanInterfaceRuntime, type InterfaceContext } from "@ai-fsm/titan-platform/interface-runtime";
+import { createTitanInterfaceRuntime, type InterfaceContext } from "@titan-zero/titan-platform/interface-runtime";
 import {
   TitanBuilderConversationCycle,
   TitanBuilderWorkspace,
@@ -9,7 +9,7 @@ import {
   sanitizeBuilderProjection,
   type BuilderDocument,
   type BuilderNode,
-} from "@ai-fsm/titan-platform/titan-builder";
+} from "@titan-zero/titan-platform/titan-builder";
 
 export const dynamic = "force-dynamic";
 

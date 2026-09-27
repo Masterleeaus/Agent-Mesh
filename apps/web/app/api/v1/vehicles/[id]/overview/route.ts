@@ -11,7 +11,7 @@ import {
   type FuelLogForMpg,
   type ServiceRecordForDue,
   type ServiceScheduleForDue,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { withRole } from "@/lib/auth/middleware";
 import { withPortableTransaction } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";

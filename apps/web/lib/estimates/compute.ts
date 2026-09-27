@@ -5,8 +5,8 @@
  * Never import this from the domain package — it has DB access.
  */
 
-import { computeEstimate, CURRENT_RULES, ENGINE_VERSION, type PricingRules } from "@ai-fsm/domain";
-import type { EstimateSpec, EstimateResult } from "@ai-fsm/domain";
+import { computeEstimate, CURRENT_RULES, ENGINE_VERSION, type PricingRules } from "@titan-zero/domain";
+import type { EstimateSpec, EstimateResult } from "@titan-zero/domain";
 import { getPool, query } from "@/lib/db";
 import { calculateDepositPolicy } from "@/lib/estimates/deposit-policy";
 import { loadPricingRules } from "@/lib/pricing/settings";

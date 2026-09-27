@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { VisitStatus } from "@ai-fsm/domain";
+import type { VisitStatus } from "@titan-zero/domain";
 import { Button, useToast } from "@/components/ui";
 import { CloseoutWizard } from "@/components/visits/CloseoutWizard";
 import type { ButtonVariant } from "@/components/ui";

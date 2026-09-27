@@ -9,8 +9,8 @@ import {
   buildShoppingListFromEstimateResult,
   CURRENT_RULES,
   serviceCodesForSnapshots,
-} from "@ai-fsm/domain";
-import type { ServiceMaterial, ScopeComponentValues, ComplexityValues, MaterialsBySection, RoomSpec, ShoppingList } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { ServiceMaterial, ScopeComponentValues, ComplexityValues, MaterialsBySection, RoomSpec, ShoppingList } from "@titan-zero/domain";
 import { PrintButton } from "../print/PrintButton";
 import { shoppingListToMaterialsBySection } from "@/lib/estimates/shopping-list-display";
 

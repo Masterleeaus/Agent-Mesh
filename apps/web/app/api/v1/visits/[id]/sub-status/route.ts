@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { VISIT_SUB_STATUSES } from "@ai-fsm/domain";
+import { VISIT_SUB_STATUSES } from "@titan-zero/domain";
 import { withRole } from "@/lib/auth/middleware";
 import { portableQuery, portableQueryOne } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";

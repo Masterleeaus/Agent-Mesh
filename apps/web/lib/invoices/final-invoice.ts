@@ -37,7 +37,7 @@ import {
 import {
   LABOR_CUSTOMER_RATE_CENTS_PER_HOUR,
   dueDateUponCompletion,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { loadTravelSettings } from "@/lib/travel/settings";
 import {
   TRAVEL_LINE_MARKER,

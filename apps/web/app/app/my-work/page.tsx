@@ -21,7 +21,7 @@ import {
   VISIT_TYPE_LABELS,
   type WorkOrderStatus,
   type VisitType,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { PageContainer, PageHeader, Card, SectionHeader, EmptyState, LinkButton } from "@/components/ui";
 
 export const dynamic = "force-dynamic";

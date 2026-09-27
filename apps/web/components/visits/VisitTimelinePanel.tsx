@@ -1,4 +1,4 @@
-import type { VisitTimelineEvent } from "@ai-fsm/domain";
+import type { VisitTimelineEvent } from "@titan-zero/domain";
 import { Timeline } from "@/components/ui";
 import type { TimelineEntryData } from "@/components/ui";
 

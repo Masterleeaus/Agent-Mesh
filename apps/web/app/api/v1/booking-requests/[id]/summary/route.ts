@@ -3,7 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { withRole } from "@/lib/auth/middleware";
 import { queryOne } from "@/lib/db";
 import { logger } from "@/lib/logger";
-import { scoreJobFit } from "@ai-fsm/domain";
+import { scoreJobFit } from "@titan-zero/domain";
 import { INTAKE_QUESTIONS, INTAKE_METADATA_LABELS } from "@/lib/intake/questions";
 
 export const dynamic = "force-dynamic";

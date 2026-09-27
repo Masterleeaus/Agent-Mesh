@@ -4,7 +4,7 @@ import {
   buildPricingRules,
   type BusinessPricingSettings,
   type PricingRules,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export type { BusinessPricingSettings };
 

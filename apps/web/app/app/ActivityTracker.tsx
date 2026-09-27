@@ -12,7 +12,7 @@ import {
   type ActivityType,
   type ActivityCategory,
   type AssignmentKind,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { summarizeDay, formatMinutes, formatElapsed } from "@/lib/activities/summary";
 import { formatBusinessTime } from "@/lib/time/business-tz";
 import type { ActivityEntryDto } from "@/lib/my-work/field-day-types";

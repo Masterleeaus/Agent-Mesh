@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { canCreateEstimates } from "@/lib/auth/permissions";
-import { resolveDepositPolicy } from "@ai-fsm/domain";
+import { resolveDepositPolicy } from "@titan-zero/domain";
 import { query, queryOne } from "@/lib/db";
 import { Breadcrumbs, Card, PageContainer, PageHeader, HubSubnav } from "@/components/ui";
 import { WORK_HUB_LINKS } from "@/lib/navigation/hubs";

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { Card, SectionHeader } from "@/components/ui";
-import { MINIMUM_SERVICE_FEE_CENTS } from "@ai-fsm/domain";
+import { MINIMUM_SERVICE_FEE_CENTS } from "@titan-zero/domain";
 import { formatCents, pctOf, OVERRIDE_REASON_LABELS } from "../format";
 import type { PricingSummaryRow, LowValueRow, OverrideReasonRow, BelowMinimumEstimateRow } from "../queries";
 

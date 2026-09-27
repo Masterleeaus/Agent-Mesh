@@ -3,7 +3,7 @@ import { compare } from "bcryptjs";
 import { z } from "zod";
 import { portableQuery } from "@/lib/db/portable";
 import { createSession, setSessionCookie } from "@/lib/auth/session";
-import { roleSchema } from "@ai-fsm/domain";
+import { roleSchema } from "@titan-zero/domain";
 import { randomUUID } from "crypto";
 import {
   checkRateLimit,

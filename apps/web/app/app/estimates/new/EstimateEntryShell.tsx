@@ -9,7 +9,7 @@ import { TmBriefingFlow } from "./TmBriefingFlow";
 import { NewEstimateForm } from "./NewEstimateForm";
 import type { DraftEstimate } from "@/lib/estimates/ai-draft";
 import type { TmEstimateDraft } from "@/lib/estimates/tm-briefing";
-import type { ShoppingList } from "@ai-fsm/domain";
+import type { ShoppingList } from "@titan-zero/domain";
 import type { AssessmentContext } from "@/lib/estimates/assessment-context";
 
 interface EstimateEntryShellProps {

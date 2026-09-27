@@ -14,7 +14,7 @@ import {
   type BusinessPricingSettings,
   type ShoppingList,
   type SpecifiedMaterial,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 // ---------------------------------------------------------------------------
 // Types

@@ -4,7 +4,7 @@ import { withAuth } from "@/lib/auth/middleware";
 import { getPool } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { suggestLineItems, type PriceBookEntry } from "@/lib/estimates/item-suggester";
-import { priceBookCategorySchema } from "@ai-fsm/domain";
+import { priceBookCategorySchema } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

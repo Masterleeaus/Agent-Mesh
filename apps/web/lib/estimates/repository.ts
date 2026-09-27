@@ -3,7 +3,7 @@ import { getDatabaseDialect } from "@/lib/db";
 import { randomUUID } from "node:crypto";
 import { appendAuditLog } from "@/lib/db/audit";
 import { calcTotals, lineItemTotal } from "./math";
-import { computeEstimate, sqftPaintingToSpec, CURRENT_RULES } from "@ai-fsm/domain";
+import { computeEstimate, sqftPaintingToSpec, CURRENT_RULES } from "@titan-zero/domain";
 import { calculateDepositPolicy, estimateMaterialsDepositBasis } from "./deposit-policy";
 import { computeConditionTier } from "./guardrails";
 

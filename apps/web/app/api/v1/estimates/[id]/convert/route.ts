@@ -9,7 +9,7 @@ import {
   ensureInvoiceTravelLinesFromSnapshot,
   getTravelSnapshot,
 } from "@/lib/travel/snapshots";
-import { resolveIssueDueDate } from "@ai-fsm/domain";
+import { resolveIssueDueDate } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

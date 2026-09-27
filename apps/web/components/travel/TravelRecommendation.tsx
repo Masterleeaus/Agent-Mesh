@@ -13,8 +13,8 @@ import {
   type TravelChargeMode,
   type TravelPolicyTier,
   type TripDirectionMode,
-} from "@ai-fsm/domain";
-import { formatCents } from "@ai-fsm/money";
+} from "@titan-zero/domain";
+import { formatCents } from "@titan-zero/money";
 
 export interface TravelRecommendationValue {
   charge_mode: TravelChargeMode;

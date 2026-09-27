@@ -6,7 +6,7 @@ import { withPortableTransaction } from "@/lib/db/portable";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
 import { loadPricingSettings, rowToPricingSettings } from "@/lib/pricing/settings";
-import { buildPricingRules } from "@ai-fsm/domain";
+import { buildPricingRules } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

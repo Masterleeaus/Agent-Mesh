@@ -1,6 +1,6 @@
 import { queryForSession } from "@/lib/db";
 import type { SessionPayload } from "@/lib/auth/session";
-import { ACTIVITY_TYPE_META, type ActivityType } from "@ai-fsm/domain";
+import { ACTIVITY_TYPE_META, type ActivityType } from "@titan-zero/domain";
 import { deriveDayCloseStatus } from "@/app/app/day-close/day-close-status";
 import type { DayCloseStatusPayload } from "@/app/app/day-close/types";
 

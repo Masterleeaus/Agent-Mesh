@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { NextRequest, NextResponse } from "next/server";
-import { OWNER_PROMISE_ACTION_TYPE } from "@ai-fsm/domain";
+import { OWNER_PROMISE_ACTION_TYPE } from "@titan-zero/domain";
 
 const mockSession = {
   userId: "00000000-0000-0000-0000-000000000001",

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { visitCloseoutBodySchema } from "@ai-fsm/domain";
+import { visitCloseoutBodySchema } from "@titan-zero/domain";
 import { withAuth } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
 import { getPool } from "@/lib/db";

@@ -1,4 +1,4 @@
-import type { PromiseEntityType } from "@ai-fsm/domain";
+import type { PromiseEntityType } from "@titan-zero/domain";
 import type { SessionPayload } from "@/lib/auth/session";
 import { withTenantTransaction } from "@/lib/db/portable";
 import { BUSINESS_TIMEZONE } from "@/lib/operations/business-day";

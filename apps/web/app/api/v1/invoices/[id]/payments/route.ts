@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { withAuth, withRole } from "@/lib/auth/middleware";
 import { withInvoiceContext } from "@/lib/invoices/db";
 import { appendAuditLog } from "@/lib/db/audit";
-import { paymentMethodSchema, paymentTypeSchema } from "@ai-fsm/domain";
+import { paymentMethodSchema, paymentTypeSchema } from "@titan-zero/domain";
 import { deriveInvoiceStatus, validatePaymentAmount } from "@/lib/invoices/payments";
 import { randomUUID } from "node:crypto";
 import { logger } from "@/lib/logger";

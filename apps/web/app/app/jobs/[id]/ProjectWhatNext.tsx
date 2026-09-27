@@ -3,7 +3,7 @@ import type { Route } from "next";
 import {
   PIPELINE_STAGE_LABELS,
   type PipelineStage,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { Card, LinkButton } from "@/components/ui";
 
 export type PricingMode = "flat_rate" | "hourly_internal" | null;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allRequiredCriteriaMet } from "@ai-fsm/domain";
+import { allRequiredCriteriaMet } from "@titan-zero/domain";
 import {
   criteriaItemsToTaskSeeds,
   minutesByTask,

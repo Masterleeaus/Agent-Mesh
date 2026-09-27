@@ -5,7 +5,7 @@ import type { AuthSession } from "../../../../../../lib/auth/middleware";
 import { query, queryOne, getPool } from "../../../../../../lib/db";
 import { appendAuditLog } from "../../../../../../lib/db/audit";
 import { logger } from "../../../../../../lib/logger";
-import { VAULT_CATEGORIES } from "@ai-fsm/domain";
+import { VAULT_CATEGORIES } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

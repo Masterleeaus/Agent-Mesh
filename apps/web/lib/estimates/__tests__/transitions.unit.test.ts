@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { estimateTransitions } from "@ai-fsm/domain";
+import { estimateTransitions } from "@titan-zero/domain";
 import { manualEstimateTransitions, NON_MANUAL_ESTIMATE_STATUSES } from "../transitions";
 
 describe("manualEstimateTransitions — sending is the only path to sent", () => {

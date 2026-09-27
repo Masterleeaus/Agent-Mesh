@@ -4,7 +4,7 @@
  */
 
 import type { PoolClient } from "pg";
-import { seedCompletionCriteriaFromLineItems } from "@ai-fsm/domain";
+import { seedCompletionCriteriaFromLineItems } from "@titan-zero/domain";
 import { deriveJobTitle, deriveJobDescription } from "../estimates/job-from-estimate";
 import { seedWorkOrderTasksFromCriteria } from "./task-time";
 

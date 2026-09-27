@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { computeEstimate, CURRENT_RULES, ENGINE_VERSION, type EstimateSpec } from "@ai-fsm/domain";
+import { computeEstimate, CURRENT_RULES, ENGINE_VERSION, type EstimateSpec } from "@titan-zero/domain";
 import { formatCents } from "@/lib/estimates/pricing";
 import { calculateDepositPolicy } from "@/lib/estimates/deposit-policy";
 import type { DepositDueTrigger, DepositType } from "@/lib/estimates/deposit-policy";

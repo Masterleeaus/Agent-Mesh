@@ -15,4 +15,4 @@ export {
   type TitanWorkforceSupervisorDomain,
   type TitanWorkforceSupervisorEscalation,
   type TitanWorkforceSupervisorRuntime,
-} from "@ai-fsm/titan-platform/workforce";
+} from "@titan-zero/titan-platform/workforce";

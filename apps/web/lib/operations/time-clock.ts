@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import type { DbClient } from "@/lib/db-contract";
-import type { PayType } from "@ai-fsm/domain";
+import type { PayType } from "@titan-zero/domain";
 import { businessToday, openBusinessDay } from "./business-day";
 
 export interface TimeClockRow {

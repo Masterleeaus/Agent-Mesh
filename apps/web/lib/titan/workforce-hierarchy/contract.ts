@@ -8,4 +8,4 @@ export {
   type TitanWorkforceHierarchyContract,
   type TitanWorkforceHierarchyNode,
   type TitanWorkforceHierarchyTier,
-} from "@ai-fsm/titan-platform/workforce";
+} from "@titan-zero/titan-platform/workforce";

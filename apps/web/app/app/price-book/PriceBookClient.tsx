@@ -6,7 +6,7 @@ import { formatCents } from "@/lib/money";
 import {
   PRICE_BOOK_CATEGORY_LABELS,
   PRICE_BOOK_TIER_LABELS,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 interface Service {
   id: string;

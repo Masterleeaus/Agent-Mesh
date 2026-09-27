@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Route } from "next";
-import { formatCents } from "@ai-fsm/money";
+import { formatCents } from "@titan-zero/money";
 import { formatLineQuantityDisplay } from "@/lib/invoices/quantity";
 import type { JobMaterialExpenseWithLines } from "@/lib/invoices/job-expenses";
 

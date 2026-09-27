@@ -10,7 +10,7 @@ import { z } from "zod";
 import { withAuth } from "@/lib/auth/middleware";
 import { withPortableTransaction } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";
-import { PAY_TYPES } from "@ai-fsm/domain";
+import { PAY_TYPES } from "@titan-zero/domain";
 import { clockIn } from "@/lib/operations/time-clock";
 
 export const dynamic = "force-dynamic";

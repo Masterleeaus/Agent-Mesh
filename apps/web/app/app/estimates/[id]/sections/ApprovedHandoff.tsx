@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatCents } from "@ai-fsm/money";
+import { formatCents } from "@titan-zero/money";
 import { CreateJobFromEstimateButton } from "../CreateJobFromEstimateButton";
 import { EstimateConvertButton } from "../EstimateConvertButton";
 import { CollectDepositButton } from "../../../jobs/[id]/CollectDepositButton";

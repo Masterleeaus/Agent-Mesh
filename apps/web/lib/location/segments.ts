@@ -27,7 +27,7 @@ import {
   type DetectedActivity,
   type LocationEventKind,
   type SegmentKind,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 /**
  * TASK-076: once a stop has a fix, a GPS ping within this radius is the same

@@ -4,7 +4,7 @@ import { withRole } from "@/lib/auth/middleware";
 import { withTenantTransaction } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";
 import { createIntakeRecords } from "../../../../lib/intake/records";
-import { scoreSiteVisitProbability } from "@ai-fsm/domain";
+import { scoreSiteVisitProbability } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

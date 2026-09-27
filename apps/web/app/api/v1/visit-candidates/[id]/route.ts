@@ -16,7 +16,7 @@ import {
   activityCategoryFor,
   resolveWorkOrderForProperty,
   type VisitClassification,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import {
   entityLinkFromCandidate,
   ensureFieldDayVisit,

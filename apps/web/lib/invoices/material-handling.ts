@@ -1,4 +1,4 @@
-import { MATERIAL_HANDLING_CLIENT_RATE } from "@ai-fsm/domain";
+import { MATERIAL_HANDLING_CLIENT_RATE } from "@titan-zero/domain";
 
 export type AccountSettingsSlice = {
   material_handling_pct?: number;

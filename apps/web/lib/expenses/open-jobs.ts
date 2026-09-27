@@ -1,4 +1,4 @@
-import { ACTIVE_JOB_STATUSES } from "@ai-fsm/domain";
+import { ACTIVE_JOB_STATUSES } from "@titan-zero/domain";
 
 /**
  * Jobs that appear in receipt / expense job pickers.

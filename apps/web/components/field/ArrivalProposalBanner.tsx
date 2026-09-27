@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { selectArrivalNextAction } from "@ai-fsm/domain";
+import { selectArrivalNextAction } from "@titan-zero/domain";
 import type { ArrivalProposalDto } from "@/lib/field/load-arrival-proposals";
 import { WorkOrderPicker } from "./WorkOrderPicker";
 

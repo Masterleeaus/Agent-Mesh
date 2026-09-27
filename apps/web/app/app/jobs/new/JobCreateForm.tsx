@@ -10,7 +10,7 @@ import {
   Select,
   Textarea,
 } from "@/components/ui";
-import { JOB_ACCEPTANCE_CATEGORIES, JOB_ACCEPTANCE_CATEGORY_LABELS } from "@ai-fsm/domain";
+import { JOB_ACCEPTANCE_CATEGORIES, JOB_ACCEPTANCE_CATEGORY_LABELS } from "@titan-zero/domain";
 
 interface Client {
   id: string;

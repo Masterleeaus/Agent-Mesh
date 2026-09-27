@@ -1,5 +1,5 @@
 import { Card, SectionHeader } from "@/components/ui";
-import { ACTIVITY_CATEGORY_LABELS, type ActivityCategory } from "@ai-fsm/domain";
+import { ACTIVITY_CATEGORY_LABELS, type ActivityCategory } from "@titan-zero/domain";
 import type { TimeByCategoryRow } from "../queries";
 
 const CATEGORY_COLORS: Record<string, string> = {

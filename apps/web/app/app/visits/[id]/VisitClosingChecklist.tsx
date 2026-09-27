@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui";
-import type { VisitChecklistItem } from "@ai-fsm/domain";
+import type { VisitChecklistItem } from "@titan-zero/domain";
 
 interface Props {
   visitId: string;

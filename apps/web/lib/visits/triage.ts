@@ -1,4 +1,4 @@
-import type { Visit, VisitStatus } from "@ai-fsm/domain";
+import type { Visit, VisitStatus } from "@titan-zero/domain";
 import { isSameCalendarDay, isVisitOverdue } from "./formatting";
 
 /**

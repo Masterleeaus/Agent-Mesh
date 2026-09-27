@@ -21,8 +21,8 @@ import {
   type DocumentLocationRow,
 } from "@/lib/documents/service-location";
 import { withInvoiceContext } from "@/lib/invoices/db";
-import { buildClientDocumentFilename, invoiceTransitions, invoiceDueOnCompletion } from "@ai-fsm/domain";
-import type { InvoiceStatus } from "@ai-fsm/domain";
+import { buildClientDocumentFilename, invoiceTransitions, invoiceDueOnCompletion } from "@titan-zero/domain";
+import type { InvoiceStatus } from "@titan-zero/domain";
 import { InvoiceTransitionForm } from "./InvoiceTransitionForm";
 import { RecordPaymentForm } from "./RecordPaymentForm";
 import { SquareLinkActions } from "./SquareLinkActions";
@@ -33,7 +33,7 @@ import { MarkDepositReceivedButton } from "./MarkDepositReceivedButton";
 import { InvoiceDepositForm } from "./InvoiceDepositForm";
 import { requestedDepositCents, type InvoiceDepositType } from "@/lib/invoices/deposit";
 import { amountDueCents } from "@/lib/invoices/payments";
-import { resolveDepositPolicy } from "@ai-fsm/domain";
+import { resolveDepositPolicy } from "@titan-zero/domain";
 import { SendInvoiceButton } from "./SendInvoiceButton";
 import { InvoiceMobileDeliverBar } from "./InvoiceMobileDeliverBar";
 import { InvoiceLineItemsEditor } from "./InvoiceLineItemsEditor";

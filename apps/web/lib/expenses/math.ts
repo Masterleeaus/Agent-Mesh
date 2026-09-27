@@ -1,10 +1,10 @@
-import { EXPENSE_CATEGORIES, EXPENSE_CATEGORY_LABELS } from "@ai-fsm/domain";
-import type { ExpenseCategory } from "@ai-fsm/domain";
+import { EXPENSE_CATEGORIES, EXPENSE_CATEGORY_LABELS } from "@titan-zero/domain";
+import type { ExpenseCategory } from "@titan-zero/domain";
 
 export { EXPENSE_CATEGORIES, EXPENSE_CATEGORY_LABELS };
 export type { ExpenseCategory };
 
-export { formatCentsToDollars, parseDollarsToCents } from "@ai-fsm/money";
+export { formatCentsToDollars, parseDollarsToCents } from "@titan-zero/money";
 
 /**
  * Check that a category value is in the locked set.

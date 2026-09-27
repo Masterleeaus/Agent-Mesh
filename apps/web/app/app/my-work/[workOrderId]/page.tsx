@@ -6,7 +6,7 @@ import {
   WORK_ORDER_STATUS_LABELS,
   allRequiredCriteriaMet,
   type WorkOrderStatus,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { PageContainer, PageHeader, Card, SectionHeader, LinkButton, Timeline } from "@/components/ui";
 import { fetchWorkOrderTimeline } from "@/lib/work-orders/timeline";
 import { withDbSession } from "@/lib/db";

@@ -1,4 +1,4 @@
-import type { Role } from "@ai-fsm/domain";
+import type { Role } from "@titan-zero/domain";
 
 /**
  * Role hierarchy: owner > admin > tech

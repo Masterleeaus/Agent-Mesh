@@ -9,7 +9,7 @@ import { withAuth } from "@/lib/auth/middleware";
 import { withPortableTransaction } from "@/lib/db/portable";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
-import { validateClockCorrection } from "@ai-fsm/domain";
+import { validateClockCorrection } from "@titan-zero/domain";
 import { correctClock } from "@/lib/operations/time-clock";
 
 export const dynamic = "force-dynamic";

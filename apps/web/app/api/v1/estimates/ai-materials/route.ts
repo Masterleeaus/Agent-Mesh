@@ -16,7 +16,7 @@ import {
   loadAssessmentSummary,
   loadAssessmentSummaryById,
 } from "@/lib/estimates/assessment-summary-loader";
-import type { AssessmentSummary } from "@ai-fsm/domain";
+import type { AssessmentSummary } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

@@ -1,6 +1,6 @@
 import type { DbClient } from "@/lib/db-contract";
 import { randomUUID } from "node:crypto";
-import { LABOR_CUSTOMER_RATE_CENTS_PER_HOUR } from "@ai-fsm/domain";
+import { LABOR_CUSTOMER_RATE_CENTS_PER_HOUR } from "@titan-zero/domain";
 import {
   roundedQuarterHoursFromMinutes,
   trackedLaborMinutesFromActivityEntries,

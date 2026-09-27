@@ -12,7 +12,7 @@ import {
   LABOR_CUSTOMER_RATE_CENTS_PER_HOUR,
   MA_LABOR_RATE_DELTA,
   DEFAULT_PRICING_SETTINGS,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 function sampleExtraction(overrides: Partial<TmBriefingExtraction> = {}): TmBriefingExtraction {
   return {

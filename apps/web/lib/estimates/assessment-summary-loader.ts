@@ -2,7 +2,7 @@ import {
   buildAssessmentSummary,
   type AssessmentRoom,
   type AssessmentSummary,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { queryForSession } from "@/lib/db";
 import type { SessionPayload } from "@/lib/auth/session";
 

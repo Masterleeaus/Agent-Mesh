@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildHybridMileageDaySummary, hybridMileageExportToCsv, buildHybridMileageExportRow } from "@ai-fsm/domain";
+import { buildHybridMileageDaySummary, hybridMileageExportToCsv, buildHybridMileageExportRow } from "@titan-zero/domain";
 
 /** Wiring smoke: web package can consume domain hybrid helpers (TASK-091). */
 describe("hybrid mileage web wiring", () => {

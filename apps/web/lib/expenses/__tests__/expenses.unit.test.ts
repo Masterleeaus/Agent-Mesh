@@ -3,7 +3,7 @@ import {
   EXPENSE_CATEGORIES,
   EXPENSE_CATEGORY_LABELS,
   expenseCategorySchema,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { isValidCategory } from "../math";
 import {
   canManageExpenses,

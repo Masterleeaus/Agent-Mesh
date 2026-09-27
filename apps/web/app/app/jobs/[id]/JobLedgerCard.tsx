@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Route } from "next";
-import type { JobLedgerSummary } from "@ai-fsm/domain";
+import type { JobLedgerSummary } from "@titan-zero/domain";
 import { formatCents } from "@/lib/money";
 import { Card, SectionHeader, LinkButton } from "@/components/ui";
 import { DraftCoFromVarianceButton } from "./DraftCoFromVarianceButton";

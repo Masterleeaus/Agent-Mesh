@@ -6,7 +6,7 @@ import { portableQueryOne, withPortableTransaction } from "../../../../../lib/db
 import { appendAuditLog } from "../../../../../lib/db/audit";
 import { logger } from "../../../../../lib/logger";
 import { computeCapStatus } from "../../../../../lib/visits/membership-cap";
-import { MEMBERSHIP_VISIT_PHASES } from "@ai-fsm/domain";
+import { MEMBERSHIP_VISIT_PHASES } from "@titan-zero/domain";
 import { getVisitScheduleConflicts } from "../../../../../lib/scheduling/visit-conflicts";
 
 export const dynamic = "force-dynamic";

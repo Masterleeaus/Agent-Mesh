@@ -1,4 +1,4 @@
-import { formatCentsShort } from "@ai-fsm/money";
+import { formatCentsShort } from "@titan-zero/money";
 
 /**
  * Pure helpers for creating a job from an approved estimate.

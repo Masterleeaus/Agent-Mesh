@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Input, Card, Button } from "@/components/ui";
-import { PRICE_BOOK_CATEGORY_LABELS, PRICE_BOOK_TIER_LABELS } from "@ai-fsm/domain";
+import { PRICE_BOOK_CATEGORY_LABELS, PRICE_BOOK_TIER_LABELS } from "@titan-zero/domain";
 
 export interface PriceBookService {
   id: string;

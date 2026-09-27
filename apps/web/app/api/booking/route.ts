@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getPool } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { createIntakeRecords } from "../../../lib/intake/records";
-import { priceBookCategorySchema, scoreSiteVisitProbability } from "@ai-fsm/domain";
+import { priceBookCategorySchema, scoreSiteVisitProbability } from "@titan-zero/domain";
 import { checkRateLimit, getClientIp, BOOKING_RATE_LIMIT } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";

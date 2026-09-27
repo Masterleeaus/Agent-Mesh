@@ -1,5 +1,5 @@
 import type { Route } from "next";
-import { OWNER_PROMISE_ACTION_TYPE, promiseBucketTone } from "@ai-fsm/domain";
+import { OWNER_PROMISE_ACTION_TYPE, promiseBucketTone } from "@titan-zero/domain";
 
 export { OWNER_PROMISE_ACTION_TYPE };
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Route } from "next";
-import { ACTIVITY_TYPE_META, type ActivityType } from "@ai-fsm/domain";
+import { ACTIVITY_TYPE_META, type ActivityType } from "@titan-zero/domain";
 import { Card, EmptyState, SectionHeader } from "@/components/ui";
 import type { ActivityEntryDto } from "@/lib/my-work/field-day-types";
 import { formatBusinessTime } from "@/lib/time/business-tz";

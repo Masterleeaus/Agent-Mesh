@@ -1,6 +1,6 @@
 import {buildNativeGovernance,applyNativeGovernanceHeaders} from "./governance";
 import type { AuthSession } from "@/lib/auth/middleware";
-import { buildTitanCustomerCarePlan, type TitanCustomerCarePlanInput } from "@ai-fsm/titan-platform/workforce-native";
+import { buildTitanCustomerCarePlan, type TitanCustomerCarePlanInput } from "@titan-zero/titan-platform/workforce-native";
 
 export type CustomerCareNativeRequest = Omit<TitanCustomerCarePlanInput, "companyId" | "actorId"> & { dryRun?: boolean };
 const ALLOWED_ROLES = new Set(["owner", "admin"]);

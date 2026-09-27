@@ -14,7 +14,7 @@ import {
   metersToMiles,
   roundMiles,
   type LatLng,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export interface DistanceLookupResult {
   one_way_miles: number;

@@ -13,7 +13,7 @@ import {
   receiptJobOrderSql,
 } from "@/lib/expenses/open-jobs";
 import { buildPoMatchText, suggestJobFromPoText } from "@/lib/expenses/match-job-po";
-import { formatJobPickerLabel } from "@ai-fsm/domain";
+import { formatJobPickerLabel } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

@@ -13,7 +13,7 @@ import type { ScheduleValue } from "@/components/ui";
 import { scheduleToISOPair } from "@/components/ui";
 import { reviewScheduleDay } from "@/lib/jobs/schedule-guard";
 import { easternWallToUtc, formatBusinessDate, formatBusinessTime } from "@/lib/time/business-tz";
-import { VISIT_TYPES, VISIT_TYPE_LABELS, type VisitType } from "@ai-fsm/domain";
+import { VISIT_TYPES, VISIT_TYPE_LABELS, type VisitType } from "@titan-zero/domain";
 import { coveringTechFieldHint, coveringTechFieldLabel } from "@/lib/visits/covering-tech";
 
 interface User {

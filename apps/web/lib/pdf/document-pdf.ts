@@ -9,7 +9,7 @@
  * section headers, line-item table, totals, notes, and payment/estimate terms.
  */
 import { PDFDocument, StandardFonts, rgb, degrees, type PDFFont, type PDFPage } from "pdf-lib";
-import { DOCUMENT_STANDARD_VERSION } from "@ai-fsm/domain";
+import { DOCUMENT_STANDARD_VERSION } from "@titan-zero/domain";
 
 const DEFAULT_BRAND = "Dovetails Services LLC";
 const DEFAULT_BRAND_URL = "mydovetails.com";

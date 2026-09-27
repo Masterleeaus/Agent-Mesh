@@ -14,9 +14,9 @@ import {
   type EstimateSpec,
   type GuardrailWarning,
   type PricingRules,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
-export { buildClientDocumentFilename } from "@ai-fsm/domain";
+export { buildClientDocumentFilename } from "@titan-zero/domain";
 
 export interface EstimateGuardrailInput {
   total_cents: number;

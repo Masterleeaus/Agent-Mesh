@@ -4,7 +4,7 @@ import {
   OWNER_PROMISE_ACTION_TYPE,
   PROMISE_ENTITY_TYPES,
   type PromiseEntityType,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { withRole } from "@/lib/auth/middleware";
 import { withDbSession } from "@/lib/db";
 import { logger } from "@/lib/logger";

@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { clockDurationMinutes, validateClockCorrection } from "@ai-fsm/domain";
+import { clockDurationMinutes, validateClockCorrection } from "@titan-zero/domain";
 import {
   easternDatetimeLocalToUtc,
   formatBusinessTime,

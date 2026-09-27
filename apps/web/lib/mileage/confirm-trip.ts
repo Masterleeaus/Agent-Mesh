@@ -1,6 +1,6 @@
 import type { PoolClient } from "pg";
-import type { ActivityType } from "@ai-fsm/domain";
-import { activityCategoryFor } from "@ai-fsm/domain";
+import type { ActivityType } from "@titan-zero/domain";
+import { activityCategoryFor } from "@titan-zero/domain";
 import { inferTripMilesSource } from "./linking";
 
 export type DriveSegmentRow = {

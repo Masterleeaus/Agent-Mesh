@@ -4,7 +4,7 @@ import { query, queryOne } from "@/lib/db";
 import { buildClientDocumentFilename } from "@/lib/estimates/guardrails";
 import { PrintButton } from "./PrintButton";
 import { formatBusinessTime } from "@/lib/time/business-tz";
-import type { ChecklistDisposition } from "@ai-fsm/domain";
+import type { ChecklistDisposition } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

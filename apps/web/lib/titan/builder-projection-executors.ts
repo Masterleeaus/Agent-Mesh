@@ -1,10 +1,10 @@
 import { portableQuery } from "@/lib/db/portable";
-import type { InterfaceContext } from "@ai-fsm/titan-platform/interface-runtime";
+import type { InterfaceContext } from "@titan-zero/titan-platform/interface-runtime";
 import {
   createCapabilityOwnedBuilderProjectionProvider,
   type BuilderCapabilityProjectionExecutor,
   type BuilderCapabilityProjectionQuery,
-} from "@ai-fsm/titan-platform/titan-builder";
+} from "@titan-zero/titan-platform/titan-builder";
 
 type Row = Record<string, unknown>;
 const cents = (value: unknown) => Number(value ?? 0) / 100;

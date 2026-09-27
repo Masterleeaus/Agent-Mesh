@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast, Input, Select, Textarea, Button, LinkButton } from "@/components/ui";
-import { computeVaultCompleteness, VAULT_CATEGORIES, VAULT_CATEGORY_LABELS } from "@ai-fsm/domain";
-import type { VaultCategory } from "@ai-fsm/domain";
+import { computeVaultCompleteness, VAULT_CATEGORIES, VAULT_CATEGORY_LABELS } from "@titan-zero/domain";
+import type { VaultCategory } from "@titan-zero/domain";
 import { VaultItemPhotoPanel } from "./VaultItemPhotoPanel";
 
 interface VaultItem {

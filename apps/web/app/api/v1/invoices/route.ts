@@ -4,7 +4,7 @@ import { withAuth, withRole } from "@/lib/auth/middleware";
 import { withInvoiceContext, generateInvoiceNumber } from "@/lib/invoices/db";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
-import { invoiceStatusSchema, resolveIssueDueDate } from "@ai-fsm/domain";
+import { invoiceStatusSchema, resolveIssueDueDate } from "@titan-zero/domain";
 import { manualInvoiceKind } from "@/lib/invoices/manual-kind";
 
 export const dynamic = "force-dynamic";

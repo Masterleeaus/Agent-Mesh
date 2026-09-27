@@ -11,9 +11,9 @@ import {
   canDeleteRecords,
   canCreateEstimates,
 } from "@/lib/auth/permissions";
-import { jobTransitions, JOB_STATUS_LABELS, toSupplyPo } from "@ai-fsm/domain";
-import type { Job, Visit, JobStatus, JobAcceptanceCategory, JobIntakeDecision } from "@ai-fsm/domain";
-import { JOB_SUB_STATUSES, SUB_STATUS_LABELS } from "@ai-fsm/domain";
+import { jobTransitions, JOB_STATUS_LABELS, toSupplyPo } from "@titan-zero/domain";
+import type { Job, Visit, JobStatus, JobAcceptanceCategory, JobIntakeDecision } from "@titan-zero/domain";
+import { JOB_SUB_STATUSES, SUB_STATUS_LABELS } from "@titan-zero/domain";
 import { CopySupplyPoButton } from "@/components/jobs/CopySupplyPoButton";
 import { JobTransitionForm } from "./JobTransitionForm";
 import { DeleteJobButton } from "./DeleteJobButton";
@@ -46,7 +46,7 @@ import {
 import { SubStatusSelect } from "@/components/SubStatusSelect";
 import { isHomeboxEnabled } from "@/lib/homebox/client";
 import { withAssetContext, listAssetLinks } from "@/lib/homebox/db";
-import { derivePipelineStage, isReadyForCloseout } from "@ai-fsm/domain";
+import { derivePipelineStage, isReadyForCloseout } from "@titan-zero/domain";
 import { visitTypeLabel } from "@/lib/visits/labels";
 import {
   PageContainer,

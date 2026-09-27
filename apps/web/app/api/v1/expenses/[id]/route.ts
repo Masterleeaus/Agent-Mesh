@@ -4,7 +4,7 @@ import { withAuth, withRole } from "@/lib/auth/middleware";
 import { withExpenseContext } from "@/lib/expenses/db";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
-import { expenseCategorySchema, EXPENSE_COMMERCIAL_TAGS } from "@ai-fsm/domain";
+import { expenseCategorySchema, EXPENSE_COMMERCIAL_TAGS } from "@titan-zero/domain";
 import { getPathId } from "@/lib/route-utils";
 import { attachFuelExpenseToVehicle } from "@/lib/expenses/attach-fuel-expense";
 import { gallonsFromParsedReceipt, isFuelExpenseCategory } from "@/lib/expenses/fuel-from-receipt";

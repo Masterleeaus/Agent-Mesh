@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { buildBusinessOpsBootstrap } from "@ai-fsm/domain";
-import { getTitanPlatformDescriptor, TITAN_BUSINESS_OPS_AGENT_COMMANDS } from "@ai-fsm/titan-platform";
+import { buildBusinessOpsBootstrap } from "@titan-zero/domain";
+import { getTitanPlatformDescriptor, TITAN_BUSINESS_OPS_AGENT_COMMANDS } from "@titan-zero/titan-platform";
 import { getSession } from "@/lib/auth/session";
 import { portableQueryOne } from "@/lib/db/portable";
 

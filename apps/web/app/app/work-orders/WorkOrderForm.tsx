@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import { Button, useToast } from "@/components/ui";
 import { MaterialsMetadata, type MaterialsMetadata as MaterialsMetadataShape } from "@/app/app/estimates/components/MaterialsMetadata";
-import type { WorkOrderDraft, WorkOrderRoomLine, CompletionCriterion } from "@ai-fsm/domain";
+import type { WorkOrderDraft, WorkOrderRoomLine, CompletionCriterion } from "@titan-zero/domain";
 import {
   materialItemsToDraft,
   WORK_ORDER_UI_STATUSES,
   WORK_ORDER_STATUS_LABELS,
-} from "@ai-fsm/domain";
-import { formatCents } from "@ai-fsm/money";
+} from "@titan-zero/domain";
+import { formatCents } from "@titan-zero/money";
 import {
   TravelRecommendation,
   applyTravelRecommendationToWorkOrder,

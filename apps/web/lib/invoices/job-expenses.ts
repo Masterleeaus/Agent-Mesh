@@ -14,7 +14,7 @@ import {
   type ExpenseLineItemPreview,
 } from "./material-handling";
 import { parseLineQuantity } from "./quantity";
-import { isEquipmentExpense } from "@ai-fsm/domain";
+import { isEquipmentExpense } from "@titan-zero/domain";
 
 export type JobMaterialExpenseRow = {
   id: string;

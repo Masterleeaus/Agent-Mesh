@@ -3,7 +3,7 @@ import type { AuthSession } from "@/lib/auth/middleware";
 import {
   buildTitanBookingPlan,
   type TitanBookingPlanInput,
-} from "@ai-fsm/titan-platform/workforce-native";
+} from "@titan-zero/titan-platform/workforce-native";
 
 export type BookingNativeRequest = Omit<TitanBookingPlanInput, "companyId" | "actorId"> & {
   dryRun?: boolean;

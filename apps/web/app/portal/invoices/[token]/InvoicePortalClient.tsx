@@ -7,7 +7,7 @@ import {
   renderDepositTerms,
   invoiceDueOnCompletion,
   isInvoiceCalendarOverdue,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { requestedDepositCents, type InvoiceDepositType } from "@/lib/invoices/deposit";
 import { amountDueCents, isInvoiceFullyPaid } from "@/lib/invoices/payments";
 import { PaidStamp } from "@/components/invoices/PaidStamp";

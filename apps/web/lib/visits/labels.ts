@@ -7,7 +7,7 @@ import {
   EXECUTION_VISIT_TYPES,
   VISIT_TYPE_LABELS,
   type VisitType,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 /** Owner labels — Assessment / Work day first-class. */
 export const OWNER_VISIT_TYPE_LABELS: Record<VisitType, string> = {

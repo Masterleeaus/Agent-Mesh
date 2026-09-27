@@ -9,7 +9,7 @@ import {
   type TripCalculationMethod,
   type TripDirectionMode,
   type TravelCalculationSource,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import {
   loadActiveMileageRate,
   loadTravelSettings,

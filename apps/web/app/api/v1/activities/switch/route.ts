@@ -9,7 +9,7 @@ import {
   ASSIGNMENT_KINDS,
   activityCategoryFor,
   isSameActivitySnapshot,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { businessToday } from "@/lib/operations/business-day";
 
 export const dynamic = "force-dynamic";

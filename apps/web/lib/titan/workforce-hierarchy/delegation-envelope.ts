@@ -7,4 +7,4 @@ export {
   validateTitanWorkforceHierarchyDelegationEnvelope,
   type TitanWorkforceDelegationAuthorityCeiling,
   type TitanWorkforceHierarchyDelegationEnvelope,
-} from "@ai-fsm/titan-platform/workforce";
+} from "@titan-zero/titan-platform/workforce";

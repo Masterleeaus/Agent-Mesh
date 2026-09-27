@@ -6,8 +6,8 @@ import type { PoolClient } from "pg";
 import {
   deriveWorkOrderStatus,
   type WorkOrderVisitSnapshot,
-} from "@ai-fsm/domain";
-import type { VisitStatus, WorkOrderStatus } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { VisitStatus, WorkOrderStatus } from "@titan-zero/domain";
 import { loadWorkOrderCompletionCriteria } from "@/lib/work-orders/task-time";
 
 /** Planning statuses that may already receive new execution visits. */

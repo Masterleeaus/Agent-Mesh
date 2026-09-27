@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui";
-import { JOB_TYPE_MATERIALS, getMaterialsByCategory } from "@ai-fsm/domain";
+import { JOB_TYPE_MATERIALS, getMaterialsByCategory } from "@titan-zero/domain";
 
 interface PartRow {
   id: string;

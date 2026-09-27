@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
-import { listBuilderItems, builderPropControls, builderCatalogPolicy, builderDataSourceOptions, builderActionOptions, builderFieldTargets, suggestBuilderFieldMap, coerceBuilderProp, type BuilderCatalogItem, type BuilderDocument, type BuilderNode } from "@ai-fsm/titan-platform/titan-builder";
+import { listBuilderItems, builderPropControls, builderCatalogPolicy, builderDataSourceOptions, builderActionOptions, builderFieldTargets, suggestBuilderFieldMap, coerceBuilderProp, type BuilderCatalogItem, type BuilderDocument, type BuilderNode } from "@titan-zero/titan-platform/titan-builder";
 import styles from "./BuilderStudio.module.css";
 import { StructuredPropEditor } from "./StructuredPropEditor";
 

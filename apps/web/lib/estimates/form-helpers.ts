@@ -1,4 +1,4 @@
-import type { PrepLevel, ShoppingList, EstimateResult, RoomSpec, ProjectOptions } from "@ai-fsm/domain";
+import type { PrepLevel, ShoppingList, EstimateResult, RoomSpec, ProjectOptions } from "@titan-zero/domain";
 import {
   buildShoppingList,
   buildShoppingListFromEstimateResult,
@@ -6,7 +6,7 @@ import {
   mergeDoorHardwareTakeoffIntoShoppingList,
   includesDoorHardwareCode,
   DOOR_HARDWARE_PRICE_BOOK_CODE,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import type { ScopeBuilderResult } from "@/components/ScopeBuilder";
 import type { PriceBookEntry } from "@/app/app/estimates/new/hooks/useEstimatePriceBook";
 
@@ -90,7 +90,7 @@ export const STEP_LABELS = ["Who & What", "Pricing", "Adjustments", "Review & Se
  */
 /**
  * Build a ShoppingList from an engine EstimateResult and source room specs.
- * @deprecated Use buildShoppingListFromEstimateResult from @ai-fsm/domain directly.
+ * @deprecated Use buildShoppingListFromEstimateResult from @titan-zero/domain directly.
  */
 export function buildShoppingListFromPaintingSummary(
   result: EstimateResult,

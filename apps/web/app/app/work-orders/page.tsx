@@ -14,7 +14,7 @@ import {
   HubSubnav,
 } from "@/components/ui";
 import type { StatusVariant } from "@/components/ui";
-import { WORK_ORDER_UI_STATUSES, WORK_ORDER_STATUS_LABELS } from "@ai-fsm/domain";
+import { WORK_ORDER_UI_STATUSES, WORK_ORDER_STATUS_LABELS } from "@titan-zero/domain";
 import { WORK_HUB_LINKS } from "@/lib/navigation/hubs";
 import { WorkOrderBoard } from "./WorkOrderBoard";
 

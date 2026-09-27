@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/Toast";
-import type { TravelSettings } from "@ai-fsm/domain";
-import { DEFAULT_TRAVEL_SETTINGS } from "@ai-fsm/domain";
+import type { TravelSettings } from "@titan-zero/domain";
+import { DEFAULT_TRAVEL_SETTINGS } from "@titan-zero/domain";
 
 interface MileageRateRow {
   id: string;

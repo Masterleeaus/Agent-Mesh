@@ -1,4 +1,4 @@
-import { ACTIVITY_TYPES, type ActivityType } from "@ai-fsm/domain";
+import { ACTIVITY_TYPES, type ActivityType } from "@titan-zero/domain";
 
 /**
  * Pick the activities to surface as one-tap quick-switch chips (TASK-021).

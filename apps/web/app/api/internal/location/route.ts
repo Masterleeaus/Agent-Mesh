@@ -17,7 +17,7 @@ import {
   shouldAutoStampPresence,
   resolveLocationPersonUserId,
   shouldLearnHomeCoords,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import type { PoolClient } from "pg";
 import { reduceLocationEvent, stopsAreSamePlace, type OpenSegment } from "@/lib/location/segments";
 import { sendPushToUser, sendPushToOwners } from "@/lib/push/send";

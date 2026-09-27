@@ -6,7 +6,7 @@ import {
   STOP_REASON_LABELS,
   stopRequiresNotes,
   type StopReason,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { Button, Card, SectionHeader, Textarea, useToast } from "@/components/ui";
 import { BUSINESS_TIMEZONE } from "@/lib/operations/business-day";
 import type { StopInterviewPayload, StopInterviewCard } from "@/lib/day-review/load-stop-interview";

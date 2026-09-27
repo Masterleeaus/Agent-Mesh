@@ -250,7 +250,7 @@ import {
   documentLinkSchema,
   createDocumentLinkSchema,
   documentLinkEntityTypeSchema,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 describe("documentLinkEntityTypeSchema", () => {
   const validTypes = ["expense", "job", "client", "property", "invoice", "estimate"];

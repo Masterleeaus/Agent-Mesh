@@ -30,8 +30,8 @@ import { SendSmsButton } from "./SendSmsButton";
 import { dollars } from "./client360-helpers";
 import { formatCents } from "@/lib/money";
 import { CopyPortalLinkButton } from "@/components/CopyPortalLinkButton";
-import { VAULT_CATEGORY_LABELS } from "@ai-fsm/domain";
-import type { VaultCategory } from "@ai-fsm/domain";
+import { VAULT_CATEGORY_LABELS } from "@titan-zero/domain";
+import type { VaultCategory } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

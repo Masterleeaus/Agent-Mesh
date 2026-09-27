@@ -1,5 +1,5 @@
-import type { ExpenseCategory } from "@ai-fsm/domain";
-import { EXPENSE_CATEGORY_LABELS } from "@ai-fsm/domain";
+import type { ExpenseCategory } from "@titan-zero/domain";
+import { EXPENSE_CATEGORY_LABELS } from "@titan-zero/domain";
 
 export function isValidMonthKey(monthKey: string): boolean {
   if (!/^\d{4}-\d{2}$/.test(monthKey)) {

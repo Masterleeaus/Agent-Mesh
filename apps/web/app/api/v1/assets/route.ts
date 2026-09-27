@@ -3,7 +3,7 @@ import { z } from "zod";
 import { withAuth, withRole } from "@/lib/auth/middleware";
 import { withAssetContext, listAssetLinks, createAssetLink, getAssetLinkConflicts } from "@/lib/homebox/db";
 import { appendAuditLog } from "@/lib/db/audit";
-import { assetLinkEntityTypeSchema } from "@ai-fsm/domain";
+import { assetLinkEntityTypeSchema } from "@titan-zero/domain";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";

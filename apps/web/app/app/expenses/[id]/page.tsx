@@ -6,8 +6,8 @@ import { withExpenseContext } from "@/lib/expenses/db";
 import { canManageExpenses } from "@/lib/auth/permissions";
 import { formatCentsToDollars } from "@/lib/expenses/math";
 import { categoryLabel, formatExpenseDate } from "@/lib/expenses/ui";
-import type { ExpenseCategory } from "@ai-fsm/domain";
-import { EXPENSE_CATEGORIES, EXPENSE_CATEGORY_LABELS } from "@ai-fsm/domain";
+import type { ExpenseCategory } from "@titan-zero/domain";
+import { EXPENSE_CATEGORIES, EXPENSE_CATEGORY_LABELS } from "@titan-zero/domain";
 import {
   Breadcrumbs,
   PageContainer,

@@ -9,7 +9,7 @@ import {
   CLASSIFICATION_TO_ACTIVITY,
   type ActivityType,
   type VisitClassification,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import {
   asTimelineEntry,
   proposeRebalance,

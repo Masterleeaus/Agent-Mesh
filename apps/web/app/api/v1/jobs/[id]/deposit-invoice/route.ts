@@ -3,7 +3,7 @@ import { withRole } from "@/lib/auth/middleware";
 import { appendAuditLog } from "@/lib/db/audit";
 import { withInvoiceContext, generateInvoiceNumber } from "@/lib/invoices/db";
 import { gatedDepositCents } from "@/lib/invoices/deposit";
-import { resolveDepositPolicy } from "@ai-fsm/domain";
+import { resolveDepositPolicy } from "@titan-zero/domain";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";

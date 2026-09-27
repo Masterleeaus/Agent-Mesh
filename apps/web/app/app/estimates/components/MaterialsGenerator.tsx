@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { AssessmentRoom } from "@ai-fsm/domain";
+import type { AssessmentRoom } from "@titan-zero/domain";
 import { preserveScope } from "@/lib/estimates/assessment-context";
 import { attachAiSnapshot } from "@/lib/estimates/materials-delta";
 import { MaterialsMetadata } from "./MaterialsMetadata";

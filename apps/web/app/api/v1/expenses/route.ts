@@ -5,7 +5,7 @@ import { withExpenseContext } from "@/lib/expenses/db";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
 import { isValidMonthKey } from "@/lib/expenses/ui";
-import { expenseCategorySchema } from "@ai-fsm/domain";
+import { expenseCategorySchema } from "@titan-zero/domain";
 import { attachFuelExpenseToVehicle } from "@/lib/expenses/attach-fuel-expense";
 import { gallonsFromParsedReceipt } from "@/lib/expenses/fuel-from-receipt";
 import {

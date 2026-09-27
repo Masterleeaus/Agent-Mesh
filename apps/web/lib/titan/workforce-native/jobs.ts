@@ -1,6 +1,6 @@
 import {buildNativeGovernance,applyNativeGovernanceHeaders} from "./governance";
 import type { AuthSession } from "@/lib/auth/middleware";
-import { buildTitanJobsPlan, type TitanJobsPlanInput } from "@ai-fsm/titan-platform/workforce-native";
+import { buildTitanJobsPlan, type TitanJobsPlanInput } from "@titan-zero/titan-platform/workforce-native";
 export type JobsNativeRequest = Omit<TitanJobsPlanInput,"companyId"|"actorId"> & {dryRun?:boolean};
 const ALLOWED_ROLES=new Set(["owner","admin"]);
 function assertRole(session:AuthSession){if(!ALLOWED_ROLES.has(session.role))throw new Error("ROLE_NOT_AUTHORIZED");}

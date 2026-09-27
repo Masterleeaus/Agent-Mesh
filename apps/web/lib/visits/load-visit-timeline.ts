@@ -8,7 +8,7 @@ import {
   type VisitTimelineActivityInput,
   type VisitTimelineEvent,
   type VisitTimelineVisitInput,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { query } from "@/lib/db";
 import { BUSINESS_TIMEZONE } from "@/lib/operations/business-day";
 

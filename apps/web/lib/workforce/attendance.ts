@@ -1,4 +1,4 @@
-import { clockDurationMinutes } from "@ai-fsm/domain";
+import { clockDurationMinutes } from "@titan-zero/domain";
 
 export interface AttendanceClockRow {
   user_id: string;

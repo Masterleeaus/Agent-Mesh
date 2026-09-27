@@ -2,7 +2,7 @@ import {
   hybridVerifyLabel,
   milesSourceLabel,
   type HybridMileageDaySummary,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 /**
  * Dual-path mileage card: odometer PRIMARY + GPS corroboration (TASK-091).

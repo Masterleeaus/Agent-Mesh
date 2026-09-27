@@ -8,8 +8,8 @@ import {
   JOB_ACCEPTANCE_CATEGORY_LABELS,
   JOB_INTAKE_DECISIONS,
   JOB_INTAKE_DECISION_LABELS,
-} from "@ai-fsm/domain";
-import type { JobAcceptanceCategory, JobIntakeDecision } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { JobAcceptanceCategory, JobIntakeDecision } from "@titan-zero/domain";
 
 interface Props {
   jobId: string;

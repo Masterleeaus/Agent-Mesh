@@ -1,5 +1,5 @@
 import type { PoolClient } from "pg";
-import { isDumpExpense } from "@ai-fsm/domain";
+import { isDumpExpense } from "@titan-zero/domain";
 import type { InvoiceLineItemRow } from "./line-items";
 import { createInvoiceLineItem } from "./line-items";
 

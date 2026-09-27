@@ -6,7 +6,7 @@ import {
   canBusinessOpsAction,
   resolveBusinessOpsCommand,
   type BusinessOpsCommandRequest,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { getSession } from "@/lib/auth/session";
 import { withTenantTransaction } from "@/lib/db/portable";
 import { appendAuditLog } from "@/lib/db/audit";

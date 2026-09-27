@@ -4,7 +4,7 @@ import {
   isGpsEstimateSource,
   mileageTagStrategy,
   type MilesSource,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 const PAD_MS = 30 * 60 * 1000;
 

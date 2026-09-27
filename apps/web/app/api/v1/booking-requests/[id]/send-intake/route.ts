@@ -5,7 +5,7 @@ import { withRole } from "@/lib/auth/middleware";
 import { portableQuery } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";
 import { sendEmail, appUrl, isEmailConfigured } from "@/lib/email/mailer";
-import { intakeInviteEmailHtml, intakeInviteEmailText } from "@ai-fsm/email-templates";
+import { intakeInviteEmailHtml, intakeInviteEmailText } from "@titan-zero/email-templates";
 import { logCommunication } from "@/lib/communications-log";
 
 export const dynamic = "force-dynamic";

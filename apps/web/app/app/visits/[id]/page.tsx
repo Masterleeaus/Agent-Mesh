@@ -21,7 +21,7 @@ import {
   type VaultCategory,
   type VaultCollectionStep,
   type MembershipRoutingZone,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { VisitAssignForm } from "./VisitAssignForm";
 import { OverdueVisitModal } from "./OverdueVisitModal";
 import { VisitRescheduleForm } from "./VisitRescheduleForm";

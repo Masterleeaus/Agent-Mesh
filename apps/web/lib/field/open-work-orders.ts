@@ -1,5 +1,5 @@
 import type { PoolClient } from "pg";
-import type { OpenWorkOrderOption } from "@ai-fsm/domain";
+import type { OpenWorkOrderOption } from "@titan-zero/domain";
 
 /**
  * Bookable / open work orders at a property for arrival-proposal resolution.

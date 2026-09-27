@@ -10,7 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "../../../../../../../lib/auth/middleware";
 import type { AuthSession } from "../../../../../../../lib/auth/middleware";
 import { logger } from "../../../../../../../lib/logger";
-import { updateChecklistItemSchema } from "@ai-fsm/domain";
+import { updateChecklistItemSchema } from "@titan-zero/domain";
 import {
   withChecklistContext,
   updateChecklistItem,

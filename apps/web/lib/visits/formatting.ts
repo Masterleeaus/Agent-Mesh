@@ -1,4 +1,4 @@
-import type { VisitStatus } from "@ai-fsm/domain";
+import type { VisitStatus } from "@titan-zero/domain";
 import {
   formatBusinessDate,
   formatBusinessTime,

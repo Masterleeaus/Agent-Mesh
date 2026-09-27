@@ -2,7 +2,7 @@ import type { PoolClient } from "pg";
 import {
   completionGateMessage,
   type CompletionCriterion,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export async function validateWorkOrderForeignKeys(
   client: PoolClient,

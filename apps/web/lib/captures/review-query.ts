@@ -2,7 +2,7 @@ import {
   pickReviewCaptures,
   PROMISE_ENTITY_TYPES,
   type PromiseEntityType,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { withDbSession } from "@/lib/db";
 import type { SessionPayload } from "@/lib/auth/session";
 

@@ -4,11 +4,11 @@ import { withInvoiceContext } from "@/lib/invoices/db";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
 import { sendEmail, appUrl, isEmailConfigured } from "@/lib/email/mailer";
-import { invoiceEmailHtml, invoiceEmailText } from "@ai-fsm/email-templates";
+import { invoiceEmailHtml, invoiceEmailText } from "@titan-zero/email-templates";
 import { logCommunication } from "@/lib/communications-log";
 import { loadInvoicePdf } from "@/lib/pdf/load";
 import { applyServiceMinimum, isServiceMinimumEligible } from "@/lib/invoices/service-minimum";
-import { dueDateUponCompletion, invoiceDueOnCompletion } from "@ai-fsm/domain";
+import { dueDateUponCompletion, invoiceDueOnCompletion } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

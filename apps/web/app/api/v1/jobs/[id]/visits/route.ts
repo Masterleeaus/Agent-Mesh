@@ -5,8 +5,8 @@ import {
   EXECUTION_VISIT_TYPES,
   FIELD_ACTIVE_VISIT_STATUSES,
   VISIT_TYPES,
-} from "@ai-fsm/domain";
-import type { VisitType } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { VisitType } from "@titan-zero/domain";
 import { syncWorkOrderLeadFromVisit } from "../../../../../../lib/work-orders/assign-lead";
 import {
   resolveWorkOrderForVisit,

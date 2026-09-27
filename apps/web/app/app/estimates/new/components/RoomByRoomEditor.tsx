@@ -8,8 +8,8 @@ import {
   computeEstimate,
   roomSpecsToEstimateSpec,
   CURRENT_RULES,
-} from "@ai-fsm/domain";
-import type { RoomSpec, RoomPrepLevel, PaintGrade, PaintSupplier, ProjectOptions, EstimateResult } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { RoomSpec, RoomPrepLevel, PaintGrade, PaintSupplier, ProjectOptions, EstimateResult } from "@titan-zero/domain";
 
 // ---------------------------------------------------------------------------
 // Types

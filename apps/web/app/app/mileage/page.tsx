@@ -16,7 +16,7 @@ import {
 } from "@/components/ui";
 import type { TabDef } from "@/components/ui";
 import { MONEY_HUB_LINKS } from "@/lib/navigation/hubs";
-import { groupMileageMonth, milesSourceLabel, type MilesSource } from "@ai-fsm/domain";
+import { groupMileageMonth, milesSourceLabel, type MilesSource } from "@titan-zero/domain";
 import { TagClaimControl } from "@/components/mileage/TagClaimControl";
 
 export const dynamic = "force-dynamic";

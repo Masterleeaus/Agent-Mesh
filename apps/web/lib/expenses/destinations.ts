@@ -1,4 +1,4 @@
-import type { ExpenseCategory } from "@ai-fsm/domain";
+import type { ExpenseCategory } from "@titan-zero/domain";
 
 export const RECEIPT_DESTINATIONS = ["job", "truck", "stock", "tools", "overhead"] as const;
 export type ReceiptDestination = (typeof RECEIPT_DESTINATIONS)[number];

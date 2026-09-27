@@ -7,7 +7,7 @@ import {
   ACTIVITY_TYPES,
   ACTIVITY_TYPE_META,
   type ActivityType,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { DayTimeSummary } from "./ActivityTracker";
 import type { ActivityEntryDto } from "@/lib/my-work/field-day-types";
 import { easternWallToUtc, formatBusinessTime, utcToEasternClock } from "@/lib/time/business-tz";

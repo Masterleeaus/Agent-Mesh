@@ -9,7 +9,7 @@
  */
 
 import Anthropic from "@anthropic-ai/sdk";
-import type { InterviewMessage, InterviewTurnResult, ExtractedFacts } from "@ai-fsm/domain";
+import type { InterviewMessage, InterviewTurnResult, ExtractedFacts } from "@titan-zero/domain";
 
 // ---------------------------------------------------------------------------
 // System prompt

@@ -4,7 +4,7 @@ import { withRole } from "@/lib/auth/middleware";
 import { portableQuery, withPortableTransaction } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";
 import { createIntakeRecords } from "../../../../lib/intake/records";
-import { bookingRequestStatusSchema } from "@ai-fsm/domain";
+import { bookingRequestStatusSchema } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

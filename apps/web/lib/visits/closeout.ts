@@ -6,7 +6,7 @@ import {
   visitTransitions,
   type VisitCloseoutBody,
   type VisitStatus,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { checkCompletionPacket, isQuickJobPacketExempt } from "@/lib/completion-guard";
 import { appendAuditLog } from "@/lib/db/audit";
 import { createDraftFinalInvoiceForJob } from "@/lib/invoices/final-invoice";
