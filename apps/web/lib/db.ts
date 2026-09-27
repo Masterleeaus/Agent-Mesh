@@ -3,6 +3,9 @@ import type { PoolClient } from "pg";
 import { getEnv } from "./env";
 import type { SessionPayload } from "./auth/session";
 
+export { getDatabaseDialect, inferDatabaseDialect } from "./db/dialect";
+export type { DatabaseDialect } from "./db/dialect";
+
 let pool: Pool | null = null;
 
 export function getPool(): Pool {
