@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1057,
+  "fileCount": 1056,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -5272,11 +5272,6 @@
       "path": "tools/generate-source-manifest.mjs",
       "bytes": 1676,
       "sha256": "678948639231452dbd05e94ff40f81c511f98c92f29c8dfe7a48f641464da702"
-    },
-    {
-      "path": "tools/prune-legacy-manager-runtime.mjs",
-      "bytes": 3575,
-      "sha256": "098d4aa77bb742a5055189ae98073e18e7a295b8f1af0e0e83df62b6ef0c8a61"
     },
     {
       "path": "tools/test-worker-vm-preload.cjs",
