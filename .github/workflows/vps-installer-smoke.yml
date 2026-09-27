@@ -1,35 +1,46 @@
-name: VPS installer smoke
+name: VPS SQLite installer smoke
 
 on:
   pull_request:
     paths:
       - 'scripts/vps/**'
+      - 'scripts/sqlite-migrate.mjs'
+      - 'db/sqlite/**'
       - 'infra/compose.vps.yml'
       - 'infra/vps.env.example'
       - 'apps/web/Dockerfile'
-      - 'apps/web/next.config.mjs'
       - 'services/worker/Dockerfile'
       - '.github/workflows/vps-installer-smoke.yml'
   workflow_dispatch:
 
 jobs:
-  compose-and-build:
+  sqlite-compose-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Validate VPS scripts and Compose
+      - uses: pnpm/action-setup@v4
+        with: {version: 9.12.0}
+      - uses: actions/setup-node@v4
+        with: {node-version: 20, cache: pnpm}
+      - run: pnpm install --frozen-lockfile
+      - name: Validate SQLite VPS scripts and migration
         shell: bash
         run: |
-          bash -n scripts/vps/install-vps.sh
+          bash -n scripts/vps/install-sqlite-vps.sh
           bash -n scripts/vps/backup-vps.sh
-          bash -n scripts/vps/update-vps.sh
+          rm -rf "$RUNNER_TEMP/titan-data"
+          SQLITE_PATH="$RUNNER_TEMP/titan-data/titan-zero.db" node scripts/sqlite-migrate.mjs
+          test -s "$RUNNER_TEMP/titan-data/titan-zero.db"
+      - name: Assert production Compose is PostgreSQL-independent
+        shell: bash
+        run: |
           cp infra/vps.env.example .env.vps
           sed -i 's/GENERATED_BY_INSTALLER/local-smoke-test-only/g' .env.vps
-          TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
-            docker compose --env-file .env.vps -f infra/compose.vps.yml config -q
-      - name: Build VPS images
+          TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/runtime" docker compose --env-file .env.vps -f infra/compose.vps.yml config > "$RUNNER_TEMP/compose.txt"
+          ! grep -qi 'postgres' "$RUNNER_TEMP/compose.txt"
+          grep -q 'DATABASE_DIALECT: sqlite' "$RUNNER_TEMP/compose.txt"
+      - name: Build SQLite VPS images
         shell: bash
         run: |
-          TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
-            docker compose --env-file .env.vps -f infra/compose.vps.yml build web worker
+          TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/runtime" docker compose --env-file .env.vps -f infra/compose.vps.yml build web worker
