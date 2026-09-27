@@ -11,7 +11,7 @@ export function markBrowserObservationUntrusted(observation) {
   return Object.freeze({ source: 'browser', trust: 'untrusted_external', may_define_authority: false, content: observation });
 }
 
-export function createBrowserNodeProvider({ id = 'browser-node.local', company_id, sessions, allowedDomains = [], blockedDomains = [], executor }) {
+export function createBrowserNodeProvider({ id = 'browser-node.local', company_id, sessions, allowedDomains = [], blockedDomains = [], executor, verifyOutcome }) {
   if (!company_id) throw new ExecutionError('INVALID_BROWSER_NODE', 'Browser Node requires company_id');
   return {
     id, company_id, executionClass: EXECUTION_CLASSES.OPERATED, capabilities: ['browser.open','browser.navigate','browser.read','browser.click','browser.type','browser.select','browser.scroll','browser.screenshot','browser.tabs','browser.download','browser.upload','browser.evaluate','browser.wait'],
@@ -27,9 +27,13 @@ export function createBrowserNodeProvider({ id = 'browser-node.local', company_i
       const result = await executor({ action, session, input: request.input ?? {}, externalContentTrust: 'untrusted_external' });
       if (result?.requires_mfa) return { state: EXECUTION_STATES.WAITING_MFA, external_ref: result.external_ref };
       if (result?.requires_login) return { state: EXECUTION_STATES.WAITING_USER_AUTH, external_ref: result.external_ref };
-      return { ...result, verified: result?.verified === true, verification: result?.verification ?? null };
+      if (result?.requires_approval) return { state: EXECUTION_STATES.WAITING_APPROVAL, external_ref: result.external_ref };
+      return { external_ref: result?.external_ref ?? null, session_id: session.id ?? request.input?.session_id, acknowledgement: true };
     },
-    async verify(raw) { return raw?.verified === true; },
+    async verify(raw, request) {
+      if (typeof verifyOutcome !== 'function') return false;
+      return verifyOutcome({ request, session_id: raw.session_id, external_ref: raw.external_ref, executor });
+    },
   };
 }
 
