@@ -13,17 +13,17 @@ context.importScripts=(...urls)=>{for(const url of urls){const file=path.resolve
 vm.runInContext(source,context,{filename:'service-worker.js'});
 (async()=>{
  const payload=await context.getCapabilityRegistryPayload();
- assert.strictEqual(payload.registry.prompts.length,89);
- assert.strictEqual(payload.registry.prompts.filter(p=>p.category==='Managers & AI Workforce').length,30);
- assert.strictEqual(payload.registry.skills.length,100);
- assert.strictEqual(payload.registry.skills.filter(p=>p.category==='Managers & AI Workforce').length,34);
- assert.strictEqual(payload.registry.profiles.length,38);
- assert.strictEqual(payload.registry.managers.length,14);
+ assert.strictEqual(payload.registry.prompts.filter(p=>p.category==='Managers & AI Workforce').length,30,'workforce prompts must remain available');
+ assert.strictEqual(payload.registry.skills.filter(p=>p.category==='Managers & AI Workforce').length,34,'workforce skills must remain available');
+ assert.strictEqual(payload.registry.prompts.filter(p=>p.category==='Repository & Coding Intelligence').length,0,'repository developer prompts must stay unloaded');
+ assert.strictEqual(payload.registry.skills.filter(p=>p.category==='Repository & Coding Intelligence').length,0,'repository developer skills must stay unloaded');
+ assert.strictEqual(payload.registry.profiles.filter(p=>String(p.category||'').includes('Repository')).length,0,'repository developer profiles must stay unloaded');
+ assert.strictEqual(payload.registry.managers.length,14,'manager registry must remain operational');
  assert.strictEqual(payload.titanZeroSettings.ignoreExtensions,false);
  assert.strictEqual(payload.titanZeroSettings.includeExtensions,true);
  assert.strictEqual(payload.titanZeroSettings.parseSqlRows,false);
- assert.strictEqual(payload.registry.repositoryCapabilities.length,28);
+ assert.strictEqual(payload.registry.repositoryCapabilities.length,28,'repository compatibility capabilities must remain operational');
  assert.strictEqual(payload.repositorySettings.includeExtensions,true);
  assert.strictEqual(payload.repositorySettings.requireVerifiedBackupBeforeMutation,true);
- console.log('Titan Zero worker import/runtime registration OK');
+ console.log('Titan Zero Browser Node operational runtime registration OK without development catalogues');
 })().catch(e=>{console.error(e);process.exit(1)});
