@@ -17,7 +17,7 @@ export default async function ZeroPage() {
 
   return (
     <PageContainer>
-      <ZeroChatFirst pulse={pulse} />
+      <ZeroChatFirst companyId={session.accountId} pulse={pulse} />
       <p style={{ color: "var(--fg-muted)", margin: 0 }}>
         Live company-scoped state from Titan&apos;s business and workforce stores. Zero is a projection and control surface, not a second source of truth.
       </p>

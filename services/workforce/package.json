@@ -2,6 +2,14 @@
   "name": "@titan-zero/workforce",
   "private": true,
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./runtime-adapter": "./src/runtime-adapter.ts",
+    "./sqlite-store": "./src/sqlite-store.ts"
+  },
+  "dependencies": {
+    "@titan-zero/storage": "workspace:*"
+  },
   "scripts": {
     "test": "tsx --test src/*.test.ts",
     "typecheck": "tsc --noEmit"

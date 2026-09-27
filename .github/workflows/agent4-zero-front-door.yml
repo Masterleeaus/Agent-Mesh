@@ -1,0 +1,38 @@
+name: Agent 4 Zero Front Door
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/app/api/v1/zero/**"
+      - "apps/web/app/app/ZeroChatFirst.tsx"
+      - "apps/web/app/app/zero/page.tsx"
+      - "apps/web/app/titan/runtime/zero-http-transport*"
+      - "apps/web/lib/zero/runtime-dispatch*"
+      - "packages/titan-platform/src/runtime.ts"
+      - "packages/workforce/package.json"
+      - "services/workforce/package.json"
+      - ".github/workflows/agent4-zero-front-door.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Canonical workforce package resolves uniquely
+        run: pnpm --filter @titan-zero/workforce typecheck && pnpm --filter @titan-zero/workforce test
+      - name: Zero transport and fail-closed dispatch
+        run: pnpm --dir apps/web exec vitest run lib/zero/runtime-dispatch.test.ts app/titan/runtime/zero-http-transport.test.ts
