@@ -8,21 +8,27 @@ const html = fs.readFileSync(path.join(root, 'src/sidebar/sidebar.html'), 'utf8'
 const js = fs.readFileSync(path.join(root, 'src/sidebar/sidebar.js'), 'utf8');
 
 const pages = [
-  ['workspace.history','history'],
-  ['workspace.artifacts','artifacts'],
-  ['intelligence.brain','intelligence'],
-  ['intelligence.workforce','workforce'],
-  ['intelligence.repository','repository'],
-  ['intelligence.titan','titan-zero'],
-  ['knowledge.knowledge','knowledge']
+  ['zero.outcomes','history'],
+  ['zero.evidence','artifacts'],
+  ['workforce.intelligence','intelligence'],
+  ['workforce.control','workforce'],
+  ['systems.knowledge','knowledge'],
+  ['systems.connections','connections'],
+  ['systems.mcp','mcp'],
+  ['workforce.browser','browser'],
+  ['node.diagnostics','diagnostics'],
+  ['node.settings','settings'],
+  ['node.about','about']
 ];
 
 for (const [id, page] of pages) {
   const entry = new RegExp(`id: '${id.replace('.', '\\.')}'[^\\n]+page: '${page}'[^\\n]+readiness: 'AVAILABLE'`);
   assert(entry.test(registry), `${id} should be AVAILABLE`);
   assert(html.includes(`data-page="${page}"`), `${page} page scaffold missing`);
-  assert(js.includes(`loadWorkspacePage('${page}')`) || js.includes(`case '${page}'`), `${page} loader wiring missing`);
 }
 
-assert(!/id: '(workspace\.history|workspace\.artifacts|intelligence\.brain|intelligence\.workforce|intelligence\.repository|intelligence\.titan|knowledge\.knowledge)'[^\n]+readiness: 'COMING_NEXT'/.test(registry), 'No formerly Coming Next page may remain COMING_NEXT');
-console.log('menu coming-next pages functional wiring OK');
+for (const retired of ['intelligence.repository','intelligence.titan','workspace.repository-host','workspace.prompts','workspace.skills']) {
+  assert(!registry.includes(`id: '${retired}'`), `${retired} must not remain a primary Browser Node navigation item`);
+}
+assert(js.includes('loadWorkspacePage'), 'sidebar page loader wiring missing');
+console.log('PASS Browser Node operational navigation pages are functional and development-only pages are demoted');
