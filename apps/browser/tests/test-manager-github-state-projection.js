@@ -4,7 +4,7 @@ for(const file of ['src/titan-zero/manager-github-state.js','src/titan-zero/mana
 const G=s.TitanCodeManagerGitHubStateProjection, main='a'.repeat(40), base='a'.repeat(40), head='b'.repeat(40);
 assert.strictEqual(G.branchFor('SG04'),'agent/SG04');
 let x=G.derive({subgoalId:'SG04',mainSha:main,issue:{number:722,state:'open',subgoalId:'SG04'}});
-assert.strictEqual(x.state,'AVAILABLE');assert.strictEqual(x.authority,'github');
+assert.strictEqual(x.state,'AVAILABLE');assert.strictEqual(x.authority.durableTruth,'github');assert.strictEqual(x.authority.claim,'git-branch-ref');assert.strictEqual(x.authority.aiMaySet,false);
 x=G.derive({subgoalId:'SG04',mainSha:main,baseSha:base,headSha:base,issue:{number:722,state:'open'},branch:{exists:true}});
 assert.strictEqual(x.state,'CLAIMED');
 x=G.derive({subgoalId:'SG04',mainSha:main,baseSha:base,headSha:head,issue:{number:722,state:'open'},branch:{exists:true}});
