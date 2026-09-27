@@ -10,11 +10,18 @@ const before = source;
 
 // Repair malformed function seams produced by the original one-shot prune.
 source = source.replace('\n(options = {}) {\n', '\nasync function getMcpInspectorPayload(options = {}) {\n');
-if (!source.includes('async function getTitanZeroStatus() {') && source.includes('\n    const ready = await ensureTitanZeroRegistered();')) {
-  source = source.replace(
-    '\n    const ready = await ensureTitanZeroRegistered();',
-    '\nasync function getTitanZeroStatus() {\n    const ready = await ensureTitanZeroRegistered();'
-  );
+source = source.replace(
+  'async function analyzeTitanZeroSnapshot(snapshot, options = {}) {\nasync function getTitanZeroStatus() {\n',
+  'async function analyzeTitanZeroSnapshot(snapshot, options = {}) {\n'
+);
+if (!source.includes('async function getTitanZeroStatus() {')) {
+  const statusSeam = "        report: analysis.report || null\n    };\n}\n\n\n    const ready = await ensureTitanZeroRegistered();";
+  if (source.includes(statusSeam)) {
+    source = source.replace(
+      statusSeam,
+      "        report: analysis.report || null\n    };\n}\n\nasync function getTitanZeroStatus() {\n    const ready = await ensureTitanZeroRegistered();"
+    );
+  }
 }
 
 const stillHasManagerRuntime = [
@@ -63,9 +70,13 @@ for (const forbidden of [
 }
 for (const required of [
   'async function getMcpInspectorPayload(options = {}) {',
+  'async function analyzeTitanZeroSnapshot(snapshot, options = {}) {',
   'async function getTitanZeroStatus() {'
 ]) {
   if (!source.includes(required)) throw new Error(`Required Browser Node function seam is missing: ${required}`);
+}
+if (source.includes('async function analyzeTitanZeroSnapshot(snapshot, options = {}) {\nasync function getTitanZeroStatus() {')) {
+  throw new Error('Titan Zero status function is incorrectly nested inside analysis function');
 }
 
 if (source === before) {
