@@ -9,7 +9,7 @@ const baseline = require('../src/intelligence/baseline.js').getProgramBaseline()
 
 assert.strictEqual(ledger.schemaVersion, 1);
 assert.strictEqual(ledger.baselineVersion, JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8')).version);
-assert.strictEqual(ledger.program, 'Codee Browser Intelligence');
+assert.strictEqual(ledger.program, 'Titan Zero Browser Node Intelligence');
 assert.ok(Number.isInteger(ledger.pass) && ledger.pass >= 1, 'baseline pass must advance monotonically');
 assert.deepStrictEqual(ledger.statusVocabulary, ['COMPLETE', 'PARTIAL', 'CONTRACT_ONLY', 'DEAD', 'DUPLICATE', 'MISSING']);
 assert.ok(Array.isArray(ledger.subsystems) && ledger.subsystems.length >= 20);
@@ -24,4 +24,4 @@ assert.deepStrictEqual(baseline.optionalAccelerators, ['ollama']);
 assert.strictEqual(baseline.authorityModel, 'advisory-ai-governed-effects');
 assert.ok(ledger.invariants.some((x) => /multi-conversation/i.test(x)));
 assert.ok(ledger.invariants.some((x) => /self-authorize/i.test(x)));
-console.log('PASS browser intelligence canonical baseline pass 1');
+console.log('PASS Titan Zero Browser Node intelligence canonical baseline');
