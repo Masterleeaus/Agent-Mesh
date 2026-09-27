@@ -35,10 +35,6 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      # The repository root lockfile is currently stale relative to package.json
-      # (better-sqlite3 was added without a lockfile refresh). That is tracked as
-      # a production-readiness finding; this focused verifier must still reach the
-      # acceptance tests so we can diagnose the canonical runtime itself.
       - name: Install dependencies for focused verification
         run: pnpm install --no-frozen-lockfile
 
@@ -53,6 +49,27 @@ jobs:
 
       - name: Governed execution gateway tests
         run: node --test packages/tools/execution-gateway.test.mjs
+
+  zero-governance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies for Zero verification
+        run: pnpm install --no-frozen-lockfile
 
       - name: Compile Zero governance seams
         run: pnpm --filter @titan-zero/titan-platform exec tsc -p tsconfig.json --noEmit false --outDir .zero-test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false
