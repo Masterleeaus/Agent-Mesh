@@ -55,7 +55,6 @@ const htmlBefore = html;
 html = html.replaceAll('Titan Code', 'Titan Zero Browser Node');
 html = html.replaceAll('TITAN CODE', 'TITAN ZERO');
 html = html.replaceAll('../../public/branding/codee-logo.png', '../../public/branding/titan-zero-browser-node.svg');
-html = html.replaceAll('alt="Titan Zero Browser Node logo"', 'alt="Titan Zero Browser Node logo"');
 html = html.replace('<title>Titan Zero Browser Node - Plan Runner</title>', '<title>Titan Zero Browser Node</title>');
 html = html.replace('aria-label="Titan Zero Browser Node pages"', 'aria-label="Titan Zero Browser Node navigation"');
 html = html.replace('<span>Workspace</span>', '<span>Browser Node</span>');
@@ -69,8 +68,11 @@ html = html.replace(/\s*<button class="btn btn-secondary" type="button" data-das
 html = html.replace(/\s*<button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-ask-codee">Ask Titan Zero Browser Node<\/button>/g, '');
 html = html.replace('▶ Run a Plan', '▶ Run Governed Work');
 html = html.replace('Paste a plan or load a local Markdown/text file.', 'Provide a governed work instruction or load a local work specification.');
-html = html.replace('<h2>◈ Managers & AI Workforce</h2>', '<h2>◈ Titan AI Workforce</h2>');
+html = html.replaceAll('Managers & AI Workforce', 'Titan AI Workforce');
 html = html.replace('Route the task to specialist managers and prepare evidence requests. Managers are advisory and cannot advance plans.', 'Route governed browser work to the Titan AI Workforce and prepare evidence requests. Workforce recommendations never create execution authority.');
+html = html.replace('Specialist managers classify tasks, select evidence and prepare plan drafts. They never advance Titan Zero Browser Node plans or mutate systems directly.', 'Titan workforce specialists classify work, select evidence and prepare governed work drafts. They never create execution authority or mutate systems directly.');
+html = html.replace('Enable manager routing', 'Enable workforce routing');
+html = html.replace('Select a primary manager plus bounded supporting specialists for each task.', 'Select the appropriate workforce specialist plus bounded supporting specialists for each work item.');
 html = html.replace('Analyze Managers', 'Analyze Workforce');
 html = html.replace('Create Plan Draft', 'Prepare Work Draft');
 html = html.replace('No manager preflight yet.', 'No workforce preflight yet.');
@@ -80,7 +82,9 @@ if (!html.includes('<title>Titan Zero Browser Node</title>')) throw new Error('B
 if (!html.includes('aria-label="Titan Zero Browser Node navigation"')) throw new Error('Browser Node navigation label conversion failed');
 if (!html.includes('<strong>TITAN ZERO</strong>')) throw new Error('Browser Node drawer branding conversion failed');
 if (!html.includes('<h1>TITAN ZERO</h1>')) throw new Error('Browser Node header branding conversion failed');
-if (html.includes('<title>Titan Code') || html.includes('TITAN CODE') || html.includes('14-manager runtime')) throw new Error('legacy visible branding remains');
+for (const forbidden of ['<title>Titan Code', 'TITAN CODE', '14-manager runtime', 'Managers & AI Workforce']) {
+  if (html.includes(forbidden)) throw new Error(`legacy visible branding remains: ${forbidden}`);
+}
 if (html !== htmlBefore) fs.writeFileSync(sidebarPath, html);
 
 console.log(JSON.stringify({ restoredCompatibilityImports: missing.length, workerChanged: worker !== workerBefore, sidebarChanged: html !== htmlBefore }, null, 2));
