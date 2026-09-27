@@ -367,7 +367,7 @@
     },
     {
       "title": "Implement governed payment acceptance across ZeroPay, PayID, QR, bank and cash rails using one canonical payment workforce",
-      "status": "TODO",
+      "status": "COMPLETE",
       "subgoal_order": 3,
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -377,7 +377,7 @@
         "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
       },
       "completion_basis": "acceptance gates and complete outcome, not planned pass count",
-      "claimable": true,
+      "claimable": false,
       "priority": "P1",
       "mvp_required": false,
       "reuse_first": true,
@@ -390,7 +390,7 @@
       ],
       "subgoal_id": "TZ-ROADMAP-14-SG-03",
       "execution": {
-        "state": "UNCLAIMED",
+        "state": "COMPLETE",
         "claimed_by": null,
         "claimed_at": null,
         "last_heartbeat_at": null,
@@ -400,7 +400,11 @@
         "final_cumulative_delta": null,
         "checkpoint_counter": 0,
         "checkpoint_history": [],
-        "next_checkpoint_due_after_pass": 4
+        "next_checkpoint_due_after_pass": 4,
+        "completed_at": "2026-09-27T12:23:31Z",
+        "merged_pr_number": 861,
+        "merge_sha": "63f237cebbcf4418e43ea743de5790470ba2cbb2",
+        "claim_branch": "agent/TZ-ROADMAP-14-SG-03"
       },
       "agent_model": {
         "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
@@ -497,6 +501,14 @@
         "last_scanned_at_utc": "2026-09-19T17:20:30Z",
         "scan_notes": "Use one Payment Acceptance Specialist across rails. Payment providers/rails remain capabilities/tools; no direct provider-specific agent identities.",
         "exhaustion_evidence": null
+      },
+      "completion_receipt": {
+        "source": "GITHUB_MANAGER_MERGE",
+        "pr_number": 861,
+        "issue_number": 809,
+        "merge_sha": "63f237cebbcf4418e43ea743de5790470ba2cbb2",
+        "head_branch": "agent/TZ-ROADMAP-14-SG-03",
+        "merged_at_utc": "2026-09-27T12:23:31Z"
       }
     },
     {
@@ -1575,7 +1587,7 @@
   "preferred_successors": [],
   "agent_tier_contract_required": false,
   "last_canonical_revalidation": null,
-  "progress_percent": 0,
+  "progress_percent": 10,
   "goal_is_planning_container": true,
   "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
   "unified_architecture_contract_required": true,

@@ -1282,7 +1282,7 @@
     "goal_id": "TZ-ROADMAP-14",
     "goal_title": "Finance, Invoicing & Payments",
     "title": "Implement governed payment acceptance across ZeroPay, PayID, QR, bank and cash rails using one canonical payment workforce",
-    "status": "TODO",
+    "status": "COMPLETE",
     "priority": "P1",
     "mvp_required": false
   },
