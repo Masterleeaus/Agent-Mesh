@@ -1,0 +1,31 @@
+{
+  "id": "onboarding",
+  "name": "Titan Onboarding",
+  "product": "Titan Onboarding",
+  "runtime_owner": "Titan Mobile / Titan Onboarding",
+  "connectivity": "online-first",
+  "offline_fallback": "safe-shell-and-recoverable-draft-only-when-mobilecore-supports-it",
+  "authority": "presentation-only",
+  "default_template": "onboarding",
+  "allowed_devices": [
+    "mobile",
+    "tablet",
+    "desktop"
+  ],
+  "required_capabilities": [
+    "mobile.onboarding",
+    "titan-ai.runtime",
+    "interaction-engine.runtime",
+    "crm.business.configuration",
+    "builder.application.configure"
+  ],
+  "preview_states": [
+    "online",
+    "offline",
+    "empty",
+    "populated",
+    "loading",
+    "error",
+    "permission-denied"
+  ]
+}

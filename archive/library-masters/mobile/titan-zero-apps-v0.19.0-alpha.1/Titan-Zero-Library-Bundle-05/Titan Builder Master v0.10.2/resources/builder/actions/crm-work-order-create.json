@@ -1,0 +1,14 @@
+{
+  "id": "crm.work_order.create",
+  "name": "crm.work_order.create",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "crm",
+  "required_capability": "crm.customer.operations",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

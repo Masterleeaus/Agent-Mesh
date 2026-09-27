@@ -1,0 +1,15 @@
+{
+  "id": "settings-layout",
+  "name": "Settings layout",
+  "category": "Layout",
+  "blade": "components.titan-builder.settings-layout",
+  "authority": "presentation-only",
+  "props": [
+    "sections",
+    "active"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

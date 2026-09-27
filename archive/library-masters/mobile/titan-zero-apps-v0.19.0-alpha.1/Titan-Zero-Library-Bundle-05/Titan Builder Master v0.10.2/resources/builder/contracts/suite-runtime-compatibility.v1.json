@@ -1,0 +1,24 @@
+{
+  "schema": "titan-builder-suite-runtime-compatibility-v1",
+  "suite_pass": 4,
+  "source": "Titan-Apps-Eight-Suite-Interface-Recovery-Rebase-Pass4-CUMULATIVE",
+  "canonical_surfaces": [
+    "zero",
+    "go",
+    "hub"
+  ],
+  "company_boundary": "company_id",
+  "ownership_boundary_not_isolation": true,
+  "interface_runtime": {
+    "version": "1.0.4-recovery.2",
+    "catalogue_contract": "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\BuilderCatalogue",
+    "live_adapter": "App\\Extensions\\TitanInterfaceRuntime\\System\\Catalogue\\InstalledBuilderCatalogue",
+    "builder_contract": "App\\Extensions\\TitanBuilder\\System\\Contracts\\ComponentRegistry",
+    "method": "find"
+  },
+  "core_expected_public_contracts": [
+    "App\\Extensions\\TitanBuilder\\System\\Contracts\\ComponentRegistry",
+    "App\\Extensions\\TitanBuilder\\System\\Contracts\\SurfaceRegistry"
+  ],
+  "interaction_authority": "App\\Extensions\\InteractionEngine\\System\\Contracts\\CapabilityIntentGatewayInterface"
+}

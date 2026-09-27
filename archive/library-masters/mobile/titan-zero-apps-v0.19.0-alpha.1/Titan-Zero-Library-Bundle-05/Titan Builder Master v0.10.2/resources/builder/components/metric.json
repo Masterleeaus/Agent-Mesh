@@ -1,0 +1,17 @@
+{
+  "id": "metric",
+  "name": "Metric",
+  "category": "Data Display",
+  "blade": "components.titan-builder.metric",
+  "authority": "presentation-only",
+  "props": [
+    "label",
+    "value",
+    "change",
+    "trend"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

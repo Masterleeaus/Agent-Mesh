@@ -1,0 +1,24 @@
+{
+  "slug": "pest-control",
+  "profile": "field_home_services",
+  "terminology": [
+    "treatment",
+    "site"
+  ],
+  "required_evidence_suggestions": [
+    "before_photo",
+    "after_photo",
+    "treatment_record"
+  ],
+  "suggested_services": [
+    "General pest treatment",
+    "Inspection",
+    "Rodent control"
+  ],
+  "compliance_prompts": [
+    "licensing, chemical and treatment record requirements"
+  ],
+  "wizard_overrides": {
+    "engine_logic": "unchanged"
+  }
+}

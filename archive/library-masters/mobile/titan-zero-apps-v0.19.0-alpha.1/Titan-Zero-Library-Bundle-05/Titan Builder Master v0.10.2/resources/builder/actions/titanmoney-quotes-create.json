@@ -1,0 +1,14 @@
+{
+  "id": "titanmoney.quotes.create",
+  "name": "titanmoney.quotes.create",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "payments",
+  "required_capability": "titan-money.quotes",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

@@ -1,0 +1,9 @@
+@extends('titan-builder::management.layout')
+@section('content')
+<form class="tbm-panel tbm-settings-form" method="post" action="{{ route('titan-builder.manage.settings.update') }}">@csrf @method('PATCH')
+<p class="tbm-eyebrow">Company defaults</p><h2>Builder settings</h2>
+<div class="tbm-form-grid"><label>Default app<select name="default_surface">@foreach(['customer'=>'Titan Hub','field'=>'Titan Go','owner'=>'Titan Command','onboarding'=>'Titan Onboarding'] as $value=>$label)<option value="{{ $value }}" @selected($settings['default_surface']===$value)>{{ $label }}</option>@endforeach</select></label><label>Preview device<select name="preview_device">@foreach(['mobile','tablet','desktop'] as $value)<option @selected($settings['preview_device']===$value)>{{ $value }}</option>@endforeach</select></label><label>Preview state<select name="preview_network_state">@foreach(['online','offline','syncing','conflict','empty','populated','loading','error','permission-denied'] as $value)<option @selected($settings['preview_network_state']===$value)>{{ $value }}</option>@endforeach</select></label><label>Theme mode<select name="default_theme_mode">@foreach(['system','light','dark'] as $value)<option @selected($settings['default_theme_mode']===$value)>{{ $value }}</option>@endforeach</select></label></div>
+<div class="tbm-toggle-grid">@foreach(['ai_assistance'=>'TitanAI authoring assistance','show_readiness_warnings'=>'Show readiness warnings','compact_navigation'=>'Compact management navigation','reduced_motion'=>'Reduce management UI motion'] as $key=>$label)<label class="tbm-toggle"><input type="checkbox" name="{{ $key }}" value="1" @checked($settings[$key])><span></span>{{ $label }}</label>@endforeach</div>
+<button class="tbm-button is-primary" type="submit">Save settings</button>
+</form>
+@endsection

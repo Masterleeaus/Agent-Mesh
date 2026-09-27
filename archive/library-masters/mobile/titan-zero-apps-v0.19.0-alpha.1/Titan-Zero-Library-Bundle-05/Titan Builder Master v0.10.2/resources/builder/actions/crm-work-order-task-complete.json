@@ -1,0 +1,14 @@
+{
+  "id": "crm.work_order.task.complete",
+  "name": "crm.work_order.task.complete",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "crm",
+  "required_capability": "crm.field.offline",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

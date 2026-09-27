@@ -1,0 +1,261 @@
+{
+  "id": "cleaning-business",
+  "business": {
+    "name": "BrightHome Cleaning",
+    "tagline": "Reliable cleaning for homes, offices and managed properties",
+    "phone": "1300 555 019",
+    "email": "hello@brighthome.example"
+  },
+  "stats": [
+    {
+      "title": "Today’s jobs",
+      "value": "12",
+      "description": "3 awaiting dispatch"
+    },
+    {
+      "title": "Active cleaners",
+      "value": "8",
+      "description": "2 available now"
+    },
+    {
+      "title": "Outstanding",
+      "value": "$4,860",
+      "description": "Across 14 invoices"
+    },
+    {
+      "title": "Customer rating",
+      "value": "4.9",
+      "description": "Last 90 days"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "JOB-1042",
+      "customer": "Alex Morgan",
+      "property": "12 Ocean Street",
+      "service": "End-of-lease clean",
+      "time": "8:30 am",
+      "status": "Assigned",
+      "worker": "Sam Lee"
+    },
+    {
+      "id": "JOB-1043",
+      "customer": "Harbour Offices",
+      "property": "88 King Road",
+      "service": "Commercial clean",
+      "time": "10:00 am",
+      "status": "In progress",
+      "worker": "Mia Chen"
+    },
+    {
+      "id": "JOB-1044",
+      "customer": "Priya Shah",
+      "property": "5 Garden Lane",
+      "service": "Weekly home clean",
+      "time": "1:30 pm",
+      "status": "Unassigned",
+      "worker": "—"
+    },
+    {
+      "id": "JOB-1045",
+      "customer": "Northside Realty",
+      "property": "Unit 7, 24 Lake Ave",
+      "service": "Inspection clean",
+      "time": "3:00 pm",
+      "status": "Scheduled",
+      "worker": "Noah Kim"
+    }
+  ],
+  "properties": [
+    {
+      "name": "Ocean Street Residence",
+      "address": "12 Ocean Street",
+      "type": "Residential",
+      "open_jobs": 2,
+      "status": "Active"
+    },
+    {
+      "name": "Harbour Offices",
+      "address": "88 King Road",
+      "type": "Commercial",
+      "open_jobs": 1,
+      "status": "Active"
+    },
+    {
+      "name": "Lake Avenue Apartments",
+      "address": "24 Lake Avenue",
+      "type": "Multi-unit",
+      "open_jobs": 4,
+      "status": "Attention"
+    }
+  ],
+  "invoices": [
+    {
+      "number": "INV-2081",
+      "customer": "Harbour Offices",
+      "amount": "$1,320.00",
+      "due": "29 Jul 2026",
+      "status": "Sent"
+    },
+    {
+      "number": "INV-2078",
+      "customer": "Northside Realty",
+      "amount": "$840.00",
+      "due": "24 Jul 2026",
+      "status": "Overdue"
+    },
+    {
+      "number": "INV-2074",
+      "customer": "Alex Morgan",
+      "amount": "$420.00",
+      "due": "Paid",
+      "status": "Paid"
+    }
+  ],
+  "inventory": [
+    {
+      "name": "Neutral floor cleaner",
+      "sku": "CHEM-001",
+      "stock": 18,
+      "unit": "5 L",
+      "status": "Healthy"
+    },
+    {
+      "name": "Microfibre cloth pack",
+      "sku": "SUP-014",
+      "stock": 6,
+      "unit": "packs",
+      "status": "Low"
+    },
+    {
+      "name": "HEPA vacuum bags",
+      "sku": "EQP-032",
+      "stock": 3,
+      "unit": "boxes",
+      "status": "Reorder"
+    },
+    {
+      "name": "Glass cleaner",
+      "sku": "CHEM-008",
+      "stock": 14,
+      "unit": "5 L",
+      "status": "Healthy"
+    }
+  ],
+  "schedule": [
+    {
+      "day": "Mon",
+      "jobs": 6,
+      "workers": 5
+    },
+    {
+      "day": "Tue",
+      "jobs": 8,
+      "workers": 6
+    },
+    {
+      "day": "Wed",
+      "jobs": 7,
+      "workers": 6
+    },
+    {
+      "day": "Thu",
+      "jobs": 10,
+      "workers": 7
+    },
+    {
+      "day": "Fri",
+      "jobs": 9,
+      "workers": 7
+    },
+    {
+      "day": "Sat",
+      "jobs": 5,
+      "workers": 4
+    },
+    {
+      "day": "Sun",
+      "jobs": 2,
+      "workers": 2
+    }
+  ],
+  "services": [
+    {
+      "title": "Recurring home cleaning",
+      "copy": "Flexible weekly, fortnightly or monthly cleaning plans.",
+      "icon": "home"
+    },
+    {
+      "title": "End-of-lease cleaning",
+      "copy": "Detailed room-by-room cleaning ready for inspection.",
+      "icon": "sparkles"
+    },
+    {
+      "title": "Commercial cleaning",
+      "copy": "Reliable office and facility cleaning with clear reporting.",
+      "icon": "building-2"
+    }
+  ],
+  "testimonials": [
+    {
+      "quote": "The team is reliable, careful and easy to communicate with.",
+      "name": "Alex Morgan",
+      "role": "Homeowner"
+    },
+    {
+      "quote": "We can see every property, job and invoice in one place.",
+      "name": "Jamie Wright",
+      "role": "Property manager"
+    },
+    {
+      "quote": "The mobile job screen keeps our cleaners focused on the checklist.",
+      "name": "Mia Chen",
+      "role": "Team leader"
+    }
+  ],
+  "chat": [
+    {
+      "role": "assistant",
+      "text": "I can generate a cleaner dashboard, customer portal or public website."
+    },
+    {
+      "role": "user",
+      "text": "Create a mobile job screen for end-of-lease cleaners."
+    },
+    {
+      "role": "assistant",
+      "text": "Drafted a mobile-first page with property details, room checklist, evidence upload and customer sign-off intents."
+    }
+  ],
+  "mobile_job": {
+    "id": "JOB-1042",
+    "service": "End-of-lease clean",
+    "customer": "Alex Morgan",
+    "address": "12 Ocean Street",
+    "time": "8:30 am – 12:30 pm",
+    "status": "Assigned",
+    "notes": "Use tenant-provided key code. Focus on kitchen oven and bathroom grout."
+  },
+  "tasks": [
+    {
+      "label": "Photograph property before starting",
+      "done": true
+    },
+    {
+      "label": "Kitchen and appliances",
+      "done": false
+    },
+    {
+      "label": "Bathrooms and grout",
+      "done": false
+    },
+    {
+      "label": "Bedrooms and wardrobes",
+      "done": false
+    },
+    {
+      "label": "Final walkthrough and evidence",
+      "done": false
+    }
+  ]
+}

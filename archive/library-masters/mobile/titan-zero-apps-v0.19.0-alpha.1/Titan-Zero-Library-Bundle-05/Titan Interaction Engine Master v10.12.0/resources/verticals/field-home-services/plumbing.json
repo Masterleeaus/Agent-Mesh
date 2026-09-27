@@ -1,0 +1,24 @@
+{
+  "slug": "plumbing",
+  "profile": "field_home_services",
+  "terminology": [
+    "job",
+    "site"
+  ],
+  "required_evidence_suggestions": [
+    "before_photo",
+    "after_photo",
+    "customer_signoff"
+  ],
+  "suggested_services": [
+    "Blocked drains",
+    "Hot water",
+    "Emergency plumbing"
+  ],
+  "compliance_prompts": [
+    "licence and compliance certificate where required"
+  ],
+  "wizard_overrides": {
+    "engine_logic": "unchanged"
+  }
+}

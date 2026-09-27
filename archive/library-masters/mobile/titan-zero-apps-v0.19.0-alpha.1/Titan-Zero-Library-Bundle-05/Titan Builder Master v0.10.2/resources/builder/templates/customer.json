@@ -1,0 +1,155 @@
+{
+  "schema_version": "4.0.0",
+  "id": "customer",
+  "identity": {
+    "name": "Titan Hub",
+    "product": "Titan Hub",
+    "surface": "customer",
+    "icon": "home",
+    "accent": "var(--titan-builder-accent, #3157d5)"
+  },
+  "navigation": {
+    "default_view": "home",
+    "primary": [
+      {
+        "id": "home",
+        "label": "Home",
+        "icon": "home"
+      },
+      {
+        "id": "bookings",
+        "label": "Bookings",
+        "icon": "calendar"
+      },
+      {
+        "id": "chat",
+        "label": "Chat",
+        "icon": "message-circle"
+      },
+      {
+        "id": "account",
+        "label": "Account",
+        "icon": "user"
+      }
+    ],
+    "drawer": [
+      {
+        "id": "quotes",
+        "label": "Quotes",
+        "icon": "file-text"
+      },
+      {
+        "id": "invoices",
+        "label": "Invoices",
+        "icon": "receipt"
+      },
+      {
+        "id": "documents",
+        "label": "Documents",
+        "icon": "folder"
+      }
+    ],
+    "header_actions": [
+      "notifications",
+      "settings"
+    ]
+  },
+  "home": {
+    "widgets": [
+      "service-summary",
+      "booking-summary",
+      "invoice-summary"
+    ],
+    "quick_actions": [
+      "book-service",
+      "request-quote",
+      "open-chat"
+    ]
+  },
+  "assistant": {
+    "enabled": true,
+    "persistent": true,
+    "role": "customer assistant",
+    "chatbot_reference": null,
+    "suggested_prompts": [
+      "Book a service",
+      "Show my invoices",
+      "What happens next?"
+    ]
+  },
+  "data": {
+    "provider": "crm",
+    "sources": [
+      "crm-customer-work-orders",
+      "crm-customer-bookings",
+      "crm-customer-quotes",
+      "crm-customer-invoices",
+      "crm-business-services",
+      "crm-business-hours",
+      "crm-business-locations"
+    ]
+  },
+  "capabilities": {
+    "required": [
+      "crm.customer.operations",
+      "mobile.customer"
+    ],
+    "optional": [
+      "titan-connect.messaging",
+      "chatbot.provisioning"
+    ]
+  },
+  "actions": {
+    "intents": [
+      "crm.work_order.create",
+      "communications.message.send"
+    ]
+  },
+  "offline": {
+    "mode": "online-first",
+    "cached_read_models": [
+      "safe-non-sensitive-display-data"
+    ],
+    "writes": "unavailable-unless-runtime-capability"
+  },
+  "permissions": [
+    "customer.authenticated"
+  ],
+  "privacy": {
+    "default_mode": "minimum-required"
+  },
+  "notifications": [
+    "booking-status",
+    "quote-status",
+    "invoice-status"
+  ],
+  "settings_sections": [
+    "business-data",
+    "ai",
+    "communications",
+    "mobile",
+    "privacy",
+    "permissions",
+    "notifications",
+    "appearance",
+    "accessibility",
+    "diagnostics"
+  ],
+  "preview_states": [
+    "mobile",
+    "tablet",
+    "desktop",
+    "online",
+    "offline",
+    "empty",
+    "populated",
+    "loading",
+    "error",
+    "permission-denied"
+  ],
+  "default_page": {
+    "slug": "titan-hub-home",
+    "name": "Home",
+    "spec": "titan-hub-home"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "FeedbackLegacy",
+  "alias": "feedback-legacy",
+  "description": "Pass 3 runtime-disabled donor. Canonical replacement: CustomerFeedback. Source preserved in LegacyDonors/feedback-Feedback-Pass2-Source.zip.",
+  "version": "0.0.0-disabled",
+  "active": 0,
+  "providers": [],
+  "files": [],
+  "canonical_replacement": "CustomerFeedback",
+  "source_archive": "LegacyDonors/feedback-Feedback-Pass2-Source.zip"
+}

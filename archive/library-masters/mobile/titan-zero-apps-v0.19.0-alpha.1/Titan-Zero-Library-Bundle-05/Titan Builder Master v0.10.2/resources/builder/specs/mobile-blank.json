@@ -1,0 +1,81 @@
+{
+  "id": "mobile-blank",
+  "name": "Blank mobile page",
+  "description": "Premium Mobilekit-derived blank mobile page preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {},
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Blank mobile page",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "empty"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "empty": {
+      "type": "empty-state",
+      "props": {
+        "title": "Start building",
+        "description": "Add Premium mobile components to this shell."
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "id": "titan-command-home",
+  "name": "Titan Command Home",
+  "description": "Default owner/manager PWA configuration preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "state": {},
+  "data_sources": [
+    "crm-owner-operations-summary",
+    "crm-owner-schedule-capacity",
+    "crm-owner-approvals",
+    "crm-owner-finance-summary"
+  ],
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Titan Command",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "summary",
+        "capacity",
+        "approvals",
+        "create"
+      ]
+    },
+    "summary": {
+      "type": "card",
+      "props": {
+        "title": "Operations",
+        "description": "CRM owner operations summary.",
+        "dataSource": "crm-owner-operations-summary"
+      }
+    },
+    "capacity": {
+      "type": "card",
+      "props": {
+        "title": "Schedule capacity",
+        "description": "Read-only dispatch and schedule capacity.",
+        "dataSource": "crm-owner-schedule-capacity"
+      }
+    },
+    "approvals": {
+      "type": "card",
+      "props": {
+        "title": "Approvals",
+        "description": "Items requiring owner attention.",
+        "dataSource": "crm-owner-approvals"
+      }
+    },
+    "create": {
+      "type": "button",
+      "props": {
+        "label": "Create work order"
+      },
+      "on": {
+        "click": {
+          "action": "crm.work_order.create"
+        }
+      }
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "operations",
+            "label": "Operations",
+            "icon": "▣"
+          },
+          {
+            "id": "customers",
+            "label": "Customers",
+            "icon": "○"
+          },
+          {
+            "id": "titan",
+            "label": "Titan",
+            "icon": "✦"
+          }
+        ]
+      }
+    }
+  }
+}

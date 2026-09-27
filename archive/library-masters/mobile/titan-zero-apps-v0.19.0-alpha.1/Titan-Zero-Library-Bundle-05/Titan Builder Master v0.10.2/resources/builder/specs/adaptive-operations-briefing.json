@@ -1,0 +1,215 @@
+{
+  "id": "adaptive-operations-briefing",
+  "name": "Adaptive Operations Briefing",
+  "description": "Conversational briefing with progressive disclosure, agenda and an approval preview.",
+  "version": "1.1",
+  "surface": "chat",
+  "authority": "presentation-only",
+  "meta": {
+    "title": "Morning operations briefing",
+    "summary": "A compact operational briefing that can expand to canvas."
+  },
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {
+    "showDetails": false
+  },
+  "data": {
+    "company": {
+      "name": "Fresh Horizon Cleaning"
+    },
+    "jobs": [
+      {
+        "id": "JOB-2051",
+        "title": "End-of-lease clean",
+        "time": "8:30 am",
+        "detail": "Carlton · 2 cleaners"
+      },
+      {
+        "id": "JOB-2052",
+        "title": "Office clean",
+        "time": "11:00 am",
+        "detail": "Richmond · 3 cleaners"
+      }
+    ]
+  },
+  "root": "root",
+  "elements": {
+    "root": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "briefing",
+        "metrics",
+        "agenda",
+        "details-toggle",
+        "details",
+        "approval"
+      ]
+    },
+    "briefing": {
+      "type": "briefing",
+      "props": {
+        "kicker": "Good morning",
+        "title": {
+          "$concat": [
+            "Ready for ",
+            {
+              "$data": "/company/name"
+            }
+          ]
+        },
+        "summary": "Two jobs need attention before the first dispatch."
+      }
+    },
+    "metrics": {
+      "type": "grid",
+      "props": {
+        "columns": 3,
+        "gap": "sm"
+      },
+      "children": [
+        "m1",
+        "m2",
+        "m3"
+      ]
+    },
+    "m1": {
+      "type": "metric",
+      "props": {
+        "label": "Jobs today",
+        "value": 8,
+        "change": "2 unassigned"
+      }
+    },
+    "m2": {
+      "type": "metric",
+      "props": {
+        "label": "Cleaners available",
+        "value": 6,
+        "change": "1 on leave"
+      }
+    },
+    "m3": {
+      "type": "metric",
+      "props": {
+        "label": "Preview revenue",
+        "value": {
+          "$format": {
+            "value": 2840,
+            "style": "currency",
+            "currency": "AUD"
+          }
+        }
+      }
+    },
+    "agenda": {
+      "type": "calendar-agenda",
+      "props": {
+        "items": {
+          "$data": "/jobs"
+        }
+      }
+    },
+    "details-toggle": {
+      "type": "button",
+      "props": {
+        "label": {
+          "$if": {
+            "condition": {
+              "$state": "/showDetails",
+              "eq": true
+            },
+            "then": "Hide details",
+            "else": "Show details"
+          }
+        },
+        "variant": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "state.toggle",
+          "params": {
+            "path": "/showDetails"
+          }
+        }
+      }
+    },
+    "details": {
+      "type": "data-list",
+      "visible": {
+        "$state": "/showDetails",
+        "eq": true
+      },
+      "props": {
+        "items": [
+          {
+            "title": "Stock alert",
+            "description": "Microfibre cloths below threshold",
+            "value": "12 left"
+          },
+          {
+            "title": "Late invoice",
+            "description": "Invoice INV-1042 is 4 days overdue",
+            "value": "$420"
+          }
+        ]
+      }
+    },
+    "approval": {
+      "type": "approval-card",
+      "props": {
+        "title": "Assign JOB-2051?",
+        "summary": "Mia is available and 12 minutes from the property.",
+        "impact": "Expected arrival: 8:18 am. This remains a preview until approved."
+      },
+      "children": [
+        "approval-actions"
+      ]
+    },
+    "approval-actions": {
+      "type": "action-bar",
+      "props": {
+        "align": "end"
+      },
+      "children": [
+        "decline",
+        "approve"
+      ]
+    },
+    "decline": {
+      "type": "button",
+      "props": {
+        "label": "Not now",
+        "variant": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "ui.collapse",
+          "params": {}
+        }
+      }
+    },
+    "approve": {
+      "type": "button",
+      "props": {
+        "label": "Prepare assignment",
+        "variant": "primary"
+      },
+      "on": {
+        "press": {
+          "action": "crm.work_order.assign",
+          "confirm": "Prepare this assignment intent?",
+          "params": {
+            "jobId": "JOB-2051",
+            "workerId": "WORKER-MIA"
+          }
+        }
+      }
+    }
+  }
+}

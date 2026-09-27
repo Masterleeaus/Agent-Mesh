@@ -1,0 +1,14 @@
+{
+  "id": "zeropay.payment-intent.create",
+  "name": "zeropay.payment-intent.create",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "payments",
+  "required_capability": "zero-pay.payments",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

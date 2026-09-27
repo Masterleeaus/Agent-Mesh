@@ -1,0 +1,14 @@
+{
+  "id": "builder.vertical.apply",
+  "name": "builder.vertical.apply",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "builder",
+  "required_capability": "builder.edit",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

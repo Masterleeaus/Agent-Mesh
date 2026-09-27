@@ -1,0 +1,427 @@
+{
+  "schema": "titan.interaction.template-compatibility.v1",
+  "generated_for": "10.6.0",
+  "connected_host_verified": false,
+  "templates": [
+    {
+      "id": "abandoned-checkout-recovery",
+      "status": "draft",
+      "engine_ready": false,
+      "connected_host_verified": false,
+      "activation_allowed": false,
+      "entry_wizard": "abandoned_checkout_recovery_v1",
+      "capabilities": [
+        "commerce.checkout.recover"
+      ]
+    },
+    {
+      "id": "booking-intake",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "booking_intake_v1",
+      "capabilities": [
+        "hospitality.bookings.create"
+      ]
+    },
+    {
+      "id": "client-intake-consent",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "client_intake_consent_v1",
+      "capabilities": [
+        "care.clients.intake"
+      ]
+    },
+    {
+      "id": "clinical-service-incident-escalation",
+      "status": "draft",
+      "engine_ready": false,
+      "connected_host_verified": false,
+      "activation_allowed": false,
+      "entry_wizard": "clinical_service_incident_escalation_v1",
+      "capabilities": [
+        "care.incidents.escalate"
+      ]
+    },
+    {
+      "id": "customer-onboarding",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "new_customer_v1",
+      "capabilities": [
+        "crm.customer.create"
+      ]
+    },
+    {
+      "id": "customer-order-capture",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "customer_order_capture_v1",
+      "capabilities": [
+        "commerce.orders.create"
+      ]
+    },
+    {
+      "id": "event-function-setup",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "event_function_setup_v1",
+      "capabilities": [
+        "hospitality.events.prepare"
+      ]
+    },
+    {
+      "id": "field-job-handover",
+      "status": "draft",
+      "engine_ready": false,
+      "connected_host_verified": false,
+      "activation_allowed": false,
+      "entry_wizard": "field_job_handover_v1",
+      "capabilities": [
+        "jobs.handover.create",
+        "evidence.attach"
+      ]
+    },
+    {
+      "id": "guest-issue-resolution",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "guest_issue_resolution_v1",
+      "capabilities": [
+        "hospitality.guest_issues.resolve"
+      ]
+    },
+    {
+      "id": "incident-response",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "incident_response_v1",
+      "capabilities": [
+        "crm.form.submit"
+      ]
+    },
+    {
+      "id": "inspection-corrective-action",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "inspection_corrective_action_v1",
+      "capabilities": [
+        "crm.form.submit"
+      ]
+    },
+    {
+      "id": "inventory-adjustment",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "inventory_adjustment_v1",
+      "capabilities": [
+        "inventory.adjustments.record"
+      ]
+    },
+    {
+      "id": "invoice-creation",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "create_invoice_v1",
+      "capabilities": [
+        "crm.invoice.create"
+      ]
+    },
+    {
+      "id": "job-completion",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "complete_job_v1",
+      "capabilities": [
+        "crm.work_order.complete"
+      ]
+    },
+    {
+      "id": "job-creation",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "create_job_v1",
+      "capabilities": [
+        "crm.work_order.create"
+      ]
+    },
+    {
+      "id": "job-variation-approval",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "job_variation_approval_v1",
+      "capabilities": [
+        "crm.work_order.update"
+      ]
+    },
+    {
+      "id": "maintenance-request",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "maintenance_request_v1",
+      "capabilities": [
+        "property.maintenance.request"
+      ]
+    },
+    {
+      "id": "materials-request",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "materials_request_v1",
+      "capabilities": [
+        "crm.work_order.material.add"
+      ]
+    },
+    {
+      "id": "order-fulfilment",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "order_fulfilment_v1",
+      "capabilities": [
+        "commerce.orders.fulfil"
+      ]
+    },
+    {
+      "id": "order-issue-resolution",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "order_issue_resolution_v1",
+      "capabilities": [
+        "commerce.orders.resolve_issue"
+      ]
+    },
+    {
+      "id": "payment-reconciliation",
+      "status": "draft",
+      "engine_ready": false,
+      "connected_host_verified": false,
+      "activation_allowed": false,
+      "entry_wizard": "payment_reconciliation_v1",
+      "capabilities": [
+        "finance.payment.reconcile"
+      ]
+    },
+    {
+      "id": "practical-completion-defects",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "practical_completion_defects_v1",
+      "capabilities": [
+        "crm.work_order.update"
+      ]
+    },
+    {
+      "id": "product-catalogue-item",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "product_catalogue_item_v1",
+      "capabilities": [
+        "commerce.products.upsert"
+      ]
+    },
+    {
+      "id": "property-onboarding",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "property_onboarding_v1",
+      "capabilities": [
+        "property.assets.onboard"
+      ]
+    },
+    {
+      "id": "property-turnover-handover",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "property_turnover_handover_v1",
+      "capabilities": [
+        "property.turnovers.complete"
+      ]
+    },
+    {
+      "id": "quote-builder",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "create_quote_v1",
+      "capabilities": [
+        "crm.quote.create"
+      ]
+    },
+    {
+      "id": "recurring-service-agreement",
+      "status": "draft",
+      "engine_ready": false,
+      "connected_host_verified": false,
+      "activation_allowed": false,
+      "entry_wizard": "recurring_service_agreement_v1",
+      "capabilities": [
+        "field_services.recurring_agreements.create"
+      ]
+    },
+    {
+      "id": "refund-approval",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "refund_approval_v1",
+      "capabilities": [
+        "commerce.refunds.approve"
+      ]
+    },
+    {
+      "id": "return-request",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "return_request_v1",
+      "capabilities": [
+        "commerce.returns.request"
+      ]
+    },
+    {
+      "id": "service-booking",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "service_booking_v1",
+      "capabilities": [
+        "crm.appointment.create"
+      ]
+    },
+    {
+      "id": "service-plan-review",
+      "status": "draft",
+      "engine_ready": false,
+      "connected_host_verified": false,
+      "activation_allowed": false,
+      "entry_wizard": "service_plan_review_v1",
+      "capabilities": [
+        "care.service_plans.review"
+      ]
+    },
+    {
+      "id": "site-variation",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "site_variation_v1",
+      "capabilities": [
+        "crm.work_order.update"
+      ]
+    },
+    {
+      "id": "staff-onboarding",
+      "status": "draft",
+      "engine_ready": false,
+      "connected_host_verified": false,
+      "activation_allowed": false,
+      "entry_wizard": "staff_onboarding_v1",
+      "capabilities": [
+        "workforce.staff.onboard",
+        "training.assign"
+      ]
+    },
+    {
+      "id": "stocktake-variance",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "stocktake_variance_v1",
+      "capabilities": [
+        "inventory.stocktakes.complete"
+      ]
+    },
+    {
+      "id": "store-stock-transfer",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "store_stock_transfer_v1",
+      "capabilities": [
+        "inventory.transfers.create"
+      ]
+    },
+    {
+      "id": "supplier-receiving-discrepancy",
+      "status": "ready",
+      "engine_ready": true,
+      "connected_host_verified": false,
+      "activation_allowed": true,
+      "entry_wizard": "supplier_receiving_discrepancy_v1",
+      "capabilities": [
+        "inventory.receipts.record"
+      ]
+    },
+    {
+      "id": "supplier-replenishment",
+      "status": "draft",
+      "engine_ready": false,
+      "connected_host_verified": false,
+      "activation_allowed": false,
+      "entry_wizard": "supplier_replenishment_v1",
+      "capabilities": [
+        "procurement.replenishment.request"
+      ]
+    },
+    {
+      "id": "wholesale-order",
+      "status": "draft",
+      "engine_ready": false,
+      "connected_host_verified": false,
+      "activation_allowed": false,
+      "entry_wizard": "wholesale_order_v1",
+      "capabilities": [
+        "wholesale.orders.create"
+      ]
+    }
+  ]
+}

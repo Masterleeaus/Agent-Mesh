@@ -1,0 +1,18 @@
+{
+  "schema": "titan-extension-lifecycle-v1",
+  "extension": "titan-apps-core",
+  "install": {
+    "migrations": false,
+    "publishes": [
+      "titan-apps-core"
+    ],
+    "health_gate": "TitanAppsCoreInstallReadiness"
+  },
+  "disable": {
+    "data_retained": true
+  },
+  "uninstall": {
+    "destructive": false,
+    "owned_data": []
+  }
+}

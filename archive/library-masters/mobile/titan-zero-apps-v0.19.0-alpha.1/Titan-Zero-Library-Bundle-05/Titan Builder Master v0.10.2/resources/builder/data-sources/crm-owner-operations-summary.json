@@ -1,0 +1,20 @@
+{
+  "id": "crm-owner-operations-summary",
+  "name": "Owner operations summary",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.owner.operations-summary",
+  "required_capability": "crm.owner.dashboard",
+  "fields": [
+    "scheduled",
+    "in_progress",
+    "unassigned",
+    "exceptions",
+    "revenue_preview"
+  ],
+  "surface_compatibility": [
+    "owner"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

@@ -1,0 +1,145 @@
+{
+  "wizard": {
+    "id": "event_function_setup_v1",
+    "version": "1.0.0",
+    "name": "Event or Function Setup",
+    "capability": "hospitality.events.prepare",
+    "permissions": {
+      "required_roles": [
+        "staff",
+        "supervisor",
+        "manager",
+        "admin"
+      ]
+    },
+    "metadata": {
+      "category": "hospitality",
+      "template_id": "event-function-setup",
+      "template_version": "1.0.0",
+      "verticals": [
+        "hospitality",
+        "events",
+        "venues"
+      ],
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "high",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": [
+        {
+          "when": {
+            "field": "safety_check_complete",
+            "equals": false
+          },
+          "require_fields": [
+            "readiness_issues",
+            "issue_owner_id"
+          ],
+          "message_prefix": "Missing required event safety action"
+        }
+      ]
+    },
+    "steps": [
+      {
+        "id": "event",
+        "title": "Event",
+        "fields": [
+          {
+            "id": "event_id",
+            "label": "Event ID",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "venue_id",
+            "label": "Venue ID",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "event_start_at",
+            "label": "Event start",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "setup",
+        "title": "Setup plan",
+        "fields": [
+          {
+            "id": "setup_items",
+            "label": "Setup items",
+            "type": "array",
+            "required": true
+          },
+          {
+            "id": "staff_assignments",
+            "label": "Staff assignments",
+            "type": "array",
+            "required": true
+          },
+          {
+            "id": "supplier_deliveries",
+            "label": "Supplier deliveries",
+            "type": "array",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "safety",
+        "title": "Safety and readiness",
+        "fields": [
+          {
+            "id": "safety_check_complete",
+            "label": "Safety check complete",
+            "type": "boolean",
+            "required": true
+          },
+          {
+            "id": "readiness_issues",
+            "label": "Readiness issues",
+            "type": "array",
+            "required": false
+          },
+          {
+            "id": "issue_owner_id",
+            "label": "Issue owner",
+            "type": "text",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "declaration",
+        "title": "Review",
+        "fields": [
+          {
+            "id": "declaration_accepted",
+            "label": "Declaration accepted",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

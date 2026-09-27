@@ -1,0 +1,20 @@
+{
+  "id": "operations-kanban",
+  "name": "Operations kanban",
+  "category": "Generative UI",
+  "renderer": "operations-kanban",
+  "authority": "presentation-only",
+  "props": [
+    "title",
+    "columns"
+  ],
+  "allowed_actions": [
+    "filter",
+    "search",
+    "builder.edit"
+  ],
+  "data_contract": {
+    "type": "array"
+  },
+  "responsive": true
+}

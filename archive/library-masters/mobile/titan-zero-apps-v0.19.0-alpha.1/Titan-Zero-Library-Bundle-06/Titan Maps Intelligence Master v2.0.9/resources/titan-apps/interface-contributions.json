@@ -1,0 +1,75 @@
+{
+  "schema": "titan-apps-interface-contributions-v1",
+  "owner_extension": "titan-maps-intelligence",
+  "contributions": [
+    {
+      "contribution_id": "maps.location.summary",
+      "owner_extension": "titan-maps-intelligence",
+      "supported_surfaces": [
+        "zero",
+        "go",
+        "hub"
+      ],
+      "variants": [
+        "default"
+      ],
+      "capability_ids": [
+        "maps.location.read"
+      ],
+      "projection_ids": [
+        "maps.location.summary.projection.zero",
+        "maps.location.summary.projection.go",
+        "maps.location.summary.projection.hub"
+      ],
+      "action_ids": [],
+      "permissions": [
+        "provider_policy_enforced"
+      ],
+      "sensitivity": "confidential",
+      "risk_classification": "provider_governed",
+      "offline_availability": "online_or_cached",
+      "data_freshness": "provider_defined",
+      "fallback_behavior": "location_unavailable",
+      "authority": "none; actions remain governed capability intent",
+      "projection_by_surface": {
+        "zero": "maps.location.summary.projection.zero",
+        "go": "maps.location.summary.projection.go",
+        "hub": "maps.location.summary.projection.hub"
+      },
+      "company_scope_key": "company_id"
+    },
+    {
+      "contribution_id": "maps.route.summary",
+      "owner_extension": "titan-maps-intelligence",
+      "supported_surfaces": [
+        "zero",
+        "go"
+      ],
+      "variants": [
+        "default"
+      ],
+      "capability_ids": [
+        "maps.route.read"
+      ],
+      "projection_ids": [
+        "maps.route.summary.projection.zero",
+        "maps.route.summary.projection.go"
+      ],
+      "action_ids": [],
+      "permissions": [
+        "provider_policy_enforced"
+      ],
+      "sensitivity": "confidential",
+      "risk_classification": "provider_governed",
+      "offline_availability": "online_or_cached",
+      "data_freshness": "provider_defined",
+      "fallback_behavior": "route_unavailable",
+      "authority": "none; actions remain governed capability intent",
+      "projection_by_surface": {
+        "zero": "maps.route.summary.projection.zero",
+        "go": "maps.route.summary.projection.go"
+      },
+      "company_scope_key": "company_id"
+    }
+  ]
+}

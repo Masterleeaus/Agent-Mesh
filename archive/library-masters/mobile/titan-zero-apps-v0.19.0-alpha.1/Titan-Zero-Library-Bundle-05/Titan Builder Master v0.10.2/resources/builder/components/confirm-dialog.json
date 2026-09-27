@@ -1,0 +1,15 @@
+{
+  "id": "confirm-dialog",
+  "name": "Confirm dialog",
+  "category": "Overlay",
+  "blade": "components.titan-builder.confirm-dialog",
+  "authority": "presentation-only",
+  "props": [
+    "message",
+    "confirmLabel"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

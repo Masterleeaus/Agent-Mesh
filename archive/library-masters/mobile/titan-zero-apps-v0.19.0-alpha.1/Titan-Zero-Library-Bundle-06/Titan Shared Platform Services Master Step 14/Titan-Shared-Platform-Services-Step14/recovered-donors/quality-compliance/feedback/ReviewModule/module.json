@@ -1,0 +1,11 @@
+{
+  "name": "ReviewModuleLegacy",
+  "alias": "review-legacy",
+  "description": "Pass 3 runtime-disabled donor. Canonical replacement: CustomerFeedback. Source preserved in LegacyDonors/ReviewModule-Pass2-Source.zip.",
+  "version": "0.0.0-disabled",
+  "active": 0,
+  "providers": [],
+  "files": [],
+  "canonical_replacement": "CustomerFeedback",
+  "source_archive": "LegacyDonors/ReviewModule-Pass2-Source.zip"
+}

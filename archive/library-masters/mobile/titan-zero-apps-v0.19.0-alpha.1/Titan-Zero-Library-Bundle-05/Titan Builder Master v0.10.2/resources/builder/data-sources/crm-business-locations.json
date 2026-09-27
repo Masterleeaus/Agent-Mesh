@@ -1,0 +1,23 @@
+{
+  "id": "crm-business-locations",
+  "name": "Business locations",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.business.locations",
+  "required_capability": "crm.business.configuration",
+  "fields": [
+    "id",
+    "name",
+    "address_summary",
+    "service_area_summary",
+    "enabled"
+  ],
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

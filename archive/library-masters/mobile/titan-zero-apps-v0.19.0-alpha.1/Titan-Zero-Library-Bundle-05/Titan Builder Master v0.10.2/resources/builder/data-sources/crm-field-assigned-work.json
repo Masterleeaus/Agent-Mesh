@@ -1,0 +1,21 @@
+{
+  "id": "crm-field-assigned-work",
+  "name": "Assigned field work",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.field.assigned-work",
+  "required_capability": "crm.field.offline",
+  "fields": [
+    "id",
+    "reference",
+    "status",
+    "scheduled_at",
+    "site_summary",
+    "customer_summary"
+  ],
+  "surface_compatibility": [
+    "field"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

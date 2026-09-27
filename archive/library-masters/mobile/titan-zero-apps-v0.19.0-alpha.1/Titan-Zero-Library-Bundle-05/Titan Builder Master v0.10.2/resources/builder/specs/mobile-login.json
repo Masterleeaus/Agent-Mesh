@@ -1,0 +1,139 @@
+{
+  "id": "mobile-login",
+  "name": "Sign in",
+  "description": "Premium Mobilekit-derived sign in preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {
+    "form": {
+      "email": "",
+      "password": ""
+    }
+  },
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Sign in",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "intro",
+        "email",
+        "password",
+        "signin"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "intro": {
+      "type": "summary-banner",
+      "props": {
+        "eyebrow": "Welcome back",
+        "title": "Sign in to continue",
+        "description": "Preview only. Authentication remains owned by Titan Zero."
+      }
+    },
+    "email": {
+      "type": "mobile-input",
+      "props": {
+        "label": "Email",
+        "type": "email",
+        "placeholder": "name@example.com",
+        "statePath": "/form/email",
+        "validation": [
+          {
+            "type": "required",
+            "message": "Email is required"
+          },
+          {
+            "type": "email",
+            "message": "Enter a valid email"
+          }
+        ]
+      }
+    },
+    "password": {
+      "type": "mobile-input",
+      "props": {
+        "label": "Password",
+        "type": "password",
+        "placeholder": "Password",
+        "statePath": "/form/password",
+        "validation": [
+          {
+            "type": "required",
+            "message": "Password is required"
+          }
+        ]
+      }
+    },
+    "signin": {
+      "type": "button",
+      "props": {
+        "label": "Sign in preview",
+        "variant": "primary"
+      },
+      "on": {
+        "press": {
+          "action": "navigate",
+          "params": {
+            "destination": "auth.sign-in"
+          }
+        }
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

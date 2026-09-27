@@ -1,0 +1,15 @@
+{
+  "id": "collapsible",
+  "name": "Collapsible",
+  "category": "Disclosure",
+  "blade": "components.titan-builder.collapsible",
+  "authority": "presentation-only",
+  "props": [
+    "label",
+    "open"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

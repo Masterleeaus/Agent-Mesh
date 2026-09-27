@@ -1,0 +1,22 @@
+{
+  "schema": "titan-apps-runtime-contract-policy-v1",
+  "rule": "Resolve suite services by stable public contract, never by package path.",
+  "dependencies": {
+    "interaction-engine": {
+      "owner": "Titan Apps: Interaction Engine",
+      "status": "awaiting-agent-2-final-contract"
+    },
+    "interface-runtime": {
+      "owner": "Titan Apps: Interface Runtime",
+      "status": "public-contract-candidates-present"
+    },
+    "builder": {
+      "owner": "Titan Apps: Builder",
+      "status": "public-contract-candidates-present"
+    },
+    "visual-runtime": {
+      "owner": "Titan Apps: Visual Runtime",
+      "status": "awaiting-agent-4-final-contract"
+    }
+  }
+}

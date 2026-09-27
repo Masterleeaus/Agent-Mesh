@@ -1,0 +1,20 @@
+{
+  "id": "crm-field-minimum-site-context",
+  "name": "Minimum site context",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.field.minimum-site-context",
+  "required_capability": "crm.field.offline",
+  "fields": [
+    "id",
+    "label",
+    "address_summary",
+    "access_notes",
+    "hazards"
+  ],
+  "surface_compatibility": [
+    "field"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

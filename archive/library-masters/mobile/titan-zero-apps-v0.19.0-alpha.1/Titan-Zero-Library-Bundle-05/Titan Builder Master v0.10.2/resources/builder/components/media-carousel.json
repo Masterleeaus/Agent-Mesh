@@ -1,0 +1,25 @@
+{
+  "id": "media-carousel",
+  "name": "Media Carousel",
+  "category": "Premium / Media",
+  "blade": "components.titan-builder.premium.media-carousel",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "items",
+    "aspectRatio",
+    "perPage",
+    "gap",
+    "pagination",
+    "arrows",
+    "loop"
+  ],
+  "actions": [
+    "ui.next-page",
+    "ui.previous-page"
+  ]
+}

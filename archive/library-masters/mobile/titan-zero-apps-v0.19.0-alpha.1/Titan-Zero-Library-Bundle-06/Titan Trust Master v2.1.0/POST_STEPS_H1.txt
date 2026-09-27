@@ -1,0 +1,15 @@
+TitanTrust Hardening Pass H1 — Post Steps
+
+1) Upload + unzip the extension into your extensions folder (so the top folder is TitanTrust/).
+
+2) Run caches + migrations (ABSOLUTE PATHS):
+
+cd /home/saassmar/domains/YOURDOMAIN/public_html && php artisan optimize:clear
+cd /home/saassmar/domains/YOURDOMAIN/public_html && php artisan module:migrate TitanTrust
+cd /home/saassmar/domains/YOURDOMAIN/public_html && php artisan optimize:clear
+
+3) Quick smoke checks:
+- Visit: /dashboard/user/jobs/trust/review
+- Visit: /dashboard/user/titantrust (evidence list)
+- Upload a JPG/PNG/WebP/PDF and confirm it stores and appears
+- Confirm a disallowed file type is blocked

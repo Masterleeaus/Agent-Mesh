@@ -1,0 +1,14 @@
+{
+  "id": "command-palette",
+  "name": "Command palette",
+  "category": "Navigation",
+  "blade": "components.titan-builder.command-palette",
+  "authority": "presentation-only",
+  "props": [
+    "items"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

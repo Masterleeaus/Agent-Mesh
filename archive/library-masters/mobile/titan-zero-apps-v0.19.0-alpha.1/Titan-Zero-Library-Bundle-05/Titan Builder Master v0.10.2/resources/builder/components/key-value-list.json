@@ -1,0 +1,14 @@
+{
+  "id": "key-value-list",
+  "name": "Key Value List",
+  "category": "Data Display",
+  "blade": "components.titan-builder.key-value-list",
+  "authority": "presentation-only",
+  "props": [
+    "items"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

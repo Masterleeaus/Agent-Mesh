@@ -1,0 +1,20 @@
+{
+  "id": "tasks-assigned",
+  "name": "Assigned work-order tasks",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.field.tasks",
+  "required_capability": "crm.field.assigned-work",
+  "fields": [
+    "id",
+    "label",
+    "status",
+    "required",
+    "evidence_requirement"
+  ],
+  "surface_compatibility": [
+    "field"
+  ],
+  "compatibility_alias": true,
+  "authority": "read-only-dto"
+}

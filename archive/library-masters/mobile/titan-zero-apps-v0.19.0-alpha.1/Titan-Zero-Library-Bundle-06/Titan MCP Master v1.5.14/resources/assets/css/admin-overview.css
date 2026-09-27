@@ -1,0 +1,21 @@
+/* Titan MCP Super Admin overview.
+ * Theme colours bind directly to Titan/MagicAI semantic CSS variables so the
+ * extension does not depend on Tailwind utilities being present in the host build.
+ * No fixed light/dark colour values are owned by Titan MCP.
+ */
+.titan-mcp-overview .titan-mcp-card {
+    background-color: hsl(var(--card-background, var(--background)));
+    color: hsl(var(--card-foreground, var(--foreground)));
+    border-width: var(--bs-card-border-width, 1px);
+    border-style: solid;
+    border-color: hsl(var(--card-border, var(--border)));
+    border-radius: var(--card-rounded, var(--bs-card-border-radius, var(--bs-border-radius-xl, 1rem)));
+    box-shadow: var(--card-shadow, var(--bs-box-shadow-sm, none));
+    overflow: hidden;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.titan-mcp-overview .titan-mcp-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--card-shadow, var(--bs-box-shadow, var(--bs-box-shadow-sm, none)));
+}

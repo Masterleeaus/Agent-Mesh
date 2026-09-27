@@ -1,0 +1,15 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:f37dcc7de5d34213a82534d8665dda1f",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-08-21T22:27:30.940946+00:00",
+    "component": {
+      "type": "application",
+      "name": "Titan MCP",
+      "version": "1.5.14"
+    }
+  },
+  "components": []
+}

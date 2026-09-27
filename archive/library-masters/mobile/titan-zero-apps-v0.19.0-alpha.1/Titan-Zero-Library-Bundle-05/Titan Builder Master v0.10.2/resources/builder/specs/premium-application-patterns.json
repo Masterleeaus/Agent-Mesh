@@ -1,0 +1,242 @@
+{
+  "id": "premium-application-patterns",
+  "name": "Premium Application Patterns",
+  "description": "v0.7 showcase exercising all Mobilekit-derived application primitives.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {
+    "draft": "",
+    "qty": 1
+  },
+  "root": "root",
+  "elements": {
+    "root": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "auth_panel",
+        "profile_hero",
+        "profile_stat_grid",
+        "chat_thread",
+        "chat_message",
+        "chat_composer",
+        "invoice_header",
+        "invoice_party",
+        "invoice_line_items",
+        "invoice_total",
+        "cart_item",
+        "product_detail",
+        "rating_summary",
+        "article_header",
+        "article_body",
+        "social_links",
+        "system_state"
+      ]
+    },
+    "auth_panel": {
+      "type": "auth-panel",
+      "props": {
+        "title": "Welcome back",
+        "subtitle": "Sign in to continue",
+        "mode": "login",
+        "primaryLabel": "Sign in"
+      }
+    },
+    "profile_hero": {
+      "type": "profile-hero",
+      "props": {
+        "name": "Alex Taylor",
+        "subtitle": "Premium customer",
+        "badge": "Active",
+        "bio": "Mobile profile preview"
+      }
+    },
+    "profile_stat_grid": {
+      "type": "profile-stat-grid",
+      "props": {
+        "items": [
+          {
+            "label": "Bookings",
+            "value": "4"
+          },
+          {
+            "label": "Invoices",
+            "value": "2"
+          },
+          {
+            "label": "Messages",
+            "value": "8"
+          }
+        ]
+      }
+    },
+    "chat_thread": {
+      "type": "chat-thread",
+      "props": {
+        "items": [
+          {
+            "author": "Titan",
+            "text": "Your booking is confirmed.",
+            "time": "09:30",
+            "direction": "in"
+          },
+          {
+            "author": "You",
+            "text": "Thanks.",
+            "time": "09:31",
+            "direction": "out"
+          }
+        ]
+      }
+    },
+    "chat_message": {
+      "type": "chat-message",
+      "props": {
+        "author": "Titan",
+        "text": "Standalone message preview",
+        "time": "09:32",
+        "direction": "in"
+      }
+    },
+    "chat_composer": {
+      "type": "chat-composer",
+      "props": {
+        "placeholder": "Write a message",
+        "sendLabel": "Send",
+        "statePath": "/draft"
+      }
+    },
+    "invoice_header": {
+      "type": "invoice-header",
+      "props": {
+        "invoiceNumber": "INV-1042",
+        "status": "Due",
+        "issuedAt": "9 Aug 2026",
+        "dueAt": "16 Aug 2026"
+      }
+    },
+    "invoice_party": {
+      "type": "invoice-party",
+      "props": {
+        "label": "Bill to",
+        "name": "Alex Taylor",
+        "company": "Example Company",
+        "address": "Melbourne VIC"
+      }
+    },
+    "invoice_line_items": {
+      "type": "invoice-line-items",
+      "props": {
+        "items": [
+          {
+            "description": "Service visit",
+            "quantity": 1,
+            "unitPrice": "$120.00",
+            "total": "$120.00"
+          }
+        ]
+      }
+    },
+    "invoice_total": {
+      "type": "invoice-total",
+      "props": {
+        "subtotal": "$120.00",
+        "tax": "$12.00",
+        "total": "$132.00",
+        "balance": "$132.00"
+      }
+    },
+    "cart_item": {
+      "type": "cart-item",
+      "props": {
+        "title": "Service package",
+        "price": "$99.00",
+        "quantity": 1,
+        "statePath": "/qty"
+      }
+    },
+    "product_detail": {
+      "type": "product-detail",
+      "props": {
+        "title": "Premium service",
+        "subtitle": "Mobile product detail",
+        "price": "$129.00",
+        "description": "Configured from Titan Builder."
+      }
+    },
+    "rating_summary": {
+      "type": "rating-summary",
+      "props": {
+        "rating": 4.8,
+        "count": 128,
+        "breakdown": [
+          {
+            "stars": 5,
+            "percent": 82
+          },
+          {
+            "stars": 4,
+            "percent": 13
+          }
+        ]
+      }
+    },
+    "article_header": {
+      "type": "article-header",
+      "props": {
+        "eyebrow": "Guide",
+        "title": "Preparing for your appointment",
+        "author": "Titan Team",
+        "publishedAt": "9 Aug 2026",
+        "readingTime": "4 min"
+      }
+    },
+    "article_body": {
+      "type": "article-body",
+      "props": {
+        "lead": "A reusable Mobilekit-derived content layout.",
+        "paragraphs": [
+          "Bring any relevant documents.",
+          "You can message the team from the app."
+        ]
+      }
+    },
+    "social_links": {
+      "type": "social-links",
+      "props": {
+        "label": "Follow us",
+        "items": [
+          {
+            "label": "Website",
+            "url": "https://example.com"
+          },
+          {
+            "label": "Instagram",
+            "url": "https://instagram.com"
+          }
+        ]
+      }
+    },
+    "system_state": {
+      "type": "system-state",
+      "props": {
+        "state": "maintenance",
+        "title": "We are updating this area",
+        "description": "Please try again shortly.",
+        "actionLabel": "Go home"
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

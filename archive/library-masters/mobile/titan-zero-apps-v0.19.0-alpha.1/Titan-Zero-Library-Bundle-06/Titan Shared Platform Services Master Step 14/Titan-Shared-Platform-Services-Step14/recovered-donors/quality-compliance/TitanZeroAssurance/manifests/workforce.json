@@ -1,0 +1,61 @@
+{
+  "schema": "titan.workforce.manifest.v2",
+  "module": "TitanQualityComplianceTeam",
+  "company_boundary": "company_id",
+  "team": {
+    "name": "Quality & Compliance",
+    "division": "Operations Assurance",
+    "manager_role": "Quality & Compliance Manager",
+    "specialist_roles": [
+      "Quality Inspector",
+      "Customer Feedback Specialist",
+      "Evidence & Trust Specialist",
+      "Compliance Analyst"
+    ]
+  },
+  "responsibilities": [
+    "inspect_service_quality",
+    "detect_quality_failures",
+    "manage_corrective_actions",
+    "manage_reclean_verification",
+    "triage_customer_feedback",
+    "investigate_complaints",
+    "review_job_evidence",
+    "investigate_incidents",
+    "verify_audit_integrity",
+    "produce_compliance_reports",
+    "verify_corrective_outcomes"
+  ],
+  "capabilities": [
+    "assurance.context.inspect",
+    "assurance.authority.evaluate",
+    "quality.corrective.manage",
+    "feedback.resolve",
+    "evidence.review",
+    "compliance.audit.read",
+    "compliance.integrity.verify",
+    "compliance.corrective.manage"
+  ],
+  "signals": [
+    "quality.failed",
+    "quality.reclean_required",
+    "feedback.complaint_received",
+    "feedback.complaint_escalated",
+    "trust.incident_reported",
+    "compliance.integrity_mismatch"
+  ],
+  "lifecycle": [
+    "signal",
+    "evidence",
+    "finding",
+    "audit_event",
+    "governed_corrective_work",
+    "execution",
+    "verified_outcome"
+  ],
+  "authority": {
+    "low_risk": "may_auto_execute_when_capability_granted",
+    "medium_high_critical": "approval_required",
+    "fail_closed_without_company_context": true
+  }
+}

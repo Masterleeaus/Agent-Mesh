@@ -1,0 +1,100 @@
+{
+  "schema": "titan.extension.ecosystem-integration.v1",
+  "schema_version": "1.0",
+  "extension": {
+    "key": "titan-maps-intelligence",
+    "name": "Titan Maps Intelligence",
+    "version": "2.0.5"
+  },
+  "tenancy": {
+    "canonical_key": "company_id",
+    "fail_closed": true
+  },
+  "coordination": {
+    "workforce_owner": "titan-ai-workforce",
+    "authority_owner": "titan-autonomy",
+    "signals_owner": "titan-signal"
+  },
+  "peers": [
+    "titan-field",
+    "crm",
+    "titan-assets"
+  ],
+  "handoffs": [
+    {
+      "id": "field-to-spatial-context",
+      "direction": "inbound",
+      "peer": "titan-field",
+      "consumes": [
+        "service_location",
+        "schedule_window",
+        "resource_candidates"
+      ],
+      "work_types": [
+        "maps.route.assess",
+        "maps.dispatch.assess"
+      ]
+    },
+    {
+      "id": "maps-to-field-routing",
+      "direction": "outbound",
+      "peer": "titan-field",
+      "provides": [
+        "route_estimate",
+        "travel_matrix",
+        "nearest_resource",
+        "service_area_result",
+        "provider_health"
+      ],
+      "work_types": [
+        "field.dispatch.review",
+        "field.schedule.review"
+      ]
+    },
+    {
+      "id": "asset-location-context",
+      "direction": "inbound",
+      "peer": "titan-assets",
+      "consumes": [
+        "asset_location",
+        "custody_location",
+        "fleet_state"
+      ],
+      "purpose": "improve routing and territory context without taking custody authority"
+    }
+  ],
+  "safe_degradation": {
+    "missing_peer": "mark_degraded_and_continue_with_local_capabilities_only",
+    "missing_provider": "do_not_auto_substitute_without_capability_match_and_policy",
+    "stale_context": "surface_staleness_and_require_refresh_for_high_risk_execution",
+    "offline": "never_increase_authority",
+    "unknown_facts": "never_infer_licence_price_geography_emergency_service_permission_or_authority"
+  },
+  "execution": {
+    "target_domain_owns_mutation": true,
+    "command_gateway_required": true,
+    "receipt_required": true,
+    "provider_provenance_required": true,
+    "idempotency_required": true,
+    "envelope_contract": "resources/contracts/ecosystem-execution-envelope.v1.json",
+    "envelope_schema": "titan.ecosystem.execution-envelope.v1",
+    "cross_extension_idempotency_scope": [
+      "company_id",
+      "target_extension",
+      "work_type",
+      "idempotency_key"
+    ],
+    "correlation_required": true,
+    "causation_required": true,
+    "evidence_references_supported": true,
+    "authority_decision_required": true,
+    "unknown_outcome": "deferred",
+    "duplicate_behavior": "return_original_receipt_without_reexecution"
+  },
+  "causal_context": [
+    "trace_id",
+    "correlation_id",
+    "causation_id",
+    "root_causation_id"
+  ]
+}

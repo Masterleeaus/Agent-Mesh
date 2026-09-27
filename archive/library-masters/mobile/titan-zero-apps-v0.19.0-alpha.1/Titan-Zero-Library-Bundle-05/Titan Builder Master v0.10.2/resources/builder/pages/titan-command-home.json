@@ -1,0 +1,9 @@
+{
+  "id": "titan-command-home",
+  "name": "Titan Command Home",
+  "surface": "owner",
+  "theme": "mobilekit-premium",
+  "description": "Default Titan Command mobile operations overview.",
+  "spec": "titan-command-home",
+  "authority": "presentation-only"
+}

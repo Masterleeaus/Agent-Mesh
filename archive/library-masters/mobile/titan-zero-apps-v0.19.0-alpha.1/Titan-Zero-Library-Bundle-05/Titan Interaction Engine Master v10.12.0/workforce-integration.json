@@ -1,0 +1,391 @@
+{
+  "schema": "titan-workforce-extension-integration-v1",
+  "provider": {
+    "slug": "titan-interaction-engine",
+    "version": "10.12.0",
+    "contract_version": "1.1"
+  },
+  "tenancy": {
+    "key": "company_id",
+    "trusted_context_required": true,
+    "client_selectable": false,
+    "fail_closed": true
+  },
+  "ownership": {
+    "domain": "interaction-orchestration-and-guidance",
+    "extension_owns": "interaction runtime, compiler, wizards, journeys, local guidance/cognition and authority-neutral capability routing; not Workforce identity or business-domain mutation authority",
+    "workforce_owns": [
+      "employee_identity",
+      "organisational_roles",
+      "hierarchy",
+      "teams",
+      "responsibilities",
+      "assignments",
+      "work_items",
+      "orchestration"
+    ],
+    "extension_must_not_own": [
+      "workforce_employee_identity",
+      "workforce_role_identity",
+      "workforce_hierarchy",
+      "workforce_assignments"
+    ]
+  },
+  "capabilities": [
+    {
+      "id": "interaction.runtime",
+      "kind": "capability",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.compiler",
+      "kind": "capability",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.wizards",
+      "kind": "capability",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.journeys",
+      "kind": "capability",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.templates",
+      "kind": "capability",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.localbrain",
+      "kind": "capability",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.cognition",
+      "kind": "capability",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.onboarding",
+      "kind": "capability",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.context.read",
+      "kind": "read",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.guidance.prepare",
+      "kind": "read",
+      "authority_neutral": true
+    }
+  ],
+  "reads": [
+    {
+      "id": "interaction.context.read",
+      "mutating": false,
+      "company_scoped": true
+    },
+    {
+      "id": "interaction.template.read",
+      "mutating": false,
+      "company_scoped": true
+    },
+    {
+      "id": "interaction.journey.read",
+      "mutating": false,
+      "company_scoped": true
+    },
+    {
+      "id": "interaction.cognition.read",
+      "mutating": false,
+      "company_scoped": true
+    },
+    {
+      "id": "interaction.guidance.prepare",
+      "mutating": false,
+      "company_scoped": true
+    }
+  ],
+  "commands": [
+    {
+      "id": "interaction.work.prepare",
+      "mutating": true,
+      "execution_boundary": "titan-command-bus",
+      "installed_does_not_imply_authority": true,
+      "governance_required": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "provider_pin_required": true,
+      "required_context": [
+        "company_id",
+        "trace_id",
+        "correlation_id",
+        "causation_id",
+        "root_causation_id",
+        "idempotency_key"
+      ],
+      "idempotency_required": true,
+      "receipt_required": true,
+      "evidence_required": true,
+      "fail_closed_on_missing_provider": true
+    },
+    {
+      "id": "interaction.onboarding.prepare",
+      "mutating": true,
+      "execution_boundary": "titan-command-bus",
+      "installed_does_not_imply_authority": true,
+      "governance_required": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "provider_pin_required": true,
+      "required_context": [
+        "company_id",
+        "trace_id",
+        "correlation_id",
+        "causation_id",
+        "root_causation_id",
+        "idempotency_key"
+      ],
+      "idempotency_required": true,
+      "receipt_required": true,
+      "evidence_required": true,
+      "fail_closed_on_missing_provider": true
+    },
+    {
+      "id": "interaction.offline_command.submit_for_revalidation",
+      "mutating": true,
+      "execution_boundary": "titan-command-bus",
+      "installed_does_not_imply_authority": true,
+      "governance_required": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "provider_pin_required": true,
+      "required_context": [
+        "company_id",
+        "trace_id",
+        "correlation_id",
+        "causation_id",
+        "root_causation_id",
+        "idempotency_key"
+      ],
+      "idempotency_required": true,
+      "receipt_required": true,
+      "evidence_required": true,
+      "fail_closed_on_missing_provider": true
+    }
+  ],
+  "signals": [
+    {
+      "type": "interaction.observation.recorded",
+      "authority_neutral": true,
+      "company_scoped": true
+    },
+    {
+      "type": "interaction.decision.prepared",
+      "authority_neutral": true,
+      "company_scoped": true
+    },
+    {
+      "type": "interaction.outcome.recorded",
+      "authority_neutral": true,
+      "company_scoped": true
+    },
+    {
+      "type": "interaction.capability_prepared",
+      "authority_neutral": true,
+      "company_scoped": true
+    },
+    {
+      "type": "interaction.capability_failed",
+      "authority_neutral": true,
+      "company_scoped": true
+    }
+  ],
+  "work_types": [
+    {
+      "id": "interaction.guide_user",
+      "identity_owner": "titan-ai-workforce",
+      "execution_provider": "titan-interaction-engine",
+      "provider_pin": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "unavailable_behavior": "fail_closed"
+    },
+    {
+      "id": "interaction.collect_context",
+      "identity_owner": "titan-ai-workforce",
+      "execution_provider": "titan-interaction-engine",
+      "provider_pin": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "unavailable_behavior": "fail_closed"
+    },
+    {
+      "id": "interaction.prepare_action",
+      "identity_owner": "titan-ai-workforce",
+      "execution_provider": "titan-interaction-engine",
+      "provider_pin": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "unavailable_behavior": "fail_closed"
+    },
+    {
+      "id": "interaction.onboarding.coordinate",
+      "identity_owner": "titan-ai-workforce",
+      "execution_provider": "titan-interaction-engine",
+      "provider_pin": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "unavailable_behavior": "fail_closed"
+    },
+    {
+      "id": "interaction.review_outcome",
+      "identity_owner": "titan-ai-workforce",
+      "execution_provider": "titan-interaction-engine",
+      "provider_pin": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "unavailable_behavior": "fail_closed"
+    }
+  ],
+  "governance": {
+    "availability_is_not_authority": true,
+    "risk_required_for_consequential_actions": true,
+    "assurance_required_for_consequential_actions": true,
+    "autonomy_required_for_autonomous_actions": true,
+    "fail_closed": true
+  },
+  "evidence_surfaces": [
+    "cognitive_event",
+    "interaction_run",
+    "interaction_answer",
+    "prepared_command_metadata",
+    "outcome_record"
+  ],
+  "availability": {
+    "states": [
+      "available",
+      "degraded",
+      "unavailable",
+      "missing_provider",
+      "blocked",
+      "policy_disabled"
+    ],
+    "semantics": "available for read/guidance when enabled and trusted company_id exists; consequential work remains prepared/blocked unless a governed execution provider is available",
+    "provider_provenance_required": true,
+    "provider_removal_does_not_mutate_workforce_identity": true
+  },
+  "compatibility_notes": [
+    "The extension-local CommandBus class is treated as a compatibility/orchestration abstraction, not Titan mutation authority.",
+    "Workforce must not treat Interaction authority levels as executable platform authority; consequential mutations require canonical Titan Command Bus plus governance."
+  ],
+  "tools": [
+    {
+      "id": "interaction.context.read",
+      "kind": "read_tool",
+      "mutating": false,
+      "company_scoped": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.template.read",
+      "kind": "read_tool",
+      "mutating": false,
+      "company_scoped": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.journey.read",
+      "kind": "read_tool",
+      "mutating": false,
+      "company_scoped": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.cognition.read",
+      "kind": "read_tool",
+      "mutating": false,
+      "company_scoped": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "authority_neutral": true
+    },
+    {
+      "id": "interaction.guidance.prepare",
+      "kind": "read_tool",
+      "mutating": false,
+      "company_scoped": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "authority_neutral": true
+    }
+  ],
+  "data_sources": [
+    {
+      "id": "interaction.context.read",
+      "kind": "read_model",
+      "company_scoped": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "authority_neutral": true,
+      "mutation_forbidden": true
+    },
+    {
+      "id": "interaction.template.read",
+      "kind": "read_model",
+      "company_scoped": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "authority_neutral": true,
+      "mutation_forbidden": true
+    },
+    {
+      "id": "interaction.journey.read",
+      "kind": "read_model",
+      "company_scoped": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "authority_neutral": true,
+      "mutation_forbidden": true
+    },
+    {
+      "id": "interaction.cognition.read",
+      "kind": "read_model",
+      "company_scoped": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "authority_neutral": true,
+      "mutation_forbidden": true
+    },
+    {
+      "id": "interaction.guidance.prepare",
+      "kind": "read_model",
+      "company_scoped": true,
+      "provider": "titan-interaction-engine",
+      "provider_version": "10.12.0",
+      "authority_neutral": true,
+      "mutation_forbidden": true
+    }
+  ],
+  "execution_contract": {
+    "company_key": "company_id",
+    "provider_pin_required": true,
+    "provider_version_required": true,
+    "idempotency_key_required_for_mutations": true,
+    "causal_context_required": [
+      "trace_id",
+      "correlation_id",
+      "causation_id",
+      "root_causation_id"
+    ],
+    "governance_evidence_required_for_consequential_mutations": true,
+    "receipt_required_for_mutations": true,
+    "availability_never_grants_authority": true,
+    "missing_or_degraded_execution_provider": "fail_closed"
+  }
+}

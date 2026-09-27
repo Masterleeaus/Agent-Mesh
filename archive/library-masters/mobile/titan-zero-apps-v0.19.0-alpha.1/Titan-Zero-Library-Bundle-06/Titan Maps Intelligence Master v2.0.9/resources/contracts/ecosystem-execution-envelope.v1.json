@@ -1,0 +1,91 @@
+{
+  "schema": "titan.ecosystem.execution-envelope.v1",
+  "schema_version": "1.0",
+  "purpose": "Canonical cross-extension execution trace envelope for Agent-01 operational domains.",
+  "tenancy": {
+    "required_key": "company_id",
+    "cross_company_replay_forbidden": true
+  },
+  "required_fields": [
+    "envelope_id",
+    "company_id",
+    "source_extension",
+    "target_extension",
+    "work_type",
+    "correlation_id",
+    "causation_id",
+    "idempotency_key",
+    "provider",
+    "authority",
+    "status",
+    "occurred_at"
+  ],
+  "causality": {
+    "correlation_id_required": true,
+    "causation_id_required": true,
+    "root_causation_id_supported": true,
+    "trace_id_supported": true
+  },
+  "idempotency": {
+    "required": true,
+    "scope": [
+      "company_id",
+      "target_extension",
+      "work_type",
+      "idempotency_key"
+    ],
+    "duplicate_result": "return_original_receipt_without_reexecution"
+  },
+  "provider_provenance": {
+    "required": [
+      "extension",
+      "capability"
+    ],
+    "optional": [
+      "implementation",
+      "provider_id",
+      "model",
+      "connector"
+    ]
+  },
+  "authority": {
+    "owner": "titan-autonomy",
+    "required_decision": true,
+    "allowed": [
+      "approved",
+      "denied",
+      "escalate",
+      "deferred",
+      "read_only"
+    ],
+    "offline_never_increases_authority": true
+  },
+  "evidence": {
+    "references_supported": true,
+    "must_not_embed_secrets": true,
+    "high_risk_execution_requires_fresh_evidence": true
+  },
+  "receipt": {
+    "required": true,
+    "statuses": [
+      "accepted",
+      "executing",
+      "succeeded",
+      "failed",
+      "deferred",
+      "duplicate"
+    ],
+    "target_domain_is_system_of_record": true
+  },
+  "failure": {
+    "retry_requires_same_idempotency_key": true,
+    "unknown_outcome": "deferred",
+    "missing_peer": "degraded_not_fabricated",
+    "missing_provider": "degraded_not_auto_authorized"
+  },
+  "workforce": {
+    "staff_identity_owner": "titan-ai-workforce",
+    "assignment_owner": "titan-ai-workforce",
+    "extension_must_not_create_roles": true
+  }
+}

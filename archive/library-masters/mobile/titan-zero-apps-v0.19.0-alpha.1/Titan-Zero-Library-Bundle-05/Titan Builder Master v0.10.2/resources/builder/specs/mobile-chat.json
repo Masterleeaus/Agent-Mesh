@@ -1,0 +1,105 @@
+{
+  "id": "mobile-chat",
+  "name": "Messages",
+  "description": "Premium Mobilekit-derived messages preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {
+    "message": ""
+  },
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Messages",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "thread",
+        "message"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "thread": {
+      "type": "chat-thread",
+      "props": {
+        "items": [
+          {
+            "author": "Customer",
+            "text": "Is tomorrow still confirmed?",
+            "time": "09:28",
+            "direction": "in"
+          },
+          {
+            "author": "Team",
+            "text": "Yes, 10:00 am is confirmed.",
+            "time": "09:30",
+            "direction": "out",
+            "status": "Delivered"
+          }
+        ]
+      }
+    },
+    "message": {
+      "type": "chat-composer",
+      "props": {
+        "placeholder": "Write a message",
+        "sendLabel": "Send",
+        "statePath": "/message"
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

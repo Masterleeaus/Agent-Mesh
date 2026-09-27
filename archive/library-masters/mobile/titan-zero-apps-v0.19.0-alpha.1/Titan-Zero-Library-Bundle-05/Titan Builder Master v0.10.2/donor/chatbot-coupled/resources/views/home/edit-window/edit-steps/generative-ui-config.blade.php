@@ -1,0 +1,4 @@
+<div class="rounded-xl border p-5" data-generative-ui-config>
+    <div class="flex items-start justify-between gap-4"><div><h3 class="font-semibold">{{ __('Adaptive Generative UI') }}</h3><p class="mt-1 text-sm opacity-70">{{ __('The chatbot can compose validated forms, cards, schedules, dashboards and approval previews directly inside chat. Actions remain presentation-only intents.') }}</p></div><span class="rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-700">{{ __('Enabled') }}</span></div>
+    <div class="mt-4 flex flex-wrap gap-2"><a class="btn btn-outline" href="{{ route('dashboard.chatbot.generative-ui.lab') }}" target="_blank">{{ __('Open UI Lab') }}</a><a class="btn btn-outline" href="{{ route('dashboard.chatbot.generative-ui.catalogue') }}" target="_blank">{{ __('View Catalogue') }}</a></div>
+</div>

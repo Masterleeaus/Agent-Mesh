@@ -1,0 +1,16 @@
+{
+  "id": "nav-group",
+  "name": "Navigation group",
+  "category": "Navigation",
+  "blade": "components.titan-builder.nav.group",
+  "authority": "presentation-only",
+  "props": [
+    "label",
+    "icon",
+    "open"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Radminly-adapted",
+  "actions": []
+}

@@ -1,0 +1,29 @@
+{
+  "id": "field",
+  "name": "Titan Go",
+  "product": "Titan Go",
+  "runtime_owner": "Titan Mobile / Titan Go",
+  "connectivity": "offline-first",
+  "offline_fallback": "assigned-work-pack+permitted-queued-actions+local-media+sync-conflict-state",
+  "authority": "presentation-only",
+  "default_template": "field",
+  "allowed_devices": [
+    "mobile",
+    "tablet"
+  ],
+  "required_capabilities": [
+    "mobile.field",
+    "crm.field.offline"
+  ],
+  "preview_states": [
+    "online",
+    "offline",
+    "syncing",
+    "conflict",
+    "empty",
+    "populated",
+    "loading",
+    "error",
+    "permission-denied"
+  ]
+}

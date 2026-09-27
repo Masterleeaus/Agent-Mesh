@@ -1,0 +1,14 @@
+{
+  "id": "status-pill",
+  "name": "Status pill",
+  "category": "Data display",
+  "blade": "components.titan-builder.status-pill",
+  "authority": "presentation-only",
+  "props": [
+    "status"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

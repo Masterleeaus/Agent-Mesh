@@ -1,0 +1,191 @@
+{
+  "id": "dynamic-form",
+  "name": "Dynamic Quote Form",
+  "description": "State-bound form with validation and conditional success feedback.",
+  "version": "1.0",
+  "surface": "chat",
+  "authority": "presentation-only",
+  "root": "root",
+  "state": {
+    "form": {
+      "name": "",
+      "email": "",
+      "service": "standard",
+      "frequency": "once",
+      "hours": 3
+    },
+    "submitted": false
+  },
+  "elements": {
+    "root": {
+      "type": "card",
+      "props": {
+        "title": "Quote preview",
+        "subtitle": "Interactive form generated in chat"
+      },
+      "children": [
+        "form-stack",
+        "success"
+      ]
+    },
+    "form-stack": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "name",
+        "email",
+        "service",
+        "frequency",
+        "hours",
+        "estimate",
+        "submit"
+      ]
+    },
+    "name": {
+      "type": "form-input",
+      "props": {
+        "name": "name",
+        "label": "Customer name",
+        "placeholder": "Enter a name",
+        "statePath": "/form/name",
+        "validation": [
+          {
+            "type": "required",
+            "message": "Customer name is required"
+          }
+        ]
+      }
+    },
+    "email": {
+      "type": "form-input",
+      "props": {
+        "name": "email",
+        "label": "Email",
+        "type": "email",
+        "placeholder": "name@example.com",
+        "statePath": "/form/email",
+        "validation": [
+          {
+            "type": "required",
+            "message": "Email is required"
+          },
+          {
+            "type": "email",
+            "message": "Enter a valid email"
+          }
+        ]
+      }
+    },
+    "service": {
+      "type": "radio-group",
+      "props": {
+        "label": "Service",
+        "name": "service",
+        "statePath": "/form/service",
+        "options": [
+          {
+            "label": "Standard clean",
+            "value": "standard"
+          },
+          {
+            "label": "Deep clean",
+            "value": "deep"
+          },
+          {
+            "label": "End-of-lease",
+            "value": "end-of-lease"
+          }
+        ]
+      }
+    },
+    "frequency": {
+      "type": "toggle-group",
+      "props": {
+        "name": "frequency",
+        "statePath": "/form/frequency",
+        "options": [
+          {
+            "label": "Once",
+            "value": "once"
+          },
+          {
+            "label": "Weekly",
+            "value": "weekly"
+          },
+          {
+            "label": "Fortnightly",
+            "value": "fortnightly"
+          }
+        ]
+      }
+    },
+    "hours": {
+      "type": "slider",
+      "props": {
+        "name": "hours",
+        "label": "Estimated hours",
+        "statePath": "/form/hours",
+        "min": 1,
+        "max": 12,
+        "step": 1
+      }
+    },
+    "estimate": {
+      "type": "alert",
+      "props": {
+        "tone": "info",
+        "title": "Preview estimate",
+        "message": {
+          "$concat": [
+            "Estimated duration: ",
+            {
+              "$state": "/form/hours"
+            },
+            " hours. Final pricing requires validation."
+          ]
+        }
+      }
+    },
+    "submit": {
+      "type": "button",
+      "props": {
+        "label": "Prepare quote intent",
+        "variant": "primary"
+      },
+      "on": {
+        "press": [
+          {
+            "action": "state.set",
+            "params": {
+              "path": "/submitted",
+              "value": true
+            }
+          },
+          {
+            "action": "titanmoney.quotes.create",
+            "confirm": "Prepare this quote preview?",
+            "params": {
+              "form": {
+                "$state": "/form"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "success": {
+      "type": "alert",
+      "visible": {
+        "$state": "/submitted",
+        "eq": true
+      },
+      "props": {
+        "tone": "success",
+        "title": "Intent prepared",
+        "message": "The preview action was emitted. No quote was created."
+      }
+    }
+  }
+}

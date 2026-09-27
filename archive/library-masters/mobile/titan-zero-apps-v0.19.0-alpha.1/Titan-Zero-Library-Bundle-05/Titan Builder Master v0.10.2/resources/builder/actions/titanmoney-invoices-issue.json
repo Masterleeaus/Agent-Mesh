@@ -1,0 +1,14 @@
+{
+  "id": "titanmoney.invoices.issue",
+  "name": "titanmoney.invoices.issue",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "payments",
+  "required_capability": "titan-money.invoices",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

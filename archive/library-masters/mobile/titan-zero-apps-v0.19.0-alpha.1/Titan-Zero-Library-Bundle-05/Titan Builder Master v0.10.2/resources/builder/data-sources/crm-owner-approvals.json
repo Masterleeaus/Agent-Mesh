@@ -1,0 +1,20 @@
+{
+  "id": "crm-owner-approvals",
+  "name": "Owner approvals",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.owner.approvals",
+  "required_capability": "crm.owner.dashboard",
+  "fields": [
+    "id",
+    "type",
+    "status",
+    "summary",
+    "requested_at"
+  ],
+  "surface_compatibility": [
+    "owner"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

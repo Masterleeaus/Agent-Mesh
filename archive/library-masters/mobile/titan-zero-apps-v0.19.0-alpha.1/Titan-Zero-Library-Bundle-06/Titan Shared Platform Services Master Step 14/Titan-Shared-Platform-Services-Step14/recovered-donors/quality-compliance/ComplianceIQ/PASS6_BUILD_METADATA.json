@@ -1,0 +1,9 @@
+{
+  "pass": 6,
+  "version": "0.6.0",
+  "name": "ComplianceIQ Convergence",
+  "canonical_domain": "compliance_reporting",
+  "audit_source": "TitanZeroAssurance",
+  "php_lint_debt": 0,
+  "next_pass": "Cross-Domain Assurance Orchestration"
+}

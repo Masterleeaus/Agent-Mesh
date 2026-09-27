@@ -1,0 +1,24 @@
+{
+  "id": "image-gallery",
+  "name": "Image Gallery",
+  "category": "Premium / Media",
+  "blade": "components.titan-builder.premium.image-gallery",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "images",
+    "columns",
+    "radius",
+    "fit",
+    "lightbox",
+    "activePath"
+  ],
+  "actions": [
+    "state.set",
+    "open-modal"
+  ]
+}

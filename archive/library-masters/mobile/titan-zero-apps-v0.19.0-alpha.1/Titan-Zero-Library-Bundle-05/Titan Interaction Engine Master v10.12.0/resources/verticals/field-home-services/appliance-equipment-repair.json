@@ -1,0 +1,24 @@
+{
+  "slug": "appliance-equipment-repair",
+  "profile": "field_home_services",
+  "terminology": [
+    "job",
+    "equipment"
+  ],
+  "required_evidence_suggestions": [
+    "before_photo",
+    "after_photo",
+    "test_readings"
+  ],
+  "suggested_services": [
+    "Appliance repair",
+    "Equipment service",
+    "Diagnostic inspection"
+  ],
+  "compliance_prompts": [
+    "electrical/test requirements where applicable"
+  ],
+  "wizard_overrides": {
+    "engine_logic": "unchanged"
+  }
+}

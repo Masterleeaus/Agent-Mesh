@@ -1,0 +1,155 @@
+{
+  "schema_version": "4.0.0",
+  "id": "onboarding",
+  "identity": {
+    "name": "Titan Onboarding",
+    "product": "Titan Onboarding",
+    "surface": "onboarding",
+    "icon": "sparkles",
+    "accent": "var(--titan-builder-accent, #3157d5)",
+    "bootstrap_brand": "titan-neutral"
+  },
+  "navigation": {
+    "default_view": "conversation",
+    "primary": [
+      {
+        "id": "conversation",
+        "label": "Setup",
+        "icon": "message-circle"
+      },
+      {
+        "id": "progress",
+        "label": "Progress",
+        "icon": "list"
+      },
+      {
+        "id": "preview",
+        "label": "Apps",
+        "icon": "smartphone"
+      },
+      {
+        "id": "readiness",
+        "label": "Ready",
+        "icon": "check-circle"
+      }
+    ],
+    "drawer": [
+      {
+        "id": "integrations",
+        "label": "Integrations",
+        "icon": "plug"
+      },
+      {
+        "id": "review",
+        "label": "Review",
+        "icon": "clipboard-check"
+      }
+    ],
+    "header_actions": [
+      "help",
+      "settings"
+    ]
+  },
+  "home": {
+    "widgets": [
+      "onboarding-conversation",
+      "progress",
+      "generated-ui",
+      "app-preview",
+      "readiness"
+    ],
+    "quick_actions": [
+      "voice-input",
+      "review",
+      "preview-apps"
+    ]
+  },
+  "assistant": {
+    "enabled": true,
+    "persistent": true,
+    "role": "business setup assistant",
+    "chatbot_reference": null,
+    "suggested_prompts": [
+      "Tell me about your business",
+      "Configure my services",
+      "Preview my apps"
+    ]
+  },
+  "data": {
+    "provider": "crm",
+    "sources": [
+      "crm-business-services",
+      "crm-business-hours",
+      "crm-business-locations"
+    ]
+  },
+  "capabilities": {
+    "required": [
+      "titan-ai.runtime",
+      "interaction-engine.runtime",
+      "crm.business.configuration",
+      "mobile.onboarding",
+      "builder.application.configure"
+    ],
+    "optional": [
+      "titan-connect.messaging",
+      "chatbot.provisioning"
+    ]
+  },
+  "actions": {
+    "intents": [
+      "onboarding.response.submit",
+      "builder.brand.update",
+      "builder.navigation.update",
+      "builder.features.update",
+      "builder.vertical.apply",
+      "builder.preview",
+      "builder.readiness",
+      "builder.publish"
+    ]
+  },
+  "offline": {
+    "mode": "online-first",
+    "draft_recovery": "mobilecore-capability-only",
+    "external_integrations": "requires-online"
+  },
+  "permissions": [
+    "onboarding.configure"
+  ],
+  "privacy": {
+    "default_mode": "minimum-required"
+  },
+  "notifications": [
+    "setup-progress"
+  ],
+  "settings_sections": [
+    "business-data",
+    "crm",
+    "ai",
+    "communications",
+    "mobile",
+    "privacy",
+    "permissions",
+    "notifications",
+    "appearance",
+    "accessibility",
+    "diagnostics"
+  ],
+  "preview_states": [
+    "mobile",
+    "tablet",
+    "desktop",
+    "online",
+    "offline",
+    "empty",
+    "populated",
+    "loading",
+    "error",
+    "permission-denied"
+  ],
+  "default_page": {
+    "slug": "titan-onboarding",
+    "name": "Setup",
+    "spec": "titan-onboarding"
+  }
+}

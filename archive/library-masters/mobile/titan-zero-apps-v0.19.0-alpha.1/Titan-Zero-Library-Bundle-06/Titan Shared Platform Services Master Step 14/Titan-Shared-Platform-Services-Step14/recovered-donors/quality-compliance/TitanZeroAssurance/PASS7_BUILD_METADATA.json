@@ -1,0 +1,8 @@
+{
+  "pass": 7,
+  "version": "0.7.0",
+  "name": "Cross-Domain Assurance Orchestration",
+  "lifecycle": "signal -> evidence -> finding -> audit event -> governed corrective work -> execution -> verified outcome",
+  "php_lint_debt": 0,
+  "next_pass": "Production Hardening & Final Team Contract"
+}

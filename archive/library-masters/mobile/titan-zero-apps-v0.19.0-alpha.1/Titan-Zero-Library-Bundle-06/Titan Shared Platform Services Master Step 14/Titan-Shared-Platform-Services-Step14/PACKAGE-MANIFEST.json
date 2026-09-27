@@ -1,0 +1,3672 @@
+{
+  "files": {
+    "CODEE_STEP.txt": {
+      "bytes": 111,
+      "sha256": "d296c286632c85f8f76af65172eea47ae90778d99c1116ced5c6ad01f37a1c6c"
+    },
+    "contracts/DecisionPacket.schema.json": {
+      "bytes": 1173,
+      "sha256": "8de36cdb4e4eb502215373f4c88aceaa80508d91cda85f46449cbc52405e0ab4"
+    },
+    "contracts/PlatformServiceEnvelope.schema.json": {
+      "bytes": 931,
+      "sha256": "1716266ec253150e91d5ae0fbed035c5307767a9a3fa8aeb913239c8b8e3d964"
+    },
+    "contracts/ProviderContribution.schema.json": {
+      "bytes": 754,
+      "sha256": "4d431f83a04ba9486c90270e067c7bcf4481a9faa05169f0edf59cb1a0fd52b2"
+    },
+    "docs/SHARED-PLATFORM-SERVICES-RECOVERY.md": {
+      "bytes": 1186,
+      "sha256": "ff61f84f524b85f7fee35d9f72309ca2f62c0b038243e876684d58cc8855fe60"
+    },
+    "orchestrator/Titan-AI-Workforce-v0.72.0-alpha.45-31-Provider-Full-Platform-Converged-Cumulative.zip": {
+      "bytes": 1089757,
+      "sha256": "d84b60160698f1fbd6de18c00df61fe84a5868afd8aee9c21b3f5c79d4cb6b6c"
+    },
+    "providers/Titan-AI-Assurance-Engine-v2.3.0-Pass6-Namespace-Isolation-Cumulative.zip": {
+      "bytes": 373771,
+      "sha256": "a5af964427ae643644efd82a097a0e34ceca068a9068fc9d8ec79e39c0208340"
+    },
+    "providers/Titan-AI-Core-v0.5.0-Pass5-Runtime-Availability-Handoff-Cumulative.zip": {
+      "bytes": 109609,
+      "sha256": "1ba599369349b0ea084246f17d9f458b0f63162f2d320f7c54a7fd6a0eac5d2a"
+    },
+    "providers/Titan-AI-Vision-v1.12.6-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip": {
+      "bytes": 164177,
+      "sha256": "dd152bb3525047656beb669b9f2ed13c7ae0370b03899606f5514b7bdc891355"
+    },
+    "providers/Titan-AI-v1.5.3-Pass6-Workforce-Identity-Boundary-Cumulative.zip": {
+      "bytes": 386380,
+      "sha256": "10bbf4c6706fca124b1c0145377fbf0543b662ae92d547ebdf3ef94eadba196a"
+    },
+    "providers/Titan-Assets-v0.2.0-alpha.7-Pass6-DEEP-SCAN-FIXED-Cumulative.zip": {
+      "bytes": 128608,
+      "sha256": "1cf01bd7fe7cf40beaa0acefc91c38acf70917bb98ee8e8da0a7a5da3153c0c9"
+    },
+    "providers/Titan-Autonomy-v1.7.5-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip": {
+      "bytes": 260143,
+      "sha256": "f1df29de599e36e82b7b77565251827a14079c2728a874ca901aa1def4db4976"
+    },
+    "providers/Titan-Bookings-Quotes-v0.1.0-alpha.2-Pass2-Booking-Engine-Cumulative.zip": {
+      "bytes": 27880,
+      "sha256": "9dee7b76126528f732c3a8bec1ba48fa4a7df20f96125cff3ab3954a01d15753"
+    },
+    "providers/Titan-CRM-v1.3.0-alpha.42-Pass6-DEEP-SCAN-FIXED-Cumulative.zip": {
+      "bytes": 854188,
+      "sha256": "9a2ebb607abff5a0af8d1e9c16aacac48bc499e235b426c65e6ee89563a892cf"
+    },
+    "providers/Titan-Command-Bus-v0.2.0-alpha.7-Pass5-Executable-Workforce-Contract-Cumulative.zip": {
+      "bytes": 101092,
+      "sha256": "a41812967540080c4bacbe058077eee12fdea85aec00b8760fc5c9bf8a2604f7"
+    },
+    "providers/Titan-Connect-v0.10.6-Pass5-Executable-Workforce-Contract-Cumulative.zip": {
+      "bytes": 299861,
+      "sha256": "6c9aa87498571f8dad111f9e980aff7859d9c03682f586ac1564a0403d4fa528"
+    },
+    "providers/Titan-Field-v1.0.12-Pass6-DEEP-SCAN-FIXED-Cumulative.zip": {
+      "bytes": 341204,
+      "sha256": "d09e8c8d4a0e4776cff0253612f96d30442b15f57055430663700e49ebe8cbcc"
+    },
+    "providers/Titan-Financial-Engine-v0.4.0-Pass5-Executable-Workforce-Contract-Cumulative.zip": {
+      "bytes": 125119,
+      "sha256": "38ffa756ca64797a1f821ab8a578a507b835f8db15794bc7075c56b16cdedb0c"
+    },
+    "providers/Titan-Forge-v0.9.0-alpha.8-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip": {
+      "bytes": 278666,
+      "sha256": "b8e92661f80ea2c693e06b26ce44d57bdaecde661057a4ab6b7ad3afbeef9d34"
+    },
+    "providers/Titan-Governance-v1.0.0-rc.2-Pass5-Durable-Execution-Cumulative.zip": {
+      "bytes": 318916,
+      "sha256": "d66cbc444f5ce796454bc62112c569a1e54b55212e94ac3fecfdae34b4520a6e"
+    },
+    "providers/Titan-Interaction-Engine-v10.3.2-Pass5-Executable-Workforce-Contract-Cumulative.zip": {
+      "bytes": 732482,
+      "sha256": "b625000458f5ada8574cbf06d1705dde2d11962ee82a0c0a95421689b05bf3d8"
+    },
+    "providers/Titan-Ledger-v1.20.0-rc.5-Pass5-Executable-Workforce-Contract-Cumulative.zip": {
+      "bytes": 390187,
+      "sha256": "94fd80a17874fe4ae2bcbfdf55749c57df0c10a4012386416528c7f233f9d0a8"
+    },
+    "providers/Titan-Locker-v1.1.0-alpha.6-Pass6-Command-Bus-Convergence-Cumulative.zip": {
+      "bytes": 102433,
+      "sha256": "3b12cbba25680e34ae9e5f352bfdc78698efb32fc1635c7f7dded2705a44f7af"
+    },
+    "providers/Titan-MCP-v1.5.14-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip": {
+      "bytes": 226612,
+      "sha256": "1e4d79a2be5c9a24ce0476cd749c7c19d699f098d99cc8aa08be94a2de9f7da8"
+    },
+    "providers/Titan-Maps-Intelligence-v2.0.7-Pass6-DEEP-SCAN-FIXED-Cumulative.zip": {
+      "bytes": 743467,
+      "sha256": "060e40c97e6296672cfd09cd4a8f366e962cca973629094a0fa8a97e2c480e41"
+    },
+    "providers/Titan-Model-Council-v1.0.0-rc.1-Pass6-Assurance-Coexistence-Cumulative.zip": {
+      "bytes": 311850,
+      "sha256": "5a38fa1cc443f7c3c5dff923485de28b0be5efcf70bba9e0e2f64a506f49c85a"
+    },
+    "providers/Titan-Payroll-v0.1.0-rc.2-Workforce31-Converged-Cumulative.zip": {
+      "bytes": 300391,
+      "sha256": "e37cce9fc23cb91417d23fbd817393dbcf670a173a09c23893665db8cb2c6790"
+    },
+    "providers/Titan-People-v1.0.0-rc.1-Workforce31-Converged-Cumulative.zip": {
+      "bytes": 167546,
+      "sha256": "f4345b11154d69137ccd854c509f0485677587b053de3c87ce93172da55f2db7"
+    },
+    "providers/Titan-Prime-v0.4.0-Pass5-Runtime-Availability-Handoff-Cumulative.zip": {
+      "bytes": 92039,
+      "sha256": "1e53c751050e6b815d01366f60f1319e594f6eb9dcebace817d98a8e9273d7a2"
+    },
+    "providers/Titan-Risk-Engine-v1.0.0-rc.3-Pass5-Durable-Execution-Cumulative.zip": {
+      "bytes": 332826,
+      "sha256": "6a527075bda0e6ed5998100f7c0788a696fe69b5e6336faa125d78ba0003e44f"
+    },
+    "providers/Titan-Shield-v1.0.0-rc.2-Pass5-Durable-Execution-Cumulative.zip": {
+      "bytes": 287338,
+      "sha256": "7a2dad4020c4a5fec21e85abcace9cfd557c1066fa4c8b6edfff44310f91acce"
+    },
+    "providers/Titan-Time-Attendance-v0.1.7-Pass6-DEEP-SCAN-FIXED-Cumulative.zip": {
+      "bytes": 191526,
+      "sha256": "6cb01a6e894f3e2204c4e05fc8a894204a921347c96db1ab8db8450783545376"
+    },
+    "providers/TitanKnowledgeAuthority-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip": {
+      "bytes": 144692,
+      "sha256": "bd5d676353f0ca93f0f4b3ba939c35e9feb72f403fb444198d56594e7213138b"
+    },
+    "providers/TitanNexus-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip": {
+      "bytes": 323937,
+      "sha256": "9846a93d0233176167022232d35371b69e60300afe4c194e940b23abf091412f"
+    },
+    "providers/TitanRewind-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip": {
+      "bytes": 447224,
+      "sha256": "a95e12a326186e7b30fe5740c791561e022db7c6bd39252fb79d19a1e2c197eb"
+    },
+    "providers/TitanSignalEngine-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip": {
+      "bytes": 549033,
+      "sha256": "9834d63e2919101a1763a0c15b3033c544ac4599993d901b6afb1733143839cb"
+    },
+    "providers/TitanTrust-v2.1.0-Workforce31-Converged-Cumulative.zip": {
+      "bytes": 98877,
+      "sha256": "9b1d99fb266976ec05fe863f717e16dfbb4e8665fdbc1b29ac484748dba896e9"
+    },
+    "providers/TitanWisdomEngine-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip": {
+      "bytes": 155256,
+      "sha256": "3019bb66d7225ae9a39cc7395ea58a93fc63a4db0c22c58f8b23a226c5fbab81"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Config/Donor/worksuite-audit-log-saas-main_Config_config.php": {
+      "bytes": 48,
+      "sha256": "44eeaf45ba8410ac66f8599a14fafd43f61077e814f092def4c36d9e846392c3"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Config/config.php": {
+      "bytes": 371,
+      "sha256": "8867c9fbc3fd4ca74251b1389300a2e562d71aa1550e4642959538944a490a34"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Config/permissions.php": {
+      "bytes": 465,
+      "sha256": "7becd8d322c3b49ccc91c352677ae08bb9ce0727fe725e7d9da6feba2d252f06"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Database/Migrations/2025_09_19_000000_create_compliance_tables.php": {
+      "bytes": 1931,
+      "sha256": "235d1b6f448f375f3ec0a2509caf6af30003f0b8725665dcefa9c0428d20b311"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Database/Migrations/2025_09_19_131457_0001_Database_Migrations_2021_07_03_155008_add_audit_log_module_to_the_system.php": {
+      "bytes": 710,
+      "sha256": "cdfaf416ecda012119cff0a30d9fb89cefb53e94955b15d6a8eb07dd607f5e1d"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Database/Migrations/2026_08_22_000006_company_scope_compliance_hashes.php": {
+      "bytes": 453,
+      "sha256": "c4de2a8cd181d4922996ff5ee3c6c652395fb7a152b4aeb47060e1f1728a0680"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Database/Migrations/Donor/Database_Migrations_2021_07_03_155008_add_audit_log_module_to_the_system.php": {
+      "bytes": 710,
+      "sha256": "cdfaf416ecda012119cff0a30d9fb89cefb53e94955b15d6a8eb07dd607f5e1d"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Database/Seeders/CompliancePermissionSeeder.php": {
+      "bytes": 1284,
+      "sha256": "1ff78d0e5387817e6ade514e3a8d6943dc2b7aa596f53002c03f9e3695fd2fc7"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Config/config.php": {
+      "bytes": 48,
+      "sha256": "44eeaf45ba8410ac66f8599a14fafd43f61077e814f092def4c36d9e846392c3"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/DataTables/AttendanceLogActivityDataTable.php": {
+      "bytes": 6080,
+      "sha256": "330bd718357ee352e2b4f0e5deb53614f41c11178a443fd2377c92532f1a4847"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/DataTables/IncidentLogActivityDataTable.php": {
+      "bytes": 6190,
+      "sha256": "f2b38663f0ed2e8fb7ceff54cad693416b79ea471f120326b224bbcfb0fb4184"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/DataTables/LeaveLogDataTable.php": {
+      "bytes": 6027,
+      "sha256": "14e374a39da5173ef997089ee4f5d033ed77091691a01259c3d4002988fd339d"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/DataTables/LogActivityDataTable.php": {
+      "bytes": 5461,
+      "sha256": "a3fe0654dcc2db283cd99482abf6fee5d784e6e2ba7fd2f3ccf3ebe2728a1c5d"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/DataTables/ProjectLogDataTable.php": {
+      "bytes": 3799,
+      "sha256": "079fe6105876107d4950ac2e4e5b8d31fcaf65d45a601c10056c72d35915d5af"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/DataTables/TaskLogDataTable.php": {
+      "bytes": 4020,
+      "sha256": "b6a2752e119fc0126e15435c40eb56c24d7d8bb2264f6196340816f3f24bde46"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/DataTables/UserLogDataTable.php": {
+      "bytes": 3527,
+      "sha256": "e56fa27fa35d81d0b5e059ea55bd315da9f55436b023e3043fd5edd1f12234f4"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Database/Migrations/2021_07_03_155008_add_audit_log_module_to_the_system.php": {
+      "bytes": 710,
+      "sha256": "cdfaf416ecda012119cff0a30d9fb89cefb53e94955b15d6a8eb07dd607f5e1d"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Exports/AttendanceExport.php": {
+      "bytes": 1428,
+      "sha256": "91bbba30566419708d5c783e048586c1f2c7b8c9f818b35a150e7c588bbbf885"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Exports/LeaveExport.php": {
+      "bytes": 1446,
+      "sha256": "55eb5bc0ff75c32b96a3ca2e8598297d0ee4e45d30f686852bef653e420ae3b6"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Exports/LogActivityExport.php": {
+      "bytes": 1164,
+      "sha256": "9979399902e734ca47790e081844e14c08ecff5cdc9c8671133e3d0dc0d504cd"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Http/Controllers/Admin/AuditLogController.php": {
+      "bytes": 3025,
+      "sha256": "47cc5bd49c0ad2e5b3fdd00b132c27f524a647fc61d064804aab35428735b670"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Http/Controllers/Admin/LeaveLogsController.php": {
+      "bytes": 2004,
+      "sha256": "a1ce49c40bb21caac15db65fdaa257e16fe50db9481a0c8b2c8cc1297ecd5b7e"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Http/Controllers/Member/AuditLogController.php": {
+      "bytes": 3117,
+      "sha256": "1fa8bf3510bfa04b2bceec0cc1c657c948a6aead855df0b40715ed8f1bb05035"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Http/Controllers/Member/LeaveLogsController.php": {
+      "bytes": 2009,
+      "sha256": "89720c70d7031b7651cac06df1f7cee5e5776ff0986d5bd21ee2ec49c1f150b1"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Http/routes.php": {
+      "bytes": 183,
+      "sha256": "d7756242896544fa80df08f2fa0476a4762a67040754f7378bbb6b8672d3c4f1"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Providers/AuditLogServiceProvider.php": {
+      "bytes": 2254,
+      "sha256": "3064cff753fef7c2dc9e7e9b60ca62c36caf4f34801421efe8635149b25273fd"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Providers/RouteServiceProvider.php": {
+      "bytes": 1558,
+      "sha256": "e916e8c9d0b7b98ff0b33c0fb09505c221d32725ba27b438769a9a8d1c373a89"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/lang/en/app.php": {
+      "bytes": 974,
+      "sha256": "aef9160c4bec4d577578ecc592ad1d3a7af000c1761bf589b8de0b09f66059f0"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/lang/es/app.php": {
+      "bytes": 1050,
+      "sha256": "6dce2fc0f1af03f43bbd20cc57b3d06c79f45dee16e73a1a08f058b9159383f4"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/lang/jt/app.php": {
+      "bytes": 1050,
+      "sha256": "6dce2fc0f1af03f43bbd20cc57b3d06c79f45dee16e73a1a08f058b9159383f4"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/lang/sw/app.php": {
+      "bytes": 1050,
+      "sha256": "6dce2fc0f1af03f43bbd20cc57b3d06c79f45dee16e73a1a08f058b9159383f4"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/attendance/export.blade.php": {
+      "bytes": 996,
+      "sha256": "58459ab4c8b8d53a0dc50ba65fa11fca630953cf11f798dfd43f265e032dbd20"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/attendance/index.blade.php": {
+      "bytes": 9499,
+      "sha256": "f63c30c67ff68c838167e0c2775eb554688d1fad758e767efda97de96a878294"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/incident/export.blade.php": {
+      "bytes": 996,
+      "sha256": "58459ab4c8b8d53a0dc50ba65fa11fca630953cf11f798dfd43f265e032dbd20"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/incident/index.blade.php": {
+      "bytes": 9113,
+      "sha256": "2257146d8cf7cc339d729602fd540beb7c6a5753f3063f0ec78166c8140c16da"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/leave/export.blade.php": {
+      "bytes": 996,
+      "sha256": "58459ab4c8b8d53a0dc50ba65fa11fca630953cf11f798dfd43f265e032dbd20"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/leave/index.blade.php": {
+      "bytes": 9272,
+      "sha256": "60a0cf277adea04b5c1a8ccb13fb2b5876972c3da1816fba3bbcf07f6995a338"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/leave/properties.blade.php": {
+      "bytes": 1674,
+      "sha256": "246e431a41afda99a061f118d42454e5c6a5a99226c171c8f22fe2755c799cb1"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/log-activities-exports.blade.php": {
+      "bytes": 1118,
+      "sha256": "01c1618aecae452834f76d33fad6a89a2605766c06ef21c29a159f259010645f"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/log-activities.blade.php": {
+      "bytes": 8383,
+      "sha256": "1a8a9f32d1416b4a082fb8b3337de4a55765ea2130071308b12a0f4fb71c217f"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/project.blade.php": {
+      "bytes": 4508,
+      "sha256": "b809c187193c78f6f03b4f5505a4a1781c7b9c83ee818e48f2c69e36ec8d9835"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/properties.blade.php": {
+      "bytes": 1802,
+      "sha256": "2e9cd47e4eb77d4cb34958f6fe1d174f70f6184b2370c3cb52c6f04481f53b06"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/sections/left_sidebar.blade.php": {
+      "bytes": 1784,
+      "sha256": "c204133845e58822ebafc83321f0673a61e5eb9c76240207202d7b73120766d3"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/task.blade.php": {
+      "bytes": 4508,
+      "sha256": "b809c187193c78f6f03b4f5505a4a1781c7b9c83ee818e48f2c69e36ec8d9835"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/admin/user.blade.php": {
+      "bytes": 3874,
+      "sha256": "43883e5c3c1f1edd2a4c7f18eb1088ff372e5882149ed362977e3f3b79b48680"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/attendance/export.blade.php": {
+      "bytes": 996,
+      "sha256": "58459ab4c8b8d53a0dc50ba65fa11fca630953cf11f798dfd43f265e032dbd20"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/attendance/index.blade.php": {
+      "bytes": 9499,
+      "sha256": "f63c30c67ff68c838167e0c2775eb554688d1fad758e767efda97de96a878294"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/incident/export.blade.php": {
+      "bytes": 996,
+      "sha256": "58459ab4c8b8d53a0dc50ba65fa11fca630953cf11f798dfd43f265e032dbd20"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/incident/index.blade.php": {
+      "bytes": 9113,
+      "sha256": "2257146d8cf7cc339d729602fd540beb7c6a5753f3063f0ec78166c8140c16da"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/leave/export.blade.php": {
+      "bytes": 996,
+      "sha256": "58459ab4c8b8d53a0dc50ba65fa11fca630953cf11f798dfd43f265e032dbd20"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/leave/index.blade.php": {
+      "bytes": 9272,
+      "sha256": "60a0cf277adea04b5c1a8ccb13fb2b5876972c3da1816fba3bbcf07f6995a338"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/leave/properties.blade.php": {
+      "bytes": 1674,
+      "sha256": "246e431a41afda99a061f118d42454e5c6a5a99226c171c8f22fe2755c799cb1"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/log-activities-exports.blade.php": {
+      "bytes": 1118,
+      "sha256": "01c1618aecae452834f76d33fad6a89a2605766c06ef21c29a159f259010645f"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/log-activities.blade.php": {
+      "bytes": 8383,
+      "sha256": "1a8a9f32d1416b4a082fb8b3337de4a55765ea2130071308b12a0f4fb71c217f"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/project.blade.php": {
+      "bytes": 4508,
+      "sha256": "b809c187193c78f6f03b4f5505a4a1781c7b9c83ee818e48f2c69e36ec8d9835"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/properties.blade.php": {
+      "bytes": 1802,
+      "sha256": "2e9cd47e4eb77d4cb34958f6fe1d174f70f6184b2370c3cb52c6f04481f53b06"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/sections/left_sidebar.blade.php": {
+      "bytes": 1784,
+      "sha256": "c204133845e58822ebafc83321f0673a61e5eb9c76240207202d7b73120766d3"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/task.blade.php": {
+      "bytes": 4508,
+      "sha256": "b809c187193c78f6f03b4f5505a4a1781c7b9c83ee818e48f2c69e36ec8d9835"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Resources/views/user.blade.php": {
+      "bytes": 3874,
+      "sha256": "43883e5c3c1f1edd2a4c7f18eb1088ff372e5882149ed362977e3f3b79b48680"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Routes/api.php": {
+      "bytes": 6,
+      "sha256": "00aba3928cd622ad67c0f81ecd5aa8699e07f8f4908c045fe34f6a2dc0067b37"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/Routes/web.php": {
+      "bytes": 2216,
+      "sha256": "3557baec98cf16715a6d3bda5e1d101216c926f3cee186322acf2e09cc4a2c23"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/composer.json": {
+      "bytes": 488,
+      "sha256": "011cffc0c73aa73ea1a7769b83c76755b54d19f8571371851bf794e703098c4c"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/module.json": {
+      "bytes": 393,
+      "sha256": "6ca5ce7e3e6420ccd99a7ac98b3321fa2e2e68d030eafd215504b57458b86e00"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/DonorSource/worksuite-audit-log-saas-main/start.php": {
+      "bytes": 477,
+      "sha256": "bce31231c3ff084af7696f8a886b6426d48885207cd6df7c52262bb9019480d5"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Entities/ComplianceAnnotation.php": {
+      "bytes": 370,
+      "sha256": "0a207c2b339edf67cd5c44e313f572b6b3777df01558606eb753b7f2e8ebd324"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Entities/ComplianceHash.php": {
+      "bytes": 389,
+      "sha256": "a4ef0a15a09a1d92c9f0a75b2669be65e72c8f8761e08382039e3adc23424008"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Entities/ComplianceReport.php": {
+      "bytes": 706,
+      "sha256": "f6604084539a375383c75ce62e0af8a1f6f86d58892b8749396ae0864926e9d7"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Http/Controllers/Admin/ComplianceLogController.php": {
+      "bytes": 709,
+      "sha256": "31822e4649f8f69c342c9de84d07b5dbb4125f910ba2aafa6421d3d21b69db47"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Http/Controllers/Admin/ComplianceReportController.php": {
+      "bytes": 708,
+      "sha256": "d697ae494404c0cdc149d5342e212cab53c5e7f6d0418cb7c5b4eab82074544e"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Http/Controllers/Api/ExplainController.php": {
+      "bytes": 614,
+      "sha256": "072393f927b5876ed5808b0c208a3b795c45a7f8d9d9bd144504a8c570168b3c"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/INSTALL.md": {
+      "bytes": 978,
+      "sha256": "f3ac806abd4ba7373aa197d3bb4de32b014e43cb67dadcb3d12dacd86139abe4"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Jobs/AnalyzeComplianceAnomalies.php": {
+      "bytes": 1485,
+      "sha256": "535abd1ac259c0df68b5b6ca66340fd8093c74af189d7a1d8a6bb7e0b16b3c31"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Jobs/GenerateComplianceSummary.php": {
+      "bytes": 1009,
+      "sha256": "6928e53e74e3b2e386c3b57ea8bad5bdb7d94cff11b1df9f74474853a3d0f4c3"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Jobs/TamperCheckHashes.php": {
+      "bytes": 730,
+      "sha256": "0f65139e3d1ff10ed2fad59c0b66864fe961f03a3c7c4cc08fe6b1ffdbd01877"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/MERGE_NOTES.md": {
+      "bytes": 1045,
+      "sha256": "7fb07b0a37d2e8b4f92b71055120fc0f369d09c42590bb67662f7140ab2f1b2a"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/NEXT_PASS_HANDOFF.md": {
+      "bytes": 484,
+      "sha256": "b264d2e897a8a511ba1f08512330ff3520c3957189e39da89bc5437a85f76dc7"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/PASS6_BUILD_METADATA.json": {
+      "bytes": 239,
+      "sha256": "d4d990c2f5929f3e06b113805c48105a3fb328517b643df80a105f1d5f592ca2"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/PASS6_COMPLIANCE_CONVERGENCE.md": {
+      "bytes": 633,
+      "sha256": "59242944b5ab3f0280f6d679f1def67ecf9c8f6f66dc1f92e7f4c2b4d40727e7"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Providers/ComplianceIQServiceProvider.php": {
+      "bytes": 2330,
+      "sha256": "a0da5e30055354bfce0739f24ba56e7b95d04fa7130265efbe7f708fecbc9c99"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Providers/RouteServiceProvider.php": {
+      "bytes": 414,
+      "sha256": "e3bfced09af411f8ff5eae387f211248524911119c63604a3e4c6df5fb7e2a50"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/README.md": {
+      "bytes": 185,
+      "sha256": "47c5c2288c70655a8fec545e4f24234357736a862997682019185d1644aed744"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/Resources_views_log-activities-exports.blade.php": {
+      "bytes": 1199,
+      "sha256": "d7902b7b3a9f06d92b9f94c8677abd76c7ea276048805e62568163ded6c264f6"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/Resources_views_log-activities.blade.php": {
+      "bytes": 8383,
+      "sha256": "1a8a9f32d1416b4a082fb8b3337de4a55765ea2130071308b12a0f4fb71c217f"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/Resources_views_project.blade.php": {
+      "bytes": 4508,
+      "sha256": "b809c187193c78f6f03b4f5505a4a1781c7b9c83ee818e48f2c69e36ec8d9835"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/Resources_views_properties.blade.php": {
+      "bytes": 1883,
+      "sha256": "9de74bde22c8c763a101a190655476541e7740ee35a6deb884dc8a1e9d7e73a5"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/Resources_views_task.blade.php": {
+      "bytes": 4508,
+      "sha256": "b809c187193c78f6f03b4f5505a4a1781c7b9c83ee818e48f2c69e36ec8d9835"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/Resources_views_user.blade.php": {
+      "bytes": 3874,
+      "sha256": "43883e5c3c1f1edd2a4c7f18eb1088ff372e5882149ed362977e3f3b79b48680"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/admin_attendance_export.blade.php": {
+      "bytes": 1077,
+      "sha256": "0a719ec69a1c3686a1d60998de5b504ee9de9ab869405e6a71055ecb32c1788c"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/admin_attendance_index.blade.php": {
+      "bytes": 9499,
+      "sha256": "f63c30c67ff68c838167e0c2775eb554688d1fad758e767efda97de96a878294"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/admin_incident_export.blade.php": {
+      "bytes": 1077,
+      "sha256": "0a719ec69a1c3686a1d60998de5b504ee9de9ab869405e6a71055ecb32c1788c"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/admin_incident_index.blade.php": {
+      "bytes": 9113,
+      "sha256": "2257146d8cf7cc339d729602fd540beb7c6a5753f3063f0ec78166c8140c16da"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/admin_leave_export.blade.php": {
+      "bytes": 1077,
+      "sha256": "0a719ec69a1c3686a1d60998de5b504ee9de9ab869405e6a71055ecb32c1788c"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/admin_leave_index.blade.php": {
+      "bytes": 9272,
+      "sha256": "60a0cf277adea04b5c1a8ccb13fb2b5876972c3da1816fba3bbcf07f6995a338"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/admin_leave_properties.blade.php": {
+      "bytes": 1755,
+      "sha256": "3612c041d39d33cebe6c7c3459795be01fe81b7900471ce99afc679d9b203abf"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/admin_sections_left_sidebar.blade.php": {
+      "bytes": 1865,
+      "sha256": "bde975bf4e30d161836c20bee522dabd7d2af7f56ed1d63b96aa22892267fca2"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_admin_log-activities-exports.blade.php": {
+      "bytes": 1199,
+      "sha256": "d7902b7b3a9f06d92b9f94c8677abd76c7ea276048805e62568163ded6c264f6"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_admin_log-activities.blade.php": {
+      "bytes": 8383,
+      "sha256": "1a8a9f32d1416b4a082fb8b3337de4a55765ea2130071308b12a0f4fb71c217f"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_admin_project.blade.php": {
+      "bytes": 4508,
+      "sha256": "b809c187193c78f6f03b4f5505a4a1781c7b9c83ee818e48f2c69e36ec8d9835"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_admin_properties.blade.php": {
+      "bytes": 1883,
+      "sha256": "9de74bde22c8c763a101a190655476541e7740ee35a6deb884dc8a1e9d7e73a5"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_admin_task.blade.php": {
+      "bytes": 4508,
+      "sha256": "b809c187193c78f6f03b4f5505a4a1781c7b9c83ee818e48f2c69e36ec8d9835"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_admin_user.blade.php": {
+      "bytes": 3874,
+      "sha256": "43883e5c3c1f1edd2a4c7f18eb1088ff372e5882149ed362977e3f3b79b48680"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_attendance_export.blade.php": {
+      "bytes": 1077,
+      "sha256": "0a719ec69a1c3686a1d60998de5b504ee9de9ab869405e6a71055ecb32c1788c"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_attendance_index.blade.php": {
+      "bytes": 9499,
+      "sha256": "f63c30c67ff68c838167e0c2775eb554688d1fad758e767efda97de96a878294"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_incident_export.blade.php": {
+      "bytes": 1077,
+      "sha256": "0a719ec69a1c3686a1d60998de5b504ee9de9ab869405e6a71055ecb32c1788c"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_incident_index.blade.php": {
+      "bytes": 9113,
+      "sha256": "2257146d8cf7cc339d729602fd540beb7c6a5753f3063f0ec78166c8140c16da"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_leave_export.blade.php": {
+      "bytes": 1077,
+      "sha256": "0a719ec69a1c3686a1d60998de5b504ee9de9ab869405e6a71055ecb32c1788c"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_leave_index.blade.php": {
+      "bytes": 9272,
+      "sha256": "60a0cf277adea04b5c1a8ccb13fb2b5876972c3da1816fba3bbcf07f6995a338"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_leave_properties.blade.php": {
+      "bytes": 1755,
+      "sha256": "3612c041d39d33cebe6c7c3459795be01fe81b7900471ce99afc679d9b203abf"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/Donor/views_sections_left_sidebar.blade.php": {
+      "bytes": 1865,
+      "sha256": "bde975bf4e30d161836c20bee522dabd7d2af7f56ed1d63b96aa22892267fca2"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/admin/logs/index.blade.php": {
+      "bytes": 1101,
+      "sha256": "3a8af358cb62a170adbaca44c7b5a4e89f2120f0d0080e3a0cc8a6a9c580120b"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/admin/reports/create.blade.php": {
+      "bytes": 838,
+      "sha256": "ad56517d517f8e18546b21e58defe2299b11a8517c9f07719860238593d01926"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/admin/reports/index.blade.php": {
+      "bytes": 821,
+      "sha256": "58bf416e93cfa16676dd9807ff2070f360fd751a3e796deab9e94f824d823d2f"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/admin/reports/pdf.blade.php": {
+      "bytes": 418,
+      "sha256": "fdaf82c75fc7fb70e8dcd68f5251409cf5ba735ceb0780a8bf4e384e6ed160d7"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/admin/reports/show.blade.php": {
+      "bytes": 1038,
+      "sha256": "28e1497ad6b2f2dbe6c044fd4bd979d879b98ec10cd6d8f3d0b9d1ac36cbfe04"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/layouts/compliance.blade.php": {
+      "bytes": 79,
+      "sha256": "fcf3a1698bc251d970013060c7eff058b813959636bef60b42c6367d0fb60072"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Resources/views/reports/index.blade.php": {
+      "bytes": 565,
+      "sha256": "c91a6f0a898c2981ad2b75e3e6c295b1613c37651102cca0e78eeeb57f64ba42"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Routes/Donor/worksuite-audit-log-saas-main_Routes_api.php": {
+      "bytes": 6,
+      "sha256": "00aba3928cd622ad67c0f81ecd5aa8699e07f8f4908c045fe34f6a2dc0067b37"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Routes/Donor/worksuite-audit-log-saas-main_Routes_web.php": {
+      "bytes": 2216,
+      "sha256": "3557baec98cf16715a6d3bda5e1d101216c926f3cee186322acf2e09cc4a2c23"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Routes/admin.php": {
+      "bytes": 567,
+      "sha256": "9c7250b55109be6ca1cb24b6c5dedb1dbb33414ae9314ffdf81aa326ad3f214e"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Routes/api.php": {
+      "bytes": 117,
+      "sha256": "2680694545af191e611a8f768ff65cb4c7424b9398189e5c1db39de4c15f2323"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Routes/donor_admin_bridge.php": {
+      "bytes": 217,
+      "sha256": "fb12904f7319de25445450cdcaa287b581c37f7a68140bc60c3e759a6cd12e40"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Services/AI/ComplianceAIInterface.php": {
+      "bytes": 279,
+      "sha256": "b03c0a2b86f9a0fd480343e4fbdf61fe19239c30b1f42c91c3bfeb043a709f43"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Services/AI/NullComplianceAI.php": {
+      "bytes": 703,
+      "sha256": "dbf0c989715b54b6c101c24600271107c1ba1ebcf047af949a3ac2f3384ff378"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Services/AI/OpenAIComplianceAI.php": {
+      "bytes": 829,
+      "sha256": "93d073f314c37c8e79686687576fee4ac8dd35f1819cc5264ebcf89d07d4e2d0"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Services/Compliance/AssuranceBridge.php": {
+      "bytes": 514,
+      "sha256": "a786671f03b2d023e87a1fad4cb94bddf7d41d616f7c1d3713cde4be85ad341a"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Services/Compliance/AuditIntegrityService.php": {
+      "bytes": 1396,
+      "sha256": "9267938da0babd2c36e25b3be8eefd6f7838d00e37b1c0283f37fb3e608800c7"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Services/Compliance/ComplianceFindingService.php": {
+      "bytes": 1085,
+      "sha256": "b06381fa41b537cc904a1578d28a1cec33b5589b177eeac9a70064db5954fbd1"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Services/Compliance/ComplianceReportService.php": {
+      "bytes": 1221,
+      "sha256": "5f903e1e8fc937c48ca8c17464e7abb5abd6e028b79fd0cbf3e129e584b35339"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Services/Export/CsvExporter.php": {
+      "bytes": 521,
+      "sha256": "a306d042757fcef6920359d2828a6c2dd16a11c05bbbba66f1c074a00680f9d1"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Services/Export/ExporterFactory.php": {
+      "bytes": 363,
+      "sha256": "d84f5a4f3423169f58aafbe21fef00c50f4dce2e326f6a7019f5a5201ce625b4"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Services/Export/ExporterInterface.php": {
+      "bytes": 273,
+      "sha256": "e102f0d5b2f69d80761841faecb97b3a92c0381e3cd65a4573fd545d7f164216"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Services/Export/PdfExporter.php": {
+      "bytes": 1175,
+      "sha256": "ee425733ae8f2b46f8184c33999df12bb1e1df165cfa2c38cdeb795fc849cfdb"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Tests/Feature/AISummaryJobTest.php": {
+      "bytes": 815,
+      "sha256": "908db48e9012644e2dbb40f42a7639536c681731e65fd57d641eb5ada662164b"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Tests/Feature/ReportGenerationTest.php": {
+      "bytes": 992,
+      "sha256": "3240180d3d0456988bed48863536e8262ae4a8130da8831bcfc9958834c9f786"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Tests/Pass6ComplianceConvergenceTest.php": {
+      "bytes": 2577,
+      "sha256": "164a0b024898d6fa8c15e6cfdca961e4ad7dba8cddc679eb186903af572dd2d2"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/Traits/CompanyScoped.php": {
+      "bytes": 840,
+      "sha256": "b8c230d4954dafe30266a4f5e80159d77926083545a9274e3055101de85b1192"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/VERIFY_PASS6.php": {
+      "bytes": 1731,
+      "sha256": "82f67f5ddcf441a0addc340c3ae8abe6f34952c676ebab758a527c5337958804"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/WORKFLOWS.md": {
+      "bytes": 843,
+      "sha256": "0debb7f4c6d2cd652384eb9d9baa77d63e597e8ab205bfeff62ca1c431939d4f"
+    },
+    "recovered-donors/quality-compliance/ComplianceIQ/module.json": {
+      "bytes": 523,
+      "sha256": "85e2a7b7ea8a3437182132122f67ad472745fa6a91e86ec14d20ae1f34b552f5"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Actions/AuthoriseReclean.php": {
+      "bytes": 1082,
+      "sha256": "f1d9e1b07b6dc1f619fbc290dbcedcd72e0b64e5855cdf4a8adf6c9f51f4fc9c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Actions/CompleteInspection.php": {
+      "bytes": 1057,
+      "sha256": "d7f80c6a8916e91972b6d99734c467e38856e26e651147269f76ab9b300cc7b6"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Actions/ScoreQualityCheck.php": {
+      "bytes": 493,
+      "sha256": "0b918dbcd3ea9136114d6d9f9f3e78b496a3ab2c61beb909a781e72f5f5d1d91"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Application/Queries/GetComplaintLinkedQcCasesQuery.php": {
+      "bytes": 406,
+      "sha256": "014e8288941eb35a852cff188d9abbdd823784aa7d101766c62227b7060bc4e4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Application/Queries/GetInspectionTemplateQuery.php": {
+      "bytes": 313,
+      "sha256": "0ed0f74e58a927ad9cdcebf2f311ff13a8d0a1ba02279b82cc4789cfceaf8a84"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Application/Queries/GetInspectorWorkloadQuery.php": {
+      "bytes": 554,
+      "sha256": "9aea9dff68ee9e7c28710c18d0f7a0442c6a9707ff3bcc3d776f254a7a0b57c7"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Application/Queries/GetQcDashboardQuery.php": {
+      "bytes": 755,
+      "sha256": "60bb9bafd0e752da0feb752ac997f63ebbc281c27dbaa1e53bcec4570c936008"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Application/Queries/GetQcRecordDetailsQuery.php": {
+      "bytes": 460,
+      "sha256": "7ba99e9e1e34a57e9cd2f8b39548e36caf4557ad64eb816df70997cccdcf37c8"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Application/Queries/ListFailedQcItemsQuery.php": {
+      "bytes": 401,
+      "sha256": "deeb67b666fe0e5e0c89553d29007338130580e110f41c5a0fc640472cc05e87"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Application/Queries/ListInspectionSchedulesQuery.php": {
+      "bytes": 373,
+      "sha256": "55c0ebff24a53773b230768ba6c34c8b8c37329bf4928fa2877ee9326d8a2f46"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Application/Queries/ListRecleanRequestsQuery.php": {
+      "bytes": 429,
+      "sha256": "9285a44721f5aed3217b6da03d9e9438a4a9ca0128738ae31d41e8b53d19a81e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Config/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Config/config.php": {
+      "bytes": 2091,
+      "sha256": "9da9de31fa5b7c986304216baf1fe8b64ca39230e85872b322d5bdfd24e2b159"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Config/integrations.php": {
+      "bytes": 1035,
+      "sha256": "848ee73c0ee6a6836b549520f4e571f7912866d8ac1eb537e1193702e831d87b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Config/module_settings.php": {
+      "bytes": 922,
+      "sha256": "682ee4652f41d61f67662b3b96a4ee20f7721b708e33f9352cb707350c55ce1c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Config/titanzero.php": {
+      "bytes": 5670,
+      "sha256": "414dbffcef7fc72ee7054d1712ae8e23b67dbcd357a736a5e9e82c8f2eb1674d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Console/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Console/Commands/ActivateQualityControlModuleCommand.php": {
+      "bytes": 2904,
+      "sha256": "88ec51a0747abbee4af153e6c9f7a913a366e0456b06d30bdaa1f408abcf6b41"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Console/Commands/AutoCreateRecurringSchedules.php": {
+      "bytes": 4767,
+      "sha256": "23419c6e57f69cfe0b8ee7aa2ef8c1b1787454c062ad8d2c90ae4d3b1014d84d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Console/Commands/EnforceCorrectiveActionSlaCommand.php": {
+      "bytes": 867,
+      "sha256": "d329427b1c776259ca534d7aaad5baae7b37b5cc0c63fe37cc5cb6e364cb559f"
+    },
+    "recovered-donors/quality-compliance/QualityControl/DataTables/RecurringSchedulesDataTable.php": {
+      "bytes": 6176,
+      "sha256": "ac8d4139d28d0f9b01b8b31657463ecf0bbd45d9fa60d14dbc5a41dc3f04d689"
+    },
+    "recovered-donors/quality-compliance/QualityControl/DataTables/ScheduleInspectionDataTable.php": {
+      "bytes": 12890,
+      "sha256": "0c592872f994e9281d9666b884bc56d7d0a1dc240d7ad8a02bd58d581f093d55"
+    },
+    "recovered-donors/quality-compliance/QualityControl/DataTables/ScheduleRecurringDataTable.php": {
+      "bytes": 8342,
+      "sha256": "c0957dd646542bdaa748ddb864d093091d0691396fb7c38bcbcc2ef9a627e9fa"
+    },
+    "recovered-donors/quality-compliance/QualityControl/DataTables/SchedulesDataTable.php": {
+      "bytes": 7352,
+      "sha256": "52417653157918e13d0fe2907c70fa426d7aedebb5dbfa9c21e1cae89e52e350"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2023_02_25_013151_qc_create_schedule_recurring_table.php": {
+      "bytes": 2551,
+      "sha256": "70dfe594e97474a13d337e0a8bd670e0d065387abae0bb8832f69a4a16cafcb8"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2023_02_25_015641_qc_create_schedule_recurring_items_table.php": {
+      "bytes": 1205,
+      "sha256": "b5c8b0895c9bf25c26b166e767f745a89a2c54538f7a6c3b98cacf5b8fe3f856"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2023_02_25_020525_qc_create_schedules_table.php": {
+      "bytes": 2903,
+      "sha256": "c70432017d154831f8b55f689c56127a5b667d15de7d495a175092a7c95875a0"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2023_02_25_020625_qc_create_schedule_items_table.php": {
+      "bytes": 1150,
+      "sha256": "005caf82f2fb569caa1ec8b4637c697fcc6124a8fa221f92c23d5ad28418dde1"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2023_02_25_034644_qc_create_schedule_replies_table.php": {
+      "bytes": 1538,
+      "sha256": "2b1a6bb0cfac87ad61a92c93a6baebe07bfa5025f005f2a19b098d81674da8f4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2023_02_25_034720_qc_create_schedule_files_table.php": {
+      "bytes": 1754,
+      "sha256": "68014e8063f66b376d50166fedf9ac7d88c3cad5ca6364c891d932e2424db9c3"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2023_02_25_035831_qc_create_inspection_module_permission_and_module_setting.php": {
+      "bytes": 2380,
+      "sha256": "dc136e2db695693d650a5a424bbe55e9b2de83e59dc78fe9cb6962b119813021"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2025_12_23_030000_qc_create_inspection_templates_table.php": {
+      "bytes": 977,
+      "sha256": "4e57df7df263aa3f6196917d2836c1af27ba6cb54f7ed302024db6c951c4ff19"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2025_12_23_030100_qc_create_inspection_template_items_table.php": {
+      "bytes": 1332,
+      "sha256": "75915773a56ccacd3f9a1a0b37de5984e51e9f4b0b8940c419f5a77188844d08"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_02_03_000001_register_quality_control_module.php": {
+      "bytes": 1206,
+      "sha256": "e6cb159a3e31025de0be5ba243049e0f4b7559537d3e0c686791045f5f70a9de"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_02_03_010000_add_cleaning_fields_to_quality_control.php": {
+      "bytes": 2082,
+      "sha256": "07045412fa825453641bf3ed8b903646e0cf40821e8ce6e89052cc8c583dfd35"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_02_04_000001_add_complaint_link_to_inspection_schedules_table.php": {
+      "bytes": 891,
+      "sha256": "4ac50ffaf3ef5d7c5120be4b21092d852a5f5956cbd819cdb26edb48d4cbde55"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_02_04_100000_add_outcome_fields_to_inspection_schedules_table.php": {
+      "bytes": 1491,
+      "sha256": "e3257307ac5ac1a38012d916fd4d8be3730640bb931a9bc3ee1a501fa4c4680f"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_03_02_090259_add_company_id_to_qualitycontrol_tables.php": {
+      "bytes": 2851,
+      "sha256": "1d4fe904a4d6630e6a06daaa9d118fd1aefb3a564b0db9a13d6c8ab75a0fa0cf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_03_22_000001_harden_optional_dependencies_and_permissions.php": {
+      "bytes": 1032,
+      "sha256": "0aa3bc8308ebd2fd2e9ad17a0aede82a7c6093f92de21145f1e41aede7da5233"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_10_600001_add_service_type_to_inspection_templates.php": {
+      "bytes": 1623,
+      "sha256": "2ce7205e292d8caf02881de418ce4fcd92c904912c198c0d991167105d5222ef"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_10_600002_create_qc_records_table.php": {
+      "bytes": 1960,
+      "sha256": "ab5ab56a57059b41b4dc42d451bcbeae43a145e87373c7d9690da40d7419eaca"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_10_600003_create_qc_record_items_table.php": {
+      "bytes": 1371,
+      "sha256": "58738cc436771591ab2885f993706b3e7018520214103015c3cb6ff45e0de124"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_10_600004_register_qc_permissions_and_package.php": {
+      "bytes": 5046,
+      "sha256": "811668dcf8d37515551d2494bf935180d53f751368a6385238d0b4b266056c02"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_20_174900_add_legacy_mapping_to_qc_records.php": {
+      "bytes": 1514,
+      "sha256": "0dbdf8528f95907b38f31a53dd216e67f1d87dd24d829e914448c609300cfa21"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_20_175000_backfill_qc_records_from_inspections.php": {
+      "bytes": 4240,
+      "sha256": "63bef35f58eba3b894b011bfabef5dd930cb0095a6563b0e306660cd7c3b102d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_20_190000_add_premise_context_to_qc_records.php": {
+      "bytes": 1426,
+      "sha256": "b7c1062c65b27bd8eeaa3806b75ebe002c9c309286344f0694b945c2d2793b0c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_20_190100_backfill_qc_premise_context_from_managedpremises.php": {
+      "bytes": 1891,
+      "sha256": "bcc0fcedd0069bc4a1fa71e5e7c60668c929c5b1266c13be0324f0dcd4a6d3fa"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_20_190200_harden_qc_records_premise_indexes.php": {
+      "bytes": 2675,
+      "sha256": "1855ef1c56c4d8eedf7417f9ddaf52193181e03b6f5148863aabc6cc5905f177"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_20_220000_add_qc_lifecycle_fields_to_qc_records.php": {
+      "bytes": 1951,
+      "sha256": "d00f1c651f53c9f101610184f7d23f3a6506c12f449e342626cac912a53dbf67"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_20_220100_create_qc_corrective_actions_table.php": {
+      "bytes": 1301,
+      "sha256": "76526379a1ec65dec5972858f77cc64bee1899415ca70b70b9b5386c5e00a431"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_20_220200_create_qc_corrective_action_updates_table.php": {
+      "bytes": 1254,
+      "sha256": "d13546e422ed30ff9af696c26ccc50a68fb23cffcdc84848a275973636eb137e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_20_220300_create_qc_followup_verifications_table.php": {
+      "bytes": 1278,
+      "sha256": "b5aa54349b6c28cb60a3e82dd6f64aff5ee9ab206fe600f9219f216f0fbba30a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Migrations/2026_04_20_220400_create_qc_status_catalog_table.php": {
+      "bytes": 942,
+      "sha256": "1e29bc446f82765e9e35744cdc0112420188c89c815ef879eb19893759663ca4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Seeders/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Seeders/InspectionDatabaseSeeder.php": {
+      "bytes": 378,
+      "sha256": "040eed48710e9380942b997b7072a046c80c3ea97d626eeb1a5d9670fef8c809"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Seeders/InspectionModuleSeeder.php": {
+      "bytes": 554,
+      "sha256": "f5ba70b31c95dbc88890647b82a2d644a83c5fa237d2e2093955881e1558a1dd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Seeders/InspectionPermissionsSeeder.php": {
+      "bytes": 249,
+      "sha256": "d16e4f489a6af058037a4d16d8f3b2ee675f9818ec6a96ba96b937624412e5bb"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Seeders/InspectionTemplateSeeder.php": {
+      "bytes": 2778,
+      "sha256": "59e84fa0e3bfea93b8d2d44c28b842a086365516e33791ed94a9255b9d50d8ce"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Seeders/QualityControlDatabaseSeeder.php": {
+      "bytes": 537,
+      "sha256": "1f2b1485d4a284176bb1b7924ec177aa1f02a7debae6673c47247fe4638230f0"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Seeders/QualityControlPermissionSeeder.php": {
+      "bytes": 1359,
+      "sha256": "63f53e255780fe68ba61025c6a0e3d09504cfc81d106af2b2907ea6a08f8ae12"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Seeders/QualityControlSettingsSeeder.php": {
+      "bytes": 2053,
+      "sha256": "7fecca5b57e5b30566e083501b193034bbbbf160b7958965ad7f012e1f637819"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/Seeders/QualityControlStatusSeeder.php": {
+      "bytes": 1584,
+      "sha256": "2ef972d244d156e3cd3191e312221b5c9df7afac8cd3eb14c15dba0f988ff57f"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Database/factories/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_1.md": {
+      "bytes": 85,
+      "sha256": "721d7cf3df3e06cc4eb1022ed93676ca09374f952edd2f91781b7175792b2fdb"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_10.md": {
+      "bytes": 86,
+      "sha256": "097cc2400421ec2b2af1c88c26e074407c7e7324b2da56bedd498307849afa6c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_11.md": {
+      "bytes": 86,
+      "sha256": "6c155887e673cde8422744333cd80b5d12d1cf38425518de8fe9b234ee71254e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_12.md": {
+      "bytes": 86,
+      "sha256": "a576b091e846f7cca663d1de1b7fdbf4813e033dbce131df510619112b6e8450"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_2.md": {
+      "bytes": 85,
+      "sha256": "10cc0192e08ca769c0b7c2d6ed6dd4445d2dff7c2d8da18c48039621531279f1"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_3.md": {
+      "bytes": 85,
+      "sha256": "9ebf4b653c8e6ea88d15d671a9c780b0e493ab5d70bea8f4dcf0f5a901d278cb"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_4.md": {
+      "bytes": 85,
+      "sha256": "044cc0457e14f3d4a1953ed54f318a5338ce7cebdf1427fcd920b8c9976c9f7b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_5.md": {
+      "bytes": 85,
+      "sha256": "f4430803e4c2c3167713fca9adc3ba2f93218539324989694aff1612dd1b0754"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_6.md": {
+      "bytes": 85,
+      "sha256": "af6fc7afc61f4bd9eb600e386db2ed5822d046ee8301b17417ff46c7d8838342"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_7.md": {
+      "bytes": 85,
+      "sha256": "56273db4d87caf144dc327deef1ca5a42e0555c5aafcfc7f09fabd0ab9fbc24f"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_8.md": {
+      "bytes": 85,
+      "sha256": "3b825fa08f982f9058ba0a856df03d25258a2937d8a560e35f8afd29c0120c3c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass1_note_9.md": {
+      "bytes": 85,
+      "sha256": "c6aa12b78385a395b026527758b84fd166d258364d1e6c13d7d8be5568ac42ad"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/pass4.md": {
+      "bytes": 207,
+      "sha256": "234384f7a5a67aaf8d0cd4f7fb62658117fa1f793ccc3479085a38d811a91ae2"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/permissions.md": {
+      "bytes": 172,
+      "sha256": "9f9435a3d033c4ff85852955edfa59fa70e58f59baa3c4b6a17f4f2c9792b18c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/routes.md": {
+      "bytes": 231,
+      "sha256": "0d91f8358f2ac699090b012c08b7d63f9b20c9514f365d27bce2a15624f0e274"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/sidebar.md": {
+      "bytes": 127,
+      "sha256": "d6a9dff2bd198c7396c9a8ce493090e2b80e0c88ed1cf71aed7248e67ab1bdb1"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/templates.md": {
+      "bytes": 181,
+      "sha256": "a698847cb4b16601f98bfe8e9041c4b9b5edc5112b57b46ecd03da0f7c824b0d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Docs/titan-integrations.md": {
+      "bytes": 383,
+      "sha256": "c2cce69dc777bf65395d40be29f535c5574aec05803f8384c808f812ff0ceda8"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/AttachInspectionFileAction.php": {
+      "bytes": 489,
+      "sha256": "a8c610c338f30c740679c865e4ffd6a3e053f7793ca029bf433ed8d0ddec8f9a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/CloseQcRecordAction.php": {
+      "bytes": 436,
+      "sha256": "effe1c24e1e59d1bf4ab203ea2d9e73ecd9a3e6a4f6972dbe4f1d85aa4965f27"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/CreateComplaintFromQcFailureAction.php": {
+      "bytes": 1603,
+      "sha256": "5507e6f71d1489a57ae1c4424596124e8836e54a4acc9d8d2875656b196469d7"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/CreateInspectionScheduleAction.php": {
+      "bytes": 360,
+      "sha256": "3e5c02d57c77dcada3830bc5a1a7055fc1ff243c6f38eb453bd78b7d857fcf26"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/CreateInspectionTemplateAction.php": {
+      "bytes": 531,
+      "sha256": "5b7012b1fdcdb4572b2b160b25100e8f933a7d3f6329fdcee3cbdfacd044d8f9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/CreateQcFromComplaintAction.php": {
+      "bytes": 3410,
+      "sha256": "e242c9e6a69e383abca22b28a2e8b3189a8e58878acdab6564c46d2198102f2e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/CreateQcRecordAction.php": {
+      "bytes": 533,
+      "sha256": "e9c6c3dab587c276217b509eda2986467c900ae6fd9e90dfaa6d22861e1a815b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/EscalateQcIssueAction.php": {
+      "bytes": 587,
+      "sha256": "b6e259202cc24853ef164bdd42c3a7bd330be75404d00f44c8727a540ea6d767"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/FailQcRecordAction.php": {
+      "bytes": 475,
+      "sha256": "349aa32cb55504286e204499a289bc0857d4aa217de1dcbfe169cf419af0113b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/MarkNeedsRecleanAction.php": {
+      "bytes": 718,
+      "sha256": "57ee93e0b390a782c62580ad18d12e89f7b5d4029483b3a4304407225d19bd35"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/PassQcRecordAction.php": {
+      "bytes": 307,
+      "sha256": "72fc995d394ae3d6323c5984bd7e40ff6216fb1d60f98b3f9c71a293d80fbeb4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/RescheduleInspectionAction.php": {
+      "bytes": 341,
+      "sha256": "25453fa1e391f3424762310a47a50d24aa34c5c62808196f40b68110b8f53cbd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/ScoreQcRecordAction.php": {
+      "bytes": 1307,
+      "sha256": "6e5e88ed18408049fb1a143474989eea2f2e496c3a1c0cac408d7992443ec317"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/SubmitInspectionReplyAction.php": {
+      "bytes": 491,
+      "sha256": "640a1859ee33850d28cffc3935b256072c9312be889a6d93229b5dc91e15a0f5"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/Actions/UpdateInspectionTemplateAction.php": {
+      "bytes": 561,
+      "sha256": "c880528ac3888ebf57257167dcaa0c3ca3b3b68ed9385f60d4dada21eb00c0fc"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/DTOs/ComplaintLinkData.php": {
+      "bytes": 432,
+      "sha256": "219556e581fed16c303eeef187e0eaf18d985694829d823cb0736d37f95a2ffa"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/DTOs/InspectionReplyData.php": {
+      "bytes": 720,
+      "sha256": "62f2d5cdc2d792048008b7e7389114b78f580867c40c28518ee79006d12b18fc"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/DTOs/InspectionScheduleData.php": {
+      "bytes": 1588,
+      "sha256": "3add86192daa4af610350221a99324890ab15c163dc4059582f24a459b5ca657"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/DTOs/InspectionTemplateData.php": {
+      "bytes": 1360,
+      "sha256": "1aa1396339064a2ca543c08c5689c9abdb5e1b6c68c45b1ab22ce863b8b17558"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/DTOs/QcOutcomeData.php": {
+      "bytes": 316,
+      "sha256": "aad2a9ac51c82778ab26fc560b44746a7f7d420450297c96360799a19ac4ea21"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/DTOs/QcRecordData.php": {
+      "bytes": 1571,
+      "sha256": "1f998803c7009d905da2d93e9f90cb2d820c71e3236527b5fa76dbdee4be1c88"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/DTOs/RecleanRequestData.php": {
+      "bytes": 326,
+      "sha256": "f4483c99843fceb57ab30bed49b7c59ba4a17ee2afaff85622d4129a6b96d66b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/ValueObjects/InspectionOutcome.php": {
+      "bytes": 445,
+      "sha256": "e4a22bec885b73f3ada9b955c07bd29228b212683f50633e811600697cca9067"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/ValueObjects/QualityStatus.php": {
+      "bytes": 592,
+      "sha256": "1d69d0836a5ebb60fcb9da729693e945d6d1c83b4e51f72560baffd55ad11653"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/ValueObjects/RecleanLifecycleStatus.php": {
+      "bytes": 622,
+      "sha256": "a00fc1b7e7da40d9c8e31a001dac4681e27d90846a132d7d435c0c60d5840b49"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/ValueObjects/ScoreValue.php": {
+      "bytes": 336,
+      "sha256": "dac1139875477e4a3dfbd0874ff3075833727b457a7e0cb67bc95ef2c9c1c6e9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Domain/Quality/ValueObjects/SeverityLevel.php": {
+      "bytes": 361,
+      "sha256": "82a8ece4f7a7faeb703ff7a76c48be4041b1d3fe40854bb84c2f9279de5baee5"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/InspectionTemplate.php": {
+      "bytes": 650,
+      "sha256": "5fe6eb312eb9d3cf514761c317fecffa161ce79d26fe4142b8adf1b1646b1f53"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/InspectionTemplateItem.php": {
+      "bytes": 671,
+      "sha256": "8e422c7656648cafc0f0bd4ccc63432213dbd7a002b560970a7fdd7f7f6f00e1"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/QcCorrectiveAction.php": {
+      "bytes": 559,
+      "sha256": "c5a137cc238e7f2443e42a3932f5d9c7a3a3571fd0eef34111a286038e5e4cd3"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/QcCorrectiveActionUpdate.php": {
+      "bytes": 342,
+      "sha256": "e8d0ce49c894e93928831c6c5e29ea882b26fcc7556716b79b5aee17d5896061"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/QcFollowupVerification.php": {
+      "bytes": 544,
+      "sha256": "b3b8716eb9a14a6c32f0469e847083dbc7020c3805046cccbc2f0b33fea2f285"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/QcRecord.php": {
+      "bytes": 3031,
+      "sha256": "110a1190d50f9c913c4c247881b838ecf0070967dcf561c7a572ed6a5347aadd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/QcRecordItem.php": {
+      "bytes": 679,
+      "sha256": "5bef33f4367d1f30eb7bcd62139a8afd5c6dc713e55a8addb63925206b9db7ac"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/RecurringSchedule.php": {
+      "bytes": 2141,
+      "sha256": "1d07ac7e34f5b4b971a29c4e506058a193c5c267ed81fdb5074c957f516add01"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/RecurringScheduleItems.php": {
+      "bytes": 227,
+      "sha256": "8c771dc5e5d32ec74e1df83fb84be1244cff48b50a0d7faf08e73029ffaa41d8"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/Schedule.php": {
+      "bytes": 2426,
+      "sha256": "405f2dd905909beade38fe7c3fe8e7f7ab33e51b386cbb96ddd97124a66b09cf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/ScheduleFile.php": {
+      "bytes": 841,
+      "sha256": "b6636123804edea1de9a223e2d088d015a5d21c7f67d0f939e0ba40200da7f48"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/ScheduleItems.php": {
+      "bytes": 2418,
+      "sha256": "243095d296ac49332fa795a453036fd98be91c101a71236238f742b4f9de15ce"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Entities/ScheduleReply.php": {
+      "bytes": 815,
+      "sha256": "a132944cb0871520e94b5d326d9bc93573fd7038185ae491e735dd1180689219"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Events/CorrectiveActionAssignedEvent.php": {
+      "bytes": 986,
+      "sha256": "cd7842a026f6198c3e0339b5bf69bb26554f1b82eb769376f2198b4c76225798"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Events/CorrectiveActionOverdueEvent.php": {
+      "bytes": 988,
+      "sha256": "5d0b644f1c824ba8c125082e5e1912996b7d004efae56f19799ee68765a94cd0"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Events/QcFailedEvent.php": {
+      "bytes": 1118,
+      "sha256": "612440d211c44c74befd4dbeda1b9d46821708372e1f4230798510f57a83241c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Events/QcSeverityExceededEvent.php": {
+      "bytes": 1129,
+      "sha256": "534d41797cb27a29608ec0a6ca34aaf05dafd7018959d03b956c2ca5e51ff168"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Events/VerificationCompletedEvent.php": {
+      "bytes": 1104,
+      "sha256": "6bb41385cef5440230481a30a15cc68e4b04cf17cd3586f39a6c5eb066777368"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Events/VerificationScheduledEvent.php": {
+      "bytes": 1104,
+      "sha256": "bddbf7d1cd6cd6707c4fe36805c13f22543bb003fe6590285fefff8afd6d1512"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Filament/Plugin/QualityControlPlugin.php": {
+      "bytes": 850,
+      "sha256": "58f47828ff23aa9d2357fbfbf5dcbc129c65bad5bcf04c2a5673b429604ccb36"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Filament/Resources/InspectionScheduleResource/Pages/ListInspectionSchedules.php": {
+      "bytes": 427,
+      "sha256": "35874a0c42e86a55cf29cb84f3b4222056c7fbcc3d3e65dfb53d580635f7ec06"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Filament/Resources/InspectionScheduleResource/Pages/ViewInspectionSchedule.php": {
+      "bytes": 424,
+      "sha256": "3694ab475ca79910444b925537781b4f17898ea2ddad0b2e450449088a21d6ac"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Filament/Resources/InspectionScheduleResource.php": {
+      "bytes": 5242,
+      "sha256": "3261742706ad3c13e3e26dd848aae1cd747de922ea2e2c66ec5bfe16fb76bec4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Filament/Resources/QualityCheckResource/Pages/ListQualityChecks.php": {
+      "bytes": 403,
+      "sha256": "2e6e038e4d72bb250f2a80c299b05a9db8b8b55531ea1ebeae89010bc2b865a7"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Filament/Resources/QualityCheckResource/Pages/ViewQualityCheck.php": {
+      "bytes": 400,
+      "sha256": "65129cf87afeb9ea99c4d23881d880b818a7e805795ffe3f857170baf82c5092"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Filament/Resources/QualityCheckResource.php": {
+      "bytes": 5998,
+      "sha256": "8e1f74b3d55a952dc6993227cb9df1b9d954017a1750b9e92fc7092d8156a669"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Filament/Widgets/QualityScoreboard.php": {
+      "bytes": 3281,
+      "sha256": "45bcaac4ca3bacb9e344652b44488e58cda9d0fa007934b49558bc4b67896648"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/CleanerRatingController.php": {
+      "bytes": 3552,
+      "sha256": "ab3f082d8adc17a68d51f5e74e5c7e0a4945d38e3c2e8c1bcd0ce8bdd34d5575"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/InspectionTemplateController.php": {
+      "bytes": 1902,
+      "sha256": "7a618660c95eb667dbbd0fcc2647034e00be3e682666e701d97857535e698c11"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/InspectionTemplateItemController.php": {
+      "bytes": 987,
+      "sha256": "986669457b9e57f9af35f86957e232f8bc2b920b8f3dff124a173d03f9615c64"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/QcDashboardController.php": {
+      "bytes": 3472,
+      "sha256": "b9d202c2328c3cb39bed78f62c44baf78677da1f57c98b936e78c71b15ebb4bc"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/QcRecordController.php": {
+      "bytes": 7827,
+      "sha256": "d831a3e172bcbcbf7ceba3f9c5bc8d1f200127447596c47ec2ab3cfde426cd3c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/RecleanController.php": {
+      "bytes": 1971,
+      "sha256": "d5f5988277d37026f28f5db9852941f0d79a2a9948a7976fbb0be5aa0d73d730"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/RecurringScheduleController.php": {
+      "bytes": 14396,
+      "sha256": "afbd4bf5394a8f2272412ee1ece48ab37323af5146b3e0154319f371cb94f95a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/ScheduleController.php": {
+      "bytes": 18473,
+      "sha256": "050357e95527cd8a94babc588a7b521a32e340e7fa3a0a6731d21636c0b1c128"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/ScheduleFileController.php": {
+      "bytes": 2651,
+      "sha256": "2ad5b6958982173c5f8df02a06d23f5c88032a58d7bce466457db791c229ec7a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/ScheduleInspectionController.php": {
+      "bytes": 9204,
+      "sha256": "1f2cf6bcc616831dc15bb73817c7c147fc7e971ca8146545c0cd0e3f70040192"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Controllers/ScheduleReplyController.php": {
+      "bytes": 1214,
+      "sha256": "b3fb1fccf1632f2c6c8bbaac0111f98dd5f2bb09552e1618726682133f701007"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Middleware/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Middleware/EnsureInspectionEnabled.php": {
+      "bytes": 239,
+      "sha256": "783de38af30aa5d533bdea5d1407fc05dfeced058fce4636a9901f819354af27"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/StoreInspectionRequest.php": {
+      "bytes": 292,
+      "sha256": "f2ac9b83c53cdde73ccac89c0abb666635f74b8f280b46f300a89b776c8e95a4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/StoreInspectionScheduleRequest.php": {
+      "bytes": 267,
+      "sha256": "df949d8cd0c1cb013ac6c3e073f6d4f4331fc8b28431b500e1a3fa4d3781703b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/StoreInspectionTemplateItemRequest.php": {
+      "bytes": 789,
+      "sha256": "af8edb61f4d0079fdb4a67e69f5ff5d57916b542231bde92216cb2157d0daa2c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/StoreInspectionTemplateRequest.php": {
+      "bytes": 708,
+      "sha256": "f29781a1a50a495f24f74074ab8621e662c8118b798b60f7d10ca4dff1444566"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/StoreQcRecordRequest.php": {
+      "bytes": 1263,
+      "sha256": "25ac2c5d0e879a220843b159bd8d3816c3c483105f4e7b984f1c598dc275e4f3"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/StoreRecurringSchedule.php": {
+      "bytes": 817,
+      "sha256": "dfd35d83f31a56ead0de7b729b4461b8e8a082fbc95000aa063d2d23de39a398"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/StoreSchedule.php": {
+      "bytes": 562,
+      "sha256": "67f6546da56354c2c92e95082027afa583cdb1fe7aee4b22a647961b3d80ba0b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/StoreScheduleRequest.php": {
+      "bytes": 257,
+      "sha256": "fd1d9dcc5e27a43197c9c83dbf475be9eeb17951188702d7d36707a27920b8db"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/UpdateInspectionRequest.php": {
+      "bytes": 260,
+      "sha256": "74621707d4e7892238c50b5be7e5ce750795c3d00dfdc518dccd14e5b6656c76"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/UpdateInspectionScheduleRequest.php": {
+      "bytes": 268,
+      "sha256": "096f6e8728b1a64974cd18204d0536a9ad10eb8e9e5aa96359416531cb123943"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/UpdateInspectionTemplateRequest.php": {
+      "bytes": 710,
+      "sha256": "72575d5e46143a7d5eacf5d10ad19a8b91dfeb68336d6a20b495ee82b851c826"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/UpdateQcRecordRequest.php": {
+      "bytes": 117,
+      "sha256": "f4391ed9527cb44ea53b79230bcc7e7bcbd25f4d4e7a04942f7a991fc8589cf5"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/UpdateRecurringSchedule.php": {
+      "bytes": 783,
+      "sha256": "158f76917acce79cabf1cf4b3f0b1b065e8f001d7a3a07ac1979886e35b04157"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/UpdateSchedule.php": {
+      "bytes": 560,
+      "sha256": "9dbc1881d964e06db7f58d8bd1a854233af7aa40f8e9f8941d4d78087ee76626"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Http/Requests/UpdateScheduleRequest.php": {
+      "bytes": 258,
+      "sha256": "98a73632e98c4f5e1a43888e46191457c39753854989cf844c1194b7f488d3e3"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Jobs/CreateComplaintFromCriticalQcFailureJob.php": {
+      "bytes": 2179,
+      "sha256": "b5f8fa310b751d18e06ae007caf274d06b3e1a5aaaf6526df0e89839827a8054"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Jobs/DispatchQcFailureNotificationsJob.php": {
+      "bytes": 2758,
+      "sha256": "6eda09d858a4f1d72b67e4d8b98019d0cdf10c6bcb6111bba82de0fe2dbb3cbd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Jobs/EnforceCorrectiveActionSlaJob.php": {
+      "bytes": 2016,
+      "sha256": "5cc10b4cf61019c1a089331b733d18b8ff50472fc25b86b697cb5432a679da6e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Jobs/EscalateOverdueCorrectiveActionsJob.php": {
+      "bytes": 1830,
+      "sha256": "1db81e828e1165cd5c7dcf4b63b9dfe7324de8c39da3660cb64413ffb3a762fd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Jobs/ScheduleFollowupVerificationJob.php": {
+      "bytes": 2501,
+      "sha256": "c60bddb16403382f6d55b4caa9eb83d15731078979191db63b550f373cbca029"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Legacy/Migrations/2023_02_25_013151_create_schedule_recurring_table.php.disabled": {
+      "bytes": 2507,
+      "sha256": "1ce031a2edc648759198479746f40c8c98c503a89eb6f5e7bd249caab1c370fe"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Legacy/Migrations/2023_02_25_015641_create_schedule_recurring_items_table.php.disabled": {
+      "bytes": 1155,
+      "sha256": "20ff157868f44c391bd3562d0a127712d6a925c82495c9fb34a6316a45351d7c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Legacy/Migrations/2023_02_25_020525_create_schedules_table.php.disabled": {
+      "bytes": 2868,
+      "sha256": "9729af0ab5f30b2797a06eb0e89c6776af0ff6ad902ea01bf4dbd074c2e25941"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Legacy/Migrations/2023_02_25_020625_create_schedule_items_table.php.disabled": {
+      "bytes": 1110,
+      "sha256": "47e88574105f57e0f96787944590ba48711e38d79d88c237f10d6a8e5577708d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Legacy/Migrations/2023_02_25_034644_create_schedule_replies_table.php.disabled": {
+      "bytes": 1496,
+      "sha256": "8fdcc11e61a53cc4ae2817679eaa4796e181b13d35456a4ad9c4f4fad64eb2d9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Legacy/Migrations/2023_02_25_034720_create_schedule_files_table.php.disabled": {
+      "bytes": 1714,
+      "sha256": "f81f8b031a0299dfd7159b69781c28417cdfef1bacf6aacdc1be6813f1214e43"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Legacy/Migrations/2023_02_25_035831_create_inspection_module_permission_and_module_setting.php.disabled": {
+      "bytes": 2380,
+      "sha256": "dc136e2db695693d650a5a424bbe55e9b2de83e59dc78fe9cb6962b119813021"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Legacy/Migrations/2025_12_23_030000_create_inspection_templates_table.php.disabled": {
+      "bytes": 930,
+      "sha256": "6a0bb39994622cdff0bb6a7f2fb97ec4636cd1788f85afa1458adf6fed34e45d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Legacy/Migrations/2025_12_23_030100_create_inspection_template_items_table.php.disabled": {
+      "bytes": 1280,
+      "sha256": "a76f0d075a1678074f2d8384e1f7dddd35d9c3d5b099dbbb5dd421b394fe7a4b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Legacy/Migrations/README.md": {
+      "bytes": 300,
+      "sha256": "c70c8023189bc72af5f27b2d621498e056eb40d67721e8b9734f13586e820e82"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Listeners/AssuranceQcFailedListener.php": {
+      "bytes": 852,
+      "sha256": "1627ae919f3496e391d54be8b81b3a6e1e84c2d15d4022e139d3d304d04923d0"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Listeners/CompanyCreatedListener.php": {
+      "bytes": 281,
+      "sha256": "fcc696b1e17dc891e4aee9a553b8a1bc41cd7c2355103854d4e2a61bdc353755"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Listeners/CorrectiveActionAssignedListener.php": {
+      "bytes": 1364,
+      "sha256": "2fc7bb70556b56e44a2d13ec9fa4326043a148c8a538f718d7dd88d8514fa921"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Listeners/CorrectiveActionOverdueListener.php": {
+      "bytes": 2008,
+      "sha256": "a59088fdeda223769520044a0c62346d519d41d1ab684696686bdd4f2133e850"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Listeners/JobCompletedListener.php": {
+      "bytes": 2566,
+      "sha256": "c9c2c29964183e781a9817495ca54e7d112c70bc754ccd6fe86327661ebaab5b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Listeners/QcFailedListener.php": {
+      "bytes": 1402,
+      "sha256": "1e808a5b5a394dc204d6e6b547e445456b1f074bacaa13b57cf45e4c3c2af305"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Listeners/QcSeverityExceededListener.php": {
+      "bytes": 867,
+      "sha256": "132a164e0b8894bffcfd9ccc29518b5d3009c08697531033a648f5a7bac4ebd2"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Listeners/VerificationCompletedListener.php": {
+      "bytes": 1700,
+      "sha256": "38e2897eb0fa0ebe17d80dcd10db17f6cd6d206d56cf54f19b1d19a3476b072a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Listeners/VerificationScheduledListener.php": {
+      "bytes": 1397,
+      "sha256": "6efa633ee6b16464be7166f6ca8ee807ac23e73b2a3f536aa2577ed9800a001a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Mail/ComplaintEscalatedMail.php": {
+      "bytes": 718,
+      "sha256": "fcb9479ab7740a332debafea723f9779a716acaeb592628b7f12fa720639eb1d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Mail/CorrectiveActionAssignedMail.php": {
+      "bytes": 707,
+      "sha256": "291fbf245f09ab0975444af698cef55b590ae8b3bd66fd6f3789ab49b3c4e694"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Mail/QcFailedMail.php": {
+      "bytes": 766,
+      "sha256": "deb30c3836e54e44dd29e2b194d88df4c53c7df7c8309cbd6daa91250a2897e2"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Mail/VerificationReminderMail.php": {
+      "bytes": 604,
+      "sha256": "379de7f7814982b2f5811e5911586981bba599f26717625da9de4412f1a7d9d7"
+    },
+    "recovered-donors/quality-compliance/QualityControl/NEXT_PASS_HANDOFF.md": {
+      "bytes": 1789,
+      "sha256": "b819f3a3b9f7d57af468c1a128e8031139279e4ad2ca6bdab33561d4de729bd8"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Observers/ScheduleObserver.php": {
+      "bytes": 3474,
+      "sha256": "183e3e9cb04ef4343589178d2df66782355cd97538546d478eb9e230118b368f"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Observers/ScheduleRecurringObserver.php": {
+      "bytes": 2196,
+      "sha256": "22fbc83aec47cfc8e630b1b4962d38008f6f52d9d5f05937b45a8d9a74c178bf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/PASS2_BUILD_METADATA.json": {
+      "bytes": 534,
+      "sha256": "544237704aa96fb60bfe67b4338b657b26d2281f17e731f300b0a75881150b29"
+    },
+    "recovered-donors/quality-compliance/QualityControl/PASS2_CONVERGENCE.md": {
+      "bytes": 1375,
+      "sha256": "9df5c47c6a9a90057171269b580c06fd93e63ec364b2f07624812a3fde274b6b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/PASS2_LEGACY_PHP_LINT_BASELINE.txt": {
+      "bytes": 931,
+      "sha256": "164c62d81d064754c1bcb0c509b3a2b79f67435756ef51c5dee0d2b1bf38279b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/PASS2_VERIFICATION.md": {
+      "bytes": 1709,
+      "sha256": "239f55dd84c5a480e08c98db6ea792a49b45085d879adaea0d0c3be9295ae705"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Policies/InspectionPolicy.php": {
+      "bytes": 483,
+      "sha256": "de512f68b0eb6947d558f8ca9ef0c4164992648a75c88c2b9a17320abca9986d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Policies/SchedulePolicy.php": {
+      "bytes": 342,
+      "sha256": "9edb665795896b54b49ef0cddc40874fff29d0f7ee3adb3ec194e6af59fb233b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Policies/TemplatePolicy.php": {
+      "bytes": 973,
+      "sha256": "0b7a8c2fded9a9c84f055257d543143b25552cb74e935088fa2b861a5cc29eef"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Providers/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Providers/EventServiceProvider.php": {
+      "bytes": 2264,
+      "sha256": "cf76367df2acbcd070af99bec73ce8c3ac61b5955930f49294989c41b7a170b9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Providers/FilamentServiceProvider.php": {
+      "bytes": 504,
+      "sha256": "2206c413b13ba55d1fc64123a9111ca66528032f9d1720c3d6672cd468247ed4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Providers/QualityControlServiceProvider.php": {
+      "bytes": 6551,
+      "sha256": "14500770e00f91ee1b809c3d04bc376a3853442240b62b277226bec3e646015a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Providers/RouteServiceProvider.php": {
+      "bytes": 1582,
+      "sha256": "8f919f473ebebf585eb082ecac3d2a6c3f5da811e1c63c22ed9174e433e2726b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/README.md": {
+      "bytes": 397,
+      "sha256": "6b899734f5a57d4e059f225030b01f5f8b1072f084bd36be0904f47b43942bbf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/assets/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/assets/js/app.js": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/assets/sass/app.scss": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/cleaning/app.php": {
+      "bytes": 2133,
+      "sha256": "0c75693270c7e7e41017c19d052436f254ce9397db186207e716ff91101839c3"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/cleaning/buttons.php": {
+      "bytes": 137,
+      "sha256": "84a781fde00a08880f8bab70aa9c7e708777ad0bef67b09d3eb88afcc3466ce8"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/cleaning/general.php": {
+      "bytes": 570,
+      "sha256": "7a67e0528f6962765fd46b13a38a935a1d35b718282e87a8df0ce21272eac6a9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/cleaning/integrations.php": {
+      "bytes": 277,
+      "sha256": "348aec5b1635a3b662413b4fa5c3e8cefaadee7ceb98da30623b27d152ef71da"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/cleaning/messages.php": {
+      "bytes": 693,
+      "sha256": "5ee2cb07d2c8077c8bd7828c4db144ef1337f36d1753f21dd40dc2f47e240821"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/cleaning/modules.php": {
+      "bytes": 595,
+      "sha256": "a3ce4bc883bf582f6d4c92e2c729fbc89a9fd5102fa8f4b35cc70bc4c724a86a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/cleaning/permissions.php": {
+      "bytes": 556,
+      "sha256": "a7138b7d1710eb632e84ed44ff52d9d462ccf7af218541f895c72791e221721b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/cleaning/sidebar.php": {
+      "bytes": 485,
+      "sha256": "bb0c861e405c8a86b0d01b09f2dca65bb0778199934315f59ea0094e20de17ef"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/cleaning/templates.php": {
+      "bytes": 743,
+      "sha256": "fd87d777fae4f67f57116264e344aa42acc99fc07e2174d6e57138e040fa3151"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/en/app.php": {
+      "bytes": 4172,
+      "sha256": "5bcb7b8f37c49ff6da7bc838435fb1001ca70436f0324fca7d9d72d935055114"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/en/buttons.php": {
+      "bytes": 137,
+      "sha256": "84a781fde00a08880f8bab70aa9c7e708777ad0bef67b09d3eb88afcc3466ce8"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/en/general.php": {
+      "bytes": 570,
+      "sha256": "7a67e0528f6962765fd46b13a38a935a1d35b718282e87a8df0ce21272eac6a9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/en/integrations.php": {
+      "bytes": 277,
+      "sha256": "348aec5b1635a3b662413b4fa5c3e8cefaadee7ceb98da30623b27d152ef71da"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/en/messages.php": {
+      "bytes": 1097,
+      "sha256": "3d350ab91ef1e09a048a19b824a61cbac8ed9ab23508effadec3dbc9bb3807ac"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/en/modules.php": {
+      "bytes": 595,
+      "sha256": "a3ce4bc883bf582f6d4c92e2c729fbc89a9fd5102fa8f4b35cc70bc4c724a86a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/en/permissions.php": {
+      "bytes": 833,
+      "sha256": "f86a50949d4df7c65562dc9ad9a9a0c63ea315be0bce78cf3f6f5ede18ebce0c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/en/sidebar.php": {
+      "bytes": 493,
+      "sha256": "1e78817d72bf8be61d183bec2cfcd31ab409e132c864bf4a51e60aca0c7de2ed"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/en/templates.php": {
+      "bytes": 743,
+      "sha256": "fd87d777fae4f67f57116264e344aa42acc99fc07e2174d6e57138e040fa3151"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/eng/app.php": {
+      "bytes": 2133,
+      "sha256": "0c75693270c7e7e41017c19d052436f254ce9397db186207e716ff91101839c3"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/eng/buttons.php": {
+      "bytes": 137,
+      "sha256": "84a781fde00a08880f8bab70aa9c7e708777ad0bef67b09d3eb88afcc3466ce8"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/eng/general.php": {
+      "bytes": 570,
+      "sha256": "7a67e0528f6962765fd46b13a38a935a1d35b718282e87a8df0ce21272eac6a9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/eng/integrations.php": {
+      "bytes": 277,
+      "sha256": "348aec5b1635a3b662413b4fa5c3e8cefaadee7ceb98da30623b27d152ef71da"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/eng/messages.php": {
+      "bytes": 693,
+      "sha256": "5ee2cb07d2c8077c8bd7828c4db144ef1337f36d1753f21dd40dc2f47e240821"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/eng/modules.php": {
+      "bytes": 595,
+      "sha256": "a3ce4bc883bf582f6d4c92e2c729fbc89a9fd5102fa8f4b35cc70bc4c724a86a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/eng/permissions.php": {
+      "bytes": 556,
+      "sha256": "a7138b7d1710eb632e84ed44ff52d9d462ccf7af218541f895c72791e221721b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/eng/sidebar.php": {
+      "bytes": 243,
+      "sha256": "589e1d5769d685602d77f381cafcb288b1770141762b091e3dd791f01c8618f3"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/lang/eng/templates.php": {
+      "bytes": 743,
+      "sha256": "fd87d777fae4f67f57116264e344aa42acc99fc07e2174d6e57138e040fa3151"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/cleaner-ratings/index.blade.php": {
+      "bytes": 4518,
+      "sha256": "208b7635c419d4c9f533acc7b9c26c2c826d9a701507d5ab68f9755e3cd24b59"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/cleaner-ratings/show.blade.php": {
+      "bytes": 5058,
+      "sha256": "878f5f18bb751bd6a494b167cecbd6ce9eaf9785e48846b9fea0ce64929203af"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/components/badge.blade.php": {
+      "bytes": 138,
+      "sha256": "050afec6b58c7af49f754c830ecfc059e7dfa444668cc7666b2190c6e52b6a64"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/components/card-header.blade.php": {
+      "bytes": 52,
+      "sha256": "541da26247b0feae6e7c79670679682b7751b1bd52bc7162c2b77a58f7d9a26b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/components/empty-state.blade.php": {
+      "bytes": 52,
+      "sha256": "271ba3e35512d8d384b136a8bce31d26bef6b3e7fd8301c20c5975a91263d8c9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/components/form-errors.blade.php": {
+      "bytes": 52,
+      "sha256": "e1fb5f29fc528f990305de917e5e25d14f9b7abdbacd5705db390390f045ec70"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/components/help-tip.blade.php": {
+      "bytes": 49,
+      "sha256": "673efb6834dcffe268ab74bf84db69c264ce57d5031acaac85949c4794d8ad8a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/components/panel.blade.php": {
+      "bytes": 46,
+      "sha256": "6a0603a52eb6cbdf82e09bc129913fa19fdca930f641d45eb499cb34502f23e3"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/components/status-pill.blade.php": {
+      "bytes": 195,
+      "sha256": "494bb85cb47236f3538b66ac35df2ecf93d8616498adf93d3f929b759fcf5e57"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/components/titan-link.blade.php": {
+      "bytes": 147,
+      "sha256": "099121a20c050d7adc768ba36d22e6e95bbba2737464b1dfc6b54bcd4f588a0b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/components/toolbar.blade.php": {
+      "bytes": 48,
+      "sha256": "289fc9052ecf3862be725174f701cba74283aa1a119a5dc71dff198e9e23138b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/dashboard/index.blade.php": {
+      "bytes": 13970,
+      "sha256": "03bf0ac3bdb321801669e948a62f708c48f12d22764be8a2c8662a8d544d5b7c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/filament/widgets/quality-scoreboard.blade.php": {
+      "bytes": 1895,
+      "sha256": "44306fcd4e62af72c9ddade03d0f5d75725afe5e20f56d91632f7e261bf42611"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/files/view.blade.php": {
+      "bytes": 471,
+      "sha256": "b39ac80c896b2d81b05c63edd32b2a637592963725b741a95c23e2b1798848f1"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/index.blade.php": {
+      "bytes": 195,
+      "sha256": "3cb0c4f69648cd412b01b7593bb2efd70f94ec68a92d1569295fd5d04eed51d2"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/layouts/master.blade.php": {
+      "bytes": 590,
+      "sha256": "e23da5a642b14fcca3717cf67de29e647ee0aa0eb5eb96e394e4b44835b1430e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/mail/complaint_escalated.blade.php": {
+      "bytes": 1021,
+      "sha256": "1e17bbd2690d1c74d3e025f984fad75eefc328f57b210eb39c544ae195b4ea0a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/mail/corrective_action_assigned.blade.php": {
+      "bytes": 1220,
+      "sha256": "06815bad96ca9e8b9150def3f4f0948d8c1edb47c05ae2e7b625d9abb7fb1ddf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/mail/qc_failed.blade.php": {
+      "bytes": 1183,
+      "sha256": "a19a8c5ee5476f23956728e3371f990b84c258f2f542434f11c121667df494e3"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/mail/verification_reminder.blade.php": {
+      "bytes": 968,
+      "sha256": "c39aea8753fa23c816e06e6799f8544c5594e0f81d71132be22f3ad624981c0e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/partials/titan-links.blade.php": {
+      "bytes": 1227,
+      "sha256": "4a8a6c9923738997a54f7412fd8e407b0f5ca09aad73adc03804b85bbcca1274"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/qc-records/create.blade.php": {
+      "bytes": 7722,
+      "sha256": "7952f5bdf825a4f147bd82ddc194ea961ba45e27ce16225921f9104a6f94c65e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/qc-records/index.blade.php": {
+      "bytes": 5433,
+      "sha256": "010ee3e2bb35161e5facda5f31f00e21aa3040e88a22a87da451e23926c3108b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/qc-records/show.blade.php": {
+      "bytes": 8280,
+      "sha256": "e9b293472788c0b1cccc9c416c63bd643645e54746e62afd657eeba3fe85f9e9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/reclean/index.blade.php": {
+      "bytes": 4740,
+      "sha256": "97b1aea2b6fdcda87302be81f92895ac67a0a0e1de62a643fb069affefa8a73b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/recurring-schedules/ajax/create.blade.php": {
+      "bytes": 17535,
+      "sha256": "b805824d721f16e806c8659f8c7a7e531258dc30dc5b8b18812ad952d8d839e1"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/recurring-schedules/ajax/overview.blade.php": {
+      "bytes": 14804,
+      "sha256": "abde9e441b897910c8659ed7c261a1ec0d8218c1d987fd4ffb6440a639bf4f19"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/recurring-schedules/ajax/schedules.blade.php": {
+      "bytes": 2657,
+      "sha256": "b8aff26a81672dc73f92459d13a3a52bbd6fb5e8bc53df9dccb75f42083d6efe"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/recurring-schedules/create.blade.php": {
+      "bytes": 128,
+      "sha256": "7e5fb7259323247756e8bbaea733d825c045a695d8e1dabea1cd2e16e59ce2bd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/recurring-schedules/edit.blade.php": {
+      "bytes": 23226,
+      "sha256": "71ee203ee9599606ef49e6dadaee2c6b3547ab464dbc553e92eff3c9469adc1f"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/recurring-schedules/index.blade.php": {
+      "bytes": 8305,
+      "sha256": "a88d9f9c9a1942e00cffbbaeafebbacbe8267782f3a0dbb1b6d71b293aec32cd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/recurring-schedules/show.blade.php": {
+      "bytes": 2393,
+      "sha256": "a6f61ab765de4c70d5398d64cba590e7d4bdcd08688dd58c82fa938311c3455a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedule-inspection/ajax/create.blade.php": {
+      "bytes": 20901,
+      "sha256": "f620213134239e92817fb4ca8a17bf7abc5419b36353001cf4869ac0986ce656"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedule-inspection/create.blade.php": {
+      "bytes": 171,
+      "sha256": "5d7acfe3e4e92e82926e65104690a376cd9e14c328a51e814f1f55ebba9187d6"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedule-inspection/edit.blade.php": {
+      "bytes": 32854,
+      "sha256": "80c7236c675bf2ccfb3af07c7c327dde1ac1466075ecd9c1a56b89923c178090"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedule-inspection/index.blade.php": {
+      "bytes": 21307,
+      "sha256": "2b2e0dc3c5e039b7eb491a98334b8e406b8b740c65775df7087803ab5bc26598"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/ajax/add_item.blade.php": {
+      "bytes": 6229,
+      "sha256": "557dea4b0b92d646ec21eeae75e490d6e1ec84da5e4491e096c7c4d110846761"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/ajax/create.blade.php": {
+      "bytes": 14881,
+      "sha256": "ce771dcc74402a4732edd3ba410dbd617136415812fd7814bed2bdf512d3b65c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/ajax/edit.blade.php": {
+      "bytes": 12547,
+      "sha256": "c13e51152aed1f7a18d84422cd6abfba7e6ff9f4e24ced7d56330650aae97fb2"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/ajax/show.blade.php": {
+      "bytes": 18599,
+      "sha256": "211db136b63225e04e3e906c60b8513d242a3cb2d0ee2d0eb16207dd5d4f82c0"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/create.blade.php": {
+      "bytes": 128,
+      "sha256": "7e5fb7259323247756e8bbaea733d825c045a695d8e1dabea1cd2e16e59ce2bd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/index.blade.php": {
+      "bytes": 11648,
+      "sha256": "78f62a0dafb090f9eed74bb64c83e9e93ee70195fb22c7b44a0a4719f3171731"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/offline/index.blade.php": {
+      "bytes": 2399,
+      "sha256": "95ac584c0e8ce4e71c19896443d1e013b59e9547e548de095fc0e8bd185382a3"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/pdf/invoice-1.blade.php": {
+      "bytes": 32095,
+      "sha256": "1f4f80642ef431247a9c47b78854303ee8dc51e08436bf40490dd81706fb2d4d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/pdf/invoice-2.blade.php": {
+      "bytes": 37112,
+      "sha256": "0cdedfec88e29d7c3b5397c66a6411230c6e08c4a511696efc2bdec04848e9ea"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/pdf/invoice-3.blade.php": {
+      "bytes": 36985,
+      "sha256": "fa495f48d55147645506035d1752e1e933dd2a22e9d7d0d7846b71127026d27e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/pdf/invoice-4.blade.php": {
+      "bytes": 37474,
+      "sha256": "5d044d886a124ed150344405c011bd78c298b9b7824ac52280cf5d218a773d78"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/pdf/invoice-5.blade.php": {
+      "bytes": 27227,
+      "sha256": "8054f7405c387d1e32e7779b340e10b808947012454025ede15f989f12dbe866"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/pdf/invoice-recurring.blade.php": {
+      "bytes": 23434,
+      "sha256": "24299706a47a92602affd27c3c94e2319fb250a85e923b193c3b2edc63956144"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/schedules/show.blade.php": {
+      "bytes": 279,
+      "sha256": "e6a396bb6add819e931dd16ad64b169ce2010f20ab835dcc725a776e31dd0a1d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/sections/sidebar.blade.php": {
+      "bytes": 3681,
+      "sha256": "557c204e69ac2c990716a859599ca94df0ee1c989dafd13c62010cf61b8a494a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/templates/create.blade.php": {
+      "bytes": 649,
+      "sha256": "bf415217023546ca9ff2ef1127817a29fb441d69264bc9728dc9d2e82ee9fd9a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/templates/edit.blade.php": {
+      "bytes": 1370,
+      "sha256": "bbf07f875d3626cbfe010b7462923dc2fed59658e6e77c32d747ca3df5f6a994"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/templates/index.blade.php": {
+      "bytes": 860,
+      "sha256": "c456bd18eb33c73b7d6802bccd65cc4ef567a4911d9a8490cbcac473bb06ee9b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/templates/partials/_empty.blade.php": {
+      "bytes": 206,
+      "sha256": "26c88cf299f01d85dafb719b083335b3483172c6cc0190d94f1e820a4f97b7a4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/templates/partials/_form.blade.php": {
+      "bytes": 1044,
+      "sha256": "37c78083dd6c227d1a2be30735821ee55488707d4cdb1fba5e08a9f07d2ccd27"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/templates/partials/_items.blade.php": {
+      "bytes": 1416,
+      "sha256": "d37d480dd0b92bb0142b39cba27741b36ebd23bdcc9b13b92a9e5a2119d3c421"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/templates/partials/_nav.blade.php": {
+      "bytes": 44,
+      "sha256": "928c68816ed1b3327539f9621c31967383cbc3d568e53d3c581c7ca570d5c90b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/templates/partials/_pack_suggestions.blade.php": {
+      "bytes": 199,
+      "sha256": "4c411b28845abf9a8339f6655d5faa88c60ac42424bb1708595d72eea78ed07f"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/templates/partials/_table.blade.php": {
+      "bytes": 898,
+      "sha256": "f38c078660b06ae4880a390d945a0caff07d4fb175e3740a2887a123c64202a2"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Resources/views/templates/show.blade.php": {
+      "bytes": 1081,
+      "sha256": "62c4247844d63c2755f39f61e4b3c906219daea6d60bb0614b25b8c586c5a189"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Routes/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Routes/api.php": {
+      "bytes": 534,
+      "sha256": "9bc8ddb8d6cb697a5adc77bb3c61c15b22951eb35dec732a4b393bdf02c54876"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Routes/web.php": {
+      "bytes": 8619,
+      "sha256": "b510d9d3f0072ca6536b6deaff688791fe733363a2c6808daff3e46ccdee12bd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/SCAN_REPORT_PASS2.md": {
+      "bytes": 942,
+      "sha256": "e816bb7d0d7b54ba3057b4b85d4723baef1602dcde36d7ba74ab6dd6c07337cf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Services/AssuranceBridge.php": {
+      "bytes": 490,
+      "sha256": "1d480e9ce0e7193d7fe9eae2163ae7b1c390153ebeacde2a13bf22f4a0189759"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Services/ExecutionRecordService.php": {
+      "bytes": 6369,
+      "sha256": "f9f0fc64514916d21368321e0df8d341be2212037b2840a30fed4020b9eccf83"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Services/QualityReportService.php": {
+      "bytes": 3091,
+      "sha256": "371a353b2c8050c78df45ae0b2d4dea2c7f9f86a6938ae7a950cfcb22e06d543"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Services/ScheduleService.php": {
+      "bytes": 902,
+      "sha256": "e0bb78db7436a8b73c2ad54e7bd3f1204cc785d0e0300a6e02b4400133982d15"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Services/TemplateService.php": {
+      "bytes": 923,
+      "sha256": "b63a0b3748bb4663b38375286586603dd9e37f5a46ba8369e8269022f4ca0d11"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Services/TitanLinkService.php": {
+      "bytes": 1204,
+      "sha256": "3bbeb85f261f50cf13ce8ca371205532fa7072b76bb84b9ca4e3ae0a977b5e49"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Contracts/MenuProvider.php": {
+      "bytes": 86,
+      "sha256": "ec6deb753bb170ca4810db29c4e8d856c47d36c9a2eb519c60b4ecb81f4e1e58"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Contracts/PermissionProvider.php": {
+      "bytes": 92,
+      "sha256": "f0e2a3af6d9c987d6946ce80fe30e564fe4d3bc5ef8e4bcd4ff4c13788583b18"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Contracts/RouteNamer.php": {
+      "bytes": 84,
+      "sha256": "59600db308b1f5c9f327fe1ed1bf4c7dc3284f84fbdd57745b47355fa1b04786"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/InspectionSummaryDto.php": {
+      "bytes": 206,
+      "sha256": "1375261442d13df0de68c42e0866b76dd43481cb10b70f72d9da58bae0bb8027"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto1.php": {
+      "bytes": 173,
+      "sha256": "2d39199f8b219edf4bf3905261ef69cbb451cbde4b1180aa45e7e05a31b0ae79"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto10.php": {
+      "bytes": 174,
+      "sha256": "face62416652fb5d1026545732d891f8980f59a95e2e0a4294965fdf3f21f22a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto11.php": {
+      "bytes": 174,
+      "sha256": "0ca9efb9c9b4c7a48d515a11ebb72389f3b4189a79500178841240a282618343"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto12.php": {
+      "bytes": 174,
+      "sha256": "b9cb701dcc9dfff6dbb30d5e119f7f1f6c5de88312046a4b914286c3112a0552"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto13.php": {
+      "bytes": 174,
+      "sha256": "b03c99c215abb54b5282c76ebd87c3cc6b6c545b019633ea84a51de3f73c35af"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto14.php": {
+      "bytes": 174,
+      "sha256": "a4969defb9c2b31995c96fa00fbe840acc9bd45bb5db6476d26be94c53f15f70"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto15.php": {
+      "bytes": 174,
+      "sha256": "45993f04155fca6986d3e569db9a2fb6e8b2f0ccd245623af81a741d9eac3674"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto2.php": {
+      "bytes": 173,
+      "sha256": "1b414a0a257ce5c75fc6d261f80ed0a2afb97adaf1da8b31e1b6c1eedcaa8831"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto3.php": {
+      "bytes": 173,
+      "sha256": "3228dfd673afef9e79f4e41e5821569e0165ddbdd3851ba02f395e86b9e743b2"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto4.php": {
+      "bytes": 173,
+      "sha256": "fa0180a1420a8d729fefe853685b1b74ab2c38d63d0cc5a05592c3e425919b0c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto5.php": {
+      "bytes": 173,
+      "sha256": "ee782daf3ea749cbb1fbc0622762002f9eb9d658aa977388d17cb5ccc8d95fab"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto6.php": {
+      "bytes": 173,
+      "sha256": "9d91c1e55904c3df6a70102d2674dc04ba69f68ae22a40b30343d8adc2fe378a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto7.php": {
+      "bytes": 173,
+      "sha256": "bd9a80235302a53bfcc93922ac0e6db16471e32042d8701616f88d5226b46a98"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto8.php": {
+      "bytes": 173,
+      "sha256": "243328684e6c4a685cefc28de5bef875e3f8ecff0f9a0ef954977c96a9789207"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/PlaceholderDto9.php": {
+      "bytes": 173,
+      "sha256": "4fda72e848530fa1639a2d7beeab1b45d21036b79ce655cc1c669a35bdb5f3ef"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Dto/RecurringScheduleDto.php": {
+      "bytes": 213,
+      "sha256": "9124d3df4bd2b2ee8cd987f7fca0cce945bfd3b49a6126b272824c4768172ea7"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Enums/InspectionStatus.php": {
+      "bytes": 2947,
+      "sha256": "6371d73a2a56db3d6bd13486a35684f880732661449a6f917a8b2393af79c8ab"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Enums/RecurringFrequency.php": {
+      "bytes": 1924,
+      "sha256": "6d3a0c28c8da57bed5f63dcf0fa93c113d4a779c36a31620ef49b8ce3e26c01a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/Enums/ScheduleStatus.php": {
+      "bytes": 1263,
+      "sha256": "3bd5fbf86ad83a4f103fd8421cc1c000de46b5bb53191f4d33bc1c7a48fcadd9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/FeatureFlags.php": {
+      "bytes": 251,
+      "sha256": "e910494578451695e479230340cae6deeb8c8d32437d61e1aa58db3ecbb2cbfd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/InspectionMenu.php": {
+      "bytes": 257,
+      "sha256": "62d8e265cf7d0541a59ea37654e23997849fea76c24ca54f2bcd5fc8014689e4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/InspectionPermissions.php": {
+      "bytes": 2429,
+      "sha256": "d97300a1edd598db4f43f0a8e114faa47421d1e10a0a894eafcdee647a2c76a0"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/InspectionRoutes.php": {
+      "bytes": 289,
+      "sha256": "ab7da45bf7808e6a9c1647d6c84166ee6ec686d72eb6963b0081e91e7b9c5408"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/InspectionUi.php": {
+      "bytes": 262,
+      "sha256": "b0790f097ade84d5a9a58785c0feeb2c32cce4c097bf4d4f07cdb7bd2c92ac44"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/ModuleAccess.php": {
+      "bytes": 1821,
+      "sha256": "323b91437fdc4ac93a4b0451cf4fe7a6126251b01b7c60cf0b10bbfb6e789edd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/SchemaGuards.php": {
+      "bytes": 526,
+      "sha256": "2938400b64efe52c8dbb917680e816f0b7bb1d9ef3e694dc396fdcf003ef5daa"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Support/TemplatePacks.php": {
+      "bytes": 709,
+      "sha256": "5e8728c265a30c67338249472c9f4f9facb4413d7b3ef1c56b2fabd5fa690d05"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/ComplaintIntegrationBridgeTest.php": {
+      "bytes": 405,
+      "sha256": "bf5976c7d57bad78c0dca4d7563540e829f921823130d86d0862978639c0c18d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/CorrectiveActionEscalationTest.php": {
+      "bytes": 3719,
+      "sha256": "6b4afe4e6f3b0315dbafa643a23aee2e4cb41a8334dc13e22c6ba5e8f9c371cf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/OwnershipBridgeRegressionTest.php": {
+      "bytes": 962,
+      "sha256": "e13dd7b4dca098129e56d51a2f30b779c4196cf58a2b45ecc733193c4c3ceb1d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub01Test.php": {
+      "bytes": 257,
+      "sha256": "03e903c3e542e3ee8d78eb74109f05cd443c8efc410d6e446638c9e919a57390"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub02Test.php": {
+      "bytes": 257,
+      "sha256": "d3080fd6f9eabbbf53ff8784216d585ef64e33aef57713cdb1b23e0ad307564d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub03Test.php": {
+      "bytes": 257,
+      "sha256": "77c5001e3e55aaa189c7df86c1382e2207ae45873461266c4ed9401610b0122a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub04Test.php": {
+      "bytes": 257,
+      "sha256": "cb7e0ae0ef12ec551ebc0d7939c2241a30bb3187f41deca2251db8d4c457ca38"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub05Test.php": {
+      "bytes": 257,
+      "sha256": "8c6d2cd92cec40afd1216f3dd75b18582b68862f55ce91d2503e6fffe0fb0503"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub06Test.php": {
+      "bytes": 257,
+      "sha256": "ea34f5c5a057804729eceec1d4a8b5a014449acfb859511d8ca9e5a31bc3a253"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub07Test.php": {
+      "bytes": 257,
+      "sha256": "4dedf783c251d3583bdddf545f3ce76b1215024f924f1e482c953ebe56ca6825"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub08Test.php": {
+      "bytes": 257,
+      "sha256": "3fb39fc2f250e4ec83db84ea264b1fa2387984a4d2fe6946bdeb735d717fec8e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub09Test.php": {
+      "bytes": 257,
+      "sha256": "c973e9a2e87fba18f7c79f4b36cf0769bed4e22c348ec3aebe394eaf1d2c65c4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub10Test.php": {
+      "bytes": 257,
+      "sha256": "4af4da1b311d3bd770de1d4ab0e618bcbda833cdaa3c3bcb6836cfa15ac2eecf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub11Test.php": {
+      "bytes": 257,
+      "sha256": "55331aacb2d85e91c8ea899da585e72334517cc1d9c06edceaa8f9df4b2fd0de"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub12Test.php": {
+      "bytes": 257,
+      "sha256": "16c7cb26d38094b7080c094ad0aabee936a6efd16123f92da342e69c435c6d85"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub13Test.php": {
+      "bytes": 257,
+      "sha256": "477ff404dd858d2baf87f193accaef5f289e0c57279024e4fa3a3b29e53e4a13"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub14Test.php": {
+      "bytes": 257,
+      "sha256": "ea01de36faf2be8fc5d6c07257ee2b4cdd5d07fba0116afe9255e2e6db6a690b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub15Test.php": {
+      "bytes": 257,
+      "sha256": "8eb6e4452eef4a0b3c7a8835d1a7d425d313cd50b23a14ba0c90569f2952d804"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub16Test.php": {
+      "bytes": 257,
+      "sha256": "f7fdad37aa83d70390b5d0cd6829667b0adda0ed0ef674b427e52bebec6e56cf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub17Test.php": {
+      "bytes": 257,
+      "sha256": "5e13776b35f9c003735bef7ee27819b050c930791a68b4bd2c62ed8e912f529a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub18Test.php": {
+      "bytes": 257,
+      "sha256": "2be583962a2aad3033cfa75b4322178d78283775aada093ca218d9898629dc20"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub19Test.php": {
+      "bytes": 257,
+      "sha256": "82a907c3903f05f8f2dde6f4fec2e072d5769fff47ac6663c2cdf0db1f9655b4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass1Stub20Test.php": {
+      "bytes": 257,
+      "sha256": "b94b6ef89be132f25a75f743d8431383cf988245ae74460d8edc7144802fc886"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub01Test.php": {
+      "bytes": 213,
+      "sha256": "dcda23fc3b53126e2e9f8779a5a94f74e47a221e3e11e0aaf72a227ca0415880"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub02Test.php": {
+      "bytes": 213,
+      "sha256": "dea7495553927074710f07801dc4d8ef57bc8e0b5e52082b7736c5306b61980e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub03Test.php": {
+      "bytes": 213,
+      "sha256": "4dd7d7d704d918021573765e4eb38bae4a92ae2fe3215e732be57fb45c01ff91"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub04Test.php": {
+      "bytes": 213,
+      "sha256": "ee711dcdb9877d83a408231c0522375e7cd0d782bd2394d7a40acd90acc94269"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub05Test.php": {
+      "bytes": 213,
+      "sha256": "911a42416408e8b058f9ede85da3fba7af76943fd9419531599717914367d494"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub06Test.php": {
+      "bytes": 213,
+      "sha256": "1b78908a684dc703bb0097d52e8c36adcd62c6d5247a1d001ab08d62f6e53b03"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub07Test.php": {
+      "bytes": 213,
+      "sha256": "b7cedf01d58fb334ad59c6ca795d19c6b00fa46a68470f1ec87463762c592d05"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub08Test.php": {
+      "bytes": 213,
+      "sha256": "fb512dd6f7a513b62f93365394a364d201c754a2df74342787b9be74b600b10b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub09Test.php": {
+      "bytes": 213,
+      "sha256": "850c9d411f760d84ab1e6da621295f1cd2cce3b4d06f0ef23c8cb1056d5e1e60"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub10Test.php": {
+      "bytes": 213,
+      "sha256": "c4f874b47ce35f6db536081aec76e2a780cdb2ec3097ff19d24c449dec5f1b40"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub11Test.php": {
+      "bytes": 213,
+      "sha256": "07cba4aaad366f6a6efd81be558af42105ba7d019eba7cb057224b5fb44a9f3d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub12Test.php": {
+      "bytes": 213,
+      "sha256": "9ef82e29104a732e6ce8fa12ba8ee6733cdd815673b3d070f899d609344d01e9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub13Test.php": {
+      "bytes": 213,
+      "sha256": "a8ef7a87c43dd7dfe535f7812779ea0892a080a67dc5055048663ee843cbddd2"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub14Test.php": {
+      "bytes": 213,
+      "sha256": "2db65c699b7236f1023a675e079aed1619307902103609582811db839b2ccd9f"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub15Test.php": {
+      "bytes": 213,
+      "sha256": "238343d8e377dbb7b9a73f99865a9106391a5cc5af14be49a424d99d2cc30043"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub16Test.php": {
+      "bytes": 213,
+      "sha256": "68ece8446b7226f1114b52b15828e6ae34e9a28899710b89920201cdf669a3ac"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub17Test.php": {
+      "bytes": 213,
+      "sha256": "453434690ee040662cc6d0c3105e6d8b7b4e780c288b0b680194f15567c6f0e2"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub18Test.php": {
+      "bytes": 213,
+      "sha256": "a3565a7faa532299bfd7707598492c90110e181c0cacdaff43060e0ebbd72af5"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub19Test.php": {
+      "bytes": 213,
+      "sha256": "aa048fba1040c25f174cafcc8f6dee13195dd777ee501bfcf9bbb0ec35a384ea"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub20Test.php": {
+      "bytes": 213,
+      "sha256": "e2fe63829ee35d05b299111bb2c1a537b6f311309c462399d9a5d602ab4bbe2a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub21Test.php": {
+      "bytes": 213,
+      "sha256": "01d277ef752b15d370e008cb0bab13fe2e95281b0d08bcfe241c899319eaa480"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub22Test.php": {
+      "bytes": 213,
+      "sha256": "ec3cc638791fa3c3cd4621399938ac10d05004451c4339127829fb265b97e416"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub23Test.php": {
+      "bytes": 213,
+      "sha256": "5b02bba8e00fb0ccc4c98d251899b23bc4d429af11b0b93d101851efff749318"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub24Test.php": {
+      "bytes": 213,
+      "sha256": "8d5fc53c83b2334dec9fb3dfe6f2541a7a69dc46aaace6adf265993ce6cdb05e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub25Test.php": {
+      "bytes": 213,
+      "sha256": "fccd002df6fd41a7e1a47d8f1af25366fa468b31a1778da6f598376af0f31698"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub26Test.php": {
+      "bytes": 213,
+      "sha256": "efc358a1eea57143fd07e75b1751fc1bcd085f9dc9560afa6582cd5233cee264"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub27Test.php": {
+      "bytes": 213,
+      "sha256": "21f5b2e7702aeb1a8fc3b67aaf4a1ff9648b96d400ee99c1e05b1f6738be440d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub28Test.php": {
+      "bytes": 213,
+      "sha256": "bb36ac3d69bce89d4442916b7ec9f92cf615e19bed455a5f54ed5d9c394a4421"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub29Test.php": {
+      "bytes": 213,
+      "sha256": "e031966fe9c9623fea8322d8e775039dc2a7edbae7ab21ef7c41a0b0b253a629"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub30Test.php": {
+      "bytes": 213,
+      "sha256": "a1a809cf55bb0eccc08cb7174ad4fe6794548ef8d0a60ce2614480e6175156fb"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub31Test.php": {
+      "bytes": 213,
+      "sha256": "1a944568ba866f5a88209b76f5d0cc73c80b1bf072595d0d129adccfe02d4d76"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub32Test.php": {
+      "bytes": 213,
+      "sha256": "45acecd5f2d893425cecdcc0f8146e22f2521774d043092a6dc47d8a1dec6719"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub33Test.php": {
+      "bytes": 213,
+      "sha256": "1688a6a2cdc1fadaa244225d491207efebcedcc16dcbce35dbd47fda5eee44a2"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub34Test.php": {
+      "bytes": 213,
+      "sha256": "7be9f52ee0a44d0dab4506eb368838d3f8c303420c6e8e243f8390750816e43e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass3Stub35Test.php": {
+      "bytes": 213,
+      "sha256": "82f999abd9ded75106091bc427383e0eb1ad5a9b3a293a5b53e73bb8cb360918"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub01Test.php": {
+      "bytes": 212,
+      "sha256": "efedbc5852092e4bb2a6f3f7f92edc09236cab7e8f4d29abc1de2f93907348be"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub02Test.php": {
+      "bytes": 212,
+      "sha256": "8ebfa40ae6e4f44fecfcc7caad7fb5c9339d2c4b3c4049727c9bd134935f7637"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub03Test.php": {
+      "bytes": 212,
+      "sha256": "f2eb618caf55f00f802f24518ccc0d7b37e4202023f96c14310f40eaa5f916c0"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub04Test.php": {
+      "bytes": 212,
+      "sha256": "39493e69181a0f1967450b326c130273277ea66fa01fa3506d8018d7c9518f87"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub05Test.php": {
+      "bytes": 212,
+      "sha256": "0c803f26ded5f154cb33f6d9d488661cd5242072c362ebade6c8726b21305b49"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub06Test.php": {
+      "bytes": 212,
+      "sha256": "a6be8e1ae68c24542a34733cd754efb66151191e28ee4a226c03271b4bf80324"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub07Test.php": {
+      "bytes": 212,
+      "sha256": "8350f80564ac9eaec12e4144c275762558900478ead0ef7d3beb2a37a69c8dcf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub08Test.php": {
+      "bytes": 212,
+      "sha256": "62b106ea461cab049dddaf3df682415079cdee482c84ce40f6a3e9eae51f881a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub09Test.php": {
+      "bytes": 212,
+      "sha256": "28f4686241ff57fb877f11c392109a87ec0c8467d540231d41568123dd3fbc1d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub10Test.php": {
+      "bytes": 212,
+      "sha256": "13a8793d772f8b89766ab79f26b184f34e95c14fffbf03d488ac5e90554f14e1"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub11Test.php": {
+      "bytes": 212,
+      "sha256": "bd52639263158e76256f7c18c806d6eb3b9d86359b7e6374b200296fc45a97d4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub12Test.php": {
+      "bytes": 212,
+      "sha256": "cfa936ca64a923b1eea79afd940e20d628f94391df98322c9616273b3ccf26d4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub13Test.php": {
+      "bytes": 212,
+      "sha256": "bab09d06745af549e86fff2b8b8135a4b2b9ede2c779619a6bfb43a549980541"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub14Test.php": {
+      "bytes": 212,
+      "sha256": "1928c55cf650d99fca0d65db714b735b67f8f2e3bcd6091e15eb54fcb108fe77"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub15Test.php": {
+      "bytes": 212,
+      "sha256": "686c20723db6f104fdb6f4eea0865abd93d79a518f50105e97443ac90a7901c4"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub16Test.php": {
+      "bytes": 212,
+      "sha256": "eb0bc49aec2a32bcb20e295a65ab6da5d86f643c393c35c3591c2c6eaf420f98"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub17Test.php": {
+      "bytes": 212,
+      "sha256": "8de2ce64c351a6467322a971a7368bd82299281efa0d9f38d88557140d8ac6c9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub18Test.php": {
+      "bytes": 212,
+      "sha256": "d9ad3280a4c018839a8b67f6486ea6363d3c39e7a878ce8a5bfb4f4a9fbed48c"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub19Test.php": {
+      "bytes": 212,
+      "sha256": "7e1e34f1730a4a4ed9141ea8d8e374f411499d1ce1dd4a65b223d8a7e508af82"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/Pass4Stub20Test.php": {
+      "bytes": 212,
+      "sha256": "f164b25a41e13a256346a8cdb16826b228ebadac5a19185571c269b828e702b9"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/PermissionsTest.php": {
+      "bytes": 727,
+      "sha256": "1a600ec5dc6b4edfe6efa2a3829d23ba489a43ae50570204062e897e790b7fe6"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/QcAutomationWorkflowTest.php": {
+      "bytes": 5244,
+      "sha256": "15cf10fb8309dd709161c1e2e0fb1f9ce58a6d3a7328ecc7f85e1b13edcb6779"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/QcComplaintIntegrationAutomationTest.php": {
+      "bytes": 3500,
+      "sha256": "a0ed15064b8b653173420cb26dafa48624ad40341c6ca0ec09dad6b0bfcca0de"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/RoutesTest.php": {
+      "bytes": 509,
+      "sha256": "eb02b9c68e5b2f31e0500edea84d8218e3c4e9074647967bcb87167b9b7fcfbf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/SidebarDoesNotCrashTest.php": {
+      "bytes": 296,
+      "sha256": "c8bed10ec75d25e3485f9b3a5075a81aa595157feba84e91bdb97221b6ac0d55"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/TemplatesRoutesTest.php": {
+      "bytes": 383,
+      "sha256": "459c227927eb265f722c2fdc44c5efe5caf8e53f483834687b27d3b76c7f9614"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Feature/TitanLinksPanelRendersTest.php": {
+      "bytes": 273,
+      "sha256": "00b86536aa3dd16b4b75aeee1f5428e9ecfd89210bbd6d6098ef5e5a133c6654"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Pass2CanonicalQualityTest.php": {
+      "bytes": 6067,
+      "sha256": "a69cd8e72b72aebbff12da07844edb31ea967452cb12e673e053470adf0d6730"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Unit/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Unit/ModuleStructureRegressionTest.php": {
+      "bytes": 1176,
+      "sha256": "f7b015e5cdbcc4fe433738dbdada9f6eebe421a84b6400cd1f249ba2b93995bd"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Tests/Unit/SupportClassesTest.php": {
+      "bytes": 329,
+      "sha256": "4f74adce666d730823cfab2cfaea433330ce6e943dbd93f7ae720d40ba5a8920"
+    },
+    "recovered-donors/quality-compliance/QualityControl/Traits/CompanyScoped.php": {
+      "bytes": 2671,
+      "sha256": "73ce63a0b75dfd9aefc9819c2fe07895c854412cdad96f3de80ebedaf06830bf"
+    },
+    "recovered-donors/quality-compliance/QualityControl/VERIFY_PASS2.php": {
+      "bytes": 8432,
+      "sha256": "5478f2f80ea82a02304417ea3a3ece3c8ca9d176d584540e3a4d458f3394b426"
+    },
+    "recovered-donors/quality-compliance/QualityControl/composer.json": {
+      "bytes": 394,
+      "sha256": "90bac3d789046472fea678e90ad37b99410de81704b8432abbcd28fe53e1568d"
+    },
+    "recovered-donors/quality-compliance/QualityControl/health/checks.php": {
+      "bytes": 2750,
+      "sha256": "3f5615f7d40e4f181e3689880d87d56ecea658af4358859a2591e6d18571427f"
+    },
+    "recovered-donors/quality-compliance/QualityControl/manifests/ai.php": {
+      "bytes": 1411,
+      "sha256": "c886d8381b8ee90322b774319f30b220c864f1f7dbb43d9f3504171712cfc2d5"
+    },
+    "recovered-donors/quality-compliance/QualityControl/manifests/api.php": {
+      "bytes": 297,
+      "sha256": "3eb34ba161ffd4437b8ed0d0826502fd38b4fa2d0eeec47d56f70407a759de5e"
+    },
+    "recovered-donors/quality-compliance/QualityControl/manifests/lifecycle.php": {
+      "bytes": 3967,
+      "sha256": "c2f7354ec03171d6e1fde57be72043f120a93c09c5c1b670ef189fee42ee7d1b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/manifests/permissions.php": {
+      "bytes": 875,
+      "sha256": "f7a20018e5d5ddea3254b781e04f3735a54b66041a29ab82d5f30e35b9de4b9b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/manifests/seeders.php": {
+      "bytes": 481,
+      "sha256": "15bcf245779db1d93b7039f70218d04dfb512dbc1a629d5921e76c87da5837b6"
+    },
+    "recovered-donors/quality-compliance/QualityControl/manifests/settings.php": {
+      "bytes": 436,
+      "sha256": "2c79662ed0f21cff669d6bae7a0d24edef0a75ee609a4d829ab5f384ac6acc4a"
+    },
+    "recovered-donors/quality-compliance/QualityControl/manifests/signals.php": {
+      "bytes": 2969,
+      "sha256": "a78f3909307061255e9b51667c2820875398c31ff4d60544e2c11e69975005f0"
+    },
+    "recovered-donors/quality-compliance/QualityControl/module.json": {
+      "bytes": 2099,
+      "sha256": "8f0b469f73887b4d53561c85ebb74004664bb34b72748ca62016a07204177541"
+    },
+    "recovered-donors/quality-compliance/QualityControl/package.json": {
+      "bytes": 304,
+      "sha256": "02bf28e0ef5c859ef123f738547f7d445a8c6052c895d76224b3e4fd0427fd1b"
+    },
+    "recovered-donors/quality-compliance/QualityControl/vite.config.js": {
+      "bytes": 692,
+      "sha256": "34fc11d6d57b44041afdde74c2a11fc4d543f53b918fef735dcc1570672579f8"
+    },
+    "recovered-donors/quality-compliance/Titan-Quality-Compliance-Team-v0.8.0-Pass8-Production-Hardening-Final-Cumulative.zip": {
+      "bytes": 3318274,
+      "sha256": "b674fe6887b7f1229ffebed39817420a18a90a5158ee700180865b4bceb49572"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/BUILD_METADATA.json": {
+      "bytes": 447,
+      "sha256": "a6877a46e1684cf0325a40a224bb012a2c06ce9f5f5e3b05221408db093952c9"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Config/assurance.php": {
+      "bytes": 244,
+      "sha256": "0c94fb6f88f83bbaf2f7a188023efa75552557f91a9c0226b9f437692b17c697"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Config/titanzero.php": {
+      "bytes": 2086,
+      "sha256": "2a36bb7fee617b8904e2713a00519d02131c55a3f75cb69e97fff185ee15fd64"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Contracts/AssuranceSignalHandler.php": {
+      "bytes": 287,
+      "sha256": "db06588674759182e6ece435e5e0aab5134c2ef12b46631291e21ca7eba732f6"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Contracts/AuditEventStore.php": {
+      "bytes": 380,
+      "sha256": "7387f82e343255ef6d842b1fed22487f518060ea1fe58dd4a0d9f960e762a80c"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Contracts/CompanyExecutionContextProvider.php": {
+      "bytes": 312,
+      "sha256": "0f930935a9a44b7d0beb00a56c358770d3fe429b791f228e61996b75b65aec1c"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Contracts/WorkItemDispatcher.php": {
+      "bytes": 241,
+      "sha256": "cfb7553cdd53917899ea61f817b6aa335128a9dcaafe5c1ac9167fdb6ebc8fd4"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Database/Migrations/2026_08_22_000005_create_titan_assurance_audit_events.php": {
+      "bytes": 1071,
+      "sha256": "18bd562208dd23a2feb0dfe7ad09abde09f94cfe30f16eed555dd8fc40b4be87"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Database/Migrations/2026_08_22_000008_create_titan_assurance_work_items.php": {
+      "bytes": 863,
+      "sha256": "75cb4b026a522d68297e5630e67c055129a4d1219a33616efa02906414101839"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Entities/AssuranceAuditEvent.php": {
+      "bytes": 430,
+      "sha256": "e83236ba7096a178b04934312f236febe5ad266ff25c4f5d49f08697bb2f75b2"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Entities/AssuranceWorkItem.php": {
+      "bytes": 309,
+      "sha256": "e4dbc2ec6282a00636ca26c98061aabf862bef2d984adcb5d7b37c3a6dfca7d3"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/FINAL_TEAM_CONTRACT.md": {
+      "bytes": 834,
+      "sha256": "3ec47d169def89aada494f0698fc3d43e7954ccd5edb5b16fd43f0255f1eb927"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/NEXT_PASS_HANDOFF.md": {
+      "bytes": 646,
+      "sha256": "306c951a58b42da70a596a14b6a883205eb573dd5a22e4a8cab1a22a8211291a"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/PASS1_LEGACY_PHP_LINT_BASELINE.txt": {
+      "bytes": 1614,
+      "sha256": "954217b0aea0f5d2fa16b59474947ecd01b35b573f51152e620d18314dbd1021"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/PASS1_VERIFICATION.md": {
+      "bytes": 1365,
+      "sha256": "d9f813c5506b00da1ad8fb8d219bf5c7ab165cc4a671b78419e716a52894b469"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/PASS5_AUDIT_BACKBONE.md": {
+      "bytes": 575,
+      "sha256": "57fccb0af82b46f0bc75e3e1d3e316e2e79aaed4f3c678ce5b7baf9bcadfda5a"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/PASS5_BUILD_METADATA.json": {
+      "bytes": 141,
+      "sha256": "1be7a8872027ad9a063594f31269f2debea4c0e24891e75dd1742cbe04acdd9d"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/PASS5_LEGACY_PHP_LINT_BASELINE.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/PASS7_BUILD_METADATA.json": {
+      "bytes": 295,
+      "sha256": "5dc12a8a0c97426e50bfb5eceb51823b70c0d4cb411677e266b45a12065e1323"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/PASS7_CROSS_DOMAIN_ORCHESTRATION.md": {
+      "bytes": 792,
+      "sha256": "c317f6965da77caf98669c030e4b368aa5029f351d96f83b64984fdb05901311"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/PASS8_BUILD_METADATA.json": {
+      "bytes": 291,
+      "sha256": "228369d2818a5d8c1f003a0ff24924f4d7b0c6a4a982b1a63023d38d7eccff86"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/PASS8_PRODUCTION_HARDENING.md": {
+      "bytes": 1147,
+      "sha256": "5f31d7e6ec92267cad29e1c29d2bafaee60fe3e48b2e3731d5ad3b8ea9a3c72f"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Providers/TitanZeroAssuranceServiceProvider.php": {
+      "bytes": 2995,
+      "sha256": "f1a5e4d216c68cb7451c38e4ec100382b02b3b4385658942aa1b7d52f7c57c6a"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/README.md": {
+      "bytes": 706,
+      "sha256": "84c9456e6d337883e8d5597442c964d949db834286601a776b4cb3a47ce6248a"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Services/AssuranceHandlerRegistry.php": {
+      "bytes": 418,
+      "sha256": "6af575b0e27304d21221294e57a3468659f6cc8507e473759bcadcf3e6b6302c"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Services/AssuranceOrchestrator.php": {
+      "bytes": 2294,
+      "sha256": "d55a14ded0e377db489148a5c29591d16e1c9553e837080cb9c46d176bf6cdfa"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Services/AssuranceSignals.php": {
+      "bytes": 623,
+      "sha256": "cbfc7739bcd098cecc1d648b3b5287dcbc403d57645b663abf0840bbd3f68080"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Services/AuditBackbone.php": {
+      "bytes": 864,
+      "sha256": "b410ef858737ebc29a22c815eb2b3d36fb2eaef7034240e488aadb618fc3040f"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Services/AuthorityPolicy.php": {
+      "bytes": 1157,
+      "sha256": "b95330408491d3c15d7ad0361f241425d546248bbc303e8b208919d87983bae6"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Services/CapabilityRegistry.php": {
+      "bytes": 2175,
+      "sha256": "5775e4ef020a4090b9ef7aaecd6fd7b8f59b2fc628a9ee69bfcec867326546a5"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Services/EloquentAuditEventStore.php": {
+      "bytes": 1384,
+      "sha256": "a042ee3bc2074caf99d434cfebf561e696396ade2fe9e0aeec53671bb24c4317"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Services/EloquentWorkItemDispatcher.php": {
+      "bytes": 777,
+      "sha256": "eb324cc4006725b50a10df11894ba1b46ca5fd2cd532abd78228fa0889f8fb62"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Services/ExecutionContextStore.php": {
+      "bytes": 1131,
+      "sha256": "edb619b7a325bd1749b49f0ead456e8f2db74a760f99574598bf914af37d2b79"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Services/GovernedWorkItemRouter.php": {
+      "bytes": 1121,
+      "sha256": "b81a82e337df9b69fd84b2242ad92432ce1934a35d87b224ea48b9554e10dbf4"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Services/RuleBasedAssuranceHandler.php": {
+      "bytes": 2189,
+      "sha256": "4720838fe5f1b34118585b35c379f81118700ad63bf35bc0aeb9d46ce8e9fcee"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Support/Identifier.php": {
+      "bytes": 574,
+      "sha256": "a905487ef5aa2d6468ec77c104a5f070d1dc5935688803ef4641d8071eea0380"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Tests/Pass5AuditBackboneTest.php": {
+      "bytes": 2228,
+      "sha256": "5c80e404d4bb80bd34329d180fb11715631285ebb8a87e10a71c0655499e76ac"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Tests/Pass7CrossDomainOrchestrationTest.php": {
+      "bytes": 2251,
+      "sha256": "285263456b8c751ab8caf43263b5cb99e42bef00c603ba85caad3cdf442462ec"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Tests/Pass8ProductionHardeningTest.php": {
+      "bytes": 2955,
+      "sha256": "5b2cb6362ca2bfd567792e45ed1a1884317fea6c094b4643f7afbc50d1d107bc"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/Tests/run.php": {
+      "bytes": 10279,
+      "sha256": "c5e0292b01dd94dea5da45ada9152e01f7344b701860acdabe9c283bea94ab09"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/VERIFY_PASS1.php": {
+      "bytes": 5454,
+      "sha256": "42f61ac7c4203f9f36cbfdfbee40b59854505383961860ad2eba2350ce48fc03"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/VERIFY_PASS5.php": {
+      "bytes": 1984,
+      "sha256": "a830941b3dee28121f440e4b1cd3255adf3fafc6cabf0a91da057598724ba809"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/ValueObjects/AssuranceFinding.php": {
+      "bytes": 2401,
+      "sha256": "6f8edd5b5247a0d7b29aa0fe41d1762b148bba8fd204de815ad07fc52c890f95"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/ValueObjects/AuditEvent.php": {
+      "bytes": 3081,
+      "sha256": "9086bd6ed58db43cb54b890158ec0c110c803184ac343b1e6abd9aa3a452cdef"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/ValueObjects/AuthorityDecision.php": {
+      "bytes": 562,
+      "sha256": "415cd25d27411cbd32849eb3db595757aa309107305e1939717debd8c8c4f6c5"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/ValueObjects/CapabilityDefinition.php": {
+      "bytes": 1164,
+      "sha256": "50eef78114452ee5bf829cb6b94e90ef1b761c0c6b2d21036a3be76e1cf859ad"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/ValueObjects/CompanyExecutionContext.php": {
+      "bytes": 1567,
+      "sha256": "a0c3b605be28b97e62d90ad67f33525be7288d190e728163c0d7cd52245baed9"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/ValueObjects/EvidenceRef.php": {
+      "bytes": 1353,
+      "sha256": "41bf3af63e2f2339a26f5d277575233bffa3b5e52b4c504335b4cd62a45469cb"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/ValueObjects/SignalEnvelope.php": {
+      "bytes": 3164,
+      "sha256": "71c1d945c04026f0604e33939a205dd283ce77a58b8ee647637e5440c9a6824e"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/ValueObjects/WorkItemRequest.php": {
+      "bytes": 2701,
+      "sha256": "ae78aa97ea55b1e38d87ea9c2a4c953881f506c45a898ba2b41b5cb64dd89b99"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/composer.json": {
+      "bytes": 277,
+      "sha256": "debc4379c2e5a6c74094ef8bc85d9deadd4e6f2b4dad058a4784ce4d955f6b0e"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/manifests/contracts.php": {
+      "bytes": 915,
+      "sha256": "b79954b1f10921130725aecb15483b969f84b8aac5aaf3b26252991f63c43125"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/manifests/workforce.json": {
+      "bytes": 1626,
+      "sha256": "0387e58d6b7f156c75d48e682fea532a32a01d04eea030416e555f9fc5f92983"
+    },
+    "recovered-donors/quality-compliance/TitanZeroAssurance/module.json": {
+      "bytes": 572,
+      "sha256": "51803c829360beedd2bdba547d5feb8cc290410147a6468a4c876c5443712f58"
+    },
+    "recovered-donors/quality-compliance/feedback/Complaint/README.md": {
+      "bytes": 105,
+      "sha256": "399ca966492903dbc43204ecb98a1d5d7d8ed32a1c19c026d22dc2677e9f67d0"
+    },
+    "recovered-donors/quality-compliance/feedback/Complaint/RUNTIME_DISABLED.md": {
+      "bytes": 192,
+      "sha256": "e56429aeaa14613e9e3eaf71b42e3f09e3875a26583d0609580363b61268d19c"
+    },
+    "recovered-donors/quality-compliance/feedback/Complaint/module.json": {
+      "bytes": 424,
+      "sha256": "4b32eeeb6655e65504b5414d75434a6f1e0a7ae9f76d51d6749fdc31fdca76b0"
+    },
+    "recovered-donors/quality-compliance/feedback/Complaint/runtime.disabled": {
+      "bytes": 79,
+      "sha256": "b35cfb3ec11ff33ee4dc75e4d3423f172f228e73f4d75a3ffd115749d6222e47"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/AI/Tools/AnalyseComplaintTool.php": {
+      "bytes": 597,
+      "sha256": "d21912933fe14c3fb01cb34b621eecadd59697491812cbd8f8e6790e8010add1"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/AI/Tools/DraftResolutionResponseTool.php": {
+      "bytes": 779,
+      "sha256": "3938ecb4a7ce45c2026009eaff8e51c7d03e2ccafe6e4f2964d2aec935f5fe1b"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Actions/CreateComplaintAction.php": {
+      "bytes": 3545,
+      "sha256": "1f1cae566b9009c9a16869d9884e3b0251a3305a2be3f981919d5e4d4b1507c7"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Actions/EscalateComplaintAction.php": {
+      "bytes": 2263,
+      "sha256": "288566834adb163d24a3153fdba00778faaa9f64f0aef48399c9476e4eb05b1a"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Actions/IngestReviewAction.php": {
+      "bytes": 1671,
+      "sha256": "25ac343ea6361bf9e6f11c5e4a3b844ea8bde21fb577928187ea5729266cc132"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Actions/ResolveComplaintAction.php": {
+      "bytes": 1296,
+      "sha256": "57379e92e2bca41795638cb94afe11e470e2dd8975e3a00c32e575ae1064702f"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Config/ai.php": {
+      "bytes": 129,
+      "sha256": "6e2e9b5f348b9a76782cf8a7ece737c52a44584a4980670aa33ed3e62008a64e"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Config/config.php": {
+      "bytes": 1172,
+      "sha256": "b87b6679dc9e17e684f8f2e1d24107973fbda206bdf13587bc29c7016754dab7"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Config/resolution.php": {
+      "bytes": 404,
+      "sha256": "15eb69d8dbc0d073d688caddd2f689d30dbe9a4227d1e96fc043dc9958e5b41c"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Config/titanzero.php": {
+      "bytes": 2598,
+      "sha256": "b3260040eb610e7f0b05fbb4b24b55b6af93a3301bfafe30bc5465eb19c894a7"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/DataTables/FeedbackTicketDataTable.php": {
+      "bytes": 2262,
+      "sha256": "952198b5acb04eabbbd437043fe135006dc83c2b6910d9e895df81df7bfb7708"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Database/Migrations/2025_03_22_000001_create_feedback_tickets_table.php": {
+      "bytes": 2153,
+      "sha256": "29b2ddbc233482beb91c34d6302b51148e2fda2db164dbfe2545fd850e6992ec"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Database/Migrations/2025_03_22_000002_create_feedback_replies_table.php": {
+      "bytes": 1334,
+      "sha256": "182e6ec0e4ceb896f7c0f34b85315c8ac60e061ddd9d61c97cda54c81a5ddd3e"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Database/Migrations/2025_03_22_000003_create_support_tables.php": {
+      "bytes": 6622,
+      "sha256": "98473250dd8a3c2faef23d6c47d2245271de974dc87c76793b7f4c16b2dd8069"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Database/Migrations/2025_03_22_000004_create_survey_tables.php": {
+      "bytes": 4411,
+      "sha256": "bff57717f55e239a3275068e4a19402b86f179ce987839bf4e82836ecda44a3d"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Database/Migrations/2026_08_22_000001_add_resolution_contract_to_feedback_tickets.php": {
+      "bytes": 2906,
+      "sha256": "1404d0cb25de3765e9c74ebb60d86259fddf865b9705854a8159d19200fc69e5"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Database/Migrations/2026_08_22_000002_encrypt_feedback_email_credentials.php": {
+      "bytes": 1118,
+      "sha256": "2609de1d5781eb31f9f711fa8d31af348e110426f26e1cc060a1886fba1f1343"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Docs/openapi.yaml": {
+      "bytes": 189,
+      "sha256": "cb9535b7d071c621c42f0aedde3d82c6188f19f3ece8b7294444850b2ca1e46d"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/CsatResponse.php": {
+      "bytes": 958,
+      "sha256": "da1b6ccb09e2ac52b76ee17c9a8c82242d648e382af947b102b658898abd31e4"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/CsatSurvey.php": {
+      "bytes": 803,
+      "sha256": "7ca6866d247f228b54a71268d936824e517b223ab9ca992aa9d22aa2d053910f"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackAgentGroups.php": {
+      "bytes": 718,
+      "sha256": "766928098927d70a21a59002437e81675012e17ed9d29e4a1c8a101a9b1983d3"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackChannel.php": {
+      "bytes": 835,
+      "sha256": "63e36d748cd4efd8c5e7648147159cdfed361586fb52fa0deda3c6ea4e95fcf1"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackCustomForm.php": {
+      "bytes": 447,
+      "sha256": "c0acfe05d258780febe4e280acd8875da7dd889ec388354f534f64fd85cacfdf"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackEmailSetting.php": {
+      "bytes": 682,
+      "sha256": "52917e8b34c8d6aeca848ec41da9262d6161ecbfafec9aa04f379c253fc0b929"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackFile.php": {
+      "bytes": 689,
+      "sha256": "4212aca602f3c31234eca5451c6bcc6f67c7f410854f6d53a1816e2bdf753651"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackGroup.php": {
+      "bytes": 1111,
+      "sha256": "0c9c6f02f8c7d2e893e34e5505602142b1d40100ae9040b178e99b30c9d5796d"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackInsight.php": {
+      "bytes": 1020,
+      "sha256": "ea75ef7d1a1dfd3fa01553f9f756d7521bc061b74f2027fc6f01f685e6dbe3a0"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackReply.php": {
+      "bytes": 2455,
+      "sha256": "24e10d7e552eb19dfe244de2ae423625d9de3650f4d743a3e9dedd5aa264a3d2"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackReplyTemplate.php": {
+      "bytes": 512,
+      "sha256": "f1b32b01771d81ab70a5c2747264a579fefe50256bee64cad96eedd9d4607faf"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackTag.php": {
+      "bytes": 574,
+      "sha256": "eb0fb780fd3d1eeed5f2a744889a2f92a30d9eef4faa563771b5957fd3ea3886"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackTagList.php": {
+      "bytes": 453,
+      "sha256": "9284bdf71da28bdb88ad0902e800467a26449f712531e11a815b93fe0ea7075f"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackTicket.php": {
+      "bytes": 7525,
+      "sha256": "2d527ec9dd051df5127098700af5bd1b359db4e8df9e26eb55db2c979ac673cd"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/FeedbackType.php": {
+      "bytes": 1138,
+      "sha256": "639c5fb512b4757e2945b3da8441ebd770cb0b78ed61d4a314d2be8381b75ce3"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/NpsResponse.php": {
+      "bytes": 1260,
+      "sha256": "5b0471416b96e838b6fa78110a4a8d536fe52b39defc49debaf38ea2e85ad7d5"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Entities/NpsSurvey.php": {
+      "bytes": 1170,
+      "sha256": "6813bb7d8a5c6668c83912870488e0fa07ad74a4d283c292d97af1a7f5e3e355"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Events/ComplaintEscalated.php": {
+      "bytes": 450,
+      "sha256": "9aabbf4a0d78f704ff5ab1dd520fc268d808880f96f4888bb97de683c9014757"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Events/ComplaintReceived.php": {
+      "bytes": 417,
+      "sha256": "6c489aad9111ddb015f43198b8bc94b3fade0385d1e5a0554ee6962ad7f58441"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Events/ComplaintResolved.php": {
+      "bytes": 417,
+      "sha256": "36d43455f68c4780ed86299bd156bad8677d597d8f198b3d4ad92c3899d12997"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Events/FeedbackReplyAdded.php": {
+      "bytes": 616,
+      "sha256": "2b497eb2e275a2f472584cbb4e39758cecd3d7b7f29b223a31e25ee3177811cb"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Events/FeedbackTicketCreated.php": {
+      "bytes": 708,
+      "sha256": "7d14a70c3e3805d89fc6b06cffac85f2a349670e06baed7b609f678f06f5b72c"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Events/FeedbackTicketUpdated.php": {
+      "bytes": 626,
+      "sha256": "f6a7e4e7464bd3d83ffb87d8797551121724355fc43899a55d9d59440f356d64"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Events/NpsSurveyCreated.php": {
+      "bytes": 611,
+      "sha256": "d5c56da7c062b9b49448798cb537ff256f0a7070f7e58da1b68d66d3ac9d7663"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/AnalyticsController.php": {
+      "bytes": 9917,
+      "sha256": "0056922e9f2d808ee08b84f34c019809a32d58defbbbeb700134921191c1911c"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/ComplaintLifecycleController.php": {
+      "bytes": 2351,
+      "sha256": "73b45b3d4af7ed1542f3de5fa9b090af4f5be1f660bf0eed9de65dceb7e10f15"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/CsatSurveyController.php": {
+      "bytes": 2344,
+      "sha256": "c7137bbaf1b4247c0e99490c4628a3386b43971b4158b7fd1e100beaac6a5f13"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/FeedbackAgentGroupController.php": {
+      "bytes": 1289,
+      "sha256": "6bdb923efdb0b117570fe07ee7b5a38c611249477b61269c33e081922e84392d"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/FeedbackChannelController.php": {
+      "bytes": 1218,
+      "sha256": "d0a1ac8e6fd8bf8065462bdce37bc67c09c313303e2dd69bcb9ea14227824fc8"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/FeedbackCustomFormController.php": {
+      "bytes": 1263,
+      "sha256": "b8c8413d6ad851a7a2359b16b442b0964ff15fce0e9e08e2af707a3dfe9466d4"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/FeedbackEmailSettingController.php": {
+      "bytes": 1419,
+      "sha256": "085ee0664e503f6bc5f79182c80c7fd0f2488b86ca4c95b5d01381cfd5506198"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/FeedbackFileController.php": {
+      "bytes": 876,
+      "sha256": "3c2f9410e5bc6dea81d435f80bf17e2934cb7b3ee246d43c7a0a7b2f6503ea70"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/FeedbackGroupController.php": {
+      "bytes": 1114,
+      "sha256": "ab39749810096bde96b5b24c42aa41d24fcd6a571d7cce1a02cbfb4a5c1ee0e8"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/FeedbackInsightsController.php": {
+      "bytes": 1958,
+      "sha256": "6d31b1e58a0fbc24506a91820833bc7d9e2ac48baef7bd5ae87487747f92c0ab"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/FeedbackReplyController.php": {
+      "bytes": 4688,
+      "sha256": "c2eb9c543ac7ad336f90f3194844eea1f0ae2ca90675160ae08c9e7964a3d29c"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/FeedbackReplyTemplateController.php": {
+      "bytes": 1261,
+      "sha256": "2992ea80e402c53e42dc8a94cf2eb6f12555f9b4362e75ae741b4bdf43a7a87c"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/FeedbackTicketController.php": {
+      "bytes": 10441,
+      "sha256": "0f3c126b8f3332a3b94e760d2e73b98dc335bf97b3143d75a331cb9c697a5edd"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/FeedbackTypeController.php": {
+      "bytes": 1217,
+      "sha256": "19afe18e3fff774fbfe41f09d2d4d499f4d75a727a3c10f47aa2843cc1e37663"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Controllers/NpsSurveyController.php": {
+      "bytes": 4282,
+      "sha256": "d90982bde9e5a0015431ea10beac5589c87bfb0f163359ce2f0d36f9f6764946"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Requests/StoreFeedbackReply.php": {
+      "bytes": 646,
+      "sha256": "f7dddf86ca556f9f88c5aca0987bc0fcdc3a40b7c3dfc368ad999c24fe2195cb"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Requests/StoreFeedbackTicket.php": {
+      "bytes": 1169,
+      "sha256": "315cdfd09c27df5305b7abf5888895d4a5849605da4326d8b7deda066e5789bd"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Requests/StoreNpsSurvey.php": {
+      "bytes": 522,
+      "sha256": "829b7edd60a425c169296c880124bc8984fa38d4e300bcd6e4637f5e52a78003"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Http/Requests/UpdateFeedbackTicket.php": {
+      "bytes": 826,
+      "sha256": "f294891b1464c2266e0a62b400699d2f94b40d0a5b6506b0e160ad88ab1993dc"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/INSTALLATION.md": {
+      "bytes": 4688,
+      "sha256": "b43682d39e958b4f560b989920cf30312f8f849067dfc7ce678a9f30d9399e44"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Jobs/AnalyzeFeedbackTicket.php": {
+      "bytes": 1478,
+      "sha256": "0a8df567cd99d108da5a4e4d408275e9ac6ffe2c2ccdbeb6082fd4e1c5d6bde5"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Jobs/EscalateOverdueComplaints.php": {
+      "bytes": 2287,
+      "sha256": "e195c52d6537c62908cf900c60a35e79534732834c2c816927d074144f131743"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Listeners/AssuranceComplaintEscalatedListener.php": {
+      "bytes": 861,
+      "sha256": "fc7c7eb4f631416eb5a862b80f5a47ef62b872a127305a629337bbfebc988940"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Listeners/AssuranceComplaintReceivedListener.php": {
+      "bytes": 847,
+      "sha256": "e77ffd814b761ed02b8041c8b663e4c712271c4360981102dd914e0d4db87cfc"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Listeners/QualityControlNeedsRecleanListener.php": {
+      "bytes": 3379,
+      "sha256": "a61dbb05c0df4f11697e9d60e686a1c508cf304cfebd69c8f7a4de568be538dc"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Listeners/SendFeedbackNotification.php": {
+      "bytes": 848,
+      "sha256": "d2c85ba745d95a4dfd717b0e3759244be11c31e07981d4e57e68fce37df19b3c"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Listeners/TriggerFeedbackAnalysis.php": {
+      "bytes": 412,
+      "sha256": "08bc2a36225d90b434cfba88893ad5e9ce34176231ceeb431a958b11ecd4f31c"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/NEXT_PASS_HANDOFF.md": {
+      "bytes": 594,
+      "sha256": "a2fa3dcc2811570e84b502221f3d918574a5f5d4322977239298d2f92bea8658"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Notifications/NewFeedbackTicket.php": {
+      "bytes": 845,
+      "sha256": "6c9d2b10723d44a0b373855d54b02c0212a49e78fa880109566ec28c480ed4e2"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Observers/FeedbackReplyObserver.php": {
+      "bytes": 672,
+      "sha256": "b9bbac9eae639753521d1d1dc6135ad2d578bd1c775aeea770f00b9335e8e10f"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Observers/FeedbackTicketObserver.php": {
+      "bytes": 685,
+      "sha256": "a57bb89ce6ac23cb6b0ef88c6b98c89bd46aa3bd1f21a8de7376a0b70dca657c"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/PASS3_BUILD_METADATA.json": {
+      "bytes": 633,
+      "sha256": "1525eb2bf7d92d676a9c946e03a52d31a83cdb64a742c78e2de8ac6358ce61ec"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/PASS3_CONVERGENCE.md": {
+      "bytes": 741,
+      "sha256": "bfabc764fb6be0cfdfcff7225624ee47c1a00f4cb9b14016aa811094018240a2"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/PASS3_LEGACY_PHP_LINT_BASELINE.txt": {
+      "bytes": 872,
+      "sha256": "7a0815d2feef0f934f297ca65f2b07f045a93a0129c1803230b3b4b5ae014c4a"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/PASS3_VERIFICATION.md": {
+      "bytes": 2463,
+      "sha256": "f507e582629e30e6065a5254a32a3e0198c8d8010f00b6a6ebb1d7a882b90826"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Providers/CustomerFeedbackServiceProvider.php": {
+      "bytes": 2257,
+      "sha256": "10b032b1182e8e26fd6234e7375811b8a212f8387d06c8543ea740ea2315fd67"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Providers/EventServiceProvider.php": {
+      "bytes": 1635,
+      "sha256": "3e677d1d11c3baa88834d812ba5174e528b08bf1b765f5b72d02d2dbe80f0157"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/README.md": {
+      "bytes": 13968,
+      "sha256": "6c4b2f6c7cdabe8d16f44cad3fd8a4427c1ee9a5094494c050b7621cdd18b217"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/lang/en/app.php": {
+      "bytes": 137,
+      "sha256": "a57875eddd6421a63c068598fe670e85650fcc42da3e9c0f2faad8f3b82443fa"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/lang/en/messages.php": {
+      "bytes": 148,
+      "sha256": "42241cabfa235c09abf67828fa74d7e64ed3ab8a6c1db6941080b446cf675a8d"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/lang/en/modules.php": {
+      "bytes": 94,
+      "sha256": "ca8b015d617cf8104ee6fc49fc7ee6fddc71e1b2132cceda2c02cafb31d14f0d"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/analytics/csat.blade.php": {
+      "bytes": 458,
+      "sha256": "8b1798f53ad8f30b4401d14b0fb69d374e4b94acacf8e37b509b502c36531317"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/analytics/dashboard.blade.php": {
+      "bytes": 949,
+      "sha256": "eb18301cde36423aaacb85da3dc739fd2bdae3a242f3f19c14366c5c08d1a9a9"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/analytics/nps.blade.php": {
+      "bytes": 465,
+      "sha256": "819fba7d7b513b98dcf55d44475965c39366480171e33297a3c9aeec04cade3e"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/insights/dashboard.blade.php": {
+      "bytes": 603,
+      "sha256": "029843a415ae7b148436fd890994fb2f76f9467d26bd5cd109cdaaf3422b6fc0"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/layouts/master.blade.php": {
+      "bytes": 1482,
+      "sha256": "a6442263c9c3518ea65114abc4c0a2ba9a2781e22c9a3fda24e74bfe536a4dc5"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/settings/agents.blade.php": {
+      "bytes": 1112,
+      "sha256": "3ef73b4bcf249a25911f50cf43cff4fbbd00db9e5a9ea38ada7186e533ce4e6b"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/settings/email.blade.php": {
+      "bytes": 1435,
+      "sha256": "dc15acafec2d8d9761900df1f53518d34387869777cd1f0cbb8ca555b7185a56"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/settings/index.blade.php": {
+      "bytes": 2248,
+      "sha256": "8a13303fe01e72d7effd705606bdeb966ac102ecb3e0c71464e73821d8034b0f"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/surveys/csat/create.blade.php": {
+      "bytes": 606,
+      "sha256": "23d16ba2fab4d95f550f256665fae57db378bf852dd79f498e6a066d59ab430c"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/surveys/csat/index.blade.php": {
+      "bytes": 502,
+      "sha256": "1a9350938d49af025ad529402e024d9d2244177e8468f7fa8384e9d824bc8917"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/surveys/csat/show.blade.php": {
+      "bytes": 446,
+      "sha256": "3b13a0a701115c18bb9c4e8cf224018b5cc023041863b93773cf419aaaf42cba"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/surveys/nps/create.blade.php": {
+      "bytes": 463,
+      "sha256": "2d513259136889ec7fae62e3291b86f51575aede2dfedd2002f74676479b7934"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/surveys/nps/index.blade.php": {
+      "bytes": 498,
+      "sha256": "5b8fd7cb8037faf7b6cabb81f8d31157fc03f31f01adfca52a7b62d79adb7cdb"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/surveys/nps/show.blade.php": {
+      "bytes": 493,
+      "sha256": "44231e33d2142b948d219b7a3f0a82391dc324b6c4245790c6a287e34b57c4db"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/tickets/_form.blade.php": {
+      "bytes": 2388,
+      "sha256": "1febb6b1b573c2b59517da02e349f13159f593218f28a3895b0a1fff1256eed5"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/tickets/create.blade.php": {
+      "bytes": 243,
+      "sha256": "e31d83a1eadfb3e3eda3f8608c24a99a9ddb9cefd7cc17ae0b67c0b74ee1f4d5"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/tickets/edit.blade.php": {
+      "bytes": 270,
+      "sha256": "b68f5be0982ef06cc0ec1b73bd5b4439bd76481fdddf9bbc71456300e71a2a1c"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/tickets/index.blade.php": {
+      "bytes": 1584,
+      "sha256": "de0f5b781d2f88ff813e1cd0aecf6186d58c8f528b909d71a93d3e42ded27dae"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Resources/views/tickets/show.blade.php": {
+      "bytes": 1265,
+      "sha256": "7a8c6465a826f8016c84448e715e80b984fe89a7e917fdd00905d6bbee940365"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Routes/api.php": {
+      "bytes": 983,
+      "sha256": "b7410b4a709d86154b90b8b3e85141ab7c5e43c56b889fdaec594c84792cfa29"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Routes/web.php": {
+      "bytes": 7823,
+      "sha256": "ccc33b584d731acd3c63867b731d9b2d650c10d69e23fa23e7ea539fbd291c47"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/SCAN_REPORT_PASS3.md": {
+      "bytes": 1438,
+      "sha256": "7a9dba240722bedf95aa3940de3353fcc0369f922b7efc2a4881e36accdd174b"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Services/AssuranceBridge.php": {
+      "bytes": 505,
+      "sha256": "e1e7c17c5aae8072f6c043e9295bf3bd70308875562167f6e5a60a5f4c2255ea"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Services/ComplaintAnalysisService.php": {
+      "bytes": 3012,
+      "sha256": "844a0b0d8e065b534cd4ada7487d9d9d98622f84117e95f7f1d29af06c122c4e"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Services/ComplaintSlaPolicy.php": {
+      "bytes": 946,
+      "sha256": "29f570a34375d0ea7a97783718ac7f325635640364c8e54cd3a425afcadff987"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Services/FeedbackAiService.php": {
+      "bytes": 6314,
+      "sha256": "6c40ee645f98e9cf807ba5bb9f704b69f962f78d8af8b954f060139aee630f7a"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Services/FeedbackWorkItemService.php": {
+      "bytes": 3028,
+      "sha256": "d3840779c6c19504e0f1f393a8cc55786536e6cfecd61e2a4b475263a376f25c"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Support/CompanyContext.php": {
+      "bytes": 1146,
+      "sha256": "44ceb6d2fc5883c5a4adced7b3d393f874c41e7dfa417ef21af0be9714a03b86"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/Tests/Pass3FeedbackConvergenceTest.php": {
+      "bytes": 6447,
+      "sha256": "c3c1d3b2e24c2f855e46c01d7cbcdff1ec2dd2e431a5b4de86ee6192176160c7"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/VERIFY_PASS3.php": {
+      "bytes": 11867,
+      "sha256": "31c078ffd2feb65da605b8fd0193d1b3565b0b5fd2f98ec7e899e3faa70280e5"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/composer.json": {
+      "bytes": 561,
+      "sha256": "c23ed94fc098bb323bd08fd0fc79bc9901ba8876a3303cf26d0bfbb0aa05f58f"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/module.json": {
+      "bytes": 2711,
+      "sha256": "4cf3837a4f82c43b1cb17214bafc0b4686a2e9d5c98701d818a2bfbe8509729b"
+    },
+    "recovered-donors/quality-compliance/feedback/CustomerFeedback/package.json": {
+      "bytes": 146,
+      "sha256": "3cb55aa6097f7a9fdd50b6421a6dbaf22881ad27933965e862bc614a3fe95e3d"
+    },
+    "recovered-donors/quality-compliance/feedback/Feedback/README.md": {
+      "bytes": 104,
+      "sha256": "6ff8ef3c0af86ca6d7df2aac9da3918f1fd65ea85f210874b575b457a93f4813"
+    },
+    "recovered-donors/quality-compliance/feedback/Feedback/RUNTIME_DISABLED.md": {
+      "bytes": 190,
+      "sha256": "8f78980fdd89d15555e903d043868e617c6304d71b83ab1aec130108ddc51151"
+    },
+    "recovered-donors/quality-compliance/feedback/Feedback/module.json": {
+      "bytes": 420,
+      "sha256": "9cfd0fd3f1e3bed6c902a8fe3af0604921988e5c299d67bdece988a874b69261"
+    },
+    "recovered-donors/quality-compliance/feedback/Feedback/runtime.disabled": {
+      "bytes": 79,
+      "sha256": "b35cfb3ec11ff33ee4dc75e4d3423f172f228e73f4d75a3ffd115749d6222e47"
+    },
+    "recovered-donors/quality-compliance/feedback/ReviewModule/README.md": {
+      "bytes": 108,
+      "sha256": "e7f762ca8b10776f92aef1a6a214ab3bdbb3aa8511fc24a3d1f1de5336ebc038"
+    },
+    "recovered-donors/quality-compliance/feedback/ReviewModule/RUNTIME_DISABLED.md": {
+      "bytes": 189,
+      "sha256": "d068292ab8694a936c71a8568c7df71d117776faa9a07d87c609d6dd5379862a"
+    },
+    "recovered-donors/quality-compliance/feedback/ReviewModule/module.json": {
+      "bytes": 412,
+      "sha256": "557282a3a55193187033a28b43a8fc0b2f4ea2c341d8403a6c57e5f75eeb3050"
+    },
+    "recovered-donors/quality-compliance/feedback/ReviewModule/runtime.disabled": {
+      "bytes": 79,
+      "sha256": "b35cfb3ec11ff33ee4dc75e4d3423f172f228e73f4d75a3ffd115749d6222e47"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/css/reports/report.css": {
+      "bytes": 7609,
+      "sha256": "92a8356074d68e1e314b36916f1a2017e92a503f97595115ef4487af50138ff3"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/css/sharings/sharing.css": {
+      "bytes": 907,
+      "sha256": "9f14e8bd6bfba11fd77c6a307fb814161eb7b81f6ca97db3bda17584d1d68e6f"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/css/style.css": {
+      "bytes": 217,
+      "sha256": "adf451a4b9f026bf8f457449f194f997f4946b9d9d60e0b54dc41fdda4bc149f"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/css/templates/cell_formatting.css": {
+      "bytes": 118,
+      "sha256": "40e7ec702c82a7e1480cb82c12b776eb58b252c51b361325955593230dea4857"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/reports/report_filter_modal_js.php": {
+      "bytes": 164,
+      "sha256": "f8ca32d8975e04a7120766e9e7640f274e5815741916ca6dd7f11cc999b9a6a1"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/reports/report_management_js.php": {
+      "bytes": 1638,
+      "sha256": "339470be403a03c691a503ff023864fd8ef21039d87bda7bee788a75ee959a50"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/settings/category_js.php": {
+      "bytes": 741,
+      "sha256": "29f62896f150c405766a0ca811e116155ced7d22798835c269db8637bd616861"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/settings/general_setting_js.php": {
+      "bytes": 1108,
+      "sha256": "a445a45fd0b242d5bedda5cac7f8d9562c090fdb60fb4d0f5a23997e2612501d"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/sharings/sharing_manage_js.php": {
+      "bytes": 1557,
+      "sha256": "7b78b9ff2740be098d222887b09b9b8a32ac5e67e89bd1a45be5e940386e1901"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/sharings/sharing_modal_js.php": {
+      "bytes": 993,
+      "sha256": "03bc5ea3b5f71fbec3acdfee3371ca1b8a5d74140c1d12ebc1aafdf34452d33a"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/cells/cell_format_manage_js.php": {
+      "bytes": 2027,
+      "sha256": "0115149c6236aa242f267e022c95a227834729ef3f425d97edfaf279a2a65aa9"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/cells/cell_modal_js.php": {
+      "bytes": 2455,
+      "sha256": "958633fe11c0952813faae789837ea5e1c3f7b117ab0911a9211d0b465b1785a"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/columns/column_js.php": {
+      "bytes": 529,
+      "sha256": "4eca18fc9de41a66c6370032bdfc6ecaa027bcbaa27c21acb84f8135ce2a8ee1"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/columns/column_manage_js.php": {
+      "bytes": 489,
+      "sha256": "b5fd2dc5f8cc33483d2d4b055862d8cd094024652ca867e9023d0b6ba098def3"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/columns/label_cell_type_js.php": {
+      "bytes": 3484,
+      "sha256": "2cfa2f44860caf358ba2203c6e1e4c2d920cf458fd0e21fc0b08a53601d0155d"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/data_source/data_source_js.php": {
+      "bytes": 534,
+      "sha256": "f87c8f6667fea9f7c0c7f29bb0ee9567ad5bd8962ebcbd9f75b785a3efaa811c"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/data_source/filters_manage_js.php": {
+      "bytes": 1169,
+      "sha256": "932d625e5c738b51cc0b23dfc9e55f0c8f9a7f91c872b6a4f77f1dd0064efd71"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/data_source/filters_modal_js.php": {
+      "bytes": 5582,
+      "sha256": "fdf36e1b82d2945b7a670c42b62c8425cb8d336cf95852140390b97041ae548e"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/data_source/relationships_manage_js.php": {
+      "bytes": 9657,
+      "sha256": "fe9d41ecdfcf0f16e4e37930e22a9ee24d25a3c3278ead30bb68764243b101f9"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/groups/group_manage_js.php": {
+      "bytes": 1000,
+      "sha256": "63a1c56b07b2ed09e15d01aeed2367b401a68b2db21f652832f5e2788a066180"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/settings/setting_manage_js.php": {
+      "bytes": 1386,
+      "sha256": "5b43f262cbc5f3310d18a9098d50b047cb7b983fe5a5b23499402e8a29c904fa"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/subtotals/subtotal_manage_js.php": {
+      "bytes": 1002,
+      "sha256": "099ce368a4137c31fd27ca6f241ba3714d0218cd450833755d178ccb41c64aa7"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/js/templates/template_manage_js.php": {
+      "bytes": 711,
+      "sha256": "c97cdf088a91736dcce7b1afb5ada1d1d29af20e1bfe94c9898ef82b2f69e686"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/plugins/Side_By_Side_Multi_Select_Plugin_jQuery/README.md": {
+      "bytes": 22,
+      "sha256": "665006fc7e0c8ea27faab6d256954b0d41b3cfccf813565b4fc3a51b95e0d539"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/plugins/Side_By_Side_Multi_Select_Plugin_jQuery/jquery.multiselect.css": {
+      "bytes": 45,
+      "sha256": "31399c71ff84f3ab151c605ffa90e76408bb6e8a9325c532cd333227c870f373"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/plugins/Side_By_Side_Multi_Select_Plugin_jQuery/jquery.multiselect.js": {
+      "bytes": 22065,
+      "sha256": "e9e060679063337fd10005755c681394b63fb13afc52962cbe04bea4af9725b6"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/plugins/handsontable/chosen-sprite.png": {
+      "bytes": 538,
+      "sha256": "8aa69ee6b2376505578d758bfbbc52aec88fa5e591f1a7cabd8adfa80a7b613a"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/plugins/handsontable/chosen-sprite@2x.png": {
+      "bytes": 738,
+      "sha256": "1e349b80fba8c23b63656925fda8dfe3c5927b5d0d8a1672143416caacf460fb"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/plugins/handsontable/chosen.css": {
+      "bytes": 13816,
+      "sha256": "8e5720197bc0effce4d9ddb27cb1b8246b5a309edd72fecb74ad831647970ba0"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/plugins/handsontable/chosen.jquery.js": {
+      "bytes": 45390,
+      "sha256": "9a8c012ee09b59398a4b5654ceb677a3ea31551819ff00ee0ada82efc25b90cb"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/plugins/handsontable/handsontable-chosen-editor.js": {
+      "bytes": 10615,
+      "sha256": "8809b6c7f3c9d477eb0e43fa6eac09042e3da814027a7011d59b397d2b050c68"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/plugins/handsontable/handsontable.full.min.css": {
+      "bytes": 38050,
+      "sha256": "fca282f13f13000c9de51d677e6e4b43d84315f1d54caffd5bd73350a44f298a"
+    },
+    "recovered-donors/quality-compliance/report_builder/assets/plugins/handsontable/handsontable.full.min.js": {
+      "bytes": 1165947,
+      "sha256": "1983f86bae3512c82b0a6691099659ee250642febddc247d74ac8dcb1a230d1d"
+    },
+    "recovered-donors/quality-compliance/report_builder/controllers/Gtsverify.php": {
+      "bytes": 1201,
+      "sha256": "96be1ae0bd29e29f6f26dfa989eb60f880c1971e30f60c7f65c0c45b52bd499b"
+    },
+    "recovered-donors/quality-compliance/report_builder/controllers/Report_builder.php": {
+      "bytes": 40159,
+      "sha256": "81f289c65ed839f873c587f4a4904d8a987ddbce97178689c06e0457a6676b2b"
+    },
+    "recovered-donors/quality-compliance/report_builder/controllers/index.html": {
+      "bytes": 140,
+      "sha256": "151b84dec9ab7083891a07e80ac8245147fb905c19c6f6f00ccbe6f9a4e51e30"
+    },
+    "recovered-donors/quality-compliance/report_builder/helpers/report_builder_helper.php": {
+      "bytes": 213644,
+      "sha256": "5311fdc9d71fa4a496edfcfd482d146f63b44daa74aef88c2479eadf4227b3db"
+    },
+    "recovered-donors/quality-compliance/report_builder/index.html": {
+      "bytes": 142,
+      "sha256": "bbc24cf0260b7c1dd0f7091fc4044dba4791902414003ee699f0ba031a6d5635"
+    },
+    "recovered-donors/quality-compliance/report_builder/install.php": {
+      "bytes": 6625,
+      "sha256": "17e6282025306e4af5bbd91cc0af5307a8c6c41ce9bffb582de644d7850865f2"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/bulgarian/report_builder_lang.php": {
+      "bytes": 295266,
+      "sha256": "e253909cb6752cac8819a82fd4b22f0a3ec015a0c53a5c83247bee6220137603"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/catalan/report_builder_lang.php": {
+      "bytes": 238985,
+      "sha256": "81ff83fa701dfc4dff5f1b9017838f5fa46ba3acf509c31211a4ecdb5b398e64"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/chinese/report_builder_lang.php": {
+      "bytes": 223088,
+      "sha256": "def6fc825f20c51166d730134eed608b67c39fe4cc241d3aa29939ee2e8d856f"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/czech/report_builder_lang.php": {
+      "bytes": 233217,
+      "sha256": "e01124ff10c789a154cf70617e81937c1ffd9c4a24abcd3aff122efa829fd017"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/dutch/report_builder_lang.php": {
+      "bytes": 232722,
+      "sha256": "481bfe3a87fd9dce61fb045c823cf938a4b6f19e525d3564dc7c56d5365cbea0"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/english/report_builder_lang.php": {
+      "bytes": 224430,
+      "sha256": "e4f9235faee78e815c2e70b0fac20ab2a850d04814356f289cbd0620273d6a4c"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/french/report_builder_lang.php": {
+      "bytes": 245155,
+      "sha256": "e81d38d502a24638fc2afc0fbd8c478b221d471ca619d4747a23fccf831a3bf4"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/german/report_builder_lang.php": {
+      "bytes": 233545,
+      "sha256": "eb246accc8fab3eae3c8bc9bdd93729abae2aded710ce391c2cf94d9f12023e7"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/greek/report_builder_lang.php": {
+      "bytes": 292483,
+      "sha256": "fcf9068f85a733fce4aefd9b4b1e521cd31df504fe94b72514a8f1b0bf1695c8"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/index.html": {
+      "bytes": 142,
+      "sha256": "bbc24cf0260b7c1dd0f7091fc4044dba4791902414003ee699f0ba031a6d5635"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/indonesia/report_builder_lang.php": {
+      "bytes": 229961,
+      "sha256": "690c178026177efbd6d7a0e03cb71bd41175fcbd687bd63aaf9f6c759319a8cb"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/italian/report_builder_lang.php": {
+      "bytes": 236264,
+      "sha256": "83b17f9a1c2d248618501e01f8cb7ddf01d7352fea726920b66ff529c42018d3"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/japanese/report_builder_lang.php": {
+      "bytes": 237967,
+      "sha256": "ea0170abec09199693f469c9edf42e7ca46d88baeb7b7babcfd6b5142287de37"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/persian/report_builder_lang.php": {
+      "bytes": 259384,
+      "sha256": "0fa53e1e4f8ce54e45616030adcd6e107050890728f44095d16d8c715f2c7f18"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/polish/report_builder_lang.php": {
+      "bytes": 239308,
+      "sha256": "12eaabc07c66a8b155d86f95b034a26bef0e86a93a3606f6db713f1269392fc3"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/portuguese/report_builder_lang.php": {
+      "bytes": 239955,
+      "sha256": "7e79d0f2162c5668ae9c00a94ab1550d344cd1485b7100e68712e478859f7f28"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/portuguese_br/report_builder_lang.php": {
+      "bytes": 239955,
+      "sha256": "7e79d0f2162c5668ae9c00a94ab1550d344cd1485b7100e68712e478859f7f28"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/romanian/report_builder_lang.php": {
+      "bytes": 234695,
+      "sha256": "76468ec1f2eafe8eb05eca747d3d00593e3a07dd38a271ee40f334782d92746a"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/russian/report_builder_lang.php": {
+      "bytes": 294206,
+      "sha256": "30ef65a9bebe0ebb52c4cac81b01ea590df9e7f87b1a5ee41f51d37cd423f1af"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/slovak/report_builder_lang.php": {
+      "bytes": 233753,
+      "sha256": "844f48010836da3a32837e153c1b131181bbc2c175c5cca07b86c1ef89cb2893"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/spanish/report_builder_lang.php": {
+      "bytes": 247977,
+      "sha256": "e6d1dc4cc5a0de26299fc0c68bd367f072a1e9e9c9ff40dabffc383ba4f9a390"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/swedish/report_builder_lang.php": {
+      "bytes": 228446,
+      "sha256": "27e874b44fe63f2ec0c58b216b184ae960d9f52741512f54eb6fe1268d178f49"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/turkish/report_builder_lang.php": {
+      "bytes": 234270,
+      "sha256": "9ce19091b6ec66c9d1e21527ffdcf89d945c3a441eaecb673b97db152c8d6674"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/ukrainian/report_builder_lang.php": {
+      "bytes": 283259,
+      "sha256": "a73012b0714d3212e32e06aa6a8a62c3d4675bdde36f42eedb1a9677f896404b"
+    },
+    "recovered-donors/quality-compliance/report_builder/language/vietnamese/report_builder_lang.php": {
+      "bytes": 224453,
+      "sha256": "ceea546226a1f9e928daa0446a10dbaef1da4bbefc643ee8a751d67faeeaf736"
+    },
+    "recovered-donors/quality-compliance/report_builder/libraries/gtsslib.php": {
+      "bytes": 24408,
+      "sha256": "2a2d650a0d6fa3443017676663753b9f623b3749496263aaf60316330bfa60a8"
+    },
+    "recovered-donors/quality-compliance/report_builder/models/Report_builder_model.php": {
+      "bytes": 78515,
+      "sha256": "380888b13f22002d169b0802f75a6e4ef8d0289447f7e9e60e03e13ffc7cbc24"
+    },
+    "recovered-donors/quality-compliance/report_builder/report_builder.php": {
+      "bytes": 10118,
+      "sha256": "2baa157b1cdc53c42d71c31cc83cf4c695852327621b1a41e754812ebd6e8929"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/activate.php": {
+      "bytes": 2221,
+      "sha256": "89cdbce99af63a1bdfc8ac57ed79aea992abe24630312b83f1e2057e460f7b8e"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/reports/add_report.php": {
+      "bytes": 3520,
+      "sha256": "f64d4449ff5abad160f75a9ae1d4217e088a80b10d19606279628678804c8b39"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/reports/report_details/render_input.php": {
+      "bytes": 7625,
+      "sha256": "c6fd5b6fe97982ece2825f3af4d843861050b312e443b35bf81e9ef9db24a12e"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/reports/report_details/report_detail.php": {
+      "bytes": 2614,
+      "sha256": "3bbdc57891d187a70d639f987c06fd5b379fe645b82a4ee780bc2ca26bf06ba0"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/reports/report_details/report_detail_group_by.php": {
+      "bytes": 3056,
+      "sha256": "f267f10015fc3325138747cd1e0de8f5599b90f7dc642e05dbcd6fee9f398305"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/reports/report_details/report_detail_non_group_by.php": {
+      "bytes": 1413,
+      "sha256": "92ac2079985ffb3ad97d77cb4cbdf28061e4beaeca0ba20a62bfc77f628beae3"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/reports/report_details/report_filter_modal.php": {
+      "bytes": 2469,
+      "sha256": "b61b55eb187462bec131b9834a05c620a46435ded090573b061df57d1aac4f7a"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/reports/report_management.php": {
+      "bytes": 3220,
+      "sha256": "88ca2449180bda487a00fd02957366c605ac98d0f48cc3e4299ba562df7bf434"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/reports/report_table.php": {
+      "bytes": 5625,
+      "sha256": "c428448e6b7eaef6f31e168bb4a06e6c7ff40137462036419c1474070923e58a"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/settings/category.php": {
+      "bytes": 3436,
+      "sha256": "9af7c403e53d382c47922cf12a68082c67e31019ea676ed7c115de930f528d1b"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/settings/general_setting.php": {
+      "bytes": 10732,
+      "sha256": "0118aa9101ef99083f9672d7a1e4d00709d27cf2a30fa4205eddc91e5a44d3b9"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/settings/manage_setting.php": {
+      "bytes": 1515,
+      "sha256": "43f9959ab0ffa63f43ce9d110764bf07bef6bfa75ca2f4d5b49edacd47e4b323"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/sharings/sharing_manage.php": {
+      "bytes": 3235,
+      "sha256": "a21396b66755ea0d9e0439c27fe86e408e1482bd6f29cf8f4118e9e414cd2690"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/sharings/sharing_modal.php": {
+      "bytes": 8064,
+      "sha256": "ca0ae46ffbca1ceabdd4a64385e0b8daebb2b35173354207c6a95d7f811b5593"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/sharings/sharing_table.php": {
+      "bytes": 8776,
+      "sha256": "32ce4c5519295a35437a25bb14092491b3aebfeceb280f829f0cdd1a0e7beb4c"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/cells/cell_format_manage.php": {
+      "bytes": 3880,
+      "sha256": "b5262f57b070ee2ef8b8db153dce705285bd3209381a465862a4aab2ecce698b"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/cells/cell_format_table.php": {
+      "bytes": 5176,
+      "sha256": "fd28d519acfc52e64ca848a4e4a2f1c4b57d2a943f1248bd395c57d14ce348cc"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/cells/cell_modal.php": {
+      "bytes": 3752,
+      "sha256": "dc2a23aef5e9c771882afd2f52e0f2068643cb55f1dff4884ee2b1f424c541da"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/columns/aggregation_function.php": {
+      "bytes": 5068,
+      "sha256": "57be80e333708a3eb6a757eb3d197ef7c44a3c79a8d60a6ee82999adc96935be"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/columns/column.php": {
+      "bytes": 2294,
+      "sha256": "8b02010c8282c4bb11bea5d8af3f3789e84c6619d6914ce1a5d437b73f9b9819"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/columns/column_manage.php": {
+      "bytes": 4467,
+      "sha256": "c9b3a10cd789915f9b5ca1f5706a259f1d265b66969a3a651ecc6ceeea1a97e4"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/columns/label_cell_type.php": {
+      "bytes": 923,
+      "sha256": "e9a98fa46315f50e2f9c7373ac517c5a4db7a7145d6c05af37b415db2f3829e2"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/data_sources/data_source.php": {
+      "bytes": 4011,
+      "sha256": "d8b9043141cf621214172b0d1aa9447a4acbb751f54db5efce340356f4641dcb"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/data_sources/filter_modal.php": {
+      "bytes": 6704,
+      "sha256": "43c853f2a23aa172d9e287a7f6621e5b090d0ad1492b4a076c132a8ba9fc6daa"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/data_sources/filter_table.php": {
+      "bytes": 5485,
+      "sha256": "8e721f8a272af33467097bc905b7331da00dad4415a6b8cb34e818a1d8e46acf"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/data_sources/filters.php": {
+      "bytes": 932,
+      "sha256": "d1e06c2a781d2f115663a0bb5789bc9570112421e3f1b001cf37ddf47f2be13b"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/data_sources/relationship_modal.php": {
+      "bytes": 2322,
+      "sha256": "507b4037c0f2ae781e3c15eedfba88cb82fea56690cefcf55e36009951660a58"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/data_sources/relationship_table.php": {
+      "bytes": 1926,
+      "sha256": "9ad46b15148dc6138474d8cb5449035b9af2e48b251768c2211d5d571c3de877"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/data_sources/relationships.php": {
+      "bytes": 1156,
+      "sha256": "3fc77197335713349f90df427c3b64f1561740f45faf92c2c9afd7501f969961"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/groups/group_by.php": {
+      "bytes": 2176,
+      "sha256": "3b9b977d9e87920202f456aa829c6c569c498fe0fae3f6ee08b3e1f87ae47956"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/groups/group_manage.php": {
+      "bytes": 4009,
+      "sha256": "6d23c47ef7897f1a6e8bb7d73508ee21783d220e06c9c08bc12b03755e4d4e2e"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/groups/sort_by.php": {
+      "bytes": 2495,
+      "sha256": "210da8dd6f6eea94723f554f403d6e37fb03f412b8250d069c967dd7fe818bd6"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/subtotals/subtotal_manage.php": {
+      "bytes": 7004,
+      "sha256": "cbc39f977a09b701458abc05e5c89f9b525ae372f545613fea3dc8e0e5aebeca"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/template_management.php": {
+      "bytes": 1538,
+      "sha256": "60e9c94293423b35404d60880f68a8505c061c00370414acbef17133af3463bc"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/template_settings/template_setting_manage.php": {
+      "bytes": 3078,
+      "sha256": "691f039fa48e11c979305d4de22a745132c3b74c9cdfeb9dfa1d9872644859b7"
+    },
+    "recovered-donors/quality-compliance/report_builder/views/templates/template_table.php": {
+      "bytes": 2822,
+      "sha256": "f1510bf515bcf3c98d42f16fe2cf1a60382fde992ac7c9652375deadd9f77695"
+    },
+    "recovery/STEP14-VERIFICATION.json": {
+      "bytes": 233,
+      "sha256": "a542f37e911a47469c9278a73e9e2ca83035c3787736017a763a0f3fe3e37fce"
+    },
+    "recovery/donor-disposition.json": {
+      "bytes": 813,
+      "sha256": "1ca94389ca427c4295210a94b117e5c400f4b5057364153adfc649d17ff30d69"
+    },
+    "registry/canonical-service-owners.json": {
+      "bytes": 7591,
+      "sha256": "b5d1be61120d40ab094dba1c87acbf206b6c54fb2d410a043e04c6fd3c8813da"
+    },
+    "registry/provider-inventory.json": {
+      "bytes": 8867,
+      "sha256": "69fff6f6f46e89582cb20a6870b7ee36417864714c71875db593ca249a3ee1c2"
+    },
+    "tests/verify.py": {
+      "bytes": 1129,
+      "sha256": "ef95068395f59de1480ceed0f37a28ac192b1f8b548ca2717adebb1f0cb9601c"
+    }
+  }
+}

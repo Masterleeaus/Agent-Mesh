@@ -1,0 +1,6 @@
+{
+  "id": "crossfade",
+  "type": "opacity",
+  "durationMs": 160,
+  "reducedMotionFallback": "none"
+}

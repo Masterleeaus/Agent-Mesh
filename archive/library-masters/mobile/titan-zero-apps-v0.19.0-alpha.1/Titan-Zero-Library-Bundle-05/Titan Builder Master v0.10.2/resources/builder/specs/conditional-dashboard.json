@@ -1,0 +1,218 @@
+{
+  "id": "conditional-dashboard",
+  "name": "Conditional Operations Dashboard",
+  "description": "Dashboard using visibility, state actions, timelines, progress and pagination.",
+  "version": "1.0",
+  "surface": "canvas",
+  "authority": "presentation-only",
+  "root": "root",
+  "state": {
+    "showRisk": true,
+    "page": 1,
+    "capacity": 72
+  },
+  "elements": {
+    "root": {
+      "type": "stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "header",
+        "toolbar",
+        "metrics",
+        "risk",
+        "body",
+        "pager"
+      ]
+    },
+    "header": {
+      "type": "heading",
+      "props": {
+        "text": "Cleaning operations",
+        "level": 2
+      }
+    },
+    "toolbar": {
+      "type": "toggle-group",
+      "props": {
+        "name": "view",
+        "statePath": "/view",
+        "options": [
+          {
+            "label": "Overview",
+            "value": "overview"
+          },
+          {
+            "label": "Schedule",
+            "value": "schedule"
+          },
+          {
+            "label": "Quality",
+            "value": "quality"
+          }
+        ]
+      }
+    },
+    "metrics": {
+      "type": "grid",
+      "props": {
+        "columns": 4,
+        "gap": "md"
+      },
+      "children": [
+        "m1",
+        "m2",
+        "m3",
+        "m4"
+      ]
+    },
+    "m1": {
+      "type": "metric",
+      "props": {
+        "label": "Jobs today",
+        "value": 18,
+        "change": "+3 from Monday",
+        "trend": "up"
+      }
+    },
+    "m2": {
+      "type": "metric",
+      "props": {
+        "label": "Cleaners active",
+        "value": 12,
+        "change": "3 available",
+        "trend": "neutral"
+      }
+    },
+    "m3": {
+      "type": "metric",
+      "props": {
+        "label": "On-time rate",
+        "value": "94%",
+        "change": "+2.1%",
+        "trend": "up"
+      }
+    },
+    "m4": {
+      "type": "metric",
+      "props": {
+        "label": "Outstanding",
+        "value": "$2,480",
+        "change": "Preview only",
+        "trend": "neutral"
+      }
+    },
+    "risk": {
+      "type": "alert",
+      "visible": {
+        "$state": "/showRisk",
+        "eq": true
+      },
+      "props": {
+        "tone": "warning",
+        "title": "Capacity risk",
+        "message": "Two afternoon jobs remain unassigned."
+      },
+      "children": [
+        "risk-close"
+      ]
+    },
+    "risk-close": {
+      "type": "button",
+      "props": {
+        "label": "Dismiss",
+        "variant": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "state.toggle",
+          "params": {
+            "path": "/showRisk"
+          }
+        }
+      }
+    },
+    "body": {
+      "type": "grid",
+      "props": {
+        "columns": 2,
+        "gap": "lg"
+      },
+      "children": [
+        "capacity-card",
+        "timeline-card"
+      ]
+    },
+    "capacity-card": {
+      "type": "card",
+      "props": {
+        "title": "Team capacity",
+        "subtitle": "Current preview utilisation"
+      },
+      "children": [
+        "capacity-progress",
+        "capacity-text"
+      ]
+    },
+    "capacity-progress": {
+      "type": "progress",
+      "props": {
+        "value": {
+          "$state": "/capacity"
+        },
+        "max": 100,
+        "label": "Allocated",
+        "showValue": true
+      }
+    },
+    "capacity-text": {
+      "type": "text",
+      "props": {
+        "text": "Capacity values are illustrative until a scheduling adapter is connected.",
+        "tone": "muted"
+      }
+    },
+    "timeline-card": {
+      "type": "card",
+      "props": {
+        "title": "Recent activity"
+      },
+      "children": [
+        "timeline"
+      ]
+    },
+    "timeline": {
+      "type": "timeline",
+      "props": {
+        "items": [
+          {
+            "title": "JOB-1042 assigned",
+            "detail": "8:12 am · Sarah Chen",
+            "tone": "success"
+          },
+          {
+            "title": "New customer request",
+            "detail": "8:04 am · Carlton",
+            "tone": "info"
+          },
+          {
+            "title": "Supply alert",
+            "detail": "7:48 am · Microfibre cloths",
+            "tone": "warning"
+          }
+        ]
+      }
+    },
+    "pager": {
+      "type": "pagination",
+      "props": {
+        "current": {
+          "$state": "/page"
+        },
+        "total": 5,
+        "statePath": "/page"
+      }
+    }
+  }
+}

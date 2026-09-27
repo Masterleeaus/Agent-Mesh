@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Titan Interface Contribution",
+  "type": "object",
+  "required": [
+    "type",
+    "key",
+    "owner_extension",
+    "authority_neutral"
+  ],
+  "properties": {
+    "type": {
+      "enum": [
+        "interface",
+        "component",
+        "action",
+        "projection",
+        "presentation"
+      ]
+    },
+    "key": {
+      "type": "string",
+      "minLength": 3
+    },
+    "owner_extension": {
+      "type": "string"
+    },
+    "authority_neutral": {
+      "const": true
+    },
+    "surfaces": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "zero",
+          "go",
+          "hub"
+        ]
+      }
+    },
+    "customer_safe": {
+      "type": "boolean"
+    },
+    "definition": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

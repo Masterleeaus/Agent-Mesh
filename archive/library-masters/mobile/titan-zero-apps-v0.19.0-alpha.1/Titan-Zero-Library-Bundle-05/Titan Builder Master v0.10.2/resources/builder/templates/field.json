@@ -1,0 +1,158 @@
+{
+  "schema_version": "4.0.0",
+  "id": "field",
+  "identity": {
+    "name": "Titan Go",
+    "product": "Titan Go",
+    "surface": "field",
+    "icon": "briefcase",
+    "accent": "var(--titan-builder-accent, #3157d5)"
+  },
+  "navigation": {
+    "default_view": "today",
+    "primary": [
+      {
+        "id": "today",
+        "label": "Today",
+        "icon": "calendar"
+      },
+      {
+        "id": "jobs",
+        "label": "Jobs",
+        "icon": "briefcase"
+      },
+      {
+        "id": "titan",
+        "label": "Titan",
+        "icon": "sparkles"
+      },
+      {
+        "id": "more",
+        "label": "More",
+        "icon": "menu"
+      }
+    ],
+    "drawer": [
+      {
+        "id": "messages",
+        "label": "Messages",
+        "icon": "message-circle"
+      },
+      {
+        "id": "sync",
+        "label": "Sync",
+        "icon": "refresh-cw"
+      },
+      {
+        "id": "settings",
+        "label": "Settings",
+        "icon": "settings"
+      }
+    ],
+    "header_actions": [
+      "sync",
+      "notifications"
+    ]
+  },
+  "home": {
+    "widgets": [
+      "assigned-work",
+      "sync-state",
+      "next-job"
+    ],
+    "quick_actions": [
+      "open-next-job",
+      "open-titan",
+      "sync-now"
+    ]
+  },
+  "assistant": {
+    "enabled": true,
+    "persistent": true,
+    "role": "field assistant",
+    "chatbot_reference": null,
+    "suggested_prompts": [
+      "What is next?",
+      "Summarise this job",
+      "What evidence is required?"
+    ]
+  },
+  "data": {
+    "provider": "crm",
+    "sources": [
+      "crm-field-assigned-work",
+      "crm-field-tasks",
+      "crm-field-minimum-customer-context",
+      "crm-field-minimum-site-context",
+      "crm-business-services"
+    ]
+  },
+  "capabilities": {
+    "required": [
+      "crm.field.offline",
+      "mobile.field"
+    ],
+    "optional": [
+      "titan-connect.messaging"
+    ]
+  },
+  "actions": {
+    "intents": [
+      "crm.work_order.task.complete",
+      "communications.message.send"
+    ]
+  },
+  "offline": {
+    "mode": "offline-first",
+    "records": [
+      "assigned-work",
+      "tasks",
+      "minimum-customer-context",
+      "minimum-site-context"
+    ],
+    "queued_operations": "runtime-governed",
+    "media": "runtime-owned",
+    "conflict_state": true
+  },
+  "permissions": [
+    "field.assigned-work"
+  ],
+  "privacy": {
+    "default_mode": "minimum-field-context"
+  },
+  "notifications": [
+    "assignment",
+    "schedule-change",
+    "sync-conflict"
+  ],
+  "settings_sections": [
+    "business-data",
+    "ai",
+    "communications",
+    "mobile",
+    "privacy",
+    "permissions",
+    "notifications",
+    "appearance",
+    "accessibility",
+    "diagnostics"
+  ],
+  "preview_states": [
+    "mobile",
+    "tablet",
+    "online",
+    "offline",
+    "syncing",
+    "conflict",
+    "empty",
+    "populated",
+    "loading",
+    "error",
+    "permission-denied"
+  ],
+  "default_page": {
+    "slug": "titan-go-today",
+    "name": "Today",
+    "spec": "titan-go-today"
+  }
+}

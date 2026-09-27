@@ -1,0 +1,14 @@
+{
+  "id": "onboarding.response.submit",
+  "name": "onboarding.response.submit",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "interaction-engine",
+  "required_capability": "interaction-engine.runtime",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

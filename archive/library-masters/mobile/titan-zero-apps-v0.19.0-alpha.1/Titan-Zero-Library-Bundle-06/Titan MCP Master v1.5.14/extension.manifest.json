@@ -1,0 +1,602 @@
+{
+  "schema_version": "2.2",
+  "key": "titan-mcp",
+  "name": "Titan MCP",
+  "version": "1.5.14",
+  "folder": "TitanMcp",
+  "namespace": "App\\Extensions\\TitanMcp",
+  "provider": "App\\Extensions\\TitanMcp\\System\\TitanMcpServiceProvider",
+  "family": "native",
+  "compatibility": {
+    "magicai": ">=10.91 <11.0",
+    "php": "^8.3",
+    "laravel": "^10.50"
+  },
+  "dependencies": {
+    "parent": null,
+    "required": [
+      {
+        "key": "titan-signal",
+        "version": ">=0.2.0"
+      }
+    ],
+    "optional": [],
+    "peers": [],
+    "conflicts": []
+  },
+  "capabilities": [
+    "titan-mcp",
+    "titan.mcp.prompt.titan-start-plan",
+    "titan_project_info",
+    "titan_extensions_list",
+    "titan_extension_inspect",
+    "titan_repository_read",
+    "titan_repository_list",
+    "titan_repository_search",
+    "titan_schema_tables",
+    "titan_schema_table",
+    "titan_database_query_readonly",
+    "titan_runtime_health",
+    "titan_routes_search",
+    "titan_logs_recent",
+    "titan_repository_write",
+    "titan_repository_mkdir",
+    "titan_repository_batch_write",
+    "titan_repository_replace",
+    "titan_repository_delete",
+    "titan_repository_rollback",
+    "titan_backup_verify",
+    "titan_backup_manifest",
+    "titan_database_mutate",
+    "titan_database_rollback",
+    "titan_artisan_readonly",
+    "titan_artisan_mutate",
+    "titan_config_search",
+    "titan_migrations_status",
+    "titan_queue_status",
+    "titan_scheduler_list",
+    "titan_permissions_summary",
+    "titan_audit_status",
+    "titan_backups_list",
+    "titan_mutation_prepare",
+    "titan_mutation_commit",
+    "titan_mutation_status"
+  ],
+  "contributions": [],
+  "permissions": [
+    "titan_mcp",
+    "titan_mcp_overview",
+    "titan_mcp_tools",
+    "titan_mcp_settings",
+    "titan.mcp.admin",
+    "titan.mcp.access",
+    "titan.mcp.read",
+    "titan.mcp.repository.read",
+    "titan.mcp.database.read",
+    "titan.mcp.runtime.read",
+    "titan.mcp.logs.read",
+    "titan.mcp.backups.read",
+    "titan.mcp.execute.read",
+    "titan.mcp.repository.write",
+    "titan.mcp.repository.destructive",
+    "titan.mcp.database.write",
+    "titan.mcp.database.destructive",
+    "titan.mcp.execute.write",
+    "titan.mcp.execute.destructive",
+    "titan.mcp.*",
+    "titan_mcp_runtime",
+    "titan_mcp_backups",
+    "titan_mcp_audit",
+    "titan_mcp_permissions"
+  ],
+  "external_hosts": [],
+  "routes": [
+    {
+      "profile": "authenticated-user",
+      "prefix": "mcp/titan",
+      "name_prefix": "titan-mcp."
+    },
+    {
+      "profile": "admin",
+      "prefix": "dashboard/admin/titan-mcp",
+      "name_prefix": "dashboard.admin.titan-mcp."
+    }
+  ],
+  "database": {
+    "migrations": true,
+    "owned_tables": [],
+    "shared_tables": [
+      "menus",
+      "permissions",
+      "roles",
+      "role_has_permissions"
+    ],
+    "migration_strategy": "forward-only-compatible",
+    "migration_lock": true,
+    "chunked_backfills": false,
+    "old_new_worker_compatibility": true,
+    "interrupted_migration_recovery": true
+  },
+  "queues": {
+    "used": false,
+    "queue_names": [],
+    "tenant_context_required": true,
+    "delivery_contracts": []
+  },
+  "schedules": [],
+  "webhooks": [],
+  "billing": {
+    "mode": "none",
+    "reservation_required": false,
+    "ledger": ""
+  },
+  "data": {
+    "tenant_key": "company_id",
+    "default_uninstall_policy": "retain",
+    "owned_paths": [
+      "storage/app/titan-mcp",
+      "storage/logs/titan-mcp-audit.jsonl"
+    ],
+    "credential_storage": "none",
+    "classifications": [
+      "INTERNAL",
+      "CONFIDENTIAL",
+      "SENSITIVE"
+    ],
+    "export_supported": true,
+    "retention_policy": "bounded backup retention; audit and recovery evidence retained until operator policy removes it",
+    "encryption_at_rest": true,
+    "deletion_policy": "retain by default; explicit operator purge only after export/rollback review",
+    "legal_hold_aware": true,
+    "purge_receipts": true,
+    "retention_classes": [
+      "settings",
+      "filesystem-backups",
+      "database-backups",
+      "audit-ledger",
+      "mutation-tickets"
+    ]
+  },
+  "lifecycle": {
+    "register_key": true,
+    "uninstall": true,
+    "idempotent": true,
+    "supports_disable": true,
+    "upgrade_strategy": "forward-only migrations"
+  },
+  "tests": [
+    "unit",
+    "feature",
+    "integration",
+    "architecture",
+    "security"
+  ],
+  "support": {
+    "telegram": "",
+    "documentation": "docs/README.md"
+  },
+  "capability_contracts": [],
+  "health": {
+    "liveness": true,
+    "readiness": true,
+    "dependency_checks": [
+      "database",
+      "storage",
+      "backup-binaries",
+      "audit-chain",
+      "encryption-at-rest-attestation"
+    ],
+    "degraded_mode": true,
+    "statuses": [
+      "HEALTHY",
+      "DEGRADED",
+      "UNAVAILABLE",
+      "DISABLED",
+      "MAINTENANCE",
+      "DRAINING"
+    ],
+    "operational_health": true,
+    "historical_incidents_separate": true,
+    "scopes": [
+      "platform",
+      "tenant",
+      "source_component"
+    ],
+    "current_pressure": true,
+    "recent_incident_rate": true
+  },
+  "observability": {
+    "structured_logging": true,
+    "metrics": false,
+    "tracing": true,
+    "signal_events": false,
+    "required_context": [
+      "extension_key",
+      "company_id",
+      "trace_id",
+      "correlation_id"
+    ],
+    "redacted_fields": [
+      "authorization",
+      "token",
+      "secret",
+      "password",
+      "api_key",
+      "private_reasoning",
+      "chain_of_thought"
+    ],
+    "metric_prefix": "titan_mcp_",
+    "trace_sampling": "audit all mutations; runtime logs retain bounded redacted diagnostics"
+  },
+  "resilience": {
+    "timeouts": true,
+    "retries": true,
+    "dead_letter": false,
+    "circuit_breaker": false,
+    "backpressure": true,
+    "terminal_failure_state": "ATTENTION_REQUIRED",
+    "retryable_errors": [
+      "timeout",
+      "rate_limit",
+      "transient_database_error"
+    ],
+    "permanent_errors": [
+      "authorization_denied",
+      "validation_failed",
+      "backup_verification_failed",
+      "audit_integrity_failed"
+    ],
+    "tenant_context_restoration": true,
+    "draining_stops_new_work": true,
+    "operator_retry_path": true
+  },
+  "authorization": {
+    "policy_enforced": true,
+    "tenant_object_scope": true,
+    "ai_mutations_via_capabilities": true,
+    "authorization_matrix": "docs/AUTHORIZATION-MATRIX.md"
+  },
+  "concurrency": {
+    "strategies": [
+      "optimistic-lock",
+      "pessimistic-lock"
+    ],
+    "idempotency": true,
+    "entity_versioning": false,
+    "race_tests": true,
+    "operation_idempotency": true,
+    "mutable_record_version_conflicts": true,
+    "idempotency_contract": {
+      "required": true,
+      "scope": "company_id+operation_id",
+      "ttl_seconds": 86400,
+      "no_expiry_permitted": false,
+      "key_owner": "capability",
+      "duplicate_semantics": "return-original-receipt",
+      "collision_behavior": "reject-conflicting-payload"
+    },
+    "lease_cas": {
+      "state_machine": "pending->processing->terminal",
+      "lease_token": true,
+      "expiry": true,
+      "worker_identity": true,
+      "stale_worker_protection": true,
+      "claim_generation": true
+    }
+  },
+  "versioning": {
+    "api": "mcp-2025-03-26",
+    "events": "v1",
+    "capabilities": "v1",
+    "deprecation_window_days": 90,
+    "compatibility_window": "current Titan MCP major; explicit compatibility adapters for legacy root integration"
+  },
+  "performance": {
+    "p95_http_ms": 1000,
+    "p95_command_ms": 5000,
+    "max_db_queries": 50,
+    "max_external_timeout_ms": 15000,
+    "max_queue_attempts": 1,
+    "memory_budget_mb": 256,
+    "streaming_required": false
+  },
+  "slos": [
+    {
+      "name": "authorized-request-success",
+      "target": "99.9% excluding downstream host failures",
+      "measurement": "successful authorized MCP requests / attempted authorized MCP requests",
+      "critical": true
+    },
+    {
+      "name": "mutation-recovery-integrity",
+      "target": "100%",
+      "measurement": "verified prewrite backups and recovery receipts / accepted mutation operations",
+      "critical": true
+    }
+  ],
+  "supply_chain": {
+    "sbom": true,
+    "dependency_audit": true,
+    "provenance": true,
+    "signature_required": false,
+    "signature_method": "none",
+    "static_analysis": {
+      "required": true,
+      "tool": "phpstan",
+      "minimum_level": 8
+    },
+    "release_stage": "development"
+  },
+  "rollout": {
+    "feature_flags": true,
+    "stages": [
+      "DISABLED",
+      "INTERNAL",
+      "CANARY",
+      "GENERAL"
+    ],
+    "kill_switch": true,
+    "maintenance_states": [
+      "ACTIVE",
+      "DEGRADED",
+      "MAINTENANCE",
+      "DRAINING",
+      "DISABLED",
+      "UNINSTALLING"
+    ]
+  },
+  "disaster_recovery": {
+    "rpo_minutes": 0,
+    "rto_minutes": 30,
+    "restore_runbook": "docs/DISASTER-RECOVERY.md",
+    "reconciliation_required": true,
+    "backup_scope": "Titan MCP extension settings, audit ledger and verified filesystem/database recovery points",
+    "post_restore_integrity_verification": true,
+    "source_resynchronization": false
+  },
+  "secrets": {
+    "rotation_supported": true,
+    "expiry_monitoring": true,
+    "revocation_supported": true,
+    "connection_test": true,
+    "audit_metadata_only": true
+  },
+  "external_dependencies": [],
+  "verification": {
+    "tenant_isolation": true,
+    "authorization": true,
+    "concurrency": true,
+    "architecture": true,
+    "performance": true,
+    "fault_injection": true,
+    "upgrade": true,
+    "uninstall": true,
+    "certification_command": null,
+    "certification_evidence_contract": "titan.release-certification.v1"
+  },
+  "ui": {
+    "has_ui": true,
+    "responsive": true,
+    "accessibility": true,
+    "localization": true,
+    "wcag_target": "2.2-AA"
+  },
+  "documentation": {
+    "architecture": "docs/ARCHITECTURE.md",
+    "capabilities": "docs/CAPABILITIES.md",
+    "operations": "docs/OPERATIONS.md",
+    "security": "docs/SECURITY.md",
+    "data_ownership": "docs/DATA-OWNERSHIP.md",
+    "upgrade": "docs/UPGRADE.md",
+    "uninstall": "docs/UNINSTALL.md",
+    "troubleshooting": "docs/TROUBLESHOOTING.md",
+    "changelog": "CHANGELOG.md",
+    "integration_contracts": "docs/INTEGRATION-CONTRACTS.md",
+    "signal_events": "docs/SIGNAL-EVENTS.md",
+    "governance": "docs/GOVERNANCE.md",
+    "failure_modes": "docs/FAILURE-MODES.md"
+  },
+  "architecture": {
+    "profile": "integration-extension",
+    "modifiers": [
+      "signal-aware"
+    ],
+    "overlays": [
+      "agent-tool-pack"
+    ],
+    "production_core": "titan.production.core.v1"
+  },
+  "authority": {
+    "canonical_owner": false,
+    "owns": [
+      "titan-mcp.tool-registry",
+      "titan-mcp.mutation-tickets",
+      "titan-mcp.backup-evidence"
+    ],
+    "must_not_own": [
+      "business.records",
+      "titan-ai-workforce.employee-identity",
+      "autonomy",
+      "risk",
+      "assurance"
+    ],
+    "sources_of_truth": [
+      "titan-mcp.tool-registry"
+    ],
+    "cross_domain_write_policy": "command-bus-only"
+  },
+  "workforce": {
+    "enabled": false,
+    "source_of_truth": "none",
+    "manifest": null,
+    "discovery_contract": "workforce-integration.json",
+    "direct_domain_writes": false,
+    "state_writes_via_command_bus": true,
+    "auto_activate": false
+  },
+  "governance": {
+    "command_bus": "required",
+    "risk": "required",
+    "assurance": "required",
+    "autonomy": "required",
+    "signal": "required",
+    "rewind": "optional",
+    "wisdom": "not-applicable",
+    "knowledge_authority": "not-applicable",
+    "shield": "optional",
+    "model_council": "not-applicable",
+    "offline_never_increases_authority": true,
+    "authority_contract": "titan.authority.convergence.v1",
+    "effective_authority_source": "titan-autonomy",
+    "external_constraints_are_upper_bounds": true,
+    "workforce_may_raise_authority": false,
+    "governance_may_raise_earned_authority": false
+  },
+  "predictive": {
+    "enabled": false,
+    "inference_is_authoritative": false,
+    "prepared_actions_mutating": false,
+    "execution_requires_fresh_governance": true,
+    "models": [],
+    "feature_sets": [],
+    "outcome_contracts": [],
+    "drift_controls": [],
+    "intelligence_contract": "titan.intelligence.convergence.v1",
+    "prediction_contract": "titan.prediction.v2",
+    "feature_contract": "titan.feature-vector.v2",
+    "outcome_contract": "titan.prediction-outcome.v2",
+    "drift_contract": "titan.predictive-drift.v1",
+    "model_lifecycle_contract": "titan.predictive-model-lifecycle.v1",
+    "knowledge_provenance_required": false,
+    "wisdom_outcome_feedback_required": false,
+    "training_serving_consistency_required": false,
+    "leakage_controls_required": false,
+    "minimum_sample_required": false,
+    "tenant_coverage_required": false,
+    "prediction_never_grants_authority": true,
+    "cold_start_required": false,
+    "prediction_expiry_required": false
+  },
+  "offline": {
+    "supported": false,
+    "authority_policy": "deny-offline",
+    "can_increase_authority": false,
+    "conflict_resolution": "not-applicable"
+  },
+  "data_governance": {
+    "classifications": [
+      "INTERNAL",
+      "CONFIDENTIAL",
+      "SENSITIVE"
+    ],
+    "tenant_key": "company_id",
+    "retention_policy": "bounded backup retention; audit and recovery evidence retained until operator policy removes it",
+    "export_supported": true,
+    "deletion_policy": "retain by default; explicit operator purge only after export/rollback review",
+    "encryption_at_rest": true,
+    "legal_hold_aware": true,
+    "families": [
+      {
+        "data_family": "extension-owned-state",
+        "retention_class": "business-record",
+        "archive_mode": "archivable_and_queryable",
+        "legal_hold_supported": false,
+        "pruning_allowed": false,
+        "redaction_model": "field-redaction",
+        "cold_read_supported": true,
+        "destructive_prune": {
+          "preview_required": true,
+          "candidate_set_hash_required": true,
+          "confirmation_token_required": true,
+          "atomic_claim_required": true,
+          "archive_verification_required": true,
+          "audit_required": true
+        }
+      }
+    ]
+  },
+  "service_identity": {
+    "schema_version": "1.0",
+    "service_id": "titan-mcp",
+    "source": "titan-mcp",
+    "component": "TitanMcp",
+    "tenant_authority": "tenant-scoped",
+    "capabilities": [
+      "titan-mcp",
+      "titan.mcp.prompt.titan-start-plan",
+      "titan_project_info",
+      "titan_extensions_list",
+      "titan_extension_inspect",
+      "titan_repository_read",
+      "titan_repository_list",
+      "titan_repository_search",
+      "titan_schema_tables",
+      "titan_schema_table",
+      "titan_database_query_readonly",
+      "titan_runtime_health",
+      "titan_routes_search",
+      "titan_logs_recent",
+      "titan_repository_write",
+      "titan_repository_mkdir",
+      "titan_repository_batch_write",
+      "titan_repository_replace",
+      "titan_repository_delete",
+      "titan_repository_rollback",
+      "titan_backup_verify",
+      "titan_backup_manifest",
+      "titan_database_mutate",
+      "titan_database_rollback",
+      "titan_artisan_readonly",
+      "titan_artisan_mutate",
+      "titan_config_search",
+      "titan_migrations_status",
+      "titan_queue_status",
+      "titan_scheduler_list",
+      "titan_permissions_summary",
+      "titan_audit_status",
+      "titan_backups_list",
+      "titan_mutation_prepare",
+      "titan_mutation_commit",
+      "titan_mutation_status"
+    ],
+    "attestation": {
+      "required": true,
+      "method": "host-service-registry"
+    }
+  },
+  "control_plane": {
+    "authenticated_owner_required": true,
+    "authenticated_registrar_required": true,
+    "immutable_definition_versions": true,
+    "runtime_projection_mutable": true,
+    "runtime_quarantine_separate": true,
+    "definitions": []
+  },
+  "signal": {
+    "integration_contract": "titan.signal.integration.v1",
+    "owner_extension": "titan-mcp",
+    "service_identity": "titan-mcp",
+    "causal_context": [
+      "trace_id",
+      "correlation_id",
+      "causation_id",
+      "root_causation_id"
+    ],
+    "forbidden_payload_fields": [
+      "password",
+      "token",
+      "secret",
+      "authorization",
+      "signature"
+    ],
+    "emits": [],
+    "consumes": []
+  },
+  "navigation": {
+    "user": [],
+    "admin": [],
+    "host_sync": true,
+    "preserve_admin_customization": true
+  },
+  "predictive_models": []
+}

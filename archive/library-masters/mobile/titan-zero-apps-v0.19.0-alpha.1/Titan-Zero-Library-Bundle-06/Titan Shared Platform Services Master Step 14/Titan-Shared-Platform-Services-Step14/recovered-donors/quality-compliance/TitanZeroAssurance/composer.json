@@ -1,0 +1,13 @@
+{
+  "name": "titan-zero/assurance-kernel",
+  "description": "Canonical quality, compliance and assurance contracts for Titan Zero",
+  "type": "library",
+  "autoload": {
+    "psr-4": {
+      "Modules\\TitanZeroAssurance\\": ""
+    }
+  },
+  "require": {
+    "php": ">=8.1"
+  }
+}

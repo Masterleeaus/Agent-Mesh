@@ -1,0 +1,23 @@
+{
+  "id": "mobile-checkbox",
+  "name": "Mobile Checkbox",
+  "category": "Premium / Forms",
+  "blade": "components.titan-builder.premium.mobile-checkbox",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "name",
+    "label",
+    "checked",
+    "disabled",
+    "statePath",
+    "tone"
+  ],
+  "actions": [
+    "state.toggle"
+  ]
+}

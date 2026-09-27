@@ -1,0 +1,26 @@
+{
+  "name": "TitanZeroAssurance",
+  "alias": "titan_zero_assurance",
+  "description": "Canonical Titan Zero quality, compliance and assurance kernel",
+  "keywords": [
+    "titan-zero",
+    "quality",
+    "compliance",
+    "assurance",
+    "evidence",
+    "governance"
+  ],
+  "active": 1,
+  "priority": 5,
+  "providers": [
+    "Modules\\TitanZeroAssurance\\Providers\\TitanZeroAssuranceServiceProvider"
+  ],
+  "files": [],
+  "version": "0.8.0",
+  "canonical_domains": [
+    "assurance_kernel",
+    "audit_backbone",
+    "assurance_orchestration",
+    "governed_work"
+  ]
+}

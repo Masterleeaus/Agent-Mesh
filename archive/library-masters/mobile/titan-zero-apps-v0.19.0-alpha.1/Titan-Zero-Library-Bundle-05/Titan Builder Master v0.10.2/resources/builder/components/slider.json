@@ -1,0 +1,19 @@
+{
+  "id": "slider",
+  "name": "Slider",
+  "category": "Forms",
+  "blade": "components.titan-builder.slider",
+  "authority": "presentation-only",
+  "props": [
+    "name",
+    "label",
+    "value",
+    "min",
+    "max",
+    "step"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

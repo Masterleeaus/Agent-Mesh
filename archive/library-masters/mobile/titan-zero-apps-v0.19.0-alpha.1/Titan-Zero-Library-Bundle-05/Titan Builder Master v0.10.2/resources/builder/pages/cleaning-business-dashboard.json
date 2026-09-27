@@ -1,0 +1,55 @@
+{
+  "id": "cleaning-business-dashboard",
+  "name": "Cleaning business dashboard",
+  "surface": "admin-dashboard",
+  "theme": "cleaning-fresh",
+  "mock_data": "cleaning-business",
+  "description": "Operations dashboard for a cleaning business.",
+  "sections": [
+    {
+      "block": "hero",
+      "renderer": "hero",
+      "data": {
+        "eyebrow": "Cleaning operations",
+        "heading": "Good morning, BrightHome",
+        "copy": "See today’s work, staffing, payments and customer activity at a glance.",
+        "primary_action": {
+          "label": "Create job",
+          "intent": "crm.work_order.create"
+        },
+        "secondary_action": {
+          "label": "Ask Titan Zero",
+          "intent": "builder.edit"
+        }
+      }
+    },
+    {
+      "block": "stats-grid",
+      "renderer": "stats-grid",
+      "title": "Today",
+      "data_source": "stats"
+    },
+    {
+      "block": "job-list",
+      "renderer": "job-list",
+      "title": "Today’s jobs",
+      "data_source": "jobs",
+      "action": {
+        "label": "Open schedule",
+        "intent": "navigate"
+      }
+    },
+    {
+      "block": "schedule-board",
+      "renderer": "schedule-board",
+      "title": "Capacity this week",
+      "data_source": "schedule"
+    },
+    {
+      "block": "invoice-list",
+      "renderer": "invoice-list",
+      "title": "Recent invoices",
+      "data_source": "invoices"
+    }
+  ]
+}

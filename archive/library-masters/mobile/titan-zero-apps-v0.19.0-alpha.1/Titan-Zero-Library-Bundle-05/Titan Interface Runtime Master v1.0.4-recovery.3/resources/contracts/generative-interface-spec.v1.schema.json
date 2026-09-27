@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "component"
+  ],
+  "properties": {
+    "component": {
+      "type": "string"
+    },
+    "props": {
+      "type": "object"
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "#"
+      }
+    },
+    "visual": {
+      "type": "object"
+    },
+    "binding": {
+      "type": "object"
+    },
+    "condition": {},
+    "repeat": {
+      "type": "object"
+    },
+    "state": {
+      "type": "object"
+    },
+    "accessibility": {
+      "type": "object"
+    },
+    "contribution": {
+      "type": "string",
+      "minLength": 3
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,10 @@
+{
+  "pass": 8,
+  "version": "0.8.0",
+  "name": "Production Hardening & Final Team Contract",
+  "planned_passes_complete": 8,
+  "php_lint_debt": 0,
+  "company_boundary": "company_id",
+  "workforce_manifest": "TitanZeroAssurance/manifests/workforce.json",
+  "status": "production_candidate"
+}

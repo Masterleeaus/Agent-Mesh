@@ -1,0 +1,15 @@
+{
+  "id": "chart-radial",
+  "name": "Radial chart",
+  "category": "Charts",
+  "blade": "components.titan-builder.chart.radial",
+  "authority": "presentation-only",
+  "props": [
+    "value",
+    "label"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Radminly-adapted",
+  "actions": []
+}

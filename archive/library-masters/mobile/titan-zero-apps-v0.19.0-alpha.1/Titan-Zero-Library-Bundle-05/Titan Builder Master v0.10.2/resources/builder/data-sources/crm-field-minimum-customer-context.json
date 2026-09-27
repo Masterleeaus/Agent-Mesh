@@ -1,0 +1,19 @@
+{
+  "id": "crm-field-minimum-customer-context",
+  "name": "Minimum customer context",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.field.minimum-customer-context",
+  "required_capability": "crm.field.offline",
+  "fields": [
+    "id",
+    "display_name",
+    "contact_summary",
+    "access_notes"
+  ],
+  "surface_compatibility": [
+    "field"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

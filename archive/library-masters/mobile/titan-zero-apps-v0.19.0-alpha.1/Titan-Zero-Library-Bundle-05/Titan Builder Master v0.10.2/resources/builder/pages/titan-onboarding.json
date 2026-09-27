@@ -1,0 +1,16 @@
+{
+  "id": "titan-onboarding",
+  "name": "Titan Onboarding",
+  "surface": "onboarding",
+  "theme": "titan-light",
+  "description": "Conversation-first provisioning shell for business setup, generated controls, app previews and readiness.",
+  "category": "Provisioning",
+  "authority": "presentation-only",
+  "sections": [],
+  "notes": [
+    "Interaction Engine owns wizard progression.",
+    "TitanAI proposes structured Builder UI only.",
+    "CRM owns business configuration."
+  ],
+  "spec": "titan-onboarding"
+}

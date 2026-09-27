@@ -1,0 +1,136 @@
+{
+  "id": "cleaning-kanban",
+  "name": "Cleaning Work Kanban",
+  "description": "Canvas-ready work board using richer operational presentation components.",
+  "version": "1.1",
+  "surface": "canvas",
+  "authority": "presentation-only",
+  "meta": {
+    "title": "Cleaning work board"
+  },
+  "persistence": false,
+  "root": "root",
+  "elements": {
+    "root": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "header",
+        "filters",
+        "board"
+      ]
+    },
+    "header": {
+      "type": "page-header",
+      "props": {
+        "title": "Cleaning work board",
+        "description": "Drag-and-drop is intentionally not operational in this preview."
+      },
+      "children": [
+        "open-chat"
+      ]
+    },
+    "open-chat": {
+      "type": "button",
+      "props": {
+        "label": "Open in chat",
+        "variant": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "navigate",
+          "params": {
+            "href": "/chat"
+          }
+        }
+      }
+    },
+    "filters": {
+      "type": "filter-bar",
+      "props": {
+        "title": "Filters"
+      },
+      "children": [
+        "search",
+        "team"
+      ]
+    },
+    "search": {
+      "type": "form-input",
+      "props": {
+        "label": "Search",
+        "placeholder": "Job, address or cleaner",
+        "statePath": "/filters/search"
+      }
+    },
+    "team": {
+      "type": "segmented-control",
+      "props": {
+        "statePath": "/filters/team",
+        "options": [
+          {
+            "label": "All",
+            "value": "all"
+          },
+          {
+            "label": "North",
+            "value": "north"
+          },
+          {
+            "label": "South",
+            "value": "south"
+          }
+        ]
+      }
+    },
+    "board": {
+      "type": "kanban-board",
+      "props": {
+        "columns": [
+          {
+            "label": "Unassigned",
+            "items": [
+              {
+                "title": "JOB-2061 · Deep clean",
+                "detail": "Brunswick · 9:00 am"
+              }
+            ]
+          },
+          {
+            "label": "Scheduled",
+            "items": [
+              {
+                "title": "JOB-2058 · Office clean",
+                "detail": "Richmond · 10:30 am"
+              },
+              {
+                "title": "JOB-2059 · Weekly clean",
+                "detail": "Fitzroy · 12:00 pm"
+              }
+            ]
+          },
+          {
+            "label": "In progress",
+            "items": [
+              {
+                "title": "JOB-2057 · Bond clean",
+                "detail": "Carlton · Mia + Noah"
+              }
+            ]
+          },
+          {
+            "label": "Complete",
+            "items": [
+              {
+                "title": "JOB-2054 · Regular clean",
+                "detail": "Southbank · signed off"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

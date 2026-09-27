@@ -1,0 +1,7 @@
+{
+  "pass": 5,
+  "version": "0.5.0",
+  "name": "Canonical Audit Backbone",
+  "php_lint_debt": 0,
+  "next_pass": "ComplianceIQ Convergence"
+}

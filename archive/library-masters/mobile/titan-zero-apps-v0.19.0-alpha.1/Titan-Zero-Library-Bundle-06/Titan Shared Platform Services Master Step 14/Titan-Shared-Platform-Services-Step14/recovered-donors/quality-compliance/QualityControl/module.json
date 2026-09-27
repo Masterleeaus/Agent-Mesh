@@ -1,0 +1,70 @@
+{
+    "name": "QualityControl",
+    "alias": "quality_control",
+    "description": "Canonical Titan quality and inspection runtime: planning, verification, corrective action, reclean, reporting, and compatibility bridges.",
+    "keywords": [
+        "quality",
+        "inspection",
+        "templates",
+        "service",
+        "cleaning",
+        "reclean",
+        "ratings"
+    ],
+    "active": 1,
+    "permissions": [
+        "view_quality_control",
+        "add_quality_control",
+        "edit_quality_control",
+        "delete_quality_control",
+        "view_qc_reports",
+        "manage_qc_templates",
+        "trigger_reclean",
+        "view_cleaner_ratings",
+        "manage_qc_corrective_actions",
+        "verify_qc_followups"
+    ],
+    "roles_permissions": {
+        "admin": [
+            "view_quality_control",
+            "add_quality_control",
+            "edit_quality_control",
+            "delete_quality_control",
+            "view_qc_reports",
+            "manage_qc_templates",
+            "trigger_reclean",
+            "view_cleaner_ratings",
+            "manage_qc_corrective_actions",
+            "verify_qc_followups"
+        ],
+        "manager": [
+            "view_quality_control",
+            "add_quality_control",
+            "edit_quality_control",
+            "view_qc_reports",
+            "manage_qc_templates",
+            "trigger_reclean",
+            "view_cleaner_ratings",
+            "manage_qc_corrective_actions",
+            "verify_qc_followups"
+        ]
+    },
+    "priority": 0,
+    "providers": [
+        "Modules\\QualityControl\\Providers\\QualityControlServiceProvider",
+        "Modules\\QualityControl\\Providers\\EventServiceProvider",
+        "Modules\\QualityControl\\Providers\\RouteServiceProvider",
+        "Modules\\QualityControl\\Providers\\FilamentServiceProvider"
+    ],
+    "files": [],
+    "menus": [
+        {
+            "panel": "user",
+            "label": "Quality Control",
+            "route": "quality-control.index",
+            "sort_order": 86
+        }
+    ],
+    "sidebar_menu": true,
+    "version": "1.2.0"
+}

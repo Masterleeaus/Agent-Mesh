@@ -1,0 +1,93 @@
+{
+  "id": "mobile-maintenance",
+  "name": "Maintenance",
+  "description": "Premium Mobilekit-derived maintenance preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {},
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Maintenance",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "notice",
+        "network"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "notice": {
+      "type": "system-state",
+      "props": {
+        "state": "maintenance",
+        "icon": "⚙",
+        "title": "Maintenance in progress",
+        "description": "We are updating this area. Please try again shortly.",
+        "actionLabel": "Return home"
+      }
+    },
+    "network": {
+      "type": "network-status",
+      "props": {
+        "online": true,
+        "onlineLabel": "Network available",
+        "offlineLabel": "Offline"
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

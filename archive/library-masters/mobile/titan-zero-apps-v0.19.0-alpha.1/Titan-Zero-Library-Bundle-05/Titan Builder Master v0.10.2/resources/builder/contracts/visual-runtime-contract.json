@@ -1,0 +1,25 @@
+{
+  "schema": "titan-builder-visual-runtime-contract-v1",
+  "contractVersion": "1.1",
+  "producer": "titan-builder",
+  "consumer": "titan-visual-runtime",
+  "surfaces": [
+    "zero",
+    "go",
+    "hub"
+  ],
+  "metadataSchema": "titan://builder/schema/visual-metadata/v1",
+  "executionModel": "declarative-only",
+  "authorizesActions": false,
+  "businessAuthority": false,
+  "fallback": "semantic-static",
+  "compatibility": {
+    "minVisualRuntime": "1.7.0",
+    "maxMajor": 1
+  },
+  "upgradePolicy": {
+    "backwardCompatibleWithinMajor": true,
+    "unknownFieldsFailClosed": true,
+    "authorityExpansionForbidden": true
+  }
+}

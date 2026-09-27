@@ -1,0 +1,134 @@
+{
+  "schema_version": "2.2",
+  "key": "titan-go",
+  "name": "Titan Apps: Go",
+  "version": "1.10.0",
+  "folder": "TitanGo",
+  "namespace": "App\\Extensions\\TitanGo",
+  "provider": "App\\Extensions\\TitanGo\\System\\TitanGoServiceProvider",
+  "family": "titan-apps",
+  "titan_apps": {
+    "suite_member": true,
+    "canonical_component": "go",
+    "surface": "go",
+    "ownership": "Titan Apps Suite",
+    "legacy_aliases": [
+      "field",
+      "worker",
+      "titan_go",
+      "titan-go"
+    ]
+  },
+  "dependencies": {
+    "required": [
+      {
+        "key": "titan-apps-core",
+        "version": "*"
+      },
+      {
+        "key": "titan-interaction-engine",
+        "version": ">=10.6.0"
+      },
+      {
+        "key": "titan-interface-runtime",
+        "version": "*"
+      },
+      {
+        "key": "titan-visual-runtime",
+        "version": "*"
+      },
+      {
+        "key": "titan-field",
+        "version": ">=1.0.12"
+      }
+    ],
+    "optional": [
+      {
+        "key": "titan-builder",
+        "version": "*"
+      }
+    ]
+  },
+  "capabilities": [
+    "app.go.surface",
+    "app.go.today",
+    "app.go.jobs",
+    "app.go.schedule",
+    "app.go.inbox",
+    "app.go.job-detail",
+    "app.go.field-evidence-presentation",
+    "app.go.offline-envelope",
+    "app.go.worker-projections",
+    "app.go.suite-runtime",
+    "app.go.presentation-intent",
+    "app.go.interface-execution",
+    "app.go.core-pwa-lifecycle",
+    "app.go.device-shell-state",
+    "app.go.offline-batch-scope",
+    "app.go.governed-action-gateway"
+  ],
+  "public_contracts": [
+    "App\\Extensions\\TitanGo\\System\\Contracts\\GoRuntimeBridgeInterface",
+    "App\\Extensions\\TitanGo\\System\\Contracts\\GoProjectionProviderInterface",
+    "App\\Extensions\\TitanGo\\System\\Contracts\\GoActionIntentGatewayInterface",
+    "App\\Extensions\\TitanGo\\System\\Contracts\\GoOfflineQueueInterface",
+    "App\\Extensions\\TitanGo\\System\\Contracts\\TitanFieldMobileGatewayInterface",
+    "App\\Extensions\\TitanGo\\System\\Contracts\\GoSuiteRuntimeInterface"
+  ],
+  "domain_ownership": {
+    "owns_worker_ux": true,
+    "owns_business_truth": false,
+    "field_truth_provider": "titan-field",
+    "actions_are_intents": true,
+    "projection_required": true
+  },
+  "database": {
+    "migrations": false,
+    "owned_tables": [],
+    "shared_tables": []
+  },
+  "offline": {
+    "device_local_queue": true,
+    "server_business_queue_ownership": false,
+    "replay_via_governed_provider": true,
+    "required_context": [
+      "company_id",
+      "actor_id",
+      "device_id",
+      "capability",
+      "operation_id",
+      "occurred_at",
+      "idempotency"
+    ],
+    "provider_contract": "titan-field.mobile.v1",
+    "max_batch_size": 100,
+    "conflict_version_field": "base_entity_version",
+    "replay_operation_field": "operation"
+  },
+  "security": {
+    "tenant_key": "company_id",
+    "actor_required": true,
+    "raw_provider_records_forbidden": true,
+    "client_permissions_authoritative": false
+  },
+  "lifecycle": {
+    "register_key": true,
+    "uninstall": true,
+    "idempotent": true,
+    "supports_disable": true
+  },
+  "tests": [
+    "unit",
+    "architecture",
+    "compatibility"
+  ],
+  "production_hardening": {
+    "runtime_readiness": "required-bindings-reported",
+    "provider_mobile_contract": "titan-field.mobile.v1",
+    "projection_guard": "normalized-recursive-json-safe-bounded-projection-rejection",
+    "suite_wiring": "core+interaction+interface+visual+builder-real-contracts",
+    "company_boundary": "company_id-only",
+    "offline_batch_scope": "single-company+single-actor+single-device",
+    "governed_action_gateway": "interaction-engine-capability-intent+idempotency+trusted-context"
+  }
+}

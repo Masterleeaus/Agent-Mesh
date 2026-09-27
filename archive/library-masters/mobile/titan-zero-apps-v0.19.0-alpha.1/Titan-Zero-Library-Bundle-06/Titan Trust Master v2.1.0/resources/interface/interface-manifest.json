@@ -1,0 +1,108 @@
+{
+  "schema_version": "titan-apps-provider-contributions-v1",
+  "owner_extension": "titan-trust",
+  "ownership_boundary": "provider owns domain semantics; Titan Apps owns composition and rendering",
+  "canonical_surfaces": [
+    "zero",
+    "go",
+    "hub"
+  ],
+  "contributions": [
+    {
+      "contribution_id": "titan-trust.trust-summary",
+      "semantic_type": "TrustSummary",
+      "owner_extension": "titan-trust",
+      "supported_surfaces": [
+        "zero"
+      ],
+      "journey": null,
+      "variants": [
+        "summary",
+        "detail"
+      ],
+      "capability_ids": [],
+      "projection_ids": [
+        "trust.read"
+      ],
+      "action_ids": [],
+      "permissions": [
+        "company-scoped"
+      ],
+      "sensitivity": "internal",
+      "risk_classification": "read_only",
+      "offline_availability": "cached_projection_only",
+      "data_freshness": "provider_defined",
+      "fallback_behavior": "semantic_text_summary",
+      "authority_neutral": true,
+      "executable_ui": false
+    },
+    {
+      "contribution_id": "titan-trust.review-requirement",
+      "semantic_type": "ReviewRequirement",
+      "owner_extension": "titan-trust",
+      "supported_surfaces": [
+        "zero"
+      ],
+      "journey": null,
+      "variants": [
+        "summary",
+        "detail"
+      ],
+      "capability_ids": [
+        "trust.compliance.review",
+        "trust.compliance.override"
+      ],
+      "projection_ids": [
+        "trust.compliance.review"
+      ],
+      "action_ids": [
+        "trust.compliance.override"
+      ],
+      "permissions": [
+        "trust.compliance.review",
+        "trust.compliance.override"
+      ],
+      "sensitivity": "internal",
+      "risk_classification": "high_risk_action_available",
+      "offline_availability": "read_projection_only_actions_online_governed",
+      "data_freshness": "provider_defined",
+      "fallback_behavior": "read_only_summary_without_governed_action",
+      "authority_neutral": true,
+      "executable_ui": false
+    },
+    {
+      "contribution_id": "titan-trust.incident-review",
+      "semantic_type": "IncidentReview",
+      "owner_extension": "titan-trust",
+      "supported_surfaces": [
+        "zero"
+      ],
+      "journey": null,
+      "variants": [
+        "summary",
+        "detail"
+      ],
+      "capability_ids": [
+        "trust.incident.read",
+        "trust.incident.resolve"
+      ],
+      "projection_ids": [
+        "trust.incident.read"
+      ],
+      "action_ids": [
+        "trust.incident.resolve"
+      ],
+      "permissions": [
+        "trust.incident.read",
+        "trust.incident.resolve"
+      ],
+      "sensitivity": "internal",
+      "risk_classification": "high_risk_action_available",
+      "offline_availability": "read_projection_only_actions_online_governed",
+      "data_freshness": "provider_defined",
+      "fallback_behavior": "read_only_summary_without_governed_action",
+      "authority_neutral": true,
+      "executable_ui": false
+    }
+  ]
+}

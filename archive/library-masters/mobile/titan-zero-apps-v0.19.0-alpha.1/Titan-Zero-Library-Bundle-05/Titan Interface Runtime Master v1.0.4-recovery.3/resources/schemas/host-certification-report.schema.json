@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://titan.local/schemas/host-certification-report.schema.json",
+  "title": "Titan Exact Host Certification Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "host_profile", "package_sha256", "stages", "overall_status"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "host_profile": {"const": "titan.host.magicai.installer-1.7.8.v1"},
+    "package_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "overall_status": {"enum": ["CERTIFIED", "PARTIAL", "FAILED", "NOT_RUN"]},
+    "stages": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["PACKAGE_CERTIFIED", "INSTALLER_CERTIFIED", "MIGRATION_CERTIFIED", "BOOT_CERTIFIED", "NAVIGATION_CERTIFIED", "AUTHORIZATION_CERTIFIED", "RUNTIME_CERTIFIED", "UPGRADE_CERTIFIED", "UNINSTALL_CERTIFIED"],
+      "properties": {
+        "PACKAGE_CERTIFIED": {"$ref": "#/$defs/stage"},
+        "INSTALLER_CERTIFIED": {"$ref": "#/$defs/stage"},
+        "MIGRATION_CERTIFIED": {"$ref": "#/$defs/stage"},
+        "BOOT_CERTIFIED": {"$ref": "#/$defs/stage"},
+        "NAVIGATION_CERTIFIED": {"$ref": "#/$defs/stage"},
+        "AUTHORIZATION_CERTIFIED": {"$ref": "#/$defs/stage"},
+        "RUNTIME_CERTIFIED": {"$ref": "#/$defs/stage"},
+        "UPGRADE_CERTIFIED": {"$ref": "#/$defs/stage"},
+        "UNINSTALL_CERTIFIED": {"$ref": "#/$defs/stage"}
+      }
+    }
+  },
+  "$defs": {
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "evidence"],
+      "properties": {
+        "status": {"enum": ["PASS", "FAIL", "NOT_RUN", "BLOCKED"]},
+        "evidence": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

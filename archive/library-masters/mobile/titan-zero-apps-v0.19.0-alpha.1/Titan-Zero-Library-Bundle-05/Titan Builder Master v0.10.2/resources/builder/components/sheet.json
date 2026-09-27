@@ -1,0 +1,16 @@
+{
+  "id": "sheet",
+  "name": "Sheet",
+  "category": "Overlay",
+  "blade": "components.titan-builder.sheet",
+  "authority": "presentation-only",
+  "props": [
+    "label",
+    "title",
+    "side"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

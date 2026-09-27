@@ -1,0 +1,20 @@
+{
+  "id": "article-body",
+  "name": "Article Body",
+  "category": "Premium / Content",
+  "blade": "components.titan-builder.premium.article-body",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "paragraphs",
+    "lead",
+    "quote",
+    "image",
+    "caption"
+  ],
+  "actions": []
+}

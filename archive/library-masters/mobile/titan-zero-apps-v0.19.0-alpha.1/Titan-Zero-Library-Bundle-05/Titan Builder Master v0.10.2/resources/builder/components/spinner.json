@@ -1,0 +1,15 @@
+{
+  "id": "spinner",
+  "name": "Spinner",
+  "category": "Feedback",
+  "blade": "components.titan-builder.spinner",
+  "authority": "presentation-only",
+  "props": [
+    "size",
+    "label"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

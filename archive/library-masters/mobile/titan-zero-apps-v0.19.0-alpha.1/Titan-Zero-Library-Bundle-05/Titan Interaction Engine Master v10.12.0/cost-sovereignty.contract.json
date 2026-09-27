@@ -1,0 +1,32 @@
+{
+  "provider_key": "titan-interaction-engine",
+  "schema_version": "1.0",
+  "enforced_by": "titan.workforce.cost-sovereignty",
+  "resource_types": [
+    "ai",
+    "voice",
+    "vision",
+    "media"
+  ],
+  "execution_priority": [
+    "device",
+    "local",
+    "byo_api",
+    "customer_service",
+    "titan_entitled",
+    "titan_metered"
+  ],
+  "supports_device": true,
+  "supports_byo": true,
+  "supports_titan_managed": true,
+  "managed_entitlement": null,
+  "billing_units": [
+    "request",
+    "token",
+    "image",
+    "second"
+  ],
+  "no_hidden_titan_fallback": true,
+  "company_boundary": "company_id",
+  "surface_rule": "chat_voice_vision_share_same_governed_resource_router"
+}

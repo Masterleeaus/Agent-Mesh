@@ -1,0 +1,16 @@
+{
+  "id": "empty-state",
+  "name": "Empty state",
+  "category": "Feedback",
+  "blade": "components.titan-builder.empty-state",
+  "authority": "presentation-only",
+  "props": [
+    "title",
+    "description",
+    "icon"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

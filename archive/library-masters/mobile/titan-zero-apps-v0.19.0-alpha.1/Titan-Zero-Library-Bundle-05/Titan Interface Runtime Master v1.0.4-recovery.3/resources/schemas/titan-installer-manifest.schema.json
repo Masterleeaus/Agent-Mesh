@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://titan.local/schemas/titan-installer-manifest.schema.json",
+  "title": "Titan Extension Manager 1.7.8 Root Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "slug",
+    "folder",
+    "provider",
+    "version"
+  ],
+  "properties": {
+    "schema": {
+      "const": "titan-extension-v1"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "folder": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^App\\\\Extensions\\\\[A-Za-z][A-Za-z0-9_]*\\\\System\\\\[A-Za-z][A-Za-z0-9_]*ServiceProvider$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(?:\\.\\d+)?(?:[-+][0-9A-Za-z.-]+)?$"
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "files"
+      ],
+      "properties": {
+        "files": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^(?!extension\\.json$)(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

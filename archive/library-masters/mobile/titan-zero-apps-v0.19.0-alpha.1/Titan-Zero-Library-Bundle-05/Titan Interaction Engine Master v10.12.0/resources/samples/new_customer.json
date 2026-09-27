@@ -1,0 +1,29 @@
+{
+  "wizard_id": "new_customer_v1",
+  "context": {
+    "company_id": "tenant-demo",
+    "user_id": 1,
+    "device_id": "device-demo"
+  },
+  "steps": [
+    {
+      "customer_type": "business"
+    },
+    {
+      "display_name": "Example Cleaning Co",
+      "email": "hello@example.test",
+      "phone": "0400000000"
+    },
+    {
+      "street": "1 Example Street",
+      "suburb": "Sydney",
+      "state": "NSW",
+      "postcode": "2000"
+    },
+    {
+      "communication_preference": "email",
+      "marketing_consent": false,
+      "notes": "Sample payload only."
+    }
+  ]
+}

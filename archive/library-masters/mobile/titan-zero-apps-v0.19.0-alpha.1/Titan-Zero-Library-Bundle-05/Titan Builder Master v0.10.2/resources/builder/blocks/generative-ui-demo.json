@@ -1,0 +1,16 @@
+{
+  "id": "generative-ui-demo",
+  "name": "Generative UI Demo",
+  "category": "AI Builder",
+  "renderer": "generative-ui-demo",
+  "authority": "presentation-only",
+  "props": [
+    "title",
+    "copy",
+    "spec"
+  ],
+  "data_sources": [],
+  "actions": [
+    "builder.edit"
+  ]
+}

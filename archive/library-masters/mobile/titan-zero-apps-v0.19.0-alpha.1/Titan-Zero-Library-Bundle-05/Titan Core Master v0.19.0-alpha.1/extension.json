@@ -1,0 +1,54 @@
+{
+  "schema": "titan-extension-v1",
+  "slug": "titan-apps-core",
+  "name": "Titan Apps: Core",
+  "version": "0.19.0-alpha.1",
+  "folder": "TitanAppsCore",
+  "provider": "App\\Extensions\\TitanAppsCore\\System\\TitanAppsCoreServiceProvider",
+  "migrations": false,
+  "suite": "Titan Apps",
+  "description": "Titan Apps public application foundation with verified suite-runtime contracts, host diagnostics, app/PWA registration, lifecycle, context and platform-accessible service discovery.",
+  "dependencies": [],
+  "requires": {
+    "php": ">=8.2",
+    "titan_platform": ">=1.0"
+  },
+  "publish_tags": [
+    "titan-apps-core"
+  ],
+  "capabilities": [
+    "titan.apps.agent4-runtime-convergence",
+    "titan.apps.application-registry",
+    "titan.apps.compatibility-aliases",
+    "titan.apps.context-factory",
+    "titan.apps.continuous-intelligence-ui",
+    "titan.apps.core",
+    "titan.apps.discovery",
+    "titan.apps.governed-decision-surface",
+    "titan.apps.host-diagnostics",
+    "titan.apps.install-readiness",
+    "titan.apps.journeys",
+    "titan.apps.lifecycle",
+    "titan.apps.lifecycle-metadata",
+    "titan.apps.offline-capability-intent",
+    "titan.apps.package-identity-map",
+    "titan.apps.platform-access",
+    "titan.apps.public-service-registry",
+    "titan.apps.pwa-lifecycle",
+    "titan.apps.readiness",
+    "titan.apps.runtime-dependencies",
+    "titan.apps.six-suite-integration",
+    "titan.apps.suite-requirements",
+    "titan.apps.surface-audience-resolution",
+    "titan.apps.surfaces.go",
+    "titan.apps.surfaces.hub",
+    "titan.apps.surfaces.zero",
+    "titan.apps.verified-runtime-contracts",
+    "titan.apps.visual-runtime-contract-verified"
+  ],
+  "integrity": {
+    "algorithm": "sha256",
+    "file_count": 85,
+    "manifest": "PACKAGE-FILES.sha256"
+  }
+}

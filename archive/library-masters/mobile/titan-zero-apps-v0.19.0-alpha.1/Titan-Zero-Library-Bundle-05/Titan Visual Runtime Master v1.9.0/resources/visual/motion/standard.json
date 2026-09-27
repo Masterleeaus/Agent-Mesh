@@ -1,0 +1,6 @@
+{
+  "id": "standard",
+  "durationMs": 180,
+  "easing": "ease-out",
+  "reducedMotionFallback": "none"
+}

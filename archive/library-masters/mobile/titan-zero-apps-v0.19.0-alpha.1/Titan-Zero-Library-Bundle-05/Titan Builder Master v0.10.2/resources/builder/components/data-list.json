@@ -1,0 +1,13 @@
+{
+  "id": "data-list",
+  "name": "Data list",
+  "category": "Data display",
+  "blade": "components.titan-builder.data-list",
+  "authority": "presentation-only",
+  "props": [
+    "items"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

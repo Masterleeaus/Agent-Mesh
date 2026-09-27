@@ -1,0 +1,45 @@
+{
+  "id": "property-operations-dashboard",
+  "name": "Property operations dashboard",
+  "surface": "property-operations",
+  "theme": "property-professional",
+  "mock_data": "cleaning-business",
+  "description": "Property-centric operations dashboard.",
+  "sections": [
+    {
+      "block": "hero",
+      "renderer": "hero",
+      "data": {
+        "eyebrow": "Property operations",
+        "heading": "Portfolio service overview",
+        "copy": "Coordinate cleaning, maintenance and communication across managed properties.",
+        "secondary_action": {
+          "label": "Create work order",
+          "intent": "crm.work_order.create"
+        }
+      }
+    },
+    {
+      "block": "property-grid",
+      "renderer": "property-grid",
+      "title": "Managed properties",
+      "data_source": "properties"
+    },
+    {
+      "block": "job-list",
+      "renderer": "job-list",
+      "title": "Open work",
+      "data_source": "jobs"
+    },
+    {
+      "block": "invoice-list",
+      "renderer": "invoice-list",
+      "title": "Property billing",
+      "data_source": "invoices"
+    }
+  ],
+  "migration_review_required": true,
+  "unresolved_action_intents": [
+    "Property creation requires an explicit CRM site/property capability mapping."
+  ]
+}

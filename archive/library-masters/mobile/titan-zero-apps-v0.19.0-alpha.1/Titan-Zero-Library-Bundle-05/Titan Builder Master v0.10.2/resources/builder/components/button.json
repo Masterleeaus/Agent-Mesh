@@ -1,0 +1,17 @@
+{
+  "id": "button",
+  "name": "Button",
+  "category": "Actions",
+  "blade": "components.titan-builder.button",
+  "authority": "presentation-only",
+  "props": [
+    "variant",
+    "size",
+    "href",
+    "disabled"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

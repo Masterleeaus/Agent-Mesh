@@ -1,0 +1,16 @@
+{
+  "id": "text",
+  "name": "Text",
+  "category": "Content",
+  "blade": "components.titan-builder.text",
+  "authority": "presentation-only",
+  "props": [
+    "text",
+    "as",
+    "tone"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

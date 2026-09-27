@@ -1,0 +1,17 @@
+TitanTrust Hardening Pass H1 — Rollback
+
+If you need to rollback quickly:
+
+1) Remove the TitanTrust folder you just uploaded (or restore previous TitanTrust folder from backup).
+2) Restore database from backup OR manually revert migration changes:
+
+Notes:
+- This pass adds identity columns and indexes (non-destructive).
+- It migrates legacy `task_id` into `job_item_id` and DROPS `task_id` on:
+  - work_jobs_evidence
+  - work_jobs_incidents
+
+If you must reintroduce task_id:
+- Add a column task_id back and copy from job_item_id.
+
+Recommended rollback method: restore DB snapshot taken before running module:migrate TitanTrust.

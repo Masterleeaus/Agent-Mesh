@@ -1,0 +1,14 @@
+{
+  "id": "permission-selector",
+  "name": "Access matrix",
+  "category": "Forms",
+  "blade": "components.titan-builder.permission-selector",
+  "authority": "presentation-only",
+  "props": [
+    "permissions"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

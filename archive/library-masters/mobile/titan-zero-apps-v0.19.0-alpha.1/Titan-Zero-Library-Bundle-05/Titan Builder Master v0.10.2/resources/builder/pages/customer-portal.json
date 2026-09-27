@@ -1,0 +1,39 @@
+{
+  "id": "customer-portal",
+  "name": "Customer portal",
+  "surface": "customer-portal",
+  "theme": "titan-light",
+  "mock_data": "cleaning-business",
+  "description": "Customer view of bookings, messages and invoices.",
+  "sections": [
+    {
+      "block": "hero",
+      "renderer": "hero",
+      "data": {
+        "eyebrow": "Customer portal",
+        "heading": "Welcome back, Alex",
+        "copy": "Review upcoming visits, messages and payments.",
+        "primary_action": {
+          "label": "Request a clean",
+          "intent": "crm.work_order.create"
+        },
+        "secondary_action": {
+          "label": "Send message",
+          "intent": "communications.message.send"
+        }
+      }
+    },
+    {
+      "block": "job-list",
+      "renderer": "job-list",
+      "title": "Your bookings",
+      "data_source": "jobs"
+    },
+    {
+      "block": "invoice-list",
+      "renderer": "invoice-list",
+      "title": "Invoices and payments",
+      "data_source": "invoices"
+    }
+  ]
+}

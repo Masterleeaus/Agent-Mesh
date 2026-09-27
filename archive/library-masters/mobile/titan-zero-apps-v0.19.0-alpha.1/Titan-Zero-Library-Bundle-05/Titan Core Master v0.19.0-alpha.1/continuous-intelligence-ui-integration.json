@@ -1,0 +1,19 @@
+{
+  "schema": "titan-apps-continuous-intelligence-ui-v1",
+  "source": "Titan Zero Continuous Intelligence Loop Pass 17/17 final delta",
+  "interface_runtime_embedded": "titan-interface-runtime-v1.0.5-pass11-continuous-intelligence.zip",
+  "supported_decision_outcomes": [
+    "AUTO_EXECUTE",
+    "ASK_OWNER",
+    "ASK_MANAGER",
+    "PREPARE_ONLY",
+    "WATCH",
+    "BLOCK",
+    "ESCALATE"
+  ],
+  "authority_rule": "No learning, UI, Wisdom, prediction, or adaptation stage grants execution authority.",
+  "zero_role": "owner-facing governed generative decision surface",
+  "execution_path": "UI intent -> governed capability / Interaction Engine dispatch -> authoritative provider",
+  "company_scope": "required",
+  "hidden_chain_of_thought": "not persisted"
+}

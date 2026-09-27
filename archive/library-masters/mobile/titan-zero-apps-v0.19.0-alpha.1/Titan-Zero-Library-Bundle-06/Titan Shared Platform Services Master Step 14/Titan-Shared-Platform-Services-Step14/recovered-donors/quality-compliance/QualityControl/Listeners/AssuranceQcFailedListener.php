@@ -1,0 +1,4 @@
+<?php
+declare(strict_types=1);namespace Modules\QualityControl\Listeners;
+use Modules\QualityControl\Events\QcFailedEvent;use Modules\QualityControl\Services\AssuranceBridge;use Modules\TitanZeroAssurance\Services\ExecutionContextStore;use Modules\TitanZeroAssurance\ValueObjects\CompanyExecutionContext;
+final class AssuranceQcFailedListener {public function __construct(private AssuranceBridge $bridge,private ExecutionContextStore $contexts){}public function handle(QcFailedEvent $e):void{if((int)$e->companyId<=0)throw new \LogicException('QC failure requires company_id.');$this->contexts->runWith(new CompanyExecutionContext((int)$e->companyId,'system','quality-control'),fn()=> $this->bridge->emit('qc_record',$e->qcRecordId,[],['severity'=>$e->severityLevel,'risk_score'=>$e->riskScore,'trigger_source'=>$e->triggerSource],'quality.failed'));}}

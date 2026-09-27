@@ -1,0 +1,15 @@
+{
+  "id": "page-header",
+  "name": "Page header",
+  "category": "Layout",
+  "blade": "components.titan-builder.page-header",
+  "authority": "presentation-only",
+  "props": [
+    "title",
+    "description"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

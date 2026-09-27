@@ -1,0 +1,23 @@
+{
+  "id": "mobile-alert",
+  "name": "Mobile Alert",
+  "category": "Premium / Feedback",
+  "blade": "components.titan-builder.premium.mobile-alert",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "title",
+    "message",
+    "icon",
+    "tone",
+    "dismissible",
+    "compact"
+  ],
+  "actions": [
+    "state.set"
+  ]
+}

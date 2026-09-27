@@ -1,0 +1,20 @@
+{
+  "id": "action-sheet",
+  "name": "Action Sheet",
+  "category": "Premium / Overlay",
+  "blade": "components.titan-builder.premium.action-sheet",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "label",
+    "title",
+    "description",
+    "position",
+    "dismissLabel"
+  ],
+  "actions": []
+}

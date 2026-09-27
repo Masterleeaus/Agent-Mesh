@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://titanzero.local/schemas/generative-ui.schema.json",
+  "title": "Titan Zero Adaptive Generative UI Specification",
+  "type": "object",
+  "required": [
+    "version",
+    "root",
+    "elements"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "enum": [
+        "1.0",
+        "1.1"
+      ]
+    },
+    "surface": {
+      "type": "string",
+      "enum": [
+        "chat",
+        "builder",
+        "page",
+        "canvas",
+        "mobile",
+        "preview"
+      ]
+    },
+    "authority": {
+      "type": "string",
+      "const": "presentation-only",
+      "default": "presentation-only"
+    },
+    "root": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "state": {
+      "type": "object"
+    },
+    "data": {
+      "type": "object"
+    },
+    "meta": {
+      "type": "object"
+    },
+    "persistence": {
+      "oneOf": [
+        {
+          "const": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scope": {
+              "enum": [
+                "message",
+                "session",
+                "none"
+              ]
+            },
+            "key": {
+              "type": "string"
+            },
+            "historyLimit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "elements": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 250,
+      "additionalProperties": {
+        "$ref": "#/$defs/element"
+      }
+    }
+  },
+  "$defs": {
+    "dynamicValue": {
+      "oneOf": [
+        {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "type": "array"
+        },
+        {
+          "type": "object",
+          "required": [
+            "$state"
+          ],
+          "properties": {
+            "$state": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$data"
+          ],
+          "properties": {
+            "$data": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$env"
+          ],
+          "properties": {
+            "$env": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$item"
+          ],
+          "properties": {
+            "$item": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$index"
+          ],
+          "properties": {
+            "$index": {
+              "const": true
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$coalesce"
+          ],
+          "properties": {
+            "$coalesce": {
+              "type": "array"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$if"
+          ],
+          "properties": {
+            "$if": {
+              "type": "object",
+              "required": [
+                "condition",
+                "then"
+              ],
+              "properties": {
+                "condition": {},
+                "then": {},
+                "else": {}
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "action": {
+      "type": "object",
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "params": {
+          "type": "object"
+        },
+        "confirm": {
+          "type": [
+            "boolean",
+            "string"
+          ]
+        },
+        "preventDefault": {
+          "type": "boolean"
+        },
+        "stopPropagation": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "element": {
+      "type": "object",
+      "required": [
+        "type",
+        "props"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object"
+        },
+        "children": {
+          "type": "array",
+          "maxItems": 60,
+          "items": {
+            "type": "string"
+          }
+        },
+        "visible": {},
+        "repeat": {
+          "type": "object",
+          "required": [
+            "statePath"
+          ],
+          "properties": {
+            "statePath": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "on": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/action"
+              },
+              {
+                "type": "array",
+                "maxItems": 12,
+                "items": {
+                  "$ref": "#/$defs/action"
+                }
+              }
+            ]
+          }
+        },
+        "watch": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^/"
+          },
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/action"
+              },
+              {
+                "type": "array",
+                "maxItems": 12,
+                "items": {
+                  "$ref": "#/$defs/action"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

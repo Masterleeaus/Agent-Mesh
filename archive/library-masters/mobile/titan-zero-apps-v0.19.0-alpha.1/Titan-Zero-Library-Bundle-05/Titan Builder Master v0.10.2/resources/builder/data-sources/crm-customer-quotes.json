@@ -1,0 +1,21 @@
+{
+  "id": "crm-customer-quotes",
+  "name": "Customer quotes",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.customer.quotes",
+  "required_capability": "crm.customer.operations",
+  "fields": [
+    "id",
+    "number",
+    "status",
+    "amount",
+    "currency",
+    "expires_at"
+  ],
+  "surface_compatibility": [
+    "customer"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

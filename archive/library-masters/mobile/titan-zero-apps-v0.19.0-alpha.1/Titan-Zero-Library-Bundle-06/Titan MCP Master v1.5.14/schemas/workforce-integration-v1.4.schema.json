@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://titan.local/schemas/workforce-integration-v1.4.schema.json",
+  "title": "Titan Workforce Host Registration v1.4",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "tenant_key",
+    "runtime_adapter",
+    "host_registration"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.4"
+    },
+    "tenant_key": {
+      "const": "company_id"
+    },
+    "host_registration": {
+      "type": "object",
+      "required": [
+        "contract",
+        "service_provider",
+        "contribution_class",
+        "health_store_contract",
+        "persistent_store",
+        "event_emitter_class",
+        "registration_key",
+        "scope_key",
+        "fail_closed"
+      ]
+    }
+  }
+}

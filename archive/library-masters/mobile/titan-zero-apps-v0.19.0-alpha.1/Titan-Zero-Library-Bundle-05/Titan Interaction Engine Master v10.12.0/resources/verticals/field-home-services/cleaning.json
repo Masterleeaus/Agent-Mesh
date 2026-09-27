@@ -1,0 +1,23 @@
+{
+  "slug": "cleaning",
+  "profile": "field_home_services",
+  "terminology": [
+    "clean",
+    "property"
+  ],
+  "required_evidence_suggestions": [
+    "before_photo",
+    "after_photo"
+  ],
+  "suggested_services": [
+    "Regular clean",
+    "Deep clean",
+    "End of lease clean"
+  ],
+  "compliance_prompts": [
+    "chemical/SDS requirements where applicable"
+  ],
+  "wizard_overrides": {
+    "engine_logic": "unchanged"
+  }
+}

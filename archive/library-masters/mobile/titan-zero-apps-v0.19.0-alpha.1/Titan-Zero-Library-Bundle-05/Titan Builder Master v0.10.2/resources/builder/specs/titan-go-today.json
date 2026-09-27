@@ -1,0 +1,103 @@
+{
+  "id": "titan-go-today",
+  "name": "Titan Go Today",
+  "description": "Default field PWA configuration preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "state": {
+    "sync": "online"
+  },
+  "data_sources": [
+    "crm-field-assigned-work",
+    "crm-field-tasks",
+    "crm-field-minimum-customer-context",
+    "crm-field-minimum-site-context"
+  ],
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Titan Go",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "sync",
+        "today",
+        "tasks"
+      ]
+    },
+    "sync": {
+      "type": "network-status",
+      "props": {
+        "state": {
+          "$state": "/sync"
+        },
+        "onlineLabel": "Synced",
+        "offlineLabel": "Offline — permitted work queues locally"
+      }
+    },
+    "today": {
+      "type": "card",
+      "props": {
+        "title": "Today",
+        "description": "Assigned CRM work is available here.",
+        "dataSource": "crm-field-assigned-work"
+      }
+    },
+    "tasks": {
+      "type": "card",
+      "props": {
+        "title": "Tasks & evidence",
+        "description": "Field task requirements are read from CRM; Titan Go owns offline execution.",
+        "dataSource": "crm-field-tasks"
+      }
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "today",
+        "items": [
+          {
+            "id": "today",
+            "label": "Today",
+            "icon": "□"
+          },
+          {
+            "id": "jobs",
+            "label": "Jobs",
+            "icon": "▣"
+          },
+          {
+            "id": "titan",
+            "label": "Titan",
+            "icon": "✦"
+          },
+          {
+            "id": "more",
+            "label": "More",
+            "icon": "⋯"
+          }
+        ]
+      }
+    }
+  }
+}

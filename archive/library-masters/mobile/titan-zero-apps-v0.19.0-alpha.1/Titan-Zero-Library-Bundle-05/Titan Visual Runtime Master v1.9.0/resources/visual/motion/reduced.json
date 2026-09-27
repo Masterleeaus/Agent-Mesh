@@ -1,0 +1,6 @@
+{
+  "id": "reduced",
+  "durationMs": 80,
+  "easing": "linear",
+  "reducedMotionFallback": "none"
+}

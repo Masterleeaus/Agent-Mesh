@@ -1,0 +1,16 @@
+{
+  "id": "textarea",
+  "name": "Textarea alias",
+  "category": "Forms",
+  "blade": "components.titan-builder.form.textarea",
+  "authority": "presentation-only",
+  "props": [
+    "name",
+    "label",
+    "hint",
+    "statePath"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero runtime alias"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "approval-card",
+  "name": "Approval card",
+  "category": "Feedback",
+  "blade": "components.titan-builder.approval-card",
+  "authority": "presentation-only",
+  "props": [
+    "title",
+    "summary",
+    "impact",
+    "tone",
+    "icon"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

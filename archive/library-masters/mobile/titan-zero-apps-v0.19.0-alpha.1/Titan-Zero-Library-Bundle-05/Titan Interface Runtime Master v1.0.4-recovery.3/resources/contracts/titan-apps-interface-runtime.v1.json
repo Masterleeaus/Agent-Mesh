@@ -1,0 +1,81 @@
+{
+  "format": "titan-apps-interface-runtime-contract/v1",
+  "suite": "Titan Apps Suite",
+  "suite_role": "implementation/development/release ownership; not an isolation boundary",
+  "extension_key": "titan-interface-runtime",
+  "release": "1.0.4-recovery.3",
+  "canonical_company_boundary": "company_id",
+  "legacy_company_aliases": [
+    "company_id",
+    "company_id"
+  ],
+  "canonical_surfaces": [
+    "zero",
+    "go",
+    "hub"
+  ],
+  "surface_aliases": {
+    "bos": "zero",
+    "command": "zero",
+    "owner": "zero",
+    "manager": "zero",
+    "business": "zero",
+    "field": "go",
+    "worker": "go",
+    "customer": "hub"
+  },
+  "journeys": {
+    "onboarding": {
+      "surface": "zero",
+      "journey": "onboarding"
+    }
+  },
+  "ownership": {
+    "owns": [
+      "semantic interface execution",
+      "interface contribution discovery",
+      "projection binding",
+      "presentation lifecycle"
+    ],
+    "does_not_own": [
+      "business truth",
+      "business action authority",
+      "Builder authoring",
+      "Interaction Engine intent authority",
+      "Visual Runtime advanced visual execution"
+    ]
+  },
+  "public_contracts": [
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\InterfaceContribution",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\ComponentContribution",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\ActionContribution",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\ProjectionContribution",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\PresentationContribution",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\InterfaceContributionRegistry",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\InterfaceRuntime",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\ActionIntentDispatcher",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\BuilderCatalogue",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\VisualRuntimeBridge",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\TitanInterfaceRuntimeManagerContract",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\Presentation\\PresentationComposerContract",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\Authority\\GovernedActionDispatcherContract",
+    "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\Interaction\\InteractionEngineGatewayContract"
+  ],
+  "runtime_layers": {
+    "mature_compatibility": "Certified v1.0.3 discovery/context/workspace/presentation runtime graph",
+    "semantic_runtime": "App\\Extensions\\TitanInterfaceRuntime\\System\\Runtime\\SemanticInterfaceRuntime",
+    "semantic_registry": "App\\Extensions\\TitanInterfaceRuntime\\System\\Registry\\SemanticInterfaceContributionRegistry",
+    "eight_suite_live_adapters": {
+      "builder": "InstalledBuilderCatalogue",
+      "interaction_engine": "InteractionEngineActionIntentDispatcher",
+      "visual_runtime": "InstalledVisualRuntimeBridge"
+    },
+    "canonical_mature_surface_compatibility": "zero\u2192command; zero/onboarding\u2192onboarding; go/hub unchanged"
+  },
+  "adjacent_authorities": {
+    "builder": "component vocabulary and authoring authority",
+    "interaction_engine": "intent/journey/workflow authority",
+    "visual_runtime": "advanced visual/media/effects execution",
+    "providers": "business/domain truth and source-owned state"
+  }
+}

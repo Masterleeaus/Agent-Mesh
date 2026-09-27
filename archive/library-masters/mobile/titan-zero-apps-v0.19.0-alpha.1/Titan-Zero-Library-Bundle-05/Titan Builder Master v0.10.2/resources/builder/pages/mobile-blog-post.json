@@ -1,0 +1,25 @@
+{
+  "id": "mobile-blog-post",
+  "name": "Blog post",
+  "surface": "customer-portal",
+  "theme": "mobilekit-premium",
+  "description": "Long-form mobile article preset.",
+  "category": "Content",
+  "premium": true,
+  "tier": "premium",
+  "source": "Mobilekit-v2.9.1-MIT",
+  "donor_page": "page-blogpost.html",
+  "authority": "presentation-only",
+  "shell": {
+    "component": "mobile-app-shell",
+    "header": "mobile-app-header",
+    "bottom_navigation": "mobile-bottom-nav",
+    "safe_area": true
+  },
+  "sections": [],
+  "notes": [
+    "Operational actions remain declarative intents.",
+    "Authentication/payment/business truth remains host-owned."
+  ],
+  "spec": "mobile-blog-post"
+}

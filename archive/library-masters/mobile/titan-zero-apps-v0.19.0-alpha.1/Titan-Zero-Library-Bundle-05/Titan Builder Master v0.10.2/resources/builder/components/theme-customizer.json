@@ -1,0 +1,14 @@
+{
+  "id": "theme-customizer",
+  "name": "Theme customizer",
+  "category": "Builder",
+  "blade": "components.titan-builder.theme-customizer",
+  "authority": "presentation-only",
+  "props": [
+    "presets"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Radminly-adapted",
+  "actions": []
+}

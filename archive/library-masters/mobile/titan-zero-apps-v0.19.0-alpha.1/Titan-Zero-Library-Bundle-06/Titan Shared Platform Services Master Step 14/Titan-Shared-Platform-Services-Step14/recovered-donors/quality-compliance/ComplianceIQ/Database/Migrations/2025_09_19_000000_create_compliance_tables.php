@@ -1,0 +1,10 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration {
+ public function up():void {
+  if(!Schema::hasTable('compliance_reports')) Schema::create('compliance_reports',function(Blueprint $t){$t->id();$t->unsignedBigInteger('company_id')->index();$t->string('title');$t->date('period_start');$t->date('period_end');$t->enum('status',['draft','in_review','signed_off'])->default('draft');$t->foreignId('signed_off_by')->nullable()->constrained('users')->nullOnDelete();$t->timestamp('signed_off_at')->nullable();$t->json('filters')->nullable();$t->json('summary')->nullable();$t->string('integrity_root',64)->nullable();$t->timestamps();$t->index(['company_id','period_start','period_end']);});
+  if(!Schema::hasTable('compliance_annotations')) Schema::create('compliance_annotations',function(Blueprint $t){$t->id();$t->unsignedBigInteger('company_id')->index();$t->foreignId('report_id')->constrained('compliance_reports')->cascadeOnDelete();$t->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();$t->string('kind',40)->default('note');$t->string('severity',20)->nullable();$t->text('note');$t->json('finding_json')->nullable();$t->timestamps();$t->index(['company_id','report_id']);});
+  if(!Schema::hasTable('compliance_hashes')) Schema::create('compliance_hashes',function(Blueprint $t){$t->id();$t->unsignedBigInteger('company_id')->index();$t->string('hashable_type');$t->string('hashable_id',190);$t->string('sha256',64);$t->string('previous_sha256',64)->nullable();$t->timestamp('computed_at');$t->enum('status',['valid','mismatch','unknown'])->default('unknown');$t->index(['company_id','hashable_type','hashable_id']);});
+ }
+ public function down():void {Schema::dropIfExists('compliance_hashes');Schema::dropIfExists('compliance_annotations');Schema::dropIfExists('compliance_reports');}
+};

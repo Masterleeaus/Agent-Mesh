@@ -1,0 +1,48 @@
+{
+  "schema": "titan-apps-verified-runtime-contracts-v1",
+  "verified_against": {
+    "interaction_engine": "Titan-Interaction-Engine-v10.11.2 (eight-suite integration)",
+    "interface_runtime": "Titan-Interface-Runtime-v1.0.4-recovery.2 (full recovered rebase)",
+    "builder": "Titan Builder v0.9.8",
+    "visual_runtime": "Titan Apps: Visual Runtime v1.6.1",
+    "hub": "Titan Apps: Hub v1.0.0-alpha.6"
+  },
+  "contracts": {
+    "interaction-engine": [
+      "App\\Extensions\\InteractionEngine\\System\\Contracts\\PublicInteractionEngineInterface",
+      "App\\Extensions\\InteractionEngine\\System\\Contracts\\CapabilityIntentGatewayInterface",
+      "App\\Extensions\\InteractionEngine\\System\\Contracts\\PresentationIntentPlannerInterface",
+      "App\\Extensions\\InteractionEngine\\System\\Contracts\\InteractionContextFactoryInterface",
+      "App\\Extensions\\InteractionEngine\\System\\Contracts\\InteractionEngineManagerContract"
+    ],
+    "interface-runtime": [
+      "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\InterfaceRuntime",
+      "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\InterfaceContributionRegistry",
+      "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\ActionIntentDispatcher",
+      "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\BuilderCatalogue",
+      "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\VisualRuntimeBridge",
+      "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\TitanInterfaceRuntimeManagerContract",
+      "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\Presentation\\PresentationComposerContract",
+      "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\Authority\\GovernedActionDispatcherContract",
+      "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\Interaction\\InteractionEngineGatewayContract"
+    ],
+    "builder": [
+      "App\\Extensions\\TitanBuilder\\System\\Contracts\\ComponentRegistry",
+      "App\\Extensions\\TitanBuilder\\System\\Contracts\\SurfaceRegistry"
+    ],
+    "visual-runtime": [
+      "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualRuntime",
+      "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualContributionRegistry",
+      "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualContributionResolver",
+      "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualResourceRegistry",
+      "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualCapabilityNegotiator",
+      "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualMetadataContract"
+    ],
+    "hub": [
+      "App\\Extensions\\TitanHub\\System\\Contracts\\CustomerOperationsGateway",
+      "App\\Extensions\\TitanHub\\System\\Contracts\\TrustedCustomerContextResolver",
+      "App\\Extensions\\TitanHub\\System\\Contracts\\HubPresentationBridge"
+    ]
+  },
+  "policy": "Full recovered Interface Runtime is authoritative. Semantic and mature runtime contracts coexist; package aliases remain compatibility only."
+}

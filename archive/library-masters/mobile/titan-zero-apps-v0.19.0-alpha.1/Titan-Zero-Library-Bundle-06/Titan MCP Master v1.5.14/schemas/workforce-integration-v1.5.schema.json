@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://titan.local/schemas/workforce-integration-v1.5.schema.json",
+  "title": "Titan Workforce Provider Health Execution v1.5",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "tenant_key",
+    "host_registration",
+    "health_execution"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.5"
+    },
+    "tenant_key": {
+      "const": "company_id"
+    },
+    "health_execution": {
+      "type": "object",
+      "required": [
+        "contract",
+        "probe_class",
+        "refresh_service_class",
+        "status_service_class",
+        "refresh_interval_seconds",
+        "scope_key",
+        "secret_safe",
+        "mutating_probe_forbidden",
+        "transition_event_required",
+        "health_event_required"
+      ]
+    }
+  }
+}

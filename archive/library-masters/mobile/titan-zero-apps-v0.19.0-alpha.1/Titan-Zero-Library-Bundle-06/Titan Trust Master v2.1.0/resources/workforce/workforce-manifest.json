@@ -1,0 +1,182 @@
+{
+  "schema_version": "2.0",
+  "extension": {
+    "key": "titan-trust",
+    "version": "2.1.0"
+  },
+  "ownership": {
+    "source_of_truth": "titan-ai-workforce",
+    "central_workforce_owns_definitions": true,
+    "auto_seed_staff": false,
+    "provider_owns_execution_surfaces": true,
+    "role_definitions_owned_by_provider": false
+  },
+  "runtime": {
+    "manifest_provider": null,
+    "execution_context": "company_id",
+    "fail_closed": true,
+    "execution_receipt_required": true,
+    "role_blocks_are_compatibility_hints_only": true
+  },
+  "divisions": [],
+  "teams": [],
+  "roles": [],
+  "relationships": [],
+  "capabilities": [
+    {
+      "name": "trust.evidence.read",
+      "owner": "titan-trust",
+      "risk_profile": "LOW",
+      "mutation_mode": "read_only"
+    },
+    {
+      "name": "trust.evidence.readiness",
+      "owner": "titan-trust",
+      "risk_profile": "LOW",
+      "mutation_mode": "read_only"
+    },
+    {
+      "name": "trust.job.timeline.read",
+      "owner": "titan-trust",
+      "risk_profile": "LOW",
+      "mutation_mode": "read_only"
+    },
+    {
+      "name": "trust.presence.evaluate",
+      "owner": "titan-trust",
+      "risk_profile": "LOW",
+      "mutation_mode": "read_only"
+    },
+    {
+      "name": "trust.incident.read",
+      "owner": "titan-trust",
+      "risk_profile": "MEDIUM",
+      "mutation_mode": "read_only"
+    },
+    {
+      "name": "trust.evidence.capture",
+      "owner": "titan-trust",
+      "risk_profile": "MEDIUM",
+      "mutation_mode": "write"
+    },
+    {
+      "name": "trust.incident.resolve",
+      "owner": "titan-trust",
+      "risk_profile": "HIGH",
+      "mutation_mode": "write"
+    },
+    {
+      "name": "trust.signoff.request",
+      "owner": "titan-trust",
+      "risk_profile": "MEDIUM",
+      "mutation_mode": "write"
+    },
+    {
+      "name": "trust.rules.manage",
+      "owner": "titan-trust",
+      "risk_profile": "HIGH",
+      "mutation_mode": "write"
+    },
+    {
+      "name": "trust.compliance.review",
+      "owner": "titan-trust",
+      "risk_profile": "LOW",
+      "mutation_mode": "read_only"
+    },
+    {
+      "name": "trust.compliance.override",
+      "owner": "titan-trust",
+      "risk_profile": "HIGH",
+      "mutation_mode": "write"
+    }
+  ],
+  "tools": [
+    {
+      "id": "trust.evidence.read",
+      "capability": "trust.evidence.read",
+      "writes_state": false,
+      "execution": "local_read"
+    },
+    {
+      "id": "trust.evidence.readiness",
+      "capability": "trust.evidence.readiness",
+      "writes_state": false,
+      "execution": "local_read"
+    },
+    {
+      "id": "trust.job.timeline.read",
+      "capability": "trust.job.timeline.read",
+      "writes_state": false,
+      "execution": "local_read"
+    },
+    {
+      "id": "trust.presence.evaluate",
+      "capability": "trust.presence.evaluate",
+      "writes_state": false,
+      "execution": "local_calculation"
+    },
+    {
+      "id": "trust.incident.read",
+      "capability": "trust.incident.read",
+      "writes_state": false,
+      "execution": "local_read"
+    },
+    {
+      "id": "trust.evidence.capture",
+      "capability": "trust.evidence.capture",
+      "writes_state": true,
+      "execution": "governed_domain_write"
+    },
+    {
+      "id": "trust.incident.resolve",
+      "capability": "trust.incident.resolve",
+      "writes_state": true,
+      "execution": "governed_domain_write"
+    },
+    {
+      "id": "trust.signoff.request",
+      "capability": "trust.signoff.request",
+      "writes_state": true,
+      "execution": "governed_domain_write"
+    },
+    {
+      "id": "trust.rules.manage",
+      "capability": "trust.rules.manage",
+      "writes_state": true,
+      "execution": "governed_domain_write"
+    },
+    {
+      "id": "trust.compliance.review",
+      "capability": "trust.compliance.review",
+      "writes_state": false,
+      "execution": "local_read"
+    },
+    {
+      "id": "trust.compliance.override",
+      "capability": "trust.compliance.override",
+      "writes_state": true,
+      "execution": "governed_domain_write"
+    }
+  ],
+  "workflows": [
+    "trust.job-evidence-review",
+    "trust.incident-review",
+    "trust.client-signoff-review"
+  ],
+  "wizards": [],
+  "proactive": {
+    "schedules": [],
+    "signals": [
+      "trust.evidence.missing",
+      "trust.incident.opened",
+      "trust.signoff.pending"
+    ],
+    "auto_execute_business_mutations": false
+  },
+  "governance": {
+    "command_bus": "preferred",
+    "risk": "required_for_high_risk",
+    "assurance": "required_for_completion_claims",
+    "offline_never_increases_authority": true
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "chart-bar",
+  "name": "Bar chart",
+  "category": "Charts",
+  "blade": "components.titan-builder.chart.bar",
+  "authority": "presentation-only",
+  "props": [
+    "data",
+    "labels",
+    "color"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Radminly-adapted",
+  "actions": []
+}

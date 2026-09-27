@@ -1,0 +1,13 @@
+{
+  "id": "kanban-board",
+  "name": "Kanban board",
+  "category": "Data display",
+  "blade": "components.titan-builder.kanban-board",
+  "authority": "presentation-only",
+  "props": [
+    "columns"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

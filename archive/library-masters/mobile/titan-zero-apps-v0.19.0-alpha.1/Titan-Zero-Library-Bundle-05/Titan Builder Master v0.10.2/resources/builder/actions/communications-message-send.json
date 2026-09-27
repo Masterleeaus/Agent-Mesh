@@ -1,0 +1,14 @@
+{
+  "id": "communications.message.send",
+  "name": "communications.message.send",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "titan-connect",
+  "required_capability": "titan-connect.messaging",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

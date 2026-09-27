@@ -1,0 +1,233 @@
+{
+  "id": "chat-jobs",
+  "name": "Today's Cleaning Jobs",
+  "description": "Inline chat surface with repeated job cards, stateful selection and preview actions.",
+  "version": "1.0",
+  "surface": "chat",
+  "authority": "presentation-only",
+  "root": "root",
+  "state": {
+    "showCompleted": false,
+    "jobs": [
+      {
+        "id": "JOB-1042",
+        "title": "End-of-lease clean",
+        "address": "14 Collins Street, Melbourne",
+        "time": "8:30 am",
+        "status": "Scheduled",
+        "tone": "info",
+        "price": 420
+      },
+      {
+        "id": "JOB-1043",
+        "title": "Weekly office clean",
+        "address": "88 Bourke Road, Richmond",
+        "time": "10:00 am",
+        "status": "In progress",
+        "tone": "warning",
+        "price": 285
+      },
+      {
+        "id": "JOB-1044",
+        "title": "Three-bedroom deep clean",
+        "address": "5 Ocean View, St Kilda",
+        "time": "1:30 pm",
+        "status": "Unassigned",
+        "tone": "danger",
+        "price": 360
+      }
+    ]
+  },
+  "elements": {
+    "root": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "title",
+        "intro",
+        "metrics",
+        "jobs-title",
+        "job-card",
+        "selection"
+      ]
+    },
+    "title": {
+      "type": "heading",
+      "props": {
+        "text": "Today's cleaning jobs",
+        "level": 3
+      }
+    },
+    "intro": {
+      "type": "text",
+      "props": {
+        "text": "Generated inside chat from a constrained component catalogue.",
+        "tone": "muted"
+      }
+    },
+    "metrics": {
+      "type": "grid",
+      "props": {
+        "columns": 3,
+        "gap": "sm"
+      },
+      "children": [
+        "metric-total",
+        "metric-active",
+        "metric-value"
+      ]
+    },
+    "metric-total": {
+      "type": "metric",
+      "props": {
+        "label": "Jobs",
+        "value": 3,
+        "change": "Today",
+        "trend": "neutral"
+      }
+    },
+    "metric-active": {
+      "type": "metric",
+      "props": {
+        "label": "Active",
+        "value": 1,
+        "change": "In progress",
+        "trend": "up"
+      }
+    },
+    "metric-value": {
+      "type": "metric",
+      "props": {
+        "label": "Preview value",
+        "value": {
+          "$format": {
+            "value": 1065,
+            "style": "currency",
+            "currency": "AUD"
+          }
+        },
+        "change": "Not invoiced",
+        "trend": "neutral"
+      }
+    },
+    "jobs-title": {
+      "type": "heading",
+      "props": {
+        "text": "Schedule",
+        "level": 4
+      }
+    },
+    "job-card": {
+      "type": "card",
+      "repeat": {
+        "statePath": "/jobs",
+        "key": "id"
+      },
+      "props": {
+        "title": {
+          "$item": "title"
+        },
+        "subtitle": {
+          "$concat": [
+            {
+              "$item": "time"
+            },
+            " · ",
+            {
+              "$item": "address"
+            }
+          ]
+        }
+      },
+      "children": [
+        "job-row",
+        "job-button"
+      ]
+    },
+    "job-row": {
+      "type": "stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "job-status",
+        "job-price"
+      ]
+    },
+    "job-status": {
+      "type": "badge",
+      "props": {
+        "label": {
+          "$item": "status"
+        },
+        "tone": {
+          "$item": "tone"
+        }
+      }
+    },
+    "job-price": {
+      "type": "text",
+      "props": {
+        "text": {
+          "$format": {
+            "value": {
+              "$item": "price"
+            },
+            "style": "currency",
+            "currency": "AUD"
+          }
+        },
+        "tone": "muted"
+      }
+    },
+    "job-button": {
+      "type": "button",
+      "props": {
+        "label": "Open job preview",
+        "variant": "outline"
+      },
+      "on": {
+        "press": [
+          {
+            "action": "state.set",
+            "params": {
+              "path": "/selectedJob",
+              "value": {
+                "$item": "id"
+              }
+            }
+          },
+          {
+            "action": "crm.work_order.assign",
+            "params": {
+              "jobId": {
+                "$item": "id"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "selection": {
+      "type": "alert",
+      "visible": {
+        "$state": "/selectedJob"
+      },
+      "props": {
+        "tone": "info",
+        "title": "Selected job",
+        "message": {
+          "$concat": [
+            "Preview intent prepared for ",
+            {
+              "$state": "/selectedJob"
+            },
+            ". No business record was changed."
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "build": {
+    "name": "Titan Interaction Engine v10.3.2 Phase 6.2 Installer/Admin Fix",
+    "version": "10.3.2",
+    "built_at": "2026-08-09",
+    "status": "standalone/source release candidate; connected Titan host certification unverified",
+    "strategy": "Preserve the mature interaction runtime and Phase 6.1 settings while fixing install-time clean boot for unconfigured security secrets and adding resilient Super Admin navigation. company_id tenancy and provider ownership remain unchanged."
+  },
+  "historical_sources": [
+    {
+      "filename": "InteractionEngine_Wizard_Cumulative_Merged_Phase8(3).zip",
+      "sha256": "1e01f33d605fa5fb40d3a52774a163039b6078f5b59e341e7dec6f1d399a2b4f",
+      "file_count": 127
+    },
+    {
+      "filename": "InteractionEngine_Wizard_Cumulative_Merged_Phase9_80_Core_Engines(1).zip",
+      "sha256": "b7febf32f42e49f69a8ee67c2a946a3d124fc3b9798aa98f9b2f9b0de3ffe713",
+      "file_count": 289
+    },
+    {
+      "filename": "Titan Local Intelligence(1).docx",
+      "sha256": "adcac5026a0abb199d4799c347b25b4b22f90ae90fdd1401e38b5dfd4986aa4e"
+    }
+  ],
+  "phase6_architecture": [
+    "company_id remains the canonical platform company boundary.",
+    "CapabilityRouter dispatches to independent CRM, Builder, Chatbot, Connect, Mobile and TitanAI providers.",
+    "Unknown, unbound or unavailable capabilities fail closed.",
+    "Authority and approval decisions occur before provider execution.",
+    "CRM/Builder/Chatbot/Connect/Mobile/TitanAI persistence remains outside Interaction Engine ownership.",
+    "Field/Home Services onboarding compiles provider-specific actions with explicit dependencies and activation last.",
+    "Titan Hub, Titan Go, Titan Command and Titan Onboarding consume one shared wizard/session protocol.",
+    "LocalBrain v2 and offline wizard/outbox support remain part of Interaction Engine."
+  ],
+  "provider_status": {
+    "crm": "Capability provider/catalogue implemented; current company-scoped CRM execution gateway not verified in this package and therefore fails closed.",
+    "builder": "Provider implemented; current adapter supports only verified preview/publish/rollback contracts when present.",
+    "chatbot": "Provider implemented; provisioning gateway remains unavailable until a verified public company-scoped gateway is bound.",
+    "connect": "Provider implemented; current adapter supports verified messaging sends where the published gateway is compatible; secure connection/OAuth setup remains provider-owned.",
+    "mobile": "Provider/catalogue implemented; supplied MobileCapabilityRegistry is global rather than company-scoped, so no automatic readiness adapter is enabled. Live mobile capabilities remain unavailable until a verified company-scoped Mobile gateway is bound.",
+    "titan_ai": "Provider implemented; configuration gateway remains unavailable until a verified public company-scoped gateway is bound."
+  },
+  "remaining_gates": [
+    "Install into the current MagicAI/Titan Laravel host and run provider/container/route/migration tests.",
+    "Verify current company-scoped CRM provisioning/action gateway and bind only its published capabilities.",
+    "Verify current Builder, Chatbot, Connect, Mobile and TitanAI gateway contracts in the integrated host.",
+    "Run end-to-end Apex Plumbing onboarding with real provider confirmations.",
+    "Run multi-company and four-PWA browser/device tests against live persistence and queues."
+  ],
+  "historical_provenance": "SOURCE-PROVENANCE.json and PHASE*_BUILD_REPORT.md files are retained as source-history evidence and are not descriptions of the current runtime architecture."
+}

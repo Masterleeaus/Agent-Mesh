@@ -1,0 +1,14 @@
+{
+  "id": "tooltip",
+  "name": "Tooltip",
+  "category": "Feedback",
+  "blade": "components.titan-builder.tooltip",
+  "authority": "presentation-only",
+  "props": [
+    "text"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

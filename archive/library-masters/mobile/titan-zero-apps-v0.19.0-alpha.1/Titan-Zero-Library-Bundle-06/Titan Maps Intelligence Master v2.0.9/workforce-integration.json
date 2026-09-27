@@ -1,0 +1,276 @@
+{
+  "schema": "titan.workforce.extension-integration.v1",
+  "schema_version": "1.0",
+  "provider": {
+    "extension_key": "titan-maps-intelligence",
+    "extension_name": "Titan Maps Intelligence",
+    "extension_version": "2.0.9",
+    "provenance_required": true,
+    "provider_pin_required_for_execution": true
+  },
+  "ownership": {
+    "workforce_identity_owner": "titan-ai-workforce",
+    "extension_owns_employees": false,
+    "extension_owns_roles": false,
+    "extension_owns_hierarchy": false,
+    "extension_owns_assignments": false,
+    "extension_owns_work_items": false,
+    "extension_domain_owner": "titan-maps-intelligence"
+  },
+  "tenancy": {
+    "canonical_key": "company_id",
+    "fail_closed": true
+  },
+  "availability": {
+    "states": [
+      "available",
+      "degraded",
+      "unavailable",
+      "missing_provider",
+      "blocked",
+      "policy_disabled"
+    ],
+    "installed_does_not_imply_available": true,
+    "available_does_not_imply_authorized": true,
+    "provider_removal_preserves_workforce_identity": true
+  },
+  "capabilities": [
+    "titan-maps-intelligence.search.businesses",
+    "titan-maps-intelligence.search.read",
+    "titan-maps-intelligence.search.cancel",
+    "titan-maps-intelligence.search.export",
+    "titan-maps-intelligence.candidates.list",
+    "titan-maps-intelligence.candidate.match",
+    "titan-maps-intelligence.candidate.classify",
+    "titan-maps-intelligence.candidate.approve",
+    "titan-maps-intelligence.candidate.reject",
+    "titan-maps-intelligence.candidate.promote",
+    "titan-maps-intelligence.territory.analyse",
+    "titan-maps-intelligence.territory-analytics.run",
+    "titan-maps-intelligence.territory-analytics.read",
+    "titan-maps-intelligence.territory.manage",
+    "titan-maps-intelligence.territory.read",
+    "titan-maps-intelligence.territory.evaluate",
+    "titan-maps-intelligence.geographic-pricing.read",
+    "titan-maps-intelligence.route.calculate",
+    "titan-maps-intelligence.route.history",
+    "titan-maps-intelligence.travel-matrix.calculate",
+    "titan-maps-intelligence.route-plan.manage",
+    "titan-maps-intelligence.route-plan.read",
+    "titan-maps-intelligence.nearest-resource.find",
+    "titan-maps-intelligence.dispatch.recommend",
+    "titan-maps-intelligence.dispatch.read",
+    "titan-maps-intelligence.dispatch.decide",
+    "titan-maps-intelligence.resource-fallback.start",
+    "titan-maps-intelligence.resource-fallback.read",
+    "titan-maps-intelligence.resource-fallback.decide",
+    "titan-maps-intelligence.resource-fallback.promote",
+    "location.geocode",
+    "territory.lookup",
+    "territory.validate",
+    "route.estimate",
+    "route.compare",
+    "job.travel_context",
+    "service_area.check",
+    "nearby.search",
+    "maps.provider.health",
+    "maps.quota.status",
+    "maps.provider.quota.override",
+    "maps.dispatch.weights.read",
+    "maps.dispatch.weights.update",
+    "titan-maps-intelligence.usage.read"
+  ],
+  "tools": {
+    "read_operations": [
+      "titan-maps-intelligence.search.businesses",
+      "titan-maps-intelligence.search.read",
+      "titan-maps-intelligence.search.export",
+      "titan-maps-intelligence.candidates.list",
+      "titan-maps-intelligence.candidate.match",
+      "titan-maps-intelligence.candidate.classify",
+      "titan-maps-intelligence.territory.analyse",
+      "titan-maps-intelligence.territory-analytics.run",
+      "titan-maps-intelligence.territory-analytics.read",
+      "titan-maps-intelligence.territory.read",
+      "titan-maps-intelligence.territory.evaluate",
+      "titan-maps-intelligence.geographic-pricing.read",
+      "titan-maps-intelligence.route.calculate",
+      "titan-maps-intelligence.route.history",
+      "titan-maps-intelligence.travel-matrix.calculate",
+      "titan-maps-intelligence.route-plan.read",
+      "titan-maps-intelligence.nearest-resource.find",
+      "titan-maps-intelligence.dispatch.recommend",
+      "titan-maps-intelligence.dispatch.read",
+      "titan-maps-intelligence.dispatch.decide",
+      "titan-maps-intelligence.resource-fallback.read",
+      "titan-maps-intelligence.resource-fallback.decide",
+      "location.geocode",
+      "territory.lookup",
+      "territory.validate",
+      "route.estimate",
+      "route.compare",
+      "job.travel_context",
+      "service_area.check",
+      "nearby.search",
+      "maps.provider.health",
+      "maps.quota.status",
+      "maps.dispatch.weights.read",
+      "titan-maps-intelligence.usage.read"
+    ],
+    "commands": [
+      "titan-maps-intelligence.search.cancel",
+      "titan-maps-intelligence.candidate.approve",
+      "titan-maps-intelligence.candidate.reject",
+      "titan-maps-intelligence.candidate.promote",
+      "titan-maps-intelligence.territory.manage",
+      "titan-maps-intelligence.route-plan.manage",
+      "titan-maps-intelligence.resource-fallback.start",
+      "titan-maps-intelligence.resource-fallback.promote",
+      "maps.provider.quota.override",
+      "maps.dispatch.weights.update"
+    ],
+    "read_operations_are_non_mutating": true,
+    "commands_require_governed_execution": true,
+    "command_bus_required_for_state_writes": true,
+    "execution_receipt_required": true
+  },
+  "data_sources": [
+    "maps.route_results",
+    "maps.territory_analysis",
+    "maps.provider_health",
+    "maps.spatial_evidence"
+  ],
+  "signals": {
+    "emitted": [
+      "maps.route.calculated",
+      "maps.territory.analysed",
+      "maps.provider.degraded",
+      "maps.quota.warning"
+    ],
+    "consumed": [
+      "field.work_order.changed",
+      "field.dispatch.changed",
+      "crm.service_location.changed",
+      "assets.custody.changed"
+    ],
+    "signals_are_observations_not_authority": true,
+    "causal_context": [
+      "trace_id",
+      "correlation_id",
+      "causation_id",
+      "root_causation_id"
+    ]
+  },
+  "responsibility_bindings": [
+    "route-intelligence",
+    "territory-analysis",
+    "service-area-validation",
+    "spatial-provider-health"
+  ],
+  "work_types": [
+    "maps.route.analyse",
+    "maps.territory.analyse",
+    "maps.service_area.check",
+    "maps.provider.exception"
+  ],
+  "governance": {
+    "authorization_separate": true,
+    "risk_separate": true,
+    "assurance_separate": true,
+    "autonomy_separate": true,
+    "effective_authority_owner": "titan-autonomy",
+    "offline_never_increases_authority": true,
+    "missing_data_never_infers": [
+      "licence",
+      "price",
+      "geographic_coverage",
+      "emergency_service",
+      "permission",
+      "authority"
+    ]
+  },
+  "evidence_outcomes": {
+    "execution_receipts": true,
+    "provider_provenance": true,
+    "completion_signals": true,
+    "exception_signals": true
+  },
+  "compatibility": {
+    "legacy_role_agent_definitions": "reference_only_not_active_authority_source"
+  },
+  "ecosystem": {
+    "schema": "titan.workforce.ecosystem-handoffs.v1",
+    "coordination_owner": "titan-ai-workforce",
+    "provider_selection_owner": "titan-ai-workforce",
+    "authority_owner": "titan-autonomy",
+    "tenant_key": "company_id",
+    "peer_extensions": [
+      "titan-field",
+      "crm",
+      "titan-assets"
+    ],
+    "handoffs": [
+      {
+        "id": "field-to-spatial-context",
+        "direction": "inbound",
+        "peer": "titan-field",
+        "consumes": [
+          "service_location",
+          "schedule_window",
+          "resource_candidates"
+        ],
+        "work_types": [
+          "maps.route.assess",
+          "maps.dispatch.assess"
+        ]
+      },
+      {
+        "id": "maps-to-field-routing",
+        "direction": "outbound",
+        "peer": "titan-field",
+        "provides": [
+          "route_estimate",
+          "travel_matrix",
+          "nearest_resource",
+          "service_area_result",
+          "provider_health"
+        ],
+        "work_types": [
+          "field.dispatch.review",
+          "field.schedule.review"
+        ]
+      },
+      {
+        "id": "asset-location-context",
+        "direction": "inbound",
+        "peer": "titan-assets",
+        "consumes": [
+          "asset_location",
+          "custody_location",
+          "fleet_state"
+        ],
+        "purpose": "improve routing and territory context without taking custody authority"
+      }
+    ],
+    "rules": {
+      "peer_missing_behavior": "degrade_without_inventing_data_or_authority",
+      "provider_missing_behavior": "preserve_workforce_identity_and_reassign_or_escalate",
+      "signals_are_observations_not_commands": true,
+      "cross_extension_state_writes_require_target_domain_command_gateway": true,
+      "provider_provenance_required": true,
+      "idempotency_required_for_commands": true,
+      "causal_context_required": [
+        "trace_id",
+        "correlation_id",
+        "causation_id",
+        "root_causation_id"
+      ],
+      "cross_extension_requests_require_correlation_and_causation": true,
+      "cross_extension_retries_reuse_idempotency_key": true,
+      "duplicate_execution_returns_original_receipt": true,
+      "provider_provenance_must_be_preserved": true,
+      "unknown_execution_outcome_is_deferred_not_success": true
+    },
+    "execution_envelope_contract": "resources/contracts/ecosystem-execution-envelope.v1.json"
+  }
+}

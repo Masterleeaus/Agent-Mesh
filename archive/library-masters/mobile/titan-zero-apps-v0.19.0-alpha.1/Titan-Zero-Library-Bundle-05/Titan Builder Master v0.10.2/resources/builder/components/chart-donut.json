@@ -1,0 +1,15 @@
+{
+  "id": "chart-donut",
+  "name": "Donut chart",
+  "category": "Charts",
+  "blade": "components.titan-builder.chart.donut",
+  "authority": "presentation-only",
+  "props": [
+    "segments",
+    "label"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Radminly-adapted",
+  "actions": []
+}

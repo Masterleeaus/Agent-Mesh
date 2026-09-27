@@ -1,0 +1,355 @@
+
+/* === unified-base reconciled layer === */
+
+/* ---- base merged styles ---- */
+.chatbot-pwa-status {
+  position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 2147483647;
+  transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+  max-width: min(92vw, 560px); padding: 10px 14px; border-radius: 999px;
+  background: rgba(17, 19, 24, .94); color: #fff; font: 600 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 10px 35px rgba(0,0,0,.28); transition: .2s ease;
+}
+.chatbot-pwa-status[data-visible="true"] { opacity: 1; transform: translate(-50%, 0); }
+.chatbot-pwa-status button { margin-left: 10px; border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; cursor: pointer; }
+.chatbot-pwa-offline .chatbot-pwa-status[data-kind="offline"] { opacity: 1; transform: translate(-50%, 0); }
+@media (display-mode: standalone) { html, body { overscroll-behavior-y: contain; } }
+@media (prefers-reduced-motion: reduce) { .chatbot-pwa-status { transition: none; } }
+
+.workcore-sync-panel { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 2147483000; font: 13px/1.35 system-ui, sans-serif; color: #f7f8fa; }
+.workcore-sync-panel > button { border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 9px 13px; background: #171a21; color: inherit; box-shadow: 0 8px 28px rgba(0,0,0,.28); }
+.workcore-sync-panel > button strong { display: inline-grid; min-width: 20px; height: 20px; place-items: center; margin-left: 5px; border-radius: 999px; background: #fff; color: #111318; }
+.workcore-sync-popover { position: absolute; right: 0; bottom: 48px; width: min(360px, calc(100vw - 24px)); max-height: min(520px, 70vh); overflow: auto; padding: 14px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; background: #171a21; box-shadow: 0 18px 60px rgba(0,0,0,.42); }
+.workcore-sync-popover small { display: block; opacity: .72; margin-top: 2px; }
+.workcore-sync-actions { display: flex; gap: 8px; margin: 12px 0; }
+.workcore-sync-actions button, .workcore-sync-popover li button { border: 1px solid rgba(255,255,255,.17); border-radius: 9px; padding: 7px 9px; background: #252a34; color: inherit; }
+.workcore-sync-popover ol { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.workcore-sync-popover li { display: flex; justify-content: space-between; gap: 8px; padding: 9px; border-radius: 10px; background: rgba(255,255,255,.055); }
+.workcore-sync-popover li > span:last-child { display: flex; gap: 5px; align-items: center; }
+@media (max-width: 600px) { .workcore-sync-panel { right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); } }
+/* Agent 3: conflict and integrity surfaces */
+.chatbot-conflict-centre:empty { display:none; }
+.chatbot-conflict-centre { position:fixed; inset:auto 1rem 1rem auto; z-index:2147483000; width:min(28rem,calc(100vw - 2rem)); max-height:70vh; overflow:auto; display:grid; gap:.75rem; }
+.chatbot-conflict-card { background:#17191f; color:#fff; border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:1rem; box-shadow:0 14px 40px rgba(0,0,0,.35); }
+.chatbot-conflict-card header { display:flex; justify-content:space-between; gap:1rem; }
+.chatbot-conflict-card header span { opacity:.65; font-size:.8rem; }
+.chatbot-conflict-card p { margin:.65rem 0; font-size:.9rem; }
+.chatbot-conflict-card pre { white-space:pre-wrap; word-break:break-word; max-height:14rem; overflow:auto; background:#0d0e12; padding:.75rem; border-radius:8px; font-size:.72rem; }
+.chatbot-conflict-card button { margin:.5rem .35rem 0 0; border:0; border-radius:8px; padding:.55rem .7rem; cursor:pointer; }
+.chatbot-conflict-empty { display:none; }
+
+
+/* ---- agent1 merged styles ---- */
+.chatbot-pwa-status {
+  position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 2147483647;
+  transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+  max-width: min(92vw, 560px); padding: 10px 14px; border-radius: 999px;
+  background: rgba(17, 19, 24, .94); color: #fff; font: 600 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 10px 35px rgba(0,0,0,.28); transition: .2s ease;
+}
+.chatbot-pwa-status[data-visible="true"] { opacity: 1; transform: translate(-50%, 0); }
+.chatbot-pwa-status button { margin-left: 10px; border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; cursor: pointer; }
+.chatbot-pwa-offline .chatbot-pwa-status[data-kind="offline"] { opacity: 1; transform: translate(-50%, 0); }
+@media (display-mode: standalone) { html, body { overscroll-behavior-y: contain; } }
+@media (prefers-reduced-motion: reduce) { .chatbot-pwa-status { transition: none; } }
+
+/* Phase 1 device-runtime status. */
+.chatbot-pwa-device-status{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));z-index:2147483646;display:none;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:#111318;color:#fff;font:600 12px/1.2 system-ui,-apple-system,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.chatbot-pwa-device-status[data-visible="true"]{display:flex}
+.chatbot-pwa-device-status button{border:0;border-radius:999px;padding:5px 9px;background:#fff;color:#111318;font:inherit;cursor:pointer}
+.chatbot-pwa-device-status button:disabled{opacity:.55;cursor:wait}
+.chatbot-pwa-device-status[data-online="false"] [data-pwa-sync]{display:none}
+
+
+/* ---- agent3 merged styles ---- */
+.chatbot-pwa-status {
+  position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 2147483647;
+  transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+  max-width: min(92vw, 560px); padding: 10px 14px; border-radius: 999px;
+  background: rgba(17, 19, 24, .94); color: #fff; font: 600 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 10px 35px rgba(0,0,0,.28); transition: .2s ease;
+}
+.chatbot-pwa-status[data-visible="true"] { opacity: 1; transform: translate(-50%, 0); }
+.chatbot-pwa-status button { margin-left: 10px; border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; cursor: pointer; }
+.chatbot-pwa-offline .chatbot-pwa-status[data-kind="offline"] { opacity: 1; transform: translate(-50%, 0); }
+@media (display-mode: standalone) { html, body { overscroll-behavior-y: contain; } }
+@media (prefers-reduced-motion: reduce) { .chatbot-pwa-status { transition: none; } }
+
+/* Agent 3: conflict and integrity surfaces */
+.chatbot-conflict-centre:empty { display:none; }
+.chatbot-conflict-centre { position:fixed; inset:auto 1rem 1rem auto; z-index:2147483000; width:min(28rem,calc(100vw - 2rem)); max-height:70vh; overflow:auto; display:grid; gap:.75rem; }
+.chatbot-conflict-card { background:#17191f; color:#fff; border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:1rem; box-shadow:0 14px 40px rgba(0,0,0,.35); }
+.chatbot-conflict-card header { display:flex; justify-content:space-between; gap:1rem; }
+.chatbot-conflict-card header span { opacity:.65; font-size:.8rem; }
+.chatbot-conflict-card p { margin:.65rem 0; font-size:.9rem; }
+.chatbot-conflict-card pre { white-space:pre-wrap; word-break:break-word; max-height:14rem; overflow:auto; background:#0d0e12; padding:.75rem; border-radius:8px; font-size:.72rem; }
+.chatbot-conflict-card button { margin:.5rem .35rem 0 0; border:0; border-radius:8px; padding:.55rem .7rem; cursor:pointer; }
+.chatbot-conflict-empty { display:none; }
+
+
+/* ---- agent4 merged styles ---- */
+.chatbot-pwa-status {
+  position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 2147483647;
+  transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+  max-width: min(92vw, 560px); padding: 10px 14px; border-radius: 999px;
+  background: rgba(17, 19, 24, .94); color: #fff; font: 600 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 10px 35px rgba(0,0,0,.28); transition: .2s ease;
+}
+.chatbot-pwa-status[data-visible="true"] { opacity: 1; transform: translate(-50%, 0); }
+.chatbot-pwa-status button { margin-left: 10px; border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; cursor: pointer; }
+.chatbot-pwa-offline .chatbot-pwa-status[data-kind="offline"] { opacity: 1; transform: translate(-50%, 0); }
+@media (display-mode: standalone) { html, body { overscroll-behavior-y: contain; } }
+@media (prefers-reduced-motion: reduce) { .chatbot-pwa-status { transition: none; } }
+
+.workcore-sync-panel { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 2147483000; font: 13px/1.35 system-ui, sans-serif; color: #f7f8fa; }
+.workcore-sync-panel > button { border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 9px 13px; background: #171a21; color: inherit; box-shadow: 0 8px 28px rgba(0,0,0,.28); }
+.workcore-sync-panel > button strong { display: inline-grid; min-width: 20px; height: 20px; place-items: center; margin-left: 5px; border-radius: 999px; background: #fff; color: #111318; }
+.workcore-sync-popover { position: absolute; right: 0; bottom: 48px; width: min(360px, calc(100vw - 24px)); max-height: min(520px, 70vh); overflow: auto; padding: 14px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; background: #171a21; box-shadow: 0 18px 60px rgba(0,0,0,.42); }
+.workcore-sync-popover small { display: block; opacity: .72; margin-top: 2px; }
+.workcore-sync-actions { display: flex; gap: 8px; margin: 12px 0; }
+.workcore-sync-actions button, .workcore-sync-popover li button { border: 1px solid rgba(255,255,255,.17); border-radius: 9px; padding: 7px 9px; background: #252a34; color: inherit; }
+.workcore-sync-popover ol { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.workcore-sync-popover li { display: flex; justify-content: space-between; gap: 8px; padding: 9px; border-radius: 10px; background: rgba(255,255,255,.055); }
+.workcore-sync-popover li > span:last-child { display: flex; gap: 5px; align-items: center; }
+@media (max-width: 600px) { .workcore-sync-panel { right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); } }
+/* Agent 3: conflict and integrity surfaces */
+.chatbot-conflict-centre:empty { display:none; }
+.chatbot-conflict-centre { position:fixed; inset:auto 1rem 1rem auto; z-index:2147483000; width:min(28rem,calc(100vw - 2rem)); max-height:70vh; overflow:auto; display:grid; gap:.75rem; }
+.chatbot-conflict-card { background:#17191f; color:#fff; border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:1rem; box-shadow:0 14px 40px rgba(0,0,0,.35); }
+.chatbot-conflict-card header { display:flex; justify-content:space-between; gap:1rem; }
+.chatbot-conflict-card header span { opacity:.65; font-size:.8rem; }
+.chatbot-conflict-card p { margin:.65rem 0; font-size:.9rem; }
+.chatbot-conflict-card pre { white-space:pre-wrap; word-break:break-word; max-height:14rem; overflow:auto; background:#0d0e12; padding:.75rem; border-radius:8px; font-size:.72rem; }
+.chatbot-conflict-card button { margin:.5rem .35rem 0 0; border:0; border-radius:8px; padding:.55rem .7rem; cursor:pointer; }
+.chatbot-conflict-empty { display:none; }
+
+
+/* Agent 4: offline readiness and resilience */
+.workcore-readiness{position:fixed;inset:0;z-index:2147483646;background:rgba(15,23,42,.62);display:grid;place-items:center;padding:20px}.workcore-readiness[hidden]{display:none}.workcore-readiness-card{width:min(620px,100%);max-height:85vh;overflow:auto;background:#fff;color:#172033;border-radius:18px;box-shadow:0 24px 80px rgba(0,0,0,.3)}.workcore-readiness-card header,.workcore-readiness-card footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid #e5e7eb}.workcore-readiness-card footer{border-top:1px solid #e5e7eb;border-bottom:0;justify-content:flex-end}.workcore-readiness-card h2{margin:0;font-size:1.1rem}.workcore-readiness-card [data-body]{padding:16px 20px}.workcore-readiness-card dl{margin:0}.workcore-readiness-card dl div{display:flex;justify-content:space-between;gap:20px;padding:9px 0;border-bottom:1px solid #f1f5f9}.workcore-readiness-card dt{font-weight:600}.workcore-readiness-card dd{margin:0;text-align:right}.workcore-readiness-card button{border:1px solid #cbd5e1;border-radius:10px;background:#fff;padding:8px 12px;cursor:pointer}.workcore-readiness-card header button{font-size:1.4rem;border:0}.workcore-readiness-card details{margin-top:16px}.workcore-readiness-card li{display:flex;justify-content:space-between;padding:4px 0}@media(max-width:520px){.workcore-readiness-card dl div{display:block}.workcore-readiness-card dd{text-align:left;margin-top:3px}}
+
+
+/* ---- workcore-pass2 merged styles ---- */
+.chatbot-pwa-status {
+  position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 2147483647;
+  transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+  max-width: min(92vw, 560px); padding: 10px 14px; border-radius: 999px;
+  background: rgba(17, 19, 24, .94); color: #fff; font: 600 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 10px 35px rgba(0,0,0,.28); transition: .2s ease;
+}
+.chatbot-pwa-status[data-visible="true"] { opacity: 1; transform: translate(-50%, 0); }
+.chatbot-pwa-status button { margin-left: 10px; border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; cursor: pointer; }
+.chatbot-pwa-offline .chatbot-pwa-status[data-kind="offline"] { opacity: 1; transform: translate(-50%, 0); }
+@media (display-mode: standalone) { html, body { overscroll-behavior-y: contain; } }
+@media (prefers-reduced-motion: reduce) { .chatbot-pwa-status { transition: none; } }
+
+.workcore-sync-panel { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 2147483000; font: 13px/1.35 system-ui, sans-serif; color: #f7f8fa; }
+.workcore-sync-panel > button { border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 9px 13px; background: #171a21; color: inherit; box-shadow: 0 8px 28px rgba(0,0,0,.28); }
+.workcore-sync-panel > button strong { display: inline-grid; min-width: 20px; height: 20px; place-items: center; margin-left: 5px; border-radius: 999px; background: #fff; color: #111318; }
+.workcore-sync-popover { position: absolute; right: 0; bottom: 48px; width: min(360px, calc(100vw - 24px)); max-height: min(520px, 70vh); overflow: auto; padding: 14px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; background: #171a21; box-shadow: 0 18px 60px rgba(0,0,0,.42); }
+.workcore-sync-popover small { display: block; opacity: .72; margin-top: 2px; }
+.workcore-sync-actions { display: flex; gap: 8px; margin: 12px 0; }
+.workcore-sync-actions button, .workcore-sync-popover li button { border: 1px solid rgba(255,255,255,.17); border-radius: 9px; padding: 7px 9px; background: #252a34; color: inherit; }
+.workcore-sync-popover ol { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.workcore-sync-popover li { display: flex; justify-content: space-between; gap: 8px; padding: 9px; border-radius: 10px; background: rgba(255,255,255,.055); }
+.workcore-sync-popover li > span:last-child { display: flex; gap: 5px; align-items: center; }
+@media (max-width: 600px) { .workcore-sync-panel { right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); } }
+
+/* WorkCore field-worker workspace */
+.workcore-field-launcher { position: fixed; left: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 2147482999; border: 0; border-radius: 999px; padding: 11px 15px; background: #fff; color: #111318; font: 700 13px/1 system-ui,sans-serif; box-shadow: 0 8px 28px rgba(0,0,0,.24); }
+.workcore-field-workspace { position: fixed; inset: 0; z-index: 2147483100; background: #111318; color: #f7f8fa; font: 14px/1.4 system-ui,sans-serif; }
+.workcore-field-workspace > header { height: calc(62px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 14px 0; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; border-bottom: 1px solid rgba(255,255,255,.12); background: #171a21; }
+.workcore-field-workspace > header button { border: 1px solid rgba(255,255,255,.16); border-radius: 10px; padding: 8px 11px; background: #252a34; color: inherit; }
+.workcore-field-workspace > header small { display:block; opacity:.65; }
+.workcore-field-body { height: calc(100% - 62px - env(safe-area-inset-top)); display:grid; grid-template-columns:minmax(260px,340px) 1fr; }
+.workcore-field-body nav { overflow:auto; padding:12px; border-right:1px solid rgba(255,255,255,.1); background:#14171d; }
+.workcore-field-body main { overflow:auto; padding:clamp(14px,3vw,30px); }
+.workcore-field-filter { display:flex; gap:8px; margin-bottom:10px; }
+.workcore-field-filter button { flex:1; border:1px solid rgba(255,255,255,.14); border-radius:9px; padding:8px; background:#20242d; color:inherit; }
+.workcore-field-filter button[aria-pressed="true"] { background:#fff; color:#111318; }
+.workcore-job-card { width:100%; display:grid; gap:5px; text-align:left; margin:0 0 8px; padding:12px; border:1px solid transparent; border-radius:13px; background:rgba(255,255,255,.055); color:inherit; }
+.workcore-job-card[data-selected="true"] { border-color:rgba(255,255,255,.55); background:rgba(255,255,255,.11); }
+.workcore-job-card > span { display:flex; justify-content:space-between; gap:8px; }
+.workcore-job-card em { font-style:normal; opacity:.65; }
+.workcore-job-card small { opacity:.66; }
+.workcore-field-empty { min-height:180px; display:grid; place-content:center; gap:5px; text-align:center; opacity:.7; }
+.workcore-job-detail { max-width:900px; margin:auto; display:grid; gap:16px; }
+.workcore-job-detail section { padding:16px; border:1px solid rgba(255,255,255,.11); border-radius:16px; background:rgba(255,255,255,.045); }
+.workcore-job-detail h2,.workcore-job-detail h3,.workcore-job-detail p { margin:0; }
+.workcore-job-detail h3 { margin-bottom:10px; }
+.workcore-job-hero { display:flex; justify-content:space-between; gap:15px; align-items:flex-start; }
+.workcore-job-hero > span { border-radius:999px; padding:6px 9px; background:#252a34; }
+.workcore-job-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.workcore-job-actions button,.workcore-job-actions a,.workcore-job-detail form button,.workcore-capture { border:0; border-radius:10px; padding:10px 13px; background:#fff; color:#111318; font:700 13px/1.2 system-ui,sans-serif; text-decoration:none; cursor:pointer; }
+.workcore-job-detail form { display:grid; gap:8px; }
+.workcore-job-detail input,.workcore-job-detail textarea,.workcore-job-detail select { width:100%; box-sizing:border-box; border:1px solid rgba(255,255,255,.14); border-radius:10px; padding:10px; background:#20242d; color:inherit; }
+.workcore-job-detail textarea { min-height:90px; resize:vertical; }
+.workcore-task { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+.workcore-task input { width:20px; height:20px; }
+.workcore-capture { display:inline-block; margin-bottom:7px; }
+.workcore-capture input { position:absolute; width:1px; height:1px; opacity:0; }
+.workcore-dynamic-form { padding:12px; margin-top:10px; border-radius:12px; background:rgba(255,255,255,.04); }
+.workcore-dynamic-form label { display:grid; gap:4px; }
+@media (max-width:760px) { .workcore-field-body { grid-template-columns:1fr; } .workcore-field-body nav { max-height:38vh; border-right:0; border-bottom:1px solid rgba(255,255,255,.1); } .workcore-job-detail { padding-bottom:calc(30px + env(safe-area-inset-bottom)); } }
+@media (prefers-reduced-motion:reduce) { .workcore-field-workspace * { scroll-behavior:auto !important; } }
+.workcore-job-detail canvas[data-signature] { width:100%; height:auto; max-height:220px; touch-action:none; border:1px dashed rgba(255,255,255,.3); border-radius:12px; background:#20242d; }
+.workcore-signature-actions { display:flex; gap:8px; margin-top:8px; }
+.workcore-signature-actions button { border:1px solid rgba(255,255,255,.16); border-radius:9px; padding:8px 11px; background:#252a34; color:inherit; }
+
+
+/* === workcore-final reconciled layer === */
+.chatbot-pwa-status {
+  position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 2147483647;
+  transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+  max-width: min(92vw, 560px); padding: 10px 14px; border-radius: 999px;
+  background: rgba(17, 19, 24, .94); color: #fff; font: 600 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 10px 35px rgba(0,0,0,.28); transition: .2s ease;
+}
+.chatbot-pwa-status[data-visible="true"] { opacity: 1; transform: translate(-50%, 0); }
+.chatbot-pwa-status button { margin-left: 10px; border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; cursor: pointer; }
+.chatbot-pwa-offline .chatbot-pwa-status[data-kind="offline"] { opacity: 1; transform: translate(-50%, 0); }
+@media (display-mode: standalone) { html, body { overscroll-behavior-y: contain; } }
+@media (prefers-reduced-motion: reduce) { .chatbot-pwa-status { transition: none; } }
+
+.workcore-sync-panel { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 2147483000; font: 13px/1.35 system-ui, sans-serif; color: #f7f8fa; }
+.workcore-sync-panel > button { border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 9px 13px; background: #171a21; color: inherit; box-shadow: 0 8px 28px rgba(0,0,0,.28); }
+.workcore-sync-panel > button strong { display: inline-grid; min-width: 20px; height: 20px; place-items: center; margin-left: 5px; border-radius: 999px; background: #fff; color: #111318; }
+.workcore-sync-popover { position: absolute; right: 0; bottom: 48px; width: min(360px, calc(100vw - 24px)); max-height: min(520px, 70vh); overflow: auto; padding: 14px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; background: #171a21; box-shadow: 0 18px 60px rgba(0,0,0,.42); }
+.workcore-sync-popover small { display: block; opacity: .72; margin-top: 2px; }
+.workcore-sync-actions { display: flex; gap: 8px; margin: 12px 0; }
+.workcore-sync-actions button, .workcore-sync-popover li button { border: 1px solid rgba(255,255,255,.17); border-radius: 9px; padding: 7px 9px; background: #252a34; color: inherit; }
+.workcore-sync-popover ol { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.workcore-sync-popover li { display: flex; justify-content: space-between; gap: 8px; padding: 9px; border-radius: 10px; background: rgba(255,255,255,.055); }
+.workcore-sync-popover li > span:last-child { display: flex; gap: 5px; align-items: center; }
+@media (max-width: 600px) { .workcore-sync-panel { right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); } }
+
+/* WorkCore field-worker workspace */
+.workcore-field-launcher { position: fixed; left: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 2147482999; border: 0; border-radius: 999px; padding: 11px 15px; background: #fff; color: #111318; font: 700 13px/1 system-ui,sans-serif; box-shadow: 0 8px 28px rgba(0,0,0,.24); }
+.workcore-field-workspace { position: fixed; inset: 0; z-index: 2147483100; background: #111318; color: #f7f8fa; font: 14px/1.4 system-ui,sans-serif; }
+.workcore-field-workspace > header { height: calc(62px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 14px 0; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; border-bottom: 1px solid rgba(255,255,255,.12); background: #171a21; }
+.workcore-field-workspace > header button { border: 1px solid rgba(255,255,255,.16); border-radius: 10px; padding: 8px 11px; background: #252a34; color: inherit; }
+.workcore-field-workspace > header small { display:block; opacity:.65; }
+.workcore-field-body { height: calc(100% - 62px - env(safe-area-inset-top)); display:grid; grid-template-columns:minmax(260px,340px) 1fr; }
+.workcore-field-body nav { overflow:auto; padding:12px; border-right:1px solid rgba(255,255,255,.1); background:#14171d; }
+.workcore-field-body main { overflow:auto; padding:clamp(14px,3vw,30px); }
+.workcore-field-filter { display:flex; gap:8px; margin-bottom:10px; }
+.workcore-field-filter button { flex:1; border:1px solid rgba(255,255,255,.14); border-radius:9px; padding:8px; background:#20242d; color:inherit; }
+.workcore-field-filter button[aria-pressed="true"] { background:#fff; color:#111318; }
+.workcore-job-card { width:100%; display:grid; gap:5px; text-align:left; margin:0 0 8px; padding:12px; border:1px solid transparent; border-radius:13px; background:rgba(255,255,255,.055); color:inherit; }
+.workcore-job-card[data-selected="true"] { border-color:rgba(255,255,255,.55); background:rgba(255,255,255,.11); }
+.workcore-job-card > span { display:flex; justify-content:space-between; gap:8px; }
+.workcore-job-card em { font-style:normal; opacity:.65; }
+.workcore-job-card small { opacity:.66; }
+.workcore-field-empty { min-height:180px; display:grid; place-content:center; gap:5px; text-align:center; opacity:.7; }
+.workcore-job-detail { max-width:900px; margin:auto; display:grid; gap:16px; }
+.workcore-job-detail section { padding:16px; border:1px solid rgba(255,255,255,.11); border-radius:16px; background:rgba(255,255,255,.045); }
+.workcore-job-detail h2,.workcore-job-detail h3,.workcore-job-detail p { margin:0; }
+.workcore-job-detail h3 { margin-bottom:10px; }
+.workcore-job-hero { display:flex; justify-content:space-between; gap:15px; align-items:flex-start; }
+.workcore-job-hero > span { border-radius:999px; padding:6px 9px; background:#252a34; }
+.workcore-job-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.workcore-job-actions button,.workcore-job-actions a,.workcore-job-detail form button,.workcore-capture { border:0; border-radius:10px; padding:10px 13px; background:#fff; color:#111318; font:700 13px/1.2 system-ui,sans-serif; text-decoration:none; cursor:pointer; }
+.workcore-job-detail form { display:grid; gap:8px; }
+.workcore-job-detail input,.workcore-job-detail textarea,.workcore-job-detail select { width:100%; box-sizing:border-box; border:1px solid rgba(255,255,255,.14); border-radius:10px; padding:10px; background:#20242d; color:inherit; }
+.workcore-job-detail textarea { min-height:90px; resize:vertical; }
+.workcore-task { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+.workcore-task input { width:20px; height:20px; }
+.workcore-capture { display:inline-block; margin-bottom:7px; }
+.workcore-capture input { position:absolute; width:1px; height:1px; opacity:0; }
+.workcore-dynamic-form { padding:12px; margin-top:10px; border-radius:12px; background:rgba(255,255,255,.04); }
+.workcore-dynamic-form label { display:grid; gap:4px; }
+@media (max-width:760px) { .workcore-field-body { grid-template-columns:1fr; } .workcore-field-body nav { max-height:38vh; border-right:0; border-bottom:1px solid rgba(255,255,255,.1); } .workcore-job-detail { padding-bottom:calc(30px + env(safe-area-inset-bottom)); } }
+@media (prefers-reduced-motion:reduce) { .workcore-field-workspace * { scroll-behavior:auto !important; } }
+.workcore-job-detail canvas[data-signature] { width:100%; height:auto; max-height:220px; touch-action:none; border:1px dashed rgba(255,255,255,.3); border-radius:12px; background:#20242d; }
+.workcore-signature-actions { display:flex; gap:8px; margin-top:8px; }
+.workcore-signature-actions button { border:1px solid rgba(255,255,255,.16); border-radius:9px; padding:8px 11px; background:#252a34; color:inherit; }
+.workcore-device-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.workcore-device-actions > button { border:0; border-radius:10px; padding:10px 13px; background:#fff; color:#111318; font:700 13px/1.2 system-ui,sans-serif; cursor:pointer; }
+.workcore-device-result { min-height:1.4em; margin-top:8px; opacity:.78; }
+
+
+/* === agent4-pass4 reconciled layer === */
+.chatbot-pwa-status {
+  position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 2147483647;
+  transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+  max-width: min(92vw, 560px); padding: 10px 14px; border-radius: 999px;
+  background: rgba(17, 19, 24, .94); color: #fff; font: 600 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 10px 35px rgba(0,0,0,.28); transition: .2s ease;
+}
+.chatbot-pwa-status[data-visible="true"] { opacity: 1; transform: translate(-50%, 0); }
+.chatbot-pwa-status button { margin-left: 10px; border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; cursor: pointer; }
+.chatbot-pwa-offline .chatbot-pwa-status[data-kind="offline"] { opacity: 1; transform: translate(-50%, 0); }
+@media (display-mode: standalone) { html, body { overscroll-behavior-y: contain; } }
+@media (prefers-reduced-motion: reduce) { .chatbot-pwa-status { transition: none; } }
+
+.workcore-sync-panel { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 2147483000; font: 13px/1.35 system-ui, sans-serif; color: #f7f8fa; }
+.workcore-sync-panel > button { border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 9px 13px; background: #171a21; color: inherit; box-shadow: 0 8px 28px rgba(0,0,0,.28); }
+.workcore-sync-panel > button strong { display: inline-grid; min-width: 20px; height: 20px; place-items: center; margin-left: 5px; border-radius: 999px; background: #fff; color: #111318; }
+.workcore-sync-popover { position: absolute; right: 0; bottom: 48px; width: min(360px, calc(100vw - 24px)); max-height: min(520px, 70vh); overflow: auto; padding: 14px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; background: #171a21; box-shadow: 0 18px 60px rgba(0,0,0,.42); }
+.workcore-sync-popover small { display: block; opacity: .72; margin-top: 2px; }
+.workcore-sync-actions { display: flex; gap: 8px; margin: 12px 0; }
+.workcore-sync-actions button, .workcore-sync-popover li button { border: 1px solid rgba(255,255,255,.17); border-radius: 9px; padding: 7px 9px; background: #252a34; color: inherit; }
+.workcore-sync-popover ol { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.workcore-sync-popover li { display: flex; justify-content: space-between; gap: 8px; padding: 9px; border-radius: 10px; background: rgba(255,255,255,.055); }
+.workcore-sync-popover li > span:last-child { display: flex; gap: 5px; align-items: center; }
+@media (max-width: 600px) { .workcore-sync-panel { right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); } }
+/* Agent 3: conflict and integrity surfaces */
+.chatbot-conflict-centre:empty { display:none; }
+.chatbot-conflict-centre { position:fixed; inset:auto 1rem 1rem auto; z-index:2147483000; width:min(28rem,calc(100vw - 2rem)); max-height:70vh; overflow:auto; display:grid; gap:.75rem; }
+.chatbot-conflict-card { background:#17191f; color:#fff; border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:1rem; box-shadow:0 14px 40px rgba(0,0,0,.35); }
+.chatbot-conflict-card header { display:flex; justify-content:space-between; gap:1rem; }
+.chatbot-conflict-card header span { opacity:.65; font-size:.8rem; }
+.chatbot-conflict-card p { margin:.65rem 0; font-size:.9rem; }
+.chatbot-conflict-card pre { white-space:pre-wrap; word-break:break-word; max-height:14rem; overflow:auto; background:#0d0e12; padding:.75rem; border-radius:8px; font-size:.72rem; }
+.chatbot-conflict-card button { margin:.5rem .35rem 0 0; border:0; border-radius:8px; padding:.55rem .7rem; cursor:pointer; }
+.chatbot-conflict-empty { display:none; }
+
+
+/* Agent 4: offline readiness and resilience */
+.workcore-readiness{position:fixed;inset:0;z-index:2147483646;background:rgba(15,23,42,.62);display:grid;place-items:center;padding:20px}.workcore-readiness[hidden]{display:none}.workcore-readiness-card{width:min(620px,100%);max-height:85vh;overflow:auto;background:#fff;color:#172033;border-radius:18px;box-shadow:0 24px 80px rgba(0,0,0,.3)}.workcore-readiness-card header,.workcore-readiness-card footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid #e5e7eb}.workcore-readiness-card footer{border-top:1px solid #e5e7eb;border-bottom:0;justify-content:flex-end}.workcore-readiness-card h2{margin:0;font-size:1.1rem}.workcore-readiness-card [data-body]{padding:16px 20px}.workcore-readiness-card dl{margin:0}.workcore-readiness-card dl div{display:flex;justify-content:space-between;gap:20px;padding:9px 0;border-bottom:1px solid #f1f5f9}.workcore-readiness-card dt{font-weight:600}.workcore-readiness-card dd{margin:0;text-align:right}.workcore-readiness-card button{border:1px solid #cbd5e1;border-radius:10px;background:#fff;padding:8px 12px;cursor:pointer}.workcore-readiness-card header button{font-size:1.4rem;border:0}.workcore-readiness-card details{margin-top:16px}.workcore-readiness-card li{display:flex;justify-content:space-between;padding:4px 0}@media(max-width:520px){.workcore-readiness-card dl div{display:block}.workcore-readiness-card dd{text-align:left;margin-top:3px}}
+
+
+/* === agent3-pass5 reconciled layer === */
+.chatbot-pwa-status {
+  position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 2147483647;
+  transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+  max-width: min(92vw, 560px); padding: 10px 14px; border-radius: 999px;
+  background: rgba(17, 19, 24, .94); color: #fff; font: 600 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 10px 35px rgba(0,0,0,.28); transition: .2s ease;
+}
+.chatbot-pwa-status[data-visible="true"] { opacity: 1; transform: translate(-50%, 0); }
+.chatbot-pwa-status button { margin-left: 10px; border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; cursor: pointer; }
+.chatbot-pwa-offline .chatbot-pwa-status[data-kind="offline"] { opacity: 1; transform: translate(-50%, 0); }
+@media (display-mode: standalone) { html, body { overscroll-behavior-y: contain; } }
+@media (prefers-reduced-motion: reduce) { .chatbot-pwa-status { transition: none; } }
+
+/* Agent 3: conflict and integrity surfaces */
+.chatbot-conflict-centre:empty { display:none; }
+.chatbot-conflict-centre { position:fixed; inset:auto 1rem 1rem auto; z-index:2147483000; width:min(28rem,calc(100vw - 2rem)); max-height:70vh; overflow:auto; display:grid; gap:.75rem; }
+.chatbot-conflict-card { background:#17191f; color:#fff; border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:1rem; box-shadow:0 14px 40px rgba(0,0,0,.35); }
+.chatbot-conflict-card header { display:flex; justify-content:space-between; gap:1rem; }
+.chatbot-conflict-card header span { opacity:.65; font-size:.8rem; }
+.chatbot-conflict-card p { margin:.65rem 0; font-size:.9rem; }
+.chatbot-conflict-card pre { white-space:pre-wrap; word-break:break-word; max-height:14rem; overflow:auto; background:#0d0e12; padding:.75rem; border-radius:8px; font-size:.72rem; }
+.chatbot-conflict-card button { margin:.5rem .35rem 0 0; border:0; border-radius:8px; padding:.55rem .7rem; cursor:pointer; }
+.chatbot-conflict-empty { display:none; }
+
+
+/* === agent1-pass3 reconciled layer === */
+.chatbot-pwa-status {
+  position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 2147483647;
+  transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+  max-width: min(92vw, 560px); padding: 10px 14px; border-radius: 999px;
+  background: rgba(17, 19, 24, .94); color: #fff; font: 600 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 10px 35px rgba(0,0,0,.28); transition: .2s ease;
+}
+.chatbot-pwa-status[data-visible="true"] { opacity: 1; transform: translate(-50%, 0); }
+.chatbot-pwa-status button { margin-left: 10px; border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; cursor: pointer; }
+.chatbot-pwa-offline .chatbot-pwa-status[data-kind="offline"] { opacity: 1; transform: translate(-50%, 0); }
+@media (display-mode: standalone) { html, body { overscroll-behavior-y: contain; } }
+@media (prefers-reduced-motion: reduce) { .chatbot-pwa-status { transition: none; } }
+
+/* Phase 1 device-runtime status. */
+.chatbot-pwa-device-status{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));z-index:2147483646;display:none;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:#111318;color:#fff;font:600 12px/1.2 system-ui,-apple-system,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.chatbot-pwa-device-status[data-visible="true"]{display:flex}
+.chatbot-pwa-device-status button{border:0;border-radius:999px;padding:5px 9px;background:#fff;color:#111318;font:inherit;cursor:pointer}
+.chatbot-pwa-device-status button:disabled{opacity:.55;cursor:wait}
+.chatbot-pwa-device-status[data-online="false"] [data-pwa-sync]{display:none}

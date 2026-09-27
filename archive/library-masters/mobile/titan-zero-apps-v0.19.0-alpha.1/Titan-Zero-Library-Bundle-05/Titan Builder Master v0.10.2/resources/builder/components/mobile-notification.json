@@ -1,0 +1,24 @@
+{
+  "id": "mobile-notification",
+  "name": "Mobile Notification",
+  "category": "Premium / Feedback",
+  "blade": "components.titan-builder.premium.mobile-notification",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "title",
+    "message",
+    "icon",
+    "image",
+    "timeLabel",
+    "tone",
+    "dismissible"
+  ],
+  "actions": [
+    "state.set"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "segmented-control",
+  "name": "Segmented control",
+  "category": "Forms",
+  "blade": "components.titan-builder.segmented-control",
+  "authority": "presentation-only",
+  "props": [
+    "statePath",
+    "options"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

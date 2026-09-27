@@ -1,0 +1,14 @@
+{
+  "id": "builder.application.read",
+  "name": "builder.application.read",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "builder",
+  "required_capability": "builder.read",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

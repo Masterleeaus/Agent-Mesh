@@ -1,0 +1,111 @@
+{
+  "id": "titan-hub-home",
+  "name": "Titan Hub Home",
+  "description": "Default customer PWA configuration preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "state": {},
+  "data_sources": [
+    "crm-customer-work-orders",
+    "crm-customer-bookings",
+    "crm-customer-invoices",
+    "crm-business-services"
+  ],
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Titan Hub",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "welcome",
+        "book",
+        "work",
+        "invoices"
+      ]
+    },
+    "welcome": {
+      "type": "summary-banner",
+      "props": {
+        "eyebrow": "Customer",
+        "title": "Welcome to Titan Hub",
+        "description": "Bookings, service updates and account information in one place."
+      }
+    },
+    "book": {
+      "type": "button",
+      "props": {
+        "label": "Book or request service"
+      },
+      "on": {
+        "click": {
+          "action": "crm.work_order.create"
+        }
+      }
+    },
+    "work": {
+      "type": "card",
+      "props": {
+        "title": "Your work",
+        "description": "CRM-backed customer work orders appear here when the capability is available.",
+        "dataSource": "crm-customer-work-orders"
+      }
+    },
+    "invoices": {
+      "type": "card",
+      "props": {
+        "title": "Invoices",
+        "description": "Read-only customer invoice summary.",
+        "dataSource": "crm-customer-invoices"
+      }
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "bookings",
+            "label": "Bookings",
+            "icon": "□"
+          },
+          {
+            "id": "chat",
+            "label": "Chat",
+            "icon": "◌"
+          },
+          {
+            "id": "account",
+            "label": "Account",
+            "icon": "○"
+          }
+        ]
+      }
+    }
+  }
+}

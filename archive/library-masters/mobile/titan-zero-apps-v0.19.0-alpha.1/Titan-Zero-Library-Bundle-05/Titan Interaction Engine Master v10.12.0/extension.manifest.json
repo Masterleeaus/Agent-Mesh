@@ -1,0 +1,235 @@
+{
+  "schema_version": "1.0",
+  "key": "interaction-engine",
+  "name": "Titan Interaction Engine",
+  "version": "10.12.0",
+  "folder": "InteractionEngine",
+  "namespace": "App\\Extensions\\InteractionEngine",
+  "provider": "App\\Extensions\\InteractionEngine\\System\\InteractionEngineServiceProvider",
+  "family": "native",
+  "compatibility": {
+    "magicai": "host-verification-required",
+    "php": "^8.2",
+    "laravel": "^10.0 || ^11.0 || ^12.0"
+  },
+  "dependencies": {
+    "parent": null,
+    "required": [],
+    "optional": [
+      "titan-ai-vision"
+    ],
+    "peers": [],
+    "conflicts": []
+  },
+  "capabilities": [
+    "interaction.ai-provider-router",
+    "interaction.authority",
+    "interaction.capabilities",
+    "interaction.capability-router",
+    "interaction.cognition",
+    "interaction.compiler",
+    "interaction.engine-library",
+    "interaction.field-home-services",
+    "interaction.governed-operation-activity",
+    "interaction.governed-operation-ledger",
+    "interaction.intent-fusion",
+    "interaction.journeys",
+    "interaction.localbrain",
+    "interaction.memory",
+    "interaction.multimodal-intake",
+    "interaction.offline",
+    "interaction.onboarding",
+    "interaction.onboarding.field-services",
+    "interaction.presentation-intent",
+    "interaction.public-contract",
+    "interaction.runtime",
+    "interaction.settings.admin",
+    "interaction.settings.company",
+    "interaction.settings.user",
+    "interaction.surface.camera",
+    "interaction.surface.go",
+    "interaction.surface.hub",
+    "interaction.surface.text",
+    "interaction.surface.touch",
+    "interaction.surface.voice",
+    "interaction.surface.zero",
+    "interaction.templates",
+    "interaction.wizards"
+  ],
+  "contributions": [
+    {
+      "registry": "product_profiles",
+      "key": "field_home_services",
+      "priority": 100
+    },
+    {
+      "registry": "wizards",
+      "key": "field_home_services_onboarding_v1",
+      "priority": 100
+    },
+    {
+      "registry": "navigation.admin",
+      "key": "interaction-engine",
+      "priority": 82
+    }
+  ],
+  "permissions": [],
+  "external_hosts": [],
+  "routes": [
+    {
+      "profile": "authenticated-user",
+      "prefix": "dashboard/user/interaction-engine",
+      "name_prefix": "dashboard.user.interaction-engine."
+    },
+    {
+      "profile": "admin",
+      "prefix": "dashboard/admin/interaction-engine",
+      "name_prefix": "dashboard.admin.interaction-engine."
+    },
+    {
+      "profile": "authenticated-user",
+      "prefix": "api/interaction-engine/v1",
+      "name_prefix": "api.interaction-engine.v1."
+    }
+  ],
+  "database": {
+    "migrations": true,
+    "owned_tables": [
+      "interaction_runs",
+      "interaction_answers",
+      "interaction_events",
+      "interaction_cognitive_events",
+      "local_intelligence_memories",
+      "interaction_queued_commands",
+      "interaction_episodic_memory",
+      "interaction_semantic_memory",
+      "interaction_audit_logs",
+      "interaction_governance_logs",
+      "interaction_user_actions",
+      "interaction_user_preferences",
+      "interaction_wizard_outbox",
+      "interaction_platform_settings",
+      "interaction_company_settings"
+    ],
+    "shared_tables": []
+  },
+  "queues": {
+    "used": true,
+    "queue_names": [],
+    "tenant_context_required": true
+  },
+  "schedules": [],
+  "webhooks": [],
+  "billing": {
+    "mode": "none",
+    "reservation_required": false,
+    "ledger": ""
+  },
+  "data": {
+    "tenant_key": "company_id",
+    "default_uninstall_policy": "retain",
+    "owned_paths": [
+      "storage/app/interaction-engine",
+      "public/vendor/interaction-engine"
+    ],
+    "credential_storage": "none"
+  },
+  "lifecycle": {
+    "register_key": true,
+    "uninstall": true,
+    "idempotent": true,
+    "supports_disable": true,
+    "upgrade_strategy": "forward-only migrations"
+  },
+  "tests": [
+    "unit",
+    "feature",
+    "integration",
+    "architecture",
+    "security"
+  ],
+  "support": {
+    "telegram": "",
+    "documentation": "docs/"
+  },
+  "cost_sovereignty": {
+    "schema_version": "1.0",
+    "enforced_by": "titan.workforce.cost-sovereignty",
+    "resource_types": [
+      "ai",
+      "voice",
+      "vision",
+      "media"
+    ],
+    "execution_priority": [
+      "device",
+      "local",
+      "byo_api",
+      "customer_service",
+      "titan_entitled",
+      "titan_metered"
+    ],
+    "supports_device": true,
+    "supports_byo": true,
+    "supports_titan_managed": true,
+    "managed_entitlement": null,
+    "billing_units": [
+      "request",
+      "token",
+      "image",
+      "second"
+    ],
+    "no_hidden_titan_fallback": true,
+    "company_boundary": "company_id",
+    "surface_rule": "chat_voice_vision_share_same_governed_resource_router"
+  },
+  "titan_apps": {
+    "suite_member": true,
+    "canonical_component": "interaction-engine",
+    "ownership": "Titan Apps Suite",
+    "platform_access": "public-contracts",
+    "canonical_surfaces": [
+      "zero",
+      "go",
+      "hub"
+    ],
+    "journeys": {
+      "onboarding": {
+        "surface": "zero"
+      }
+    },
+    "legacy_surface_aliases": {
+      "bos": "zero",
+      "command": "zero",
+      "owner": "zero",
+      "manager": "zero",
+      "business": "zero",
+      "field": "go",
+      "worker": "go",
+      "customer": "hub",
+      "onboarding": "zero"
+    },
+    "context_factory": "canonicalizes-legacy-surface-aliases-and-journeys"
+  },
+  "public_contracts": [
+    "App\\Extensions\\InteractionEngine\\System\\Contracts\\PublicInteractionEngineInterface",
+    "App\\Extensions\\InteractionEngine\\System\\Contracts\\InteractionContext",
+    "App\\Extensions\\InteractionEngine\\System\\Contracts\\PresentationIntent",
+    "App\\Extensions\\InteractionEngine\\System\\Contracts\\PresentationIntentPlannerInterface",
+    "App\\Extensions\\InteractionEngine\\System\\Contracts\\InteractionContextFactoryInterface",
+    "App\\Extensions\\InteractionEngine\\System\\Contracts\\GovernedOperationLedgerInterface",
+    "App\\Extensions\\InteractionEngine\\System\\Contracts\\GovernedOperationActivityGatewayInterface",
+    "App\\Extensions\\InteractionEngine\\System\\Contracts\\CapabilityIntentGatewayInterface"
+  ],
+  "intelligence_provider_policy": {
+    "providers": [
+      "deterministic",
+      "browser_llm",
+      "device_ai",
+      "byo_ai",
+      "cloud_ai"
+    ],
+    "browser_llm_business_authority": false,
+    "provider_extensions_backend_agnostic": true
+  }
+}

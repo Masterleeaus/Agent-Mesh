@@ -1,0 +1,14 @@
+{
+  "id": "state.set",
+  "name": "state.set",
+  "authority": "presentation-only",
+  "execution": "renderer-intent",
+  "provider": "builder",
+  "required_capability": null,
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

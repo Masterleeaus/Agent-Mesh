@@ -1,0 +1,26 @@
+{
+  "id": "mobile-stepper",
+  "name": "Mobile Stepper",
+  "category": "Premium / Forms",
+  "blade": "components.titan-builder.premium.mobile-stepper",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "name",
+    "label",
+    "value",
+    "min",
+    "max",
+    "step",
+    "statePath",
+    "compact"
+  ],
+  "actions": [
+    "state.increment",
+    "state.set"
+  ]
+}

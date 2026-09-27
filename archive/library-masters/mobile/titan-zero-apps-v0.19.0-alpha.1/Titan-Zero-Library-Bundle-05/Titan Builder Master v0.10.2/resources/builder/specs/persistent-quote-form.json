@@ -1,0 +1,287 @@
+{
+  "id": "persistent-quote-form",
+  "name": "Persistent Quote Form",
+  "description": "Stateful quote preview with local persistence, history and watched totals.",
+  "version": "1.1",
+  "surface": "chat",
+  "authority": "presentation-only",
+  "meta": {
+    "title": "Quote builder",
+    "summary": "Draft state persists locally for this message."
+  },
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 30
+  },
+  "state": {
+    "quote": {
+      "customer": "Alex Morgan",
+      "service": "End-of-lease clean",
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "includeOven": true,
+      "estimated": 520
+    }
+  },
+  "root": "root",
+  "elements": {
+    "root": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "banner",
+        "form",
+        "total",
+        "actions"
+      ]
+    },
+    "banner": {
+      "type": "summary-banner",
+      "props": {
+        "eyebrow": "Quote preview",
+        "title": "End-of-lease cleaning",
+        "description": "Edit the fields below. Nothing is sent or saved to business records."
+      }
+    },
+    "form": {
+      "type": "form-section",
+      "props": {
+        "title": "Service details",
+        "description": "Local draft state only."
+      },
+      "children": [
+        "customer",
+        "service",
+        "room-grid",
+        "oven"
+      ]
+    },
+    "customer": {
+      "type": "form-input",
+      "props": {
+        "label": "Customer",
+        "statePath": "/quote/customer",
+        "value": {
+          "$state": "/quote/customer"
+        },
+        "validation": [
+          {
+            "type": "required",
+            "message": "Customer is required"
+          }
+        ]
+      }
+    },
+    "service": {
+      "type": "form-select",
+      "props": {
+        "label": "Service",
+        "statePath": "/quote/service",
+        "options": [
+          {
+            "label": "End-of-lease clean",
+            "value": "End-of-lease clean"
+          },
+          {
+            "label": "Deep clean",
+            "value": "Deep clean"
+          },
+          {
+            "label": "Regular clean",
+            "value": "Regular clean"
+          }
+        ]
+      }
+    },
+    "room-grid": {
+      "type": "grid",
+      "props": {
+        "columns": 2,
+        "gap": "md"
+      },
+      "children": [
+        "bedrooms",
+        "bathrooms"
+      ]
+    },
+    "bedrooms": {
+      "type": "number-stepper",
+      "props": {
+        "label": "Bedrooms",
+        "statePath": "/quote/bedrooms",
+        "min": 1,
+        "max": 10,
+        "step": 1
+      },
+      "watch": {
+        "/quote/bedrooms": {
+          "action": "state.set",
+          "params": {
+            "path": "/quote/estimated",
+            "value": {
+              "$math": {
+                "op": "add",
+                "values": [
+                  220,
+                  {
+                    "$math": {
+                      "op": "multiply",
+                      "values": [
+                        {
+                          "$state": "/quote/bedrooms"
+                        },
+                        80
+                      ]
+                    }
+                  },
+                  {
+                    "$math": {
+                      "op": "multiply",
+                      "values": [
+                        {
+                          "$state": "/quote/bathrooms"
+                        },
+                        30
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "bathrooms": {
+      "type": "number-stepper",
+      "props": {
+        "label": "Bathrooms",
+        "statePath": "/quote/bathrooms",
+        "min": 1,
+        "max": 6,
+        "step": 1
+      },
+      "watch": {
+        "/quote/bathrooms": {
+          "action": "state.set",
+          "params": {
+            "path": "/quote/estimated",
+            "value": {
+              "$math": {
+                "op": "add",
+                "values": [
+                  220,
+                  {
+                    "$math": {
+                      "op": "multiply",
+                      "values": [
+                        {
+                          "$state": "/quote/bedrooms"
+                        },
+                        80
+                      ]
+                    }
+                  },
+                  {
+                    "$math": {
+                      "op": "multiply",
+                      "values": [
+                        {
+                          "$state": "/quote/bathrooms"
+                        },
+                        30
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "oven": {
+      "type": "form-toggle",
+      "props": {
+        "label": "Include oven clean",
+        "statePath": "/quote/includeOven",
+        "checked": {
+          "$state": "/quote/includeOven"
+        }
+      }
+    },
+    "total": {
+      "type": "metric",
+      "props": {
+        "label": "Estimated preview",
+        "value": {
+          "$format": {
+            "value": {
+              "$state": "/quote/estimated"
+            },
+            "style": "currency",
+            "currency": "AUD"
+          }
+        },
+        "change": "Before final inspection"
+      }
+    },
+    "actions": {
+      "type": "action-bar",
+      "props": {
+        "align": "between"
+      },
+      "children": [
+        "undo",
+        "reset",
+        "submit"
+      ]
+    },
+    "undo": {
+      "type": "button",
+      "props": {
+        "label": "Undo",
+        "variant": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "state.undo",
+          "params": {}
+        }
+      }
+    },
+    "reset": {
+      "type": "button",
+      "props": {
+        "label": "Reset",
+        "variant": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "state.reset",
+          "params": {}
+        }
+      }
+    },
+    "submit": {
+      "type": "button",
+      "props": {
+        "label": "Prepare quote",
+        "variant": "primary"
+      },
+      "on": {
+        "press": {
+          "action": "titanmoney.quotes.create",
+          "confirm": "Prepare this quote intent?",
+          "params": {
+            "draft": {
+              "$state": "/quote"
+            }
+          }
+        }
+      }
+    }
+  }
+}

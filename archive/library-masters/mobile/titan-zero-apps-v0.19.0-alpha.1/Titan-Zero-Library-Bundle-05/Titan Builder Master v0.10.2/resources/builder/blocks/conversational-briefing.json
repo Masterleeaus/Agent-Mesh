@@ -1,0 +1,21 @@
+{
+  "id": "conversational-briefing",
+  "name": "Conversational briefing",
+  "category": "Generative UI",
+  "renderer": "conversational-briefing",
+  "authority": "presentation-only",
+  "props": [
+    "eyebrow",
+    "title",
+    "summary",
+    "items"
+  ],
+  "allowed_actions": [
+    "builder.edit",
+    "ui.open-canvas"
+  ],
+  "data_contract": {
+    "type": "array"
+  },
+  "responsive": true
+}

@@ -1,0 +1,170 @@
+{
+  "wizard": {
+    "id": "stocktake_variance_v1",
+    "version": "1.0.0",
+    "name": "Stocktake and Variance",
+    "capability": "inventory.stocktakes.complete",
+    "permissions": {
+      "required_roles": [
+        "staff",
+        "supervisor",
+        "manager",
+        "admin"
+      ]
+    },
+    "metadata": {
+      "category": "inventory",
+      "template_id": "stocktake-variance",
+      "template_version": "1.0.0",
+      "verticals": [
+        "ecommerce",
+        "retail",
+        "wholesale"
+      ],
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "high",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": [
+        {
+          "when": {
+            "field": "material_variance",
+            "equals": true
+          },
+          "require_fields": [
+            "evidence_attachment_ids"
+          ],
+          "message_prefix": "Missing required variance evidence"
+        },
+        {
+          "when": {
+            "field": "material_variance",
+            "equals": true
+          },
+          "require_fields": [
+            "approval_id",
+            "approved_by",
+            "approved_at"
+          ],
+          "message_prefix": "Missing required approval"
+        }
+      ]
+    },
+    "steps": [
+      {
+        "id": "scope",
+        "title": "Stocktake scope",
+        "fields": [
+          {
+            "id": "location_id",
+            "label": "Location",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "stocktake_id",
+            "label": "Stocktake ID",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "counts",
+        "title": "Counts",
+        "fields": [
+          {
+            "id": "counted_items",
+            "label": "Counted items",
+            "type": "number",
+            "required": true,
+            "min": 0
+          },
+          {
+            "id": "variance_item_count",
+            "label": "Variance item count",
+            "type": "number",
+            "required": true,
+            "min": 0
+          },
+          {
+            "id": "variance_value",
+            "label": "Variance value",
+            "type": "number",
+            "required": true
+          },
+          {
+            "id": "material_variance",
+            "label": "Material variance",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "evidence",
+        "title": "Variance evidence",
+        "fields": [
+          {
+            "id": "variance_notes",
+            "label": "Variance notes",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "evidence_attachment_ids",
+            "label": "Evidence attachments",
+            "type": "array",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "approval",
+        "title": "Approval",
+        "fields": [
+          {
+            "id": "approval_id",
+            "label": "Approval ID",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "approved_by",
+            "label": "Approved by",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "approved_at",
+            "label": "Approved at",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "declaration_accepted",
+            "label": "Declaration accepted",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

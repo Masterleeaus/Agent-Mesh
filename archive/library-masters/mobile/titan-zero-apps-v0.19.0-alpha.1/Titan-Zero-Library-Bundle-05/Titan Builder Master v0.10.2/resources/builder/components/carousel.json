@@ -1,0 +1,14 @@
+{
+  "id": "carousel",
+  "name": "Carousel",
+  "category": "Media",
+  "blade": "components.titan-builder.carousel",
+  "authority": "presentation-only",
+  "props": [
+    "items"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

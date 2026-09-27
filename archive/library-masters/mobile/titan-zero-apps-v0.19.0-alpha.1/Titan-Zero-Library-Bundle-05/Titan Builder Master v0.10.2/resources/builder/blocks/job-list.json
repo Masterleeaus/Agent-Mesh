@@ -1,0 +1,34 @@
+{
+  "id": "job-list",
+  "name": "Job list",
+  "category": "Operations",
+  "renderer": "job-list",
+  "authority": "presentation-only",
+  "props": [
+    "title",
+    "items",
+    "action"
+  ],
+  "allowed_actions": [
+    "navigate",
+    "open-modal",
+    "open-drawer",
+    "filter",
+    "search",
+    "sort",
+    "export-preview",
+    "builder.edit",
+    "crm.customer.create",
+    "crm.work_order.create",
+    "crm.work_order.assign",
+    "crm.work_order.task.complete",
+    "titanmoney.quotes.create",
+    "titanmoney.invoices.issue",
+    "zeropay.payment-intent.create",
+    "communications.message.send"
+  ],
+  "data_contract": {
+    "type": "object"
+  },
+  "responsive": true
+}

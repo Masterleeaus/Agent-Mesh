@@ -1,0 +1,17 @@
+{
+  "id": "progress",
+  "name": "Progress",
+  "category": "Feedback",
+  "blade": "components.titan-builder.progress",
+  "authority": "presentation-only",
+  "props": [
+    "value",
+    "max",
+    "label",
+    "showValue"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

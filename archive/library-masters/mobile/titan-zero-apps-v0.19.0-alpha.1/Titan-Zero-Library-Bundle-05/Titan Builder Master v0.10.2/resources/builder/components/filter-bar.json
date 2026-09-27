@@ -1,0 +1,13 @@
+{
+  "id": "filter-bar",
+  "name": "Filter bar",
+  "category": "Forms",
+  "blade": "components.titan-builder.filter-bar",
+  "authority": "presentation-only",
+  "props": [
+    "title"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

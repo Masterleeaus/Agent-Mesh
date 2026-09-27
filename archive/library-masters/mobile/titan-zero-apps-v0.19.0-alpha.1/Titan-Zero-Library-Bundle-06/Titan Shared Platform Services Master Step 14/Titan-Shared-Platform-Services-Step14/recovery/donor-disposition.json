@@ -1,0 +1,19 @@
+{
+  "quality_compliance_team": {
+    "source": "Titan-Quality-Compliance-Team-v0.8.0-Pass8-Production-Hardening-Final-Cumulative.zip",
+    "sha256": "b674fe6887b7f1229ffebed39817420a18a90a5158ee700180865b4bceb49572",
+    "disposition": "PRESERVED_AS_DONOR_NOT_PARALLEL_AUTHORITY",
+    "modules": {
+      "ComplianceIQ": "compliance/assurance donor",
+      "QualityControl": "quality workflow donor",
+      "TitanZeroAssurance": "assurance donor",
+      "feedback": "signal/projection donor",
+      "report_builder": "reporting projection donor"
+    }
+  },
+  "bookings_quotes": {
+    "source": "Titan-Bookings-Quotes-v0.1.0-alpha.2-Pass2-Booking-Engine-Cumulative.zip",
+    "sha256": "9dee7b76126528f732c3a8bec1ba48fa4a7df20f96125cff3ab3954a01d15753",
+    "disposition": "RECOVERED_AS_LIFECYCLE_CONTRIBUTION"
+  }
+}

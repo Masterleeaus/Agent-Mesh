@@ -1,0 +1,29 @@
+{
+  "schema": "titan-visual-runtime-suite-runtime-compatibility-v1",
+  "suite_pass": 4,
+  "source": "Titan-Apps-Eight-Suite-Interface-Recovery-Rebase-Pass4-CUMULATIVE",
+  "canonical_surfaces": [
+    "zero",
+    "go",
+    "hub"
+  ],
+  "company_boundary": "company_id",
+  "ownership_boundary_not_isolation": true,
+  "interface_runtime": {
+    "version": "1.0.4-recovery.2",
+    "bridge_contract": "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\VisualRuntimeBridge",
+    "live_adapter": "App\\Extensions\\TitanInterfaceRuntime\\System\\Visual\\InstalledVisualRuntimeBridge",
+    "visual_contract": "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualRuntime",
+    "method": "plan"
+  },
+  "core_expected_public_contracts": [
+    "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualRuntime",
+    "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualContributionRegistry",
+    "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualContributionResolver",
+    "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualResourceRegistry",
+    "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualCapabilityNegotiator",
+    "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualMetadataContract"
+  ],
+  "interaction_authority": "App\\Extensions\\InteractionEngine\\System\\Contracts\\CapabilityIntentGatewayInterface",
+  "business_authority": false
+}

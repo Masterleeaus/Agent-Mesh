@@ -1,0 +1,23 @@
+{
+  "id": "crm-business-services",
+  "name": "Configured business services",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.business.services",
+  "required_capability": "crm.business.configuration",
+  "fields": [
+    "id",
+    "name",
+    "enabled",
+    "booking_enabled",
+    "price_hint"
+  ],
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

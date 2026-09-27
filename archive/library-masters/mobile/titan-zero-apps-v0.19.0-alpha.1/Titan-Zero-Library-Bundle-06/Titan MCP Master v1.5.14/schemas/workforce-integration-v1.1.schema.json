@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://titan.local/schemas/workforce-integration-v1.1.schema.json",
+  "title": "Titan Workforce Provider Integration Contract v1.1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "provider",
+    "tenant_key",
+    "ownership",
+    "capabilities",
+    "tools",
+    "commands",
+    "data_sources",
+    "work_types",
+    "governance",
+    "availability",
+    "evidence_outcomes",
+    "provider_lifecycle",
+    "forbidden_inference",
+    "capability_contracts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.1"
+    },
+    "tenant_key": {
+      "const": "company_id"
+    },
+    "capability_contracts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "risk_class",
+          "mutation_mode",
+          "command_bus_required",
+          "offline_policy",
+          "reversible",
+          "idempotency_scope",
+          "authority_evaluation",
+          "execution_receipt_required",
+          "provider_provenance_required",
+          "degraded_behavior"
+        ]
+      }
+    }
+  }
+}

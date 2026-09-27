@@ -1,0 +1,36 @@
+{
+  "id": "mobilekit-premium",
+  "name": "Mobilekit Premium",
+  "mode": "light",
+  "premium": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "tokens": {
+    "primary": "#6236FF",
+    "secondary": "#8494A8",
+    "success": "#1DCC70",
+    "danger": "#FF396F",
+    "warning": "#FFB400",
+    "info": "#05D0A4",
+    "background": "#F1F2F6",
+    "surface": "#FFFFFF",
+    "surface_muted": "#F7F8FA",
+    "border": "#DCDCE9",
+    "text": "#27173E",
+    "text_muted": "#958D9E",
+    "radius": "10px",
+    "shadow": "0 3px 10px rgba(0,0,0,.08)",
+    "safe_top": "env(safe-area-inset-top)",
+    "safe_bottom": "env(safe-area-inset-bottom)",
+    "direction": "ltr"
+  },
+  "dark_tokens": {
+    "background": "#030108",
+    "surface": "#161129",
+    "border": "#2D2746",
+    "text": "#FFFFFF",
+    "text_muted": "#A7A1B3",
+    "surface_muted": "#211A38",
+    "shadow": "0 12px 35px rgba(0,0,0,.32)"
+  },
+  "direction": "ltr"
+}

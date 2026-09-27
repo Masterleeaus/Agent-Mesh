@@ -1,0 +1,51 @@
+{
+  "id": "public-cleaning-website",
+  "name": "Public cleaning website",
+  "surface": "public-website",
+  "theme": "cleaning-fresh",
+  "mock_data": "cleaning-business",
+  "description": "Public marketing website for a cleaning company.",
+  "sections": [
+    {
+      "block": "hero",
+      "renderer": "hero",
+      "data": {
+        "eyebrow": "BrightHome Cleaning",
+        "heading": "A cleaner home without the hassle",
+        "copy": "Trusted local cleaners for homes, offices and managed properties.",
+        "primary_action": {
+          "label": "Get a quote",
+          "intent": "titanmoney.quotes.create"
+        },
+        "secondary_action": {
+          "label": "View services",
+          "intent": "navigate"
+        }
+      }
+    },
+    {
+      "block": "service-grid",
+      "renderer": "service-grid",
+      "title": "Cleaning services",
+      "data_source": "services"
+    },
+    {
+      "block": "testimonial-grid",
+      "renderer": "testimonial-grid",
+      "title": "Why customers stay with us",
+      "data_source": "testimonials"
+    },
+    {
+      "block": "call-to-action",
+      "renderer": "call-to-action",
+      "data": {
+        "heading": "Ready for a cleaner space?",
+        "copy": "Tell us what needs cleaning and choose a convenient time.",
+        "action": {
+          "label": "Request a quote",
+          "intent": "titanmoney.quotes.create"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "localbrain_assisted",
+  "version": "1.0.0",
+  "name": "LocalBrain-Assisted Quote",
+  "description": "Prepare a quote with fully local deterministic assistance",
+  "category": "quotes",
+  "type": "wizard",
+  "capability": "crm.quote.create",
+  "permissions": [
+    "crm.quote.create"
+  ],
+  "sections": [
+    {
+      "id": "customer",
+      "title": "Customer",
+      "questions": [
+        {
+          "key": "customer_id",
+          "question": "Which customer?",
+          "response_type": "select",
+          "options_source": "customers",
+          "validation": {
+            "required": true
+          },
+          "handling": "lookup"
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "title": "Services",
+      "questions": [
+        {
+          "key": "services",
+          "question": "Select services to quote",
+          "response_type": "multi_select",
+          "options_source": "services",
+          "validation": {
+            "required": true
+          },
+          "handling": "local_intelligence",
+          "metadata": {
+            "compute": "['Cleaning', 'Maintenance']"
+          }
+        }
+      ]
+    }
+  ]
+}

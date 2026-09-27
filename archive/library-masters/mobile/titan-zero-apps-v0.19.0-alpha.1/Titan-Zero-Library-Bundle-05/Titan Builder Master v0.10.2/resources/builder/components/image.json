@@ -1,0 +1,18 @@
+{
+  "id": "image",
+  "name": "Image",
+  "category": "Media",
+  "blade": "components.titan-builder.image",
+  "authority": "presentation-only",
+  "props": [
+    "src",
+    "alt",
+    "fit",
+    "ratio",
+    "loading"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

@@ -1,0 +1,24 @@
+{
+  "id": "profile-hero",
+  "name": "Profile Hero",
+  "category": "Premium / Profile",
+  "blade": "components.titan-builder.premium.profile-hero",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "name",
+    "subtitle",
+    "avatar",
+    "cover",
+    "badge",
+    "bio",
+    "actions"
+  ],
+  "actions": [
+    "navigate"
+  ]
+}

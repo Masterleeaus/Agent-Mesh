@@ -1,0 +1,18 @@
+{
+  "id": "cleaning-fresh",
+  "name": "Cleaning Fresh",
+  "mode": "light",
+  "tokens": {
+    "primary": "#0f766e",
+    "accent": "#0891b2",
+    "success": "#15803d",
+    "warning": "#ca8a04",
+    "danger": "#dc2626",
+    "background": "#f0fdfa",
+    "surface": "#ffffff",
+    "surface_muted": "#ccfbf1",
+    "border": "#99f6e4",
+    "text": "#134e4a",
+    "text_muted": "#52706d"
+  }
+}

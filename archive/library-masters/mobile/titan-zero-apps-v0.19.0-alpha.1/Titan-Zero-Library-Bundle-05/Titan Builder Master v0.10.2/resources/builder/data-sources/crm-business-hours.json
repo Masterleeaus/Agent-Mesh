@@ -1,0 +1,21 @@
+{
+  "id": "crm-business-hours",
+  "name": "Business hours",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.business.hours",
+  "required_capability": "crm.business.configuration",
+  "fields": [
+    "day",
+    "open",
+    "close",
+    "closed"
+  ],
+  "surface_compatibility": [
+    "customer",
+    "owner",
+    "onboarding"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

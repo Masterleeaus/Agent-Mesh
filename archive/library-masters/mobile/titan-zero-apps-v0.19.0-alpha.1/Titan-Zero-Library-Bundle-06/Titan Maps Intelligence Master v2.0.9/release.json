@@ -1,0 +1,21 @@
+{
+  "product": "Titan Maps Intelligence",
+  "release": "2.0.2",
+  "milestone": "Installer 1.7.3 MySQL identifier and partial-DDL recovery hotfix",
+  "status": "stable-hotfix",
+  "tenant_boundary": "company_id",
+  "migration_state": "39-owned-tables-54-total-migrations",
+  "security_state": "tenant-scoped-permission-fail-closed-mutations-current-consent-live-gps-history-sharing-retention-geofence-replay-hardening",
+  "provider": "App\\Extensions\\TitanMapsIntelligence\\System\\TitanMapsIntelligenceServiceProvider",
+  "version": "2.0.4",
+  "phase": "beta-1-field-route-optimisation-proposals",
+  "configuration_version": "2026-08-12.beta1",
+  "location_state": "maps-authoritative-live-worker-gps-with-delayed-offline-history-and-optional-titan-field-peer",
+  "navigation_state": "5-user-parents-36-user-children-distinct-workspace-contracts-blade-compiler-safe",
+  "map_ui_state": "interactive-map-with-distinct-page-workspaces-host-theme-responsive-kpis-route-plans-route-history-geofences-travel-matrix-and-persisted-analytics-cell-overlays",
+  "routing_state": "field-peer-route-eta-capacity-pressure-plus-read-only-explainable-optimisation-proposals",
+  "territory_analytics_state": "six-methodologies-queued-24h-snapshot-cache",
+  "resource_fallback_state": "internal-first-approved-network-second-discovery-third-human-review-explicit-promotion",
+  "governance_state": "route-optimisation-proposals-read-only-field-apply-governed-plus-existing-spatial-governance",
+  "offline_state": "bounded-delayed-gps-sync-durable-live-historical-debounced-classification-no-retroactive-geofence"
+}

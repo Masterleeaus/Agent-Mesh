@@ -1,0 +1,24 @@
+{
+  "slug": "roofing-guttering",
+  "profile": "field_home_services",
+  "terminology": [
+    "job",
+    "site"
+  ],
+  "required_evidence_suggestions": [
+    "before_photo",
+    "after_photo",
+    "safety_check"
+  ],
+  "suggested_services": [
+    "Roof repair",
+    "Gutter cleaning",
+    "Gutter repair"
+  ],
+  "compliance_prompts": [
+    "working-at-heights and safety requirements"
+  ],
+  "wizard_overrides": {
+    "engine_logic": "unchanged"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "wizard": {
+    "id": "client_intake_consent_v1",
+    "version": "1.0.0",
+    "name": "Client Intake and Consent",
+    "capability": "care.clients.intake",
+    "permissions": {
+      "required_roles": [
+        "clinician",
+        "practitioner",
+        "care_worker",
+        "manager",
+        "admin"
+      ]
+    },
+    "metadata": {
+      "category": "care",
+      "template_id": "client-intake-consent",
+      "template_version": "1.0.0",
+      "verticals": [
+        "healthcare",
+        "allied_health",
+        "aged_care",
+        "disability_services"
+      ],
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "high",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": []
+    },
+    "steps": [
+      {
+        "id": "identity",
+        "title": "Client identity",
+        "fields": [
+          {
+            "id": "client_id",
+            "label": "Client ID",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "full_name",
+            "label": "Full name",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "date_of_birth",
+            "label": "Date of birth",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "service",
+        "title": "Service needs",
+        "fields": [
+          {
+            "id": "service_type",
+            "label": "Service type",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "accessibility_needs",
+            "label": "Accessibility needs",
+            "type": "array",
+            "required": false
+          },
+          {
+            "id": "emergency_contact",
+            "label": "Emergency contact",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "consent",
+        "title": "Consent",
+        "fields": [
+          {
+            "id": "consent_decision",
+            "label": "Consent decision",
+            "type": "text",
+            "required": true,
+            "options": [
+              "accepted"
+            ]
+          },
+          {
+            "id": "consent_recorded_at",
+            "label": "Consent recorded at",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "privacy_notice_version",
+            "label": "Privacy notice version",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "declaration",
+        "title": "Review",
+        "fields": [
+          {
+            "id": "declaration_accepted",
+            "label": "Declaration accepted",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

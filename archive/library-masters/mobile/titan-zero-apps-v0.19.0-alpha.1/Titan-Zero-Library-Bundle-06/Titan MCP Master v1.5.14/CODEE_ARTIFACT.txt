@@ -1,0 +1,11 @@
+CODEE_ARTIFACT
+PROTOCOL_VERSION: 2
+
+PLAN_ID: 240accda-a1f4-4f41-b4ea-2e894556d9ef
+RUN_ID: 320f908b-0316-469d-afa9-0e0e55e3212e
+STEP_ID: titan-mcp-extension-v1.5.8-client-contract-evidence
+STEP_TOKEN: 036658f8-73f5-4b49-abc6-b93a790fe560
+ARTIFACT_ID: 90062b20-e843-4249-973e-0be64b310332
+VERSION: 1.5.8
+TYPE: titan_extension
+STATUS: completed

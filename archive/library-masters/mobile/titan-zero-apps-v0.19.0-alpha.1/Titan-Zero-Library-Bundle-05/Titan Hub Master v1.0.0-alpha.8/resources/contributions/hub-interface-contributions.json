@@ -1,0 +1,17 @@
+{
+  "schema": "titan-interface-contributions-v1",
+  "extension": "titan-hub",
+  "surface": "hub",
+  "workspaces": [
+    {"id":"hub.home","route":"home","projection":"hub.home","visualTreatment":"customer-home"},
+    {"id":"hub.book","route":"book","projection":"hub.services","visualTreatment":"customer-booking"},
+    {"id":"hub.inbox","route":"inbox","projection":"hub.support","visualTreatment":"customer-inbox"},
+    {"id":"hub.more","route":"more","projection":"hub.profile","visualTreatment":"customer-settings"}
+  ],
+  "actions": [
+    {"id":"hub.service-request.create","type":"intent","destructive":false},
+    {"id":"hub.booking-change.request","type":"intent","destructive":false},
+    {"id":"hub.quote.approve","type":"intent","destructive":false}
+  ],
+  "executable_code": false
+}

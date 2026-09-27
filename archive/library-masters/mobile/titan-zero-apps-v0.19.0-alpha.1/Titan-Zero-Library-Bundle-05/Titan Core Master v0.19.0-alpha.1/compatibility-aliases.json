@@ -1,0 +1,24 @@
+{
+  "schema": "titan-apps-compatibility-v1",
+  "canonical_surfaces": [
+    "zero",
+    "go",
+    "hub"
+  ],
+  "surface_aliases": {
+    "bos": "zero",
+    "command": "zero",
+    "owner": "zero",
+    "manager": "zero",
+    "business": "zero",
+    "field": "go",
+    "worker": "go",
+    "customer": "hub"
+  },
+  "internal_catalogue_audiences": {
+    "zero": "business",
+    "go": "worker",
+    "hub": "customer"
+  },
+  "note": "Internal catalogue audience values are compatibility encodings, not application identities."
+}

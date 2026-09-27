@@ -1,0 +1,82 @@
+{
+  "id": "adaptive-operations-workspace",
+  "name": "Adaptive operations workspace",
+  "surface": "admin-dashboard",
+  "theme": "titan-light",
+  "mock_data": "cleaning-business",
+  "description": "Conversational briefing and canvas-ready operational workspace.",
+  "sections": [
+    {
+      "block": "conversational-briefing",
+      "renderer": "conversational-briefing",
+      "eyebrow": "Titan Zero briefing",
+      "title": "What needs your attention",
+      "summary": "A compact generative summary before the detailed workspace.",
+      "data": [
+        {
+          "title": "Two jobs need assignment",
+          "description": "The first begins at 8:30 am."
+        },
+        {
+          "title": "One invoice is overdue",
+          "description": "INV-1042 is four days late."
+        }
+      ]
+    },
+    {
+      "block": "approval-workflow",
+      "renderer": "approval-workflow",
+      "title": "Prepare cleaner assignment",
+      "summary": "Mia is the nearest available cleaner for JOB-2051.",
+      "impact": "Expected arrival is 8:18 am. This remains a preview intent.",
+      "actions": [
+        {
+          "label": "Review in chat",
+          "intent": "builder.edit"
+        },
+        {
+          "label": "Prepare assignment",
+          "intent": "crm.work_order.assign"
+        }
+      ]
+    },
+    {
+      "block": "operations-kanban",
+      "renderer": "operations-kanban",
+      "title": "Cleaning work board",
+      "data": [
+        {
+          "label": "Unassigned",
+          "items": [
+            {
+              "title": "JOB-2061 · Deep clean",
+              "detail": "Brunswick"
+            }
+          ]
+        },
+        {
+          "label": "Scheduled",
+          "items": [
+            {
+              "title": "JOB-2058 · Office clean",
+              "detail": "Richmond"
+            },
+            {
+              "title": "JOB-2059 · Weekly clean",
+              "detail": "Fitzroy"
+            }
+          ]
+        },
+        {
+          "label": "In progress",
+          "items": [
+            {
+              "title": "JOB-2057 · Bond clean",
+              "detail": "Carlton"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

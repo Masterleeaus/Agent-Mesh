@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Titan Go Worker-Safe Projection",
+  "type": "object",
+  "required": [
+    "surface",
+    "projection_type",
+    "data"
+  ],
+  "properties": {
+    "surface": {
+      "const": "go"
+    },
+    "projection_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "data": {
+      "type": "object"
+    },
+    "raw_record": {
+      "const": false
+    }
+  },
+  "additionalProperties": true
+}

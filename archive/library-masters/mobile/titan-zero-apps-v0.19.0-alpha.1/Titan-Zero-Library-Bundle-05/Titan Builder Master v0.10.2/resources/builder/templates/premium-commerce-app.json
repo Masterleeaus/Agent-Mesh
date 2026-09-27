@@ -1,0 +1,26 @@
+{
+  "id": "premium-commerce-app",
+  "name": "Premium Commerce App",
+  "description": "Commerce and retail mobile app",
+  "surface": "customer",
+  "base_surface_template": "customer",
+  "theme": "mobilekit-premium",
+  "premium": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "company_boundary": "company_id",
+  "runtime_ownership": "existing Titan surface/runtime",
+  "blocks": [
+    "premium-product-commerce",
+    "premium-cart-checkout",
+    "premium-profile-overview",
+    "premium-system-state"
+  ],
+  "page_presets": [
+    "mobile-login",
+    "mobile-profile",
+    "mobile-chat",
+    "mobile-invoice",
+    "mobile-contact",
+    "mobile-maintenance"
+  ]
+}

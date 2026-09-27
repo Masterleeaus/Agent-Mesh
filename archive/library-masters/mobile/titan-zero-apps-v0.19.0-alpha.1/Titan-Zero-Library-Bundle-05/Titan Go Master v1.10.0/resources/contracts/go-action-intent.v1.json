@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Titan Go Action Intent",
+  "type": "object",
+  "required": [
+    "intent",
+    "company_id",
+    "actor_id",
+    "idempotency_key"
+  ],
+  "properties": {
+    "intent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "company_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "not": {
+    "required": [
+      "url",
+      "sql",
+      "script"
+    ]
+  }
+}

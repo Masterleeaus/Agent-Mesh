@@ -1,0 +1,46 @@
+{
+  "id": "plumbing",
+  "name": "Plumbing",
+  "engine": "field-home-services",
+  "configuration_only": true,
+  "surfaces": [
+    "customer",
+    "field",
+    "owner"
+  ],
+  "data_sources": [
+    "crm-field-assigned-work",
+    "crm-field-tasks"
+  ],
+  "action_intents": [
+    "crm.work_order.task.complete"
+  ],
+  "terminology": {
+    "job": "service call",
+    "asset_or_area": "fixture",
+    "completion": "pressure test"
+  },
+  "authority": "presentation-only",
+  "crm_capabilities": [
+    "crm.work_order.read",
+    "crm.work_order.task.complete",
+    "crm.appointment.read"
+  ],
+  "read_models": [
+    "crm.field.assigned-work",
+    "crm.field.tasks",
+    "crm.field.minimum-customer-context",
+    "crm.field.minimum-site-context"
+  ],
+  "ui_hints": {
+    "default_surfaces": [
+      "customer",
+      "field",
+      "owner"
+    ],
+    "prefer_mobile_job_cards": true,
+    "show_required_evidence": true,
+    "capability_driven": true
+  },
+  "business_configuration_authority": "CRM"
+}

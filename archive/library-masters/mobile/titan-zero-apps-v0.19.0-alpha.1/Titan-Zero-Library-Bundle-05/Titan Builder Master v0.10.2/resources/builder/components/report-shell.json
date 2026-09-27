@@ -1,0 +1,15 @@
+{
+  "id": "report-shell",
+  "name": "Report shell",
+  "category": "Reports",
+  "blade": "components.titan-builder.report-shell",
+  "authority": "presentation-only",
+  "props": [
+    "title",
+    "period"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

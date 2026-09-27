@@ -1,0 +1,7 @@
+Titan Zero Engine Library integration
+
+Source base: InteractionEngine_Wizard_Cumulative_Merged_Phase8(2).zip
+Added: 80 contracts + 80 implementations under src/Engines
+Updated: composer.json PSR-4 mapping for TitanZero\Engines\
+Updated: InteractionServiceProvider with all 80 singleton bindings
+Added: docs/ENGINE_LIBRARY_80.md

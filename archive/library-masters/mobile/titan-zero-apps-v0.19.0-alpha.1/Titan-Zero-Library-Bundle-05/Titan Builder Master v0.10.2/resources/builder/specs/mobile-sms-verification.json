@@ -1,0 +1,110 @@
+{
+  "id": "mobile-sms-verification",
+  "name": "Verify phone",
+  "description": "Premium Mobilekit-derived verify phone preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {
+    "code": ""
+  },
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Verify phone",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "copy",
+        "code",
+        "verify"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "copy": {
+      "type": "summary-banner",
+      "props": {
+        "eyebrow": "Verification",
+        "title": "Enter the six-digit code",
+        "description": "The host authentication service validates the code."
+      }
+    },
+    "code": {
+      "type": "mobile-input",
+      "props": {
+        "label": "Verification code",
+        "type": "text",
+        "placeholder": "000000",
+        "statePath": "/code"
+      }
+    },
+    "verify": {
+      "type": "button",
+      "props": {
+        "label": "Verify preview",
+        "variant": "primary"
+      },
+      "on": {
+        "press": {
+          "action": "navigate",
+          "params": {
+            "destination": "auth.verify-phone"
+          }
+        }
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

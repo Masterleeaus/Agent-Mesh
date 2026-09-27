@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "titan.apps.go.suite-runtime.v1",
+  "title": "Titan Go Suite Runtime Contract",
+  "type": "object",
+  "required": ["surface", "company_id", "actor_id"],
+  "properties": {
+    "surface": {"const": "go"},
+    "company_id": {"type": "string", "minLength": 1},
+    "actor_id": {"type": "string", "minLength": 1},
+    "intent": {"type": "string", "minLength": 1},
+    "spec": {"type": "object"},
+    "projection": {"type": "object"}
+  },
+  "not": {
+    "anyOf": [
+      {"required": ["tenant_id"]},
+      {"required": ["tenant_company_id"]},
+      {"required": ["tenant_scope"]},
+      {"required": ["tenant_boundary"]}
+    ]
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,20 @@
+{
+  "id": "jobs-customer",
+  "name": "Customer work orders",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.customer.work-orders",
+  "required_capability": "crm.customer.operations",
+  "fields": [
+    "id",
+    "reference",
+    "status",
+    "scheduled_at",
+    "service_summary"
+  ],
+  "surface_compatibility": [
+    "customer"
+  ],
+  "compatibility_alias": true,
+  "authority": "read-only-dto"
+}

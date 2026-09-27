@@ -1,0 +1,26 @@
+name: Verify Interaction Engine
+
+on:
+  pull_request:
+  push:
+    branches: [main, feature/full-engine-template-upgrade]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Run complete engine verification
+        run: php bin/verify.php
+
+      - name: Lint PHP and validate JSON
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do php -l "$file" >/dev/null; done < <(find System tests bin routes config database -type f -name '*.php' -print0 2>/dev/null)
+          while IFS= read -r -d '' file; do php -r 'json_decode(file_get_contents($argv[1]), true, 512, JSON_THROW_ON_ERROR);' "$file"; done < <(find resources config reports -type f -name '*.json' -print0 2>/dev/null)

@@ -1,0 +1,151 @@
+{
+  "wizard": {
+    "id": "store_stock_transfer_v1",
+    "version": "1.0.0",
+    "name": "Store Stock Transfer",
+    "capability": "inventory.transfers.create",
+    "permissions": {
+      "required_roles": [
+        "staff",
+        "supervisor",
+        "manager",
+        "admin"
+      ]
+    },
+    "metadata": {
+      "category": "inventory",
+      "template_id": "store-stock-transfer",
+      "template_version": "1.0.0",
+      "verticals": [
+        "retail",
+        "wholesale",
+        "ecommerce"
+      ],
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "normal",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": [
+        {
+          "when": {
+            "field": "priority",
+            "equals": "urgent"
+          },
+          "require_fields": [
+            "approval_id",
+            "approved_by",
+            "approved_at"
+          ],
+          "message_prefix": "Missing required urgent transfer approval"
+        }
+      ]
+    },
+    "steps": [
+      {
+        "id": "locations",
+        "title": "Transfer locations",
+        "fields": [
+          {
+            "id": "source_location_id",
+            "label": "Source location",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "destination_location_id",
+            "label": "Destination location",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "items",
+        "title": "Transfer items",
+        "fields": [
+          {
+            "id": "items",
+            "label": "Items",
+            "type": "array",
+            "required": true
+          },
+          {
+            "id": "requested_at",
+            "label": "Requested at",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "priority",
+            "label": "Priority",
+            "type": "text",
+            "required": true,
+            "options": [
+              "normal",
+              "high",
+              "urgent"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "approval",
+        "title": "Approval and transport",
+        "fields": [
+          {
+            "id": "carrier",
+            "label": "Carrier",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "approval_id",
+            "label": "Approval ID",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "approved_by",
+            "label": "Approved by",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "approved_at",
+            "label": "Approved at",
+            "type": "text",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "declaration",
+        "title": "Review",
+        "fields": [
+          {
+            "id": "declaration_accepted",
+            "label": "Declaration accepted",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

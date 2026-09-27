@@ -1,0 +1,25 @@
+{
+  "id": "system-state",
+  "name": "System State",
+  "category": "Premium / System",
+  "blade": "components.titan-builder.premium.system-state",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "state",
+    "title",
+    "description",
+    "image",
+    "icon",
+    "actionLabel",
+    "secondaryLabel"
+  ],
+  "actions": [
+    "navigate",
+    "state.reset"
+  ]
+}

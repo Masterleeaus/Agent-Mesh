@@ -1,0 +1,26 @@
+{
+  "schema": "titan-builder-app-surfaces-v1",
+  "canonical": [
+    "zero",
+    "go",
+    "hub"
+  ],
+  "aliases": {
+    "base": "zero",
+    "owner": "zero",
+    "command": "zero",
+    "bos": "zero",
+    "business": "zero",
+    "manager": "zero",
+    "field": "go",
+    "worker": "go",
+    "customer": "hub"
+  },
+  "journeys": {
+    "onboarding": {
+      "surface": "zero",
+      "journey": "onboarding"
+    }
+  },
+  "rule": "Aliases are compatibility inputs only; new Builder content must persist canonical surface identities."
+}

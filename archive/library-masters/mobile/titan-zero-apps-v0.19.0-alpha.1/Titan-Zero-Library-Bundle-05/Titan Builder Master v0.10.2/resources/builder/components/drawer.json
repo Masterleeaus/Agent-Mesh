@@ -1,0 +1,16 @@
+{
+  "id": "drawer",
+  "name": "Drawer",
+  "category": "Overlay",
+  "blade": "components.titan-builder.drawer",
+  "authority": "presentation-only",
+  "props": [
+    "name",
+    "title",
+    "side"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

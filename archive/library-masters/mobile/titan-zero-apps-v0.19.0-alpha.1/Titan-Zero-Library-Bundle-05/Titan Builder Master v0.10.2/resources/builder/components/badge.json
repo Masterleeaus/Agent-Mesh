@@ -1,0 +1,14 @@
+{
+  "id": "badge",
+  "name": "Badge",
+  "category": "Data display",
+  "blade": "components.titan-builder.badge",
+  "authority": "presentation-only",
+  "props": [
+    "tone"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

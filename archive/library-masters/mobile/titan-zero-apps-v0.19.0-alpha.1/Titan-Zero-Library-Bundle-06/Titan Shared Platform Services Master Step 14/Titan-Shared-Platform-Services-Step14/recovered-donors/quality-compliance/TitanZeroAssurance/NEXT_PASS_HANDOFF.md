@@ -1,0 +1,3 @@
+# Pass 8 Handoff — Production Hardening & Final Team Contract
+
+Use Pass 7 only. Perform a final deep scan across the complete Quality & Compliance Team package. Wire remaining real event emitters to AssuranceBridge where safe, verify provider/container resolution, routes, migrations and install compatibility, eliminate remaining direct cross-domain workflow ownership, add end-to-end isolation/idempotency/correlation tests, validate module manifests and installer expectations, document the final Workforce-facing team capability contract, and produce the final cumulative production candidate. company_id remains the sole company boundary.

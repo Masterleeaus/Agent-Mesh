@@ -1,0 +1,23 @@
+{
+  "slug": "landscaping-gardening",
+  "profile": "field_home_services",
+  "terminology": [
+    "job",
+    "property"
+  ],
+  "required_evidence_suggestions": [
+    "before_photo",
+    "after_photo"
+  ],
+  "suggested_services": [
+    "Garden maintenance",
+    "Lawn care",
+    "Landscaping"
+  ],
+  "compliance_prompts": [
+    "chemical/equipment requirements where applicable"
+  ],
+  "wizard_overrides": {
+    "engine_logic": "unchanged"
+  }
+}

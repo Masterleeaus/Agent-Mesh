@@ -1,0 +1,28 @@
+{
+  "id": "owner",
+  "name": "Titan Command",
+  "product": "Titan Command",
+  "runtime_owner": "Titan Mobile / Titan Command",
+  "connectivity": "online-first",
+  "offline_fallback": "read-only-cached-snapshot-with-stale-indicator",
+  "authority": "presentation-only",
+  "default_template": "owner",
+  "allowed_devices": [
+    "mobile",
+    "tablet",
+    "desktop"
+  ],
+  "required_capabilities": [
+    "mobile.owner",
+    "crm.owner.dashboard"
+  ],
+  "preview_states": [
+    "online",
+    "offline",
+    "empty",
+    "populated",
+    "loading",
+    "error",
+    "permission-denied"
+  ]
+}

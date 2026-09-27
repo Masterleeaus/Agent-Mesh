@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0",
+  "host_profile": "titan.host.magicai.installer-1.7.8.v1",
+  "package_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "stages": {
+    "PACKAGE_CERTIFIED": {
+      "status": "BLOCKED",
+      "evidence": [
+        "Functional Pass 20 plus Pass20-H1/H2/H3 hotfix regressions and cumulative Pass 1-20 plus Pass 11R regressions pass on the v1.0.3 source tree.",
+        "Canonical Manifest v2.2 and Interface Contribution v1.1 semantic validation pass; package/security/MySQL scans pass; architecture reports 0 critical / 0 warnings; 356 PHP files and 15 JSON files validate offline.",
+        "Strict flat-root Installer 1.7.8 archive is rebuilt from the completed v1.0.3 source and verified against its exact integrity map.",
+        "Manifest requires Larastan level 8, but no Larastan/PHPStan executable is available in this execution environment; production static-analysis certification remains outstanding.",
+        "package_sha256 is a zero sentinel inside the package because embedding the final ZIP hash in the ZIP itself is self-referential; authoritative final ZIP SHA-256 is recorded in the external certification handoff."
+      ]
+    },
+    "INSTALLER_CERTIFIED": {
+      "status": "PASS",
+      "evidence": [
+        "Canonical v1.0.3 package uses the latest Blueprint strict flat-root Installer 1.7.8 manifest/integrity contract.",
+        "Website1408/Installer 1.7.6 transition package is derived from the same frozen bytes and adds only the legacy root name field.",
+        "The v1.0.1 hidden-file integrity compatibility fix remains active; the package contains zero hidden regular files."
+      ]
+    },
+    "MIGRATION_CERTIFIED": {
+      "status": "PASS",
+      "evidence": [
+        "Extension owns no migrations; v0.19.0\u2192v1.0.0 is migration-free and donor data is retained; MySQL strict-mode scan passes."
+      ]
+    },
+    "BOOT_CERTIFIED": {
+      "status": "NOT_RUN",
+      "evidence": [
+        "Live v1.0.2 install reached and passed provider boot far enough to render the overview; v1.0.3 changes host views/navigation only.",
+        "Pass20-H2 provider-binding regression remains green; exact v1.0.3 deployed-host boot remains NOT_RUN until installation."
+      ]
+    },
+    "NAVIGATION_CERTIFIED": {
+      "status": "NOT_RUN",
+      "evidence": [
+        "Website1408 source confirms panel.layout.app is the host extension layout and menus supports parent_id child hierarchies.",
+        "Pass20-H3 confirms all Interface Runtime Blade views avoid x-layouts.app and the full parent + 17-child menu hierarchy is declared.",
+        "Executable legacy-menu regression materializes all 18 rows with correct parent_id/route_slug relationships and removes all owned rows on uninstall.",
+        "Live rendered-menu click verification requires installation of v1.0.3 on the deployed host."
+      ]
+    },
+    "AUTHORIZATION_CERTIFIED": {
+      "status": "NOT_RUN",
+      "evidence": [
+        "Host adapter covers isSuperAdmin/isAdmin/can/checkPermission/hasPermissionTo; live role matrix requires deployed host."
+      ]
+    },
+    "RUNTIME_CERTIFIED": {
+      "status": "NOT_RUN",
+      "evidence": [
+        "All offline Pass 1-20 runtime/E2E/compatibility regressions pass; full deployed-host runtime certification remains NOT_RUN."
+      ]
+    },
+    "UPGRADE_CERTIFIED": {
+      "status": "NOT_RUN",
+      "evidence": [
+        "Migration-free upgrade and disable gating are mechanically verified offline; deployed-host upgrade execution remains NOT_RUN."
+      ]
+    },
+    "UNINSTALL_CERTIFIED": {
+      "status": "NOT_RUN",
+      "evidence": [
+        "Retain-data uninstall boundary is mechanically verified offline; deployed-host uninstall-retain-data sequence remains NOT_RUN."
+      ]
+    }
+  },
+  "overall_status": "PARTIAL",
+  "installer_1_7_6_hidden_file_hotfix": {
+    "status": "PASS_LOCAL_REPRODUCTION",
+    "root_cause": "Laravel File::allFiles()/Symfony Finder excludes hidden .gitkeep files from actual integrity file list while v1.0.0 declared them.",
+    "removed_paths": [
+      "database/migrations/.gitkeep",
+      "resources/lang/.gitkeep"
+    ],
+    "integrity_bypass": false,
+    "live_install_after_hotfix": "NOT_RUN"
+  },
+  "installer_1_7_6_provider_boot_hotfix": {
+    "status": "PASS_LOCAL_REPRODUCTION",
+    "failed_install_id": "01M0EX8K72XBETAP9QS2644KMD",
+    "failed_version": "1.0.1",
+    "failed_stage": "provider",
+    "root_cause": "FacetRegistryContract was resolved during TitanInterfaceRuntimeServiceProvider::boot() but omitted from register() container bindings.",
+    "fix": "Explicit singleton binding to InMemoryFacetRegistry(ObjectRegistryContract) plus boot-time registry binding coverage regression.",
+    "migrations_changed": false,
+    "integrity_bypass": false,
+    "live_install_after_hotfix": "NOT_RUN"
+  },
+  "installer_1_7_6_host_view_menu_hotfix": {
+    "status": "PASS_LOCAL_REPRODUCTION",
+    "failed_symptom": "Unable to locate a class or view for component [layouts.app].",
+    "root_cause": "Website1408/MagicAI does not provide the layouts.app Blade component; the verified extension layout is panel.layout.app.",
+    "fix": "All Interface Runtime full-page views use panel.layout.app; one parent + 17 child navigation links are materialized; parameterized capabilities use safe discovery landing pages.",
+    "legacy_menu_fallback_fix": "Uses TitanInterfaceRuntimeMenuContributor::definitions() rather than statically invoking non-static user().",
+    "migrations_changed": false,
+    "business_authority_changed": false,
+    "live_install_after_hotfix": "NOT_RUN"
+  }
+}

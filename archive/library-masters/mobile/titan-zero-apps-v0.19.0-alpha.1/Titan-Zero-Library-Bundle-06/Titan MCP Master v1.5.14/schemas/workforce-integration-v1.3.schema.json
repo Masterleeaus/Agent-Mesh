@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://titan.local/schemas/workforce-integration-v1.3.schema.json",
+  "title": "Titan Workforce Provider Runtime Integration v1.3",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "provider",
+    "tenant_key",
+    "runtime_discovery",
+    "runtime_health",
+    "capability_availability",
+    "runtime_adapter"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.3"
+    },
+    "tenant_key": {
+      "const": "company_id"
+    },
+    "runtime_adapter": {
+      "type": "object",
+      "required": [
+        "contract",
+        "class",
+        "runtime_contract_class",
+        "health_registry_class",
+        "capability_resolver_class",
+        "provider_selector_class",
+        "scope_key",
+        "fail_closed"
+      ]
+    }
+  }
+}

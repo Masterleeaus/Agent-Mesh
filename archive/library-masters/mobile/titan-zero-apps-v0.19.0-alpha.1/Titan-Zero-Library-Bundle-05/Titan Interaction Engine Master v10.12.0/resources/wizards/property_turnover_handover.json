@@ -1,0 +1,152 @@
+{
+  "wizard": {
+    "id": "property_turnover_handover_v1",
+    "version": "1.0.0",
+    "name": "Property Turnover and Handover",
+    "capability": "property.turnovers.complete",
+    "permissions": {
+      "required_roles": [
+        "staff",
+        "supervisor",
+        "manager",
+        "admin"
+      ]
+    },
+    "metadata": {
+      "category": "property",
+      "template_id": "property-turnover-handover",
+      "template_version": "1.0.0",
+      "verticals": [
+        "property_management",
+        "short_stay",
+        "facilities"
+      ],
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "normal",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": [
+        {
+          "when": {
+            "field": "damage_found",
+            "equals": true
+          },
+          "require_fields": [
+            "evidence_attachment_ids",
+            "action_owner_id",
+            "action_due_at"
+          ],
+          "message_prefix": "Missing required turnover damage action"
+        }
+      ]
+    },
+    "steps": [
+      {
+        "id": "scope",
+        "title": "Turnover scope",
+        "fields": [
+          {
+            "id": "property_id",
+            "label": "Property ID",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "turnover_type",
+            "label": "Turnover type",
+            "type": "text",
+            "required": true,
+            "options": [
+              "tenant_change",
+              "guest_change",
+              "owner_handover",
+              "service_handover"
+            ]
+          },
+          {
+            "id": "handover_at",
+            "label": "Handover at",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "condition",
+        "title": "Condition",
+        "fields": [
+          {
+            "id": "condition_items",
+            "label": "Condition items",
+            "type": "array",
+            "required": true
+          },
+          {
+            "id": "damage_found",
+            "label": "Damage found",
+            "type": "boolean",
+            "required": true
+          },
+          {
+            "id": "missing_items",
+            "label": "Missing items",
+            "type": "array",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "evidence",
+        "title": "Evidence and actions",
+        "fields": [
+          {
+            "id": "evidence_attachment_ids",
+            "label": "Evidence attachments",
+            "type": "array",
+            "required": false
+          },
+          {
+            "id": "action_owner_id",
+            "label": "Action owner",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "action_due_at",
+            "label": "Action due",
+            "type": "text",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "declaration",
+        "title": "Review",
+        "fields": [
+          {
+            "id": "declaration_accepted",
+            "label": "Declaration accepted",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "toggle-group",
+  "name": "Toggle Group",
+  "category": "Forms",
+  "blade": "components.titan-builder.toggle-group",
+  "authority": "presentation-only",
+  "props": [
+    "name",
+    "options",
+    "value",
+    "multiple"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

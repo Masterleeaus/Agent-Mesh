@@ -1,0 +1,178 @@
+{
+  "schema_version": "4.0.0",
+  "id": "owner",
+  "identity": {
+    "name": "Titan Command",
+    "product": "Titan Command",
+    "surface": "owner",
+    "icon": "command",
+    "accent": "var(--titan-builder-accent, #3157d5)"
+  },
+  "navigation": {
+    "default_view": "home",
+    "primary": [
+      {
+        "id": "home",
+        "label": "Home",
+        "icon": "home"
+      },
+      {
+        "id": "operations",
+        "label": "Operations",
+        "icon": "activity"
+      },
+      {
+        "id": "customers",
+        "label": "Customers",
+        "icon": "users"
+      },
+      {
+        "id": "titan",
+        "label": "Titan",
+        "icon": "sparkles"
+      }
+    ],
+    "drawer": [
+      {
+        "id": "approvals",
+        "label": "Approvals",
+        "icon": "check-circle"
+      },
+      {
+        "id": "jobs",
+        "label": "Jobs",
+        "icon": "briefcase"
+      },
+      {
+        "id": "team",
+        "label": "Team",
+        "icon": "users"
+      },
+      {
+        "id": "money",
+        "label": "Money",
+        "icon": "dollar-sign"
+      },
+      {
+        "id": "messages",
+        "label": "Messages",
+        "icon": "message-circle"
+      },
+      {
+        "id": "alerts",
+        "label": "Alerts",
+        "icon": "bell"
+      },
+      {
+        "id": "settings",
+        "label": "Settings",
+        "icon": "settings"
+      }
+    ],
+    "header_actions": [
+      "notifications",
+      "settings"
+    ]
+  },
+  "home": {
+    "widgets": [
+      "operations-summary",
+      "schedule-capacity",
+      "approvals",
+      "finance-summary"
+    ],
+    "quick_actions": [
+      "create-customer",
+      "create-work-order",
+      "assign-work"
+    ]
+  },
+  "assistant": {
+    "enabled": true,
+    "persistent": true,
+    "role": "owner operations assistant",
+    "chatbot_reference": null,
+    "suggested_prompts": [
+      "What needs attention?",
+      "Show today's capacity",
+      "Summarise overdue work"
+    ]
+  },
+  "data": {
+    "provider": "crm",
+    "sources": [
+      "crm-owner-operations-summary",
+      "crm-owner-schedule-capacity",
+      "crm-owner-approvals",
+      "crm-owner-finance-summary",
+      "crm-business-services",
+      "crm-business-locations"
+    ]
+  },
+  "capabilities": {
+    "required": [
+      "crm.owner.dashboard",
+      "mobile.owner"
+    ],
+    "optional": [
+      "titan-connect.messaging"
+    ]
+  },
+  "actions": {
+    "intents": [
+      "crm.customer.create",
+      "crm.work_order.create",
+      "crm.work_order.assign",
+      "communications.message.send"
+    ]
+  },
+  "offline": {
+    "mode": "online-first-read-only-cache",
+    "cached_read_models": [
+      "operations-summary"
+    ],
+    "writes": "disabled-while-offline",
+    "stale_indicator": true
+  },
+  "permissions": [
+    "owner.operations"
+  ],
+  "privacy": {
+    "default_mode": "minimum-required"
+  },
+  "notifications": [
+    "approvals",
+    "exceptions",
+    "alerts"
+  ],
+  "settings_sections": [
+    "business-data",
+    "crm",
+    "ai",
+    "communications",
+    "mobile",
+    "privacy",
+    "permissions",
+    "notifications",
+    "appearance",
+    "accessibility",
+    "diagnostics"
+  ],
+  "preview_states": [
+    "mobile",
+    "tablet",
+    "desktop",
+    "online",
+    "offline",
+    "empty",
+    "populated",
+    "loading",
+    "error",
+    "permission-denied"
+  ],
+  "default_page": {
+    "slug": "titan-command-home",
+    "name": "Home",
+    "spec": "titan-command-home"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "toast",
+  "name": "Toast stack",
+  "category": "Feedback",
+  "blade": "components.titan-builder.toast",
+  "authority": "presentation-only",
+  "props": [],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

@@ -1,0 +1,17 @@
+{
+  "id": "nav-item",
+  "name": "Navigation item",
+  "category": "Navigation",
+  "blade": "components.titan-builder.nav.item",
+  "authority": "presentation-only",
+  "props": [
+    "href",
+    "icon",
+    "active",
+    "badge"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Radminly-adapted",
+  "actions": []
+}

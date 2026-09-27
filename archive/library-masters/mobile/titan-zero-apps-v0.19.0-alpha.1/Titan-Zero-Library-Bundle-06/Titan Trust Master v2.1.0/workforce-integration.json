@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "extension": {
+    "key": "titan-trust",
+    "version": "2.1.0"
+  },
+  "tenant_key": "company_id",
+  "organisation_owner": "titan-ai-workforce",
+  "provider_owns_execution_surfaces": true,
+  "role_definitions_owned_by_provider": false,
+  "provider_installation_grants_authority": false,
+  "authority_inherited": false,
+  "fallback_authority_granted": false,
+  "execution_authority_granted": false
+}

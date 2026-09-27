@@ -1,0 +1,13 @@
+{
+  "id": "action-bar",
+  "name": "Action bar",
+  "category": "Actions",
+  "blade": "components.titan-builder.action-bar",
+  "authority": "presentation-only",
+  "props": [
+    "align"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

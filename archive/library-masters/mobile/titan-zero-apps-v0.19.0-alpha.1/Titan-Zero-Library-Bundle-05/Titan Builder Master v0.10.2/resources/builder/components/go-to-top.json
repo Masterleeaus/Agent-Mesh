@@ -1,0 +1,21 @@
+{
+  "id": "go-to-top",
+  "name": "Go To Top",
+  "category": "Premium / Navigation",
+  "blade": "components.titan-builder.premium.go-to-top",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "label",
+    "icon",
+    "threshold",
+    "position"
+  ],
+  "actions": [
+    "navigate"
+  ]
+}

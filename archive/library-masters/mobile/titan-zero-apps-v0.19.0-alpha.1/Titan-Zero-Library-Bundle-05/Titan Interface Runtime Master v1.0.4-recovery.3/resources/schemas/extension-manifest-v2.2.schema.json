@@ -1,0 +1,4603 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Titan Extension Manifest v2.2 — Unified Production, Workforce, Autonomy & Predictive Standard",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "key",
+    "name",
+    "version",
+    "folder",
+    "namespace",
+    "provider",
+    "compatibility",
+    "dependencies",
+    "capabilities",
+    "routes",
+    "data",
+    "lifecycle",
+    "family",
+    "contributions",
+    "permissions",
+    "external_hosts",
+    "database",
+    "queues",
+    "schedules",
+    "webhooks",
+    "billing",
+    "tests",
+    "support",
+    "capability_contracts",
+    "health",
+    "observability",
+    "resilience",
+    "authorization",
+    "concurrency",
+    "versioning",
+    "performance",
+    "slos",
+    "supply_chain",
+    "rollout",
+    "disaster_recovery",
+    "secrets",
+    "external_dependencies",
+    "verification",
+    "ui",
+    "documentation",
+    "architecture",
+    "authority",
+    "workforce",
+    "governance",
+    "predictive",
+    "offline",
+    "data_governance"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "2.2"
+    },
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(?:\\.\\d+)?(?:[-+][0-9A-Za-z.-]+)?$"
+    },
+    "folder": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9]*$"
+    },
+    "namespace": {
+      "type": "string",
+      "pattern": "^App\\\\Extensions\\\\[A-Za-z][A-Za-z0-9]*(?:\\\\[A-Za-z][A-Za-z0-9]*)*$"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^App\\\\Extensions\\\\.+ServiceProvider$"
+    },
+    "family": {
+      "enum": [
+        "native",
+        "addon",
+        "connector",
+        "agent-tool",
+        "channel-webhook",
+        "async-media",
+        "creative-studio",
+        "model-adapter",
+        "billing",
+        "theme-companion",
+        "vertical-suite"
+      ]
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "magicai",
+        "php",
+        "laravel"
+      ],
+      "properties": {
+        "magicai": {
+          "type": "string",
+          "minLength": 1
+        },
+        "php": {
+          "type": "string",
+          "minLength": 1
+        },
+        "laravel": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "optional",
+        "peers",
+        "conflicts"
+      ],
+      "properties": {
+        "parent": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "key",
+            "version"
+          ],
+          "properties": {
+            "key": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          }
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dependency"
+          },
+          "uniqueItems": true
+        },
+        "optional": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dependency"
+          },
+          "uniqueItems": true
+        },
+        "peers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dependency"
+          },
+          "uniqueItems": true
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dependency"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "contributions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "registry",
+          "key"
+        ],
+        "properties": {
+          "registry": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer",
+            "default": 100
+          },
+          "class": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "external_hosts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "hostname"
+      },
+      "uniqueItems": true
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "profile",
+          "prefix"
+        ],
+        "properties": {
+          "profile": {
+            "enum": [
+              "authenticated-user",
+              "admin",
+              "oauth-start",
+              "oauth-callback",
+              "public-webhook",
+              "signed-public",
+              "guest-read-only",
+              "public-embed",
+              "internal"
+            ]
+          },
+          "prefix": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name_prefix": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "uniqueItems": true
+    },
+    "database": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "migrations": {
+          "type": "boolean"
+        },
+        "owned_tables": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "shared_tables": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "migration_strategy": {
+          "enum": [
+            "expand-migrate-contract",
+            "forward-only-compatible",
+            "none"
+          ]
+        },
+        "migration_lock": {
+          "type": "boolean"
+        },
+        "chunked_backfills": {
+          "type": "boolean"
+        },
+        "old_new_worker_compatibility": {
+          "type": "boolean"
+        },
+        "interrupted_migration_recovery": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "migrations",
+        "owned_tables",
+        "shared_tables",
+        "migration_strategy",
+        "migration_lock",
+        "chunked_backfills",
+        "old_new_worker_compatibility",
+        "interrupted_migration_recovery"
+      ]
+    },
+    "queues": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "used": {
+          "type": "boolean"
+        },
+        "queue_names": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "tenant_context_required": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "used",
+        "queue_names",
+        "tenant_context_required"
+      ]
+    },
+    "schedules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "frequency",
+          "on_one_server",
+          "without_overlapping"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "frequency": {
+            "type": "string",
+            "minLength": 1
+          },
+          "on_one_server": {
+            "type": "boolean"
+          },
+          "without_overlapping": {
+            "const": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "uniqueItems": true
+    },
+    "webhooks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "provider",
+          "verification",
+          "fail_closed",
+          "idempotency",
+          "replay_window_seconds"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verification": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fail_closed": {
+            "const": true
+          },
+          "idempotency": {
+            "const": true
+          },
+          "replay_window_seconds": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "uniqueItems": true
+    },
+    "billing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "none",
+            "host-entity-credits",
+            "fixed-credits",
+            "metered",
+            "byo-key",
+            "hybrid"
+          ]
+        },
+        "reservation_required": {
+          "type": "boolean"
+        },
+        "ledger": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode",
+        "reservation_required",
+        "ledger"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_key",
+        "default_uninstall_policy",
+        "owned_paths",
+        "classifications",
+        "export_supported",
+        "retention_policy",
+        "encryption_at_rest",
+        "deletion_policy"
+      ],
+      "properties": {
+        "tenant_key": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "default_uninstall_policy": {
+          "enum": [
+            "retain",
+            "anonymise",
+            "delete"
+          ]
+        },
+        "owned_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "credential_storage": {
+          "enum": [
+            "none",
+            "encrypted-cast",
+            "credential-vault"
+          ]
+        },
+        "classifications": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "PUBLIC",
+              "INTERNAL",
+              "CONFIDENTIAL",
+              "SENSITIVE",
+              "SECRET"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "export_supported": {
+          "type": "boolean"
+        },
+        "retention_policy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "encryption_at_rest": {
+          "type": "boolean"
+        },
+        "deletion_policy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "legal_hold_aware": {
+          "type": "boolean"
+        },
+        "purge_receipts": {
+          "type": "boolean"
+        },
+        "retention_classes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "register_key",
+        "uninstall",
+        "idempotent",
+        "supports_disable",
+        "upgrade_strategy"
+      ],
+      "properties": {
+        "register_key": {
+          "type": "boolean",
+          "const": true
+        },
+        "uninstall": {
+          "type": "boolean",
+          "const": true
+        },
+        "idempotent": {
+          "type": "boolean",
+          "const": true
+        },
+        "supports_disable": {
+          "type": "boolean"
+        },
+        "upgrade_strategy": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "unit",
+          "feature",
+          "integration",
+          "architecture",
+          "security"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "support": {
+      "type": "object",
+      "properties": {
+        "telegram": {
+          "type": "string",
+          "minLength": 0
+        },
+        "documentation": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "telegram",
+        "documentation"
+      ]
+    },
+    "runtime_profile": {
+      "enum": [
+        "predictive-engine",
+        "standard",
+        "titan-autonomy-engine",
+        "titan-communications",
+        "titan-domain",
+        "titan-foresight-engine",
+        "titan-governed-engine",
+        "titan-rewind",
+        "titan-ui",
+        "titan-workforce"
+      ]
+    },
+    "capability_contracts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version",
+          "owner",
+          "input_schema",
+          "output_schema",
+          "risk_class",
+          "required_assurance",
+          "minimum_autonomy",
+          "offline_policy",
+          "reversible",
+          "idempotency_scope",
+          "timeout_ms",
+          "retry_policy",
+          "required_permissions",
+          "required_evidence",
+          "emitted_events"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "input_schema": {
+            "type": "string",
+            "minLength": 1
+          },
+          "output_schema": {
+            "type": "string",
+            "minLength": 1
+          },
+          "risk_class": {
+            "enum": [
+              "MINIMAL",
+              "LOW",
+              "MEDIUM",
+              "HIGH",
+              "EXTREME",
+              "contextual"
+            ]
+          },
+          "required_assurance": {
+            "enum": [
+              "NONE",
+              "RED",
+              "AMBER",
+              "GREEN",
+              "policy"
+            ]
+          },
+          "minimum_autonomy": {
+            "enum": [
+              "Suggest",
+              "Assist",
+              "Semi-Auto",
+              "Auto",
+              "Trusted Auto",
+              "policy"
+            ]
+          },
+          "offline_policy": {
+            "enum": [
+              "ONLINE_ONLY",
+              "OFFLINE_EXECUTE",
+              "OFFLINE_PREPARE_ONLY",
+              "OFFLINE_BLOCKED",
+              "policy"
+            ]
+          },
+          "reversible": {
+            "type": "boolean"
+          },
+          "compensation_capability": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "idempotency_scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "timeout_ms": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "retry_policy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required_permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "required_evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "emitted_events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "health": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "liveness",
+        "readiness",
+        "dependency_checks",
+        "degraded_mode",
+        "statuses"
+      ],
+      "properties": {
+        "liveness": {
+          "type": "boolean"
+        },
+        "readiness": {
+          "type": "boolean"
+        },
+        "dependency_checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "degraded_mode": {
+          "type": "boolean"
+        },
+        "statuses": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "HEALTHY",
+              "DEGRADED",
+              "UNAVAILABLE",
+              "DISABLED",
+              "MAINTENANCE",
+              "DRAINING"
+            ]
+          },
+          "minItems": 3,
+          "uniqueItems": true
+        }
+      }
+    },
+    "observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "structured_logging",
+        "metrics",
+        "tracing",
+        "signal_events",
+        "required_context",
+        "redacted_fields"
+      ],
+      "properties": {
+        "structured_logging": {
+          "const": true
+        },
+        "metrics": {
+          "type": "boolean"
+        },
+        "tracing": {
+          "type": "boolean"
+        },
+        "signal_events": {
+          "type": "boolean"
+        },
+        "required_context": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 4,
+          "uniqueItems": true
+        },
+        "redacted_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "metric_prefix": {
+          "type": "string"
+        },
+        "trace_sampling": {
+          "type": "string"
+        }
+      }
+    },
+    "resilience": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "timeouts",
+        "retries",
+        "dead_letter",
+        "circuit_breaker",
+        "backpressure",
+        "terminal_failure_state"
+      ],
+      "properties": {
+        "timeouts": {
+          "const": true
+        },
+        "retries": {
+          "const": true
+        },
+        "dead_letter": {
+          "type": "boolean"
+        },
+        "circuit_breaker": {
+          "type": "boolean"
+        },
+        "backpressure": {
+          "type": "boolean"
+        },
+        "terminal_failure_state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retryable_errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "permanent_errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "tenant_context_restoration": {
+          "type": "boolean"
+        },
+        "draining_stops_new_work": {
+          "type": "boolean"
+        },
+        "operator_retry_path": {
+          "type": "boolean"
+        }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_enforced",
+        "tenant_object_scope",
+        "ai_mutations_via_capabilities",
+        "authorization_matrix"
+      ],
+      "properties": {
+        "policy_enforced": {
+          "const": true
+        },
+        "tenant_object_scope": {
+          "const": true
+        },
+        "ai_mutations_via_capabilities": {
+          "type": "boolean"
+        },
+        "authorization_matrix": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "concurrency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategies",
+        "idempotency",
+        "entity_versioning",
+        "race_tests"
+      ],
+      "properties": {
+        "strategies": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "optimistic-lock",
+              "pessimistic-lock",
+              "distributed-lock",
+              "unique-constraint",
+              "transactional-outbox",
+              "none"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "idempotency": {
+          "const": true
+        },
+        "entity_versioning": {
+          "type": "boolean"
+        },
+        "race_tests": {
+          "type": "boolean"
+        },
+        "operation_idempotency": {
+          "type": "boolean"
+        },
+        "mutable_record_version_conflicts": {
+          "type": "boolean"
+        }
+      }
+    },
+    "versioning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "api",
+        "events",
+        "capabilities",
+        "deprecation_window_days",
+        "compatibility_window"
+      ],
+      "properties": {
+        "api": {
+          "type": "string",
+          "minLength": 1
+        },
+        "events": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capabilities": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deprecation_window_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "compatibility_window": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "p95_http_ms",
+        "p95_command_ms",
+        "max_db_queries",
+        "max_external_timeout_ms",
+        "max_queue_attempts",
+        "memory_budget_mb"
+      ],
+      "properties": {
+        "p95_http_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "p95_command_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_db_queries": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_external_timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_queue_attempts": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "memory_budget_mb": {
+          "type": "integer",
+          "minimum": 16
+        },
+        "streaming_required": {
+          "type": "boolean"
+        },
+        "max_trace_events_in_memory": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "paginated_timeline": {
+          "type": "boolean"
+        },
+        "streamed_evidence_export": {
+          "type": "boolean"
+        }
+      }
+    },
+    "slos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "target",
+          "measurement"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1
+          },
+          "measurement": {
+            "type": "string",
+            "minLength": 1
+          },
+          "critical": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "supply_chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sbom",
+        "dependency_audit",
+        "provenance",
+        "signature_required",
+        "signature_method",
+        "static_analysis"
+      ],
+      "properties": {
+        "sbom": {
+          "const": true
+        },
+        "dependency_audit": {
+          "const": true
+        },
+        "provenance": {
+          "const": true
+        },
+        "signature_required": {
+          "type": "boolean"
+        },
+        "signature_method": {
+          "enum": [
+            "openssl-rsa-sha256",
+            "gpg",
+            "minisign",
+            "none"
+          ]
+        },
+        "static_analysis": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required",
+            "tool",
+            "minimum_level"
+          ],
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "tool": {
+              "enum": [
+                "phpstan",
+                "larastan",
+                "psalm",
+                "none"
+              ]
+            },
+            "minimum_level": {
+              "type": [
+                "integer",
+                "string"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "rollout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "feature_flags",
+        "stages",
+        "kill_switch",
+        "maintenance_states"
+      ],
+      "properties": {
+        "feature_flags": {
+          "type": "boolean"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "DISABLED",
+              "INTERNAL",
+              "CANARY",
+              "TENANT_COHORT",
+              "GENERAL"
+            ]
+          },
+          "minItems": 2,
+          "uniqueItems": true
+        },
+        "kill_switch": {
+          "const": true
+        },
+        "maintenance_states": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ACTIVE",
+              "DEGRADED",
+              "MAINTENANCE",
+              "DRAINING",
+              "DISABLED",
+              "UNINSTALLING"
+            ]
+          },
+          "minItems": 3,
+          "uniqueItems": true
+        }
+      }
+    },
+    "disaster_recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rpo_minutes",
+        "rto_minutes",
+        "restore_runbook",
+        "reconciliation_required",
+        "backup_scope"
+      ],
+      "properties": {
+        "rpo_minutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rto_minutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "restore_runbook": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reconciliation_required": {
+          "type": "boolean"
+        },
+        "backup_scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "post_restore_integrity_verification": {
+          "type": "boolean"
+        },
+        "source_resynchronization": {
+          "type": "boolean"
+        }
+      }
+    },
+    "secrets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rotation_supported",
+        "expiry_monitoring",
+        "revocation_supported",
+        "connection_test",
+        "audit_metadata_only"
+      ],
+      "properties": {
+        "rotation_supported": {
+          "type": "boolean"
+        },
+        "expiry_monitoring": {
+          "type": "boolean"
+        },
+        "revocation_supported": {
+          "type": "boolean"
+        },
+        "connection_test": {
+          "type": "boolean"
+        },
+        "audit_metadata_only": {
+          "const": true
+        }
+      }
+    },
+    "external_dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "host",
+          "timeout_ms",
+          "max_retries",
+          "rate_limit_strategy",
+          "fallback",
+          "circuit_breaker",
+          "data_shared"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "host": {
+            "type": "string",
+            "minLength": 1
+          },
+          "timeout_ms": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "max_retries": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "rate_limit_strategy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fallback": {
+            "type": "string",
+            "minLength": 1
+          },
+          "circuit_breaker": {
+            "type": "boolean"
+          },
+          "data_shared": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "PUBLIC",
+                "INTERNAL",
+                "CONFIDENTIAL",
+                "SENSITIVE",
+                "SECRET"
+              ]
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "titan_governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "governed",
+        "command_bus",
+        "risk",
+        "assurance",
+        "autonomy",
+        "signal",
+        "rewind",
+        "wisdom",
+        "knowledge_authority",
+        "offline_never_increases_authority"
+      ],
+      "properties": {
+        "governed": {
+          "type": "boolean"
+        },
+        "command_bus": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "risk": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "assurance": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "autonomy": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "signal": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "rewind": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "wisdom": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "knowledge_authority": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "offline_never_increases_authority": {
+          "const": true
+        },
+        "foresight": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        }
+      }
+    },
+    "predictive_models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model_id",
+          "model_version",
+          "feature_schema",
+          "training_window",
+          "prediction_horizon",
+          "calibration_metric",
+          "minimum_sample",
+          "drift_threshold",
+          "fallback",
+          "retraining_policy",
+          "outcome_feedback"
+        ],
+        "properties": {
+          "model_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "model_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "feature_schema": {
+            "type": "string",
+            "minLength": 1
+          },
+          "training_window": {
+            "type": "string",
+            "minLength": 1
+          },
+          "prediction_horizon": {
+            "type": "string",
+            "minLength": 1
+          },
+          "calibration_metric": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minimum_sample": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "drift_threshold": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fallback": {
+            "type": "string",
+            "minLength": 1
+          },
+          "retraining_policy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "outcome_feedback": {
+            "const": true
+          },
+          "task_type": {
+            "enum": [
+              "classification",
+              "regression",
+              "time-series",
+              "survival",
+              "anomaly",
+              "graph",
+              "hybrid"
+            ]
+          },
+          "output_kind": {
+            "enum": [
+              "probability",
+              "score",
+              "value",
+              "distribution",
+              "time-to-event",
+              "anomaly-score",
+              "forecast-series"
+            ]
+          },
+          "confidence_interval": {
+            "type": "boolean"
+          },
+          "data_quality_policy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "feature_freshness_policy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "drift_monitoring": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "feature",
+                "concept",
+                "calibration",
+                "outcome",
+                "population",
+                "missingness"
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "shadow_validation": {
+            "const": true
+          },
+          "canary_rollout": {
+            "const": true
+          },
+          "privacy_classification": {
+            "enum": [
+              "PUBLIC",
+              "INTERNAL",
+              "CONFIDENTIAL",
+              "SENSITIVE",
+              "SECRET"
+            ]
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tenant_isolation",
+        "authorization",
+        "concurrency",
+        "architecture",
+        "performance",
+        "fault_injection",
+        "upgrade",
+        "uninstall"
+      ],
+      "properties": {
+        "tenant_isolation": {
+          "type": "boolean"
+        },
+        "authorization": {
+          "type": "boolean"
+        },
+        "concurrency": {
+          "type": "boolean"
+        },
+        "architecture": {
+          "type": "boolean"
+        },
+        "performance": {
+          "type": "boolean"
+        },
+        "fault_injection": {
+          "type": "boolean"
+        },
+        "upgrade": {
+          "type": "boolean"
+        },
+        "uninstall": {
+          "type": "boolean"
+        },
+        "replay_boundary": {
+          "type": "boolean"
+        },
+        "source_completeness": {
+          "type": "boolean"
+        },
+        "historical_artifact_resolution": {
+          "type": "boolean"
+        },
+        "evidence_signature": {
+          "type": "boolean"
+        },
+        "legal_hold": {
+          "type": "boolean"
+        },
+        "retention_purge": {
+          "type": "boolean"
+        },
+        "large_trace_streaming": {
+          "type": "boolean"
+        },
+        "communications_lifecycle": {
+          "type": "boolean"
+        },
+        "webhook_security": {
+          "type": "boolean"
+        },
+        "provider_receipts": {
+          "type": "boolean"
+        },
+        "idempotent_delivery": {
+          "type": "boolean"
+        },
+        "governed_outbound": {
+          "type": "boolean"
+        },
+        "voice_authority_boundary": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "has_ui",
+        "responsive",
+        "accessibility",
+        "localization",
+        "wcag_target"
+      ],
+      "properties": {
+        "has_ui": {
+          "type": "boolean"
+        },
+        "responsive": {
+          "type": "boolean"
+        },
+        "accessibility": {
+          "type": "boolean"
+        },
+        "localization": {
+          "type": "boolean"
+        },
+        "wcag_target": {
+          "enum": [
+            "2.1-AA",
+            "2.2-AA",
+            "not-applicable"
+          ]
+        }
+      }
+    },
+    "documentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "architecture",
+        "capabilities",
+        "operations",
+        "security",
+        "data_ownership",
+        "upgrade",
+        "uninstall",
+        "troubleshooting",
+        "changelog",
+        "integration_contracts",
+        "signal_events",
+        "governance",
+        "failure_modes"
+      ],
+      "properties": {
+        "architecture": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capabilities": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operations": {
+          "type": "string",
+          "minLength": 1
+        },
+        "security": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data_ownership": {
+          "type": "string",
+          "minLength": 1
+        },
+        "upgrade": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uninstall": {
+          "type": "string",
+          "minLength": 1
+        },
+        "troubleshooting": {
+          "type": "string",
+          "minLength": 1
+        },
+        "changelog": {
+          "type": "string",
+          "minLength": 1
+        },
+        "integration_contracts": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signal_events": {
+          "type": "string",
+          "minLength": 1
+        },
+        "governance": {
+          "type": "string",
+          "minLength": 1
+        },
+        "failure_modes": {
+          "type": "string",
+          "minLength": 1
+        },
+        "interface_contribution": {
+          "type": "string",
+          "minLength": 1
+        },
+        "engine_ownership": {
+          "type": "string",
+          "minLength": 1
+        },
+        "autonomy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "predictive_runtime": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rewind_contracts": {
+          "type": "string",
+          "minLength": 1
+        },
+        "replay_sandbox": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_custody": {
+          "type": "string",
+          "minLength": 1
+        },
+        "legal_hold": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retention": {
+          "type": "string",
+          "minLength": 1
+        },
+        "historical_artifacts": {
+          "type": "string",
+          "minLength": 1
+        },
+        "communications": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provider_contracts": {
+          "type": "string",
+          "minLength": 1
+        },
+        "delivery_lifecycle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "webhook_security": {
+          "type": "string",
+          "minLength": 1
+        },
+        "voice_governance": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workforce_handoff": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "architecture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "modifiers",
+        "overlays",
+        "production_core"
+      ],
+      "properties": {
+        "profile": {
+          "type": "string",
+          "enum": [
+            "builder-generator",
+            "business-domain",
+            "communication-extension",
+            "governance-engine",
+            "governed-capability",
+            "integration-extension",
+            "intelligence-engine",
+            "interaction-extension",
+            "mobile-offline",
+            "operations-extension",
+            "strategic-orchestrator",
+            "system-engine",
+            "ui-surface",
+            "vertical-pack",
+            "workforce-extension"
+          ]
+        },
+        "modifiers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "ai-enabled",
+              "autonomy-aware",
+              "communications-consumer",
+              "customer-facing",
+              "financial",
+              "forensic-replay",
+              "high-throughput",
+              "interface-contributor",
+              "offline-aware",
+              "predictive",
+              "regulated",
+              "rewind-source-contributor",
+              "safety-critical",
+              "workforce-aware"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "overlays": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "agent-tool-pack",
+              "async-media",
+              "billing-integration",
+              "channel-webhook",
+              "creative-studio",
+              "model-adapter",
+              "oauth-connector",
+              "theme"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "legacy_runtime_profile": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "compatibility_adapter": {
+          "type": "boolean",
+          "default": false
+        },
+        "production_core": {
+          "const": "titan.production.core.v1"
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_owner",
+        "owns",
+        "must_not_own",
+        "sources_of_truth",
+        "cross_domain_write_policy"
+      ],
+      "properties": {
+        "canonical_owner": {
+          "type": "boolean"
+        },
+        "owns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+          },
+          "uniqueItems": true
+        },
+        "must_not_own": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+          },
+          "uniqueItems": true
+        },
+        "sources_of_truth": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+          },
+          "uniqueItems": true
+        },
+        "cross_domain_write_policy": {
+          "enum": [
+            "forbidden",
+            "command-bus-only",
+            "governed-capability-only",
+            "explicit-versioned-contract"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "canonical_owner": {
+                "const": true
+              }
+            },
+            "required": [
+              "canonical_owner"
+            ]
+          },
+          "then": {
+            "properties": {
+              "owns": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "workforce": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "source_of_truth",
+        "manifest",
+        "discovery_contract",
+        "direct_domain_writes",
+        "state_writes_via_command_bus",
+        "auto_activate"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "source_of_truth": {
+          "enum": [
+            "none",
+            "extension",
+            "central-runtime"
+          ]
+        },
+        "manifest": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "discovery_contract": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "direct_domain_writes": {
+          "const": false
+        },
+        "state_writes_via_command_bus": {
+          "const": true
+        },
+        "auto_activate": {
+          "const": false
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command_bus",
+        "risk",
+        "assurance",
+        "autonomy",
+        "signal",
+        "rewind",
+        "wisdom",
+        "knowledge_authority",
+        "shield",
+        "model_council",
+        "offline_never_increases_authority"
+      ],
+      "properties": {
+        "command_bus": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "risk": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "assurance": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "autonomy": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "signal": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "rewind": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "wisdom": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "knowledge_authority": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "shield": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "model_council": {
+          "enum": [
+            "required",
+            "optional",
+            "not-applicable"
+          ]
+        },
+        "offline_never_increases_authority": {
+          "const": true
+        }
+      }
+    },
+    "predictive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "inference_is_authoritative",
+        "prepared_actions_mutating",
+        "execution_requires_fresh_governance",
+        "models",
+        "feature_sets",
+        "outcome_contracts",
+        "drift_controls"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "inference_is_authoritative": {
+          "const": false
+        },
+        "prepared_actions_mutating": {
+          "const": false
+        },
+        "execution_requires_fresh_governance": {
+          "const": true
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "feature_sets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "outcome_contracts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "drift_controls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "cold_start_required": {
+          "type": "boolean"
+        },
+        "prediction_expiry_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "offline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supported",
+        "authority_policy",
+        "can_increase_authority",
+        "conflict_resolution"
+      ],
+      "properties": {
+        "supported": {
+          "type": "boolean"
+        },
+        "authority_policy": {
+          "enum": [
+            "deny-offline",
+            "preserve-or-reduce"
+          ]
+        },
+        "can_increase_authority": {
+          "const": false
+        },
+        "conflict_resolution": {
+          "enum": [
+            "not-applicable",
+            "server-authoritative",
+            "optimistic-merge",
+            "outbox-reconcile",
+            "domain-specific"
+          ]
+        }
+      }
+    },
+    "data_governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classifications",
+        "tenant_key",
+        "retention_policy",
+        "export_supported",
+        "deletion_policy",
+        "encryption_at_rest",
+        "legal_hold_aware"
+      ],
+      "properties": {
+        "classifications": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "PUBLIC",
+              "INTERNAL",
+              "CONFIDENTIAL",
+              "SENSITIVE",
+              "SECRET"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "tenant_key": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "retention_policy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "export_supported": {
+          "type": "boolean"
+        },
+        "deletion_policy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "encryption_at_rest": {
+          "type": "boolean"
+        },
+        "legal_hold_aware": {
+          "type": "boolean"
+        }
+      }
+    },
+    "interface_contribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "contract_version",
+        "manifest",
+        "mode"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "contract_version": {
+          "enum": [
+            "1.0",
+            "1.1"
+          ]
+        },
+        "manifest": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mode": {
+          "const": "declarative"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "enabled": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "manifest": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "enabled": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "manifest": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "communications": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "canonical_executor",
+        "direct_provider_side_effects",
+        "consumed_capabilities",
+        "provided_capabilities",
+        "governed_outbound"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "consumer",
+            "execution-layer"
+          ]
+        },
+        "canonical_executor": {
+          "enum": [
+            "titan-connect",
+            "self"
+          ]
+        },
+        "direct_provider_side_effects": {
+          "type": "boolean"
+        },
+        "consumed_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "provided_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "governed_outbound": {
+          "type": "boolean"
+        },
+        "provider_registry": {
+          "type": "boolean"
+        },
+        "inbox_normalization": {
+          "type": "boolean"
+        },
+        "credential_vault": {
+          "type": "boolean"
+        },
+        "provider_health": {
+          "type": "boolean"
+        },
+        "provider_subscriptions": {
+          "type": "boolean"
+        },
+        "webhook_fail_closed": {
+          "type": "boolean"
+        },
+        "webhook_replay_protection": {
+          "type": "boolean"
+        },
+        "outbound_idempotency": {
+          "type": "boolean"
+        },
+        "delivery_leases": {
+          "type": "boolean"
+        },
+        "provider_receipts": {
+          "type": "boolean"
+        },
+        "human_handoff": {
+          "type": "boolean"
+        },
+        "workforce_task_bridge": {
+          "type": "boolean"
+        },
+        "attachments_private": {
+          "type": "boolean"
+        },
+        "attachments_scanned": {
+          "type": "boolean"
+        },
+        "ssrf_protection": {
+          "type": "boolean"
+        },
+        "oauth_pkce_state": {
+          "type": "boolean"
+        },
+        "voice_enabled": {
+          "type": "boolean"
+        },
+        "voice_commitments_require_authoritative_receipt": {
+          "type": "boolean"
+        },
+        "lifecycle_states": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "PREPARED",
+              "AWAITING_APPROVAL",
+              "QUEUED",
+              "SENDING",
+              "DELIVERY_UNKNOWN",
+              "SENT",
+              "DELIVERED",
+              "READ",
+              "REPLIED",
+              "FAILED",
+              "CANCELLED"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "provider_receipt_fields": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "provider",
+              "external_id",
+              "status",
+              "timestamps",
+              "failure_code"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "preflight_controls": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "consent",
+              "suppression",
+              "quiet_hours",
+              "risk",
+              "assurance",
+              "autonomy",
+              "approval"
+            ]
+          },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "consumer"
+              }
+            },
+            "required": [
+              "role"
+            ]
+          },
+          "then": {
+            "properties": {
+              "canonical_executor": {
+                "const": "titan-connect"
+              },
+              "direct_provider_side_effects": {
+                "const": false
+              },
+              "consumed_capabilities": {
+                "minItems": 1
+              },
+              "provided_capabilities": {
+                "maxItems": 0
+              },
+              "governed_outbound": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "execution-layer"
+              }
+            },
+            "required": [
+              "role"
+            ]
+          },
+          "then": {
+            "required": [
+              "provider_registry",
+              "inbox_normalization",
+              "credential_vault",
+              "provider_health",
+              "provider_subscriptions",
+              "webhook_fail_closed",
+              "webhook_replay_protection",
+              "outbound_idempotency",
+              "delivery_leases",
+              "provider_receipts",
+              "human_handoff",
+              "workforce_task_bridge",
+              "attachments_private",
+              "attachments_scanned",
+              "ssrf_protection",
+              "oauth_pkce_state",
+              "voice_enabled",
+              "voice_commitments_require_authoritative_receipt",
+              "lifecycle_states",
+              "provider_receipt_fields",
+              "preflight_controls"
+            ],
+            "properties": {
+              "canonical_executor": {
+                "const": "self"
+              },
+              "direct_provider_side_effects": {
+                "const": true
+              },
+              "provided_capabilities": {
+                "minItems": 1
+              },
+              "governed_outbound": {
+                "const": true
+              },
+              "provider_registry": {
+                "const": true
+              },
+              "inbox_normalization": {
+                "const": true
+              },
+              "credential_vault": {
+                "const": true
+              },
+              "provider_health": {
+                "const": true
+              },
+              "provider_subscriptions": {
+                "const": true
+              },
+              "webhook_fail_closed": {
+                "const": true
+              },
+              "webhook_replay_protection": {
+                "const": true
+              },
+              "outbound_idempotency": {
+                "const": true
+              },
+              "delivery_leases": {
+                "const": true
+              },
+              "provider_receipts": {
+                "const": true
+              },
+              "human_handoff": {
+                "const": true
+              },
+              "workforce_task_bridge": {
+                "const": true
+              },
+              "attachments_private": {
+                "const": true
+              },
+              "attachments_scanned": {
+                "const": true
+              },
+              "ssrf_protection": {
+                "const": true
+              },
+              "oauth_pkce_state": {
+                "const": true
+              },
+              "lifecycle_states": {
+                "allOf": [
+                  {
+                    "contains": {
+                      "const": "PREPARED"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "AWAITING_APPROVAL"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "QUEUED"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "SENDING"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "DELIVERY_UNKNOWN"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "SENT"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "DELIVERED"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "READ"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "REPLIED"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "FAILED"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "CANCELLED"
+                    },
+                    "minContains": 1
+                  }
+                ]
+              },
+              "provider_receipt_fields": {
+                "allOf": [
+                  {
+                    "contains": {
+                      "const": "provider"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "external_id"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "status"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "timestamps"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "failure_code"
+                    },
+                    "minContains": 1
+                  }
+                ]
+              },
+              "preflight_controls": {
+                "allOf": [
+                  {
+                    "contains": {
+                      "const": "consent"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "suppression"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "quiet_hours"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "risk"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "assurance"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "autonomy"
+                    },
+                    "minContains": 1
+                  },
+                  {
+                    "contains": {
+                      "const": "approval"
+                    },
+                    "minContains": 1
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "voice_enabled": {
+                "const": true
+              }
+            },
+            "required": [
+              "voice_enabled"
+            ]
+          },
+          "then": {
+            "properties": {
+              "voice_commitments_require_authoritative_receipt": {
+                "const": true
+              }
+            },
+            "required": [
+              "voice_commitments_require_authoritative_receipt"
+            ]
+          }
+        }
+      ]
+    },
+    "rewind": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "authoritative_mutation",
+        "source_adapter_contract",
+        "source_completeness_required_for_audit",
+        "deterministic_order",
+        "historical_artifact_resolution",
+        "historical_artifact_types",
+        "replay_modes",
+        "replay_mutation_policy",
+        "replay_sandbox",
+        "replay_network_policy",
+        "clock_mode",
+        "random_seed_policy",
+        "replay_violation_event",
+        "evidence_hash",
+        "evidence_signature_required",
+        "evidence_signature_method",
+        "chain_of_custody",
+        "legal_hold",
+        "legal_hold_scopes",
+        "source_watermarks",
+        "source_completeness_states",
+        "retention_legal_hold_aware",
+        "reproducibility_states",
+        "large_trace_policy"
+      ],
+      "properties": {
+        "role": {
+          "const": "forensic-read-model"
+        },
+        "authoritative_mutation": {
+          "const": false
+        },
+        "source_adapter_contract": {
+          "const": "rewind-source-v1"
+        },
+        "source_completeness_required_for_audit": {
+          "const": true
+        },
+        "deterministic_order": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "sequence"
+            },
+            {
+              "const": "occurred_at"
+            },
+            {
+              "const": "event_id"
+            }
+          ],
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "historical_artifact_resolution": {
+          "const": true
+        },
+        "historical_artifact_types": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "policy",
+              "guide",
+              "knowledge",
+              "model",
+              "model-council",
+              "capability",
+              "risk-rules",
+              "assurance-rules",
+              "autonomy-rules"
+            ]
+          },
+          "allOf": [
+            {
+              "contains": {
+                "const": "policy"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "guide"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "knowledge"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "model"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "capability"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "risk-rules"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "assurance-rules"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "autonomy-rules"
+              },
+              "minContains": 1
+            }
+          ]
+        },
+        "replay_modes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "historical",
+              "historical-executable",
+              "current-state",
+              "counterfactual",
+              "model-compare",
+              "policy-compare",
+              "knowledge-compare",
+              "council-compare"
+            ]
+          },
+          "allOf": [
+            {
+              "contains": {
+                "const": "historical"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "current-state"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "counterfactual"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "model-compare"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "policy-compare"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "knowledge-compare"
+              },
+              "minContains": 1
+            }
+          ]
+        },
+        "replay_mutation_policy": {
+          "const": "deny"
+        },
+        "replay_sandbox": {
+          "const": true
+        },
+        "replay_network_policy": {
+          "enum": [
+            "deny-all",
+            "recorded-only",
+            "allowlist"
+          ]
+        },
+        "clock_mode": {
+          "const": "virtual"
+        },
+        "random_seed_policy": {
+          "const": "deterministic"
+        },
+        "replay_violation_event": {
+          "const": "rewind.replay.boundary_violation.v1"
+        },
+        "evidence_hash": {
+          "const": "sha256-canonical-json"
+        },
+        "evidence_signature_required": {
+          "const": true
+        },
+        "evidence_signature_method": {
+          "enum": [
+            "openssl-rsa-sha256",
+            "gpg",
+            "minisign"
+          ]
+        },
+        "chain_of_custody": {
+          "const": true
+        },
+        "legal_hold": {
+          "const": true
+        },
+        "legal_hold_scopes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "trace",
+              "case",
+              "evidence-package",
+              "tenant-investigation"
+            ]
+          },
+          "allOf": [
+            {
+              "contains": {
+                "const": "trace"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "case"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "evidence-package"
+              },
+              "minContains": 1
+            }
+          ]
+        },
+        "source_watermarks": {
+          "const": true
+        },
+        "source_completeness_states": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "STALE",
+              "UNAVAILABLE"
+            ]
+          },
+          "allOf": [
+            {
+              "contains": {
+                "const": "COMPLETE"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "PARTIAL"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "STALE"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "UNAVAILABLE"
+              },
+              "minContains": 1
+            }
+          ]
+        },
+        "retention_legal_hold_aware": {
+          "const": true
+        },
+        "reproducibility_states": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "FULLY_REPRODUCIBLE",
+              "PARTIALLY_REPRODUCIBLE",
+              "ARTIFACT_UNAVAILABLE"
+            ]
+          },
+          "allOf": [
+            {
+              "contains": {
+                "const": "FULLY_REPRODUCIBLE"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "PARTIALLY_REPRODUCIBLE"
+              },
+              "minContains": 1
+            },
+            {
+              "contains": {
+                "const": "ARTIFACT_UNAVAILABLE"
+              },
+              "minContains": 1
+            }
+          ]
+        },
+        "large_trace_policy": {
+          "enum": [
+            "stream-or-archive",
+            "chunk-or-archive"
+          ]
+        }
+      }
+    },
+    "rewind_sources": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "contract_version",
+          "schema",
+          "source_engine",
+          "source_schema_version",
+          "tenant_key",
+          "historical_retrieval",
+          "supports_as_of",
+          "ordering_guarantee",
+          "watermark_semantics",
+          "authenticity",
+          "source_hash_support",
+          "classification",
+          "completeness_states"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+          },
+          "contract_version": {
+            "const": "1.0"
+          },
+          "schema": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_engine": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_schema_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tenant_key": {
+            "const": "tenant_company_id"
+          },
+          "historical_retrieval": {
+            "const": true
+          },
+          "supports_as_of": {
+            "type": "boolean"
+          },
+          "ordering_guarantee": {
+            "enum": [
+              "source-sequence",
+              "occurred-at+event-id",
+              "causation-aware"
+            ]
+          },
+          "watermark_semantics": {
+            "type": "string",
+            "minLength": 1
+          },
+          "authenticity": {
+            "enum": [
+              "signed",
+              "hashed",
+              "authoritative-store",
+              "signed+hashed"
+            ]
+          },
+          "source_hash_support": {
+            "const": true
+          },
+          "classification": {
+            "enum": [
+              "INTERNAL",
+              "CONFIDENTIAL",
+              "SENSITIVE",
+              "SECRET"
+            ]
+          },
+          "completeness_states": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "COMPLETE",
+                "PARTIAL",
+                "STALE",
+                "UNAVAILABLE"
+              ]
+            },
+            "minItems": 4
+          }
+        }
+      }
+    },
+    "engine_ownership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_owner",
+        "domain",
+        "owns",
+        "must_not_own",
+        "sources_of_truth",
+        "write_boundaries"
+      ],
+      "properties": {
+        "canonical_owner": {
+          "type": "boolean"
+        },
+        "domain": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "must_not_own": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "sources_of_truth": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "write_boundaries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "autonomy_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "scale_min",
+        "scale_max",
+        "bands",
+        "dimensions",
+        "dynamic_contraction",
+        "effective_constraints",
+        "model_transition_reassessment",
+        "offline_never_increases_authority"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "scale_min": {
+          "const": 0
+        },
+        "scale_max": {
+          "const": 100
+        },
+        "bands": {
+          "type": "array",
+          "minItems": 6,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "min",
+              "max"
+            ],
+            "properties": {
+              "name": {
+                "enum": [
+                  "Suggest",
+                  "Assist",
+                  "Semi-Auto",
+                  "Auto",
+                  "Trusted Auto",
+                  "Predictive"
+                ]
+              },
+              "min": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        },
+        "dimensions": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "desired",
+              "earned",
+              "effective",
+              "predictive_readiness"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "dynamic_contraction": {
+          "const": true
+        },
+        "effective_constraints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "model_transition_reassessment": {
+          "const": true
+        },
+        "offline_never_increases_authority": {
+          "const": true
+        }
+      }
+    },
+    "predictive_operating_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cold_start",
+        "feature_provenance_required",
+        "feature_freshness_required",
+        "anticipatory_execution",
+        "drift_monitoring"
+      ],
+      "properties": {
+        "cold_start": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enabled",
+            "fallback",
+            "confidence_cap"
+          ],
+          "properties": {
+            "enabled": {
+              "const": true
+            },
+            "fallback": {
+              "type": "string",
+              "minLength": 1
+            },
+            "confidence_cap": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "feature_provenance_required": {
+          "const": true
+        },
+        "feature_freshness_required": {
+          "const": true
+        },
+        "anticipatory_execution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enabled",
+            "prepare_mutates_state",
+            "confirm_before_execute",
+            "revalidate_before_execute",
+            "prepared_action_ttl_seconds"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "prepare_mutates_state": {
+              "const": false
+            },
+            "confirm_before_execute": {
+              "const": true
+            },
+            "revalidate_before_execute": {
+              "const": true
+            },
+            "prepared_action_ttl_seconds": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "drift_monitoring": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "feature",
+              "concept",
+              "calibration",
+              "outcome",
+              "population",
+              "missingness"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "telemetry_features": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "signal_source",
+        "feature_store",
+        "provenance",
+        "freshness",
+        "training_serving_consistency",
+        "leakage_controls"
+      ],
+      "properties": {
+        "signal_source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "feature_store": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "const": true
+        },
+        "freshness": {
+          "const": true
+        },
+        "training_serving_consistency": {
+          "const": true
+        },
+        "leakage_controls": {
+          "const": true
+        }
+      }
+    }
+  },
+  "$defs": {
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "version"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "queues": {
+            "properties": {
+              "used": {
+                "const": true
+              }
+            },
+            "required": [
+              "used"
+            ]
+          }
+        },
+        "required": [
+          "queues"
+        ]
+      },
+      "then": {
+        "properties": {
+          "queues": {
+            "properties": {
+              "queue_names": {
+                "minItems": 1
+              },
+              "tenant_context_required": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "routes": {
+            "contains": {
+              "type": "object",
+              "required": [
+                "profile"
+              ],
+              "properties": {
+                "profile": {
+                  "const": "public-webhook"
+                }
+              }
+            },
+            "minContains": 1
+          }
+        },
+        "required": [
+          "routes"
+        ]
+      },
+      "then": {
+        "required": [
+          "webhooks"
+        ],
+        "properties": {
+          "webhooks": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "fail_closed": {
+                  "const": true
+                },
+                "idempotency": {
+                  "const": true
+                },
+                "replay_window_seconds": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "fail_closed",
+                "idempotency",
+                "replay_window_seconds"
+              ]
+            }
+          },
+          "external_hosts": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "routes": {
+            "anyOf": [
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "profile"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "const": "oauth-start"
+                    }
+                  }
+                },
+                "minContains": 1
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "profile"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "const": "oauth-callback"
+                    }
+                  }
+                },
+                "minContains": 1
+              }
+            ]
+          }
+        },
+        "required": [
+          "routes"
+        ]
+      },
+      "then": {
+        "properties": {
+          "routes": {
+            "allOf": [
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "profile"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "const": "oauth-start"
+                    }
+                  }
+                },
+                "minContains": 1
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "profile"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "const": "oauth-callback"
+                    }
+                  }
+                },
+                "minContains": 1
+              }
+            ]
+          },
+          "external_hosts": {
+            "minItems": 1
+          },
+          "data": {
+            "properties": {
+              "credential_storage": {
+                "enum": [
+                  "encrypted-cast",
+                  "credential-vault"
+                ]
+              }
+            },
+            "required": [
+              "credential_storage"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "database": {
+            "properties": {
+              "migrations": {
+                "const": true
+              }
+            },
+            "required": [
+              "migrations"
+            ]
+          }
+        },
+        "required": [
+          "database"
+        ]
+      },
+      "then": {
+        "properties": {
+          "database": {
+            "anyOf": [
+              {
+                "properties": {
+                  "owned_tables": {
+                    "minItems": 1
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "shared_tables": {
+                    "minItems": 1
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "family": {
+            "const": "addon"
+          }
+        },
+        "required": [
+          "family"
+        ]
+      },
+      "then": {
+        "properties": {
+          "dependencies": {
+            "properties": {
+              "parent": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "parent"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "family": {
+            "const": "agent-tool"
+          }
+        },
+        "required": [
+          "family"
+        ]
+      },
+      "then": {
+        "required": [
+          "contributions"
+        ],
+        "properties": {
+          "dependencies": {
+            "properties": {
+              "parent": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "parent"
+            ]
+          },
+          "contributions": {
+            "contains": {
+              "type": "object",
+              "required": [
+                "registry"
+              ],
+              "properties": {
+                "registry": {
+                  "const": "agent.tools"
+                }
+              }
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "family": {
+            "const": "channel-webhook"
+          }
+        },
+        "required": [
+          "family"
+        ]
+      },
+      "then": {
+        "required": [
+          "webhooks",
+          "queues"
+        ],
+        "properties": {
+          "routes": {
+            "contains": {
+              "type": "object",
+              "required": [
+                "profile"
+              ],
+              "properties": {
+                "profile": {
+                  "const": "public-webhook"
+                }
+              }
+            },
+            "minContains": 1
+          },
+          "webhooks": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "fail_closed": {
+                  "const": true
+                },
+                "idempotency": {
+                  "const": true
+                },
+                "replay_window_seconds": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "fail_closed",
+                "idempotency",
+                "replay_window_seconds"
+              ]
+            }
+          },
+          "external_hosts": {
+            "minItems": 1
+          },
+          "queues": {
+            "properties": {
+              "used": {
+                "const": true
+              },
+              "queue_names": {
+                "minItems": 1
+              },
+              "tenant_context_required": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "family": {
+            "const": "connector"
+          }
+        },
+        "required": [
+          "family"
+        ]
+      },
+      "then": {
+        "properties": {
+          "routes": {
+            "allOf": [
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "profile"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "const": "oauth-start"
+                    }
+                  }
+                },
+                "minContains": 1
+              },
+              {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "profile"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "const": "oauth-callback"
+                    }
+                  }
+                },
+                "minContains": 1
+              }
+            ]
+          },
+          "external_hosts": {
+            "minItems": 1
+          },
+          "data": {
+            "properties": {
+              "credential_storage": {
+                "enum": [
+                  "encrypted-cast",
+                  "credential-vault"
+                ]
+              }
+            },
+            "required": [
+              "credential_storage"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "family": {
+            "const": "async-media"
+          }
+        },
+        "required": [
+          "family"
+        ]
+      },
+      "then": {
+        "required": [
+          "queues",
+          "billing"
+        ],
+        "properties": {
+          "external_hosts": {
+            "minItems": 1
+          },
+          "queues": {
+            "properties": {
+              "used": {
+                "const": true
+              },
+              "queue_names": {
+                "minItems": 1
+              },
+              "tenant_context_required": {
+                "const": true
+              }
+            }
+          },
+          "billing": {
+            "properties": {
+              "mode": {
+                "enum": [
+                  "host-entity-credits",
+                  "fixed-credits",
+                  "metered",
+                  "hybrid"
+                ]
+              },
+              "reservation_required": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "family": {
+            "const": "creative-studio"
+          }
+        },
+        "required": [
+          "family"
+        ]
+      },
+      "then": {
+        "required": [
+          "queues",
+          "billing"
+        ],
+        "properties": {
+          "queues": {
+            "properties": {
+              "used": {
+                "const": true
+              },
+              "queue_names": {
+                "minItems": 1
+              },
+              "tenant_context_required": {
+                "const": true
+              }
+            }
+          },
+          "billing": {
+            "properties": {
+              "mode": {
+                "enum": [
+                  "host-entity-credits",
+                  "fixed-credits",
+                  "metered",
+                  "hybrid"
+                ]
+              },
+              "reservation_required": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "family": {
+            "const": "model-adapter"
+          }
+        },
+        "required": [
+          "family"
+        ]
+      },
+      "then": {
+        "required": [
+          "contributions",
+          "billing"
+        ],
+        "properties": {
+          "contributions": {
+            "minItems": 1
+          },
+          "external_hosts": {
+            "minItems": 1
+          },
+          "data": {
+            "properties": {
+              "credential_storage": {
+                "enum": [
+                  "encrypted-cast",
+                  "credential-vault"
+                ]
+              }
+            },
+            "required": [
+              "credential_storage"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "family": {
+            "const": "billing"
+          }
+        },
+        "required": [
+          "family"
+        ]
+      },
+      "then": {
+        "required": [
+          "webhooks"
+        ],
+        "properties": {
+          "routes": {
+            "contains": {
+              "type": "object",
+              "required": [
+                "profile"
+              ],
+              "properties": {
+                "profile": {
+                  "const": "public-webhook"
+                }
+              }
+            },
+            "minContains": 1
+          },
+          "webhooks": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "fail_closed": {
+                  "const": true
+                },
+                "idempotency": {
+                  "const": true
+                },
+                "replay_window_seconds": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "fail_closed",
+                "idempotency",
+                "replay_window_seconds"
+              ]
+            }
+          },
+          "external_hosts": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "external_dependencies": {
+            "minItems": 1
+          }
+        },
+        "required": [
+          "external_dependencies"
+        ]
+      },
+      "then": {
+        "properties": {
+          "resilience": {
+            "properties": {
+              "circuit_breaker": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ui": {
+            "properties": {
+              "has_ui": {
+                "const": true
+              }
+            },
+            "required": [
+              "has_ui"
+            ]
+          }
+        },
+        "required": [
+          "ui"
+        ]
+      },
+      "then": {
+        "properties": {
+          "ui": {
+            "properties": {
+              "responsive": {
+                "const": true
+              },
+              "accessibility": {
+                "const": true
+              },
+              "localization": {
+                "const": true
+              },
+              "wcag_target": {
+                "enum": [
+                  "2.1-AA",
+                  "2.2-AA"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "profile": {
+                "const": "workforce-extension"
+              }
+            },
+            "required": [
+              "profile"
+            ]
+          }
+        },
+        "required": [
+          "architecture"
+        ]
+      },
+      "then": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "modifiers": {
+                "not": {
+                  "contains": {
+                    "const": "workforce-aware"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "profile": {
+                "const": "communication-extension"
+              }
+            },
+            "required": [
+              "profile"
+            ]
+          }
+        },
+        "required": [
+          "architecture"
+        ]
+      },
+      "then": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "modifiers": {
+                "not": {
+                  "contains": {
+                    "const": "communications-consumer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "modifiers": {
+                "contains": {
+                  "const": "forensic-replay"
+                },
+                "minContains": 1
+              }
+            },
+            "required": [
+              "modifiers"
+            ]
+          }
+        },
+        "required": [
+          "architecture"
+        ]
+      },
+      "then": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "profile": {
+                "const": "system-engine"
+              }
+            }
+          }
+        },
+        "required": [
+          "rewind"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "modifiers": {
+                "contains": {
+                  "const": "workforce-aware"
+                },
+                "minContains": 1
+              }
+            },
+            "required": [
+              "modifiers"
+            ]
+          }
+        },
+        "required": [
+          "architecture"
+        ]
+      },
+      "then": {
+        "properties": {
+          "workforce": {
+            "properties": {
+              "enabled": {
+                "const": true
+              },
+              "source_of_truth": {
+                "const": "extension"
+              },
+              "manifest": {
+                "type": "string",
+                "minLength": 1
+              },
+              "discovery_contract": {
+                "const": "titan.workforce.manifest.v2"
+              },
+              "direct_domain_writes": {
+                "const": false
+              },
+              "state_writes_via_command_bus": {
+                "const": true
+              },
+              "auto_activate": {
+                "const": false
+              }
+            },
+            "required": [
+              "enabled",
+              "source_of_truth",
+              "manifest",
+              "discovery_contract",
+              "direct_domain_writes",
+              "state_writes_via_command_bus",
+              "auto_activate"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "profile": {
+                "const": "workforce-extension"
+              }
+            },
+            "required": [
+              "profile"
+            ]
+          }
+        },
+        "required": [
+          "architecture"
+        ]
+      },
+      "then": {
+        "properties": {
+          "workforce": {
+            "properties": {
+              "enabled": {
+                "const": true
+              },
+              "source_of_truth": {
+                "const": "central-runtime"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "modifiers": {
+                "contains": {
+                  "const": "predictive"
+                },
+                "minContains": 1
+              }
+            },
+            "required": [
+              "modifiers"
+            ]
+          }
+        },
+        "required": [
+          "architecture"
+        ]
+      },
+      "then": {
+        "properties": {
+          "predictive": {
+            "properties": {
+              "enabled": {
+                "const": true
+              },
+              "inference_is_authoritative": {
+                "const": false
+              },
+              "prepared_actions_mutating": {
+                "const": false
+              },
+              "execution_requires_fresh_governance": {
+                "const": true
+              }
+            },
+            "required": [
+              "enabled",
+              "inference_is_authoritative",
+              "prepared_actions_mutating",
+              "execution_requires_fresh_governance"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "modifiers": {
+                "contains": {
+                  "const": "offline-aware"
+                },
+                "minContains": 1
+              }
+            },
+            "required": [
+              "modifiers"
+            ]
+          }
+        },
+        "required": [
+          "architecture"
+        ]
+      },
+      "then": {
+        "properties": {
+          "offline": {
+            "properties": {
+              "supported": {
+                "const": true
+              },
+              "can_increase_authority": {
+                "const": false
+              },
+              "authority_policy": {
+                "enum": [
+                  "deny-offline",
+                  "preserve-or-reduce"
+                ]
+              },
+              "conflict_resolution": {
+                "enum": [
+                  "server-authoritative",
+                  "optimistic-merge",
+                  "outbox-reconcile",
+                  "domain-specific"
+                ]
+              }
+            },
+            "required": [
+              "supported",
+              "authority_policy",
+              "can_increase_authority",
+              "conflict_resolution"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "modifiers": {
+                "contains": {
+                  "const": "interface-contributor"
+                },
+                "minContains": 1
+              }
+            },
+            "required": [
+              "modifiers"
+            ]
+          }
+        },
+        "required": [
+          "architecture"
+        ]
+      },
+      "then": {
+        "required": [
+          "interface_contribution"
+        ],
+        "properties": {
+          "interface_contribution": {
+            "properties": {
+              "enabled": {
+                "const": true
+              },
+              "manifest": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "enabled",
+              "manifest"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "modifiers": {
+                "contains": {
+                  "const": "communications-consumer"
+                },
+                "minContains": 1
+              }
+            },
+            "required": [
+              "modifiers"
+            ]
+          }
+        },
+        "required": [
+          "architecture"
+        ]
+      },
+      "then": {
+        "required": [
+          "communications"
+        ],
+        "properties": {
+          "communications": {
+            "properties": {
+              "role": {
+                "const": "consumer"
+              },
+              "direct_provider_side_effects": {
+                "const": false
+              }
+            },
+            "required": [
+              "role",
+              "direct_provider_side_effects"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "profile": {
+                "const": "communication-extension"
+              }
+            },
+            "required": [
+              "profile"
+            ]
+          }
+        },
+        "required": [
+          "architecture"
+        ]
+      },
+      "then": {
+        "required": [
+          "communications"
+        ],
+        "properties": {
+          "communications": {
+            "properties": {
+              "role": {
+                "const": "execution-layer"
+              },
+              "direct_provider_side_effects": {
+                "const": true
+              }
+            },
+            "required": [
+              "role",
+              "direct_provider_side_effects"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "architecture": {
+            "properties": {
+              "modifiers": {
+                "contains": {
+                  "const": "rewind-source-contributor"
+                },
+                "minContains": 1
+              }
+            },
+            "required": [
+              "modifiers"
+            ]
+          }
+        },
+        "required": [
+          "architecture"
+        ]
+      },
+      "then": {
+        "required": [
+          "rewind_sources"
+        ],
+        "properties": {
+          "rewind_sources": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
+  "description": "Canonical Titan v4.2 extension contract. Older manifest schemas are migration compatibility only.",
+  "$id": "https://titan.local/schemas/extension-manifest-v2.2.schema.json"
+}

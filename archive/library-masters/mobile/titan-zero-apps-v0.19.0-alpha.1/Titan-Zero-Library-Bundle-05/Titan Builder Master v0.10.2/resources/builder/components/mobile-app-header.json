@@ -1,0 +1,22 @@
+{
+  "id": "mobile-app-header",
+  "name": "Mobile App Header",
+  "category": "Premium / Mobile Shell",
+  "blade": "components.titan-builder.premium.mobile-app-header",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "title",
+    "subtitle",
+    "leftLabel",
+    "rightLabel",
+    "tone",
+    "transparent",
+    "sticky"
+  ],
+  "actions": []
+}

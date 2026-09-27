@@ -1,0 +1,15 @@
+{
+  "registry": "titan.interface.contributions.v1",
+  "contract_version": "1.1",
+  "surfaces": [
+    "zero",
+    "go",
+    "hub"
+  ],
+  "journeys": {
+    "onboarding": {
+      "surface": "zero"
+    }
+  },
+  "authority": "presentation-only"
+}

@@ -1,0 +1,140 @@
+{
+  "wizard": {
+    "id": "booking_intake_v1",
+    "version": "1.0.0",
+    "name": "Booking Intake",
+    "capability": "hospitality.bookings.create",
+    "permissions": {
+      "required_roles": [
+        "staff",
+        "supervisor",
+        "manager",
+        "admin"
+      ]
+    },
+    "metadata": {
+      "category": "hospitality",
+      "template_id": "booking-intake",
+      "template_version": "1.0.0",
+      "verticals": [
+        "hospitality",
+        "events",
+        "venues"
+      ],
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "normal",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": []
+    },
+    "steps": [
+      {
+        "id": "guest",
+        "title": "Guest",
+        "fields": [
+          {
+            "id": "customer_id",
+            "label": "Customer ID",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "contact_name",
+            "label": "Contact name",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "contact_email",
+            "label": "Contact email",
+            "type": "email",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "booking",
+        "title": "Booking",
+        "fields": [
+          {
+            "id": "booking_type",
+            "label": "Booking type",
+            "type": "text",
+            "required": true,
+            "options": [
+              "room",
+              "table",
+              "venue",
+              "function",
+              "service"
+            ]
+          },
+          {
+            "id": "start_at",
+            "label": "Start at",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "party_size",
+            "label": "Party size",
+            "type": "number",
+            "required": true,
+            "min": 1
+          }
+        ]
+      },
+      {
+        "id": "requirements",
+        "title": "Requirements",
+        "fields": [
+          {
+            "id": "special_requirements",
+            "label": "Special requirements",
+            "type": "array",
+            "required": false
+          },
+          {
+            "id": "deposit_status",
+            "label": "Deposit status",
+            "type": "text",
+            "required": true,
+            "options": [
+              "not_required",
+              "pending",
+              "paid"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "declaration",
+        "title": "Review",
+        "fields": [
+          {
+            "id": "declaration_accepted",
+            "label": "Declaration accepted",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

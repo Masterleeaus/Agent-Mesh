@@ -1,0 +1,55 @@
+{
+  "schema": "titan.ecosystem.recovery-reconciliation.v1",
+  "schema_version": "1.0",
+  "tenancy": {
+    "required_key": "company_id",
+    "fail_closed": true
+  },
+  "recovery": {
+    "states": [
+      "pending",
+      "retry_wait",
+      "reconciling",
+      "recovered",
+      "dead_letter",
+      "attention_required"
+    ],
+    "retryable_outcomes": [
+      "timeout",
+      "rate_limit",
+      "transient_provider_error",
+      "unknown_outcome"
+    ],
+    "permanent_outcomes": [
+      "authorization_denied",
+      "validation_failed",
+      "idempotency_collision"
+    ],
+    "max_attempts": 5,
+    "preserve_idempotency_key": true,
+    "authority_must_be_rechecked": true,
+    "dead_letter_requires_original_envelope": true,
+    "silent_drop_forbidden": true
+  },
+  "reconciliation": {
+    "required": true,
+    "compare_receipt_to_domain_state": true,
+    "repair_requires_governed_command": true,
+    "partial_success_never_treated_as_complete": true,
+    "unknown_state": "attention_required",
+    "evidence_refs_required_for_manual_resolution": true
+  },
+  "stuck_work": {
+    "detect": true,
+    "lease_expiry_supported": true,
+    "stale_worker_cannot_commit": true,
+    "reclaim_requires_new_claim_generation": true,
+    "terminal_state": "attention_required"
+  },
+  "workforce": {
+    "outcome_verification_required": true,
+    "workforce_does_not_mutate_domain_state": true,
+    "extension_must_not_create_roles": true,
+    "escalation_preserves_provider_provenance": true
+  }
+}

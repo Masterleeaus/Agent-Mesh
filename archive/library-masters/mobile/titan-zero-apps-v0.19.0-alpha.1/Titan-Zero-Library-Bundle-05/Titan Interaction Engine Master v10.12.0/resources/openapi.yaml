@@ -1,0 +1,239 @@
+openapi: 3.1.0
+info:
+  title: Titan Zero Interaction Engine API
+  version: 10.0.0
+  description: Universal wizard, local-intelligence and offline command API.
+servers:
+  - url: /api/interaction
+security:
+  - bearerAuth: []
+paths:
+  /templates:
+    get:
+      operationId: listTemplates
+      summary: List versioned workflow templates and host compatibility
+      parameters:
+        - in: query
+          name: status
+          schema: {type: string, enum: [draft, ready, deprecated]}
+        - in: query
+          name: category
+          schema: {type: string}
+      responses:
+        '200':
+          description: Template catalogue
+  /templates/{templateId}:
+    get:
+      operationId: getTemplate
+      summary: Get one template and its host compatibility
+      parameters:
+        - in: path
+          name: templateId
+          required: true
+          schema: {type: string}
+      responses:
+        '200':
+          description: Template definition
+        '404': {$ref: '#/components/responses/NotFound'}
+  /wizards:
+    get:
+      operationId: listWizards
+      summary: List registered wizard definitions
+      responses:
+        '200':
+          description: Wizard catalogue
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  wizards:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WizardSummary'
+  /wizards/{wizardId}/start:
+    post:
+      operationId: startWizard
+      summary: Start a resumable wizard session
+      parameters:
+        - $ref: '#/components/parameters/WizardId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company_id: {type: string}
+                device_id: {type: string}
+                interface: {type: string, default: api}
+      responses:
+        '201':
+          description: Wizard session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RenderedWizard'
+        '404': {$ref: '#/components/responses/NotFound'}
+  /wizard-sessions/{sessionId}:
+    get:
+      operationId: getWizardSession
+      summary: Resume or inspect a wizard session
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Current wizard state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RenderedWizard'
+        '404': {$ref: '#/components/responses/NotFound'}
+  /wizard-sessions/{sessionId}/steps:
+    post:
+      operationId: submitWizardStep
+      summary: Validate and submit the current wizard step
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [data]
+              properties:
+                data:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Step accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RenderedWizard'
+        '404': {$ref: '#/components/responses/NotFound'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /local-intelligence/process:
+    post:
+      operationId: processLocalIntelligence
+      summary: Run deterministic local intent, reasoning and suggestion processing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message: {type: string, maxLength: 5000}
+                context:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Local intelligence result
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /offline-commands:
+    post:
+      operationId: syncOfflineCommand
+      summary: Execute one encrypted-device outbox command after client-side decryption
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfflineCommand'
+      responses:
+        '202':
+          description: Command executed or already received
+        '403':
+          description: Tenant mismatch
+        '409':
+          description: Authoritative provider conflict
+        '422': {$ref: '#/components/responses/ValidationError'}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    WizardId:
+      name: wizardId
+      in: path
+      required: true
+      schema: {type: string}
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema: {type: string}
+  schemas:
+    WizardSummary:
+      type: object
+      required: [id, version, name, capability, step_count]
+      properties:
+        id: {type: string}
+        version: {type: string}
+        name: {type: string}
+        capability: {type: string}
+        permissions: {type: array, items: {type: string}}
+        metadata: {type: object, additionalProperties: true}
+        offline: {type: object, additionalProperties: true}
+        step_count: {type: integer, minimum: 1}
+    RenderedWizard:
+      type: object
+      properties:
+        message: {type: string}
+        view_model:
+          type: object
+          additionalProperties: true
+        errors:
+          type: object
+          additionalProperties: true
+        guidance: {type: [string, 'null']}
+        complete: {type: boolean}
+        command:
+          anyOf:
+            - $ref: '#/components/schemas/OfflineCommand'
+            - type: 'null'
+    OfflineCommand:
+      type: object
+      required: [id, capability, payload, metadata]
+      properties:
+        id: {type: string, format: uuid}
+        capability: {type: string}
+        payload:
+          type: object
+          additionalProperties: true
+        metadata:
+          type: object
+          required: [company_id, device_id]
+          properties:
+            company_id: {type: string}
+            user_id: {}
+            device_id: {type: string}
+          additionalProperties: true
+    Error:
+      type: object
+      properties:
+        message: {type: string}
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    ValidationError:
+      description: Validation or command rejection
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: true

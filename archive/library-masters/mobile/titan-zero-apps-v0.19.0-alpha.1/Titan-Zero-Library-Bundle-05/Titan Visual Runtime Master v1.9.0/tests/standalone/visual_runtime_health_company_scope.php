@@ -1,0 +1,25 @@
+<?php
+require_once __DIR__.'/../../System/Contracts/VisualRuntime.php';
+require_once __DIR__.'/../../System/Contracts/VisualMetadataContract.php';
+require_once __DIR__.'/../../System/Contracts/InterfaceRuntimeBridgeCompatibility.php';
+require_once __DIR__.'/../../System/Contracts/VisualRuntimeHealth.php';
+require_once __DIR__.'/../../System/Runtime/DefaultVisualRuntimeHealth.php';
+require_once __DIR__.'/../../System/Contracts/VisualRuntimeCompatibilityNegotiator.php';
+require_once __DIR__.'/../../System/Runtime/DefaultVisualRuntimeCompatibilityNegotiator.php';
+require_once __DIR__.'/../../System/Contracts/VisualCompanyScope.php';
+require_once __DIR__.'/../../System/Contracts/VisualEnvironment.php';
+use App\Extensions\TitanVisualRuntime\System\Runtime\{DefaultVisualRuntimeHealth,DefaultVisualRuntimeCompatibilityNegotiator};
+use App\Extensions\TitanVisualRuntime\System\Contracts\{VisualCompanyScope,VisualEnvironment};
+$h=(new DefaultVisualRuntimeHealth())->report();
+if(($h['status']??null)!=='healthy') throw new RuntimeException('visual runtime health degraded');
+if(($h['tenant_boundary']??null)!=='company_id') throw new RuntimeException('wrong boundary');
+if(($h['company_scope_inference']??true)!==false) throw new RuntimeException('company scope inference must remain disabled');
+$scope=new VisualCompanyScope(42);
+if(($scope->toArray()['company_id']??null)!==42) throw new RuntimeException('company scope failure');
+$env=new VisualEnvironment(surface:'zero',companyId:42);
+if($env->companyId!==42) throw new RuntimeException('environment company_id failure');
+$n=(new DefaultVisualRuntimeCompatibilityNegotiator())->negotiate(['visual_metadata_contract'=>'1.1','surface'=>'zero']);
+if(!($n['compatible']??false)) throw new RuntimeException('suite negotiation failed');
+$bad=(new DefaultVisualRuntimeCompatibilityNegotiator())->negotiate(['visual_metadata_contract'=>'2.0','surface'=>'zero']);
+if(($bad['compatible']??true)!==false) throw new RuntimeException('unsupported major accepted');
+echo "VISUAL_RUNTIME_HEALTH_COMPANY_SCOPE: PASS\n";

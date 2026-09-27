@@ -1,0 +1,9 @@
+{
+  "id": "titan-hub-home",
+  "name": "Titan Hub Home",
+  "surface": "customer",
+  "theme": "mobilekit-premium",
+  "description": "Default company-configured Titan Hub home experience.",
+  "spec": "titan-hub-home",
+  "authority": "presentation-only"
+}

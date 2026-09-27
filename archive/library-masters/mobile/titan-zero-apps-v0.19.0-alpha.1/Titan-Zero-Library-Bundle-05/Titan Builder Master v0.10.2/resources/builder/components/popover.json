@@ -1,0 +1,15 @@
+{
+  "id": "popover",
+  "name": "Popover",
+  "category": "Overlay",
+  "blade": "components.titan-builder.popover",
+  "authority": "presentation-only",
+  "props": [
+    "label",
+    "placement"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

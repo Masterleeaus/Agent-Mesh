@@ -1,0 +1,28 @@
+{
+  "id": "customer",
+  "name": "Titan Hub",
+  "product": "Titan Hub",
+  "runtime_owner": "Titan Mobile / Titan Hub",
+  "connectivity": "online-first",
+  "offline_fallback": "safe-shell-with-optional-non-sensitive-cache",
+  "authority": "presentation-only",
+  "default_template": "customer",
+  "allowed_devices": [
+    "mobile",
+    "tablet",
+    "desktop"
+  ],
+  "required_capabilities": [
+    "mobile.customer",
+    "crm.customer.operations"
+  ],
+  "preview_states": [
+    "online",
+    "offline",
+    "empty",
+    "populated",
+    "loading",
+    "error",
+    "permission-denied"
+  ]
+}

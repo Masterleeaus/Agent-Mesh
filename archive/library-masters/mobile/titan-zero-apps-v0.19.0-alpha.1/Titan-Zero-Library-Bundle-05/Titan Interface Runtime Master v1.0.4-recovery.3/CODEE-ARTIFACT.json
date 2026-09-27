@@ -1,0 +1,16 @@
+{
+  "protocol": "CODEE_ARTIFACT",
+  "protocol_version": 2,
+  "plan_id": "d55dfe16-0a2b-4357-bd5c-6c71d3aae4b9",
+  "run_id": "run-4fc1a93d-fca0-4e2b-9c30-7fc4908852a3",
+  "step_id": "pass-20-hotfix-3",
+  "step_token": "token-1eabe3c3-4c76-4e13-a293-eb0d0b2fa5df",
+  "artifact_id": "artifact-85417073-52d5-4fb7-a36e-3c005a72b419",
+  "step_completed": 20,
+  "step_total": 20,
+  "status": "completed",
+  "artifact_type": "cumulative",
+  "version": "1.0.3",
+  "next_action": "install-v1.0.3-host-view-menu-hotfix",
+  "parent_sha256": "a701c28136cb152c277f03c88bd00595b36973eaf6bfd799d413a325d154a76f"
+}

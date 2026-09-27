@@ -1,0 +1,15 @@
+{
+  "id": "chart-sparkline",
+  "name": "Sparkline",
+  "category": "Charts",
+  "blade": "components.titan-builder.chart.sparkline",
+  "authority": "presentation-only",
+  "props": [
+    "data",
+    "color"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Radminly-adapted",
+  "actions": []
+}

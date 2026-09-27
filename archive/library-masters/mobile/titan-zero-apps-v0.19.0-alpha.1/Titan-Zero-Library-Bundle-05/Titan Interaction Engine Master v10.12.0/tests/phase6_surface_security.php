@@ -1,0 +1,26 @@
+<?php
+declare(strict_types=1);
+$root=dirname(__DIR__);spl_autoload_register(static function(string$class)use($root):void{$p='App\\Extensions\\InteractionEngine\\System\\';if(str_starts_with($class,$p)){$f=$root.'/System/'.str_replace('\\','/',substr($class,strlen($p))).'.php';if(is_file($f))require_once$f;}});
+use App\Extensions\InteractionEngine\System\Surfaces\SurfaceWizardPolicy;
+use App\Extensions\InteractionEngine\System\Wizard\Security\WizardAccessPolicy;
+use App\Extensions\InteractionEngine\System\Wizard\WizardDefinition;
+use App\Extensions\InteractionEngine\System\Wizard\WizardSession;
+use App\Extensions\InteractionEngine\System\Wizard\Security\WizardSessionAccessPolicy;
+$fail=0;$n=0;$check=function(bool$c,string$m)use(&$fail,&$n){$n++;echo($c?'PASS ':'FAIL ').$m."\n";if(!$c)$fail++;};
+$surface=new SurfaceWizardPolicy();$access=new WizardAccessPolicy();
+$load=function(string$id)use($root):WizardDefinition{$p=$root.'/resources/wizards/'.str_replace('_v1','',$id).'.json';if(!is_file($p)){foreach(glob($root.'/resources/wizards/*.json')?:[]as$f){$j=json_decode((string)file_get_contents($f),true);if(($j['wizard']['id']??'')===$id)return WizardDefinition::fromArray($j);}}return WizardDefinition::fromArray(json_decode((string)file_get_contents($p),true));};
+$customer=['company_id'=>'c1','user_id'=>'cust1','roles'=>['customer']];$field=['company_id'=>'c1','user_id'=>'w1','roles'=>['field_worker']];$owner=['company_id'=>'c1','user_id'=>'o1','roles'=>['owner']];
+$new=$load('new_customer_v1');$booking=$load('service_booking_v1');$job=$load('create_job_v1');$complete=$load('complete_job_v1');$onboarding=$load('field_home_services_onboarding_v1');
+$check($surface->allows('hub',$new->id)&&$access->mayAccess($new,$customer),'Hub customer can access customer onboarding');
+$check($surface->allows('hub',$booking->id)&&$access->mayAccess($booking,$customer),'Hub customer can access service booking');
+$check(!$surface->allows('hub',$job->id),'Hub cannot expose owner work-order creation');
+$check($surface->allows('go',$complete->id)&&$access->mayAccess($complete,$field),'Titan Go field worker can access job completion');
+$check(!$surface->allows('go',$onboarding->id),'Titan Go cannot expose company onboarding');
+$check($surface->allows('command',$job->id)&&$access->mayAccess($job,$owner),'Titan Command owner can access work-order creation');
+$check($surface->allows('onboarding',$onboarding->id)&&$access->mayAccess($onboarding,$owner),'Titan Onboarding owner can access company setup');
+$check(!$access->mayAccess($onboarding,$field),'ordinary field worker cannot invoke company onboarding');
+$check(!$access->mayAccess($job,['company_id'=>'c1','user_id'=>'cust1','roles'=>['customer']]),'customer role cannot invoke owner work-order wizard even if id is known');
+$onboardingSession=new WizardSession('onboarding-session',$onboarding,0,[],['company_id'=>'c1','company_id'=>'c1','user_id'=>'o1']);$sessionPolicy=new WizardSessionAccessPolicy();
+$check($sessionPolicy->mayAccess($onboardingSession,['company_id'=>'c1','company_id'=>'c1','user_id'=>'m1','roles'=>['manager']]),'same-company authorized manager can continue multi-actor onboarding');
+$check(!$sessionPolicy->mayAccess($onboardingSession,['company_id'=>'c2','company_id'=>'c2','user_id'=>'m2','roles'=>['manager']]),'multi-actor onboarding never crosses company_id');
+echo"\n".($n-$fail)."/{$n} four-surface security checks passed\n";exit($fail?1:0);

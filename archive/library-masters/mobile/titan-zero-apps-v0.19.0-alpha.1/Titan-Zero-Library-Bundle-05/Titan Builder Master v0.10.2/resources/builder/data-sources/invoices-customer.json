@@ -1,0 +1,21 @@
+{
+  "id": "invoices-customer",
+  "name": "Customer invoices",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.customer.invoices",
+  "required_capability": "crm.customer.operations",
+  "fields": [
+    "id",
+    "number",
+    "status",
+    "amount",
+    "currency",
+    "due_at"
+  ],
+  "surface_compatibility": [
+    "customer"
+  ],
+  "compatibility_alias": true,
+  "authority": "read-only-dto"
+}

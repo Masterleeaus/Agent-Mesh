@@ -1,0 +1,22 @@
+{
+  "id": "approval-workflow",
+  "name": "Approval workflow",
+  "category": "Generative UI",
+  "renderer": "approval-workflow",
+  "authority": "presentation-only",
+  "props": [
+    "title",
+    "summary",
+    "impact",
+    "actions"
+  ],
+  "allowed_actions": [
+    "builder.edit",
+    "crm.work_order.assign",
+    "titanmoney.invoices.issue"
+  ],
+  "data_contract": {
+    "type": "object"
+  },
+  "responsive": true
+}

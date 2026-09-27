@@ -1,0 +1,14 @@
+{
+  "id": "save-bar",
+  "name": "Save bar",
+  "category": "Actions",
+  "blade": "components.titan-builder.save-bar",
+  "authority": "presentation-only",
+  "props": [
+    "message"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

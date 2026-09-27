@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);$ci=dirname(__DIR__);$pkg=dirname($ci);$f=[];function p6($x,$l){global$f;echo($x?'PASS: ':'FAIL: ').$l."\n";if(!$x)$f[]=$l;}function t6($p){return is_file($p)?file_get_contents($p):'';}
+foreach(['ComplianceReport.php','ComplianceAnnotation.php','ComplianceHash.php']as$m){$s=t6($ci.'/Entities/'.$m);p6(str_contains($s,'CompanyScoped'),$m.' is company scoped');}
+$m=t6($ci.'/Database/Migrations/2025_09_19_000000_create_compliance_tables.php');p6(substr_count($m,"unsignedBigInteger('company_id')")===3,'all compliance persistence tables carry company_id');p6(str_contains($m,"previous_sha256"),'integrity chain stores previous hash');
+$integrity=t6($ci.'/Services/Compliance/AuditIntegrityService.php');p6(str_contains($integrity,"'previous'=>\$previous")&&str_contains($integrity,'verifyCompany'),'audit integrity is chained and verifiable');
+$report=t6($ci.'/Services/Compliance/ComplianceReportService.php');p6(str_contains($report,'AuditEventStore')&&str_contains($report,'->between('),'compliance reports consume canonical audit store');
+$finding=t6($ci.'/Services/Compliance/ComplianceFindingService.php');p6(str_contains($finding,"'compliance'")&&str_contains($finding,"'compliance.corrective.manage'"),'compliance exceptions map to governed findings/work');
+foreach(['GenerateComplianceSummary.php','AnalyzeComplianceAnomalies.php','TamperCheckHashes.php']as$j){$s=t6($ci.'/Jobs/'.$j);p6(str_contains($s,'public int $companyId')&&str_contains($s,'CompanyExecutionContext'),$j.' carries explicit company execution context');}
+$anom=t6($ci.'/Jobs/AnalyzeComplianceAnomalies.php');p6(!str_contains($anom,"['no_anomalies' => true]"),'fake anomaly placeholder removed');
+$tamper=t6($ci.'/Jobs/TamperCheckHashes.php');p6(!str_contains($tamper,'$recomputed = $hashRow->sha256'),'fake tamper recompute placeholder removed');
+$cap=t6($pkg.'/TitanZeroAssurance/Config/titanzero.php');p6(str_contains($cap,'compliance.integrity.verify')&&str_contains($cap,'compliance.corrective.manage'),'compliance capabilities registered in canonical assurance kernel');
+$rt='';foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($ci,FilesystemIterator::SKIP_DOTS))as$x){if($x->isFile()&&str_ends_with($x->getFilename(),'.php')&&!str_contains($x->getPathname(),'/Tests/')&&!str_starts_with($x->getFilename(),'VERIFY_PASS'))$rt.=file_get_contents($x->getPathname());}p6(!str_contains($rt,'tenant_company_id'),'ComplianceIQ runtime introduces no tenant_company_id');
+if($f){echo'PASS6_TEST: FAIL ('.count($f).")\n";exit(1);}echo"PASS6_TEST: PASS\n";

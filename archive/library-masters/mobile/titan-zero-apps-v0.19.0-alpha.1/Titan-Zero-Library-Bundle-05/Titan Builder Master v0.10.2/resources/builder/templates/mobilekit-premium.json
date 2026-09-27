@@ -1,0 +1,38 @@
+{
+  "id": "mobilekit-premium",
+  "name": "Premium Mobile App",
+  "description": "Mobilekit-derived mobile application shell for Customer, Go and branded portal experiences.",
+  "surface": "field",
+  "theme": "mobilekit-premium",
+  "premium": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "company_boundary": "company_id",
+  "shell_components": [
+    "mobile-app-shell",
+    "mobile-app-header",
+    "mobile-tab-header",
+    "mobile-bottom-nav",
+    "floating-action-button",
+    "action-sheet"
+  ],
+  "page_presets": [
+    "mobile-login",
+    "mobile-register",
+    "mobile-forgot-password",
+    "mobile-sms-verification",
+    "mobile-lockscreen",
+    "mobile-profile",
+    "mobile-chat",
+    "mobile-product",
+    "mobile-cart",
+    "mobile-invoice",
+    "mobile-contact",
+    "mobile-faq",
+    "mobile-about",
+    "mobile-blog-post",
+    "mobile-fullpage-slider",
+    "mobile-maintenance",
+    "mobile-under-construction",
+    "mobile-blank"
+  ]
+}

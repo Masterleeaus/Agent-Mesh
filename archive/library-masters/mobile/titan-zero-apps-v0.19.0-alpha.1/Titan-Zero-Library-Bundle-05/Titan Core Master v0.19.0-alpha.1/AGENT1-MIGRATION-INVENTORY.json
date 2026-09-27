@@ -1,0 +1,44 @@
+{
+  "agent": 1,
+  "pass": 17,
+  "extension": "Titan Apps: Core",
+  "version": "0.19.0-alpha.1",
+  "canonical": [
+    "AppSurface",
+    "AppIdentity",
+    "AppContext",
+    "AppContextFactory",
+    "AppContextEnvelope",
+    "AppLifecycle",
+    "TitanAppsDiscoveryService",
+    "TitanAppsRuntimeDependencyRegistry",
+    "TitanAppsPublicServiceRegistry",
+    "PlatformAccessibleServiceRegistry",
+    "AppJourneyContext",
+    "OfflineCapabilityIntent"
+  ],
+  "architectural_principle": "Titan Apps ownership/development boundary is not an isolation boundary.",
+  "platform_accessible_services": [
+    "core",
+    "interaction-engine",
+    "interface-runtime",
+    "builder",
+    "visual-runtime"
+  ],
+  "compatibility": {
+    "surface_aliases": [
+      "bos",
+      "command",
+      "owner",
+      "manager",
+      "business",
+      "field",
+      "worker",
+      "customer"
+    ]
+  },
+  "removed": [],
+  "unresolved": [
+    "Exact public contract names for Agent 2 Interaction Engine and Agent 4 Visual Runtime remain cross-agent convergence items."
+  ]
+}

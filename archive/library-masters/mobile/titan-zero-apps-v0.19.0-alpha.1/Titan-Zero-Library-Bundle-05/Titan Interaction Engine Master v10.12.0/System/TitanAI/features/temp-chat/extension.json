@@ -1,0 +1,13 @@
+{
+  "name": "ChatPro Temporary Chat",
+  "type": "extension",
+  "version": "1.5.0",
+  "description": "Privacy-aware temporary conversations for SystemAIChat.",
+  "requires": {
+    "system-ai-chat": ">=3.8.0"
+  },
+  "capabilities": [
+    "system-ai-chat.temporary-chat"
+  ],
+  "support_telegram": "heew_support"
+}

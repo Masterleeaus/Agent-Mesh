@@ -1,0 +1,19 @@
+{
+  "id": "rating-summary",
+  "name": "Rating Summary",
+  "category": "Premium / Commerce",
+  "blade": "components.titan-builder.premium.rating-summary",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "rating",
+    "count",
+    "breakdown",
+    "label"
+  ],
+  "actions": []
+}

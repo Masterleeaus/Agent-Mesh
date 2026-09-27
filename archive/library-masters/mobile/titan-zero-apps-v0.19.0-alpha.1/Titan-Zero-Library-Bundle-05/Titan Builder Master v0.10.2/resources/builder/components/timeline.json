@@ -1,0 +1,14 @@
+{
+  "id": "timeline",
+  "name": "Timeline",
+  "category": "Data Display",
+  "blade": "components.titan-builder.timeline",
+  "authority": "presentation-only",
+  "props": [
+    "items"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

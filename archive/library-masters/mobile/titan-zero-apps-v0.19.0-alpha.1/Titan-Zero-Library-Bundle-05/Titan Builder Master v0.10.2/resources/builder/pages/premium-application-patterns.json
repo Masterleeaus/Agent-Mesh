@@ -1,0 +1,32 @@
+{
+  "id": "premium-application-patterns",
+  "name": "Premium Application Patterns",
+  "surface": "worker-mobile",
+  "theme": "mobilekit-premium",
+  "description": "Application-pattern showcase for authentication, profile, messaging, commerce, content and system states.",
+  "category": "Premium / Showcase",
+  "premium": true,
+  "tier": "premium",
+  "source": "Mobilekit-v2.9.1-MIT",
+  "authority": "presentation-only",
+  "shell": {
+    "component": "mobile-app-shell",
+    "header": "mobile-app-header",
+    "bottom_navigation": "mobile-bottom-nav",
+    "safe_area": true
+  },
+  "sections": [
+    "authentication",
+    "profile",
+    "messaging",
+    "invoice",
+    "commerce",
+    "content",
+    "system-state"
+  ],
+  "notes": [
+    "Operational actions remain declarative intents.",
+    "company_id remains the only tenant boundary."
+  ],
+  "spec": "premium-application-patterns"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "alert",
+  "name": "Alert",
+  "category": "Feedback",
+  "blade": "components.titan-builder.alert",
+  "authority": "presentation-only",
+  "props": [
+    "tone",
+    "title"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

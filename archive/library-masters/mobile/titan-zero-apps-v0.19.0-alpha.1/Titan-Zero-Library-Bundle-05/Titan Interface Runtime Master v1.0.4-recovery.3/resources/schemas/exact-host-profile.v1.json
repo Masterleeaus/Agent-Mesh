@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "id": "titan.host.magicai.installer-1.7.8.v1",
+  "php": "8.3",
+  "laravel": "10.50.x",
+  "database": "mysql",
+  "database_mode": "strict",
+  "installer": "1.7.8",
+  "root_manifest_schema": "titan-extension-v1",
+  "archive_root": "flat",
+  "integrity_algorithm": "all-regular-files-except-extension.json",
+  "navigation": {
+    "modern_registry": "MenuContributionRegistry",
+    "legacy_table": "menus",
+    "menu_services": ["App\\Services\\Common\\MenuService"],
+    "regenerate_method": "regenerate",
+    "preserve_admin_order": true,
+    "preserve_enabled_state": true
+  },
+  "authorization": {
+    "super_admin_bypass": true,
+    "supported_methods": ["isSuperAdmin", "isAdmin", "checkPermission", "can", "hasPermissionTo"],
+    "delegated_admin_requires_bounded_permission": true,
+    "ordinary_user_requires_explicit_permission": true
+  }
+}

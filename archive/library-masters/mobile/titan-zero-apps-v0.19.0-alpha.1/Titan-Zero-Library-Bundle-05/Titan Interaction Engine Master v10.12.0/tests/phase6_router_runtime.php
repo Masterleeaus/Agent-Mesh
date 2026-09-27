@@ -1,0 +1,16 @@
+<?php
+declare(strict_types=1);
+$root=dirname(__DIR__);
+spl_autoload_register(function(string $class)use($root){$p='App\\Extensions\\InteractionEngine\\System\\';if(str_starts_with($class,$p)){$f=$root.'/System/'.str_replace('\\','/',substr($class,strlen($p))).'.php';if(is_file($f))require_once$f;}});
+use App\Extensions\InteractionEngine\System\Capabilities\CapabilityProviderInterface;
+use App\Extensions\InteractionEngine\System\Capabilities\CapabilityProviderRegistry;
+use App\Extensions\InteractionEngine\System\Capabilities\CapabilityRouter;
+use App\Extensions\InteractionEngine\System\Capabilities\CapabilityDescriptor;
+use App\Extensions\InteractionEngine\System\Capabilities\CapabilityExecutionContext;
+use App\Extensions\InteractionEngine\System\Capabilities\CapabilityResult;
+use App\Extensions\InteractionEngine\System\Capabilities\CapabilityAliasRegistry;
+$tests=[];$test=function($n,$f)use(&$tests){$tests[$n]=$f;};$assert=function($c,$m='assert') {if(!$c)throw new RuntimeException($m);};
+$test('router dispatches only to the owning provider',function()use($assert){$calls=[];$p=new class($calls) implements CapabilityProviderInterface{public array $calls=[];public function __construct(&$x){$this->calls=&$x;}public function providerKey():string{return'crm';}public function descriptors():array{return['crm.customer.create'=>new CapabilityDescriptor('crm.customer.create','crm','write','medium','approval_required',true,'online_required',true,[],[],false,[],[],true,null)];}public function supports(string $c):bool{return$c==='crm.customer.create';}public function available(string $c,CapabilityExecutionContext $x):bool{return$this->supports($c)&&$x->companyId==='42';}public function execute(string $c,array $p,CapabilityExecutionContext $x):CapabilityResult{$this->calls[]=$x->companyId;return CapabilityResult::executed($c,'crm',['id'=>'c1']);}};$r=new CapabilityProviderRegistry();$r->register($p);$router=new CapabilityRouter($r,new CapabilityAliasRegistry());$ctx=new CapabilityExecutionContext('42','7','human',['owner'],['crm.customer.create'],'command','corr');$res=$router->execute('crm.customer.create',['name'=>'A'],$ctx);$assert($res->status==='executed');$assert($calls===['42']);});
+$test('unknown and missing providers are unavailable',function()use($assert){$r=new CapabilityProviderRegistry();$router=new CapabilityRouter($r,new CapabilityAliasRegistry());$ctx=new CapabilityExecutionContext('42','7','human',[],[],'api','corr');$a=$router->status('crm.customer.create',$ctx);$assert($a['availability']==='unavailable');$b=$router->execute('unknown.action',[],$ctx);$assert($b->status==='unavailable');});
+$test('legacy aliases resolve to canonical CRM namespaces',function()use($assert){$a=new CapabilityAliasRegistry();$assert($a->canonical('jobs.create')==='crm.work_order.create');$assert($a->canonical('jobs.complete')==='crm.work_order.complete');$assert($a->canonical('quotes.create')==='crm.quote.create');$assert($a->canonical('finance.invoice.create')==='crm.invoice.create');});
+$f=0;foreach($tests as$n=>$fn){try{$fn();echo"PASS $n\n";}catch(Throwable$e){$f++;echo"FAIL $n: {$e->getMessage()}\n";}}if($f)exit(1);echo"\n".count($tests)." Phase 6 router tests passed\n";

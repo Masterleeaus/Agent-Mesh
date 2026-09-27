@@ -1,0 +1,15 @@
+{
+  "id": "heading",
+  "name": "Heading",
+  "category": "Content",
+  "blade": "components.titan-builder.heading",
+  "authority": "presentation-only",
+  "props": [
+    "text",
+    "level"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

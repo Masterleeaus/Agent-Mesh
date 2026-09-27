@@ -1,0 +1,132 @@
+{
+  "id": "mobile-invoice",
+  "name": "Invoice",
+  "description": "Premium Mobilekit-derived invoice preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {},
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Invoice",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "invoiceHead",
+        "billTo",
+        "lines",
+        "invoiceTotal",
+        "pay"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "lines": {
+      "type": "invoice-line-items",
+      "props": {
+        "items": [
+          {
+            "description": "Service visit",
+            "quantity": 1,
+            "unitPrice": "$120.00",
+            "total": "$120.00"
+          }
+        ]
+      }
+    },
+    "pay": {
+      "type": "button",
+      "props": {
+        "label": "Prepare payment",
+        "variant": "primary"
+      },
+      "on": {
+        "press": {
+          "action": "zeropay.payment-intent.create",
+          "params": {
+            "invoice": "preview-1042"
+          }
+        }
+      }
+    },
+    "invoiceHead": {
+      "type": "invoice-header",
+      "props": {
+        "invoiceNumber": "INV-1042",
+        "status": "Due",
+        "issuedAt": "9 Aug 2026",
+        "dueAt": "16 Aug 2026"
+      }
+    },
+    "billTo": {
+      "type": "invoice-party",
+      "props": {
+        "label": "Bill to",
+        "name": "Customer",
+        "address": "Melbourne VIC"
+      }
+    },
+    "invoiceTotal": {
+      "type": "invoice-total",
+      "props": {
+        "subtotal": "$120.00",
+        "tax": "$12.00",
+        "total": "$132.00",
+        "balance": "$132.00"
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

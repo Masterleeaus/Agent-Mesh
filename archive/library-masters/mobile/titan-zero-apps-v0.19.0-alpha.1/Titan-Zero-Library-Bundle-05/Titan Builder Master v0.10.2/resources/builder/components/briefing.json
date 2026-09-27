@@ -1,0 +1,15 @@
+{
+  "id": "briefing",
+  "name": "Conversational briefing",
+  "category": "Content",
+  "blade": "components.titan-builder.briefing",
+  "authority": "presentation-only",
+  "props": [
+    "kicker",
+    "title",
+    "summary"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

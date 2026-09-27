@@ -1,0 +1,11 @@
+{
+  "artifact_family": "Titan Quality & Compliance Team",
+  "pass": 1,
+  "pass_name": "Titan Zero Quality, Compliance & Assurance Kernel",
+  "kernel_version": "0.1.0",
+  "parent_artifact": "Titan Quality & Compliance Team.zip",
+  "parent_sha256": "646a2e1c1392c9ea0a26f90c15a31495732a693cc95bb4ac1a1a205c00dd658b",
+  "canonical_company_boundary": "company_id",
+  "legacy_php_failure_baseline": 29,
+  "next_pass": "Canonical Quality Convergence"
+}

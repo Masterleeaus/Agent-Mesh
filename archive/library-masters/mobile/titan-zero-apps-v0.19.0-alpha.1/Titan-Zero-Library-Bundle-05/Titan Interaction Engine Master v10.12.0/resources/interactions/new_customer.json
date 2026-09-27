@@ -1,0 +1,118 @@
+{
+  "id": "new_customer",
+  "version": "1.0.0",
+  "name": "New Customer",
+  "description": "Add a new customer to the system",
+  "category": "crm",
+  "type": "wizard",
+  "capability": "crm.customer.create",
+  "permissions": [
+    "crm.customer.create"
+  ],
+  "sections": [
+    {
+      "id": "customer_type",
+      "title": "Customer Type",
+      "questions": [
+        {
+          "key": "customer_type",
+          "question": "Is this an individual or a business?",
+          "response_type": "select",
+          "options": [
+            "individual",
+            "business"
+          ],
+          "validation": {
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "contact_details",
+      "title": "Contact Details",
+      "questions": [
+        {
+          "key": "first_name",
+          "question": "First name",
+          "response_type": "text",
+          "validation": {
+            "required_if": "customer_type:individual"
+          }
+        },
+        {
+          "key": "last_name",
+          "question": "Last name",
+          "response_type": "text",
+          "validation": {
+            "required_if": "customer_type:individual"
+          }
+        },
+        {
+          "key": "company_name",
+          "question": "Company name",
+          "response_type": "text",
+          "validation": {
+            "required_if": "customer_type:business"
+          }
+        },
+        {
+          "key": "email",
+          "question": "Email",
+          "response_type": "email",
+          "validation": {
+            "required": true,
+            "email": true
+          }
+        },
+        {
+          "key": "phone",
+          "question": "Phone",
+          "response_type": "phone",
+          "validation": {
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "address",
+      "title": "Address",
+      "questions": [
+        {
+          "key": "address_line1",
+          "question": "Street address",
+          "response_type": "text"
+        },
+        {
+          "key": "address_suburb",
+          "question": "Suburb",
+          "response_type": "text"
+        },
+        {
+          "key": "address_city",
+          "question": "City",
+          "response_type": "text"
+        },
+        {
+          "key": "address_state",
+          "question": "State",
+          "response_type": "text"
+        },
+        {
+          "key": "address_postcode",
+          "question": "Postcode",
+          "response_type": "text"
+        }
+      ]
+    },
+    {
+      "id": "review",
+      "title": "Review & Submit",
+      "questions": [],
+      "metadata": {
+        "condition": "isBusiness"
+      }
+    }
+  ]
+}

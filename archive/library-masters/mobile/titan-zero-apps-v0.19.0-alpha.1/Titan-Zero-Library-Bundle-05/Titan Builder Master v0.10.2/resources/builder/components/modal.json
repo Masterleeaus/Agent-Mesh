@@ -1,0 +1,16 @@
+{
+  "id": "modal",
+  "name": "Modal",
+  "category": "Overlay",
+  "blade": "components.titan-builder.modal",
+  "authority": "presentation-only",
+  "props": [
+    "name",
+    "title",
+    "size"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

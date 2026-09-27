@@ -1,0 +1,232 @@
+{
+  "schema": "titan-shared-provider-inventory-v1",
+  "source_platform": "Titan-Zero-31-Provider-Full-Platform-With-Workforce-v0.72.0-Converged.zip",
+  "source_platform_sha256": "88314601f4d101d72d563f0abd4f3c6b84dc346cb18a5eb92b6e3d559c3295ca",
+  "providers": [
+    {
+      "filename": "Titan-AI-Assurance-Engine-v2.3.0-Pass6-Namespace-Isolation-Cumulative.zip",
+      "sha256": "a5af964427ae643644efd82a097a0e34ceca068a9068fc9d8ec79e39c0208340",
+      "bytes": 373771,
+      "entries": 313,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-AI-Core-v0.5.0-Pass5-Runtime-Availability-Handoff-Cumulative.zip",
+      "sha256": "1ba599369349b0ea084246f17d9f458b0f63162f2d320f7c54a7fd6a0eac5d2a",
+      "bytes": 109609,
+      "entries": 146,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-AI-Vision-v1.12.6-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip",
+      "sha256": "dd152bb3525047656beb669b9f2ed13c7ae0370b03899606f5514b7bdc891355",
+      "bytes": 164177,
+      "entries": 174,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-AI-v1.5.3-Pass6-Workforce-Identity-Boundary-Cumulative.zip",
+      "sha256": "10bbf4c6706fca124b1c0145377fbf0543b662ae92d547ebdf3ef94eadba196a",
+      "bytes": 386380,
+      "entries": 490,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Assets-v0.2.0-alpha.7-Pass6-DEEP-SCAN-FIXED-Cumulative.zip",
+      "sha256": "1cf01bd7fe7cf40beaa0acefc91c38acf70917bb98ee8e8da0a7a5da3153c0c9",
+      "bytes": 128608,
+      "entries": 101,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Autonomy-v1.7.5-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip",
+      "sha256": "f1df29de599e36e82b7b77565251827a14079c2728a874ca901aa1def4db4976",
+      "bytes": 260143,
+      "entries": 269,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-CRM-v1.3.0-alpha.42-Pass6-DEEP-SCAN-FIXED-Cumulative.zip",
+      "sha256": "9a2ebb607abff5a0af8d1e9c16aacac48bc499e235b426c65e6ee89563a892cf",
+      "bytes": 854188,
+      "entries": 636,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Command-Bus-v0.2.0-alpha.7-Pass5-Executable-Workforce-Contract-Cumulative.zip",
+      "sha256": "a41812967540080c4bacbe058077eee12fdea85aec00b8760fc5c9bf8a2604f7",
+      "bytes": 101092,
+      "entries": 105,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Connect-v0.10.6-Pass5-Executable-Workforce-Contract-Cumulative.zip",
+      "sha256": "6c9aa87498571f8dad111f9e980aff7859d9c03682f586ac1564a0403d4fa528",
+      "bytes": 299861,
+      "entries": 253,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Field-v1.0.12-Pass6-DEEP-SCAN-FIXED-Cumulative.zip",
+      "sha256": "d09e8c8d4a0e4776cff0253612f96d30442b15f57055430663700e49ebe8cbcc",
+      "bytes": 341204,
+      "entries": 221,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Financial-Engine-v0.4.0-Pass5-Executable-Workforce-Contract-Cumulative.zip",
+      "sha256": "38ffa756ca64797a1f821ab8a578a507b835f8db15794bc7075c56b16cdedb0c",
+      "bytes": 125119,
+      "entries": 111,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Forge-v0.9.0-alpha.8-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip",
+      "sha256": "b8e92661f80ea2c693e06b26ce44d57bdaecde661057a4ab6b7ad3afbeef9d34",
+      "bytes": 278666,
+      "entries": 286,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Governance-v1.0.0-rc.2-Pass5-Durable-Execution-Cumulative.zip",
+      "sha256": "d66cbc444f5ce796454bc62112c569a1e54b55212e94ac3fecfdae34b4520a6e",
+      "bytes": 318916,
+      "entries": 295,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Interaction-Engine-v10.3.2-Pass5-Executable-Workforce-Contract-Cumulative.zip",
+      "sha256": "b625000458f5ada8574cbf06d1705dde2d11962ee82a0c0a95421689b05bf3d8",
+      "bytes": 732482,
+      "entries": 675,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Ledger-v1.20.0-rc.5-Pass5-Executable-Workforce-Contract-Cumulative.zip",
+      "sha256": "94fd80a17874fe4ae2bcbfdf55749c57df0c10a4012386416528c7f233f9d0a8",
+      "bytes": 390187,
+      "entries": 286,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Locker-v1.1.0-alpha.6-Pass6-Command-Bus-Convergence-Cumulative.zip",
+      "sha256": "3b12cbba25680e34ae9e5f352bfdc78698efb32fc1635c7f7dded2705a44f7af",
+      "bytes": 102433,
+      "entries": 98,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-MCP-v1.5.14-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip",
+      "sha256": "1e4d79a2be5c9a24ce0476cd749c7c19d699f098d99cc8aa08be94a2de9f7da8",
+      "bytes": 226612,
+      "entries": 188,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Maps-Intelligence-v2.0.7-Pass6-DEEP-SCAN-FIXED-Cumulative.zip",
+      "sha256": "060e40c97e6296672cfd09cd4a8f366e962cca973629094a0fa8a97e2c480e41",
+      "bytes": 743467,
+      "entries": 643,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Model-Council-v1.0.0-rc.1-Pass6-Assurance-Coexistence-Cumulative.zip",
+      "sha256": "5a38fa1cc443f7c3c5dff923485de28b0be5efcf70bba9e0e2f64a506f49c85a",
+      "bytes": 311850,
+      "entries": 283,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Payroll-v0.1.0-rc.2-Workforce31-Converged-Cumulative.zip",
+      "sha256": "e37cce9fc23cb91417d23fbd817393dbcf670a173a09c23893665db8cb2c6790",
+      "bytes": 300391,
+      "entries": 361,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-People-v1.0.0-rc.1-Workforce31-Converged-Cumulative.zip",
+      "sha256": "f4345b11154d69137ccd854c509f0485677587b053de3c87ce93172da55f2db7",
+      "bytes": 167546,
+      "entries": 221,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Prime-v0.4.0-Pass5-Runtime-Availability-Handoff-Cumulative.zip",
+      "sha256": "1e53c751050e6b815d01366f60f1319e594f6eb9dcebace817d98a8e9273d7a2",
+      "bytes": 92039,
+      "entries": 116,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Risk-Engine-v1.0.0-rc.3-Pass5-Durable-Execution-Cumulative.zip",
+      "sha256": "6a527075bda0e6ed5998100f7c0788a696fe69b5e6336faa125d78ba0003e44f",
+      "bytes": 332826,
+      "entries": 326,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Shield-v1.0.0-rc.2-Pass5-Durable-Execution-Cumulative.zip",
+      "sha256": "7a2dad4020c4a5fec21e85abcace9cfd557c1066fa4c8b6edfff44310f91acce",
+      "bytes": 287338,
+      "entries": 275,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Time-Attendance-v0.1.7-Pass6-DEEP-SCAN-FIXED-Cumulative.zip",
+      "sha256": "6cb01a6e894f3e2204c4e05fc8a894204a921347c96db1ab8db8450783545376",
+      "bytes": 191526,
+      "entries": 169,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "TitanKnowledgeAuthority-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip",
+      "sha256": "bd5d676353f0ca93f0f4b3ba939c35e9feb72f403fb444198d56594e7213138b",
+      "bytes": 144692,
+      "entries": 169,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "TitanNexus-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip",
+      "sha256": "9846a93d0233176167022232d35371b69e60300afe4c194e940b23abf091412f",
+      "bytes": 323937,
+      "entries": 289,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "TitanRewind-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip",
+      "sha256": "a95e12a326186e7b30fe5740c791561e022db7c6bd39252fb79d19a1e2c197eb",
+      "bytes": 447224,
+      "entries": 394,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "TitanSignalEngine-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip",
+      "sha256": "9834d63e2919101a1763a0c15b3033c544ac4599993d901b6afb1733143839cb",
+      "bytes": 549033,
+      "entries": 456,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "TitanTrust-v2.1.0-Workforce31-Converged-Cumulative.zip",
+      "sha256": "9b1d99fb266976ec05fe863f717e16dfbb4e8665fdbc1b29ac484748dba896e9",
+      "bytes": 98877,
+      "entries": 101,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "TitanWisdomEngine-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip",
+      "sha256": "3019bb66d7225ae9a39cc7395ea58a93fc63a4db0c22c58f8b23a226c5fbab81",
+      "bytes": 155256,
+      "entries": 180,
+      "zip_integrity": "PASS"
+    },
+    {
+      "filename": "Titan-Bookings-Quotes-v0.1.0-alpha.2-Pass2-Booking-Engine-Cumulative.zip",
+      "sha256": "9dee7b76126528f732c3a8bec1ba48fa4a7df20f96125cff3ab3954a01d15753",
+      "bytes": 27880,
+      "entries": 41,
+      "zip_integrity": "PASS",
+      "role": "recovered lifecycle contribution; not independent CRM/revenue authority"
+    }
+  ]
+}

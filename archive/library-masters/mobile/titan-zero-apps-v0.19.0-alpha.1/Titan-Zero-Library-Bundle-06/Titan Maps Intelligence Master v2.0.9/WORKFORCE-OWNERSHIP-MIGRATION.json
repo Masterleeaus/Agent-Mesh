@@ -1,0 +1,10 @@
+{
+  "schema": "titan.workforce.ownership-migration.v1",
+  "extension": "titan-maps-intelligence",
+  "version": "2.0.9",
+  "active_workforce_identity_owner": "titan-ai-workforce",
+  "extension_role_definitions_active": false,
+  "extension_agent_definitions_active": false,
+  "legacy_definitions_policy": "compatibility_reference_only",
+  "canonical_integration": "resources/workforce/workforce-integration.json"
+}

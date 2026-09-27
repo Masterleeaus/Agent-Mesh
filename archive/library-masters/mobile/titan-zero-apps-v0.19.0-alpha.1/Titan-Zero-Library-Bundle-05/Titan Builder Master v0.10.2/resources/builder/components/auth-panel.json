@@ -1,0 +1,27 @@
+{
+  "id": "auth-panel",
+  "name": "Auth Panel",
+  "category": "Premium / Authentication",
+  "blade": "components.titan-builder.premium.auth-panel",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "title",
+    "subtitle",
+    "logo",
+    "mode",
+    "fields",
+    "primaryLabel",
+    "secondaryLabel",
+    "rememberLabel",
+    "footerText"
+  ],
+  "actions": [
+    "form.submit-preview",
+    "navigate"
+  ]
+}

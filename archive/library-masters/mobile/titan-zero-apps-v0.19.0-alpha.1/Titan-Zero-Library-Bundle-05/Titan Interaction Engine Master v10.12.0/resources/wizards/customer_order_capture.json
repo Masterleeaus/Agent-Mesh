@@ -1,0 +1,172 @@
+{
+  "wizard": {
+    "id": "customer_order_capture_v1",
+    "version": "1.0.0",
+    "name": "Customer Order Capture",
+    "capability": "commerce.orders.create",
+    "permissions": {
+      "required_roles": [
+        "staff",
+        "supervisor",
+        "manager",
+        "admin"
+      ]
+    },
+    "metadata": {
+      "category": "commerce",
+      "template_id": "customer-order-capture",
+      "template_version": "1.0.0",
+      "verticals": [
+        "ecommerce",
+        "retail",
+        "wholesale"
+      ],
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "normal",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": []
+    },
+    "steps": [
+      {
+        "id": "customer",
+        "title": "Customer",
+        "fields": [
+          {
+            "id": "customer_id",
+            "label": "Customer ID",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "sales_channel",
+            "label": "Sales channel",
+            "type": "text",
+            "required": true,
+            "options": [
+              "web",
+              "mobile",
+              "phone",
+              "in_person",
+              "marketplace"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "items",
+        "title": "Order items",
+        "fields": [
+          {
+            "id": "items",
+            "label": "Items",
+            "type": "array",
+            "required": true
+          },
+          {
+            "id": "subtotal",
+            "label": "Subtotal",
+            "type": "number",
+            "required": true,
+            "min": 0
+          },
+          {
+            "id": "currency",
+            "label": "Currency",
+            "type": "text",
+            "required": true,
+            "options": [
+              "AUD",
+              "USD",
+              "NZD",
+              "GBP",
+              "EUR"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "delivery",
+        "title": "Delivery",
+        "fields": [
+          {
+            "id": "delivery_method",
+            "label": "Delivery method",
+            "type": "text",
+            "required": true,
+            "options": [
+              "ship",
+              "pickup",
+              "digital",
+              "service"
+            ]
+          },
+          {
+            "id": "delivery_address",
+            "label": "Delivery address",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "requested_date",
+            "label": "Requested date",
+            "type": "text",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "payment",
+        "title": "Payment",
+        "fields": [
+          {
+            "id": "payment_status",
+            "label": "Payment status",
+            "type": "text",
+            "required": true,
+            "options": [
+              "pending",
+              "authorised",
+              "paid",
+              "invoice"
+            ]
+          },
+          {
+            "id": "payment_reference",
+            "label": "Payment reference",
+            "type": "text",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "declaration",
+        "title": "Review",
+        "fields": [
+          {
+            "id": "declaration_accepted",
+            "label": "Declaration accepted",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "ai-builder-studio",
+  "name": "AI builder studio",
+  "surface": "admin-dashboard",
+  "theme": "titan-dark",
+  "mock_data": "cleaning-business",
+  "description": "Builder-focused chat and component exploration.",
+  "sections": [
+    {
+      "block": "chat-assistant",
+      "renderer": "chat-assistant",
+      "title": "Build with Titan Zero",
+      "data_source": "chat"
+    },
+    {
+      "block": "component-gallery",
+      "renderer": "component-gallery",
+      "title": "Reusable UI system"
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "id": "mobile-cart",
+  "name": "Cart",
+  "description": "Premium Mobilekit-derived cart preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {
+    "qty": 1
+  },
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Cart",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "item1",
+        "summary",
+        "checkout"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "checkout": {
+      "type": "button",
+      "props": {
+        "label": "Prepare checkout",
+        "variant": "primary"
+      },
+      "on": {
+        "press": {
+          "action": "zeropay.payment-intent.create",
+          "params": {
+            "source": "premium-cart-preview"
+          }
+        }
+      }
+    },
+    "item1": {
+      "type": "cart-item",
+      "props": {
+        "title": "Service package",
+        "subtitle": "Standard visit",
+        "price": "$99.00",
+        "quantity": 1,
+        "statePath": "/qty"
+      }
+    },
+    "summary": {
+      "type": "price-summary",
+      "props": {
+        "subtotal": "$99.00",
+        "tax": "$9.90",
+        "total": "$108.90"
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

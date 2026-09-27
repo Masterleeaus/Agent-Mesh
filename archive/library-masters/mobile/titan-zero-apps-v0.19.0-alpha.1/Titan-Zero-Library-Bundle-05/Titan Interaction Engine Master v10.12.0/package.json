@@ -1,0 +1,12 @@
+{
+  "name": "@titanzero/interaction-engine",
+  "version": "10.12.0",
+  "private": true,
+  "description": "Browser/offline companion build tooling for the Titan Interaction Engine MagicAI extension",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test tests/ts/*.test.js",
+    "verify": "npm test"
+  }
+}

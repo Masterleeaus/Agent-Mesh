@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "titan://apps/hub/customer-projection/v1",
+  "title": "Titan Hub Customer-Safe Projection",
+  "type": "object",
+  "additionalProperties": true,
+  "not": {
+    "anyOf": [
+      {"required":["password"]},{"required":["password_hash"]},{"required":["api_key"]},
+      {"required":["credentials"]},{"required":["internal_notes"]},{"required":["cost_price"]},{"required":["margin"]}
+    ]
+  }
+}

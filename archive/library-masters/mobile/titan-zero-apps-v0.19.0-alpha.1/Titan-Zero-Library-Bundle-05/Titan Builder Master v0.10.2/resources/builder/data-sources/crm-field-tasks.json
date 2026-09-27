@@ -1,0 +1,20 @@
+{
+  "id": "crm-field-tasks",
+  "name": "Field work-order tasks",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.field.tasks",
+  "required_capability": "crm.field.offline",
+  "fields": [
+    "id",
+    "label",
+    "status",
+    "required",
+    "evidence_requirement"
+  ],
+  "surface_compatibility": [
+    "field"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

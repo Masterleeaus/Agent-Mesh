@@ -1,0 +1,35 @@
+{
+  "id": "hero",
+  "name": "Hero section",
+  "category": "Marketing",
+  "renderer": "hero",
+  "authority": "presentation-only",
+  "props": [
+    "heading",
+    "copy",
+    "primary_action",
+    "secondary_action"
+  ],
+  "allowed_actions": [
+    "navigate",
+    "open-modal",
+    "open-drawer",
+    "filter",
+    "search",
+    "sort",
+    "export-preview",
+    "builder.edit",
+    "crm.customer.create",
+    "crm.work_order.create",
+    "crm.work_order.assign",
+    "crm.work_order.task.complete",
+    "titanmoney.quotes.create",
+    "titanmoney.invoices.issue",
+    "zeropay.payment-intent.create",
+    "communications.message.send"
+  ],
+  "data_contract": {
+    "type": "object"
+  },
+  "responsive": true
+}

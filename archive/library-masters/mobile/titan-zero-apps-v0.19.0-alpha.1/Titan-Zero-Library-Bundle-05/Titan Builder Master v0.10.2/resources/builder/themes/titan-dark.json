@@ -1,0 +1,18 @@
+{
+  "id": "titan-dark",
+  "name": "Titan Dark",
+  "mode": "dark",
+  "tokens": {
+    "primary": "#8ca4ff",
+    "accent": "#a78bfa",
+    "success": "#4ade80",
+    "warning": "#fbbf24",
+    "danger": "#fb7185",
+    "background": "#111522",
+    "surface": "#1a2030",
+    "surface_muted": "#252d40",
+    "border": "#39445a",
+    "text": "#eef2f8",
+    "text_muted": "#aab4c5"
+  }
+}

@@ -1,0 +1,1946 @@
+{
+  "extracted_at": "2026-08-02T23:19:00+10:00",
+  "files": [
+    {
+      "bytes": 10651,
+      "path": "CHANGELOG_PHASE10_FIX_PASS.md",
+      "sha256": "a279c59a1b4271722c71f8e10cda3fb99ceb9240b6c06c65da2059926aea918f"
+    },
+    {
+      "bytes": 1242,
+      "path": "CHANGELOG_PHASE11_COGNITIVE_EVENTS.md",
+      "sha256": "0237a28ca6ba981918ddf899bbb406f9ab7ed4860645e685e0ba0fac674e9f0b"
+    },
+    {
+      "bytes": 959,
+      "path": "CHANGELOG_PHASE14_AUTHORITY_CONTROLS.md",
+      "sha256": "056bdba898a2e4b7d4071fdfd5aa1479cb922c38eb1a212168c7f1ddd580b73f"
+    },
+    {
+      "bytes": 276,
+      "path": "EXTRACTION-NOTES.md",
+      "sha256": "2ed06b11c7ebe1eb956a8bc7a8f557301e78ed13d631ef33c13fb7d2a1379bb1"
+    },
+    {
+      "bytes": 2150,
+      "path": "MERGE_MANIFEST.json",
+      "sha256": "a857960197c0b680d029c3a42b7cfb92c0a3d10b679b3c2d299f18e2e36ef231"
+    },
+    {
+      "bytes": 1309,
+      "path": "PHASE11_BUILD_REPORT.md",
+      "sha256": "fc8560a32baa3bdb20b9367e9218a8ef148e61d2a4d229d25640c018bdf2d2dd"
+    },
+    {
+      "bytes": 1468,
+      "path": "PHASE14_BUILD_REPORT.md",
+      "sha256": "49904d0161dfc0a6565fb29eb409a7cac9c6a4f2a441a1723a3366a18cceef94"
+    },
+    {
+      "bytes": 28372,
+      "path": "PHASE8_IMPORT.txt",
+      "sha256": "64b77c2da78ba832af3e6e3297ac5990dbaec39bd4da04b5498e794f5bfd8edd"
+    },
+    {
+      "bytes": 328,
+      "path": "PHASE9_80_ENGINE_LIBRARY_IMPORT.txt",
+      "sha256": "d4c8d49c0ddb1fe7245cec5b8dd4af4ca460e5e16b0fbcf3720405adb1611b1f"
+    },
+    {
+      "bytes": 7379,
+      "path": "README.md",
+      "sha256": "bbc64b0e294cdebdc22a9bf4db91f37d121bc9ca1ef25ccbae21a09195e878c7"
+    },
+    {
+      "bytes": 1381,
+      "path": "_Architecture/ExecutionEngine.md",
+      "sha256": "a5542f8f5f85942c4503a6f0b80611d0ab4b78dae916a189b87dd2ab4c14ae8a"
+    },
+    {
+      "bytes": 627,
+      "path": "_Architecture/Roadmap.md",
+      "sha256": "ed3745cba0c7febaa810a611d8fe416060521a6154d07e85e523776b11636a95"
+    },
+    {
+      "bytes": 858,
+      "path": "benchmarks/performance.md",
+      "sha256": "cca098edabe40d1269013f58b16872f07b836a39e83c80002651503194441d48"
+    },
+    {
+      "bytes": 761,
+      "path": "bin/verify.php",
+      "sha256": "702e216b1158b690c583ed3f4ea327f5aeb2bbeede07a4ab84cbf7c336df80b3"
+    },
+    {
+      "bytes": 1128,
+      "path": "composer.json",
+      "sha256": "9fe544ec0d8dd5444c72e02901006eaa3d8c5b108e9ffe1e8ae007a20e23381c"
+    },
+    {
+      "bytes": 2465,
+      "path": "config/interaction.php",
+      "sha256": "103657f16d45bdde9a6d9553eb2e2301e08dec6ae3920726ff2cef4ad130b5fe"
+    },
+    {
+      "bytes": 1198,
+      "path": "database/migrations/2026_08_03_000000_create_long_term_memory_table.php",
+      "sha256": "f71ddab32a641c891d4b8076727d6410b85002dc3dc5fb132e1c8956464725d2"
+    },
+    {
+      "bytes": 2070,
+      "path": "database/migrations/2026_08_04_000000_create_interaction_cognitive_events_table.php",
+      "sha256": "16c7a0d2ecdf311e5ecfe4f173c92355e0966ecaea8ee9876d61d688e67d61ec"
+    },
+    {
+      "bytes": 676,
+      "path": "dist/resources/ts/offline/cognitive-event-outbox.d.ts",
+      "sha256": "77e7a33bebe46410229ee68cdc389e39e33b08e5df506cc7495646e5b49aa118"
+    },
+    {
+      "bytes": 3039,
+      "path": "dist/resources/ts/offline/cognitive-event-outbox.js",
+      "sha256": "6216ed203b69660d0616338ef6d26723c3668d7c3086aad4e62a8813ee257085"
+    },
+    {
+      "bytes": 709,
+      "path": "dist/resources/ts/offline/command-outbox.d.ts",
+      "sha256": "04940f79021d169941121d73815e497d6d38a3596053a3800f8f1ba63bb2b166"
+    },
+    {
+      "bytes": 2835,
+      "path": "dist/resources/ts/offline/command-outbox.js",
+      "sha256": "1423a87558f35157364246b7bc1117cb3fcd5041e565b14ca3f48a46cd052b04"
+    },
+    {
+      "bytes": 269,
+      "path": "dist/resources/ts/offline/crypto.d.ts",
+      "sha256": "7c659226d5238f28d09103e2f456059a15d2b21f63b0b29613aafc7ba2cfa029"
+    },
+    {
+      "bytes": 1610,
+      "path": "dist/resources/ts/offline/crypto.js",
+      "sha256": "1361c25d58f64c016643388f21907270119df72ebd18707d7da66224bd37f497"
+    },
+    {
+      "bytes": 297,
+      "path": "dist/resources/ts/offline/index.d.ts",
+      "sha256": "03b5c6df21b620344021543aaf986e5cdf36481e3eed47c9a6b7bcf2dacad0e5"
+    },
+    {
+      "bytes": 1216,
+      "path": "dist/resources/ts/offline/index.js",
+      "sha256": "eb134617a0fbbe4735d352443be14074e100921577639b9a8cec81b8093a333c"
+    },
+    {
+      "bytes": 454,
+      "path": "dist/resources/ts/offline/indexeddb-store.d.ts",
+      "sha256": "332e00b9568b185ea7815f99c5f37c2fd35ca01a6ce8cfab0a34a211f877b78a"
+    },
+    {
+      "bytes": 1954,
+      "path": "dist/resources/ts/offline/indexeddb-store.js",
+      "sha256": "ee4548ef4aa05592aa698960a606c70af1e9fe4414bd908416769193759f0e87"
+    },
+    {
+      "bytes": 153,
+      "path": "dist/resources/ts/offline/local-language.d.ts",
+      "sha256": "0d0bf4c64c2f740c27090d1809373b76401666829a91666b328ac819e413ef5e"
+    },
+    {
+      "bytes": 2125,
+      "path": "dist/resources/ts/offline/local-language.js",
+      "sha256": "30dd9bc5ddcbdfb86a6fe09a4d204b2bd7f54b11114e1513e0614accf62fafcd"
+    },
+    {
+      "bytes": 300,
+      "path": "dist/resources/ts/offline/memory-store.d.ts",
+      "sha256": "ee040ced944206641afe128d98fa2b54a91ed92f988e7cf2ad5e3b5e45594c06"
+    },
+    {
+      "bytes": 585,
+      "path": "dist/resources/ts/offline/memory-store.js",
+      "sha256": "518da9dfb2fa07d5a9f6d4bd0b227d2adb14df7a1090a44d4f83ac58fbf1d59d"
+    },
+    {
+      "bytes": 443,
+      "path": "dist/resources/ts/offline/sync-client.d.ts",
+      "sha256": "d5c171c8c65b19f615dbcf67b3803196ec38419a3d89e8cc0fba3a9ff4162cf3"
+    },
+    {
+      "bytes": 1624,
+      "path": "dist/resources/ts/offline/sync-client.js",
+      "sha256": "587ef3dbec98610138b8a72b5150e814f650632964c2f0308eb833a8c7b75174"
+    },
+    {
+      "bytes": 2617,
+      "path": "dist/resources/ts/offline/types.d.ts",
+      "sha256": "df3b5e4b61a2d1abb04ec216f25ced819f37bcaf79dc36c296ea246a03fb116d"
+    },
+    {
+      "bytes": 77,
+      "path": "dist/resources/ts/offline/types.js",
+      "sha256": "d43aa81f5bc89faa359e0f97c814ba25155591ff078fbb9bfd40f8c7c9683230"
+    },
+    {
+      "bytes": 362,
+      "path": "dist/resources/ts/offline/wizard-draft-store.d.ts",
+      "sha256": "b07ff68eb3cd0256958aabb55ccba7f227751885fb71e354e77a9aaed42765bc"
+    },
+    {
+      "bytes": 646,
+      "path": "dist/resources/ts/offline/wizard-draft-store.js",
+      "sha256": "da2f0b75e0d5be66eb9bc147f426ead6a7e9e23e55ed75d40689c438bea1f8eb"
+    },
+    {
+      "bytes": 4254,
+      "path": "docs/ARCHITECTURE.md",
+      "sha256": "b8876e1f2aede1d13455dd825d5ac02375908675fe34380035cc2df8dbd319a7"
+    },
+    {
+      "bytes": 3182,
+      "path": "docs/BUILD_REPORT.md",
+      "sha256": "15cc268b4645d522a8ba7a43fb62888b23f27e4ba6699a0f4f51cc16200fd01a"
+    },
+    {
+      "bytes": 2402,
+      "path": "docs/ENGINE_LIBRARY_80.md",
+      "sha256": "2351f609d6b7d9e3d9d56a714fd204d309a055884060d0631419c2da6fa9d7d5"
+    },
+    {
+      "bytes": 2513,
+      "path": "docs/SOURCE_REQUIREMENTS_SUMMARY.md",
+      "sha256": "593efc41af65b5bc0a3778ba1295a2765632268a01c11a93a8fd4c4444bdc4cb"
+    },
+    {
+      "bytes": 2987,
+      "path": "docs/superpowers/plans/2026-07-29-local-intelligence-wizard-engine.md",
+      "sha256": "cc345fe3dc51e5d3729dd953de5d91f578fd00af174f85ec47c572f510ab031b"
+    },
+    {
+      "bytes": 1042,
+      "path": "interactions/ai_assisted.json",
+      "sha256": "ea21ac6ea6b5a16494633bd8aa79e9d93c3ae02eef7aeadafc609e1829e2b266"
+    },
+    {
+      "bytes": 2278,
+      "path": "interactions/new_customer.json",
+      "sha256": "db9eac8ee7a9ec174d371355631aa6d6a578a07dc46a40e174ce4f192e1847a0"
+    },
+    {
+      "bytes": 485,
+      "path": "module.json",
+      "sha256": "fe6ee1188881312e688c83fb469536285cb253bdff97d3891e0199097ffa3e76"
+    },
+    {
+      "bytes": 350,
+      "path": "package.json",
+      "sha256": "3e1fc57d46b6f353ef69da4db482fba8066556ae7c3723be32f4de8380465d37"
+    },
+    {
+      "bytes": 6277,
+      "path": "resources/openapi.yaml",
+      "sha256": "4d9fa6c786129140900b3efee896dbeb5942c5aa1e1732ff0d8aa712284707ce"
+    },
+    {
+      "bytes": 485,
+      "path": "resources/samples/new_customer.json",
+      "sha256": "8380c0c0585865db17dec4ce37da4447673dc055bc8f358fae8d8c488599b97b"
+    },
+    {
+      "bytes": 3043,
+      "path": "resources/ts/offline/cognitive-event-outbox.ts",
+      "sha256": "c854f3233d5641e89b496e357ab073d26dab601c5eb2f50ac17c5ba745c93748"
+    },
+    {
+      "bytes": 2837,
+      "path": "resources/ts/offline/command-outbox.ts",
+      "sha256": "7b9a92806ffbfe86c7bf2ff5702ccea49ed8c107f233cd13b454bfc0bd2a28df"
+    },
+    {
+      "bytes": 1674,
+      "path": "resources/ts/offline/crypto.ts",
+      "sha256": "185cb602dea679c2760f0a5390ded7a1102d97b976b57af8741c7b7b0cc9b5da"
+    },
+    {
+      "bytes": 298,
+      "path": "resources/ts/offline/index.ts",
+      "sha256": "1b87acab9de8a52f73bf685572151b8d49d813aaf970840ab060a5e227498cb0"
+    },
+    {
+      "bytes": 2018,
+      "path": "resources/ts/offline/indexeddb-store.ts",
+      "sha256": "2910f3c198c5526976269832490f85133889a4a2164da8b09d4cc7a46a226a06"
+    },
+    {
+      "bytes": 1954,
+      "path": "resources/ts/offline/local-language.ts",
+      "sha256": "08cde0de5d094b641af7f25049de26082a35fff948bcb97a9df31733010c1e9a"
+    },
+    {
+      "bytes": 619,
+      "path": "resources/ts/offline/memory-store.ts",
+      "sha256": "bcd28c8fa6ddab25f69b39500c3805f5c9bd6cce0e6902c6706fbc411551e3d4"
+    },
+    {
+      "bytes": 1440,
+      "path": "resources/ts/offline/sync-client.ts",
+      "sha256": "9c76165fd0102f2d719bfc2080b412b0868b64f5005e92355c393d626e1f8699"
+    },
+    {
+      "bytes": 2519,
+      "path": "resources/ts/offline/types.ts",
+      "sha256": "ea6333234bd5931cf3d04b7201c682411df94c31f38804300170c62ba9c04fb0"
+    },
+    {
+      "bytes": 649,
+      "path": "resources/ts/offline/wizard-draft-store.ts",
+      "sha256": "e15a3bb24022fa9f6cdeb2a86dc125e9d4adbb7045a10013a7e6734265257101"
+    },
+    {
+      "bytes": 6077,
+      "path": "resources/views/interaction/run.blade.php",
+      "sha256": "8b67b4ecbf4771109c18338204fa563ea3ec3c6aab4e751c1ad6e8fa5f20cfac"
+    },
+    {
+      "bytes": 2805,
+      "path": "resources/views/interaction/wrapper.blade.php",
+      "sha256": "b926c8d4ab679c6feafba0d266ede8c24d8be52c23dcb6692602808aebc35846"
+    },
+    {
+      "bytes": 1946,
+      "path": "routes/api.php",
+      "sha256": "321b560744fc660ccec3b7894e4094010b6d62864a15cd548bf34b4f68fdf6ae"
+    },
+    {
+      "bytes": 437,
+      "path": "routes/web.php",
+      "sha256": "82a46834a3afa856cffc22d2c51e30aa01651c2bbbac13cd8fc19d3c10462095"
+    },
+    {
+      "bytes": 177,
+      "path": "src/AI/AIServiceInterface.php",
+      "sha256": "808eb5ab04dd85501d10d6befa1930ce1a5eb3d35012dbd296df1ecadc0a6db4"
+    },
+    {
+      "bytes": 316,
+      "path": "src/AI/NullAIService.php",
+      "sha256": "dcd4b7ba827e7cc438dc89b6887d7e3ba9a4bf4d805bc7d38beee83efd0b6483"
+    },
+    {
+      "bytes": 942,
+      "path": "src/AI/OpenAIService.php",
+      "sha256": "bef1214a039716843a341b4b7d6823e63cf62f9f2c86af937ad3cded791977ca"
+    },
+    {
+      "bytes": 1588,
+      "path": "src/Authority/ApprovalSigner.php",
+      "sha256": "be5106e5e5e38d8f813bbce8cec018da8dbcf030bbd18fc31f80df433070f1b1"
+    },
+    {
+      "bytes": 844,
+      "path": "src/Authority/AuthorityDecision.php",
+      "sha256": "d5adc9443cdf01f38677ff875fec155b582a4de6a16fdd9f391bf1f4534d73d5"
+    },
+    {
+      "bytes": 367,
+      "path": "src/Authority/AuthorityLevel.php",
+      "sha256": "2a1af41ac71bb8e70e075eefe8a38dc5e207eff06aa6826c0d94377984e582bb"
+    },
+    {
+      "bytes": 569,
+      "path": "src/Authority/CapabilityPolicy.php",
+      "sha256": "745d8abe1e5d9278e988291a909ef80f0a829242604132588c121f0210c28575"
+    },
+    {
+      "bytes": 4722,
+      "path": "src/AutoComplete/AutoCompleteEngine.php",
+      "sha256": "b8e312593b7e444427d394fba0a9bb356f2474f1a9390b7a7e4c986b8e8dc04d"
+    },
+    {
+      "bytes": 647,
+      "path": "src/Capabilities/CrmCustomerCreateHandler.php",
+      "sha256": "746abc61f526b36cff0a174c19e6897aeaf55c26e05c41b253dc266abc6c9bcf"
+    },
+    {
+      "bytes": 669,
+      "path": "src/Cognition/Correlation/CausalityWindow.php",
+      "sha256": "dea293f073ccaf7178be346b93e0fbef3f2a1b8d85a3a39d1030efc95a68c221"
+    },
+    {
+      "bytes": 3738,
+      "path": "src/Cognition/Decision/DecisionRecorder.php",
+      "sha256": "b7f2761b89a60b521e87012a385f5c09afac7e0096c1c235bfad3f9bd2e596cc"
+    },
+    {
+      "bytes": 6373,
+      "path": "src/Cognition/Events/CognitiveEvent.php",
+      "sha256": "14112df39d2724934a3aea9e7df7af1c03abb3d785ed53286949f540bee47801"
+    },
+    {
+      "bytes": 386,
+      "path": "src/Cognition/Events/CognitiveEventStoreInterface.php",
+      "sha256": "a43f6219e315544bd710b9c4c79b74c9da0ec902d42786063c8640ca67026e5f"
+    },
+    {
+      "bytes": 933,
+      "path": "src/Cognition/Events/CognitiveEventType.php",
+      "sha256": "942e8ea6a8c864d4d95a2452764ef8e2470e01c8149148d92e68c7157c706615"
+    },
+    {
+      "bytes": 1649,
+      "path": "src/Cognition/Events/EloquentCognitiveEventStore.php",
+      "sha256": "401db89ac5f79b73cb13403abb3003e7776b2cf4098715cd1b59e8407842fb1a"
+    },
+    {
+      "bytes": 1076,
+      "path": "src/Cognition/Events/InMemoryCognitiveEventStore.php",
+      "sha256": "c05d4e0f4e985b95f321a734efefe3611f2faeb51066377d7cb6d9ce013b7d88"
+    },
+    {
+      "bytes": 1215,
+      "path": "src/Cognition/Observation/ObservationRecorder.php",
+      "sha256": "e680572b568e38c8b0c23e34f210b339698742b3ab5bccf154ee915e387d2e19"
+    },
+    {
+      "bytes": 2262,
+      "path": "src/Cognition/Outcome/OutcomeLinker.php",
+      "sha256": "9864482590933739b0dff1bba2860622de375b7e0b5148703beb7f662af31c60"
+    },
+    {
+      "bytes": 1287,
+      "path": "src/Cognition/Outcome/OutcomeRecorder.php",
+      "sha256": "a9e348f3675a2f725e9380c13634e419c020135e6e0d1101e1e9d28d1503e484"
+    },
+    {
+      "bytes": 4836,
+      "path": "src/Command/CommandBus.php",
+      "sha256": "b328e36d120de433de91303b441d4a9b4e03d30810317352d5743e5be87f6e57"
+    },
+    {
+      "bytes": 923,
+      "path": "src/Commands/CompileInteractionCommand.php",
+      "sha256": "a98a789e47eddb7c519c180d78c2ebfd92769697669140dbf244da90b43c91df"
+    },
+    {
+      "bytes": 1181,
+      "path": "src/Commands/HealthCheckCommand.php",
+      "sha256": "3646e51f23cd4cb9d5a7165c1322dc10b3eb3a83b3ee6ae3001219b47fdd0f00"
+    },
+    {
+      "bytes": 1338,
+      "path": "src/Commands/InstallCommand.php",
+      "sha256": "5b78357934b87717729cbf8e41bcc2792092113894a0250025dd6a6bf7a092c7"
+    },
+    {
+      "bytes": 1655,
+      "path": "src/Commands/SeedCommand.php",
+      "sha256": "16985403142da6c991cbb559e2ca249e144de397101126263f7ee55f4563f43a"
+    },
+    {
+      "bytes": 785,
+      "path": "src/Commands/SyncInteractionCommand.php",
+      "sha256": "91ea4cf4a1fa0a0c29785d453335ec36fc4ffc6a4fa47a2905af71ae91390242"
+    },
+    {
+      "bytes": 702,
+      "path": "src/Compiler/ConditionRegistry.php",
+      "sha256": "4e3dbd8580255dbab892be580d5984a12827619bdfd79655d88e405c13893bd1"
+    },
+    {
+      "bytes": 1564,
+      "path": "src/Compiler/FragmentResolver.php",
+      "sha256": "1ec98042053607c34e4113fbeea1961e392522015d92248125a0a9705ce71e00"
+    },
+    {
+      "bytes": 3792,
+      "path": "src/Compiler/InteractionCompiler.php",
+      "sha256": "0b62ad4ad68209a0fd8582f64956540b48b8643ae5d99e67cb3a9ff45fa7a987"
+    },
+    {
+      "bytes": 4873,
+      "path": "src/Compiler/SchemaValidator.php",
+      "sha256": "5f8c45bbd323541ed1b4260ae2861c564a0092cc334754a1f99a887f81bab34e"
+    },
+    {
+      "bytes": 2464,
+      "path": "src/Context/ContextBuilder.php",
+      "sha256": "e654d78dc460a575c158c9e80c419219a6f7c82dd73fd17a671e47ff4a498e72"
+    },
+    {
+      "bytes": 3444,
+      "path": "src/Context/ContextGraph.php",
+      "sha256": "da0c175d0ef90d2134c178f21f98ca2c2139be6e21fc46b29695647e77cc1ba6"
+    },
+    {
+      "bytes": 1482,
+      "path": "src/Context/Providers/CustomerContextProvider.php",
+      "sha256": "13487e0d7e606cf59cb5d9c4bbb84e801ca08bf9fad409d4f595e9052e6712bd"
+    },
+    {
+      "bytes": 1263,
+      "path": "src/Context/Providers/PolicyContextProvider.php",
+      "sha256": "972579b7114e969d7a87795718df5f3a8b59dbace01ebb67d0c0a178ab2853bf"
+    },
+    {
+      "bytes": 161,
+      "path": "src/Contracts/CapabilityHandlerInterface.php",
+      "sha256": "5926d30fa7b7093310194485adb7cfd2066f143025d30c4225117835d48669e3"
+    },
+    {
+      "bytes": 116,
+      "path": "src/Contracts/CognitiveOrchestratorInterface.php",
+      "sha256": "1a0453144f4891cd5a589d977cbcc848be99888ea0e066b37e3a261d42d521bf"
+    },
+    {
+      "bytes": 322,
+      "path": "src/Contracts/CommandBusInterface.php",
+      "sha256": "21685719ce82c4276276cd8619890e3fbd3b996a17e86be0ee809bac5ace6a17"
+    },
+    {
+      "bytes": 230,
+      "path": "src/Contracts/ConflictResolverInterface.php",
+      "sha256": "a774416efe7a4eaa7714dd232df67ebb78e2ee0da782cb3b2a55542ccda29071"
+    },
+    {
+      "bytes": 165,
+      "path": "src/Contracts/ContextProviderInterface.php",
+      "sha256": "dc84e609f8050875a402b587d59b63f1d368d8daa7d22d38f213c86f8cad1394"
+    },
+    {
+      "bytes": 436,
+      "path": "src/Contracts/DomainAdapterInterface.php",
+      "sha256": "e32aa8678ffc8c13cbb01a1b294e3d09bc620e645895b43346cdb9cc60cab83a"
+    },
+    {
+      "bytes": 229,
+      "path": "src/Contracts/EventRecorderInterface.php",
+      "sha256": "ce7a701761e944e7b32149199f8bf7140f95d0ffc6f8649f68baddd80164f0c0"
+    },
+    {
+      "bytes": 414,
+      "path": "src/Contracts/ExecutiveEngineInterface.php",
+      "sha256": "f53285a13005fc1cb104ac12c419b2317d753a34c36483ccb0cf13c7aa5ec29f"
+    },
+    {
+      "bytes": 315,
+      "path": "src/Contracts/GeneratorInterface.php",
+      "sha256": "6624f0f663cba9e181fad8f85cdf469786b62b9dc6603b4bb04bcecb3f495c5b"
+    },
+    {
+      "bytes": 247,
+      "path": "src/Contracts/HealerInterface.php",
+      "sha256": "ad6861f384b3623ccae31432af7ae863d0a7c0f9c249cdb9b4910447bba58dba"
+    },
+    {
+      "bytes": 269,
+      "path": "src/Contracts/KnowledgeSourceInterface.php",
+      "sha256": "c971c679ff3d7129103f6f288a71adbb9d5810b93580ac7e03920b19f1977425"
+    },
+    {
+      "bytes": 292,
+      "path": "src/Contracts/LearnerInterface.php",
+      "sha256": "b1c754a337ed7318026bbbe2c75b9da444337887d0e00678e039b7eba6c703cf"
+    },
+    {
+      "bytes": 366,
+      "path": "src/Contracts/NavigationEngineInterface.php",
+      "sha256": "71ebd130db880c3bf2f10689959f4e84180f15500d9c93e76f1bf4baa2ab1835"
+    },
+    {
+      "bytes": 155,
+      "path": "src/Contracts/NavigationStrategyInterface.php",
+      "sha256": "00af1b827064d5ddcde8994e633f95e27bd0684b9cf6ee1cd1760ff3d2de102d"
+    },
+    {
+      "bytes": 429,
+      "path": "src/Contracts/OfflineQueueInterface.php",
+      "sha256": "7d7c262a46ed9e3e34c6103fb7c2eca9bf5632f72a323299d5f2e6aa0a9004c4"
+    },
+    {
+      "bytes": 576,
+      "path": "src/Contracts/PolicyEngineInterface.php",
+      "sha256": "d8ee1d36bde8f2c8be86205170af7b3546b264078504d86709a89cadfd36d91d"
+    },
+    {
+      "bytes": 310,
+      "path": "src/Contracts/PredictorInterface.php",
+      "sha256": "81be9ca50f72c954b41b1af3472108102a76020af733fd55b4f63ac8b3eb7f63"
+    },
+    {
+      "bytes": 242,
+      "path": "src/Contracts/QuestionResolverInterface.php",
+      "sha256": "2061d6581b8669bde702b520c591e15bff91be9f071c346a0f9171548b5348b4"
+    },
+    {
+      "bytes": 268,
+      "path": "src/Contracts/RendererInterface.php",
+      "sha256": "232c270e4aab2395e2288813f4ca4b968568a7f720bb8e0c4cb5a90cbe5854b8"
+    },
+    {
+      "bytes": 751,
+      "path": "src/Contracts/StateManagerInterface.php",
+      "sha256": "4015241c51aff0cbbe541e184de625fa53c3488cc36fd6f4add10967c7a325cc"
+    },
+    {
+      "bytes": 228,
+      "path": "src/Contracts/ValidationEngineInterface.php",
+      "sha256": "4775a1412994f58221a41d517a0863f672f5ca0679f46e82c3e275d1f5cc0730"
+    },
+    {
+      "bytes": 157,
+      "path": "src/Contracts/ValidationProviderInterface.php",
+      "sha256": "64f1ca55bbe864f30f068296f791355c1b223affacd5b6b1f43cefdb883bd229"
+    },
+    {
+      "bytes": 105,
+      "path": "src/Contracts/WorldModelInterface.php",
+      "sha256": "15d4700df5b29aa2a795d74cb43ae5e864d62c657c56f4769bccd8f2d789bfa2"
+    },
+    {
+      "bytes": 468,
+      "path": "src/DTO/Answer.php",
+      "sha256": "563974375d66d738693f762838a113c72ed433ac1d22039ee33d4707f7d3780c"
+    },
+    {
+      "bytes": 738,
+      "path": "src/DTO/AnswerCollection.php",
+      "sha256": "d5d1afba1be4071ffeab00a65198bc6b7066a898963d1202b87c219d31d6bcec"
+    },
+    {
+      "bytes": 1068,
+      "path": "src/DTO/InteractionDefinition.php",
+      "sha256": "3cc3205a42204deaa342bb42e4329c425d3a102c3f0dcf69c30039b78b4d5eaa"
+    },
+    {
+      "bytes": 602,
+      "path": "src/DTO/Question.php",
+      "sha256": "f8d7d920b504996677e0b7a67a8463573e122d7bd38ac2b9200b07bdce889495"
+    },
+    {
+      "bytes": 303,
+      "path": "src/DTO/Section.php",
+      "sha256": "b1714a45b491762fc7e76b6c52e629ffb8aa1a001730c00b1004869bf38a0c76"
+    },
+    {
+      "bytes": 8367,
+      "path": "src/Domain/Adapters/WorkCoreAdapter.php",
+      "sha256": "deb05d2c121c7e56c6e9254e13f92c682bdb0072e81b57b7d7df29d9808c3039"
+    },
+    {
+      "bytes": 495,
+      "path": "src/Domain/DomainAdapter.php",
+      "sha256": "c6a5ffd194291e927facf0af62dd97e5934dd8207728f4b0ef6e8516dc9f64b5"
+    },
+    {
+      "bytes": 275,
+      "path": "src/Engines/AIInfrastructure/Contracts/EmbeddingEngineInterface.php",
+      "sha256": "52d3bbe35a0e3ca6a4bd92efbd68de1f7dfe4febfd174b64908e2f4b07e96a73"
+    },
+    {
+      "bytes": 334,
+      "path": "src/Engines/AIInfrastructure/Contracts/EvaluationEngineInterface.php",
+      "sha256": "1bbb4d1601aa23e05aa1bbd8c3293551d3f053c4ed23dd33c9ef0839460e2493"
+    },
+    {
+      "bytes": 327,
+      "path": "src/Engines/AIInfrastructure/Contracts/FunctionCallingEngineInterface.php",
+      "sha256": "03515e4f1c10078f6833f1a2a63d0da1caf3f744e9effd94edb2f4a2d186f039"
+    },
+    {
+      "bytes": 294,
+      "path": "src/Engines/AIInfrastructure/Contracts/GuardrailEngineInterface.php",
+      "sha256": "e5238b1a49c5e385864007b4e36ed9e4a61389eaae8053f9387c32b45edd340b"
+    },
+    {
+      "bytes": 304,
+      "path": "src/Engines/AIInfrastructure/Contracts/ModelSelectionEngineInterface.php",
+      "sha256": "ee10bfe5082831fe74ab90712784247aabadf7c418632c87e52b1a1e35793f06"
+    },
+    {
+      "bytes": 283,
+      "path": "src/Engines/AIInfrastructure/Contracts/PromptEngineInterface.php",
+      "sha256": "c1ca8dc6a64bc1faa9da396a1ea87c61ff1f8dc33cc10bccf48c49b6def1afb8"
+    },
+    {
+      "bytes": 309,
+      "path": "src/Engines/AIInfrastructure/Contracts/PromptOptimizationEngineInterface.php",
+      "sha256": "fb825037af1c826fb9cd7b5e5082b45dfa96e205f2f8d75bca4daa3fead5e3a8"
+    },
+    {
+      "bytes": 306,
+      "path": "src/Engines/AIInfrastructure/Contracts/RetrievalEngineInterface.php",
+      "sha256": "f24c3b517800e5e452d06affcbd3ebc07d504e5bdfaea9a94b39f698f35e7c6e"
+    },
+    {
+      "bytes": 307,
+      "path": "src/Engines/AIInfrastructure/Contracts/ToolCallingEngineInterface.php",
+      "sha256": "2a31040ecf0c7484127a7a8dd5c3d9011b42e2e48a25adea0afe9bffb9cc939b"
+    },
+    {
+      "bytes": 296,
+      "path": "src/Engines/AIInfrastructure/Contracts/VectorSearchEngineInterface.php",
+      "sha256": "fb7d7ac0dde0985e1c1febee57cd0030b4f217f5810e4a644e7cd3112ba8ae9a"
+    },
+    {
+      "bytes": 1275,
+      "path": "src/Engines/AIInfrastructure/Implementations/EmbeddingEngine.php",
+      "sha256": "bfc95977f789b530d49b5d89097c84776aeab395cb39e96a74843f4421d0d317"
+    },
+    {
+      "bytes": 1805,
+      "path": "src/Engines/AIInfrastructure/Implementations/EvaluationEngine.php",
+      "sha256": "31a8a4afdc9af783efd81c60d2a85c45b87a6bed21c2ffefc2e15402b2c23576"
+    },
+    {
+      "bytes": 815,
+      "path": "src/Engines/AIInfrastructure/Implementations/FunctionCallingEngine.php",
+      "sha256": "b47ad39727cdab8d17b9b6c35522b768b84eac2068ab4a6ef3aa4d4aa0dc9047"
+    },
+    {
+      "bytes": 936,
+      "path": "src/Engines/AIInfrastructure/Implementations/GuardrailEngine.php",
+      "sha256": "1473ffd57098a3a8aa4141e43aae5c32d81211c459f4afac915637fe515134e1"
+    },
+    {
+      "bytes": 1938,
+      "path": "src/Engines/AIInfrastructure/Implementations/ModelSelectionEngine.php",
+      "sha256": "5e5f0cee151cf22da6944bb28bef8f6254d3aee5da13501a30e1ec692c1b1da6"
+    },
+    {
+      "bytes": 534,
+      "path": "src/Engines/AIInfrastructure/Implementations/PromptEngine.php",
+      "sha256": "e18fdd7fbe8da1a34d416ca32c6cce1b8254a83085cc7bba2df535c140e4f12f"
+    },
+    {
+      "bytes": 2351,
+      "path": "src/Engines/AIInfrastructure/Implementations/PromptOptimizationEngine.php",
+      "sha256": "2c39d6e60cc0094159bd81462125eb0887871e70ba720f62fb6eef61273053e1"
+    },
+    {
+      "bytes": 1558,
+      "path": "src/Engines/AIInfrastructure/Implementations/RetrievalEngine.php",
+      "sha256": "97c1f2dd479b88dac3a15b420a45f65859e524d13040dca442fb240213b29d47"
+    },
+    {
+      "bytes": 747,
+      "path": "src/Engines/AIInfrastructure/Implementations/ToolCallingEngine.php",
+      "sha256": "c716a896b2f699313045d0e83b470c965450fc5607d66af56d118a9a3080ecbc"
+    },
+    {
+      "bytes": 1734,
+      "path": "src/Engines/AIInfrastructure/Implementations/VectorSearchEngine.php",
+      "sha256": "6a0a267b7499e1d57f2683f3ead30091a3e5d82308dd67ac089a764ae775d212"
+    },
+    {
+      "bytes": 308,
+      "path": "src/Engines/BusinessIntelligence/Contracts/AnalyticsEngineInterface.php",
+      "sha256": "8b89808cd3e77e8dc1efc9c588d192ba6a4fa27d846c04feb590ee19b024045f"
+    },
+    {
+      "bytes": 278,
+      "path": "src/Engines/BusinessIntelligence/Contracts/AuditEngineInterface.php",
+      "sha256": "359474b37fbc10994be411df782eaf9a9c53362feedde08430c6b9a0601ef4b3"
+    },
+    {
+      "bytes": 303,
+      "path": "src/Engines/BusinessIntelligence/Contracts/AutomationEngineInterface.php",
+      "sha256": "c4af949e0b3e05a3e00187a860f27f3f222d9d9b342cabd32a455f20f2f40eda"
+    },
+    {
+      "bytes": 303,
+      "path": "src/Engines/BusinessIntelligence/Contracts/BusinessBuilderEngineInterface.php",
+      "sha256": "94e603f31c657ebda0b309a26d1e529713b6a612de5a4dfbd31cbdc0f55aa765"
+    },
+    {
+      "bytes": 327,
+      "path": "src/Engines/BusinessIntelligence/Contracts/CRMIntelligenceEngineInterface.php",
+      "sha256": "7fc3eb198897c825a0b7e0c4ea1d18db277213dee639429fef5b5f7c01c72bbe"
+    },
+    {
+      "bytes": 303,
+      "path": "src/Engines/BusinessIntelligence/Contracts/ComplianceEngineInterface.php",
+      "sha256": "1beb80f021dfd97e92d09f0500a758a3c3e1a87a2e6e703fb6ae926d3feceb1b"
+    },
+    {
+      "bytes": 312,
+      "path": "src/Engines/BusinessIntelligence/Contracts/DispatchEngineInterface.php",
+      "sha256": "3f5de8da9a28dbb501d76baf33efa124a58f91678d152d3cb60ccac95bb793e4"
+    },
+    {
+      "bytes": 285,
+      "path": "src/Engines/BusinessIntelligence/Contracts/FinancialInsightEngineInterface.php",
+      "sha256": "094f9d3716f94ce86659936d6260178e0bfbf1971a96cc3ec630b6a98c79c039"
+    },
+    {
+      "bytes": 285,
+      "path": "src/Engines/BusinessIntelligence/Contracts/MonitoringEngineInterface.php",
+      "sha256": "b9b16bb436a363827417fd514b67cbafaacdc30ba556379c0e54b30d01eb5f29"
+    },
+    {
+      "bytes": 312,
+      "path": "src/Engines/BusinessIntelligence/Contracts/OperationsEngineInterface.php",
+      "sha256": "6cd9ac3624b0851aedbad5dd6aa9385f5df1464748bc3e83d7aaee5b20183815"
+    },
+    {
+      "bytes": 2566,
+      "path": "src/Engines/BusinessIntelligence/Implementations/AnalyticsEngine.php",
+      "sha256": "26cf6cecbb425061af4d574e279587ef3a5e6fb369354f28ac82e3c87003cd21"
+    },
+    {
+      "bytes": 923,
+      "path": "src/Engines/BusinessIntelligence/Implementations/AuditEngine.php",
+      "sha256": "6ac6de42aee5f94e6a99ea3986a4432ff8a108f79bf03fff5be1169b13f7b2a5"
+    },
+    {
+      "bytes": 596,
+      "path": "src/Engines/BusinessIntelligence/Implementations/AutomationEngine.php",
+      "sha256": "a0339eb869aca371cae5ce7b837a1920f0405ac8d2948849ed9e19c7115864b2"
+    },
+    {
+      "bytes": 662,
+      "path": "src/Engines/BusinessIntelligence/Implementations/BusinessBuilderEngine.php",
+      "sha256": "bb46d60b0bebe6f7db2152202c311e26830acc45e80721913d6266753a691126"
+    },
+    {
+      "bytes": 3142,
+      "path": "src/Engines/BusinessIntelligence/Implementations/CRMIntelligenceEngine.php",
+      "sha256": "99cdbdb008102c7a6a2f1002b996f9e6add29c3d693c5e0fb4a262970fce0d1a"
+    },
+    {
+      "bytes": 1984,
+      "path": "src/Engines/BusinessIntelligence/Implementations/ComplianceEngine.php",
+      "sha256": "fbd37d33db1abd94213da6a44c1766b64ad067f204c924396ee83625e9fe470c"
+    },
+    {
+      "bytes": 783,
+      "path": "src/Engines/BusinessIntelligence/Implementations/DispatchEngine.php",
+      "sha256": "a69fcce8fee642451f5ec92a6f75ca43f47b6adb00df23fcd1bd672b62905371"
+    },
+    {
+      "bytes": 591,
+      "path": "src/Engines/BusinessIntelligence/Implementations/FinancialInsightEngine.php",
+      "sha256": "97f8350fbf36634384beb9ce2ae0cb86f3b79d71fbfea629d161405dab9d789c"
+    },
+    {
+      "bytes": 630,
+      "path": "src/Engines/BusinessIntelligence/Implementations/MonitoringEngine.php",
+      "sha256": "de5b2d4c9db9c47686ae708ed88ea165fcba041315f2a8ec4b82dabfc0685173"
+    },
+    {
+      "bytes": 2225,
+      "path": "src/Engines/BusinessIntelligence/Implementations/OperationsEngine.php",
+      "sha256": "c196bfbbd885c1005c99ee0a68141da7b6e085c31847296e1e52a232ba9ae5f9"
+    },
+    {
+      "bytes": 310,
+      "path": "src/Engines/Cognitive/Contracts/AbstractionEngineInterface.php",
+      "sha256": "83d7064205604d2aa1d507e5f01fd11e69a8f6bbf58006bae0d4bbaafa8b4195"
+    },
+    {
+      "bytes": 319,
+      "path": "src/Engines/Cognitive/Contracts/AnalogyEngineInterface.php",
+      "sha256": "b045b6eb758b99761d6e50ca8c43e2a044c4ef4c843e4efe3424c19b9dcf5fa6"
+    },
+    {
+      "bytes": 694,
+      "path": "src/Engines/Cognitive/Contracts/CognitiveOrchestratorInterface.php",
+      "sha256": "d694798bfa3cc2a2801690fda4e275df16188d536ed61d2f27c9bde945a16f9b"
+    },
+    {
+      "bytes": 372,
+      "path": "src/Engines/Cognitive/Contracts/ConceptEngineInterface.php",
+      "sha256": "63dce29089c5934cbb82b3feb6bedfd553ae4138e55826817b4b2595ff4f8e2c"
+    },
+    {
+      "bytes": 289,
+      "path": "src/Engines/Cognitive/Contracts/CreativityEngineInterface.php",
+      "sha256": "ba81bfa5b057f629d74ac86404f5ec536a5ddbb8e445a7be509a4dcf61ab2694"
+    },
+    {
+      "bytes": 311,
+      "path": "src/Engines/Cognitive/Contracts/ExplainabilityEngineInterface.php",
+      "sha256": "44d61ba35dc7337870746b4a766a2470baa0213e2aefc68bb3f827b96d1907c3"
+    },
+    {
+      "bytes": 325,
+      "path": "src/Engines/Cognitive/Contracts/InferenceEngineInterface.php",
+      "sha256": "8c637b6b51d7e3600bfa35c3663d19cfd38173f489b2faa58c604a9cae4039b5"
+    },
+    {
+      "bytes": 337,
+      "path": "src/Engines/Cognitive/Contracts/ReasoningEngineInterface.php",
+      "sha256": "15ed25fb52193521d06ac5f2cf6e0638f4cd2805be03f726c4ea575dc215ea5e"
+    },
+    {
+      "bytes": 278,
+      "path": "src/Engines/Cognitive/Contracts/ReflectionEngineInterface.php",
+      "sha256": "14d46fb6e37286c3c8239f2c285b3e3d70d3c481e7cc219bfff1c068f64ff486"
+    },
+    {
+      "bytes": 223,
+      "path": "src/Engines/Cognitive/Contracts/SemanticEngineInterface.php",
+      "sha256": "2674dcea24c623e539b16aa5a911841209168c5d7e2a4ef804f4a4b86c0fcbec"
+    },
+    {
+      "bytes": 1904,
+      "path": "src/Engines/Cognitive/Implementations/AbstractionEngine.php",
+      "sha256": "1e7b63eb00d953a34a85299388036311db840f05aa7a53e4c7c7cb4a3d8a61fc"
+    },
+    {
+      "bytes": 2049,
+      "path": "src/Engines/Cognitive/Implementations/AnalogyEngine.php",
+      "sha256": "4d694f109974562973bddaebd25161d7a942a9a0efa1dc8a28d36ddd4294d653"
+    },
+    {
+      "bytes": 2203,
+      "path": "src/Engines/Cognitive/Implementations/CognitiveOrchestrator.php",
+      "sha256": "6fa6332de77465fcce2cde73c2b19d5d1aeec5789f76271ffb09dd200ce0e9c2"
+    },
+    {
+      "bytes": 793,
+      "path": "src/Engines/Cognitive/Implementations/ConceptEngine.php",
+      "sha256": "ecce1623fc204c726550821dbf587238bcb855cecf74e98d6e1aaa8186941c58"
+    },
+    {
+      "bytes": 1940,
+      "path": "src/Engines/Cognitive/Implementations/CreativityEngine.php",
+      "sha256": "8975af2e5d97b61bdc64deade9f580108958db1b64082e5581b5af6479de103f"
+    },
+    {
+      "bytes": 2319,
+      "path": "src/Engines/Cognitive/Implementations/ExplainabilityEngine.php",
+      "sha256": "7433849084716c4295c973aa3071227e950d9bd63284b86d117442ea22c9188d"
+    },
+    {
+      "bytes": 1779,
+      "path": "src/Engines/Cognitive/Implementations/InferenceEngine.php",
+      "sha256": "2dbde288763c70dc5a01a038673847dec58446f8b833023da48a3ee3cfa50757"
+    },
+    {
+      "bytes": 4501,
+      "path": "src/Engines/Cognitive/Implementations/ReasoningEngine.php",
+      "sha256": "ac8067e60799333b8581f2ba89a24bf77e966d4ab01527972aea0d8011b333fd"
+    },
+    {
+      "bytes": 2388,
+      "path": "src/Engines/Cognitive/Implementations/ReflectionEngine.php",
+      "sha256": "cedbb50e9bead21f2a251dc74389d46baa2f60a7c603cb9ec5cd5b030302f817"
+    },
+    {
+      "bytes": 1512,
+      "path": "src/Engines/Cognitive/Implementations/SemanticEngine.php",
+      "sha256": "3f91e9efe1f7451c4458ffb651a6415ac6944a1f9bf4ac7bb28d34fba7b3971d"
+    },
+    {
+      "bytes": 319,
+      "path": "src/Engines/Executive/Contracts/DecisionEngineInterface.php",
+      "sha256": "0f64ee78cc695f96e083ce3e09061ab9620e9bfe84adddcc26d4a0f7ef9ff232"
+    },
+    {
+      "bytes": 351,
+      "path": "src/Engines/Executive/Contracts/EscalationEngineInterface.php",
+      "sha256": "ce954e8df2e6f719cb437edb1762d5b63aaff17f0ded2f048338ce7b18f18b56"
+    },
+    {
+      "bytes": 459,
+      "path": "src/Engines/Executive/Contracts/ExecutiveEngineInterface.php",
+      "sha256": "6a1d0ed5da024aae3191344a250e64b11df3c309be8bcf614510728a5a62edd9"
+    },
+    {
+      "bytes": 417,
+      "path": "src/Engines/Executive/Contracts/GoalEngineInterface.php",
+      "sha256": "f69ff5ebb2d632c0ae52e17b30ec485d14cee6530fea1789b9db5a41d5f8de97"
+    },
+    {
+      "bytes": 335,
+      "path": "src/Engines/Executive/Contracts/GovernanceEngineInterface.php",
+      "sha256": "0f7d6cd2c9a6a597e3ae256141ece9143667d942943d64bd6db49c00b07ae409"
+    },
+    {
+      "bytes": 361,
+      "path": "src/Engines/Executive/Contracts/OpportunityEngineInterface.php",
+      "sha256": "05a91817c298f15183a3b99c35a9607c3ddb875527deb3d3b5a038c855a29efc"
+    },
+    {
+      "bytes": 373,
+      "path": "src/Engines/Executive/Contracts/PolicyEngineInterface.php",
+      "sha256": "3616ab82cb9a2857d7a26bd85cae6777e737e48c95e43b07ce18e70139cebd90"
+    },
+    {
+      "bytes": 340,
+      "path": "src/Engines/Executive/Contracts/PriorityEngineInterface.php",
+      "sha256": "008eeee2ed0aa7dcaa9690a7a0e6e8dc39199f36773103848be3dffb6fcb79be"
+    },
+    {
+      "bytes": 332,
+      "path": "src/Engines/Executive/Contracts/RiskEngineInterface.php",
+      "sha256": "6d5b281fe559b0a8e31be30dd23a5246ed6bd371b8bb3a8ed5cf1826a3311dea"
+    },
+    {
+      "bytes": 386,
+      "path": "src/Engines/Executive/Contracts/StrategicPlanningEngineInterface.php",
+      "sha256": "0a99497d1a6194d4493b714726c25cda9a95d5a252ec72276845137e6a70ec86"
+    },
+    {
+      "bytes": 1074,
+      "path": "src/Engines/Executive/Implementations/DecisionEngine.php",
+      "sha256": "aa832f1803aec141f498d82997fbb5f259bbc05114a2cc3980d5399d4fed6de6"
+    },
+    {
+      "bytes": 1368,
+      "path": "src/Engines/Executive/Implementations/EscalationEngine.php",
+      "sha256": "92c3914c6793e963d79d994755097628384a95bd308f27fbd65ec73ecb2f45c3"
+    },
+    {
+      "bytes": 2424,
+      "path": "src/Engines/Executive/Implementations/ExecutiveEngine.php",
+      "sha256": "1953bca60541130251421b62f8668f915fbeda1b76d47ea8f29446b340d60c83"
+    },
+    {
+      "bytes": 2148,
+      "path": "src/Engines/Executive/Implementations/GoalEngine.php",
+      "sha256": "dbf76b327c54a1af57d2154dd39294e9404bec3a57841b46dcb22719aa7bcb1a"
+    },
+    {
+      "bytes": 1908,
+      "path": "src/Engines/Executive/Implementations/GovernanceEngine.php",
+      "sha256": "bf2da33ec7486936e1b73980a35c5c0115fd09facb3a0b0f9880c9e6bf5255c9"
+    },
+    {
+      "bytes": 1250,
+      "path": "src/Engines/Executive/Implementations/OpportunityEngine.php",
+      "sha256": "8de436c473a91016e91abab5d94e49d7f26381ae15d8dd61e8e7ff1179f203f2"
+    },
+    {
+      "bytes": 1001,
+      "path": "src/Engines/Executive/Implementations/PolicyEngine.php",
+      "sha256": "08ce770b2f9512a3709cd7c8f86879ee9113cf0ca32c2a3df398feee7e520fa2"
+    },
+    {
+      "bytes": 1352,
+      "path": "src/Engines/Executive/Implementations/PriorityEngine.php",
+      "sha256": "7f00d20b33d2e4cffd0e282728278668384eb849094553c50733b8fcde6c4609"
+    },
+    {
+      "bytes": 1045,
+      "path": "src/Engines/Executive/Implementations/RiskEngine.php",
+      "sha256": "6f6b1fc4cfa89bc45b42d113fd0a2716a41877d97a6a7484a3db6444861310b1"
+    },
+    {
+      "bytes": 1710,
+      "path": "src/Engines/Executive/Implementations/StrategicPlanningEngine.php",
+      "sha256": "c0d1e09a66d42084e0e11c0ed95a62fa3bd1fcdde0e56d229ab83f4353febff2"
+    },
+    {
+      "bytes": 313,
+      "path": "src/Engines/HumanInteraction/Contracts/ClarificationEngineInterface.php",
+      "sha256": "c6129e91c547035e82ea22e6aca143923c9e1e144974733d49f531620af4a480"
+    },
+    {
+      "bytes": 307,
+      "path": "src/Engines/HumanInteraction/Contracts/ConversationEngineInterface.php",
+      "sha256": "464f830bd49a82efb7b4a44b2ec7b5064343f71671c3aff071bb81199d691862"
+    },
+    {
+      "bytes": 254,
+      "path": "src/Engines/HumanInteraction/Contracts/DialogueEngineInterface.php",
+      "sha256": "675c1793a4b78ef2d41e4c8b17019a78fc55e212e314c6c263812885fba6bf4c"
+    },
+    {
+      "bytes": 269,
+      "path": "src/Engines/HumanInteraction/Contracts/EmotionEngineInterface.php",
+      "sha256": "c5b5bdc5593a6703005ed22f0debcf8af584ca41c5f384cbf164e4c1e2ae2e68"
+    },
+    {
+      "bytes": 299,
+      "path": "src/Engines/HumanInteraction/Contracts/EmpathyEngineInterface.php",
+      "sha256": "3159ff2c91df807bdf250d5e6351dc9c6e6f72a99dbe60fdb4751de12f2aa1b9"
+    },
+    {
+      "bytes": 276,
+      "path": "src/Engines/HumanInteraction/Contracts/IntentEngineInterface.php",
+      "sha256": "86627328fa39144eddd7453cfb7496fec7656d9a21e3a5df89a25bbf6e6693f7"
+    },
+    {
+      "bytes": 283,
+      "path": "src/Engines/HumanInteraction/Contracts/PersonalityEngineInterface.php",
+      "sha256": "8c91298ba5b9a4c2c9318c60195129dac0252b29427e2cf1598bae48538fe697"
+    },
+    {
+      "bytes": 320,
+      "path": "src/Engines/HumanInteraction/Contracts/ResponseGenerationEngineInterface.php",
+      "sha256": "79e8275bd6aabeecc6b0dd7b27307af972f2eafc3d585a63eb248ac3ef8d85a3"
+    },
+    {
+      "bytes": 297,
+      "path": "src/Engines/HumanInteraction/Contracts/SentimentEngineInterface.php",
+      "sha256": "e953f9a81cf807b42b1dd3e6462b024f18e8d8328c84198f8ee498375ff30c27"
+    },
+    {
+      "bytes": 304,
+      "path": "src/Engines/HumanInteraction/Contracts/TrustEngineInterface.php",
+      "sha256": "dc5cbe5b6808d24faae93e47bc1ac465e4c23feed468a112c321f6e1f47f6c6d"
+    },
+    {
+      "bytes": 917,
+      "path": "src/Engines/HumanInteraction/Implementations/ClarificationEngine.php",
+      "sha256": "39c64421cc5318e225ac07ea9764f41e951de19ecbd26c73fa96e66c05cc0f3c"
+    },
+    {
+      "bytes": 1046,
+      "path": "src/Engines/HumanInteraction/Implementations/ConversationEngine.php",
+      "sha256": "6e5023d67cb52eebc85cdee9993d33eda1ed5dc059154b3295ece1ad822dd110"
+    },
+    {
+      "bytes": 572,
+      "path": "src/Engines/HumanInteraction/Implementations/DialogueEngine.php",
+      "sha256": "43423161a587b294737e8b1e7c4b6e1e427106e39a694890372b14c2ad9c6326"
+    },
+    {
+      "bytes": 1972,
+      "path": "src/Engines/HumanInteraction/Implementations/EmotionEngine.php",
+      "sha256": "8c55de6bc45b56a76914503c1c66412a4e9186c1c8bf59ade38fb23780c000cc"
+    },
+    {
+      "bytes": 1980,
+      "path": "src/Engines/HumanInteraction/Implementations/EmpathyEngine.php",
+      "sha256": "6923438e186b5c678cd8b4c8cc3863dd1f79f670078fbe5ac19f1c351b48812e"
+    },
+    {
+      "bytes": 1552,
+      "path": "src/Engines/HumanInteraction/Implementations/IntentEngine.php",
+      "sha256": "76fcfbdac56b694a1f4a48e86163d6aebf2550edbd88c9f02e387de92db3d96e"
+    },
+    {
+      "bytes": 1954,
+      "path": "src/Engines/HumanInteraction/Implementations/PersonalityEngine.php",
+      "sha256": "bfd2bd675ab64fd1898ad6b4b1245bc937a22ed1bd4e9c45a4cd1dd83a847929"
+    },
+    {
+      "bytes": 1672,
+      "path": "src/Engines/HumanInteraction/Implementations/ResponseGenerationEngine.php",
+      "sha256": "8bd83037de004d6c233729836109b59de8d9586cdfdcf2e2c5f2750b251fe7f5"
+    },
+    {
+      "bytes": 2339,
+      "path": "src/Engines/HumanInteraction/Implementations/SentimentEngine.php",
+      "sha256": "f0b94a75855427ad812fd12834d2cb6edf2d6514e7785f0d4a4307a7826b2ac9"
+    },
+    {
+      "bytes": 1782,
+      "path": "src/Engines/HumanInteraction/Implementations/TrustEngine.php",
+      "sha256": "98b54aef22745b8b9f9d40f57265ed4bf6ffda741b08c962562242f7ddc98f1d"
+    },
+    {
+      "bytes": 336,
+      "path": "src/Engines/Learning/Contracts/BehaviourLearningEngineInterface.php",
+      "sha256": "0b8840feb40385c16abb665eb330f81e865a37fd736bc09615f72933e191686c"
+    },
+    {
+      "bytes": 315,
+      "path": "src/Engines/Learning/Contracts/FeedbackEngineInterface.php",
+      "sha256": "1684dd5c528945ec2af0487d8ee5f2c386f8500e7923638f63bb1024b7658244"
+    },
+    {
+      "bytes": 349,
+      "path": "src/Engines/Learning/Contracts/GeneralizationEngineInterface.php",
+      "sha256": "b0b28ee6d7d9b2eafeb4210a97b56abdda73c42d562e854dca0ff3cff397a1f2"
+    },
+    {
+      "bytes": 277,
+      "path": "src/Engines/Learning/Contracts/LearningEngineInterface.php",
+      "sha256": "0c97e5295acd537127697c01e1d3638d5839c086039cbd5c8813cac660460ec9"
+    },
+    {
+      "bytes": 289,
+      "path": "src/Engines/Learning/Contracts/PatternRecognitionEngineInterface.php",
+      "sha256": "4d3a04b17f8ad2ec1394fc1aefc05f3a572f01f4808338daab5d34e25ff2a962"
+    },
+    {
+      "bytes": 309,
+      "path": "src/Engines/Learning/Contracts/PredictionEngineInterface.php",
+      "sha256": "1a33ecaaaae32f9b4d1ee8125c5a96c47cb751ad4bf8a50ee938c3c5b26e0c4b"
+    },
+    {
+      "bytes": 328,
+      "path": "src/Engines/Learning/Contracts/PreferenceLearningEngineInterface.php",
+      "sha256": "c20a67ce67d0f7487d5a255446cb96c219b6912693b7e03b4e5c5f693a0a94b6"
+    },
+    {
+      "bytes": 295,
+      "path": "src/Engines/Learning/Contracts/RecommendationEngineInterface.php",
+      "sha256": "7e10786b93b94e83e721610a124c8b2a5ff00409c397aeee1709c9ba07c1368f"
+    },
+    {
+      "bytes": 311,
+      "path": "src/Engines/Learning/Contracts/ReinforcementLearningEngineInterface.php",
+      "sha256": "7528834c28db0397ed7e3e4744ed5344f55b2d6a50e47c813d8699461efa3d09"
+    },
+    {
+      "bytes": 331,
+      "path": "src/Engines/Learning/Contracts/SimilarityEngineInterface.php",
+      "sha256": "bbaea89eaa8175ab05658ddd2b17e83676b0a4c9199dabaae0a2cd1bc296299d"
+    },
+    {
+      "bytes": 2719,
+      "path": "src/Engines/Learning/Implementations/BehaviourLearningEngine.php",
+      "sha256": "44fcfe7adf5c8e69f9da1533f4aeebc5e89935721b6f497e296e519e82b64c1c"
+    },
+    {
+      "bytes": 2101,
+      "path": "src/Engines/Learning/Implementations/FeedbackEngine.php",
+      "sha256": "475e327bc2eed179dfbdb40e72e57ddebaf46f580373162e9b4657913f2b5ef7"
+    },
+    {
+      "bytes": 2515,
+      "path": "src/Engines/Learning/Implementations/GeneralizationEngine.php",
+      "sha256": "1f6bb34f4283e4dbfc65832dc1cf79682771c3db71dd1cc710654b0c75a38eb4"
+    },
+    {
+      "bytes": 507,
+      "path": "src/Engines/Learning/Implementations/LearningEngine.php",
+      "sha256": "e7a8b821578c8e886830736e19e1901866d9ddcc54a13c3152ed5fa701487ce1"
+    },
+    {
+      "bytes": 1780,
+      "path": "src/Engines/Learning/Implementations/PatternRecognitionEngine.php",
+      "sha256": "e7554f77f505290a6b22915632320d1764261e96dca8da198d5a56fb0319f404"
+    },
+    {
+      "bytes": 1759,
+      "path": "src/Engines/Learning/Implementations/PredictionEngine.php",
+      "sha256": "94675bf45d70234208b5467fca4b238eefd8650baf878146493d32ae74693cf6"
+    },
+    {
+      "bytes": 1102,
+      "path": "src/Engines/Learning/Implementations/PreferenceLearningEngine.php",
+      "sha256": "4143ac6b512bfda31e1a24a5355c3c67ee9d420d684ad4e9ba2f027e0362aef9"
+    },
+    {
+      "bytes": 2938,
+      "path": "src/Engines/Learning/Implementations/RecommendationEngine.php",
+      "sha256": "15cfea793668c99b0e0e15d2c3116be6e4b4098b14271a04d9d9a14ec5cf994e"
+    },
+    {
+      "bytes": 1315,
+      "path": "src/Engines/Learning/Implementations/ReinforcementLearningEngine.php",
+      "sha256": "24187af860eeba82831985f8dce205ebe4df8bf854c627ee6f235240c06f6e6a"
+    },
+    {
+      "bytes": 2075,
+      "path": "src/Engines/Learning/Implementations/SimilarityEngine.php",
+      "sha256": "2b01f13e49107d5b61593fac8554386a0b84575ea36680ca4589f4736d68a518"
+    },
+    {
+      "bytes": 350,
+      "path": "src/Engines/Memory/Contracts/ContextEngineInterface.php",
+      "sha256": "078e17492bb7eacc78f1a248a9fd63d4b782681f47392ec6073dd58b3c61246a"
+    },
+    {
+      "bytes": 315,
+      "path": "src/Engines/Memory/Contracts/EpisodicMemoryEngineInterface.php",
+      "sha256": "6e166aff15890dc34d5744531401ef9397e307f23f6bba4cd3ca8f5f2c28e1ae"
+    },
+    {
+      "bytes": 269,
+      "path": "src/Engines/Memory/Contracts/ForgettingEngineInterface.php",
+      "sha256": "16aa64bdda909ea3d5ec604b10853ef3cbe7476ca4cc9ff42ac00b6c2cb26c1a"
+    },
+    {
+      "bytes": 293,
+      "path": "src/Engines/Memory/Contracts/KnowledgeExtractionEngineInterface.php",
+      "sha256": "904517fdf6a369d5ac07969f4e9be737a5bcf1e7e0b47192536c2a3f86ab16cc"
+    },
+    {
+      "bytes": 441,
+      "path": "src/Engines/Memory/Contracts/KnowledgeGraphEngineInterface.php",
+      "sha256": "12b6a61c57d0a1a4d230f6b14321c3eba39edc45d1a7b7b706a372a82577a98c"
+    },
+    {
+      "bytes": 293,
+      "path": "src/Engines/Memory/Contracts/MemoryConsolidationEngineInterface.php",
+      "sha256": "d688221c91c01b7af8a3e8699d427f23385ce671c1b7dd0c346d5e14912ee120"
+    },
+    {
+      "bytes": 342,
+      "path": "src/Engines/Memory/Contracts/MemoryEngineInterface.php",
+      "sha256": "9863b14c22457dd2a897b5005977e6e6ae4e1e5fadcbcde0337dac70e1915c06"
+    },
+    {
+      "bytes": 356,
+      "path": "src/Engines/Memory/Contracts/ProceduralMemoryEngineInterface.php",
+      "sha256": "426034b9199126f1a384320f60cb7c48f7d2bd8219efd4533806e08e28c326a9"
+    },
+    {
+      "bytes": 298,
+      "path": "src/Engines/Memory/Contracts/SemanticMemoryEngineInterface.php",
+      "sha256": "7d6cf636b68f970092c67526a064504c1b72ec5c6d30940da9f238e35a380ca2"
+    },
+    {
+      "bytes": 333,
+      "path": "src/Engines/Memory/Contracts/WorldModelEngineInterface.php",
+      "sha256": "cba567b61e9d5807d652886a0efb4b7558960580a0bc878b34c17ba56ce8428a"
+    },
+    {
+      "bytes": 968,
+      "path": "src/Engines/Memory/Implementations/ContextEngine.php",
+      "sha256": "ffdd3a171009d016b199bcdd50b4a16990ebecc23166ce289413aeaccf2746d9"
+    },
+    {
+      "bytes": 921,
+      "path": "src/Engines/Memory/Implementations/EpisodicMemoryEngine.php",
+      "sha256": "f955050e8415710d9211b23f4161a2f398df74e2ee8b6ffaf821f34aee333e15"
+    },
+    {
+      "bytes": 1096,
+      "path": "src/Engines/Memory/Implementations/ForgettingEngine.php",
+      "sha256": "02e777d1ea6937ada8731e8daf70ca4a1960a354deedcf2ed43a8ffd92466a09"
+    },
+    {
+      "bytes": 2317,
+      "path": "src/Engines/Memory/Implementations/KnowledgeExtractionEngine.php",
+      "sha256": "12a2c49e94419e4ac787a8730eab39179287fd87d446eed8b5705c251839f854"
+    },
+    {
+      "bytes": 3591,
+      "path": "src/Engines/Memory/Implementations/KnowledgeGraphEngine.php",
+      "sha256": "f788c92393496e0253949acde3398fec5fe66bed3ba121f8fef9b525fdaca7e6"
+    },
+    {
+      "bytes": 1656,
+      "path": "src/Engines/Memory/Implementations/MemoryConsolidationEngine.php",
+      "sha256": "1a5c7630fef58a58b6b2fea97452dc7a73228a1422a91002dadf50f9402fe4c7"
+    },
+    {
+      "bytes": 1678,
+      "path": "src/Engines/Memory/Implementations/MemoryEngine.php",
+      "sha256": "70720a0edbc47ea7a27801d00b32bb2862f47e8feee014e90624e7b1a86719ea"
+    },
+    {
+      "bytes": 1325,
+      "path": "src/Engines/Memory/Implementations/ProceduralMemoryEngine.php",
+      "sha256": "afc18405e960fd4c36bf60c0f8acc77e7adfc98b2d3aa768f541f02e35bb5ea2"
+    },
+    {
+      "bytes": 848,
+      "path": "src/Engines/Memory/Implementations/SemanticMemoryEngine.php",
+      "sha256": "ca34bba56984eb5ead76d915f9586cd5203e13fe3bbea67895cb284566769b1f"
+    },
+    {
+      "bytes": 1365,
+      "path": "src/Engines/Memory/Implementations/WorldModelEngine.php",
+      "sha256": "c790d4a9cc4bee4866deeb116b12ddfe2ce3fa41f34cd96da1b3781a71598003"
+    },
+    {
+      "bytes": 328,
+      "path": "src/Engines/Planning/Contracts/CapabilityRoutingEngineInterface.php",
+      "sha256": "43d934c51c2be8357bf626af46af4591204b792715052a86ef0f4ebd75d1532b"
+    },
+    {
+      "bytes": 295,
+      "path": "src/Engines/Planning/Contracts/ExecutionEngineInterface.php",
+      "sha256": "2ee0b17bb31d9de0c2b40ab9c45c09c3f0eb37d3a63fa82518f1719b7e6d7898"
+    },
+    {
+      "bytes": 344,
+      "path": "src/Engines/Planning/Contracts/PlanningEngineInterface.php",
+      "sha256": "4f674e049c43a80c1acf2b003a4d31fd2a6d1adeb9e0ac3d66898ebec72d0773"
+    },
+    {
+      "bytes": 267,
+      "path": "src/Engines/Planning/Contracts/RecoveryEngineInterface.php",
+      "sha256": "d5fc76ef8047de28364b7be71b4cef592b0a5e913c2ac7d91965a44673df69ae"
+    },
+    {
+      "bytes": 320,
+      "path": "src/Engines/Planning/Contracts/ResourceAllocationEngineInterface.php",
+      "sha256": "16ffa633894dc95533ecae2bbbd129c75eb544231cc39231a603b7e140e8b422"
+    },
+    {
+      "bytes": 279,
+      "path": "src/Engines/Planning/Contracts/RetryEngineInterface.php",
+      "sha256": "3b86d62a85631ae2b3b10e1f0d864bcce65d9012fdaa4eaa7c0c5f175061823c"
+    },
+    {
+      "bytes": 306,
+      "path": "src/Engines/Planning/Contracts/SchedulingEngineInterface.php",
+      "sha256": "691c156e10d77a873a29ac722b98fbd76d798454799e0726403d45f27873065b"
+    },
+    {
+      "bytes": 285,
+      "path": "src/Engines/Planning/Contracts/SynchronizationEngineInterface.php",
+      "sha256": "d7753cd03556c69c1e1db9fb2aeef5fafc9e717eac9bcf63dbd0a9f43b543a24"
+    },
+    {
+      "bytes": 307,
+      "path": "src/Engines/Planning/Contracts/TaskDecompositionEngineInterface.php",
+      "sha256": "5726cf0b615a1e12ed27b28720f471a0630e1d64e92b1c9920f7fa3471386958"
+    },
+    {
+      "bytes": 364,
+      "path": "src/Engines/Planning/Contracts/WorkflowEngineInterface.php",
+      "sha256": "91afa7405dce13e4f8809078d37193d7f1d39df90633f771990db516bc04f31a"
+    },
+    {
+      "bytes": 822,
+      "path": "src/Engines/Planning/Implementations/CapabilityRoutingEngine.php",
+      "sha256": "4ebc5cb8d7d9d85ed10cfa3e0dd0e3d097d093c514f7810d0a900dfdc6d1af1b"
+    },
+    {
+      "bytes": 819,
+      "path": "src/Engines/Planning/Implementations/ExecutionEngine.php",
+      "sha256": "165802abce71a5155d303d976a64acf5cccc6401a536c889c0e7c5667bc230ca"
+    },
+    {
+      "bytes": 1785,
+      "path": "src/Engines/Planning/Implementations/PlanningEngine.php",
+      "sha256": "6e42c5d5b3e4ad12b1e1c32097642318502d5570155e2211ffea1cfeb78396b4"
+    },
+    {
+      "bytes": 1476,
+      "path": "src/Engines/Planning/Implementations/RecoveryEngine.php",
+      "sha256": "4a5dff6ced3a106afc33b0aa30642ba4a8c561bc254ae81ceb07215ae7a16067"
+    },
+    {
+      "bytes": 635,
+      "path": "src/Engines/Planning/Implementations/ResourceAllocationEngine.php",
+      "sha256": "eed81372347073e373616d316e5e59dd28777780302e9ea79d3e0a7309577c27"
+    },
+    {
+      "bytes": 643,
+      "path": "src/Engines/Planning/Implementations/RetryEngine.php",
+      "sha256": "1482f9076247cab6677bb674651800f04e95bb61a3f48286857da1680b895a2e"
+    },
+    {
+      "bytes": 1839,
+      "path": "src/Engines/Planning/Implementations/SchedulingEngine.php",
+      "sha256": "cdccd46214d4fdc2800c38f9b7f0af52610573c8cc988624caf147b659cf49a4"
+    },
+    {
+      "bytes": 882,
+      "path": "src/Engines/Planning/Implementations/SynchronizationEngine.php",
+      "sha256": "2c7fbeb3529c6adc49bb16adf4a78f7eff1dd63f1c62076c2fdb23bd1fe9e9c5"
+    },
+    {
+      "bytes": 1597,
+      "path": "src/Engines/Planning/Implementations/TaskDecompositionEngine.php",
+      "sha256": "1b86ad9d40040327a63995baa94e28bed6b86cc0237609be4f806f5f8e068b29"
+    },
+    {
+      "bytes": 968,
+      "path": "src/Engines/Planning/Implementations/WorkflowEngine.php",
+      "sha256": "d07ce3732191e37e3eb78bdc16cbb5a6cde31c0e9af448b21266c7f739408957"
+    },
+    {
+      "bytes": 1773,
+      "path": "src/Error/ErrorHandler.php",
+      "sha256": "db307a50dbc63dda0f5682fa2ab2054a8dde627f3613922c3beffdc814644337"
+    },
+    {
+      "bytes": 903,
+      "path": "src/Event/EventRecorder.php",
+      "sha256": "4135f779cceadc49aae207825035571c3bef0384c17d678566f2073145403d78"
+    },
+    {
+      "bytes": 278,
+      "path": "src/Events/CapabilityExecuted.php",
+      "sha256": "100fef0ba83e95e3544f0e3334727d11bcac7deb5bf4e23992eb7657d3f112a6"
+    },
+    {
+      "bytes": 305,
+      "path": "src/Events/InteractionCompleted.php",
+      "sha256": "4b25ec5e916ed1de15853afd3a7b68c87cf9ad5f4ca587d8f4fcd6ffa957a98c"
+    },
+    {
+      "bytes": 228,
+      "path": "src/Events/InteractionEventRecorded.php",
+      "sha256": "5c6e4f7d770119bf700e6ab7a0eeef65ad783bca22e3f9a791f304ef768dde0c"
+    },
+    {
+      "bytes": 315,
+      "path": "src/Events/InteractionStarted.php",
+      "sha256": "7c20358077a0d13fe6281191cf9e4c6889ccec8ade005cbcd0569abe721c93ed"
+    },
+    {
+      "bytes": 307,
+      "path": "src/Events/QuestionAnswered.php",
+      "sha256": "37133219dfb4797dd378138258c80ed0ef2f54391777ff0b6a8fa961367e09b9"
+    },
+    {
+      "bytes": 237,
+      "path": "src/Events/SectionCompleted.php",
+      "sha256": "86705a26396b4e3f0114f4d76706efdd902cf0899bee15d967e3ac5efbc5ae80"
+    },
+    {
+      "bytes": 251,
+      "path": "src/Facades/Interaction.php",
+      "sha256": "e0cf08db6d05d0aa66a511ed452bfc29b15558c1fc88f182bed6892d242f0f95"
+    },
+    {
+      "bytes": 6116,
+      "path": "src/Generator/GeneratorEngine.php",
+      "sha256": "40bebbb094b3de99572318f3535550b271250b1807fe549fedd5c6b0338b3325"
+    },
+    {
+      "bytes": 157,
+      "path": "src/Goals/GoalEngine.php",
+      "sha256": "db3f9a7a7ee5370a938ef523937b7f1d43a3da021fbb134abaaeb176389cd43e"
+    },
+    {
+      "bytes": 3292,
+      "path": "src/Healer/HealerEngine.php",
+      "sha256": "e8f9845bb49a5d27b4b0bdf9498747c12067b8665bd1e8c17e95daca7bf36489"
+    },
+    {
+      "bytes": 4231,
+      "path": "src/Http/Controllers/CognitiveEventController.php",
+      "sha256": "7a9a863ef1e1d23427929143ebd91410029304da2bb8d4eb3b78f577baec4fd0"
+    },
+    {
+      "bytes": 1961,
+      "path": "src/Http/Controllers/InteractionController.php",
+      "sha256": "028ddf878dfe94ab8c5216939bfe6627a74bf085f6591813f757911b586f5425"
+    },
+    {
+      "bytes": 970,
+      "path": "src/Http/Controllers/LocalIntelligenceController.php",
+      "sha256": "69ab747d609796eac501b96042dc6f7830fb9075cc8823b2cf7653dc94a72527"
+    },
+    {
+      "bytes": 3393,
+      "path": "src/Http/Controllers/OfflineCommandController.php",
+      "sha256": "1f08de747873f73e3c595ad9146ea54aa06d076ec2db24a56fccd0d97c80390f"
+    },
+    {
+      "bytes": 1162,
+      "path": "src/Http/Controllers/SyncController.php",
+      "sha256": "bbaaa5f0c5c9162076a3e9d07cdc21655a3dcfb93c3eb6eee2683ac436130d56"
+    },
+    {
+      "bytes": 3289,
+      "path": "src/Http/Controllers/WizardController.php",
+      "sha256": "b6cec88388514c0abe07ff9581d52c204aba379eae50cd61542509cedc010b7f"
+    },
+    {
+      "bytes": 1618,
+      "path": "src/Infrastructure/WorkCore/GovernedWorkCoreDispatcher.php",
+      "sha256": "5a7d8ba5e419cb874a1497c930f58b7faa2540696c9ccd040c3f3576ad9a4b74"
+    },
+    {
+      "bytes": 863,
+      "path": "src/Knowledge/KnowledgeRegistry.php",
+      "sha256": "116ad5a3f340e16eb2be72cff74df30f01623df60862ec0d938d7feb303127de"
+    },
+    {
+      "bytes": 821,
+      "path": "src/Knowledge/Sources/CustomerKnowledgeSource.php",
+      "sha256": "255c9aafb20c61bbfd03c50921691cf4f4e0d908550afc37da6c802aaa95acb9"
+    },
+    {
+      "bytes": 659,
+      "path": "src/Knowledge/Sources/ServiceKnowledgeSource.php",
+      "sha256": "2b6c6d3a6fe7cc2946dc9093a711523d48c4da985b1ee6f497d87292ade20e69"
+    },
+    {
+      "bytes": 3397,
+      "path": "src/Learner/LearnerEngine.php",
+      "sha256": "9bc574a474d002dd38dd08162de69982a5b1acd1f1c24da74f2c1e3c70609a48"
+    },
+    {
+      "bytes": 3014,
+      "path": "src/LocalIntelligence/Decision/DecisionTreeEngine.php",
+      "sha256": "ef208ff60939e934b19ef11502a78ad01d153827a4962ec1caa1e73cd22c0eb3"
+    },
+    {
+      "bytes": 3170,
+      "path": "src/LocalIntelligence/Language/LocalLanguageEngine.php",
+      "sha256": "73b321756e5a1f487de0a62ade4542c19b958954ed766d85411b2f2e97bcc534"
+    },
+    {
+      "bytes": 3365,
+      "path": "src/LocalIntelligence/Learning/AdaptiveReweightingEngine.php",
+      "sha256": "f259750568a5a0ca6927efc7bd934fd33ad8220524eecac1e553ed2a37f61caa"
+    },
+    {
+      "bytes": 6772,
+      "path": "src/LocalIntelligence/LocalBrain.php",
+      "sha256": "372b29d6cdd8d32f8e18ca2b34bcec0ac0cfb3c987b29e4df77adf487bf61fcb"
+    },
+    {
+      "bytes": 4512,
+      "path": "src/LocalIntelligence/Memory/BehavioralMemory.php",
+      "sha256": "0c5b41da4ac62934006c48da3ac75d96c323a9436570a6aabe7a0615df26301a"
+    },
+    {
+      "bytes": 5133,
+      "path": "src/LocalIntelligence/Prediction/PredictiveCompletionEngine.php",
+      "sha256": "7b28372d48657d17568a31b793e513b2447629e826df98894483aa0ce72d69dd"
+    },
+    {
+      "bytes": 2528,
+      "path": "src/LocalIntelligence/Reasoning/HybridReasoner.php",
+      "sha256": "cc18f4e1317c3d88ee5671cbce69038ef6330285eca6ec41989f22f3fb6d5b99"
+    },
+    {
+      "bytes": 3533,
+      "path": "src/LocalIntelligence/Storage/EloquentLocalIntelligenceMemoryStore.php",
+      "sha256": "53187c97a1351f7c91f8806a29509daf88a55328d63341a5426f616835d34a12"
+    },
+    {
+      "bytes": 1383,
+      "path": "src/LocalIntelligence/Storage/LocalIntelligenceMemoryStoreInterface.php",
+      "sha256": "3d00b5122398190dec07c8d696f15a25be2a3f129d9d59b36f423558e6450a45"
+    },
+    {
+      "bytes": 748,
+      "path": "src/LocalIntelligence/Storage/NullLocalIntelligenceMemoryStore.php",
+      "sha256": "25383ddf310be5f3dde59e0998ec42bc518d6e3cb432f5e0a0c9b2b4db0c2680"
+    },
+    {
+      "bytes": 1789,
+      "path": "src/LocalIntelligence/Sync/SyncAssistant.php",
+      "sha256": "d9ffe2e30a63078ac33ed79d1d390494f270919a5facd97c6fe0823d8597dc69"
+    },
+    {
+      "bytes": 4904,
+      "path": "src/LocalIntelligence/Temporal/TemporalIntelligence.php",
+      "sha256": "b8986f4ebcafb1686b166a89d04e28af3daa0867785a2e714d7ba7d39a8f884b"
+    },
+    {
+      "bytes": 159,
+      "path": "src/Memory/MemoryEngine.php",
+      "sha256": "033196329cdac6f379a65d80721db369d00b4688faa2fa7afc79ea5f970ca385"
+    },
+    {
+      "bytes": 1033,
+      "path": "src/Migrations/2026_08_01_000000_create_interaction_runs_table.php",
+      "sha256": "aecb7f19c8df7fbfa3f5334eda2934b72a65042328cd54819f88c9ff6380e9f9"
+    },
+    {
+      "bytes": 1116,
+      "path": "src/Migrations/2026_08_01_000001_create_interaction_answers_table.php",
+      "sha256": "8fd31b985e8138fe62c3504323fe491e0032db4423384968ccffb6b503bb54f0"
+    },
+    {
+      "bytes": 742,
+      "path": "src/Migrations/2026_08_01_000002_create_interaction_events_table.php",
+      "sha256": "370ca4f5363d7a66e9acea1fb53ba2e1dbdfb311c7a367dcfc18eeb8d140f666"
+    },
+    {
+      "bytes": 1096,
+      "path": "src/Migrations/2026_08_02_000000_create_queued_commands_table.php",
+      "sha256": "78776ca75b0a613c98390755d41f4552da8822cb06b677209268e6e2811ab2cd"
+    },
+    {
+      "bytes": 824,
+      "path": "src/Migrations/2026_08_05_000000_create_episodic_memory_table.php",
+      "sha256": "10d76eba091244a2a3809f33de3eae82d8201d13a8d8496a16f62f0a3abb5006"
+    },
+    {
+      "bytes": 665,
+      "path": "src/Migrations/2026_08_05_000001_create_semantic_memory_table.php",
+      "sha256": "ce5b916b5971703221a4ada25f8768c62163c0b926af00cb5a30b0831f68b69b"
+    },
+    {
+      "bytes": 622,
+      "path": "src/Migrations/2026_08_05_000002_create_audit_logs_table.php",
+      "sha256": "62f3102c9a190609467325cac990ccc640497d58fb82cf4079c05081aa71db97"
+    },
+    {
+      "bytes": 626,
+      "path": "src/Migrations/2026_08_05_000003_create_governance_logs_table.php",
+      "sha256": "be7befecf006558c5cec463f5266bd8e2e5b228f5f8613683fe5973084ea7c1b"
+    },
+    {
+      "bytes": 767,
+      "path": "src/Migrations/2026_08_05_000004_create_user_actions_table.php",
+      "sha256": "325795c22ed3b4a62b5baedd6552ba81e938b5fc803b912d1a21a0d585ac421b"
+    },
+    {
+      "bytes": 781,
+      "path": "src/Migrations/2026_08_05_000005_create_user_preferences_table.php",
+      "sha256": "c4535f44f4d830a21f51bdb6e33b5fa141097625ae021c7cd39ddc8b83b7ff6c"
+    },
+    {
+      "bytes": 1036,
+      "path": "src/Models/CognitiveEvent.php",
+      "sha256": "270d22aaf67321d93fd527be23b75dfeb807ea644f28a0c1f23705288ae77996"
+    },
+    {
+      "bytes": 645,
+      "path": "src/Models/InteractionAnswer.php",
+      "sha256": "bbfe3b15764f7f76e80cd9da95882fad38b827682d446177d6c51f6a7e10145d"
+    },
+    {
+      "bytes": 412,
+      "path": "src/Models/InteractionEvent.php",
+      "sha256": "f7853b00341cc9fcbcdf6d24754e9b63e30e37bc9b99449280cbb71512f5d30d"
+    },
+    {
+      "bytes": 644,
+      "path": "src/Models/InteractionRun.php",
+      "sha256": "4c7146b3305c1dd5a815eb622d7d5136d0d417c616d4a90253f2663447a30372"
+    },
+    {
+      "bytes": 617,
+      "path": "src/Models/LocalIntelligenceMemory.php",
+      "sha256": "813886bba812aa250e7902580aaecbe34db228e5cd557c00c33b124aa05d7e08"
+    },
+    {
+      "bytes": 670,
+      "path": "src/Models/QueuedCommand.php",
+      "sha256": "7ae0aa5be45898ae5613ecfb66c231976f5e5102a349c749fe14d49876e44191"
+    },
+    {
+      "bytes": 2956,
+      "path": "src/Monitoring/HealthCheck.php",
+      "sha256": "65878ad86db8dd7cc74602c530fabf12d3c090ad22bb2c29ce624d820b6aa232"
+    },
+    {
+      "bytes": 2654,
+      "path": "src/Navigation/NavigationEngine.php",
+      "sha256": "5d41b90b8270f36717629db95a117ddcb8c76765c3ebe1e78ba2579690b01aaf"
+    },
+    {
+      "bytes": 2335,
+      "path": "src/Offline/ConflictResolver.php",
+      "sha256": "45b57d5c87a750fb6c8d3f33f4b5699bb15a8b2d8848d6e8b1ae0c0c89e35b86"
+    },
+    {
+      "bytes": 913,
+      "path": "src/Offline/OfflineDetector.php",
+      "sha256": "51066be96fdaa40e764747315cb2edf09118294d1e0fee1d2efb712ce22635db"
+    },
+    {
+      "bytes": 1452,
+      "path": "src/Offline/OfflineQueue.php",
+      "sha256": "4aadaadf0a81766bca63a8640b6acd7d48f3f8dd221dcf1ae1713aabf169ab8d"
+    },
+    {
+      "bytes": 3212,
+      "path": "src/Offline/SyncEngine.php",
+      "sha256": "95569697ffb4e3aa813d81cfd4374ed7583dccbd2803458f34844d9cc235de14"
+    },
+    {
+      "bytes": 3251,
+      "path": "src/Pattern/PatternRegistry.php",
+      "sha256": "cba96c27a5e2d6d40c010951497786823ca74c3b8c44603f3a944485dcafef3b"
+    },
+    {
+      "bytes": 167,
+      "path": "src/Planning/PlanningEngine.php",
+      "sha256": "f463b323a41d89b4bda2356d7d8186180494000d265d71f71bd0ebe75377f482"
+    },
+    {
+      "bytes": 5977,
+      "path": "src/Policy/PolicyEngine.php",
+      "sha256": "4d5948e9501d21fbed046cf3d72270142906f33de8009c3e22b2846567ef9be9"
+    },
+    {
+      "bytes": 5715,
+      "path": "src/Predictor/PredictorEngine.php",
+      "sha256": "7cf1949ab5309cd588199fab3e572b10f5a0e8b9cb1b42e1dfb3de40d08df87e"
+    },
+    {
+      "bytes": 20063,
+      "path": "src/Providers/InteractionServiceProvider.php",
+      "sha256": "e57112e86f4a7a4dbdaae3422907ec2cc78203c3b14e061dfd94d4eb0e14036e"
+    },
+    {
+      "bytes": 1943,
+      "path": "src/Registry/CapabilityRegistry.php",
+      "sha256": "990ac167cfe23e874a413aae69c7aba1bbdf70de6e8dd85a52d5c4f961776b4e"
+    },
+    {
+      "bytes": 1150,
+      "path": "src/Registry/InteractionRegistry.php",
+      "sha256": "eb319da68d6a1b3092a90d97df00cbf344bb87158a58efa0bea652b8ca6d1aae"
+    },
+    {
+      "bytes": 1034,
+      "path": "src/Renderer/BladeRenderer.php",
+      "sha256": "40ae3689f77184c596a1ae28f1bfa623db79535216c93a19ef265408630ef81e"
+    },
+    {
+      "bytes": 1647,
+      "path": "src/Repositories/EloquentInteractionAnswerRepository.php",
+      "sha256": "245506740d629faf786519e5408b5c58e52bdf2ac28c233c17e34da183782141"
+    },
+    {
+      "bytes": 1307,
+      "path": "src/Repositories/EloquentInteractionRunRepository.php",
+      "sha256": "c8e722c84738b2ec341dfbc74d067be9b09230b01fdf5feb968ac4a4b4afd7ed"
+    },
+    {
+      "bytes": 276,
+      "path": "src/Repositories/InteractionAnswerRepositoryInterface.php",
+      "sha256": "4e32bf54d9e31b199a50eda1d7211b42d65ff730758a6fdfe6a8385b8c3c7e5c"
+    },
+    {
+      "bytes": 411,
+      "path": "src/Repositories/InteractionRunRepositoryInterface.php",
+      "sha256": "9b851501cdd3da6f854e5c858622360e69f4b2b759921b07028956e231c60ce9"
+    },
+    {
+      "bytes": 4455,
+      "path": "src/Resolver/QuestionResolver.php",
+      "sha256": "126cda1cdec010703d9cd180c7acbf383e452002d7583eecc8ff07896c561821"
+    },
+    {
+      "bytes": 2934,
+      "path": "src/Resolver/Resolvers/AIResolver.php",
+      "sha256": "659dc1304bb30cf23814a9333379d84fbe260cfe4b4f8ec013e772852b5869f9"
+    },
+    {
+      "bytes": 7851,
+      "path": "src/Runtime/InteractionRuntime.php",
+      "sha256": "4867322fa7f400130f4c1fdb6357668288b7e5f99ab2102ed61733dfdefc7ef2"
+    },
+    {
+      "bytes": 3205,
+      "path": "src/Schema/InteractionSchema.php",
+      "sha256": "3899e074c19c586e7bafcd53a0b099c33033dbd4b50b11e96e466a8fcd7bcbcb"
+    },
+    {
+      "bytes": 168,
+      "path": "src/Semantic/SemanticEngine.php",
+      "sha256": "84ef4ec390e02319c674baa1a89f2ce372436e128d9591d202b9e784b02213b0"
+    },
+    {
+      "bytes": 2917,
+      "path": "src/State/StateManager.php",
+      "sha256": "df61cddbe5bca0ab0bdc68da3557e3d3d50257b6426751fbbfc098404824ac12"
+    },
+    {
+      "bytes": 1766,
+      "path": "src/Validation/ValidationEngine.php",
+      "sha256": "0515fcc02abad75f14d60e1cf357355b0f4b9b9c5dde7cfeeb6b9bc1b7898b07"
+    },
+    {
+      "bytes": 1327,
+      "path": "src/Wizard/Command/CommandMapper.php",
+      "sha256": "98c787bf16e1991b0cd7faed6b7149cd87c4c9f698bd0f87b890188efb11a6b1"
+    },
+    {
+      "bytes": 915,
+      "path": "src/Wizard/Guidance/LocalGuidanceProvider.php",
+      "sha256": "d0aa781e09fcc02f681baac521e0f26cc26b29da4f1a8c0377d0f973adbeacf8"
+    },
+    {
+      "bytes": 3360,
+      "path": "src/Wizard/Offline/LocalCommandOutbox.php",
+      "sha256": "8234c25d3fafadbec4036a0eb52c509821341142091b1ef573925477bbcc9aa8"
+    },
+    {
+      "bytes": 566,
+      "path": "src/Wizard/Renderer/ArrayRenderer.php",
+      "sha256": "984e8bbd303deec75d4ea10b87a81be0361b656c480fc2ea777872aaff5695a9"
+    },
+    {
+      "bytes": 553,
+      "path": "src/Wizard/Renderer/ConversationalRenderer.php",
+      "sha256": "6d44dd9206cfa7183feb7299e6775836d5ef6f332597eeb6aad4e0e0986ea080"
+    },
+    {
+      "bytes": 662,
+      "path": "src/Wizard/Renderer/HybridRenderer.php",
+      "sha256": "aeedacc504bba9e13ab6c3e62360012ec4a9ca80c95a54f76d838b1a0e57cbbe"
+    },
+    {
+      "bytes": 236,
+      "path": "src/Wizard/Renderer/WizardRendererInterface.php",
+      "sha256": "43fb25bb3cf2c2e446f1dc0b79d47741b6e6e97e2ca58ae31447960e2936b588"
+    },
+    {
+      "bytes": 1355,
+      "path": "src/Wizard/Storage/CacheWizardSessionStore.php",
+      "sha256": "553dc3facf1b9cc925c00608dde127bc3e4ea34f8c3f4ef5e79280d68caaa5d6"
+    },
+    {
+      "bytes": 719,
+      "path": "src/Wizard/Storage/InMemoryWizardSessionStore.php",
+      "sha256": "efd308e05beffe794f98c1699a04f4447745ff6830fc9671df6fb127c8355503"
+    },
+    {
+      "bytes": 343,
+      "path": "src/Wizard/Storage/WizardSessionStoreInterface.php",
+      "sha256": "0bc5858bc3d688bc286295c86de97f9328a40037c2595468051ab706f2cdd6e0"
+    },
+    {
+      "bytes": 6114,
+      "path": "src/Wizard/UniversalWizardEngine.php",
+      "sha256": "e394cce96787973a744e1a2f181143ac0ef0dfa7a697d9665642025d67fe5f03"
+    },
+    {
+      "bytes": 2309,
+      "path": "src/Wizard/Validation/WizardValidationEngine.php",
+      "sha256": "e581315fbcff27140be8e8665f247c38ba5782a282a0d2ebdefd8d7b0dca58f6"
+    },
+    {
+      "bytes": 2240,
+      "path": "src/Wizard/WizardDefinition.php",
+      "sha256": "7bfc0f10aebce828d25a3ec63b29f114bf5c5548a8c172a329a52ada9d0c9f23"
+    },
+    {
+      "bytes": 1730,
+      "path": "src/Wizard/WizardRegistry.php",
+      "sha256": "7bbad473fa71375ab8dae277693b121a98ef3e390e526935844a17fabbffef21"
+    },
+    {
+      "bytes": 347,
+      "path": "src/Wizard/WizardResult.php",
+      "sha256": "020c515b598d5be6acec7b837ad5b3181a901e9b4788195cb9a19ef61c51248f"
+    },
+    {
+      "bytes": 1580,
+      "path": "src/Wizard/WizardSession.php",
+      "sha256": "2d47c5531b7b71c6a86fe13b58a052198e6a8d4bb64787912f08519ad372bff2"
+    },
+    {
+      "bytes": 27092,
+      "path": "tests/run.php",
+      "sha256": "42c8f6b83bb830b6767f5774272032a138a02dd7ef394328c7621f865a35423f"
+    },
+    {
+      "bytes": 3437,
+      "path": "tests/ts/offline.test.js",
+      "sha256": "549c20cbf9091f60247293fcfb031b82729bce398f7bc07d82bf90b36d4f519f"
+    },
+    {
+      "bytes": 526,
+      "path": "tsconfig.json",
+      "sha256": "f86e0ae260f6f3547f3953360efc9d4c5edc8dca02a20605207c3777232d4fb6"
+    },
+    {
+      "bytes": 1815,
+      "path": "wizards/complete_job.json",
+      "sha256": "3aa82172f10b18d4493983ddb58734140fb191d8a987e6795a97c90792eb0447"
+    },
+    {
+      "bytes": 1868,
+      "path": "wizards/create_invoice.json",
+      "sha256": "9b7b57e59a15f52741271c01097db0bbcea771d832c8875e385b5e73cd0e4313"
+    },
+    {
+      "bytes": 1870,
+      "path": "wizards/create_job.json",
+      "sha256": "0def76ad07054e59d212b7e18ef9e22c607467262c25ae222e9a5e71789df887"
+    },
+    {
+      "bytes": 2047,
+      "path": "wizards/create_quote.json",
+      "sha256": "82e2d9578b3200ca03bf7f226dcf800242946fb86a923effbdb1d685220d5b29"
+    },
+    {
+      "bytes": 2028,
+      "path": "wizards/new_customer.json",
+      "sha256": "e35649f84b802ea4761a625d91494b7073a02c838b75d7ce7f29fa027b0ba75b"
+    }
+  ],
+  "policy": "Source-preserving extraction. Canonical namespaces remain unchanged; package wrappers and manifests are additive.",
+  "source_archive": "clean-main.zip",
+  "source_archive_sha256": "8360df3c44dbf114c6c5242590609a320d74ad7827b474cf55c5cb6d0ccd68a8",
+  "source_paths": [
+    "packages/titanzero/interaction-engine"
+  ]
+}

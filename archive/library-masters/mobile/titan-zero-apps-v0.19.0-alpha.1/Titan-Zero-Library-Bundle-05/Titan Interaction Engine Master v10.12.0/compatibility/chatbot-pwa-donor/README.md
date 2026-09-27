@@ -1,0 +1,1 @@
+Legacy Chatbot PWA donor resources. Not referenced by the Interaction Engine provider/config/routes. Historical tenant_id fields are compatibility-only and are not a canonical isolation boundary; active Titan Apps runtime uses company_id.

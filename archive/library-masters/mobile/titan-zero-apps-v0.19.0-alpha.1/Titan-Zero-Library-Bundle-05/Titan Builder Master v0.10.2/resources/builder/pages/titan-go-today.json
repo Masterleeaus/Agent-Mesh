@@ -1,0 +1,9 @@
+{
+  "id": "titan-go-today",
+  "name": "Titan Go Today",
+  "surface": "field",
+  "theme": "mobilekit-premium",
+  "description": "Default Titan Go assigned-work and sync-state experience.",
+  "spec": "titan-go-today",
+  "authority": "presentation-only"
+}

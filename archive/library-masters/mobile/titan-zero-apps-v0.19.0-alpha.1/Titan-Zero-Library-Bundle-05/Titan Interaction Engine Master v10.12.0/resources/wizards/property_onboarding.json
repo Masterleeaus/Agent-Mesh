@@ -1,0 +1,140 @@
+{
+  "wizard": {
+    "id": "property_onboarding_v1",
+    "version": "1.0.0",
+    "name": "Property Onboarding",
+    "capability": "property.assets.onboard",
+    "permissions": {
+      "required_roles": [
+        "staff",
+        "supervisor",
+        "manager",
+        "admin"
+      ]
+    },
+    "metadata": {
+      "category": "property",
+      "template_id": "property-onboarding",
+      "template_version": "1.0.0",
+      "verticals": [
+        "property_management",
+        "facilities",
+        "real_estate"
+      ],
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "normal",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": []
+    },
+    "steps": [
+      {
+        "id": "property",
+        "title": "Property",
+        "fields": [
+          {
+            "id": "property_id",
+            "label": "Property ID",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "property_name",
+            "label": "Property name",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "property_type",
+            "label": "Property type",
+            "type": "text",
+            "required": true,
+            "options": [
+              "residential",
+              "commercial",
+              "short_stay",
+              "facility",
+              "other"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "location",
+        "title": "Location",
+        "fields": [
+          {
+            "id": "address",
+            "label": "Address",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "timezone",
+            "label": "Timezone",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "access_contact_id",
+            "label": "Access contact",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "operations",
+        "title": "Operations",
+        "fields": [
+          {
+            "id": "service_requirements",
+            "label": "Service requirements",
+            "type": "array",
+            "required": true
+          },
+          {
+            "id": "assets",
+            "label": "Assets",
+            "type": "array",
+            "required": false
+          },
+          {
+            "id": "compliance_notes",
+            "label": "Compliance notes",
+            "type": "text",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "declaration",
+        "title": "Review",
+        "fields": [
+          {
+            "id": "declaration_accepted",
+            "label": "Declaration accepted",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

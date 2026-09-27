@@ -1,0 +1,29 @@
+{
+  "id": "premium-contact-business",
+  "name": "Premium contact business",
+  "category": "Premium / Application Patterns",
+  "renderer": "generative-ui",
+  "authority": "presentation-only",
+  "premium": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "components": [
+    "profile-hero",
+    "mobile-list",
+    "social-links"
+  ],
+  "allowed_actions": [
+    "navigate",
+    "state.set",
+    "state.increment",
+    "state.remove",
+    "state.reset",
+    "form.submit-preview",
+    "communications.message.send",
+    "zeropay.payment-intent.create"
+  ],
+  "data_contract": {
+    "type": "object"
+  },
+  "responsive": true,
+  "company_boundary": "company_id"
+}

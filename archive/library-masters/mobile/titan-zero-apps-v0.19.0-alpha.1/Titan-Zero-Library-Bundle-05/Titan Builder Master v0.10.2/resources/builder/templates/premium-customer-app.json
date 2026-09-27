@@ -1,0 +1,27 @@
+{
+  "id": "premium-customer-app",
+  "name": "Premium Customer App",
+  "description": "Customer self-service app",
+  "surface": "customer",
+  "base_surface_template": "customer",
+  "theme": "mobilekit-premium",
+  "premium": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "company_boundary": "company_id",
+  "runtime_ownership": "existing Titan surface/runtime",
+  "blocks": [
+    "premium-auth-flow",
+    "premium-profile-overview",
+    "premium-messaging-conversation",
+    "premium-invoice-document",
+    "premium-system-state"
+  ],
+  "page_presets": [
+    "mobile-login",
+    "mobile-profile",
+    "mobile-chat",
+    "mobile-invoice",
+    "mobile-contact",
+    "mobile-maintenance"
+  ]
+}

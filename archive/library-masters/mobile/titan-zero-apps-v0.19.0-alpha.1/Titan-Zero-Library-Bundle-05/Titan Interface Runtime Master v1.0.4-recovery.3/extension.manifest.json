@@ -1,0 +1,421 @@
+{
+  "schema_version": "2.2",
+  "key": "titan-interface-runtime",
+  "name": "Titan Apps: Interface Runtime",
+  "version": "1.0.4-recovery.3",
+  "folder": "TitanInterfaceRuntime",
+  "namespace": "App\\Extensions\\TitanInterfaceRuntime",
+  "provider": "App\\Extensions\\TitanInterfaceRuntime\\System\\TitanInterfaceRuntimeServiceProvider",
+  "family": "native",
+  "compatibility": {
+    "magicai": ">=11.0.0",
+    "php": "^8.2",
+    "laravel": "^10.0"
+  },
+  "dependencies": {
+    "parent": null,
+    "required": [],
+    "optional": [
+      {
+        "key": "titan-apps-core",
+        "version": "*"
+      },
+      {
+        "key": "titan-interaction-engine",
+        "version": "*"
+      },
+      {
+        "key": "titan-builder",
+        "version": "*"
+      },
+      {
+        "key": "titan-visual-runtime",
+        "version": "*"
+      }
+    ],
+    "peers": [],
+    "conflicts": []
+  },
+  "capabilities": [
+    "interface-runtime",
+    "interface.actions-as-intents",
+    "interface.bindings",
+    "interface.canonical-mature-surface-compatibility",
+    "interface.components",
+    "interface.composition",
+    "interface.conditions",
+    "interface.contributions",
+    "interface.normalisation",
+    "interface.patches",
+    "interface.projection-binding",
+    "interface.repair",
+    "interface.repeaters",
+    "interface.safe-fallback",
+    "interface.streaming",
+    "interface.surface-resolution",
+    "interface.validation"
+  ],
+  "contributions": [],
+  "permissions": [],
+  "external_hosts": [],
+  "routes": [
+    {
+      "profile": "authenticated-user",
+      "prefix": "dashboard/user/titan-interface-runtime",
+      "name_prefix": "dashboard.user.titan.interface.runtime."
+    },
+    {
+      "profile": "admin",
+      "prefix": "dashboard/admin/titan-interface-runtime",
+      "name_prefix": "dashboard.admin.titan.interface.runtime."
+    }
+  ],
+  "database": {
+    "migrations": false,
+    "owned_tables": [],
+    "shared_tables": [
+      "menus"
+    ],
+    "migration_strategy": "none",
+    "migration_lock": false,
+    "chunked_backfills": false,
+    "old_new_worker_compatibility": true,
+    "interrupted_migration_recovery": true
+  },
+  "queues": {
+    "used": false,
+    "queue_names": [],
+    "tenant_context_required": true
+  },
+  "schedules": [],
+  "webhooks": [],
+  "billing": {
+    "mode": "none",
+    "reservation_required": false,
+    "ledger": ""
+  },
+  "data": {
+    "tenant_key": "company_id",
+    "default_uninstall_policy": "retain",
+    "owned_paths": [],
+    "credential_storage": "none",
+    "classifications": [
+      "INTERNAL",
+      "CONFIDENTIAL"
+    ],
+    "export_supported": false,
+    "retention_policy": "No authoritative business data is owned by this runtime.",
+    "encryption_at_rest": true,
+    "deletion_policy": "Only package-owned configuration/cache metadata may be deleted."
+  },
+  "lifecycle": {
+    "register_key": true,
+    "uninstall": true,
+    "idempotent": true,
+    "supports_disable": true,
+    "upgrade_strategy": "forward-only migrations"
+  },
+  "tests": [
+    "feature",
+    "architecture"
+  ],
+  "support": {
+    "telegram": "",
+    "documentation": "README.md"
+  },
+  "runtime_profile": "titan-ui",
+  "capability_contracts": [],
+  "health": {
+    "liveness": true,
+    "readiness": true,
+    "dependency_checks": [
+      "interface-contribution-discovery",
+      "authenticated-context-spine",
+      "domain-intent-surface-registry",
+      "object-relationship-registry",
+      "facet-registry-object-workspace",
+      "presentation-model-builder-adapter",
+      "read-authority-legacy-data",
+      "interaction-engine-adapter",
+      "global-work-trays",
+      "context-inspector-command-surface",
+      "spatial-workspace",
+      "decide-scenario-workspace",
+      "trust-governance-receipts",
+      "working-sets-workspace-context",
+      "configuration-lifecycle-workspace",
+      "product-surface-policies",
+      "offline-sync-accessibility-performance",
+      "donor-rationalization-e2e-release",
+      "provider-boot-registry-bindings"
+    ],
+    "degraded_mode": true,
+    "statuses": [
+      "HEALTHY",
+      "DEGRADED",
+      "UNAVAILABLE",
+      "DISABLED",
+      "MAINTENANCE",
+      "DRAINING"
+    ]
+  },
+  "observability": {
+    "structured_logging": true,
+    "metrics": true,
+    "tracing": true,
+    "signal_events": false,
+    "required_context": [
+      "extension_key",
+      "company_id",
+      "trace_id",
+      "correlation_id",
+      "causation_id"
+    ],
+    "redacted_fields": [
+      "authorization",
+      "token",
+      "secret",
+      "password",
+      "signature"
+    ]
+  },
+  "resilience": {
+    "timeouts": true,
+    "retries": true,
+    "dead_letter": true,
+    "circuit_breaker": true,
+    "backpressure": true,
+    "terminal_failure_state": "ATTENTION_REQUIRED",
+    "retryable_errors": [
+      "timeout",
+      "rate_limit",
+      "transient_provider_error"
+    ],
+    "permanent_errors": [
+      "authorization_denied",
+      "validation_failed"
+    ]
+  },
+  "authorization": {
+    "policy_enforced": true,
+    "tenant_object_scope": true,
+    "ai_mutations_via_capabilities": true,
+    "authorization_matrix": "docs/AUTHORIZATION-MATRIX.md"
+  },
+  "concurrency": {
+    "strategies": [
+      "none"
+    ],
+    "idempotency": true,
+    "entity_versioning": false,
+    "race_tests": true
+  },
+  "versioning": {
+    "api": "v1",
+    "events": "v1",
+    "capabilities": "v1",
+    "deprecation_window_days": 90,
+    "compatibility_window": "current major + previous major during migration"
+  },
+  "performance": {
+    "p95_http_ms": 250,
+    "p95_command_ms": 500,
+    "max_db_queries": 10,
+    "max_external_timeout_ms": 5000,
+    "max_queue_attempts": 3,
+    "memory_budget_mb": 128
+  },
+  "slos": [
+    {
+      "name": "availability",
+      "target": "99.9%",
+      "measurement": "successful operations / attempted operations",
+      "critical": true
+    }
+  ],
+  "supply_chain": {
+    "sbom": true,
+    "dependency_audit": true,
+    "provenance": true,
+    "signature_required": false,
+    "signature_method": "none",
+    "static_analysis": {
+      "required": true,
+      "tool": "larastan",
+      "minimum_level": 8
+    }
+  },
+  "rollout": {
+    "feature_flags": true,
+    "stages": [
+      "DISABLED",
+      "INTERNAL",
+      "CANARY",
+      "TENANT_COHORT",
+      "GENERAL"
+    ],
+    "kill_switch": true,
+    "maintenance_states": [
+      "ACTIVE",
+      "DEGRADED",
+      "MAINTENANCE",
+      "DRAINING",
+      "DISABLED",
+      "UNINSTALLING"
+    ]
+  },
+  "disaster_recovery": {
+    "rpo_minutes": 60,
+    "rto_minutes": 120,
+    "restore_runbook": "docs/DISASTER-RECOVERY.md",
+    "reconciliation_required": false,
+    "backup_scope": "package-owned presentation metadata only; this runtime owns no authoritative business state"
+  },
+  "secrets": {
+    "rotation_supported": true,
+    "expiry_monitoring": true,
+    "revocation_supported": true,
+    "connection_test": true,
+    "audit_metadata_only": true
+  },
+  "external_dependencies": [],
+  "titan_governance": {
+    "governed": false,
+    "command_bus": "optional",
+    "risk": "optional",
+    "assurance": "optional",
+    "autonomy": "optional",
+    "signal": "optional",
+    "rewind": "optional",
+    "wisdom": "optional",
+    "knowledge_authority": "optional",
+    "offline_never_increases_authority": true
+  },
+  "predictive_models": [],
+  "verification": {
+    "tenant_isolation": true,
+    "authorization": true,
+    "concurrency": true,
+    "architecture": true,
+    "performance": true,
+    "fault_injection": true,
+    "upgrade": true,
+    "uninstall": true
+  },
+  "ui": {
+    "has_ui": true,
+    "responsive": true,
+    "accessibility": true,
+    "localization": true,
+    "wcag_target": "2.2-AA"
+  },
+  "documentation": {
+    "architecture": "docs/ARCHITECTURE.md",
+    "capabilities": "docs/CAPABILITIES.md",
+    "operations": "docs/OPERATIONS.md",
+    "security": "docs/SECURITY.md",
+    "data_ownership": "docs/DATA-OWNERSHIP.md",
+    "upgrade": "docs/UPGRADE.md",
+    "uninstall": "docs/UNINSTALL.md",
+    "troubleshooting": "docs/TROUBLESHOOTING.md",
+    "changelog": "CHANGELOG.md",
+    "integration_contracts": "docs/INTEGRATION-CONTRACTS.md",
+    "signal_events": "docs/SIGNAL-EVENTS.md",
+    "governance": "docs/GOVERNANCE.md",
+    "failure_modes": "docs/FAILURE-MODES.md",
+    "interface_contribution": "docs/INTERFACE-CONTRIBUTION.md"
+  },
+  "interface_contribution": {
+    "enabled": true,
+    "contract_version": "1.1",
+    "manifest": "resources/interface/interface-manifest.json",
+    "mode": "declarative"
+  },
+  "architecture": {
+    "profile": "ui-surface",
+    "modifiers": [
+      "autonomy-aware",
+      "interface-contributor",
+      "offline-aware"
+    ],
+    "overlays": [],
+    "legacy_runtime_profile": "titan-ui",
+    "compatibility_adapter": true,
+    "production_core": "titan.production.core.v1"
+  },
+  "authority": {
+    "canonical_owner": true,
+    "owns": [
+      "interface.context",
+      "interface.navigation-projection",
+      "interface.presentation",
+      "interface.registry"
+    ],
+    "must_not_own": [
+      "crm.records",
+      "finance.records",
+      "interaction.workflow-state",
+      "maps.spatial-state",
+      "work.records"
+    ],
+    "sources_of_truth": [
+      "interface.context",
+      "interface.navigation-projection",
+      "interface.presentation",
+      "interface.registry"
+    ],
+    "cross_domain_write_policy": "governed-capability-only"
+  },
+  "workforce": {
+    "enabled": false,
+    "source_of_truth": "none",
+    "manifest": null,
+    "discovery_contract": null,
+    "direct_domain_writes": false,
+    "state_writes_via_command_bus": true,
+    "auto_activate": false
+  },
+  "governance": {
+    "command_bus": "optional",
+    "risk": "optional",
+    "assurance": "optional",
+    "autonomy": "optional",
+    "signal": "optional",
+    "rewind": "optional",
+    "wisdom": "optional",
+    "knowledge_authority": "optional",
+    "shield": "optional",
+    "model_council": "optional",
+    "offline_never_increases_authority": true
+  },
+  "predictive": {
+    "enabled": false,
+    "inference_is_authoritative": false,
+    "prepared_actions_mutating": false,
+    "execution_requires_fresh_governance": true,
+    "models": [],
+    "feature_sets": [],
+    "outcome_contracts": [],
+    "drift_controls": [],
+    "cold_start_required": false,
+    "prediction_expiry_required": false
+  },
+  "offline": {
+    "supported": true,
+    "authority_policy": "preserve-or-reduce",
+    "can_increase_authority": false,
+    "conflict_resolution": "domain-specific"
+  },
+  "data_governance": {
+    "classifications": [
+      "INTERNAL",
+      "CONFIDENTIAL"
+    ],
+    "tenant_key": "company_id",
+    "retention_policy": "No authoritative business data is owned by this runtime.",
+    "export_supported": false,
+    "deletion_policy": "Only package-owned configuration/cache metadata may be deleted.",
+    "encryption_at_rest": true,
+    "legal_hold_aware": false
+  }
+}

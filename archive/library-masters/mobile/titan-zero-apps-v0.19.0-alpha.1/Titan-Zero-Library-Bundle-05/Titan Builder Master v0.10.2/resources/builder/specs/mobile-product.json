@@ -1,0 +1,160 @@
+{
+  "id": "mobile-product",
+  "name": "Product",
+  "description": "Premium Mobilekit-derived product preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {
+    "quantity": 1
+  },
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Product",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "stories",
+        "product",
+        "rating",
+        "qty",
+        "buy"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "stories": {
+      "type": "story-strip",
+      "props": {
+        "showLabels": true,
+        "items": [
+          {
+            "label": "Front",
+            "initials": "1"
+          },
+          {
+            "label": "Detail",
+            "initials": "2"
+          },
+          {
+            "label": "In use",
+            "initials": "3"
+          }
+        ]
+      }
+    },
+    "product": {
+      "type": "product-detail",
+      "props": {
+        "title": "Premium service package",
+        "subtitle": "Mobile commerce preview",
+        "price": "$129.00",
+        "description": "A reusable product/service detail layout for Titan commerce experiences.",
+        "features": [
+          "Flexible scheduling",
+          "Secure checkout",
+          "Support included"
+        ]
+      }
+    },
+    "qty": {
+      "type": "number-stepper",
+      "props": {
+        "statePath": "/quantity",
+        "min": 1,
+        "max": 10,
+        "step": 1
+      }
+    },
+    "buy": {
+      "type": "button",
+      "props": {
+        "label": "Add to cart preview",
+        "variant": "primary"
+      },
+      "on": {
+        "press": {
+          "action": "state.set",
+          "params": {
+            "path": "/added",
+            "value": true
+          }
+        }
+      }
+    },
+    "rating": {
+      "type": "rating-summary",
+      "props": {
+        "rating": 4.8,
+        "count": 128,
+        "breakdown": [
+          {
+            "stars": 5,
+            "percent": 82
+          },
+          {
+            "stars": 4,
+            "percent": 13
+          },
+          {
+            "stars": 3,
+            "percent": 5
+          }
+        ]
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "calendar-agenda",
+  "name": "Calendar agenda",
+  "category": "Data display",
+  "blade": "components.titan-builder.calendar-agenda",
+  "authority": "presentation-only",
+  "props": [
+    "items"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

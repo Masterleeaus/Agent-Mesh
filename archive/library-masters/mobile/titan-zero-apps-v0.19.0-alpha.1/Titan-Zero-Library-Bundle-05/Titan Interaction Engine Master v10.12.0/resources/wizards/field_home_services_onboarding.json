@@ -1,0 +1,3207 @@
+{
+  "wizard": {
+    "id": "field_home_services_onboarding_v1",
+    "version": "1.0.0",
+    "name": "Titan Launch — Field & Home Services",
+    "capability": "interaction.onboarding.compile",
+    "permissions": {
+      "required_roles": [
+        "owner",
+        "admin"
+      ]
+    },
+    "metadata": {
+      "category": "field_services",
+      "profile": "field_home_services",
+      "verticals": [
+        "field_services",
+        "home_services"
+      ],
+      "business_types": [
+        "cleaning",
+        "plumbing",
+        "electrical",
+        "hvac",
+        "handyman-property-maintenance",
+        "landscaping-gardening",
+        "pest-control",
+        "locksmith-security",
+        "roofing-guttering",
+        "appliance-equipment-repair"
+      ],
+      "source_catalogue": "resources/onboarding/field-home-services-question-catalog.json",
+      "question_count": 116,
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ],
+      "surfaces": [
+        "onboarding"
+      ],
+      "multi_actor": true,
+      "collaboration_roles": [
+        "owner",
+        "admin",
+        "manager",
+        "bookkeeper",
+        "technical_admin"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "high",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": [],
+      "activation_requires_explicit_approval": true
+    },
+    "steps": [
+      {
+        "id": "section_1",
+        "title": "Business identity",
+        "fields": [
+          {
+            "id": "company.name",
+            "label": "What name should customers and staff see for your business?",
+            "type": "text",
+            "required": true,
+            "ui_type": "text",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Company",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.identity.update",
+                "risk": "section",
+                "group": "chatbot"
+              }
+            ],
+            "surface_rendering_hint": "text",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.legal_name",
+            "label": "Is your legal entity name different from your trading name?",
+            "type": "text",
+            "required": false,
+            "ui_type": "text",
+            "priority": "P1",
+            "handling": "ask_if_relevant",
+            "target_owner": "Company settings",
+            "approval_gate": "section",
+            "branch_condition": "business structure requires legal entity",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "text",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.slug",
+            "label": "What short workspace address would you like?",
+            "type": "text",
+            "required": true,
+            "ui_type": "slug",
+            "priority": "P0",
+            "handling": "suggest_then_confirm",
+            "target_owner": "Company",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "slug",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.country_code",
+            "label": "Which country is the business primarily registered and operating in?",
+            "type": "text",
+            "required": true,
+            "ui_type": "country",
+            "priority": "P0",
+            "handling": "infer_then_confirm",
+            "target_owner": "Company",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "country",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.abn",
+            "label": "What is the business ABN?",
+            "type": "text",
+            "required": true,
+            "ui_type": "text",
+            "priority": "P0-AU",
+            "handling": "ask",
+            "target_owner": "Company",
+            "approval_gate": "section",
+            "branch_condition": "country_code=AU",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "text",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.gst_registered",
+            "label": "Is the business registered for GST?",
+            "type": "text",
+            "required": true,
+            "ui_type": "boolean",
+            "priority": "P0-AU",
+            "handling": "ask",
+            "target_owner": "Company",
+            "approval_gate": "section",
+            "branch_condition": "country_code=AU",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.business_email",
+            "label": "What email should Titan use for customer-facing business correspondence?",
+            "type": "email",
+            "required": true,
+            "ui_type": "email",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Company settings",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "email",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.business_phone",
+            "label": "What is the main business phone number?",
+            "type": "text",
+            "required": true,
+            "ui_type": "phone",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Company settings",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "phone",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.address",
+            "label": "What is the primary business or correspondence address?",
+            "type": "text",
+            "required": true,
+            "ui_type": "address",
+            "priority": "P0",
+            "handling": "ask_or_lookup",
+            "target_owner": "Company/Premises",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "address",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.location",
+            "label": "Is this address also a service location, office, depot, or correspondence-only address?",
+            "type": "text",
+            "required": true,
+            "ui_type": "multi_select",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Premises",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "multi_select",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.logo",
+            "label": "Would you like to upload your business logo now?",
+            "type": "text",
+            "required": false,
+            "ui_type": "file",
+            "priority": "P1",
+            "handling": "offer",
+            "target_owner": "Company branding",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "file",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.favicon",
+            "label": "Would you like to upload a small app or browser icon?",
+            "type": "text",
+            "required": false,
+            "ui_type": "file",
+            "priority": "P2",
+            "handling": "defer_by_default",
+            "target_owner": "Host branding",
+            "approval_gate": "section",
+            "branch_condition": "customer portal or branded app enabled",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "file",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.timezone",
+            "label": "Which timezone should schedules, bookings, invoices, and notifications use?",
+            "type": "text",
+            "required": true,
+            "ui_type": "timezone",
+            "priority": "P0",
+            "handling": "infer_then_confirm",
+            "target_owner": "Company",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "timezone",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.currency_code",
+            "label": "Which currency should prices and invoices use?",
+            "type": "text",
+            "required": true,
+            "ui_type": "currency",
+            "priority": "P0",
+            "handling": "infer_then_confirm",
+            "target_owner": "Company/Finance",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "currency",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.currency_display",
+            "label": "Where should the currency symbol appear, and how many decimal places should be shown?",
+            "type": "text",
+            "required": false,
+            "ui_type": "compound",
+            "priority": "P1",
+            "handling": "infer_then_confirm",
+            "target_owner": "Company UI settings",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "compound",
+            "onboarding_group": "company"
+          },
+          {
+            "id": "company.locale",
+            "label": "Which language and date/time format should the workspace use?",
+            "type": "text",
+            "required": true,
+            "ui_type": "compound",
+            "priority": "P0",
+            "handling": "infer_then_confirm",
+            "target_owner": "Company context",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "company"
+              }
+            ],
+            "surface_rendering_hint": "compound",
+            "onboarding_group": "company"
+          }
+        ]
+      },
+      {
+        "id": "section_2",
+        "title": "Business model",
+        "fields": [
+          {
+            "id": "business.verticals",
+            "label": "What type of field or home service business are you setting up? Select every service area that applies.",
+            "type": "text",
+            "required": true,
+            "ui_type": "multi_select",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Capability/vertical registry",
+            "approval_gate": "section",
+            "notes": "Ten canonical Field & Home Services verticals. Vertical packs affect terminology, evidence, suggestions and visibility, not engine logic.",
+            "allowed_values": [
+              "cleaning",
+              "plumbing",
+              "electrical",
+              "hvac",
+              "handyman-property-maintenance",
+              "landscaping-gardening",
+              "pest-control",
+              "locksmith-security",
+              "roofing-guttering",
+              "appliance-equipment-repair"
+            ],
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "business_profile"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.identity.update",
+                "risk": "section",
+                "group": "chatbot"
+              }
+            ],
+            "surface_rendering_hint": "multi_select",
+            "onboarding_group": "business_profile"
+          },
+          {
+            "id": "business.operating_model",
+            "label": "Do you deliver services with employees, contractors, external providers, or a mixture?",
+            "type": "text",
+            "required": true,
+            "ui_type": "multi_select",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Workforce/People",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "business_profile"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.identity.update",
+                "risk": "section",
+                "group": "chatbot"
+              }
+            ],
+            "surface_rendering_hint": "multi_select",
+            "onboarding_group": "business_profile"
+          },
+          {
+            "id": "business.customer_types",
+            "label": "Who do you mainly serve?",
+            "type": "text",
+            "required": true,
+            "ui_type": "multi_select",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "CRM",
+            "approval_gate": "section",
+            "notes": "Households, businesses, property managers, landlords, tenants/residents, facilities teams, government, strata.",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "business_profile"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.identity.update",
+                "risk": "section",
+                "group": "chatbot"
+              }
+            ],
+            "surface_rendering_hint": "multi_select",
+            "onboarding_group": "business_profile"
+          },
+          {
+            "id": "business.service_locations",
+            "label": "Where can work be delivered?",
+            "type": "text",
+            "required": true,
+            "ui_type": "multi_select",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Catalogue/Territories/Premises",
+            "approval_gate": "section",
+            "notes": "Customer premises, company location, remote, mobile/field, third-party site.",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "business_profile"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.identity.update",
+                "risk": "section",
+                "group": "chatbot"
+              }
+            ],
+            "surface_rendering_hint": "multi_select",
+            "onboarding_group": "business_profile"
+          },
+          {
+            "id": "business.team_size",
+            "label": "How many people currently perform or coordinate work?",
+            "type": "number",
+            "required": true,
+            "ui_type": "integer",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Workforce/People",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "business_profile"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.identity.update",
+                "risk": "section",
+                "group": "chatbot"
+              }
+            ],
+            "surface_rendering_hint": "integer",
+            "onboarding_group": "business_profile"
+          },
+          {
+            "id": "business.branches",
+            "label": "Do you operate from more than one branch, depot, office, or managed region?",
+            "type": "text",
+            "required": true,
+            "ui_type": "boolean",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Territories/Premises",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "business_profile"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.identity.update",
+                "risk": "section",
+                "group": "chatbot"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "business_profile"
+          },
+          {
+            "id": "business.after_hours",
+            "label": "Do you offer after-hours, emergency, or on-call services?",
+            "type": "text",
+            "required": false,
+            "ui_type": "multi_select",
+            "priority": "P1",
+            "handling": "ask_if_relevant",
+            "target_owner": "Rosters/Scheduling",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "business_profile"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.identity.update",
+                "risk": "section",
+                "group": "chatbot"
+              }
+            ],
+            "surface_rendering_hint": "multi_select",
+            "onboarding_group": "business_profile"
+          }
+        ]
+      },
+      {
+        "id": "section_3",
+        "title": "Availability",
+        "fields": [
+          {
+            "id": "availability.business_hours",
+            "label": "What are your normal operating hours for each day of the week?",
+            "type": "text",
+            "required": true,
+            "ui_type": "weekly_schedule",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Rosters",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.hours.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.hours.update",
+                "risk": "section",
+                "group": "availability"
+              }
+            ],
+            "surface_rendering_hint": "weekly_schedule",
+            "onboarding_group": "availability"
+          },
+          {
+            "id": "availability.closed_days",
+            "label": "Which days are normally closed?",
+            "type": "text",
+            "required": true,
+            "ui_type": "weekday_multi_select",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Rosters",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.hours.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.hours.update",
+                "risk": "section",
+                "group": "availability"
+              }
+            ],
+            "surface_rendering_hint": "weekday_multi_select",
+            "onboarding_group": "availability"
+          },
+          {
+            "id": "availability.holidays",
+            "label": "Should public holidays follow normal hours, reduced hours, or remain closed?",
+            "type": "text",
+            "required": false,
+            "ui_type": "choice",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Rosters/Scheduling",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.hours.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.hours.update",
+                "risk": "section",
+                "group": "availability"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "availability"
+          },
+          {
+            "id": "availability.booking_lead_time",
+            "label": "How much notice do you normally require before a customer can book?",
+            "type": "text",
+            "required": true,
+            "ui_type": "duration",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Scheduling",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.hours.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.hours.update",
+                "risk": "section",
+                "group": "availability"
+              }
+            ],
+            "surface_rendering_hint": "duration",
+            "onboarding_group": "availability"
+          },
+          {
+            "id": "availability.booking_horizon",
+            "label": "How far into the future may customers book?",
+            "type": "text",
+            "required": false,
+            "ui_type": "duration",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Scheduling",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.hours.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.hours.update",
+                "risk": "section",
+                "group": "availability"
+              }
+            ],
+            "surface_rendering_hint": "duration",
+            "onboarding_group": "availability"
+          },
+          {
+            "id": "availability.travel_buffer",
+            "label": "Should scheduling reserve travel or preparation time between jobs?",
+            "type": "text",
+            "required": false,
+            "ui_type": "duration_or_rule",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Scheduling/Dispatch",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.hours.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.hours.update",
+                "risk": "section",
+                "group": "availability"
+              }
+            ],
+            "surface_rendering_hint": "duration_or_rule",
+            "onboarding_group": "availability"
+          }
+        ]
+      },
+      {
+        "id": "section_4",
+        "title": "Service areas",
+        "fields": [
+          {
+            "id": "territory.method",
+            "label": "How would you like to define where you work?",
+            "type": "text",
+            "required": true,
+            "ui_type": "choice",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Territories",
+            "approval_gate": "section",
+            "notes": "Postcodes, suburbs, radius, map polygon, or a mixture.",
+            "destination_provider": "crm",
+            "capability": "crm.business.service_area.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service_area.update",
+                "risk": "section",
+                "group": "territory"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "territory"
+          },
+          {
+            "id": "territory.postcodes",
+            "label": "Which postcodes do you service?",
+            "type": "text",
+            "required": false,
+            "ui_type": "repeatable_text",
+            "priority": "P0-conditional",
+            "handling": "ask",
+            "target_owner": "Territories",
+            "approval_gate": "section",
+            "branch_condition": "territory.method includes postcode",
+            "destination_provider": "crm",
+            "capability": "crm.business.service_area.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service_area.update",
+                "risk": "section",
+                "group": "territory"
+              }
+            ],
+            "surface_rendering_hint": "repeatable_text",
+            "onboarding_group": "territory"
+          },
+          {
+            "id": "territory.suburbs",
+            "label": "Which suburbs or localities do you service?",
+            "type": "text",
+            "required": false,
+            "ui_type": "repeatable_text",
+            "priority": "P0-conditional",
+            "handling": "ask",
+            "target_owner": "Territories",
+            "approval_gate": "section",
+            "branch_condition": "territory.method includes suburb",
+            "destination_provider": "crm",
+            "capability": "crm.business.service_area.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service_area.update",
+                "risk": "section",
+                "group": "territory"
+              }
+            ],
+            "surface_rendering_hint": "repeatable_text",
+            "onboarding_group": "territory"
+          },
+          {
+            "id": "territory.radius",
+            "label": "What location should the radius start from, and how many kilometres should it cover?",
+            "type": "text",
+            "required": false,
+            "ui_type": "map_radius",
+            "priority": "P0-conditional",
+            "handling": "ask",
+            "target_owner": "Territories",
+            "approval_gate": "section",
+            "branch_condition": "territory.method includes radius",
+            "destination_provider": "crm",
+            "capability": "crm.business.service_area.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service_area.update",
+                "risk": "section",
+                "group": "territory"
+              }
+            ],
+            "surface_rendering_hint": "map_radius",
+            "onboarding_group": "territory"
+          },
+          {
+            "id": "territory.polygon",
+            "label": "Draw or describe the service boundary on the map.",
+            "type": "text",
+            "required": false,
+            "ui_type": "map_polygon",
+            "priority": "P0-conditional",
+            "handling": "guided_ui",
+            "target_owner": "Territories",
+            "approval_gate": "section",
+            "branch_condition": "territory.method includes polygon",
+            "destination_provider": "crm",
+            "capability": "crm.business.service_area.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service_area.update",
+                "risk": "section",
+                "group": "territory"
+              }
+            ],
+            "surface_rendering_hint": "map_polygon",
+            "onboarding_group": "territory"
+          },
+          {
+            "id": "territory.priority",
+            "label": "If service areas overlap, which area should take priority?",
+            "type": "text",
+            "required": false,
+            "ui_type": "ordered_list",
+            "priority": "P1",
+            "handling": "ask_if_overlap",
+            "target_owner": "Territories",
+            "approval_gate": "section",
+            "branch_condition": "overlapping territories detected",
+            "destination_provider": "crm",
+            "capability": "crm.business.service_area.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service_area.update",
+                "risk": "section",
+                "group": "territory"
+              }
+            ],
+            "surface_rendering_hint": "ordered_list",
+            "onboarding_group": "territory"
+          },
+          {
+            "id": "territory.branch_assignment",
+            "label": "Which branch or team owns each service area?",
+            "type": "text",
+            "required": false,
+            "ui_type": "mapping",
+            "priority": "P1",
+            "handling": "ask_if_relevant",
+            "target_owner": "Territories",
+            "approval_gate": "section",
+            "branch_condition": "multiple branches or teams",
+            "destination_provider": "crm",
+            "capability": "crm.business.service_area.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service_area.update",
+                "risk": "section",
+                "group": "territory"
+              }
+            ],
+            "surface_rendering_hint": "mapping",
+            "onboarding_group": "territory"
+          }
+        ]
+      },
+      {
+        "id": "section_5",
+        "title": "Services",
+        "fields": [
+          {
+            "id": "catalogue.category",
+            "label": "What broad service categories do you offer?",
+            "type": "text",
+            "required": true,
+            "ui_type": "repeatable_text",
+            "priority": "P0",
+            "handling": "ai_suggest_then_confirm",
+            "target_owner": "Catalogue",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              }
+            ],
+            "surface_rendering_hint": "repeatable_text",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.service_name",
+            "label": "What is the first service you want customers or staff to book?",
+            "type": "text",
+            "required": true,
+            "ui_type": "text",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Catalogue",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.knowledge.text.add",
+                "risk": "section",
+                "group": "chatbot_knowledge"
+              }
+            ],
+            "surface_rendering_hint": "text",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.service_description",
+            "label": "Briefly describe what is included and excluded.",
+            "type": "text",
+            "required": true,
+            "ui_type": "long_text",
+            "priority": "P0",
+            "handling": "ai_draft_then_confirm",
+            "target_owner": "Catalogue",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.knowledge.text.add",
+                "risk": "section",
+                "group": "chatbot_knowledge"
+              }
+            ],
+            "surface_rendering_hint": "long_text",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.service_duration",
+            "label": "How long does this service normally take?",
+            "type": "text",
+            "required": true,
+            "ui_type": "duration",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Catalogue/Scheduling",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              }
+            ],
+            "surface_rendering_hint": "duration",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.pricing_model",
+            "label": "How is this service priced?",
+            "type": "text",
+            "required": true,
+            "ui_type": "choice",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Catalogue",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.base_price",
+            "label": "What is the standard starting price or rate?",
+            "type": "number",
+            "required": false,
+            "ui_type": "money",
+            "priority": "P0-conditional",
+            "handling": "ask",
+            "target_owner": "Catalogue/Finance",
+            "approval_gate": "section",
+            "branch_condition": "pricing model is not quote-only",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              }
+            ],
+            "surface_rendering_hint": "money",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.tax_code",
+            "label": "Is tax included, added separately, exempt, or determined later?",
+            "type": "text",
+            "required": true,
+            "ui_type": "choice",
+            "priority": "P0",
+            "handling": "infer_then_confirm",
+            "target_owner": "Catalogue/Finance",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.variants",
+            "label": "Does this service have sizes, packages, levels, or options with different time or price?",
+            "type": "text",
+            "required": false,
+            "ui_type": "repeatable_collection",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Catalogue",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              }
+            ],
+            "surface_rendering_hint": "repeatable_collection",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.area_pricing",
+            "label": "Do prices change by service area, travel distance, branch, or location type?",
+            "type": "text",
+            "required": false,
+            "ui_type": "repeatable_collection",
+            "priority": "P1",
+            "handling": "ask_if_relevant",
+            "target_owner": "Catalogue/Territories",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              }
+            ],
+            "surface_rendering_hint": "repeatable_collection",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.tags",
+            "label": "Which search terms or tags should help staff and customers find this service?",
+            "type": "text",
+            "required": false,
+            "ui_type": "tags",
+            "priority": "P2",
+            "handling": "ai_suggest_then_confirm",
+            "target_owner": "Catalogue",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              }
+            ],
+            "surface_rendering_hint": "tags",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.faqs",
+            "label": "What questions do customers commonly ask about this service?",
+            "type": "text",
+            "required": false,
+            "ui_type": "repeatable_qa",
+            "priority": "P2",
+            "handling": "ai_draft_then_confirm",
+            "target_owner": "Catalogue/Knowledge",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.knowledge.text.add",
+                "risk": "section",
+                "group": "chatbot_knowledge"
+              }
+            ],
+            "surface_rendering_hint": "repeatable_qa",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.job_template",
+            "label": "What tasks should normally be completed for this service?",
+            "type": "text",
+            "required": false,
+            "ui_type": "checklist_builder",
+            "priority": "P1",
+            "handling": "ai_draft_then_confirm",
+            "target_owner": "Catalogue/Forms/Operations",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              }
+            ],
+            "surface_rendering_hint": "checklist_builder",
+            "onboarding_group": "catalogue"
+          },
+          {
+            "id": "catalogue.images",
+            "label": "Would you like to add service images now?",
+            "type": "text",
+            "required": false,
+            "ui_type": "file_collection",
+            "priority": "P2",
+            "handling": "offer",
+            "target_owner": "Catalogue media",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.service.create",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.service.create",
+                "risk": "section",
+                "group": "catalogue"
+              }
+            ],
+            "surface_rendering_hint": "file_collection",
+            "onboarding_group": "catalogue"
+          }
+        ]
+      },
+      {
+        "id": "section_6",
+        "title": "Booking rules",
+        "fields": [
+          {
+            "id": "booking.modes",
+            "label": "Which booking modes should be available?",
+            "type": "text",
+            "required": true,
+            "ui_type": "multi_select",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Scheduling/Recurring",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.booking_rules.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.booking_rules.update",
+                "risk": "section",
+                "group": "booking"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "multi_select",
+            "onboarding_group": "booking"
+          },
+          {
+            "id": "booking.direct_assignment",
+            "label": "May customers choose a specific worker or provider, or should dispatch assign the best match?",
+            "type": "text",
+            "required": false,
+            "ui_type": "choice",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Dispatch",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.booking_rules.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.booking_rules.update",
+                "risk": "section",
+                "group": "booking"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "booking"
+          },
+          {
+            "id": "booking.minimum_value",
+            "label": "Is there a minimum booking value?",
+            "type": "number",
+            "required": false,
+            "ui_type": "money",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Catalogue/Finance",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.booking_rules.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.booking_rules.update",
+                "risk": "section",
+                "group": "booking"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "money",
+            "onboarding_group": "booking"
+          },
+          {
+            "id": "booking.maximum_value",
+            "label": "Should online self-booking stop above a certain value and require a quote or approval?",
+            "type": "text",
+            "required": false,
+            "ui_type": "money_or_none",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Catalogue/Finance/Approvals",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.booking_rules.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.booking_rules.update",
+                "risk": "section",
+                "group": "booking"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "money_or_none",
+            "onboarding_group": "booking"
+          },
+          {
+            "id": "booking.additional_charge",
+            "label": "Do you apply a standard booking, call-out, travel, or administration charge?",
+            "type": "text",
+            "required": false,
+            "ui_type": "compound",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Catalogue/Finance",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.booking_rules.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.booking_rules.update",
+                "risk": "section",
+                "group": "booking"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "compound",
+            "onboarding_group": "booking"
+          },
+          {
+            "id": "booking.completion_otp",
+            "label": "Should the customer confirm completion with a one-time code?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Operations/Attendance verification",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.booking_rules.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.booking_rules.update",
+                "risk": "section",
+                "group": "booking"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "booking"
+          },
+          {
+            "id": "booking.photo_evidence",
+            "label": "Is photo evidence required before a job can be completed?",
+            "type": "text",
+            "required": true,
+            "ui_type": "choice",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Forms/Operations/Compliance",
+            "approval_gate": "section",
+            "notes": "Allow per-service or per-job override rather than one global switch.",
+            "destination_provider": "crm",
+            "capability": "crm.business.booking_rules.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.booking_rules.update",
+                "risk": "section",
+                "group": "booking"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "booking"
+          },
+          {
+            "id": "booking.bidding",
+            "label": "Do you use bidding or quote competition between providers?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P2",
+            "handling": "ask_if_marketplace",
+            "target_owner": "Operations/Procurement",
+            "approval_gate": "section",
+            "branch_condition": "external provider marketplace enabled",
+            "destination_provider": "crm",
+            "capability": "crm.business.booking_rules.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.booking_rules.update",
+                "risk": "section",
+                "group": "booking"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "booking"
+          },
+          {
+            "id": "booking.bid_visibility",
+            "label": "Can providers see competing bid amounts?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P2",
+            "handling": "ask_if_relevant",
+            "target_owner": "Operations/Procurement",
+            "approval_gate": "section",
+            "branch_condition": "booking.bidding=true",
+            "destination_provider": "crm",
+            "capability": "crm.business.booking_rules.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.booking_rules.update",
+                "risk": "section",
+                "group": "booking"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "booking"
+          }
+        ]
+      },
+      {
+        "id": "section_7",
+        "title": "Payments",
+        "fields": [
+          {
+            "id": "payments.methods",
+            "label": "Which payment methods will you accept at launch?",
+            "type": "text",
+            "required": true,
+            "ui_type": "multi_select",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Finance/Host payment registry",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.payment_settings.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.payment_settings.update",
+                "risk": "high",
+                "group": "payments"
+              }
+            ],
+            "surface_rendering_hint": "multi_select",
+            "onboarding_group": "payments"
+          },
+          {
+            "id": "payments.partial",
+            "label": "May customers combine wallet/balance with another payment method?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P1",
+            "handling": "ask_if_relevant",
+            "target_owner": "Finance",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.payment_settings.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.payment_settings.update",
+                "risk": "high",
+                "group": "payments"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "payments"
+          },
+          {
+            "id": "payments.partial_methods",
+            "label": "Which methods may complete the unpaid portion?",
+            "type": "text",
+            "required": false,
+            "ui_type": "multi_select",
+            "priority": "P1",
+            "handling": "ask_if_relevant",
+            "target_owner": "Finance",
+            "approval_gate": "high",
+            "branch_condition": "payments.partial=true",
+            "destination_provider": "crm",
+            "capability": "crm.business.payment_settings.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.payment_settings.update",
+                "risk": "high",
+                "group": "payments"
+              }
+            ],
+            "surface_rendering_hint": "multi_select",
+            "onboarding_group": "payments"
+          },
+          {
+            "id": "payments.invoice_terms",
+            "label": "When is payment due: immediately, on completion, or a set number of days after invoice?",
+            "type": "text",
+            "required": true,
+            "ui_type": "choice_or_days",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Finance",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.payment_settings.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.payment_settings.update",
+                "risk": "high",
+                "group": "payments"
+              }
+            ],
+            "surface_rendering_hint": "choice_or_days",
+            "onboarding_group": "payments"
+          },
+          {
+            "id": "payments.deposit",
+            "label": "Do any services require a deposit, pre-authorisation, or upfront payment?",
+            "type": "text",
+            "required": false,
+            "ui_type": "rule_builder",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Finance/Catalogue",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.payment_settings.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.payment_settings.update",
+                "risk": "high",
+                "group": "payments"
+              }
+            ],
+            "surface_rendering_hint": "rule_builder",
+            "onboarding_group": "payments"
+          },
+          {
+            "id": "payments.bank_details.connection_status",
+            "label": "Would you like to configure bank-transfer or payout details now?",
+            "type": "text",
+            "required": false,
+            "ui_type": "secure_connection",
+            "priority": "P1",
+            "handling": "secure_task",
+            "target_owner": "Finance/Vault",
+            "approval_gate": "high",
+            "notes": "Never collect full banking credentials through free-form AI chat. Open the host secure credential component; store only connection status/reference, never secret material in wizard answers.",
+            "source_key": "payments.bank_details",
+            "sensitive_input_disallowed": true,
+            "destination_provider": "crm",
+            "capability": "crm.business.payment_settings.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.payment_settings.update",
+                "risk": "high",
+                "group": "payments"
+              }
+            ],
+            "surface_rendering_hint": "secure_connection",
+            "onboarding_group": "payments"
+          },
+          {
+            "id": "payments.gateway_connection.connection_status",
+            "label": "Connect a card or digital-payment provider now?",
+            "type": "text",
+            "required": false,
+            "ui_type": "secure_connection",
+            "priority": "P1",
+            "handling": "secure_task",
+            "target_owner": "Host payment registry/Vault",
+            "approval_gate": "high",
+            "source_key": "payments.gateway_connection",
+            "sensitive_input_disallowed": true,
+            "notes": "Open the host secure credential component; store only connection status/reference, never secret material in wizard answers.",
+            "destination_provider": "crm",
+            "capability": "crm.business.payment_settings.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.payment_settings.update",
+                "risk": "high",
+                "group": "payments"
+              }
+            ],
+            "surface_rendering_hint": "secure_connection",
+            "onboarding_group": "payments"
+          }
+        ]
+      },
+      {
+        "id": "section_8",
+        "title": "Workforce",
+        "fields": [
+          {
+            "id": "workforce.owner_role",
+            "label": "What role do you perform in the business?",
+            "type": "text",
+            "required": true,
+            "ui_type": "choice",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "People/Workforce",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.staff.invite",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.staff.invite",
+                "risk": "high",
+                "group": "workforce"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "workforce"
+          },
+          {
+            "id": "workforce.add_now",
+            "label": "Would you like to add workers or contractors now, import them, or do this later?",
+            "type": "text",
+            "required": true,
+            "ui_type": "choice",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Workforce",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.staff.invite",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.staff.invite",
+                "risk": "high",
+                "group": "workforce"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "workforce"
+          },
+          {
+            "id": "worker.profile",
+            "label": "For each worker, what are their name, worker type, job title, phone, email, and timezone?",
+            "type": "text",
+            "required": false,
+            "ui_type": "repeatable_collection",
+            "priority": "P1",
+            "handling": "ask_if_add_now",
+            "target_owner": "Workforce",
+            "approval_gate": "section",
+            "branch_condition": "workforce.add_now != later",
+            "destination_provider": "crm",
+            "capability": "crm.staff.invite",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.staff.invite",
+                "risk": "high",
+                "group": "workforce"
+              }
+            ],
+            "surface_rendering_hint": "repeatable_collection",
+            "onboarding_group": "workforce"
+          },
+          {
+            "id": "worker.rates",
+            "label": "Should CRM track this worker’s internal hourly cost and customer charge rate?",
+            "type": "text",
+            "required": false,
+            "ui_type": "money_pair",
+            "priority": "P1",
+            "handling": "ask_if_relevant",
+            "target_owner": "Workforce/Finance",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.staff.invite",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.staff.invite",
+                "risk": "high",
+                "group": "workforce"
+              }
+            ],
+            "surface_rendering_hint": "money_pair",
+            "onboarding_group": "workforce"
+          },
+          {
+            "id": "worker.skills",
+            "label": "Which services, skills, equipment, or property types can each worker handle?",
+            "type": "text",
+            "required": false,
+            "ui_type": "skill_matrix",
+            "priority": "P1",
+            "handling": "ask_if_add_now",
+            "target_owner": "Workforce/Catalogue",
+            "approval_gate": "section",
+            "branch_condition": "workforce.add_now != later",
+            "destination_provider": "crm",
+            "capability": "crm.staff.invite",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.staff.invite",
+                "risk": "high",
+                "group": "workforce"
+              }
+            ],
+            "surface_rendering_hint": "skill_matrix",
+            "onboarding_group": "workforce"
+          },
+          {
+            "id": "worker.certifications",
+            "label": "Do any workers need licences, checks, or certifications before assignment?",
+            "type": "text",
+            "required": false,
+            "ui_type": "repeatable_credentials",
+            "priority": "P1",
+            "handling": "ask_if_relevant",
+            "target_owner": "Workforce/Compliance/Vault",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.staff.invite",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.staff.invite",
+                "risk": "high",
+                "group": "workforce"
+              }
+            ],
+            "surface_rendering_hint": "repeatable_credentials",
+            "onboarding_group": "workforce"
+          },
+          {
+            "id": "worker.availability",
+            "label": "What recurring days and times is each worker normally available?",
+            "type": "text",
+            "required": false,
+            "ui_type": "weekly_schedule",
+            "priority": "P1",
+            "handling": "ask_if_add_now",
+            "target_owner": "Rosters",
+            "approval_gate": "section",
+            "branch_condition": "workforce.add_now != later",
+            "destination_provider": "crm",
+            "capability": "crm.staff.invite",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.staff.invite",
+                "risk": "high",
+                "group": "workforce"
+              }
+            ],
+            "surface_rendering_hint": "weekly_schedule",
+            "onboarding_group": "workforce"
+          },
+          {
+            "id": "worker.permissions",
+            "label": "May workers edit or cancel assigned bookings?",
+            "type": "text",
+            "required": false,
+            "ui_type": "policy",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Authorization/Operations",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.staff.invite",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.staff.invite",
+                "risk": "high",
+                "group": "workforce"
+              }
+            ],
+            "surface_rendering_hint": "policy",
+            "onboarding_group": "workforce"
+          },
+          {
+            "id": "provider.policies",
+            "label": "May external providers self-register, edit/cancel bookings, reply to reviews, or delete their own account?",
+            "type": "text",
+            "required": false,
+            "ui_type": "policy_group",
+            "priority": "P2",
+            "handling": "ask_if_marketplace",
+            "target_owner": "Authorization/CRM/Operations",
+            "approval_gate": "high",
+            "branch_condition": "external providers enabled",
+            "destination_provider": "crm",
+            "capability": "crm.staff.invite",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.staff.invite",
+                "risk": "high",
+                "group": "workforce"
+              }
+            ],
+            "surface_rendering_hint": "policy_group",
+            "onboarding_group": "workforce"
+          }
+        ]
+      },
+      {
+        "id": "section_9",
+        "title": "Customer experience",
+        "fields": [
+          {
+            "id": "customer.guest_checkout",
+            "label": "May customers request or book work without creating an account?",
+            "type": "text",
+            "required": true,
+            "ui_type": "boolean",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "CRM/Portal",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "customer_experience"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "customer_experience"
+          },
+          {
+            "id": "customer.create_account",
+            "label": "When a guest provides enough information, should Titan offer to create an account?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P1",
+            "handling": "ask_if_relevant",
+            "target_owner": "CRM/Portal",
+            "approval_gate": "section",
+            "branch_condition": "customer.guest_checkout=true",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "customer_experience"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "customer_experience"
+          },
+          {
+            "id": "customer.phone_privacy",
+            "label": "Should customer and worker phone numbers be hidden or proxied during chat and calls?",
+            "type": "text",
+            "required": true,
+            "ui_type": "choice",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "CRM/Communications/Privacy",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "customer_experience"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "customer_experience"
+          },
+          {
+            "id": "customer.wallet",
+            "label": "Do you want customers to hold account credit, refunds, or prepaid balances?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P2",
+            "handling": "defer_by_default",
+            "target_owner": "Finance",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "customer_experience"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "customer_experience"
+          },
+          {
+            "id": "customer.loyalty",
+            "label": "Do you want a loyalty-points program?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P2",
+            "handling": "defer_by_default",
+            "target_owner": "CRM/Finance",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "customer_experience"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "customer_experience"
+          },
+          {
+            "id": "customer.referrals",
+            "label": "Do you want customer referral rewards or new-customer referral discounts?",
+            "type": "text",
+            "required": false,
+            "ui_type": "rule_builder",
+            "priority": "P2",
+            "handling": "defer_by_default",
+            "target_owner": "CRM/Marketing/Finance",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "customer_experience"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "rule_builder",
+            "onboarding_group": "customer_experience"
+          },
+          {
+            "id": "customer.reviews",
+            "label": "Should workers/providers be allowed to reply to customer reviews?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Reviews/Authorization",
+            "approval_gate": "section",
+            "destination_provider": "crm",
+            "capability": "crm.business.profile.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.profile.update",
+                "risk": "section",
+                "group": "customer_experience"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "customer_experience"
+          }
+        ]
+      },
+      {
+        "id": "section_10",
+        "title": "Access and security",
+        "fields": [
+          {
+            "id": "login.methods",
+            "label": "How should customers sign in?",
+            "type": "text",
+            "required": false,
+            "ui_type": "multi_select",
+            "priority": "P1",
+            "handling": "ask_if_portal",
+            "target_owner": "Host identity",
+            "approval_gate": "high",
+            "branch_condition": "customer portal enabled",
+            "destination_provider": "builder",
+            "capability": "builder.features.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.features.update",
+                "risk": "high",
+                "group": "access_security"
+              }
+            ],
+            "surface_rendering_hint": "multi_select",
+            "onboarding_group": "access_security"
+          },
+          {
+            "id": "login.social_providers",
+            "label": "Which social sign-in providers should be available?",
+            "type": "text",
+            "required": false,
+            "ui_type": "multi_select",
+            "priority": "P2",
+            "handling": "ask_if_relevant",
+            "target_owner": "Host identity",
+            "approval_gate": "high",
+            "branch_condition": "social login selected",
+            "destination_provider": "builder",
+            "capability": "builder.features.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.features.update",
+                "risk": "high",
+                "group": "access_security"
+              }
+            ],
+            "surface_rendering_hint": "multi_select",
+            "onboarding_group": "access_security"
+          },
+          {
+            "id": "login.verification",
+            "label": "Should new accounts verify email, phone, both, or neither?",
+            "type": "text",
+            "required": false,
+            "ui_type": "choice",
+            "priority": "P1",
+            "handling": "ask_if_portal",
+            "target_owner": "Host identity",
+            "approval_gate": "high",
+            "branch_condition": "customer portal enabled",
+            "destination_provider": "builder",
+            "capability": "builder.features.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.features.update",
+                "risk": "high",
+                "group": "access_security"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "access_security"
+          },
+          {
+            "id": "login.otp_policy",
+            "label": "How many incorrect OTP attempts are allowed, how long before resend, and how long should temporary blocking last?",
+            "type": "text",
+            "required": false,
+            "ui_type": "compound_numeric",
+            "priority": "P2",
+            "handling": "use_secure_default_then_confirm",
+            "target_owner": "Host identity/security",
+            "approval_gate": "high",
+            "branch_condition": "OTP login or phone verification enabled",
+            "destination_provider": "builder",
+            "capability": "builder.features.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.features.update",
+                "risk": "high",
+                "group": "access_security"
+              }
+            ],
+            "surface_rendering_hint": "compound_numeric",
+            "onboarding_group": "access_security"
+          },
+          {
+            "id": "login.password_lockout",
+            "label": "How many failed password attempts are allowed, and how long should login be blocked?",
+            "type": "text",
+            "required": false,
+            "ui_type": "compound_numeric",
+            "priority": "P2",
+            "handling": "use_secure_default_then_confirm",
+            "target_owner": "Host identity/security",
+            "approval_gate": "high",
+            "branch_condition": "manual login enabled",
+            "destination_provider": "builder",
+            "capability": "builder.features.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.features.update",
+                "risk": "high",
+                "group": "access_security"
+              }
+            ],
+            "surface_rendering_hint": "compound_numeric",
+            "onboarding_group": "access_security"
+          },
+          {
+            "id": "security.captcha",
+            "label": "Should public registration and login forms use bot protection?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P2",
+            "handling": "recommend_then_confirm",
+            "target_owner": "Host security",
+            "approval_gate": "high",
+            "branch_condition": "public portal enabled",
+            "destination_provider": "builder",
+            "capability": "builder.features.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.features.update",
+                "risk": "high",
+                "group": "access_security"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "access_security"
+          }
+        ]
+      },
+      {
+        "id": "section_11",
+        "title": "Communications",
+        "fields": [
+          {
+            "id": "notification.booking_alerts",
+            "label": "Who should be alerted when a new booking or request arrives?",
+            "type": "text",
+            "required": true,
+            "ui_type": "role_channel_matrix",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Notifications",
+            "approval_gate": "section",
+            "destination_provider": "mobile",
+            "capability": "mobile.notification.configure",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "mobile",
+                "capability": "mobile.notification.configure",
+                "risk": "high",
+                "group": "communications"
+              }
+            ],
+            "surface_rendering_hint": "role_channel_matrix",
+            "onboarding_group": "communications"
+          },
+          {
+            "id": "notification.channels",
+            "label": "Which channels may Titan use for customers, workers, managers, and providers?",
+            "type": "text",
+            "required": false,
+            "ui_type": "role_channel_matrix",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Notifications",
+            "approval_gate": "high",
+            "destination_provider": "mobile",
+            "capability": "mobile.notification.configure",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "mobile",
+                "capability": "mobile.notification.configure",
+                "risk": "high",
+                "group": "communications"
+              }
+            ],
+            "surface_rendering_hint": "role_channel_matrix",
+            "onboarding_group": "communications"
+          },
+          {
+            "id": "notification.quiet_hours",
+            "label": "Are there times when non-urgent notifications should be held?",
+            "type": "text",
+            "required": false,
+            "ui_type": "weekly_schedule",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Notifications",
+            "approval_gate": "section",
+            "destination_provider": "mobile",
+            "capability": "mobile.notification.configure",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "mobile",
+                "capability": "mobile.notification.configure",
+                "risk": "high",
+                "group": "communications"
+              }
+            ],
+            "surface_rendering_hint": "weekly_schedule",
+            "onboarding_group": "communications"
+          },
+          {
+            "id": "notification.templates",
+            "label": "Should Titan draft customer and workforce message templates from your preferred tone?",
+            "type": "text",
+            "required": false,
+            "ui_type": "choice",
+            "priority": "P1",
+            "handling": "ai_draft_then_confirm",
+            "target_owner": "Notifications/AI",
+            "approval_gate": "section",
+            "destination_provider": "mobile",
+            "capability": "mobile.notification.configure",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "mobile",
+                "capability": "mobile.notification.configure",
+                "risk": "high",
+                "group": "communications"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "communications"
+          },
+          {
+            "id": "email.connect.connection_status",
+            "label": "Connect an outbound email service now?",
+            "type": "text",
+            "required": false,
+            "ui_type": "secure_connection",
+            "priority": "P1",
+            "handling": "secure_task",
+            "target_owner": "Host integrations/Vault",
+            "approval_gate": "high",
+            "source_key": "email.connect",
+            "sensitive_input_disallowed": true,
+            "notes": "Open the host secure credential component; store only connection status/reference, never secret material in wizard answers.",
+            "destination_provider": "connect",
+            "capability": "communications.connection.start",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "connect",
+                "capability": "communications.connection.start",
+                "risk": "high",
+                "group": "channels"
+              }
+            ],
+            "surface_rendering_hint": "secure_connection",
+            "onboarding_group": "communications"
+          },
+          {
+            "id": "sms.connect.connection_status",
+            "label": "Connect an SMS provider now?",
+            "type": "text",
+            "required": false,
+            "ui_type": "secure_connection",
+            "priority": "P1",
+            "handling": "secure_task",
+            "target_owner": "Host integrations/Vault",
+            "approval_gate": "high",
+            "source_key": "sms.connect",
+            "sensitive_input_disallowed": true,
+            "notes": "Open the host secure credential component; store only connection status/reference, never secret material in wizard answers.",
+            "destination_provider": "connect",
+            "capability": "communications.connection.start",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "connect",
+                "capability": "communications.connection.start",
+                "risk": "high",
+                "group": "channels"
+              }
+            ],
+            "surface_rendering_hint": "secure_connection",
+            "onboarding_group": "communications"
+          }
+        ]
+      },
+      {
+        "id": "section_12",
+        "title": "AI assistance",
+        "fields": [
+          {
+            "id": "ai.enable",
+            "label": "Would you like Titan Zero to assist with setup and daily operations?",
+            "type": "text",
+            "required": true,
+            "ui_type": "boolean",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "AI orchestration",
+            "approval_gate": "section",
+            "destination_provider": "titan_ai",
+            "capability": "ai.business.preferences.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "titan_ai",
+                "capability": "ai.business.preferences.update",
+                "risk": "high",
+                "group": "ai_preferences"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "ai"
+          },
+          {
+            "id": "ai.authority",
+            "label": "Use risk-based authority: may Titan save drafts and perform low-risk setup automatically, while requesting approval for live, financial, external, permission, and destructive actions?",
+            "type": "text",
+            "required": true,
+            "ui_type": "policy_acknowledgement",
+            "priority": "P0",
+            "handling": "default_confirm",
+            "target_owner": "Wizard authority policy",
+            "approval_gate": "high",
+            "destination_provider": "titan_ai",
+            "capability": "ai.authority.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "titan_ai",
+                "capability": "ai.authority.update",
+                "risk": "high",
+                "group": "ai_authority"
+              },
+              {
+                "provider": "titan_ai",
+                "capability": "ai.business.preferences.update",
+                "risk": "high",
+                "group": "ai_preferences"
+              }
+            ],
+            "surface_rendering_hint": "policy_acknowledgement",
+            "onboarding_group": "ai"
+          },
+          {
+            "id": "ai.setup_style",
+            "label": "Would you prefer Titan to ask one question at a time, show grouped forms, or switch between both?",
+            "type": "text",
+            "required": true,
+            "ui_type": "choice",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Wizard runtime",
+            "approval_gate": "section",
+            "destination_provider": "titan_ai",
+            "capability": "ai.business.preferences.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "titan_ai",
+                "capability": "ai.business.preferences.update",
+                "risk": "high",
+                "group": "ai_preferences"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "ai"
+          },
+          {
+            "id": "ai.knowledge_sources",
+            "label": "Which existing documents, website pages, service lists, or policies may Titan use to prepare drafts?",
+            "type": "text",
+            "required": false,
+            "ui_type": "multi_source_picker",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "KnowledgeBase/AI",
+            "approval_gate": "high",
+            "destination_provider": "titan_ai",
+            "capability": "ai.business.preferences.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "titan_ai",
+                "capability": "ai.business.preferences.update",
+                "risk": "high",
+                "group": "ai_preferences"
+              },
+              {
+                "provider": "chatbot",
+                "capability": "chatbot.knowledge.text.add",
+                "risk": "section",
+                "group": "chatbot_knowledge"
+              }
+            ],
+            "surface_rendering_hint": "multi_source_picker",
+            "onboarding_group": "ai"
+          },
+          {
+            "id": "ai.api_connection",
+            "label": "Will you use Titan-provided AI or connect your own model provider?",
+            "type": "text",
+            "required": false,
+            "ui_type": "choice",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Host AI registry/Vault",
+            "approval_gate": "high",
+            "destination_provider": "titan_ai",
+            "capability": "ai.business.preferences.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "titan_ai",
+                "capability": "ai.business.preferences.update",
+                "risk": "high",
+                "group": "ai_preferences"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "ai"
+          },
+          {
+            "id": "ai.credentials.connection_status",
+            "label": "Connect your AI provider credentials.",
+            "type": "text",
+            "required": false,
+            "ui_type": "secure_connection",
+            "priority": "P1-conditional",
+            "handling": "secure_task",
+            "target_owner": "Host AI registry/Vault",
+            "approval_gate": "high",
+            "branch_condition": "BYO AI selected",
+            "notes": "Credentials must never be spoken back or stored as wizard answers. Open the host secure credential component; store only connection status/reference, never secret material in wizard answers.",
+            "source_key": "ai.credentials",
+            "sensitive_input_disallowed": true,
+            "destination_provider": "titan_ai",
+            "capability": "ai.business.preferences.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "titan_ai",
+                "capability": "ai.business.preferences.update",
+                "risk": "high",
+                "group": "ai_preferences"
+              }
+            ],
+            "surface_rendering_hint": "secure_connection",
+            "onboarding_group": "ai"
+          }
+        ]
+      },
+      {
+        "id": "section_13",
+        "title": "Optional integrations",
+        "fields": [
+          {
+            "id": "maps.connect",
+            "label": "Do you need address lookup, route planning, maps, or polygon drawing?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P1",
+            "handling": "infer_from_features",
+            "target_owner": "Host map registry",
+            "approval_gate": "high",
+            "destination_provider": "builder",
+            "capability": "builder.features.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.features.update",
+                "risk": "high",
+                "group": "integrations"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "integrations"
+          },
+          {
+            "id": "maps.credentials.connection_status",
+            "label": "Connect the selected map provider.",
+            "type": "text",
+            "required": false,
+            "ui_type": "secure_connection",
+            "priority": "P1-conditional",
+            "handling": "secure_task",
+            "target_owner": "Host map registry/Vault",
+            "approval_gate": "high",
+            "branch_condition": "maps needed and no host-managed provider",
+            "source_key": "maps.credentials",
+            "sensitive_input_disallowed": true,
+            "notes": "Open the host secure credential component; store only connection status/reference, never secret material in wizard answers.",
+            "destination_provider": "builder",
+            "capability": "builder.features.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.features.update",
+                "risk": "high",
+                "group": "integrations"
+              }
+            ],
+            "surface_rendering_hint": "secure_connection",
+            "onboarding_group": "integrations"
+          },
+          {
+            "id": "storage.mode",
+            "label": "Should files remain in platform-managed storage, company cloud storage, or device-first storage?",
+            "type": "text",
+            "required": false,
+            "ui_type": "choice",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Titan Vault/Host storage",
+            "approval_gate": "high",
+            "destination_provider": "builder",
+            "capability": "builder.features.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.features.update",
+                "risk": "high",
+                "group": "integrations"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "integrations"
+          },
+          {
+            "id": "storage.credentials.connection_status",
+            "label": "Connect the selected storage provider.",
+            "type": "text",
+            "required": false,
+            "ui_type": "secure_connection",
+            "priority": "P1-conditional",
+            "handling": "secure_task",
+            "target_owner": "Titan Vault/Host storage",
+            "approval_gate": "high",
+            "branch_condition": "company cloud storage selected",
+            "source_key": "storage.credentials",
+            "sensitive_input_disallowed": true,
+            "notes": "Open the host secure credential component; store only connection status/reference, never secret material in wizard answers.",
+            "destination_provider": "builder",
+            "capability": "builder.features.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.features.update",
+                "risk": "high",
+                "group": "integrations"
+              }
+            ],
+            "surface_rendering_hint": "secure_connection",
+            "onboarding_group": "integrations"
+          },
+          {
+            "id": "push.connect",
+            "label": "Do you want mobile push notifications?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P2",
+            "handling": "ask_if_app",
+            "target_owner": "Host notifications",
+            "approval_gate": "high",
+            "branch_condition": "mobile app/PWA enabled",
+            "destination_provider": "mobile",
+            "capability": "mobile.notification.configure",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "mobile",
+                "capability": "mobile.notification.configure",
+                "risk": "high",
+                "group": "communications"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "integrations"
+          },
+          {
+            "id": "app.release_settings",
+            "label": "Configure app download links and minimum supported Android/iOS versions?",
+            "type": "text",
+            "required": false,
+            "ui_type": "compound",
+            "priority": "P2",
+            "handling": "admin_only",
+            "target_owner": "Host app settings",
+            "approval_gate": "high",
+            "branch_condition": "branded native apps operated by company",
+            "destination_provider": "builder",
+            "capability": "builder.features.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.features.update",
+                "risk": "high",
+                "group": "integrations"
+              },
+              {
+                "provider": "builder",
+                "capability": "builder.application.configure",
+                "risk": "high",
+                "group": "apps"
+              }
+            ],
+            "surface_rendering_hint": "compound",
+            "onboarding_group": "integrations"
+          }
+        ]
+      },
+      {
+        "id": "section_14",
+        "title": "Brand and public presence",
+        "fields": [
+          {
+            "id": "brand.social_links",
+            "label": "Which social profiles should appear on customer-facing pages?",
+            "type": "text",
+            "required": false,
+            "ui_type": "repeatable_url",
+            "priority": "P2",
+            "handling": "defer_by_default",
+            "target_owner": "Host branding/Marketing",
+            "approval_gate": "section",
+            "destination_provider": "builder",
+            "capability": "builder.brand.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.brand.update",
+                "risk": "section",
+                "group": "brand"
+              }
+            ],
+            "surface_rendering_hint": "repeatable_url",
+            "onboarding_group": "brand"
+          },
+          {
+            "id": "brand.footer",
+            "label": "Would you like Titan to draft footer and cookie text for review?",
+            "type": "text",
+            "required": false,
+            "ui_type": "long_text_pair",
+            "priority": "P2",
+            "handling": "ai_draft_then_confirm",
+            "target_owner": "Host branding/Legal",
+            "approval_gate": "high",
+            "notes": "Cookie/legal wording requires jurisdiction-appropriate review.",
+            "destination_provider": "builder",
+            "capability": "builder.brand.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.brand.update",
+                "risk": "section",
+                "group": "brand"
+              }
+            ],
+            "surface_rendering_hint": "long_text_pair",
+            "onboarding_group": "brand"
+          },
+          {
+            "id": "brand.public_site",
+            "label": "Do you want a public website or landing page configured now?",
+            "type": "text",
+            "required": false,
+            "ui_type": "boolean",
+            "priority": "P2",
+            "handling": "defer_by_default",
+            "target_owner": "Marketing extension",
+            "approval_gate": "section",
+            "destination_provider": "builder",
+            "capability": "builder.brand.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.brand.update",
+                "risk": "section",
+                "group": "brand"
+              }
+            ],
+            "surface_rendering_hint": "boolean",
+            "onboarding_group": "brand"
+          },
+          {
+            "id": "brand.seo",
+            "label": "Would you like Titan to draft page titles, descriptions, social previews, and structured metadata?",
+            "type": "text",
+            "required": false,
+            "ui_type": "choice",
+            "priority": "P2",
+            "handling": "ai_draft_then_confirm",
+            "target_owner": "Marketing/SEO",
+            "approval_gate": "section",
+            "branch_condition": "public website enabled",
+            "destination_provider": "builder",
+            "capability": "builder.brand.update",
+            "destination_risk": "section",
+            "destinations": [
+              {
+                "provider": "builder",
+                "capability": "builder.brand.update",
+                "risk": "section",
+                "group": "brand"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "brand"
+          }
+        ]
+      },
+      {
+        "id": "section_15",
+        "title": "Compliance",
+        "fields": [
+          {
+            "id": "compliance.company_credentials",
+            "label": "Which licences, registrations, insurance policies, checks, or memberships must the business maintain?",
+            "type": "text",
+            "required": false,
+            "ui_type": "repeatable_credentials",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Compliance/Titan Vault",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.compliance.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.compliance.update",
+                "risk": "high",
+                "group": "compliance"
+              }
+            ],
+            "surface_rendering_hint": "repeatable_credentials",
+            "onboarding_group": "compliance"
+          },
+          {
+            "id": "compliance.worker_requirements",
+            "label": "Which credentials are mandatory before a worker can be assigned specific work?",
+            "type": "text",
+            "required": false,
+            "ui_type": "rule_builder",
+            "priority": "P1",
+            "handling": "ask",
+            "target_owner": "Compliance/Workforce",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.compliance.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.compliance.update",
+                "risk": "high",
+                "group": "compliance"
+              }
+            ],
+            "surface_rendering_hint": "rule_builder",
+            "onboarding_group": "compliance"
+          },
+          {
+            "id": "compliance.evidence",
+            "label": "Which services require photos, signatures, checklists, certificates, readings, or customer sign-off?",
+            "type": "text",
+            "required": true,
+            "ui_type": "service_rule_matrix",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Forms/Compliance/Operations",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.compliance.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.compliance.update",
+                "risk": "high",
+                "group": "compliance"
+              }
+            ],
+            "surface_rendering_hint": "service_rule_matrix",
+            "onboarding_group": "compliance"
+          },
+          {
+            "id": "privacy.retention",
+            "label": "How long should operational evidence, recordings, and AI-assisted wizard data be retained?",
+            "type": "text",
+            "required": false,
+            "ui_type": "retention_policy",
+            "priority": "P1",
+            "handling": "recommend_then_confirm",
+            "target_owner": "Compliance/Titan Vault/AI",
+            "approval_gate": "high",
+            "destination_provider": "crm",
+            "capability": "crm.business.compliance.update",
+            "destination_risk": "high",
+            "destinations": [
+              {
+                "provider": "crm",
+                "capability": "crm.business.compliance.update",
+                "risk": "high",
+                "group": "compliance"
+              }
+            ],
+            "surface_rendering_hint": "retention_policy",
+            "onboarding_group": "compliance"
+          }
+        ]
+      },
+      {
+        "id": "section_16",
+        "title": "Activation",
+        "fields": [
+          {
+            "id": "review.assumptions",
+            "label": "Review the information Titan inferred or drafted. Which assumptions need correction?",
+            "type": "text",
+            "required": true,
+            "ui_type": "review_diff",
+            "priority": "P0",
+            "handling": "required_review",
+            "target_owner": "Wizard runtime",
+            "approval_gate": "section",
+            "destination_provider": "interaction",
+            "capability": "interaction.onboarding.activate",
+            "destination_risk": "critical",
+            "destinations": [
+              {
+                "provider": "interaction",
+                "capability": "interaction.onboarding.activate",
+                "risk": "critical",
+                "group": "activation"
+              }
+            ],
+            "surface_rendering_hint": "review_diff",
+            "onboarding_group": "activation"
+          },
+          {
+            "id": "review.actions",
+            "label": "Approve the grouped actions that will create draft company settings, services, territories, workforce records, and policies.",
+            "type": "text",
+            "required": true,
+            "ui_type": "approval_bundle",
+            "priority": "P0",
+            "handling": "required_review",
+            "target_owner": "Business actions",
+            "approval_gate": "high",
+            "destination_provider": "interaction",
+            "capability": "interaction.onboarding.activate",
+            "destination_risk": "critical",
+            "destinations": [
+              {
+                "provider": "interaction",
+                "capability": "interaction.onboarding.activate",
+                "risk": "critical",
+                "group": "activation"
+              }
+            ],
+            "surface_rendering_hint": "approval_bundle",
+            "onboarding_group": "activation"
+          },
+          {
+            "id": "activation.go_live",
+            "label": "Activate the approved configuration now, keep it as a draft, or schedule activation?",
+            "type": "text",
+            "required": true,
+            "ui_type": "choice",
+            "priority": "P0",
+            "handling": "ask",
+            "target_owner": "Company lifecycle",
+            "approval_gate": "high",
+            "destination_provider": "interaction",
+            "capability": "interaction.onboarding.activate",
+            "destination_risk": "critical",
+            "destinations": [
+              {
+                "provider": "interaction",
+                "capability": "interaction.onboarding.activate",
+                "risk": "critical",
+                "group": "activation"
+              }
+            ],
+            "surface_rendering_hint": "choice",
+            "onboarding_group": "activation"
+          }
+        ]
+      }
+    ]
+  }
+}

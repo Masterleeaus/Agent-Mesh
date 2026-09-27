@@ -1,0 +1,23 @@
+{
+  "slug": "handyman-property-maintenance",
+  "profile": "field_home_services",
+  "terminology": [
+    "job",
+    "property"
+  ],
+  "required_evidence_suggestions": [
+    "before_photo",
+    "after_photo"
+  ],
+  "suggested_services": [
+    "General repairs",
+    "Property maintenance",
+    "Minor installations"
+  ],
+  "compliance_prompts": [
+    "site-specific safety requirements"
+  ],
+  "wizard_overrides": {
+    "engine_logic": "unchanged"
+  }
+}

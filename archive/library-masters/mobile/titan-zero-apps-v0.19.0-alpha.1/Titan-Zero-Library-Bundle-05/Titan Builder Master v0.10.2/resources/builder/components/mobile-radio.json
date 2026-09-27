@@ -1,0 +1,24 @@
+{
+  "id": "mobile-radio",
+  "name": "Mobile Radio",
+  "category": "Premium / Forms",
+  "blade": "components.titan-builder.premium.mobile-radio",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "name",
+    "label",
+    "value",
+    "selected",
+    "disabled",
+    "statePath",
+    "tone"
+  ],
+  "actions": [
+    "state.set"
+  ]
+}

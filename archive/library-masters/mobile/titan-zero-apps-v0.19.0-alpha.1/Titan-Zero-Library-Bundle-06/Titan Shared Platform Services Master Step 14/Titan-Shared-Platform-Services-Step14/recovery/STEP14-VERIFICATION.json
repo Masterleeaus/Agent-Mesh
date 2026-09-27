@@ -1,0 +1,10 @@
+{
+  "providers": 32,
+  "provider_zip_entries": 8671,
+  "php_files": 5782,
+  "json_files": 756,
+  "migration_files": 373,
+  "test_files": 1025,
+  "verification_returncode": 0,
+  "generated_at_utc": "2026-09-02T07:57:33.364413+00:00"
+}

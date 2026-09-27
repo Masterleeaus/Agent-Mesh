@@ -1,0 +1,14 @@
+{
+  "id": "form-section",
+  "name": "Form section",
+  "category": "Forms",
+  "blade": "components.titan-builder.form-section",
+  "authority": "presentation-only",
+  "props": [
+    "title",
+    "description"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

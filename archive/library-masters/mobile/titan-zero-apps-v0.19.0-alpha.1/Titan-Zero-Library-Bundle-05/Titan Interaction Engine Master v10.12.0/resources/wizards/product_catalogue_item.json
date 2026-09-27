@@ -1,0 +1,184 @@
+{
+  "wizard": {
+    "id": "product_catalogue_item_v1",
+    "version": "1.0.0",
+    "name": "Product Catalogue Item",
+    "capability": "commerce.products.upsert",
+    "permissions": {
+      "required_roles": [
+        "staff",
+        "supervisor",
+        "manager",
+        "admin"
+      ]
+    },
+    "metadata": {
+      "category": "commerce",
+      "template_id": "product-catalogue-item",
+      "template_version": "1.0.0",
+      "verticals": [
+        "ecommerce",
+        "retail",
+        "wholesale"
+      ],
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "normal",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": []
+    },
+    "steps": [
+      {
+        "id": "identity",
+        "title": "Product identity",
+        "fields": [
+          {
+            "id": "product_id",
+            "label": "Product ID",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "sku",
+            "label": "SKU",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "name",
+            "label": "Product name",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "status",
+            "label": "Status",
+            "type": "text",
+            "required": true,
+            "options": [
+              "draft",
+              "active",
+              "archived"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "classification",
+        "title": "Classification",
+        "fields": [
+          {
+            "id": "category_id",
+            "label": "Category",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "product_type",
+            "label": "Product type",
+            "type": "text",
+            "required": true,
+            "options": [
+              "physical",
+              "service",
+              "digital",
+              "bundle"
+            ]
+          },
+          {
+            "id": "tags",
+            "label": "Tags",
+            "type": "array",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "pricing",
+        "title": "Pricing",
+        "fields": [
+          {
+            "id": "price",
+            "label": "Price",
+            "type": "number",
+            "required": true,
+            "min": 0
+          },
+          {
+            "id": "currency",
+            "label": "Currency",
+            "type": "text",
+            "required": true,
+            "options": [
+              "AUD",
+              "USD",
+              "NZD",
+              "GBP",
+              "EUR"
+            ]
+          },
+          {
+            "id": "tax_class",
+            "label": "Tax class",
+            "type": "text",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "inventory",
+        "title": "Inventory",
+        "fields": [
+          {
+            "id": "track_inventory",
+            "label": "Track inventory",
+            "type": "boolean",
+            "required": true
+          },
+          {
+            "id": "initial_quantity",
+            "label": "Initial quantity",
+            "type": "number",
+            "required": false,
+            "min": 0
+          },
+          {
+            "id": "reorder_point",
+            "label": "Reorder point",
+            "type": "number",
+            "required": false,
+            "min": 0
+          }
+        ]
+      },
+      {
+        "id": "declaration",
+        "title": "Review",
+        "fields": [
+          {
+            "id": "declaration_accepted",
+            "label": "Declaration accepted",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "format": "titan-interface-runtime-recovery-certification/v1",
+  "release": "1.0.4-recovery.1",
+  "recovery_source": {
+    "artifact": "Titan-Interface-Runtime-v1.0.3-Pass20-Host-View-Full-Menu-Hotfix-Canonical.zip",
+    "sha256": "dc3eb44afe004a1206704879ce3748f0f4a32c6328ff00b22d5bc162966afbb0",
+    "files": 459,
+    "php_files": 356,
+    "zip_crc": "PASS"
+  },
+  "damaged_reconstruction_observed": {
+    "files": 50,
+    "php_files": 39,
+    "certified_files_absent": 453
+  },
+  "preservation": {
+    "certified_paths_retained": 459,
+    "certified_paths_missing": [],
+    "historical_evidence_files_checked": 52,
+    "historical_evidence_byte_changes": 0
+  },
+  "convergence": {
+    "canonical_company_boundary": "company_id",
+    "legacy_company_aliases": [
+      "tenant_company_id",
+      "tenant_id"
+    ],
+    "canonical_semantic_surfaces": [
+      "zero",
+      "go",
+      "hub"
+    ],
+    "onboarding": "zero journey",
+    "mature_surface_contracts": "retained as compatibility internals; no blind historical terminology rewrite",
+    "semantic_contract": "resources/contracts/titan-apps-interface-runtime.v1.json",
+    "registry_collision_resolution": "mature discovery registry retained; newer semantic registry renamed SemanticInterfaceContributionRegistry"
+  },
+  "verification": {
+    "php_lint": "393/393 PASS",
+    "json_parse": "PASS (final count verified at packaging gate)",
+    "native_manifest_v2_2_schema": "PASS",
+    "reconstructed_semantic_regressions": "11/11 PASS",
+    "mature_self_contained_verifiers": "54/54 PASS",
+    "pass20_provider_boot": "PASS",
+    "pass20_e2e": "PASS",
+    "pass20_lifecycle": "PASS",
+    "pass20h3_menu_sync": "PASS",
+    "builder_component_snapshot": "125/125 PASS using available Titan Builder v0.9.2 snapshot",
+    "builder_configuration_lifecycle_snapshot": "PASS",
+    "builder_legacy_pass18_surface_snapshot": "NOT_PASSING: external Builder owner-finance data source currently declares surface compatibility [base], while historical verifier expects owner; no Interface Runtime code changed to mask this external mismatch"
+  },
+  "not_run_in_recovery_environment": [
+    "Live Laravel/MagicAI install-upgrade-disable-uninstall sequence",
+    "Interaction Engine external snapshot verifiers requiring a separate Interaction Engine tree",
+    "Maps external snapshot verifier requiring a separate Maps Intelligence tree",
+    "TitanAI external governance snapshot verifier requiring a separate website/TitanAI tree"
+  ],
+  "status": "RECOVERY_VERIFIED_OFFLINE_WITH_EXTERNAL_SNAPSHOT_NOTE"
+}

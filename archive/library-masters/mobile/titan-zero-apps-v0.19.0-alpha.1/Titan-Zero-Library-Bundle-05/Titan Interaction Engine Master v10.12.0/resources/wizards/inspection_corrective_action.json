@@ -1,0 +1,228 @@
+{
+  "wizard": {
+    "id": "inspection_corrective_action_v1",
+    "version": "1.0.0",
+    "name": "Inspection and Corrective Action",
+    "capability": "crm.form.submit",
+    "permissions": {
+      "required_roles": [
+        "field_worker",
+        "supervisor",
+        "manager",
+        "admin",
+        "owner"
+      ]
+    },
+    "metadata": {
+      "category": "assurance",
+      "template_id": "inspection-corrective-action",
+      "template_version": "1.0.0",
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ],
+      "surfaces": [
+        "go",
+        "command"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "critical",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": [
+        {
+          "when": {
+            "field": "failed_item_count",
+            "gt": 0
+          },
+          "require_fields": [
+            "findings",
+            "evidence_attachment_ids",
+            "corrective_actions"
+          ],
+          "message_prefix": "Missing required failed inspection evidence"
+        },
+        {
+          "when": {
+            "field": "critical_finding_count",
+            "gt": 0
+          },
+          "require_fields": [
+            "corrective_action_owner_id",
+            "corrective_action_due_at"
+          ],
+          "message_prefix": "Missing required critical finding owner or due"
+        },
+        {
+          "when": {
+            "field": "critical_finding_count",
+            "gt": 0
+          },
+          "require_fields": [
+            "approval_id",
+            "approved_by",
+            "approved_at"
+          ],
+          "message_prefix": "Missing required approval"
+        }
+      ]
+    },
+    "steps": [
+      {
+        "id": "scope",
+        "title": "Inspection scope",
+        "fields": [
+          {
+            "id": "site_id",
+            "label": "Site",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "inspection_type",
+            "label": "Inspection type",
+            "type": "text",
+            "required": true,
+            "options": [
+              "pre_service",
+              "post_service",
+              "safety",
+              "quality",
+              "compliance",
+              "routine"
+            ]
+          },
+          {
+            "id": "inspected_at",
+            "label": "Inspected at",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "checklist_results",
+        "title": "Checklist results",
+        "fields": [
+          {
+            "id": "checklist_id",
+            "label": "Checklist",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "passed_item_count",
+            "label": "Passed items",
+            "type": "number",
+            "required": true,
+            "min": 0
+          },
+          {
+            "id": "failed_item_count",
+            "label": "Failed items",
+            "type": "number",
+            "required": true,
+            "min": 0
+          },
+          {
+            "id": "critical_finding_count",
+            "label": "Critical findings",
+            "type": "number",
+            "required": true,
+            "min": 0
+          }
+        ]
+      },
+      {
+        "id": "findings_evidence",
+        "title": "Findings and evidence",
+        "fields": [
+          {
+            "id": "findings",
+            "label": "Findings",
+            "type": "array",
+            "required": false
+          },
+          {
+            "id": "evidence_attachment_ids",
+            "label": "Evidence attachments",
+            "type": "array",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "corrective_actions",
+        "title": "Corrective actions",
+        "fields": [
+          {
+            "id": "corrective_actions",
+            "label": "Corrective actions",
+            "type": "array",
+            "required": false
+          },
+          {
+            "id": "corrective_action_owner_id",
+            "label": "Corrective action owner",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "corrective_action_due_at",
+            "label": "Corrective action due",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "verification_method",
+            "label": "Verification method",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "approval_declaration",
+        "title": "Approval and declaration",
+        "fields": [
+          {
+            "id": "approval_id",
+            "label": "Approval ID",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "approved_by",
+            "label": "Approved by",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "approved_at",
+            "label": "Approved at",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "declaration_accepted",
+            "label": "Declaration accepted",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

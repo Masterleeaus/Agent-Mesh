@@ -1,0 +1,8 @@
+@extends('titan-builder::management.layout')
+@section('content')
+<div class="tbm-stat-grid">
+@foreach($summary['registry_counts'] as $label=>$count)<article class="tbm-stat"><span>{{ ucwords(str_replace('_',' ',$label)) }}</span><strong>{{ $count }}</strong></article>@endforeach
+</div>
+<section class="tbm-grid-2"><article class="tbm-panel"><p class="tbm-eyebrow">Package</p><h2>{{ $summary['package']['name'] ?? 'Titan Builder' }} v{{ $summary['package']['version'] ?? '?' }}</h2><p>{{ $summary['package']['description'] ?? '' }}</p><code>{{ $summary['package']['schema'] ?? '' }}</code></article><article class="tbm-panel"><p class="tbm-eyebrow">Capability router</p><h2>{{ count($summary['capabilities']) }} capabilities visible</h2><p>Use Diagnostics and Integrations to inspect optional CRM, TitanAI, Mobile, Connect and Chatbot contracts.</p><a href="{{ route('titan-builder.admin.diagnostics') }}">Open diagnostics →</a></article></section>
+<section class="tbm-card-grid"><a class="tbm-card" href="{{ route('titan-builder.admin.registry') }}"><strong>Registry</strong><span>Components, blocks, templates, themes and surfaces</span></a><a class="tbm-card" href="{{ route('titan-builder.admin.verticals') }}"><strong>Vertical packs</strong><span>Ten canonical Field & Home Services packs</span></a><a class="tbm-card" href="{{ route('titan-builder.admin.settings') }}"><strong>Platform settings</strong><span>Builder-wide feature presentation flags</span></a><a class="tbm-card" href="{{ route('titan-builder.admin.permissions') }}"><strong>Permissions</strong><span>Host ability catalogue</span></a></section>
+@endsection

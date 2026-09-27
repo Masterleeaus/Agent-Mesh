@@ -1,0 +1,109 @@
+{
+  "schema_version": "2.2",
+  "slug": "titan-hub",
+  "name": "Titan Apps: Hub",
+  "version": "1.0.0-alpha.8",
+  "folder": "TitanHub",
+  "namespace": "App\\Extensions\\TitanHub",
+  "provider": "App\\Extensions\\TitanHub\\System\\TitanHubServiceProvider",
+  "family": "native",
+  "compatibility": {
+    "magicai": ">=11.0",
+    "php": "^8.2",
+    "laravel": "^10.0"
+  },
+  "dependencies": {
+    "parent": null,
+    "required": [
+      {
+        "key": "crm",
+        "version": ">=1.3.0-alpha.28"
+      },
+      {
+        "key": "titan-apps-core",
+        "version": ">=0.12.0-alpha.1"
+      },
+      {
+        "key": "interaction-engine",
+        "version": ">=10.11.2"
+      },
+      {
+        "key": "titan-interface-runtime",
+        "version": ">=1.0.4-recovery.2"
+      },
+      {
+        "key": "titan-builder",
+        "version": ">=0.9.8"
+      },
+      {
+        "key": "titan-visual-runtime",
+        "version": ">=1.6.1"
+      }
+    ],
+    "optional": [
+      {
+        "key": "titan-bookings-quotes",
+        "version": "*"
+      },
+      {
+        "key": "titan-connect",
+        "version": "*"
+      }
+    ],
+    "peers": [],
+    "conflicts": []
+  },
+  "data": {
+    "tenant_key": "company_id",
+    "public_identity": "opaque"
+  },
+  "capabilities": [
+    "hub.surface",
+    "hub.home",
+    "hub.booking",
+    "hub.quotes",
+    "hub.jobs",
+    "hub.invoices",
+    "hub.payments.presentation",
+    "hub.documents",
+    "hub.inbox",
+    "hub.customer-assistant",
+    "hub.customer-safe-projections",
+    "hub.customer-safe-actions",
+    "hub.pwa",
+    "hub.offline-shell"
+  ],
+  "public_contracts": [
+    "App\\Extensions\\TitanHub\\System\\Contracts\\CustomerOperationsGateway",
+    "App\\Extensions\\TitanHub\\System\\Contracts\\CustomerOperationsContributor",
+    "App\\Extensions\\TitanHub\\System\\Contracts\\TrustedCustomerContextResolver",
+    "App\\Extensions\\TitanHub\\System\\Contracts\\HubPresentationBridge"
+  ],
+  "boundaries": {
+    "owns": [
+      "customer-facing application shell",
+      "customer presentation",
+      "customer-safe app context"
+    ],
+    "does_not_own": [
+      "CRM truth",
+      "provider business logic",
+      "payment execution",
+      "invoice authority",
+      "job authority",
+      "Interaction Engine",
+      "Interface Runtime",
+      "Builder",
+      "Visual Runtime"
+    ]
+  },
+  "surface": {
+    "canonical": "hub",
+    "aliases": {
+      "customer": "hub"
+    }
+  },
+  "uninstall": {
+    "preserve_data": true
+  }
+}

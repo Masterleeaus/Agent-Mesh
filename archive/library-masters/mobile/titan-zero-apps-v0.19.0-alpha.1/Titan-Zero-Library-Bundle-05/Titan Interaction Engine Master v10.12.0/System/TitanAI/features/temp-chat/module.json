@@ -1,0 +1,10 @@
+{
+  "id": "temp-chat",
+  "name": "Temp Chat",
+  "tier": 4,
+  "category": "system-ai-chat-feature",
+  "system_chat": "system-ai-chat",
+  "scope": "cleaning",
+  "enabled": true,
+  "operational_authority": "governed_capability_gateway_only"
+}

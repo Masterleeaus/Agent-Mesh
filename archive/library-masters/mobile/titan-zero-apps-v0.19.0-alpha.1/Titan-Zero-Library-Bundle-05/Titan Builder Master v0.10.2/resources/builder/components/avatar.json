@@ -1,0 +1,16 @@
+{
+  "id": "avatar",
+  "name": "Avatar",
+  "category": "Identity",
+  "blade": "components.titan-builder.avatar",
+  "authority": "presentation-only",
+  "props": [
+    "name",
+    "src",
+    "size"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

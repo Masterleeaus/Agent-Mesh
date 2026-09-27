@@ -1,0 +1,51 @@
+{
+  "schema": "titan-apps-suite-requirements-v1",
+  "applications": [
+    "titan-apps-zero",
+    "titan-apps-go",
+    "titan-apps-hub"
+  ],
+  "shared_services": {
+    "core": {
+      "canonical_key": "titan-apps-core",
+      "required": true
+    },
+    "interaction-engine": {
+      "canonical_key": "titan-apps-interaction-engine",
+      "current_compatibility_key": "titan-interaction-engine",
+      "required_for_full_suite": true,
+      "verified_current_contract": "App\\Extensions\\InteractionEngine\\System\\Contracts\\PublicInteractionEngineInterface",
+      "verified_action_contract": "App\\Extensions\\InteractionEngine\\System\\Contracts\\CapabilityIntentGatewayInterface",
+      "verified_version": "10.11.2"
+    },
+    "interface-runtime": {
+      "canonical_key": "titan-apps-interface-runtime",
+      "current_compatibility_key": "titan-interface-runtime",
+      "required_for_full_suite": true,
+      "verified_current_contract": "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\InterfaceRuntime",
+      "verified_version": "1.0.4-recovery.2",
+      "recovered_mature_contract": "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\TitanInterfaceRuntimeManagerContract"
+    },
+    "builder": {
+      "canonical_key": "titan-apps-builder",
+      "current_compatibility_key": "titan-builder",
+      "required_for_full_suite": true,
+      "verified_current_contract": "App\\Extensions\\TitanBuilder\\System\\Contracts\\ComponentRegistry",
+      "verified_version": "0.9.8",
+      "required_for_app_runtime": false
+    },
+    "visual-runtime": {
+      "canonical_key": "titan-apps-visual-runtime",
+      "current_compatibility_key": "titan-visual-runtime",
+      "required_for_full_suite": true,
+      "verified_current_contract": "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualRuntime",
+      "verified_version": "1.6.1"
+    }
+  },
+  "policy": "Canonical suite keys are the target. Current compatibility keys remain accepted until the owning agents complete package identity convergence.",
+  "applications_package_versions": {
+    "zero": "0.14.0-alpha.1",
+    "go": "1.5.0",
+    "hub": "1.0.0-alpha.6"
+  }
+}

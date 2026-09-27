@@ -1,0 +1,72 @@
+{
+  "schema": "titan-extension-v1",
+  "slug": "titan-hub",
+  "folder": "TitanHub",
+  "provider": "App\\Extensions\\TitanHub\\System\\TitanHubServiceProvider",
+  "version": "1.0.0-alpha.8",
+  "requires": {
+    "php": "^8.2",
+    "laravel": "^10.0",
+    "magicai": ">=11.0"
+  },
+  "migrations": false,
+  "uninstall": {
+    "preserve_data": true
+  },
+  "dependencies": [
+    {
+      "slug": "crm",
+      "version": ">=1.3.0-alpha.28"
+    },
+    {
+      "slug": "titan-apps-core",
+      "version": ">=0.12.0-alpha.1"
+    },
+    {
+      "slug": "titan-interaction-engine",
+      "version": ">=10.11.2"
+    },
+    {
+      "slug": "titan-interface-runtime",
+      "version": ">=1.0.4-recovery.2"
+    },
+    {
+      "slug": "titan-builder",
+      "version": ">=0.9.8"
+    },
+    {
+      "slug": "titan-visual-runtime",
+      "version": ">=1.6.1"
+    }
+  ],
+  "optional_dependencies": [
+    {
+      "slug": "titan-bookings-quotes",
+      "version": "*"
+    },
+    {
+      "slug": "titan-connect",
+      "version": "*"
+    }
+  ],
+  "public_contracts": [
+    "App\\Extensions\\TitanHub\\System\\Contracts\\CustomerOperationsGateway",
+    "App\\Extensions\\TitanHub\\System\\Contracts\\CustomerOperationsContributor",
+    "App\\Extensions\\TitanHub\\System\\Contracts\\TrustedCustomerContextResolver",
+    "App\\Extensions\\TitanHub\\System\\Contracts\\HubPresentationBridge"
+  ],
+  "compatibility": {
+    "surface_aliases": {
+      "customer": "hub"
+    },
+    "legacy_namespace": "App\\Extensions\\TitanHub",
+    "authority": "presentation-only; CRM/providers own business truth",
+    "tenant_boundary": "company_id only; legacy tenant identifiers are compatibility inputs resolving to company_id"
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "manifest": "FILE-SHA256.json"
+  },
+  "native_manifest": "extension.manifest.json",
+  "name": "Titan Apps: Hub"
+}

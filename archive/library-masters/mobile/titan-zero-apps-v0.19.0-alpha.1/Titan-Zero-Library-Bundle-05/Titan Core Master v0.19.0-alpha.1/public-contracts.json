@@ -1,0 +1,71 @@
+{
+  "schema": "titan-apps-public-contracts-v1",
+  "suite": "Titan Apps",
+  "ownership_boundary_not_isolation": true,
+  "services": {
+    "core": {
+      "owner": "Titan Apps: Core",
+      "platform_accessible": true,
+      "contracts": [
+        "App\\Extensions\\TitanAppsCore\\System\\Contracts\\AppLifecycle",
+        "App\\Extensions\\TitanAppsCore\\System\\Contracts\\AppSurface",
+        "App\\Extensions\\TitanAppsCore\\System\\Contracts\\PlatformAccessibleServiceRegistry"
+      ]
+    },
+    "interaction-engine": {
+      "owner": "Titan Apps: Interaction Engine",
+      "platform_accessible": true,
+      "contracts": [
+        "App\\Extensions\\InteractionEngine\\System\\Contracts\\PublicInteractionEngineInterface",
+        "App\\Extensions\\InteractionEngine\\System\\Contracts\\CapabilityIntentGatewayInterface",
+        "App\\Extensions\\InteractionEngine\\System\\Contracts\\PresentationIntentPlannerInterface",
+        "App\\Extensions\\InteractionEngine\\System\\Contracts\\InteractionContextFactoryInterface",
+        "App\\Extensions\\InteractionEngine\\System\\Contracts\\InteractionEngineManagerContract"
+      ]
+    },
+    "interface-runtime": {
+      "owner": "Titan Apps: Interface Runtime",
+      "platform_accessible": true,
+      "contracts": [
+        "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\InterfaceRuntime",
+        "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\InterfaceContributionRegistry",
+        "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\ActionIntentDispatcher",
+        "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\BuilderCatalogue",
+        "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\VisualRuntimeBridge",
+        "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\TitanInterfaceRuntimeManagerContract",
+        "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\Presentation\\PresentationComposerContract",
+        "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\Authority\\GovernedActionDispatcherContract",
+        "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\Interaction\\InteractionEngineGatewayContract"
+      ]
+    },
+    "builder": {
+      "owner": "Titan Apps: Builder",
+      "platform_accessible": true,
+      "contracts": [
+        "App\\Extensions\\TitanBuilder\\System\\Contracts\\ComponentRegistry",
+        "App\\Extensions\\TitanBuilder\\System\\Contracts\\SurfaceRegistry"
+      ]
+    },
+    "visual-runtime": {
+      "owner": "Titan Apps: Visual Runtime",
+      "platform_accessible": true,
+      "contracts": [
+        "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualRuntime",
+        "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualContributionRegistry",
+        "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualContributionResolver",
+        "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualResourceRegistry",
+        "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualCapabilityNegotiator",
+        "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualMetadataContract"
+      ]
+    }
+  },
+  "verified_current_contracts": {
+    "interaction-engine": "App\\Extensions\\InteractionEngine\\System\\Contracts\\PublicInteractionEngineInterface",
+    "interaction-engine-actions": "App\\Extensions\\InteractionEngine\\System\\Contracts\\CapabilityIntentGatewayInterface",
+    "interface-runtime": "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\InterfaceRuntime",
+    "builder": "App\\Extensions\\TitanBuilder\\System\\Contracts\\ComponentRegistry",
+    "visual-runtime": "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualRuntime",
+    "interface-runtime-manager": "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\TitanInterfaceRuntimeManagerContract"
+  },
+  "contract_resolution_policy": "Use verified current public contracts first; package aliases normalize to canonical Titan Apps ownership."
+}

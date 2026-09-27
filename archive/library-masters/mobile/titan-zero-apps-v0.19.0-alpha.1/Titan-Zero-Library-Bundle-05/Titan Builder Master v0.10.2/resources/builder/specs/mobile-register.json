@@ -1,0 +1,138 @@
+{
+  "id": "mobile-register",
+  "name": "Create account",
+  "description": "Premium Mobilekit-derived create account preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {
+    "wizardStep": 0,
+    "form": {
+      "name": "",
+      "email": "",
+      "phone": ""
+    }
+  },
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Create account",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "wizard"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "wizard": {
+      "type": "form-wizard",
+      "props": {
+        "steps": [
+          {
+            "title": "Your details",
+            "description": "Basic account details"
+          },
+          {
+            "title": "Contact",
+            "description": "How we can reach you"
+          },
+          {
+            "title": "Review",
+            "description": "Confirm before creating"
+          }
+        ],
+        "statePath": "/wizardStep",
+        "showProgress": true,
+        "nextLabel": "Continue",
+        "finishLabel": "Ready"
+      },
+      "children": [
+        "name",
+        "email",
+        "phone"
+      ]
+    },
+    "name": {
+      "type": "mobile-input",
+      "props": {
+        "label": "Name",
+        "statePath": "/form/name",
+        "validation": [
+          {
+            "type": "required",
+            "message": "Name is required"
+          }
+        ]
+      }
+    },
+    "email": {
+      "type": "mobile-input",
+      "props": {
+        "label": "Email",
+        "type": "email",
+        "statePath": "/form/email"
+      }
+    },
+    "phone": {
+      "type": "mobile-input",
+      "props": {
+        "label": "Phone",
+        "type": "tel",
+        "statePath": "/form/phone"
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

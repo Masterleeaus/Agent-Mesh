@@ -1,0 +1,103 @@
+{
+  "id": "mobile-fullpage-slider",
+  "name": "Welcome",
+  "description": "Premium Mobilekit-derived welcome preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {},
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Welcome",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "slides",
+        "message"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "slides": {
+      "type": "story-strip",
+      "props": {
+        "showLabels": true,
+        "items": [
+          {
+            "label": "Discover",
+            "initials": "1"
+          },
+          {
+            "label": "Connect",
+            "initials": "2"
+          },
+          {
+            "label": "Get started",
+            "initials": "3"
+          }
+        ]
+      }
+    },
+    "message": {
+      "type": "summary-banner",
+      "props": {
+        "eyebrow": "Onboarding",
+        "title": "Swipe through the experience",
+        "description": "Use stories/slides for onboarding, promotions or step-by-step introductions."
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

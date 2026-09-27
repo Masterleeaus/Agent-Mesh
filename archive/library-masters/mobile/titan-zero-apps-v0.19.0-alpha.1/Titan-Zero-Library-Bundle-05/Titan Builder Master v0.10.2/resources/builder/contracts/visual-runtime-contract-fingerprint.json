@@ -1,0 +1,12 @@
+{
+  "schema": "titan-builder-visual-runtime-contract-fingerprint-v1",
+  "contractVersion": "1.1",
+  "metadataSchema": "titan://builder/schema/visual-metadata/v1",
+  "schemaSha256": "38f0752dedb7578fde0eda36e7b145879a4fb8a27049664faecdd0b1afa10745",
+  "canonicalSurfaces": [
+    "zero",
+    "go",
+    "hub"
+  ],
+  "authoritative": false
+}

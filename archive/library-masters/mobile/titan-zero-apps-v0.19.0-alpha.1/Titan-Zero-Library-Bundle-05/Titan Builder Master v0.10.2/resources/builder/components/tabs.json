@@ -1,0 +1,15 @@
+{
+  "id": "tabs",
+  "name": "Tabs",
+  "category": "Navigation",
+  "blade": "components.titan-builder.tabs",
+  "authority": "presentation-only",
+  "props": [
+    "tabs",
+    "active"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

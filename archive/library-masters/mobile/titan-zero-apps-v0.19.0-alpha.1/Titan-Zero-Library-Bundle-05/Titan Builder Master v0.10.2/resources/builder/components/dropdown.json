@@ -1,0 +1,14 @@
+{
+  "id": "dropdown",
+  "name": "Dropdown",
+  "category": "Overlay",
+  "blade": "components.titan-builder.dropdown",
+  "authority": "presentation-only",
+  "props": [
+    "align"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

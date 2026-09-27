@@ -1,0 +1,14 @@
+{
+  "id": "mobile.application.install",
+  "name": "mobile.application.install",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "titan-mobile",
+  "required_capability": "mobile.runtime",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

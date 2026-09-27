@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Titan Zero Builder Manifest",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "version",
+    "authority"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "authority": {
+      "const": "presentation-only"
+    }
+  }
+}

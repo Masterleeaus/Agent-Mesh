@@ -1,0 +1,18 @@
+{
+  "id": "radio-group",
+  "name": "Radio Group",
+  "category": "Forms",
+  "blade": "components.titan-builder.radio-group",
+  "authority": "presentation-only",
+  "props": [
+    "name",
+    "label",
+    "options",
+    "value",
+    "inline"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

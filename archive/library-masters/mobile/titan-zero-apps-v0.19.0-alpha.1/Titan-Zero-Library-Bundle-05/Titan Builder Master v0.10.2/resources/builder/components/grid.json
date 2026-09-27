@@ -1,0 +1,15 @@
+{
+  "id": "grid",
+  "name": "Grid",
+  "category": "Layout",
+  "blade": "components.titan-builder.grid",
+  "authority": "presentation-only",
+  "props": [
+    "columns",
+    "gap"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

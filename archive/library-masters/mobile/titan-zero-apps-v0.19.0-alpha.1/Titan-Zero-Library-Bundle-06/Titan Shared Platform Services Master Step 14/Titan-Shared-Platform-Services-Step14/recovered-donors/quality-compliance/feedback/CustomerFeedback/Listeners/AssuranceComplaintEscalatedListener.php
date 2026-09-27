@@ -1,0 +1,4 @@
+<?php
+declare(strict_types=1);namespace Modules\CustomerFeedback\Listeners;
+use Modules\CustomerFeedback\Events\ComplaintEscalated;use Modules\CustomerFeedback\Services\AssuranceBridge;use Modules\TitanZeroAssurance\Services\ExecutionContextStore;use Modules\TitanZeroAssurance\ValueObjects\CompanyExecutionContext;
+final class AssuranceComplaintEscalatedListener {public function __construct(private AssuranceBridge $bridge,private ExecutionContextStore $contexts){}public function handle(ComplaintEscalated $e):void{$t=$e->ticket;$id=(int)$t->company_id;if($id<=0)throw new \LogicException('Escalated complaint requires company_id.');$this->contexts->runWith(new CompanyExecutionContext($id,'system','customer-feedback'),fn()=> $this->bridge->emit('feedback_ticket',$t->id,[],['reason'=>$e->reason,'priority'=>$t->priority],'feedback.complaint_escalated'));}}

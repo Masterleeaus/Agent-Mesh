@@ -1,0 +1,20 @@
+{
+  "id": "form-wizard",
+  "name": "Mobile Form Wizard",
+  "category": "Premium / Forms",
+  "blade": "components.titan-builder.premium.form-wizard",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "steps",
+    "statePath",
+    "showProgress",
+    "nextLabel",
+    "backLabel"
+  ],
+  "actions": []
+}

@@ -1,0 +1,17 @@
+{
+  "id": "number-stepper",
+  "name": "Number stepper",
+  "category": "Forms",
+  "blade": "components.titan-builder.number-stepper",
+  "authority": "presentation-only",
+  "props": [
+    "statePath",
+    "value",
+    "min",
+    "max",
+    "step"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

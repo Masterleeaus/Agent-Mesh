@@ -1,0 +1,144 @@
+{
+  "id": "mobile-contact",
+  "name": "Contact us",
+  "description": "Premium Mobilekit-derived contact us preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {
+    "form": {
+      "name": "",
+      "email": "",
+      "message": ""
+    }
+  },
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Contact us",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "links",
+        "name",
+        "email",
+        "message",
+        "send"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "name": {
+      "type": "mobile-input",
+      "props": {
+        "label": "Name",
+        "statePath": "/form/name"
+      }
+    },
+    "email": {
+      "type": "mobile-input",
+      "props": {
+        "label": "Email",
+        "type": "email",
+        "statePath": "/form/email"
+      }
+    },
+    "message": {
+      "type": "mobile-input",
+      "props": {
+        "label": "Message",
+        "multiline": true,
+        "statePath": "/form/message"
+      }
+    },
+    "send": {
+      "type": "button",
+      "props": {
+        "label": "Prepare enquiry",
+        "variant": "primary"
+      },
+      "on": {
+        "press": {
+          "action": "communications.message.send",
+          "params": {
+            "draft": {
+              "$state": "/form"
+            }
+          }
+        }
+      }
+    },
+    "links": {
+      "type": "social-links",
+      "props": {
+        "label": "Contact channels",
+        "items": [
+          {
+            "label": "Website",
+            "url": "https://example.com"
+          },
+          {
+            "label": "Call",
+            "url": "tel:+61000000000"
+          },
+          {
+            "label": "Email",
+            "url": "mailto:hello@example.com"
+          }
+        ]
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

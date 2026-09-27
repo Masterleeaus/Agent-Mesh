@@ -1,0 +1,16 @@
+{
+  "id": "form-checkbox",
+  "name": "Checkbox or radio",
+  "category": "Forms",
+  "blade": "components.titan-builder.form.checkbox",
+  "authority": "presentation-only",
+  "props": [
+    "name",
+    "label",
+    "type"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Radminly-adapted",
+  "actions": []
+}

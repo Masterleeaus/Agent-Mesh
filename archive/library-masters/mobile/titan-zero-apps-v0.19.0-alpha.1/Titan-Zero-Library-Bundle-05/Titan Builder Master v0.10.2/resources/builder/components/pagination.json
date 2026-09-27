@@ -1,0 +1,16 @@
+{
+  "id": "pagination",
+  "name": "Pagination",
+  "category": "Navigation",
+  "blade": "components.titan-builder.pagination",
+  "authority": "presentation-only",
+  "props": [
+    "current",
+    "total",
+    "baseUrl"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "json-render-adapted",
+  "actions": []
+}

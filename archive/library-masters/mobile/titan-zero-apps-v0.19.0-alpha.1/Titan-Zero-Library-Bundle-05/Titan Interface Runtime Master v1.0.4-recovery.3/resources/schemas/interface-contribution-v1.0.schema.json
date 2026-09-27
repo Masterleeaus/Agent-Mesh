@@ -1,0 +1,840 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://titanzero.local/schemas/interface-contribution.schema.json",
+  "title": "Titan Interface Contribution Contract v1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "extension_key",
+    "context",
+    "domains",
+    "objects",
+    "facets",
+    "views",
+    "actions",
+    "lifecycles",
+    "global_work",
+    "providers",
+    "legacy_data_surfaces"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "extension_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "optional"
+      ],
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "company_id",
+              "user_id",
+              "product_surface",
+              "domain"
+            ]
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "optional": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "branch_id",
+              "workspace_id",
+              "team_id",
+              "device_id",
+              "object_ref",
+              "conversation_id",
+              "journey_id"
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/domain"
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/object"
+      },
+      "uniqueItems": true
+    },
+    "facets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/facet"
+      },
+      "uniqueItems": true
+    },
+    "views": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/view"
+      },
+      "uniqueItems": true
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/action"
+      },
+      "uniqueItems": true
+    },
+    "lifecycles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/lifecycle"
+      },
+      "uniqueItems": true
+    },
+    "global_work": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/globalWork"
+      },
+      "uniqueItems": true
+    },
+    "providers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attention",
+        "decisions",
+        "insights"
+      ],
+      "properties": {
+        "attention": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/provider"
+          },
+          "uniqueItems": true
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/provider"
+          },
+          "uniqueItems": true
+        },
+        "insights": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/provider"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "legacy_data_surfaces": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/legacyDataSurface"
+      },
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+    },
+    "productSurface": {
+      "enum": [
+        "command",
+        "go",
+        "hub",
+        "onboarding"
+      ]
+    },
+    "intentSurface": {
+      "enum": [
+        "home",
+        "ask",
+        "work",
+        "do",
+        "decide",
+        "explore",
+        "insights",
+        "data"
+      ]
+    },
+    "container": {
+      "enum": [
+        "chat",
+        "card",
+        "panel",
+        "drawer",
+        "wizard",
+        "board",
+        "map",
+        "calendar",
+        "timeline",
+        "table",
+        "canvas",
+        "report",
+        "modal",
+        "full-workspace"
+      ]
+    },
+    "domain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "layer",
+        "product_surfaces",
+        "intent_surfaces",
+        "object_refs",
+        "default_view_refs"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "layer": {
+          "enum": [
+            "business",
+            "operational-intelligence",
+            "platform"
+          ]
+        },
+        "product_surfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/productSurface"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "intent_surfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/intentSurface"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "object_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true
+        },
+        "default_view_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 100
+        }
+      }
+    },
+    "object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "data_authority",
+        "scope",
+        "product_surfaces",
+        "customer_safe",
+        "permissions",
+        "facet_refs",
+        "view_refs",
+        "action_refs",
+        "relationship_refs",
+        "offline_mode"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data_authority": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "tenant_key"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "tenant",
+                "global"
+              ]
+            },
+            "tenant_key": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "product_surfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/productSurface"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "customer_safe": {
+          "type": "boolean"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "lifecycle_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/key"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "facet_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true
+        },
+        "view_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true
+        },
+        "action_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true
+        },
+        "relationship_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true
+        },
+        "offline_mode": {
+          "enum": [
+            "online-required",
+            "read-only",
+            "queueable",
+            "local-first"
+          ]
+        }
+      }
+    },
+    "facet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "kind",
+        "applies_to",
+        "container",
+        "product_surfaces",
+        "customer_safe",
+        "permissions"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "summary",
+            "activity",
+            "relationship",
+            "messages",
+            "money",
+            "evidence",
+            "files",
+            "notes",
+            "audit",
+            "automation",
+            "recommendations",
+            "approvals",
+            "data",
+            "custom"
+          ]
+        },
+        "applies_to": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "container": {
+          "$ref": "#/$defs/container"
+        },
+        "product_surfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/productSurface"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "customer_safe": {
+          "type": "boolean"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "renderer_hint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "kind",
+        "applies_to",
+        "product_surfaces",
+        "customer_safe",
+        "permissions",
+        "data_source"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "cards",
+            "table",
+            "board",
+            "calendar",
+            "timeline",
+            "map",
+            "scenario",
+            "canvas",
+            "report",
+            "graph",
+            "feed"
+          ]
+        },
+        "applies_to": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "product_surfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/productSurface"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "customer_safe": {
+          "type": "boolean"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "data_source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "authority",
+            "mode",
+            "reference"
+          ],
+          "properties": {
+            "authority": {
+              "type": "string",
+              "minLength": 1
+            },
+            "mode": {
+              "enum": [
+                "read-model",
+                "capability",
+                "legacy-route"
+              ]
+            },
+            "reference": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "component_hint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "applies_to",
+        "mutating",
+        "capability_ref",
+        "interaction",
+        "product_surfaces",
+        "permissions",
+        "offline_mode",
+        "requires_confirmation"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "applies_to": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "mutating": {
+          "type": "boolean"
+        },
+        "capability_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "interaction": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "ref"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "wizard",
+                    "journey"
+                  ]
+                },
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "product_surfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/productSurface"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "offline_mode": {
+          "enum": [
+            "online-required",
+            "prepare-only",
+            "queueable",
+            "local-safe"
+          ]
+        },
+        "requires_confirmation": {
+          "type": "boolean"
+        },
+        "container_hint": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/container"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "lifecycleState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "label",
+        "terminal"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "terminal": {
+          "type": "boolean"
+        }
+      }
+    },
+    "lifecycleTransition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from",
+        "to",
+        "action_ref"
+      ],
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/key"
+        },
+        "to": {
+          "$ref": "#/$defs/key"
+        },
+        "action_ref": {
+          "$ref": "#/$defs/key"
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "object_ref",
+        "states",
+        "transitions"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "object_ref": {
+          "$ref": "#/$defs/key"
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lifecycleState"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lifecycleTransition"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "globalWork": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tray",
+        "provider_ref",
+        "product_surfaces"
+      ],
+      "properties": {
+        "tray": {
+          "enum": [
+            "continue",
+            "attention",
+            "approvals",
+            "inbox",
+            "sync"
+          ]
+        },
+        "provider_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "product_surfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/productSurface"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "object_refs",
+        "source_ref",
+        "action_refs"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "object_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true
+        },
+        "source_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "legacyDataSurface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "route_name",
+        "object_refs",
+        "permissions"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "route_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "object_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

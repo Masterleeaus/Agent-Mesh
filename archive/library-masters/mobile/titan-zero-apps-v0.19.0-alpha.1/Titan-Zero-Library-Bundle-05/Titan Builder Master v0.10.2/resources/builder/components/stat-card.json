@@ -1,0 +1,17 @@
+{
+  "id": "stat-card",
+  "name": "Stat card",
+  "category": "Data display",
+  "blade": "components.titan-builder.stat-card",
+  "authority": "presentation-only",
+  "props": [
+    "title",
+    "value",
+    "description",
+    "trend"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

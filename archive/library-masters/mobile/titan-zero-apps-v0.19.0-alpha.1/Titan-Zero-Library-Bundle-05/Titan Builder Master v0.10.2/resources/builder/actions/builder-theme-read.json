@@ -1,0 +1,14 @@
+{
+  "id": "builder.theme.read",
+  "name": "builder.theme.read",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "builder",
+  "required_capability": "builder.read",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

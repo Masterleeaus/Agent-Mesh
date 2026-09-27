@@ -1,0 +1,24 @@
+{
+  "slug": "hvac",
+  "profile": "field_home_services",
+  "terminology": [
+    "job",
+    "site"
+  ],
+  "required_evidence_suggestions": [
+    "before_photo",
+    "after_photo",
+    "test_readings"
+  ],
+  "suggested_services": [
+    "HVAC service",
+    "Heating repair",
+    "Cooling installation"
+  ],
+  "compliance_prompts": [
+    "refrigerant/licence requirements where applicable"
+  ],
+  "wizard_overrides": {
+    "engine_logic": "unchanged"
+  }
+}

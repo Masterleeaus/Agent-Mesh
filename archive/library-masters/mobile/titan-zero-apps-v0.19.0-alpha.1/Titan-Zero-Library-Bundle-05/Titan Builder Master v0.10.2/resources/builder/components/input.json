@@ -1,0 +1,17 @@
+{
+  "id": "input",
+  "name": "Input alias",
+  "category": "Forms",
+  "blade": "components.titan-builder.form.input",
+  "authority": "presentation-only",
+  "props": [
+    "name",
+    "label",
+    "type",
+    "hint",
+    "statePath"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero runtime alias"
+}

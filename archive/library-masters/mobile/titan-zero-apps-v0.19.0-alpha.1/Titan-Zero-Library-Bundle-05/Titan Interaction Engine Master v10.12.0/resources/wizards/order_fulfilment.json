@@ -1,0 +1,150 @@
+{
+  "wizard": {
+    "id": "order_fulfilment_v1",
+    "version": "1.0.0",
+    "name": "Order Fulfilment",
+    "capability": "commerce.orders.fulfil",
+    "permissions": {
+      "required_roles": [
+        "staff",
+        "supervisor",
+        "manager",
+        "admin"
+      ]
+    },
+    "metadata": {
+      "category": "commerce",
+      "template_id": "order-fulfilment",
+      "template_version": "1.0.0",
+      "verticals": [
+        "ecommerce",
+        "retail",
+        "wholesale"
+      ],
+      "interfaces": [
+        "chat",
+        "mobile",
+        "tablet",
+        "desktop",
+        "voice"
+      ]
+    },
+    "offline": {
+      "enabled": true,
+      "sync_priority": "normal",
+      "conflict_handling": "prompt_user"
+    },
+    "governance": {
+      "required_context": [
+        "company_id",
+        "user_id",
+        "device_id",
+        "correlation_id"
+      ],
+      "completion_rules": [
+        {
+          "when": {
+            "field": "short_items",
+            "truthy": true
+          },
+          "require_fields": [
+            "exception_owner_id"
+          ],
+          "message_prefix": "Missing required short item"
+        }
+      ]
+    },
+    "steps": [
+      {
+        "id": "order",
+        "title": "Order",
+        "fields": [
+          {
+            "id": "order_id",
+            "label": "Order ID",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "fulfilment_location_id",
+            "label": "Fulfilment location",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "picking",
+        "title": "Picking",
+        "fields": [
+          {
+            "id": "picked_items",
+            "label": "Picked items",
+            "type": "array",
+            "required": true
+          },
+          {
+            "id": "short_items",
+            "label": "Short items",
+            "type": "array",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "dispatch",
+        "title": "Dispatch",
+        "fields": [
+          {
+            "id": "fulfilment_method",
+            "label": "Method",
+            "type": "text",
+            "required": true,
+            "options": [
+              "ship",
+              "pickup",
+              "digital",
+              "service"
+            ]
+          },
+          {
+            "id": "carrier",
+            "label": "Carrier",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "tracking_number",
+            "label": "Tracking number",
+            "type": "text",
+            "required": false
+          },
+          {
+            "id": "dispatched_at",
+            "label": "Dispatched at",
+            "type": "text",
+            "required": true
+          },
+          {
+            "id": "exception_owner_id",
+            "label": "Exception owner",
+            "type": "text",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "declaration",
+        "title": "Review",
+        "fields": [
+          {
+            "id": "declaration_accepted",
+            "label": "Declaration accepted",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

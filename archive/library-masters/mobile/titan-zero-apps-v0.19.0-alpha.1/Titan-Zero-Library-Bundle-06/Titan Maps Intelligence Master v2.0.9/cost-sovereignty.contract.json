@@ -1,0 +1,27 @@
+{
+  "provider_key": "titan-maps-intelligence",
+  "schema_version": "1.0",
+  "enforced_by": "titan.workforce.cost-sovereignty",
+  "resource_types": [
+    "maps"
+  ],
+  "execution_priority": [
+    "device",
+    "byo_api",
+    "customer_service",
+    "titan_entitled",
+    "titan_metered"
+  ],
+  "supports_device": true,
+  "supports_byo": true,
+  "supports_titan_managed": true,
+  "managed_entitlement": "titan.maps.managed",
+  "billing_units": [
+    "map-request",
+    "request"
+  ],
+  "no_hidden_titan_fallback": true,
+  "company_boundary": "company_id",
+  "credential_policy": "secret_reference_or_encrypted_provider_connection",
+  "cost_receipt_required_for_titan_managed": true
+}

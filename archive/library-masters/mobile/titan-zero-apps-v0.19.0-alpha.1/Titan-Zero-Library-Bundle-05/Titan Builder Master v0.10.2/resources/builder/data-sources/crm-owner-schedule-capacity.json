@@ -1,0 +1,19 @@
+{
+  "id": "crm-owner-schedule-capacity",
+  "name": "Owner schedule capacity",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.owner.schedule-capacity",
+  "required_capability": "crm.owner.dashboard",
+  "fields": [
+    "date",
+    "capacity",
+    "booked",
+    "available"
+  ],
+  "surface_compatibility": [
+    "owner"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

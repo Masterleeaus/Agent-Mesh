@@ -1,0 +1,33 @@
+{
+  "id": "finance-overview",
+  "name": "Finance overview",
+  "surface": "admin-dashboard",
+  "theme": "titan-light",
+  "mock_data": "cleaning-business",
+  "description": "Quote, invoice and payment presentation.",
+  "sections": [
+    {
+      "block": "hero",
+      "renderer": "hero",
+      "data": {
+        "eyebrow": "Finance UI",
+        "heading": "Quotes, invoices and payments",
+        "copy": "Financial values are presentation previews until an external Titan Money adapter validates them.",
+        "primary_action": {
+          "label": "Create quote",
+          "intent": "titanmoney.quotes.create"
+        },
+        "secondary_action": {
+          "label": "Issue invoice",
+          "intent": "titanmoney.invoices.issue"
+        }
+      }
+    },
+    {
+      "block": "invoice-list",
+      "renderer": "invoice-list",
+      "title": "Recent invoices",
+      "data_source": "invoices"
+    }
+  ]
+}

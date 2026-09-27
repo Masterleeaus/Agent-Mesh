@@ -1,0 +1,16 @@
+{
+  "id": "field-worker-mobile",
+  "name": "Cleaner mobile job screen",
+  "surface": "worker-mobile",
+  "theme": "cleaning-fresh",
+  "mock_data": "cleaning-business",
+  "description": "Mobile-first job execution screen.",
+  "sections": [
+    {
+      "block": "mobile-job",
+      "renderer": "mobile-job",
+      "data_source": "mobile_job",
+      "tasks_source": "tasks"
+    }
+  ]
+}

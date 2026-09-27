@@ -1,0 +1,23 @@
+{
+  "id": "invoice-total",
+  "name": "Invoice Total",
+  "category": "Premium / Commerce",
+  "blade": "components.titan-builder.premium.invoice-total",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "subtotal",
+    "discount",
+    "tax",
+    "shipping",
+    "paid",
+    "total",
+    "balance",
+    "currency"
+  ],
+  "actions": []
+}

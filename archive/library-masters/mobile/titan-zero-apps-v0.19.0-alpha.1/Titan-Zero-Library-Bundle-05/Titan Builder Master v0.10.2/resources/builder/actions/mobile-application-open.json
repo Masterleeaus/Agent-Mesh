@@ -1,0 +1,14 @@
+{
+  "id": "mobile.application.open",
+  "name": "mobile.application.open",
+  "authority": "presentation-only",
+  "execution": "external-authorized-gateway",
+  "provider": "titan-mobile",
+  "required_capability": "mobile.runtime",
+  "surface_compatibility": [
+    "customer",
+    "field",
+    "owner",
+    "onboarding"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "schema": "titan-apps-package-identity-map-v1",
+  "canonical_components": {
+    "zero": {
+      "canonical_app_id": "titan-apps-zero",
+      "accepted_package_slugs": [
+        "titan-apps-zero"
+      ]
+    },
+    "go": {
+      "canonical_app_id": "titan-apps-go",
+      "accepted_package_slugs": [
+        "titan-go",
+        "titan-apps-go"
+      ]
+    },
+    "hub": {
+      "canonical_app_id": "titan-apps-hub",
+      "accepted_package_slugs": [
+        "titan-hub",
+        "titan-apps-hub"
+      ]
+    },
+    "core": {
+      "canonical_package_id": "titan-apps-core",
+      "accepted_package_slugs": [
+        "titan-apps-core"
+      ]
+    },
+    "builder": {
+      "canonical_package_id": "titan-apps-builder",
+      "accepted_package_slugs": [
+        "titan-builder",
+        "titan-apps-builder"
+      ]
+    },
+    "interface-runtime": {
+      "canonical_package_id": "titan-apps-interface-runtime",
+      "accepted_package_slugs": [
+        "titan-interface-runtime",
+        "titan-apps-interface-runtime"
+      ]
+    },
+    "interaction-engine": {
+      "canonical_package_id": "titan-apps-interaction-engine",
+      "accepted_package_slugs": [
+        "titan-interaction-engine",
+        "titan-apps-interaction-engine"
+      ]
+    },
+    "visual-runtime": {
+      "canonical_package_id": "titan-apps-visual-runtime",
+      "accepted_package_slugs": [
+        "titan-visual-runtime",
+        "titan-apps-visual-runtime"
+      ]
+    }
+  },
+  "rule": "Package slug compatibility must not change canonical component identity or contract ownership."
+}

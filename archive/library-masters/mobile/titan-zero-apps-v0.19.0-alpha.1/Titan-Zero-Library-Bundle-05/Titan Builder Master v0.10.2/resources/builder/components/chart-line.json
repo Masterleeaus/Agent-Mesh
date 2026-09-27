@@ -1,0 +1,17 @@
+{
+  "id": "chart-line",
+  "name": "Line chart",
+  "category": "Charts",
+  "blade": "components.titan-builder.chart.line",
+  "authority": "presentation-only",
+  "props": [
+    "data",
+    "labels",
+    "color",
+    "area"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Radminly-adapted",
+  "actions": []
+}

@@ -1,0 +1,18 @@
+{
+  "id": "entity-card",
+  "name": "Entity card",
+  "category": "Data display",
+  "blade": "components.titan-builder.entity-card",
+  "authority": "presentation-only",
+  "props": [
+    "title",
+    "subtitle",
+    "status",
+    "tone",
+    "avatar",
+    "initials"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

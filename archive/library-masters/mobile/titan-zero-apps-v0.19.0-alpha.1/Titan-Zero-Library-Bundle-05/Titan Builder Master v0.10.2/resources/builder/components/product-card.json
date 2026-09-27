@@ -1,0 +1,26 @@
+{
+  "id": "product-card",
+  "name": "Mobile Product Card",
+  "category": "Premium / Commerce",
+  "blade": "components.titan-builder.premium.product-card",
+  "authority": "presentation-only",
+  "responsive": true,
+  "accessible": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "premium": true,
+  "tier": "premium",
+  "props": [
+    "title",
+    "subtitle",
+    "image",
+    "price",
+    "oldPrice",
+    "rating",
+    "badge",
+    "availability",
+    "actionLabel"
+  ],
+  "actions": [
+    "navigate"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "premium-field-app",
+  "name": "Premium Field App",
+  "description": "Field worker mobile app",
+  "surface": "field",
+  "base_surface_template": "field",
+  "theme": "mobilekit-premium",
+  "premium": true,
+  "source": "Mobilekit-v2.9.1-MIT",
+  "company_boundary": "company_id",
+  "runtime_ownership": "existing Titan surface/runtime",
+  "blocks": [
+    "premium-profile-overview",
+    "premium-messaging-conversation",
+    "premium-system-state"
+  ],
+  "page_presets": [
+    "mobile-login",
+    "mobile-profile",
+    "mobile-chat",
+    "mobile-invoice",
+    "mobile-contact",
+    "mobile-maintenance"
+  ]
+}

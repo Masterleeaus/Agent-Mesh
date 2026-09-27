@@ -1,0 +1,24 @@
+{
+  "slug": "locksmith-security",
+  "profile": "field_home_services",
+  "terminology": [
+    "job",
+    "site"
+  ],
+  "required_evidence_suggestions": [
+    "before_photo",
+    "after_photo",
+    "customer_signoff"
+  ],
+  "suggested_services": [
+    "Lock repair",
+    "Rekeying",
+    "Security installation"
+  ],
+  "compliance_prompts": [
+    "security/licensing and access-control requirements"
+  ],
+  "wizard_overrides": {
+    "engine_logic": "unchanged"
+  }
+}

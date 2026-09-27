@@ -1,0 +1,20 @@
+{
+  "id": "crm-customer-bookings",
+  "name": "Customer bookings",
+  "provider": "crm",
+  "read_only": true,
+  "contract": "crm.customer.bookings",
+  "required_capability": "crm.customer.operations",
+  "fields": [
+    "id",
+    "status",
+    "starts_at",
+    "service",
+    "location_summary"
+  ],
+  "surface_compatibility": [
+    "customer"
+  ],
+  "authority": "read-only-dto",
+  "endpoint_url": null
+}

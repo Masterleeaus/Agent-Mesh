@@ -1,0 +1,14 @@
+{
+  "id": "skeleton",
+  "name": "Skeleton",
+  "category": "Feedback",
+  "blade": "components.titan-builder.skeleton",
+  "authority": "presentation-only",
+  "props": [
+    "lines"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

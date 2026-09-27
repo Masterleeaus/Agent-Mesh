@@ -1,0 +1,104 @@
+{
+  "id": "mobile-faq",
+  "name": "Help & FAQ",
+  "description": "Premium Mobilekit-derived help & faq preview.",
+  "version": "1.1",
+  "surface": "mobile",
+  "authority": "presentation-only",
+  "persistence": {
+    "scope": "message",
+    "historyLimit": 20
+  },
+  "state": {},
+  "root": "shell",
+  "elements": {
+    "shell": {
+      "type": "mobile-app-shell",
+      "props": {
+        "safeArea": true
+      },
+      "children": [
+        "header",
+        "body",
+        "nav"
+      ]
+    },
+    "header": {
+      "type": "mobile-app-header",
+      "props": {
+        "title": "Help & FAQ",
+        "leftLabel": "‹",
+        "rightLabel": "",
+        "tone": "transparent",
+        "sticky": true
+      }
+    },
+    "body": {
+      "type": "stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "faq"
+      ]
+    },
+    "nav": {
+      "type": "mobile-bottom-nav",
+      "props": {
+        "active": "home",
+        "items": [
+          {
+            "id": "home",
+            "label": "Home",
+            "icon": "⌂"
+          },
+          {
+            "id": "activity",
+            "label": "Activity",
+            "icon": "◎"
+          },
+          {
+            "id": "profile",
+            "label": "Profile",
+            "icon": "○"
+          }
+        ]
+      }
+    },
+    "faq": {
+      "type": "nested-list",
+      "props": {
+        "maxDepth": 2,
+        "items": [
+          {
+            "label": "Bookings",
+            "children": [
+              {
+                "label": "How do I reschedule?"
+              },
+              {
+                "label": "Can I add services?"
+              }
+            ]
+          },
+          {
+            "label": "Payments",
+            "children": [
+              {
+                "label": "Which payment methods are supported?"
+              },
+              {
+                "label": "Where can I find invoices?"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "meta": {
+    "premium": true,
+    "source": "Mobilekit-v2.9.1-MIT",
+    "company_boundary": "company_id"
+  }
+}

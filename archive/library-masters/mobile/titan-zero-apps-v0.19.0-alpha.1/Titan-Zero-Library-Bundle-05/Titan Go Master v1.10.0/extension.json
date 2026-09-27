@@ -1,0 +1,142 @@
+{
+  "schema": "titan-extension-v1",
+  "slug": "titan-go",
+  "name": "Titan Apps: Go",
+  "version": "1.10.0",
+  "folder": "TitanGo",
+  "provider": "App\\Extensions\\TitanGo\\System\\TitanGoServiceProvider",
+  "migrations": false,
+  "requires": {
+    "php": ">=8.2",
+    "titan_platform": ">=1.0"
+  },
+  "dependencies": {
+    "titan-apps-core": "*",
+    "titan-interaction-engine": ">=10.6.0",
+    "titan-interface-runtime": "*",
+    "titan-visual-runtime": "*",
+    "titan-field": ">=1.0.12"
+  },
+  "optional_dependencies": {
+    "titan-builder": "*"
+  },
+  "capabilities": [
+    "app.go.surface",
+    "app.go.today",
+    "app.go.jobs",
+    "app.go.schedule",
+    "app.go.inbox",
+    "app.go.job-detail",
+    "app.go.field-evidence-presentation",
+    "app.go.offline-envelope",
+    "app.go.worker-projections",
+    "app.go.suite-runtime",
+    "app.go.presentation-intent",
+    "app.go.interface-execution",
+    "app.go.core-pwa-lifecycle",
+    "app.go.device-shell-state",
+    "app.go.offline-batch-scope",
+    "app.go.governed-action-gateway"
+  ],
+  "titan_apps": {
+    "suite_member": true,
+    "canonical_component": "go",
+    "surface": "go",
+    "ownership": "Titan Apps Suite",
+    "legacy_aliases": [
+      "field",
+      "worker",
+      "titan_go",
+      "titan-go"
+    ]
+  },
+  "public_contracts": [
+    "App\\Extensions\\TitanGo\\System\\Contracts\\GoRuntimeBridgeInterface",
+    "App\\Extensions\\TitanGo\\System\\Contracts\\GoProjectionProviderInterface",
+    "App\\Extensions\\TitanGo\\System\\Contracts\\GoActionIntentGatewayInterface",
+    "App\\Extensions\\TitanGo\\System\\Contracts\\GoOfflineQueueInterface",
+    "App\\Extensions\\TitanGo\\System\\Contracts\\TitanFieldMobileGatewayInterface",
+    "App\\Extensions\\TitanGo\\System\\Contracts\\GoSuiteRuntimeInterface"
+  ],
+  "integrity": {
+    "algorithm": "sha256",
+    "files": {
+      "System/Compatibility/LegacyGoIdentityResolver.php": "fcaf8119422f38819f87baaf5c49e37bef1463057f7f7b0bfb54525fd4dd8ac9",
+      "System/Contracts/GoActionIntentGatewayInterface.php": "42efe58986232b060cbaf2a894207ce920efdcf80c2dbd8744ab57bb323ba9d8",
+      "System/Contracts/GoOfflineQueueInterface.php": "005d32de917677880fd80783a42e54b735a397c4948930427aa1c85a0938e146",
+      "System/Contracts/GoProjectionPolicy.php": "a05434dea042ee6154c092bee5244c830149f14d3b2fd51dbb5d45759e0610f5",
+      "System/Contracts/GoProjectionProviderInterface.php": "1ffe0bb2df9215beb7072e3827a8f63a7980aa7950a82d065369e4a9a25e8af0",
+      "System/Contracts/GoRuntimeBridgeInterface.php": "63cd30fa1ca89159b7b60bc2b402250212e9d1effb56a6374f3e43570ebc7d54",
+      "System/Contracts/GoSuiteRuntimeInterface.php": "e611fae05df0f7630abf318249da22d23ca7c3ed09e9d06a4b5b2e690d52a8ac",
+      "System/Contracts/TitanFieldMobileGatewayInterface.php": "2856c9467f6a15540e0db6baf364af8dcf8bb8781dbb529437dd0ca294b2b3b1",
+      "System/Health/GoHealthCheck.php": "760310a51524b7df890dc8aabb07f4db417ec9da39b0016832840cf9df7aa016",
+      "System/Http/Controllers/GoShellController.php": "1cac61a8e1db2fcf09f3a6b8fb842aecb8137ec770ba21aa237c53cbe035d402",
+      "System/Integration/InteractionEngineGoActionIntentGateway.php": "cdcf8f0e4465ee1516099592c6e3dc4dc9514a76729991f85d272c520b2ff23f",
+      "System/Integration/TitanFieldMobileGateway.php": "ff02aba05cacf156a91f614f23d2b0c8f0ae3e53dd105b9976141dffe19ae2b4",
+      "System/Navigation/GoNavigation.php": "1916742385c82e138c25f6974fdfd0caa18bad8af2e10478dd2cfb100488c7d2",
+      "System/Offline/DeviceQueueEnvelopeFactory.php": "7cb23189beacb2f8f58161bfcf1b65fdc9f0495db85825f68b218a7254681047",
+      "System/Offline/GoOfflineBatchEnvelopeFactory.php": "c77554828c880a53ffd998144d50446609bfe33fd3400d3fa7692996d87e50fb",
+      "System/Offline/GoOfflineOperation.php": "638590ed21871972d2660f780bb8208a55215867b44d4a4f2d6d0b7a0a7f77de",
+      "System/Offline/GoOfflineOperationPolicy.php": "9e5e6bcba9935afb1bc52fad0d0c6c3510638b29cb0f049e6efb6fea3d773f15",
+      "System/Offline/GoOfflineReplayPolicy.php": "50ce2310b2693c0e4ef217b99c72d3191d44b016c984280d10021f06cf803165",
+      "System/Presentation/GoPresentationService.php": "70d1b6fa89032ffb14d400fe00f27a6bf078ff8b2a2d582f7aa6a95f8b3ec4df",
+      "System/Runtime/GoBootstrap.php": "65031889d3442f3f0554e85fa0e38c55426a3a1e469285a39a45adf7089bce54",
+      "System/Runtime/GoRuntimeBridge.php": "7392b3575713dfc9200243fb9672517f9e08fe8a744aa03c873ac3d007b55f82",
+      "System/Runtime/GoRuntimeReadiness.php": "d6d233ba7cd4f748873f1593be1e2b9980f039765a167cce3978062d2386e826",
+      "System/Runtime/GoSuiteRuntime.php": "0424b0c7c941660de2cd5dbee7c33d7543e00d3cc8b0037ebe9f48995e08beb6",
+      "System/TitanGoServiceProvider.php": "97a5cda37a95fb6b26f2541d666ebcd0fec566a46deb0db635c47a50f5047eb4",
+      "config/titan-go.php": "2ae277c2b02bdfcb81297674fb101345888547fde5f1912145bae986077100f0",
+      "docs/ARCHITECTURE.md": "b9fdd08cff5c478a34b75b7ff503f71f4a184925ea9f2394f44d82a2a5e012a0",
+      "docs/COMPATIBILITY.md": "7e71f65dc060a325d50a55ce3083968f7698db6ad4fcdebf3713d63ff64ed662",
+      "docs/PRODUCTION-HARDENING-PASS2.md": "47280ef31f8a0fb80aac1c8e141d1afe29f07dc8e86f04163f39bf68f8177974",
+      "docs/PRODUCTION-HARDENING-PASS3.md": "cadcf92a38d81d20159acd3d6e96baa8b9dec242c40c14270fb4e893350b2eba",
+      "docs/PRODUCTION-HARDENING-PASS4.md": "c6a164a67c65032e241106c879d5763dc425a3efc29ead8959aa9131f8ff40c8",
+      "docs/PRODUCTION-HARDENING-PASS5.md": "f9ff6e27f78035a6a7e15ac735d6ce3c94885082d8c62819d861cf3e970a8673",
+      "docs/PRODUCTION-HARDENING-PASS6.md": "a255450518c6460eb1c8ce291b38f9bce9d43be300c5bdbc4109161bd417be21",
+      "docs/SUITE-WIRING-UPGRADE-v1.10.0.md": "258f81a95137ab678b2a7143f8cf07ab787d540e7ddd408a58e3810904a23410",
+      "docs/SUITE-WIRING-UPGRADE-v1.7.0.md": "3ab12a329fada92ce57dca6d824ce8db9fc01979f73182796ee77048c4f854b5",
+      "docs/SUITE-WIRING-UPGRADE-v1.8.0.md": "e9110a65c6823bc267e11cdeddd22272e751d9974d333105cb167183f35259ba",
+      "docs/SUITE-WIRING-UPGRADE-v1.9.0.md": "873a7a8eefa76c3a308dc3d51ff9bd2e62da5af6333cb6794b97cdbc51bf3420",
+      "docs/UPGRADE-PASS7-COMPANY-ID-BOUNDARY.md": "80c56fb2a13ed560a4f15950c74aad89dfe7b3c3e1a45cf2353ebee80eae865f",
+      "extension.manifest.json": "ab792490431d36c2f01e189f33b308bd736bc08583289b9cc0cd8164c8ad67be",
+      "resources/contracts/go-action-intent.v1.json": "c74a662d03bdb591d9e6eb40c9741648bde0a2378de1d8c73652f2785a046007",
+      "resources/contracts/go-projection.v1.json": "6bbeeded0df9de1bbf048cfaca8cb0bd616955b3a82e061f0b9bc8833dc963fa",
+      "resources/contracts/go-suite-runtime.v1.json": "c0f02636e6f6f10292eb99bf1dc93192334939d30cf076d4a0a000a2b26afca0",
+      "resources/js/go-shell.js": "725e13a52266bd906a120e940d368be8b91f5fd93c963722bebf0b2672f4b3e9",
+      "resources/views/go/shell.blade.php": "b9070fe41aeec0f3608e493897bf5aab99734f9092ddbe558e76807b8f551b23",
+      "routes/web.php": "248291addb77f9a9b3f86e0b84df0bca30b46e086e7c02f756744e1fc42e7577",
+      "tests/go_architecture.php": "20c53d5435d5f1b4d0e29287adc6e37b5e6844c45ea715797b17fb2d1b25747f",
+      "tests/go_pass10_offline_batch_scope.php": "609edf99962abd671b1e12b860b4c3f4b4e0b3ee67181816a6fdacd56c4850de",
+      "tests/go_pass11_governed_action_gateway.php": "a2aa2de9a04a66064d836f742fd30f53e9d08bc65baac459b9e3931fde9a53d2",
+      "tests/go_pass3_lifecycle_bootstrap.php": "cba07a7c9efc67f05f2a3dfc099e9e7056933599e208245d46f986f4af44a68c",
+      "tests/go_pass4_projection_security.php": "51476cb7a800a5a0f112f71e4d1c1c42c326a16b3a27570a1d870a26ad49492a",
+      "tests/go_pass5_projection_boundary.php": "b37f44dbc323fe4642166245a36f471830b41ee48f121f8482e306265aa4bfb2",
+      "tests/go_pass6_offline_envelope_security.php": "604eba05fb574a81b2bca2aa31037415b932e82e2e6ffae4821cdf611d25c729",
+      "tests/go_pass7_company_boundary.php": "856129b196261792dae8776639c3c0842efba401bcb11a0c8e29d816628e4526",
+      "tests/go_pass8_suite_wiring.php": "e25456dd191ecdd9dea5b1ae25456c3f36f007ca40b86f6aabfa7b4dd33f7896",
+      "tests/go_pass9_pwa_device_shell.php": "356871144ca6fe709e1acd6b3b7bf57383e61e219c7b61353a8d21df0eea4e00",
+      "tests/go_production_hardening.php": "abc33d9744aa91a7b10c85d589eb41f9758c0fe9764278d406cbf1ef0714ed47"
+    }
+  },
+  "offline": {
+    "provider_contract": "titan-field.mobile.v1",
+    "max_batch_size": 100,
+    "conflict_version_field": "base_entity_version",
+    "replay_operation_field": "operation"
+  },
+  "production_hardening": {
+    "runtime_readiness": "required-bindings-reported",
+    "provider_mobile_contract": "titan-field.mobile.v1",
+    "projection_guard": "normalized-recursive-json-safe-bounded-projection-rejection",
+    "offline_batch_scope": "single-company+single-actor+single-device",
+    "governed_action_gateway": "interaction-engine-capability-intent+idempotency+trusted-context"
+  },
+  "suite_wiring": {
+    "core": "resolved",
+    "interaction_engine": "direct-public-contract",
+    "interface_runtime": "direct-public-contract",
+    "visual_runtime": "via-interface-runtime",
+    "builder": "via-interface-runtime-catalogue",
+    "company_boundary": "company_id"
+  }
+}

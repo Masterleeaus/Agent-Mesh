@@ -1,0 +1,29 @@
+{
+  "id": "generative-ui-lab",
+  "name": "Generative UI Lab",
+  "surface": "inline-generative-ui",
+  "theme": "titan-light",
+  "mock_data": "cleaning-business",
+  "description": "Interactive flat-spec renderer and editor adapted from json-render patterns.",
+  "authority": "presentation-only",
+  "sections": [
+    {
+      "block": "hero",
+      "renderer": "hero",
+      "eyebrow": "Titan Zero Builder",
+      "title": "Generate interactive UI inside chat",
+      "copy": "Compose safe components from flat JSON specs without arbitrary HTML or business writes.",
+      "primary_action": {
+        "label": "Open UI lab",
+        "intent": "builder.edit"
+      }
+    },
+    {
+      "block": "generative-ui-demo",
+      "renderer": "generative-ui-demo",
+      "title": "Stateful, editable and catalogue-constrained",
+      "copy": "Use state bindings, visibility, repeaters, validation, action intents and JSON Patch editing.",
+      "spec": "chat-jobs"
+    }
+  ]
+}

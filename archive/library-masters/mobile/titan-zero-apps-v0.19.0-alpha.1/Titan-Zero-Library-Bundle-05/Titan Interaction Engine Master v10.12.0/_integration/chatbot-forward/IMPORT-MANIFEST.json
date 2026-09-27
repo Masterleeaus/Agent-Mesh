@@ -1,0 +1,268 @@
+{
+  "source": "Titan-Zero-Chatbot-RUNTIME-WIRING-REPAIR-PASS11-FULL.zip",
+  "target": "Titan-Interaction-Engine",
+  "base_nested_zip": "Titan-Interaction-Engine-v10.5.3.zip",
+  "mode": "forward-integration staged source",
+  "activation": "No existing extension manifest/service provider was modified. Source is merged at its intended root for follow-up namespace/wiring adaptation. Existing source was not overwritten.",
+  "added_count": 64,
+  "collision_count": 0,
+  "added": [
+    {
+      "path": "PHASE-1-OFFLINE-RUNTIME.md",
+      "sha256": "df369ab12f43302bdb23c5d35a48449a40153efc23ca0946231d5717276dc43d"
+    },
+    {
+      "path": "System/Http/Controllers/Api/Sync/ChatbotDeviceController.php",
+      "sha256": "e798791bb05b8661c2fab3e17acaed07b7237f9f55b7db82600d813ba742f1cb"
+    },
+    {
+      "path": "System/Http/Controllers/Api/Sync/ChatbotSyncController.php",
+      "sha256": "ba1be0d76701e01b0c5084bb66cd7888df5adbad81b2b0399a6064d2a40ca7ea"
+    },
+    {
+      "path": "System/Models/ChatbotSyncAcknowledgement.php",
+      "sha256": "c588fe3b94cedb6a15cc44a527a51e2c2fe6e60302d3087ce2db2fd89a73f7c3"
+    },
+    {
+      "path": "System/Models/ChatbotSyncChange.php",
+      "sha256": "fc163e1d24df7ffee9cea5ea061b2036322d3eed0449478d0248c90e669f9b72"
+    },
+    {
+      "path": "System/Models/ChatbotSyncConflict.php",
+      "sha256": "0bc0ae737a37cf233907abb90e76ea578746174d4e0dfe679a72166b5ab845b4"
+    },
+    {
+      "path": "System/Models/ChatbotSyncCursor.php",
+      "sha256": "34ad169bc8f9dad72a18cca1b51172e11b9d67b252bc5ac23aea7929b0726849"
+    },
+    {
+      "path": "System/Models/ChatbotSyncOperation.php",
+      "sha256": "22ade9de59d827b22bbee0a75536010c20136834ac3d68496c9e6e4513717681"
+    },
+    {
+      "path": "System/Models/ChatbotSyncSession.php",
+      "sha256": "513dc70775199dafdf8fd71d6643d76cdc98008187babebdc92182b21e0656b1"
+    },
+    {
+      "path": "System/Models/ChatbotSyncTombstone.php",
+      "sha256": "6630d3efdff885d2f7a5ee0b6da200a3b848513d5fef4aaa488a512e38038e07"
+    },
+    {
+      "path": "System/Observers/Sync/ChatbotSyncObserver.php",
+      "sha256": "5415d4edfdadc69d533f52ff560e8c174e6e30b44355a3afc62e6ca7cca91986"
+    },
+    {
+      "path": "System/Services/Sync/ChatbotSyncService.php",
+      "sha256": "ee5c122582fe0f9d1b5e6517fa5b32036da119b9e3754850da5a249046de723e"
+    },
+    {
+      "path": "System/Services/Sync/SyncEntityRegistry.php",
+      "sha256": "074bf84f857912f935285cf285dc3ff5faaf9a1c9658d23b761f88bdfe7107d5"
+    },
+    {
+      "path": "System/Services/Sync/SyncProtocolException.php",
+      "sha256": "310fe8ad8a8d184f3d453baa55932f2f69a0d1654ac26874e5c46e5a3c458ed0"
+    },
+    {
+      "path": "System/TitanAI/features/temp-chat/System/Features/TempChatFeature.php",
+      "sha256": "c9c96946722c0aec3ab1a97afbc202914a01e0324cd2516d33d0f70742dbc736"
+    },
+    {
+      "path": "System/TitanAI/features/temp-chat/System/Privacy/TemporaryChatPolicy.php",
+      "sha256": "338cb913d394a60fffc6b3bf78b82b4427ab2820ef08428f0c2e51ec13a11e9d"
+    },
+    {
+      "path": "System/TitanAI/features/temp-chat/System/TempChatServiceProvider.php",
+      "sha256": "b02966d1bfa950f55c923f6cc48d2344679e713456393a797d9b459a145c6acf"
+    },
+    {
+      "path": "System/TitanAI/features/temp-chat/config/tempchat.php",
+      "sha256": "f11dabddb25241b331b4be6314f26d1f9f38d585f9dec85d9e9671d7990045c0"
+    },
+    {
+      "path": "System/TitanAI/features/temp-chat/extension.json",
+      "sha256": "deb9d82f26e0c8664cf2795c29b7a8a7a9ee887adb54ab4d502c37f93edc0e34"
+    },
+    {
+      "path": "System/TitanAI/features/temp-chat/module.json",
+      "sha256": "42c31e6ff8cc27c2b9ce2ce62f5ed6c28f7e4c15e3e7829c608ee1cc8b5b3ac1"
+    },
+    {
+      "path": "System/TitanAI/features/temp-chat/resources/views/index.blade.php",
+      "sha256": "dd94fb5e7cd38858c90e7a51bdb1109c2dec71e4e08cd1e431080731d8f2c677"
+    },
+    {
+      "path": "System/TitanAI/features/temp-chat/resources/views/settings/allow-button.blade.php",
+      "sha256": "3c51f486fa68ac23b25f9527a27b5e520e42b9361e57a4ce5f3163de17f14ae9"
+    },
+    {
+      "path": "System/TitanAI/features/temp-chat/resources/views/temp-desc.blade.php",
+      "sha256": "62929482756c0b2149aa9e8fa2409a0131bf02936cd7d14b2380651e0b22308a"
+    },
+    {
+      "path": "System/TitanAI/features/temp-chat/resources/views/temp_chat_button.blade.php",
+      "sha256": "87e1ffcf4c9f7c4521bd93e69b7973531ae8aeb9a39386abdb475e872eedd46b"
+    },
+    {
+      "path": "WORKCORE-PWA-PASS1-SYNC.md",
+      "sha256": "40a7987ad8cdfe41c6471aff13fa8cf1c7f23bdbcb587a1c354b2ceb59e8b2c6"
+    },
+    {
+      "path": "WORKCORE-PWA-PASS3-DEVICE-CAPABILITIES.md",
+      "sha256": "8e385a0e5dde0ac93cff89c5b3ad7c7c647f90aab8e879361ece8b7040bebafc"
+    },
+    {
+      "path": "database/migrations/2026_07_27_000100_create_chatbot_sync_infrastructure.php",
+      "sha256": "49d776dc93bf172875c96d1350db230a8ab677a3a33890e9589cf04a85c6e55d"
+    },
+    {
+      "path": "docs/AGENT-3-OFFLINE-TRUST-INTEGRITY.md",
+      "sha256": "ff9edf818e39307cea43fa6b6e359a9e7923452f8490defb05d94ddc4f340f0c"
+    },
+    {
+      "path": "docs/AGENT-4-OFFLINE-CONTENT-RESILIENCE.md",
+      "sha256": "bd125d31063e46840752d3b7fc30941ca25f16ecfa75a45298d639896655f3b0"
+    },
+    {
+      "path": "docs/SYNC-API-CONTRACT.md",
+      "sha256": "0fd9e02b4ac8d3207b8afa1594e0b6ba9927297e4b7d4c5f362b3c3cefc0833c"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/device-db.js",
+      "sha256": "610c92ced681756749a3159f136799949499dba11b9d7aebde70c8ebf39a6698"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/frontend-local-first.js",
+      "sha256": "93767e21e21be259cd7eeabc7cf8490e9fcf3aabbf3bb5917594b6ee59e58a02"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/install.js",
+      "sha256": "de0880d53a5810e11074d668a4765e739b665b7f9310ba0b176717939dfda63a"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/local-repositories.js",
+      "sha256": "c26128e87bdd22219b41349eee71a85d2c8c073d6b7bc5f70738b0833034fbf1"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/local-search.js",
+      "sha256": "ffd8b1e87c51b34de258c450d9aa81f33ed1e0393f83517af4991e763603793f"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/local-services.js",
+      "sha256": "52fb468f52033086510b1613bdcc3bf4629b4cd701f8998cb78cd664e1dcd4e0"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/local-ui-bridge.js",
+      "sha256": "625cdfed4e60a87c805106c829aa7e0b772c2be8aacb975d40610ce2d8b357a7"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/offline-store.js",
+      "sha256": "7330a4ede8ec79e3eb1d66966ffa166573cb172ccbaeee199378f0904bf04d1e"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/offline.html",
+      "sha256": "a0f37279621ff89aa255d2c11b4b3fa26bd42eaf2b48114b73cb7fe4e16af8b1"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/outbox.js",
+      "sha256": "20c030e7aeab623bea91064498d6dba1c36ad3d1174ab54d6bbd68769fa2761b"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/pwa.css",
+      "sha256": "ee2b36fc67461c035444829f38d820b558a4c97d6c43133407aa0bcf12101eaf"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/register.js",
+      "sha256": "016c27fe4299cb36c5b1f6ce399b1066642e5e7fa6f501a8fc981f20b87fa529"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/runtime.js",
+      "sha256": "25e4ff88f53da348195e8efab26f377862838dd3d2d55d9132d031ffd35a164f"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/security-integrity.js",
+      "sha256": "b02596683671ba46fb1ce4165e6c0cdef2cc2eeba84b9a58dc5b192401910504"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/settings-runtime.js",
+      "sha256": "9011a583552a3832734929f877396490d800b61d442e586dd7e00ff7e671d290"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/sync/adapter.js",
+      "sha256": "c47cfaae43610680bab5f1c7df89007cad88980d35994d043eb39f0244e46c94"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/sync/engine.js",
+      "sha256": "d9bdd65280ddb9d2428b8a9858a0e0788ce27bea2b634b966b540658f96df68d"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/client.js",
+      "sha256": "e85260d04e0577cc161adb6aeb4f0cf6ebcd241e58dd97ba21824bda4891dfbc"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/contracts.js",
+      "sha256": "3315ec898fae2bb3f36c9a27dd7d7413eeb21f3abd180cfd67837be8d292e532"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/database.js",
+      "sha256": "41f32132f25ad66cb848f63dc38c5bc8e7f407090f393b77c79ea5960ee3367e"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/device-capabilities.js",
+      "sha256": "ed047b5fee6feb29306cb8ca168e071ad33c7add937c20344c208610bb3ee5b2"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/field-workspace.js",
+      "sha256": "4cf2f873709adc3bc363cc31c1df6691ef19faf43f13ce5d38e409e0dbae54b2"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/hardening.js",
+      "sha256": "b4c0c63a0a01928b5233eca889949ca90aebc9a5706b1863fd5426e724af08c6"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/network.js",
+      "sha256": "09bc193fcf75a386b4b5b9f29d61b5be6a72eac58aa9a9fb621da29ba9a7f6e9"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/offline-packs.js",
+      "sha256": "d0398f0c8d5f43d158353732b32895ba25bad13cf808c1f0f9cc4138589f8537"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/readiness.js",
+      "sha256": "7df9fea10474bfa8e8ed141eca3618e097f5a00058a38bcca4bcab44bcff47e5"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/resilience-ui.js",
+      "sha256": "00bae9d417aac0c8fb2f3de57270d64dd7725db4301d87511dcc61e3b1e14471"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/self-tests.js",
+      "sha256": "3152f845aa70a6bd0d64882580892035fedd8da03ac5a722be1d9675c9d58817"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/storage.js",
+      "sha256": "45a811bc470cfd1ccfc9290b4daf6a528b2320a5fad2b10f0ef8ac3fdf172ed9"
+    },
+    {
+      "path": "resources/pwa/chatbot-pwa/workcore/ui.js",
+      "sha256": "1a6bc1844a3d934e7088db71ed2e3298284534b0ec5565aaf6b75c9159228311"
+    },
+    {
+      "path": "tests/Contract/OfflineIntegrityPass8Test.js",
+      "sha256": "b45d8b2d606608a13fe2328dc0c5c4fd70af310d8b519d4b2b0173f11d23ef8f"
+    },
+    {
+      "path": "tests/Feature/ChatbotSyncSecurityContractTest.php",
+      "sha256": "45693eb5cac11d6bd57e4b4f9227a722611e5c6508bb5012d4851be7b238533d"
+    },
+    {
+      "path": "tests/Feature/Sync/SyncContractTest.php",
+      "sha256": "1f32d4e4d222b38f0c80afebd1c0c136237d6ed75700752a028dd7d00dae6880"
+    },
+    {
+      "path": "tests/JavaScript/sync-engine.test.js",
+      "sha256": "c5c57adb7d77622ad5a04521a130667879d33adce0cfa6d34462faa50634e016"
+    }
+  ],
+  "collisions": []
+}

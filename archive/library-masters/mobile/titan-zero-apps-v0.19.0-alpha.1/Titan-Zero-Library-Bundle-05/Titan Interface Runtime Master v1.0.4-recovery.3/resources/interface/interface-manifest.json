@@ -1,0 +1,72 @@
+{
+  "$schema": "../schemas/interface-contribution-v1.1.schema.json",
+  "schema_version": "1.1",
+  "extension_key": "titan-interface-runtime",
+  "context": {
+    "required": [
+      "company_id",
+      "user_id",
+      "product_surface",
+      "domain"
+    ],
+    "optional": [
+      "branch_id",
+      "workspace_id",
+      "team_id",
+      "device_id",
+      "object_ref",
+      "conversation_id",
+      "journey_id"
+    ]
+  },
+  "domains": [
+    {
+      "key": "interface-runtime",
+      "label": "Interface Runtime",
+      "layer": "platform",
+      "product_surfaces": [
+        "command"
+      ],
+      "intent_surfaces": [
+        "home",
+        "insights",
+        "data",
+        "decide"
+      ],
+      "object_refs": [],
+      "default_view_refs": [],
+      "priority": 10
+    }
+  ],
+  "objects": [],
+  "facets": [],
+  "views": [],
+  "actions": [],
+  "relationships": [],
+  "lifecycles": [],
+  "global_work": [
+    {
+      "tray": "sync",
+      "provider_ref": "interaction-engine-sync",
+      "product_surfaces": [
+        "command",
+        "go",
+        "hub",
+        "onboarding"
+      ]
+    }
+  ],
+  "providers": {
+    "attention": [
+      {
+        "key": "interaction-engine-sync",
+        "object_refs": [],
+        "source_ref": "interaction-engine-sync",
+        "action_refs": []
+      }
+    ],
+    "decisions": [],
+    "insights": []
+  },
+  "legacy_data_surfaces": []
+}

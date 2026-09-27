@@ -1,0 +1,14 @@
+{
+  "id": "table",
+  "name": "Table shell",
+  "category": "Data display",
+  "blade": "components.titan-builder.table",
+  "authority": "presentation-only",
+  "props": [
+    "caption"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "TitanOperationsUI",
+  "actions": []
+}

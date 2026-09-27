@@ -1,0 +1,21 @@
+{
+  "name": "ComplianceIQ",
+  "alias": "complianceiq",
+  "description": "Audit & compliance reporting with immutable evidence logs.",
+  "keywords": [
+    "worksuite",
+    "compliance",
+    "audit",
+    "logs"
+  ],
+  "priority": 10,
+  "providers": [
+    "Modules\\ComplianceIQ\\Providers\\ComplianceIQServiceProvider",
+    "Modules\\ComplianceIQ\\Providers\\RouteServiceProvider"
+  ],
+  "files": [],
+  "active": 1,
+  "canonical_domain": "compliance_reporting",
+  "audit_source": "TitanZeroAssurance",
+  "version": "0.6.0"
+}

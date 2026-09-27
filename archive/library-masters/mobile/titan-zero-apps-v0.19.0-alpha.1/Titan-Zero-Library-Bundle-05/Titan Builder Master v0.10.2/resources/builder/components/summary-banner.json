@@ -1,0 +1,16 @@
+{
+  "id": "summary-banner",
+  "name": "Summary banner",
+  "category": "Content",
+  "blade": "components.titan-builder.summary-banner",
+  "authority": "presentation-only",
+  "props": [
+    "eyebrow",
+    "title",
+    "description",
+    "tone"
+  ],
+  "responsive": true,
+  "accessible": true,
+  "source": "Titan Zero adaptive generative UI v0.3"
+}

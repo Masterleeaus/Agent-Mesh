@@ -1,0 +1,4 @@
+<?php
+declare(strict_types=1);namespace Modules\CustomerFeedback\Listeners;
+use Modules\CustomerFeedback\Events\ComplaintReceived;use Modules\CustomerFeedback\Services\AssuranceBridge;use Modules\TitanZeroAssurance\Services\ExecutionContextStore;use Modules\TitanZeroAssurance\ValueObjects\CompanyExecutionContext;
+final class AssuranceComplaintReceivedListener {public function __construct(private AssuranceBridge $bridge,private ExecutionContextStore $contexts){}public function handle(ComplaintReceived $e):void{$t=$e->ticket;$id=(int)$t->company_id;if($id<=0)throw new \LogicException('Complaint requires company_id.');$this->contexts->runWith(new CompanyExecutionContext($id,'system','customer-feedback'),fn()=> $this->bridge->emit('feedback_ticket',$t->id,[],['priority'=>$t->priority,'job_id'=>$t->job_id],'feedback.complaint_received'));}}

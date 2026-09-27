@@ -1,0 +1,18 @@
+{
+  "id": "property-professional",
+  "name": "Property Professional",
+  "mode": "light",
+  "tokens": {
+    "primary": "#1d4ed8",
+    "accent": "#7c3aed",
+    "success": "#166534",
+    "warning": "#a16207",
+    "danger": "#b91c1c",
+    "background": "#f8fafc",
+    "surface": "#ffffff",
+    "surface_muted": "#e2e8f0",
+    "border": "#cbd5e1",
+    "text": "#0f172a",
+    "text_muted": "#64748b"
+  }
+}

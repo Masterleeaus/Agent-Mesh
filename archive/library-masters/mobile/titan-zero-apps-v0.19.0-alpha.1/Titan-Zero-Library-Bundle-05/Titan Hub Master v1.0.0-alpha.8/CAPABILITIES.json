@@ -1,0 +1,85 @@
+{
+  "extension": "titan-hub",
+  "surface": "hub",
+  "authority": "presentation",
+  "capabilities": [
+    {
+      "id": "hub.home.read",
+      "mode": "read",
+      "projection": "customer-safe"
+    },
+    {
+      "id": "hub.services.read",
+      "mode": "read",
+      "projection": "customer-safe"
+    },
+    {
+      "id": "hub.service-request.create",
+      "mode": "intent",
+      "governed": true
+    },
+    {
+      "id": "hub.jobs.read",
+      "mode": "read",
+      "projection": "customer-safe"
+    },
+    {
+      "id": "hub.bookings.read",
+      "mode": "read",
+      "projection": "customer-safe"
+    },
+    {
+      "id": "hub.booking-change.request",
+      "mode": "intent",
+      "governed": true
+    },
+    {
+      "id": "hub.quotes.read",
+      "mode": "read",
+      "projection": "customer-safe"
+    },
+    {
+      "id": "hub.quote.approve",
+      "mode": "intent",
+      "governed": true
+    },
+    {
+      "id": "hub.invoices.read",
+      "mode": "read",
+      "projection": "customer-safe"
+    },
+    {
+      "id": "hub.documents.read",
+      "mode": "read",
+      "projection": "customer-safe"
+    },
+    {
+      "id": "hub.profile.read",
+      "mode": "read",
+      "projection": "customer-safe"
+    },
+    {
+      "id": "hub.interact",
+      "mode": "intent",
+      "backend": "interaction-engine"
+    },
+    {
+      "id": "hub.customer-assistant.message",
+      "mode": "intent",
+      "backend": "interaction-engine",
+      "governed": true
+    },
+    {
+      "id": "hub.presentation.compose",
+      "mode": "presentation",
+      "backend": "interface-runtime",
+      "builder_catalogue": true,
+      "visual_runtime": true
+    },
+    {
+      "id": "hub.suite.readiness",
+      "mode": "read",
+      "authority": "app-infrastructure"
+    }
+  ]
+}
