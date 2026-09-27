@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - browser-node-convergence-v2
-      - browser-node-postmerge-prune
     paths:
       - 'apps/browser/**'
       - '.github/workflows/browser-node-ci.yml'
