@@ -1,0 +1,1 @@
+agent/796 reconciliation complete. Main wins stale conflicts; no superseded implementation restored.
