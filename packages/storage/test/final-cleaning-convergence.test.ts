@@ -1,4 +1,4 @@
-// Agent 4 Pass 4: rerun against Agent 1 runtime recovery fixes.
+// Agent 4 Pass 5: combined Agent 1 runtime recovery + Agent 2 independent verification.
 import { readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -34,7 +34,7 @@ async function seedCleaningCompany(storage: ReturnType<typeof createSqliteStorag
 }
 
 describe("Titan final cleaning convergence", () => {
-  it("carries 'Emma is sick tomorrow. Sort it out.' through persistent work, governed execution, verification and evidence", async () => {
+  it("carries 'Emma is sick tomorrow. Sort it out.' through persistent work, governed execution, independent verification and evidence", async () => {
     const directory = await mkdtemp(join(tmpdir(), "titan-final-convergence-"));
     const databasePath = join(directory, "titan.db");
     let storage = createSqliteStorage(databasePath);
@@ -82,13 +82,16 @@ describe("Titan final cleaning convergence", () => {
           capabilities: ["visit.reassign"],
           async execute(request: any) {
             const candidate = await storage.query<{ id: string }>("SELECT id FROM users WHERE company_id=$1 AND id=$2 AND role='tech'", [request.company_id, request.input.assigned_user_id]);
-            if (!candidate.rows[0]) return { verified: false, verification: "replacement-not-in-company" };
+            if (!candidate.rows[0]) throw new Error("replacement-not-in-company");
             await storage.query("UPDATE visits SET assigned_user_id=$3, updated_at=CURRENT_TIMESTAMP WHERE company_id=$1 AND id=$2", [request.company_id, request.input.visit_id, request.input.assigned_user_id]);
+            return { external_ref: request.input.visit_id, acknowledgement: true };
+          },
+          async verify(_raw: any, request: any) {
             const observed = await storage.query<{ assigned_user_id: string }>("SELECT assigned_user_id FROM visits WHERE company_id=$1 AND id=$2", [request.company_id, request.input.visit_id]);
             return {
               verified: observed.rows[0]?.assigned_user_id === request.input.assigned_user_id,
-              external_ref: request.input.visit_id,
-              verification: "canonical-visit-re-read",
+              observed: { visit_id: request.input.visit_id, assigned_user_id: observed.rows[0]?.assigned_user_id ?? null },
+              source: "canonical-visit-reread",
             };
           },
         }],
@@ -133,6 +136,8 @@ describe("Titan final cleaning convergence", () => {
               company_id,
               work_id,
               agent_id,
+              run_id,
+              decision_id: decision.decision_id,
               capability: capabilityName,
               idempotency_key,
               authority: { status: "approved", decision_id: decision.decision_id },
@@ -165,8 +170,13 @@ describe("Titan final cleaning convergence", () => {
       const changedVisit = await storage.query<{ assigned_user_id: string }>("SELECT assigned_user_id FROM visits WHERE company_id=$1 AND id=$2", ["company-a", "visit-1"]);
       expect(changedVisit.rows[0]?.assigned_user_id).toBe("sarah");
 
-      const evidence = await storage.query<{ id: string }>("SELECT id FROM evidence WHERE company_id=$1 AND subject_type='execution'", ["company-a"]);
+      const evidence = await storage.query<{ id: string; payload: string }>("SELECT id,payload FROM evidence WHERE company_id=$1 AND subject_type='execution'", ["company-a"]);
       expect(evidence.rows).toHaveLength(1);
+      const executionEvidence = JSON.parse(evidence.rows[0].payload);
+      expect(executionEvidence.run_id).toBe("run-cover-emma");
+      expect(executionEvidence.decision_id).toBe("decision-cover-emma");
+      expect(executionEvidence.verification?.verified).toBe(true);
+      expect(executionEvidence.verification?.source).toBe("canonical-visit-reread");
       await workforce.complete("company-a", work.work_id, "zero-ops", { replacement: "sarah", visit_id: "visit-1" }, [evidence.rows[0].id]);
 
       expect(await workforceStore.get("company-b", work.work_id)).toBeUndefined();
