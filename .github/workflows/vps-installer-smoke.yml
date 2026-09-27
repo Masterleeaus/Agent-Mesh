@@ -5,6 +5,7 @@ on:
     paths:
       - 'scripts/vps/**'
       - 'infra/compose.vps.yml'
+      - 'infra/vps.env.example'
       - 'apps/web/Dockerfile'
       - 'apps/web/next.config.mjs'
       - 'services/worker/Dockerfile'
@@ -17,10 +18,12 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Validate installer and Compose
+      - name: Validate VPS scripts and Compose
         shell: bash
         run: |
           bash -n scripts/vps/install-vps.sh
+          bash -n scripts/vps/backup-vps.sh
+          bash -n scripts/vps/update-vps.sh
           cp infra/vps.env.example .env.vps
           sed -i 's/GENERATED_BY_INSTALLER/local-smoke-test-only/g' .env.vps
           TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
