@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Titan Code - AI Plan Runner",
-  "version": "2.11.9",
-  "description": "Titan Code plans, verifies and coordinates governed AI-assisted coding work across providers, repositories and local runtimes.",
+  "name": "Titan Zero Browser Node",
+  "version": "0.1.0",
+  "description": "Governed browser execution node for Titan Zero field-service operations, workforce tasks, evidence capture and verified outcomes.",
   "permissions": [
     "storage",
     "tabs",
@@ -20,7 +20,7 @@
     "default_path": "src/sidebar/sidebar.html"
   },
   "action": {
-    "default_title": "Titan Code - Open Sidebar",
+    "default_title": "Titan Zero Browser Node",
     "default_icon": {
       "16": "public/icons/icon-16.png",
       "32": "public/icons/icon-32.png",
