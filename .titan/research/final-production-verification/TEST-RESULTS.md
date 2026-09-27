@@ -28,9 +28,37 @@ The run used the Agent 4 acceptance harness together with the exact relevant Age
 5. Two workspace packages are currently named `@titan-zero/workforce`: `services/workforce` and `packages/workforce`. Both now execute under `pnpm --filter @titan-zero/workforce test`. This duplication must be explicitly converged rather than treated as two canonical workforce implementations.
 6. Root `pnpm-lock.yaml` remains stale relative to the root `better-sqlite3` declaration, so normal frozen-lockfile CI remains a release blocker. The focused verifier intentionally uses `--no-frozen-lockfile` so architecture tests can execute.
 
+## Pass 5 — Agent 2 independent-verification convergence
+
+Focused workflow: `Agent 4 Final Production Verification`, run `36301767065`.
+
+This run combined the exact relevant Agent 1 PR #801 runtime/workforce recovery changes with the exact Agent 2 PR #799 ExecutionGateway, MCP and Browser Node changes. The Agent 4 cleaning harness was corrected so native execution returns an acknowledgement only and a separate verifier independently re-reads canonical visit state.
+
+### Passed
+
+- Cleaning-business E2E with independent canonical post-action verification: **1/1 passed**.
+- `services/workforce`: **4/4 passed**.
+- duplicate/older `packages/workforce`: **14/14 passed**.
+- persistent Agent Runtime + SQLite RunStore: **14/14 passed**.
+- hardened Agent 2 ExecutionGateway/MCP/Browser contract suite: **8/8 passed**.
+
+### Agent 2 invariants proven
+
+- A provider acknowledgement cannot verify itself; failed independent verification records `OUTCOME_UNVERIFIED` evidence.
+- MCP acknowledgement without a separate resource verifier fails closed.
+- MCP discovery remains descriptive and does not grant authority.
+- Browser Node remains company/domain scoped and external page content remains untrusted.
+- Concurrent identical execution requests invoke the provider once; same idempotency key with a conflicting payload fails closed.
+- Execution evidence now carries `run_id`, `decision_id`, a request digest and verifier output.
+
+### Important boundary
+
+This pass certifies PR #799's contract semantics when composed with the current converged SQLite/runtime/workforce path. It does **not** certify durable atomic idempotency across process crashes, live MCP/Browser/native production providers, or restart in the middle of an already-effected provider mutation; PR #799 explicitly leaves those as remaining gaps.
+
 ### Not yet production-certified
 
-- Agent 1 PR #801 is still a separate draft at the time of this proof; current main does not yet contain its runtime/workforce fixes.
-- Agent 2 PR #799 introduces stricter provider-independent verification and stronger idempotency semantics; this focused run used current-main ExecutionGateway and therefore does not certify #799 yet.
+- Agent 1 PR #801 remains a separate draft until merged.
+- Agent 2 PR #799 remains a separate draft until merged.
+- Exactly one canonical workforce implementation still needs to be selected/converged.
 - Zero chat -> persistent runtime production composition is still being completed separately.
-- Live native/MCP/Browser Node provider bindings, durable cross-process idempotency, restart during consequential execution, and full SQLite-only application boot remain release gates.
+- Live native/MCP/Browser Node provider bindings, durable cross-process idempotency, restart during consequential execution, frozen-lockfile repair, and full SQLite-only application boot remain release gates.
