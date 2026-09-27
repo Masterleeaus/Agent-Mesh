@@ -49,6 +49,11 @@ export const bindCompanyBoundary = bindCompanyBoundaryRaw as <T extends Record<s
 ) => Readonly<T & { company_id: string; company_boundary_stage: string }>;
 
 export {
+  createZeroInteraction,
+  ZERO_INTERACTION_SCHEMA,
+} from "./ported/titan-runtime/interaction-engine/zero-interaction.js";
+
+export {
   createDecisionEngineEnvelope,
   runtimeDescriptor as decisionEngineDescriptor,
   RUNTIME_ID as DECISION_ENGINE_RUNTIME_ID,
