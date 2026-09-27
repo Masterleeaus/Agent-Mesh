@@ -2265,8 +2265,8 @@
     },
     {
       "path": "src/lib/service-worker.js",
-      "bytes": 260721,
-      "sha256": "f5376210ec016e3b0a7452393ef5b36952896a2e0fdd7bea955d6053496e2f86"
+      "bytes": 260834,
+      "sha256": "4f77c5e367fb50ef366f042c2e7b59be13b62df509bf38c589d7ff3940f6e782"
     },
     {
       "path": "src/lib/titan-zero-host-integration.js",
@@ -5300,8 +5300,8 @@
     },
     {
       "path": "tools/prune-browser-node-devpacks.mjs",
-      "bytes": 1698,
-      "sha256": "aff6b1dacee5c6d08b14bf6e4aca4196051761acdbab32bbbad30d737aabcbaa"
+      "bytes": 2329,
+      "sha256": "8156c164f7061a58280e892d03a47a78e6c484391ccb6d3f25f63c49095a601e"
     },
     {
       "path": "tools/test-worker-vm-preload.cjs",
