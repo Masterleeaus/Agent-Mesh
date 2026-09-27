@@ -1,36 +1,39 @@
-# Titan Code — Install Ready Build
+# Titan Zero Browser Node — Install
 
-This package is a Chrome/Chromium Manifest V3 extension build of Titan Code v2.11.9 with the current Agent Mesh Manager control-plane consolidation applied.
+This folder contains the Chrome/Chromium Manifest V3 Browser Node for Titan Zero.
+
+The extension is being converged from the private Titan Code development tool into a Titan Zero runtime surface for governed browser work, workforce execution, evidence capture and verified outcomes.
 
 ## Install in Chrome / Edge / Brave
 
-1. Extract this ZIP to a permanent folder. Do not run the extension directly from inside the ZIP.
+1. Use the `apps/browser` folder from the repository, or extract a packaged Browser Node build to a permanent folder.
 2. Open the browser extension manager:
    - Chrome: `chrome://extensions`
    - Edge: `edge://extensions`
    - Brave: `brave://extensions`
 3. Enable **Developer mode**.
 4. Choose **Load unpacked**.
-5. Select the extracted folder that contains `manifest.json`.
-6. Pin Titan Code if you want the sidebar/action available at all times.
+5. Select the folder containing `manifest.json`.
+6. Pin **Titan Zero Browser Node** if you want quick access to its side panel.
 
-## Upgrade an existing unpacked Titan Code installation
+## Upgrade an existing unpacked installation
 
-1. Stop active Titan Code plans before replacing files.
-2. Keep a backup of the existing extension folder if you need rollback.
-3. Replace the installed unpacked folder with this extracted build, preserving the folder location where practical.
-4. Open the extension manager and press **Reload** on Titan Code.
-5. Open Titan Code and run Diagnostics before resuming active plans.
+1. Avoid replacing files while a governed browser execution is actively running.
+2. Keep a copy of the old unpacked folder if rollback is required.
+3. Replace/update the extension source folder.
+4. Open the extension manager and choose **Reload** for Titan Zero Browser Node.
+5. Open the side panel and check connection/runtime health before resuming work.
 
-Browser extension storage is managed by the browser profile; replacing the unpacked source folder does not intentionally clear extension storage. Do not use **Remove** unless you intend to uninstall the extension.
+Browser extension storage belongs to the browser profile. Replacing the unpacked source folder does not intentionally clear extension storage. Removing the extension may remove local extension state.
 
-## Build identity
+## Product boundary
 
-- Product: Titan Code
-- Extension version: 2.11.9
-- Prepared generation: G3 candidate
-- Live baseline used for consolidation: Generation 2
-- Live baseline SHA256: `64bf43a24d63387ffaa3e72103bc8d8a258293a8cc88ef1a4ef324ab8f0d6587`
-- Live Delta Queue observed empty before packaging.
+Browser Node is an execution node for Titan Zero. It is not a second authority engine, second workforce, second memory system or second source of truth.
 
-See `docs/MANAGER-CONTROL-PLANE-CONSOLIDATION.md` for the Manager changes included in this build.
+Canonical tenant identity is `company_id`. Browser actions must remain inside Titan's decision, risk, authority, execution and evidence boundaries.
+
+See `TITAN-ZERO-BROWSER-NODE.md` for the canonical scope and convergence rules.
+
+## Current conversion status
+
+The runtime contains substantial proven browser, recovery and local/browser-intelligence code inherited from Titan Code. Conversion work is progressively removing development-only product surfaces and aligning the remaining runtime with Titan Zero field-service workflows, Zero/Go/Hub surfaces, Titan Trust and verified outcomes.
