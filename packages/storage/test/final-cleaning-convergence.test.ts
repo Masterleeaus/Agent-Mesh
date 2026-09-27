@@ -1,3 +1,4 @@
+// Agent 4 Pass 4: rerun against Agent 1 runtime recovery fixes.
 import { readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
