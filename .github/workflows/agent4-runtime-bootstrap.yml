@@ -1,0 +1,41 @@
+name: Agent 4 Production Runtime Bootstrap
+
+on:
+  pull_request:
+    paths:
+      - "services/workforce/src/production-runtime-bootstrap.ts"
+      - "services/workforce/src/production-runtime-bootstrap.test.ts"
+      - "services/workforce/src/runtime-adapter.ts"
+      - "services/workforce/src/index.ts"
+      - "services/workforce/src/sqlite-store.ts"
+      - "packages/runtime/agent-runtime/**"
+      - "packages/storage/**"
+      - ".github/workflows/agent4-runtime-bootstrap.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Typecheck canonical workforce
+        run: pnpm --dir services/workforce typecheck
+      - name: Production runtime bootstrap acceptance
+        run: pnpm --dir services/workforce exec tsx --test src/production-runtime-bootstrap.test.ts
+      - name: Workforce regression suite
+        run: pnpm --dir services/workforce test
+      - name: Persistent runtime regression suite
+        run: node --test packages/runtime/agent-runtime/tests/agent-runtime.test.mjs packages/runtime/agent-runtime/sqlite-run-store.test.mjs
