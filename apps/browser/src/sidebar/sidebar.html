@@ -2,25 +2,25 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Titan Code - Plan Runner</title>
+    <title>Titan Zero Browser Node</title>
     <link rel="stylesheet" href="sidebar.css">
 </head>
 <body>
     <div id="nav-backdrop" class="nav-backdrop" hidden></div>
 
-    <aside id="nav-drawer" class="nav-drawer" aria-label="Titan Code navigation" aria-hidden="true">
+    <aside id="nav-drawer" class="nav-drawer" aria-label="Titan Zero Browser Node navigation" aria-hidden="true">
         <div class="nav-drawer-header">
             <div class="drawer-brand">
-                <img class="drawer-logo" src="../../public/branding/codee-logo.png" alt="Titan Code logo">
+                <img class="drawer-logo" src="../../public/branding/titan-zero-browser-node.svg" alt="Titan Zero Browser Node logo">
                 <div class="drawer-brand-copy">
-                    <strong>TITAN CODE</strong>
-                    <span>Workspace</span>
+                    <strong>TITAN ZERO</strong>
+                    <span>Browser Node</span>
                 </div>
             </div>
             <button id="nav-close-btn" class="icon-btn nav-close-btn" type="button" title="Close menu" aria-label="Close menu">×</button>
         </div>
 
-        <nav id="codee-nav-links" class="nav-links" aria-label="Titan Code pages">
+        <nav id="codee-nav-links" class="nav-links" aria-label="Titan Zero Browser Node navigation">
             <div class="nav-group-label">Workspace</div>
             <button class="nav-link active" type="button" data-fallback-runner="true" aria-current="page"><span>▶</span><span>Runner</span></button>
         </nav>
@@ -30,10 +30,10 @@
         <header class="app-header">
             <button id="menu-btn" class="header-menu-btn" type="button" title="Open menu" aria-label="Open menu" aria-expanded="false" aria-controls="nav-drawer">☰</button>
             <div class="brand-block">
-                <img class="brand-logo" src="../../public/branding/codee-logo.png" alt="Titan Code logo">
+                <img class="brand-logo" src="../../public/branding/titan-zero-browser-node.svg" alt="Titan Zero Browser Node logo">
                 <div class="brand-copy">
-                    <h1>TITAN CODE</h1>
-                    <p id="page-context">Conversation-aware plan orchestration</p>
+                    <h1>TITAN ZERO</h1>
+                    <p id="page-context">Governed browser execution</p>
                 </div>
             </div>
             <div class="header-menu-spacer" aria-hidden="true"></div>
@@ -45,17 +45,17 @@
                     <div class="section-heading-row">
                         <div>
                             <h2>🏠 Dashboard</h2>
-                            <p class="section-subtitle">Canonical project, plan, verification and dependency status. Dashboard data is read-only and derived from existing Titan Code authorities.</p>
+                            <p class="section-subtitle">Canonical project, plan, verification and dependency status. Dashboard data is read-only and derived from existing Titan Zero Browser Node authorities.</p>
                         </div>
                         <button id="dashboard-refresh-btn" class="icon-btn" type="button" title="Refresh dashboard" aria-label="Refresh dashboard">↻</button>
                     </div>
-                    <p id="dashboard-generated-at" class="dashboard-generated-at">Loading current Titan Code status…</p>
+                    <p id="dashboard-generated-at" class="dashboard-generated-at">Loading current Titan Zero Browser Node status…</p>
                 </section>
 
                 <section class="dashboard-grid" aria-live="polite">
                     <article id="dashboard-project-card" class="dashboard-card">
                         <div class="dashboard-card-heading"><span>Project</span><span id="dashboard-project-state" class="health-badge neutral">Unknown</span></div>
-                        <strong id="dashboard-project-name">Titan Code Project</strong>
+                        <strong id="dashboard-project-name">Titan Zero Browser Node</strong>
                         <dl class="dashboard-kv"><div><dt>Branch</dt><dd id="dashboard-project-branch">—</dd></div><div><dt>Framework</dt><dd id="dashboard-project-framework">—</dd></div><div><dt>Runtime</dt><dd id="dashboard-project-runtime">—</dd></div><div><dt>Files</dt><dd id="dashboard-project-files">0</dd></div></dl>
                     </article>
                     <article id="dashboard-plan-card" class="dashboard-card">
@@ -81,8 +81,8 @@
                     </article>
                     <article id="dashboard-workforce-card" class="dashboard-card">
                         <div class="dashboard-card-heading"><span>AI Workforce</span><span id="dashboard-workforce-state" class="health-badge neutral">Unknown</span></div>
-                        <strong id="dashboard-workforce-summary">14-manager runtime</strong>
-                        <p id="dashboard-workforce-detail" class="dashboard-card-copy">Checking manager readiness…</p>
+                        <strong id="dashboard-workforce-summary">Titan AI Workforce</strong>
+                        <p id="dashboard-workforce-detail" class="dashboard-card-copy">Checking workforce readiness…</p>
                     </article>
                     <article id="dashboard-attention-card" class="dashboard-card dashboard-card-wide">
                         <div class="dashboard-card-heading"><span>Needs Attention</span><span id="dashboard-attention-count" class="health-badge neutral">0</span></div>
@@ -91,12 +91,10 @@
                 </section>
 
                 <section class="section dashboard-actions">
-                    <div class="section-heading-row"><div><h2>Quick Actions</h2><p class="section-subtitle">Actions route into existing governed Titan Code surfaces; they do not bypass plan, host or verification authority.</p></div></div>
+                    <div class="section-heading-row"><div><h2>Quick Actions</h2><p class="section-subtitle">Actions route into existing governed Titan Zero Browser Node surfaces; they do not bypass plan, host or verification authority.</p></div></div>
                     <div class="dashboard-action-grid">
-                        <button class="btn btn-primary" type="button" data-dashboard-action="dashboard-new-plan">New Plan</button>
-                        <button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-continue-plan">Continue Plan</button>
-                        <button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-analyze-repository">Analyze Repository</button>
-                        <button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-ask-codee">Ask Titan Code</button>
+                        <button class="btn btn-primary" type="button" data-dashboard-action="dashboard-new-plan">New Work</button>
+                        <button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-continue-plan">Continue Work</button>
                         <button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-run-diagnostics">Run Diagnostics</button>
                         <button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-open-artifact">Open Last Artifact</button>
                     </div>
@@ -108,8 +106,8 @@
                 <section id="plan-section" class="section">
                     <div class="section-heading-row">
                         <div>
-                            <h2>▶ Run a Plan</h2>
-                            <p class="section-subtitle">Paste a plan or load a local Markdown/text file.</p>
+                            <h2>▶ Run Governed Work</h2>
+                            <p class="section-subtitle">Provide a governed work instruction or load a local work specification.</p>
                         </div>
                         <button id="refresh-tabs-btn" class="icon-btn" type="button" title="Refresh conversations" aria-label="Refresh conversations">↻</button>
                     </div>
@@ -163,7 +161,7 @@
                         <div class="section-heading-row compact-heading">
                             <div>
                                 <h3 id="plan-requirements-heading">Plan Requirements</h3>
-                                <p class="section-subtitle">Deterministic dependencies Titan Code derives before Step 1. Readiness/blocking is evaluated separately by preflight.</p>
+                                <p class="section-subtitle">Deterministic dependencies Titan Zero Browser Node derives before Step 1. Readiness/blocking is evaluated separately by preflight.</p>
                             </div>
                             <span id="plan-requirements-badge" class="health-badge neutral">Not analyzed</span>
                         </div>
@@ -193,17 +191,17 @@
                 <section id="workforce-runner-section" class="section workforce-runner-section">
                     <div class="section-heading-row">
                         <div>
-                            <h2>◈ Managers & AI Workforce</h2>
-                            <p class="section-subtitle">Route the task to specialist managers and prepare evidence requests. Managers are advisory and cannot advance plans.</p>
+                            <h2>◈ Titan AI Workforce</h2>
+                            <p class="section-subtitle">Route governed browser work to the Titan AI Workforce and prepare evidence requests. Workforce recommendations never create execution authority.</p>
                         </div>
                         <span id="workforce-runner-badge" class="health-badge neutral">Not analyzed</span>
                     </div>
                     <div class="diagnostic-actions">
-                        <button id="workforce-preflight-btn" class="btn btn-secondary" type="button">Analyze Managers</button>
-                        <button id="workforce-draft-btn" class="btn btn-secondary" type="button">Create Plan Draft</button>
+                        <button id="workforce-preflight-btn" class="btn btn-secondary" type="button">Analyze Workforce</button>
+                        <button id="workforce-draft-btn" class="btn btn-secondary" type="button">Prepare Work Draft</button>
                         <button id="workforce-use-draft-btn" class="btn btn-primary" type="button" hidden>Use Draft</button>
                     </div>
-                    <pre id="workforce-runner-details" class="workforce-details">No manager preflight yet.</pre>
+                    <pre id="workforce-runner-details" class="workforce-details">No workforce preflight yet.</pre>
                     <pre id="workforce-draft-output" class="workforce-details" hidden></pre>
                 </section>
             </div>
@@ -265,7 +263,7 @@
                     </div>
 
                     <div class="info-box">
-                        <p><strong>Manager Preflight:</strong></p>
+                        <p><strong>Workforce Preflight:</strong></p>
                         <p id="workforce-plan-summary">—</p>
                     </div>
 
@@ -281,7 +279,7 @@
 
             <div class="app-page" data-page="browser">
                 <section class="section library-page">
-                    <div class="section-heading-row"><div><h2>🌐 Browser Engine</h2><p class="section-subtitle">Private Titan Code governed browser runtime. Live governed tabs, semantic perception and policy-gated navigation controls.</p></div><button id="browser-refresh" class="btn btn-secondary" type="button">Refresh</button></div>
+                    <div class="section-heading-row"><div><h2>🌐 Browser Engine</h2><p class="section-subtitle">Private Titan Zero Browser Node governed browser runtime. Live governed tabs, semantic perception and policy-gated navigation controls.</p></div><button id="browser-refresh" class="btn btn-secondary" type="button">Refresh</button></div>
                     <p id="browser-runtime-status" class="settings-status">Loading browser runtime…</p>
                     <div id="browser-tab-list" class="library-grid" aria-live="polite"></div>
                     <div class="info-box"><p><strong>Perception</strong></p><p id="browser-perception-status">Select Inspect on a tab to capture a governed semantic snapshot.</p><pre id="browser-snapshot-preview" class="diagnostics-output"></pre></div>
@@ -293,7 +291,7 @@
                     <div class="section-heading-row">
                         <div>
                             <h2>✦ Prompts</h2>
-                            <p class="section-subtitle">Canonical Titan Code prompt library. Titan Zero host-development prompts are registered here.</p>
+                            <p class="section-subtitle">Canonical Titan Zero Browser Node prompt library. Titan Zero host-development prompts are registered here.</p>
                         </div>
                         <span id="prompt-count" class="library-count">0</span>
                     </div>
@@ -308,7 +306,7 @@
                     <div class="section-heading-row">
                         <div>
                             <h2>◆ Skills</h2>
-                            <p class="section-subtitle">Read-only capability guidance registered into Titan Code's canonical skill data layer.</p>
+                            <p class="section-subtitle">Read-only capability guidance registered into Titan Zero Browser Node's canonical skill data layer.</p>
                         </div>
                         <span id="skill-count" class="library-count">0</span>
                     </div>
@@ -323,7 +321,7 @@
                     <div class="section-heading-row">
                         <div>
                             <h2>🔌 Connections</h2>
-                            <p class="section-subtitle">Operational health for AI, Titan MCP and privileged Titan Code runtimes. A loaded object is never treated as a healthy connection.</p>
+                            <p class="section-subtitle">Operational health for AI, Titan MCP and privileged Titan Zero Browser Node runtimes. A loaded object is never treated as a healthy connection.</p>
                         </div>
                         <button id="connections-refresh-btn" class="btn btn-secondary" type="button">Test All</button>
                     </div>
@@ -386,9 +384,9 @@
                     <div class="section-heading-row settings-heading">
                         <div>
                             <h2>⚙ Settings</h2>
-                            <p class="section-subtitle">Local Titan Code sidebar preferences. Plan safety and the one-minute recovery cadence remain protected.</p>
+                            <p class="section-subtitle">Local Titan Zero Browser Node sidebar preferences. Plan safety and the one-minute recovery cadence remain protected.</p>
                         </div>
-                        <img class="settings-logo" src="../../public/branding/codee-logo.png" alt="" aria-hidden="true">
+                        <img class="settings-logo" src="../../public/branding/titan-zero-browser-node.svg" alt="" aria-hidden="true">
                     </div>
 
                     <div class="settings-group">
@@ -414,7 +412,7 @@
                             <input id="setting-confirm-stop" type="checkbox">
                         </label>
                         <label class="setting-row" for="setting-remember-page">
-                            <span class="setting-copy"><strong>Remember last page</strong><small>Reopen Titan Code on the last hamburger-menu page you used.</small></span>
+                            <span class="setting-copy"><strong>Remember last page</strong><small>Reopen Titan Zero Browser Node on the last hamburger-menu page you used.</small></span>
                             <input id="setting-remember-page" type="checkbox">
                         </label>
                     </div>
@@ -426,12 +424,12 @@
                         <label class="setting-row" for="setting-auto-recovery-sweep"><span class="setting-copy"><strong>1-minute recovery sweep</strong><small>Reconcile artifacts, background tabs and pending sends every minute.</small></span><input id="setting-auto-recovery-sweep" type="checkbox"></label>
                         <label class="setting-row" for="setting-next-nudger-feature"><span class="setting-copy"><strong>Enable 5-minute Next nudger</strong><small>Allow the optional literal “next” provider nudge while a submitted step is still awaiting its artifact.</small></span><input id="setting-next-nudger-feature" type="checkbox"></label>
                         <label class="setting-row" for="setting-next-nudger-default"><span class="setting-copy"><strong>5-minute Next nudger by default</strong><small>Enable the optional nudge on newly created plans.</small></span><input id="setting-next-nudger-default" type="checkbox"></label>
-                        <label class="setting-row" for="setting-background-watchdog"><span class="setting-copy"><strong>Background-tab watchdog</strong><small>Wake the exact frozen/discarded Titan Code conversation when normal background messaging cannot run.</small></span><input id="setting-background-watchdog" type="checkbox"></label>
+                        <label class="setting-row" for="setting-background-watchdog"><span class="setting-copy"><strong>Background-tab watchdog</strong><small>Wake the exact frozen/discarded Titan Zero Browser Node conversation when normal background messaging cannot run.</small></span><input id="setting-background-watchdog" type="checkbox"></label>
                         <label class="setting-row" for="setting-composer-watchdog"><span class="setting-copy"><strong>Composer watchdog</strong><small>Detect missing composers and use the bounded recovery ladder while the provider is idle.</small></span><input id="setting-composer-watchdog" type="checkbox"></label>
                         <label class="setting-row" for="setting-focus-pulse"><span class="setting-copy"><strong>Temporary focus wake</strong><small>Briefly activate the exact target tab when Chrome/provider background state prevents execution.</small></span><input id="setting-focus-pulse" type="checkbox"></label>
                         <label class="setting-row" for="setting-targeted-reload"><span class="setting-copy"><strong>Targeted conversation reload</strong><small>As a last resort, reload only the stuck target conversation when the provider is not generating.</small></span><input id="setting-targeted-reload" type="checkbox"></label>
-                        <label class="setting-row" for="setting-restore-previous-tab"><span class="setting-copy"><strong>Restore previous tab</strong><small>Return to the tab you were using after Titan Code performs a recovery focus pulse.</small></span><input id="setting-restore-previous-tab" type="checkbox"></label>
-                        <label class="setting-row" for="setting-prevent-auto-discard"><span class="setting-copy"><strong>Protect active plan tabs from discard</strong><small>Ask Chrome not to auto-discard conversations with active Titan Code plans.</small></span><input id="setting-prevent-auto-discard" type="checkbox"></label>
+                        <label class="setting-row" for="setting-restore-previous-tab"><span class="setting-copy"><strong>Restore previous tab</strong><small>Return to the tab you were using after Titan Zero Browser Node performs a recovery focus pulse.</small></span><input id="setting-restore-previous-tab" type="checkbox"></label>
+                        <label class="setting-row" for="setting-prevent-auto-discard"><span class="setting-copy"><strong>Protect active plan tabs from discard</strong><small>Ask Chrome not to auto-discard conversations with active Titan Zero Browser Node plans.</small></span><input id="setting-prevent-auto-discard" type="checkbox"></label>
                     </div>
 
                     <div class="settings-group titan-zero-settings">
@@ -492,7 +490,7 @@
                             <input id="setting-repo-targeted-tests" type="checkbox">
                         </label>
                         <label class="setting-row" for="setting-repo-consume-mcp">
-                            <span class="setting-copy"><strong>Consume Titan Code MCP evidence</strong><small>Use the separate MCP runtime when it is installed; this pack never owns MCP transport.</small></span>
+                            <span class="setting-copy"><strong>Consume Titan Zero Browser Node MCP evidence</strong><small>Use the separate MCP runtime when it is installed; this pack never owns MCP transport.</small></span>
                             <input id="setting-repo-consume-mcp" type="checkbox">
                         </label>
                         <label class="setting-row setting-number-row" for="setting-repo-max-search">
@@ -515,7 +513,7 @@
 
                     <div class="settings-group workforce-settings">
                         <div class="settings-group-title">Managers & AI Workforce</div>
-                        <p class="settings-note">Specialist managers classify tasks, select evidence and prepare plan drafts. They never advance Titan Code plans or mutate systems directly.</p>
+                        <p class="settings-note">Specialist managers classify tasks, select evidence and prepare plan drafts. They never advance Titan Zero Browser Node plans or mutate systems directly.</p>
                         <label class="setting-row" for="setting-workforce-enabled">
                             <span class="setting-copy"><strong>Enable manager routing</strong><small>Select a primary manager plus bounded supporting specialists for each task.</small></span>
                             <input id="setting-workforce-enabled" type="checkbox">
@@ -537,7 +535,7 @@
                             <input id="setting-workforce-use-repository" type="checkbox">
                         </label>
                         <label class="setting-row" for="setting-workforce-use-mcp">
-                            <span class="setting-copy"><strong>Use Titan Code MCP evidence</strong><small>Consume the separately owned MCP runtime when it becomes available.</small></span>
+                            <span class="setting-copy"><strong>Use Titan Zero Browser Node MCP evidence</strong><small>Consume the separately owned MCP runtime when it becomes available.</small></span>
                             <input id="setting-workforce-use-mcp" type="checkbox">
                         </label>
                         <label class="setting-row setting-number-row" for="setting-workforce-max-context">
@@ -545,7 +543,7 @@
                             <input id="setting-workforce-max-context" type="number" min="2000" max="20000" step="1000">
                         </label>
                         <label class="setting-row setting-locked" for="setting-workforce-plan-advance">
-                            <span class="setting-copy"><strong>Managers may advance plans</strong><small>Locked off. Only Titan Code's deterministic plan state machine may advance steps.</small></span>
+                            <span class="setting-copy"><strong>Managers may advance plans</strong><small>Locked off. Only Titan Zero Browser Node's deterministic plan state machine may advance steps.</small></span>
                             <input id="setting-workforce-plan-advance" type="checkbox" disabled>
                         </label>
                         <label class="setting-row setting-locked" for="setting-workforce-direct-mutation">
@@ -557,7 +555,7 @@
 
                     <div class="settings-group mcp-settings">
                         <div class="settings-group-title">Titan MCP Connection</div>
-                        <p class="settings-note">Connect Titan Code directly to Titan MCP. Tokens stay in trusted extension storage. Titan MCP 1.5 prepares and verifies recovery evidence before approval, then commits the exact sealed mutation ticket after approval.</p>
+                        <p class="settings-note">Connect Titan Zero Browser Node directly to Titan MCP. Tokens stay in trusted extension storage. Titan MCP 1.5 prepares and verifies recovery evidence before approval, then commits the exact sealed mutation ticket after approval.</p>
                         <label class="setting-row" for="mcp-connection-name">
                             <span class="setting-copy"><strong>Connection name</strong><small>Friendly label for this Titan installation.</small></span>
                             <input id="mcp-connection-name" type="text" maxlength="120" placeholder="Titan Zero">
@@ -570,7 +568,7 @@
                             <span class="setting-copy"><strong>Bearer token</strong><small>Stored only in trusted extension storage and never exposed to ChatGPT/Claude content scripts.</small></span>
                             <input id="mcp-connection-token" type="password" autocomplete="off" placeholder="Titan API token">
                         </label>
-                        <div class="setting-readonly"><span>Titan Code Chrome origin</span><strong id="mcp-client-origin">Loading…</strong></div>
+                        <div class="setting-readonly"><span>Titan Zero Browser Node Chrome origin</span><strong id="mcp-client-origin">Loading…</strong></div>
                         <div class="settings-actions">
                             <button id="mcp-save-btn" class="btn btn-primary" type="button">Save Titan Connection</button>
                             <button id="mcp-test-btn" class="btn btn-secondary" type="button">Test Selected</button>
@@ -591,7 +589,7 @@
                     <div class="settings-group settings-runtime">
                         <div class="settings-group-title">Runtime</div>
                         <div class="setting-readonly"><span>Recovery scan</span><strong>Every 1 minute</strong></div>
-                        <div class="setting-readonly"><span>Artifact protocol</span><strong>TITAN CODE v2</strong></div>
+                        <div class="setting-readonly"><span>Artifact protocol</span><strong>TITAN ZERO v2</strong></div>
                         <div class="setting-readonly"><span>Theme</span><strong>Neon Black</strong></div>
                     </div>
 
@@ -669,7 +667,7 @@
                         <div class="diagnostic-card-heading">
                             <div>
                                 <h3>Capability Registry</h3>
-                                <p class="section-subtitle">Runtime-derived readiness for Titan Code capabilities. This view never grants execution authority.</p>
+                                <p class="section-subtitle">Runtime-derived readiness for Titan Zero Browser Node capabilities. This view never grants execution authority.</p>
                             </div>
                             <button id="capability-refresh-btn" class="text-btn" type="button">Refresh</button>
                         </div>
@@ -688,7 +686,7 @@
                                 <select id="capability-subsystem-filter"><option value="">All subsystems</option></select>
                             </label>
                         </div>
-                        <div class="capability-table-wrap" role="region" aria-label="Titan Code capability registry" tabindex="0">
+                        <div class="capability-table-wrap" role="region" aria-label="Titan Zero Browser Node capability registry" tabindex="0">
                             <table class="capability-table">
                                 <thead><tr><th>Capability</th><th>Readiness</th><th>Operation</th><th>Owner / dependency</th><th>Execution</th></tr></thead>
                                 <tbody id="capability-table-body"><tr><td colspan="5">Capability status has not been loaded yet.</td></tr></tbody>
@@ -720,7 +718,7 @@
 
             <div class="app-page" data-page="history">
                 <section class="section workspace-page">
-                    <div class="workspace-page-heading"><div><h2>History</h2><p>Completed, failed, blocked and stopped Titan Code runs.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="history">Refresh</button></div>
+                    <div class="workspace-page-heading"><div><h2>History</h2><p>Completed, failed, blocked and stopped Titan Zero Browser Node runs.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="history">Refresh</button></div>
                     <label class="field-label" for="history-search">Search history</label><input id="history-search" class="text-input" type="search" placeholder="Plan, conversation, status…">
                     <div id="history-summary" class="workspace-summary">Loading history…</div><div id="history-list" class="workspace-list"></div><p id="history-status" class="settings-status" aria-live="polite"></p>
                 </section>
@@ -728,7 +726,7 @@
 
             <div class="app-page" data-page="artifacts">
                 <section class="section workspace-page">
-                    <div class="workspace-page-heading"><div><h2>Artifacts</h2><p>Artifact receipts, verification state and build lineage retained by Titan Code.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="artifacts">Refresh</button></div>
+                    <div class="workspace-page-heading"><div><h2>Artifacts</h2><p>Artifact receipts, verification state and build lineage retained by Titan Zero Browser Node.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="artifacts">Refresh</button></div>
                     <label class="field-label" for="artifact-search">Search artifacts</label><input id="artifact-search" class="text-input" type="search" placeholder="ZIP, SHA, plan…">
                     <div id="artifact-summary" class="workspace-summary">Loading artifacts…</div><div id="artifact-list" class="workspace-list"></div><pre id="artifact-detail" class="workforce-details" hidden></pre><p id="artifact-status" class="settings-status" aria-live="polite"></p>
                 </section>
@@ -737,7 +735,7 @@
             <div class="app-page" data-page="intelligence">
                 <section class="section workspace-page">
                     <div class="workspace-page-heading"><div><h2>Intelligence</h2><p>Runtime intelligence, provider readiness and capability coverage.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="intelligence">Refresh</button></div>
-                    <section id="system-integration-panel" class="workspace-control-panel"><h3>Local + Cloud Intelligence</h3><div class="workspace-control-grid"><label>Bridge endpoint<input id="system-bridge-endpoint" class="text-input" value="http://127.0.0.1:43127/v1/action"></label><label>Bridge token<input id="system-bridge-token" class="text-input" type="password" placeholder="Pair once, then Titan Code reconnects automatically"></label><label>Workspace path<input id="system-bridge-workspace" class="text-input" placeholder="C:\path\to\project or /path/to/project"></label><label>Gemini API key<input id="system-gemini-key" class="text-input" type="password" placeholder="Google AI Studio key"></label><label>Gemini model<select id="system-gemini-model" class="text-input"><option value="">Auto-select compatible free-tier candidate</option></select></label></div><div class="workspace-actions"><button id="system-save-connect" class="btn btn-primary" type="button">Save + Connect</button><button id="system-probe" class="btn btn-secondary" type="button">Probe providers</button></div><pre id="system-integration-status" class="workforce-details">Not probed yet.</pre></section><div id="intelligence-summary" class="workspace-summary">Loading intelligence…</div><div id="intelligence-list" class="workspace-list"></div><p id="intelligence-status" class="settings-status" aria-live="polite"></p>
+                    <section id="system-integration-panel" class="workspace-control-panel"><h3>Local + Cloud Intelligence</h3><div class="workspace-control-grid"><label>Bridge endpoint<input id="system-bridge-endpoint" class="text-input" value="http://127.0.0.1:43127/v1/action"></label><label>Bridge token<input id="system-bridge-token" class="text-input" type="password" placeholder="Pair once, then Titan Zero Browser Node reconnects automatically"></label><label>Workspace path<input id="system-bridge-workspace" class="text-input" placeholder="C:\path\to\project or /path/to/project"></label><label>Gemini API key<input id="system-gemini-key" class="text-input" type="password" placeholder="Google AI Studio key"></label><label>Gemini model<select id="system-gemini-model" class="text-input"><option value="">Auto-select compatible free-tier candidate</option></select></label></div><div class="workspace-actions"><button id="system-save-connect" class="btn btn-primary" type="button">Save + Connect</button><button id="system-probe" class="btn btn-secondary" type="button">Probe providers</button></div><pre id="system-integration-status" class="workforce-details">Not probed yet.</pre></section><div id="intelligence-summary" class="workspace-summary">Loading intelligence…</div><div id="intelligence-list" class="workspace-list"></div><p id="intelligence-status" class="settings-status" aria-live="polite"></p>
                 </section>
             </div>
 
@@ -746,7 +744,7 @@
                     <div class="workspace-page-heading"><div><h2>AI Workforce</h2><p>Managers, routing evidence, dependencies and authority boundaries.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="workforce">Refresh</button></div>
                     <section class="workspace-control-panel"><label class="field-label" for="workforce-workspace-task">Task for AI Workforce</label><textarea id="workforce-workspace-task" class="text-input" rows="5" placeholder="Describe what the manager team should investigate, analyze or draft..."></textarea><label class="field-label" for="workforce-provider-select">Provider preference</label><select id="workforce-provider-select" class="text-input"><option value="auto">Auto · local/free first</option><option value="ollama">Ollama local</option><option value="gemini">Gemini</option></select><div class="workspace-actions"><button id="workforce-run-advisory" class="btn btn-primary" type="button">Run AI Workforce</button></div><pre id="workforce-advisory-output" class="workforce-details" hidden></pre></section><div id="workforce-summary" class="workspace-summary">Loading workforce…</div><div id="workforce-list" class="workspace-list"></div>
                     <section class="workspace-control-panel deployment-workforce-gateway-panel" aria-label="Laravel Workforce Gateway">
-                        <div class="deployment-workforce-panel-heading"><div><h3>Laravel Workforce Gateway</h3><p>Connect Titan Code to the canonical Laravel Deployment Workforce. Chrome remains an operator surface; Laravel retains durable authority.</p></div><span id="workforce-gateway-badge" class="health-badge neutral">Not configured</span></div>
+                        <div class="deployment-workforce-panel-heading"><div><h3>Laravel Workforce Gateway</h3><p>Connect Titan Zero Browser Node to the canonical Laravel Deployment Workforce. Chrome remains an operator surface; Laravel retains durable authority.</p></div><span id="workforce-gateway-badge" class="health-badge neutral">Not configured</span></div>
                         <div class="workspace-control-grid deployment-workforce-config-grid">
                             <label>Gateway endpoint<input id="workforce-gateway-endpoint" class="text-input" placeholder="https://your-titan-app/api/titan/workforce/gateway/v1"></label>
                             <label>Gateway token<input id="workforce-gateway-token" class="text-input" type="password" placeholder="Scoped deployment-operator token"></label>
