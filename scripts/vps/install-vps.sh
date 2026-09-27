@@ -22,7 +22,7 @@ usage() {
 Titan Zero VPS Installer ${INSTALLER_VERSION}
 
 Usage:
-  sudo bash Titan-Zero-VPS-Installer-Pass01.sh --source <zip-or-url> [options]
+  sudo bash scripts/vps/install-vps.sh --source <zip-or-url> [options]
 
 Required:
   --source PATH|URL       Titan Zero application ZIP, local path or HTTPS URL.
@@ -39,12 +39,12 @@ Options:
   -h, --help              Show this help.
 
 Examples:
-  sudo bash Titan-Zero-VPS-Installer-Pass01.sh \\
+  sudo bash scripts/vps/install-vps.sh \\
     --source /root/Titan-Zero.zip \\
     --domain titan.example.com \\
     --email admin@example.com
 
-  sudo bash Titan-Zero-VPS-Installer-Pass01.sh \\
+  sudo bash scripts/vps/install-vps.sh \\
     --source https://example.com/Titan-Zero.zip \\
     --no-tls
 USAGE
@@ -283,6 +283,7 @@ set_env APP_PORT "$APP_PORT" "$ENV_FILE"
 [[ -n "$APP_DOMAIN" ]] && set_env APP_DOMAIN "$APP_DOMAIN" "$ENV_FILE"
 set_env APP_BASE_URL "$PUBLIC_URL" "$ENV_FILE"
 set_env APP_URL "$PUBLIC_URL" "$ENV_FILE"
+set_env NO_TLS "$NO_TLS" "$ENV_FILE"
 set_env DATABASE_DIALECT postgres "$ENV_FILE"
 set_env POSTGRES_HOST postgres "$ENV_FILE"
 set_env POSTGRES_PORT 5432 "$ENV_FILE"
