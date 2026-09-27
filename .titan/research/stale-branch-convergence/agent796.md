@@ -1,0 +1,1 @@
+Stale branch agent/796 resolved: current main is canonical and supersedes conflicting historical runtime/SQLite/Zero/workforce changes. Reviewed 2026-09-28.
