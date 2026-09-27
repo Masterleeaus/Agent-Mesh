@@ -27,7 +27,7 @@ const files = walk(root).sort((a,b)=>a.rel.localeCompare(b.rel)).map(({rel,full}
 });
 const manifest = {
   schema: 1,
-  product: 'Codee',
+  product: 'Titan Zero Browser Node',
   version: JSON.parse(fs.readFileSync(path.join(root,'manifest.json'),'utf8')).version,
   generatedAt: new Date().toISOString(),
   algorithm: 'sha256',
