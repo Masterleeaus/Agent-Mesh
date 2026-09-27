@@ -3,11 +3,14 @@ name: Agent 4 Final Production Verification
 on:
   pull_request:
     paths:
+      - "apps/web/**"
       - "packages/storage/test/final-cleaning-convergence.test.ts"
       - "packages/storage/**"
+      - "packages/workforce/package.json"
       - "services/workforce/**"
       - "packages/runtime/agent-runtime/**"
       - "packages/tools/execution-gateway.mjs"
+      - "packages/titan-platform/src/runtime.ts"
       - "packages/titan-platform/src/ported/titan-runtime/interaction-engine/**"
       - "packages/titan-platform/tests/zero-governance-convergence.test.ts"
       - ".github/workflows/agent4-final-production-verification.yml"
@@ -17,6 +20,26 @@ permissions:
   contents: read
 
 jobs:
+  zero-front-door:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Zero authenticated transport and fail-closed dispatch tests
+        run: pnpm --dir apps/web exec vitest run lib/zero/runtime-dispatch.test.ts app/titan/runtime/zero-http-transport.test.ts
+
   zero-origin-correlation:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -43,30 +66,23 @@ jobs:
     steps:
       - name: Checkout canonical repository
         uses: actions/checkout@v4
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.12.0
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-
       - name: Install dependencies for focused verification
         run: pnpm install --no-frozen-lockfile
-
       - name: Final cleaning convergence acceptance
         run: pnpm --filter @titan-zero/storage exec vitest run test/final-cleaning-convergence.test.ts
-
       - name: Workforce behavioural tests
         run: pnpm --filter @titan-zero/workforce test
-
       - name: Persistent agent runtime tests
         run: node --test packages/runtime/agent-runtime/tests/agent-runtime.test.mjs packages/runtime/agent-runtime/sqlite-run-store.test.mjs
-
       - name: Governed execution gateway tests
         run: node --test packages/tools/execution-gateway.test.mjs
 
@@ -76,20 +92,16 @@ jobs:
     steps:
       - name: Checkout canonical repository
         uses: actions/checkout@v4
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.12.0
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-
       - name: Install dependencies for Zero verification
         run: pnpm install --no-frozen-lockfile
-
       - name: Zero governance convergence tests
         run: pnpm --dir services/workforce exec tsx --test ../../packages/titan-platform/tests/zero-governance-convergence.test.ts
