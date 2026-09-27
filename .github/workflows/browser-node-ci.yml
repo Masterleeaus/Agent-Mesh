@@ -13,7 +13,7 @@ on:
       - '.github/workflows/browser-node-ci.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify-browser-node:
@@ -25,11 +25,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Apply Browser Node network convergence
+        if: github.event_name == 'push'
+        run: |
+          node tools/apply-browser-node-network-convergence.mjs
+          cd ../..
+          if ! git diff --quiet; then
+            git config user.name "Titan Zero CI"
+            git config user.email "actions@users.noreply.github.com"
+            git add apps/browser/src/browser/agent-runtime apps/browser/src/lib/service-worker.js
+            git commit -m "fix(browser): route browser-agent network through governed transport"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
 
       - name: Install dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
