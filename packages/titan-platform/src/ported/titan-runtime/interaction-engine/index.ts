@@ -9,6 +9,7 @@ export { classifyDeterministicIntent, listDeterministicIntentRules, DETERMINISTI
 export { createInteractionPresentationIntent } from "./presentation-intent.js";
 export { createConversationState, createJourneyState } from "./state.js";
 export { createConversationStateRuntime, CONVERSATION_STATE_RUNTIME_SCHEMA, CONVERSATION_STATE_MODULE_ID, CONVERSATION_STATE_COLLECTIONS } from "./conversation-state-runtime.js";
+export { createZeroInteraction, ZERO_INTERACTION_SCHEMA } from "./zero-interaction.js";
 
 export const RUNTIME_ID = "interaction-engine";
 export const RUNTIME_NAME = "Interaction Engine";
@@ -27,7 +28,6 @@ export const runtimeDescriptor = Object.freeze({
 });
 export { createJourneyRuntime, createJourneyDefinition, JOURNEY_RUNTIME_SCHEMA, JOURNEY_DEFINITION_SCHEMA, JOURNEY_INSTANCE_SCHEMA, JOURNEY_COLLECTION, JOURNEY_MODULE_ID } from './journey-runtime.js';
 export { createWizardRuntime, createWizardDefinition, WIZARD_RUNTIME_SCHEMA, WIZARD_DEFINITION_SCHEMA, WIZARD_SESSION_SCHEMA, WIZARD_COLLECTION, WIZARD_MODULE_ID } from './wizard-runtime.js';
-
 export { validatePresentationMetadata } from './presentation-guard.js';
 export { presentWizardSession } from './generated-ui-presenter.js';
 export { renderWizardConversational, renderWizardStructured, renderWizardHybrid } from './wizard-renderers.js';
@@ -39,6 +39,4 @@ export { createInteractionOfflineCommandBridge } from './offline-command-bridge.
 export { createInteractionTemplateDefinition, createInteractionTemplateRuntime, INTERACTION_TEMPLATE_SCHEMA, INTERACTION_TEMPLATE_RUNTIME_SCHEMA } from './template-runtime.js';
 export { createQuestionResolver } from './question-resolver.js';
 export { createInteractionEventBridge } from './interaction-event-bridge.js';
-
-
 export { assertInteractionSecurityBoundary, assertInteractionReplayBoundary, assertInteractionPresentationBoundary, assertInteractionSurfaceTransition } from './security-boundary-hardening.js';
