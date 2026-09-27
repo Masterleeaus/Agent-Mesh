@@ -1,4 +1,5 @@
-import type { Client } from "pg";
+import type { DatabaseClient } from "../db-client.js";
+import { databaseDialect } from "../db-client.js";
 import { PRIORITY, COOLDOWN_BYPASS_MINIMUM } from "./priority.js";
 
 export interface EnqueueOpts {
@@ -19,24 +20,16 @@ export interface EnqueueOpts {
 
 export type EnqueueResult = "enqueued" | "duplicate" | "suppressed";
 
-export async function enqueueNotification(
-  client: Client,
-  opts: EnqueueOpts
-): Promise<EnqueueResult> {
-  // Check idempotency — skip if any non-failed row exists for this key
+export async function enqueueNotification(client: DatabaseClient, opts: EnqueueOpts): Promise<EnqueueResult> {
   const existing = await client.query<{ status: string }>(
     `SELECT status FROM notification_queue WHERE idempotency_key = $1 LIMIT 1`,
     [opts.idempotencyKey]
   );
-  if (existing.rows.length > 0 && existing.rows[0].status !== "failed") {
-    return "duplicate";
-  }
+  if (existing.rows.length > 0 && existing.rows[0].status !== "failed") return "duplicate";
 
-  // Check cooldown for non-critical notifications
   if (opts.priority > COOLDOWN_BYPASS_MINIMUM && opts.clientId) {
     const cooldown = await client.query<{ last_sent_at: string; cooldown_hours: number }>(
-      `SELECT nc.last_sent_at,
-              COALESCE(ar.cooldown_hours, 4) AS cooldown_hours
+      `SELECT nc.last_sent_at, COALESCE(ar.cooldown_hours, 4) AS cooldown_hours
        FROM notification_cooldowns nc
        LEFT JOIN automation_settings ar ON ar.account_id = nc.account_id
        WHERE nc.account_id = $1 AND nc.client_id = $2`,
@@ -45,33 +38,26 @@ export async function enqueueNotification(
     if (cooldown.rows.length > 0) {
       const { last_sent_at, cooldown_hours } = cooldown.rows[0];
       const elapsed = (Date.now() - new Date(last_sent_at).getTime()) / 3_600_000;
-      if (elapsed < cooldown_hours) {
-        return "suppressed";
-      }
+      if (elapsed < cooldown_hours) return "suppressed";
     }
   }
 
-  // Check daily cap for LOW priority
   if (opts.priority >= PRIORITY.LOW && opts.clientId) {
+    const dayStart = new Date();
+    dayStart.setUTCHours(0, 0, 0, 0);
     const cap = await client.query<{ today_count: number; max_per_day: number }>(
-      `SELECT
-         COUNT(nq.id)::int                           AS today_count,
-         COALESCE(ar.max_per_day, 2)                 AS max_per_day
+      `SELECT COUNT(nq.id) AS today_count, COALESCE(MAX(ar.max_per_day), 2) AS max_per_day
        FROM notification_queue nq
        LEFT JOIN automation_settings ar ON ar.account_id = nq.account_id
        WHERE nq.account_id = $1
-         AND nq.client_id  = $2
-         AND nq.status     = 'sent'
-         AND nq.sent_at    >= date_trunc('day', now() AT TIME ZONE COALESCE(ar.working_hours_tz, 'America/New_York'))
-       GROUP BY ar.max_per_day`,
-      [opts.accountId, opts.clientId]
+         AND nq.client_id = $2
+         AND nq.status = 'sent'
+         AND nq.sent_at >= $3`,
+      [opts.accountId, opts.clientId, dayStart.toISOString()]
     );
-    if (cap.rows.length > 0 && cap.rows[0].today_count >= cap.rows[0].max_per_day) {
-      return "suppressed";
-    }
+    if (cap.rows.length > 0 && Number(cap.rows[0].today_count) >= Number(cap.rows[0].max_per_day)) return "suppressed";
   }
 
-  // Upsert: if a failed row exists for this key, reset it; otherwise insert fresh
   const nextAttemptAt = opts.scheduledFor ?? new Date();
   await client.query(
     `INSERT INTO notification_queue
@@ -80,43 +66,47 @@ export async function enqueueNotification(
         cancel_on_events, next_attempt_at, metadata)
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
      ON CONFLICT (idempotency_key) DO UPDATE
-       SET status          = 'pending',
-           attempt_count   = 0,
-           failure_reason  = NULL,
-           next_attempt_at = EXCLUDED.next_attempt_at`,
-    [
-      opts.accountId,
-      opts.clientId,
-      opts.automationType,
-      opts.priority,
-      opts.toAddress,
-      opts.subject,
-      opts.htmlBody,
-      opts.idempotencyKey,
-      opts.entityType ?? null,
-      opts.entityId ?? null,
-      opts.cancelOnEvents ?? [],
-      nextAttemptAt.toISOString(),
-      JSON.stringify(opts.metadata ?? {}),
-    ]
+       SET status = 'pending', attempt_count = 0, failure_reason = NULL,
+           next_attempt_at = excluded.next_attempt_at`,
+    [opts.accountId, opts.clientId, opts.automationType, opts.priority, opts.toAddress,
+      opts.subject, opts.htmlBody, opts.idempotencyKey, opts.entityType ?? null,
+      opts.entityId ?? null, JSON.stringify(opts.cancelOnEvents ?? []), nextAttemptAt.toISOString(),
+      JSON.stringify(opts.metadata ?? {})]
   );
-
   return "enqueued";
 }
 
-export function cancelNotificationsForEntity(
-  client: Client,
+export async function cancelNotificationsForEntity(
+  client: DatabaseClient,
   entityType: string,
   entityId: string,
   eventType: string
 ): Promise<number> {
-  return client.query(
-    `UPDATE notification_queue
-        SET status = 'cancelled'
-      WHERE entity_type = $1
-        AND entity_id   = $2::uuid
-        AND status      = 'pending'
-        AND $3 = ANY(cancel_on_events)`,
-    [entityType, entityId, eventType]
-  ).then((r) => r.rowCount ?? 0);
+  if (databaseDialect(client) === "postgres") {
+    const result = await client.query(
+      `UPDATE notification_queue SET status = 'cancelled'
+       WHERE entity_type = $1 AND entity_id = $2 AND status = 'pending'
+         AND $3 = ANY(cancel_on_events)`,
+      [entityType, entityId, eventType]
+    );
+    return result.rowCount ?? 0;
+  }
+
+  const pending = await client.query<{ id: string; cancel_on_events: string | null }>(
+    `SELECT id, cancel_on_events FROM notification_queue
+     WHERE entity_type = $1 AND entity_id = $2 AND status = 'pending'`,
+    [entityType, entityId]
+  );
+  let cancelled = 0;
+  for (const row of pending.rows) {
+    let events: string[] = [];
+    try { events = JSON.parse(row.cancel_on_events ?? "[]") as string[]; } catch { events = []; }
+    if (!events.includes(eventType)) continue;
+    const result = await client.query(
+      `UPDATE notification_queue SET status = 'cancelled' WHERE id = $1 AND status = 'pending'`,
+      [row.id]
+    );
+    cancelled += result.rowCount ?? 0;
+  }
+  return cancelled;
 }
