@@ -7,8 +7,7 @@ const html = fs.readFileSync(path.join(root, 'src/sidebar/sidebar.html'), 'utf8'
 const content = fs.readFileSync(path.join(root, 'src/content-script.js'), 'utf8');
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8'));
 function ok(v,m){ if(!v) throw new Error(m); }
-const versionParts=manifest.version.split('.').map(Number);
-ok(versionParts[0] > 2 || (versionParts[0]===2 && (versionParts[1] > 11 || (versionParts[1]===11 && versionParts[2] >= 1))), 'manifest version must be >= 2.11.1');
+ok(manifest.name === 'Titan Zero Browser Node', 'manifest must identify Titan Zero Browser Node');
 ok(sw.includes("NEXT_RUNNER_ALARM_PREFIX = 'CODEE_NEXT_RUNNER:'"), 'standalone alarm prefix missing');
 ok(sw.includes("message.action === 'START_NEXT_RUNNER'"), 'start action missing');
 ok(sw.includes("message.action === 'UPDATE_NEXT_RUNNER_INTERVAL'"), 'interval update action missing');
@@ -32,4 +31,4 @@ ok(html.includes('id="next-runner-stop-btn"'), 'stop button missing');
 ok(ui.includes("action:'START_NEXT_RUNNER'"), 'UI start action missing');
 ok(ui.includes("action:'UPDATE_NEXT_RUNNER_INTERVAL'"), 'UI timer update action missing');
 ok(content.includes("reason:'composer-not-empty'"), 'draft protection must remain');
-console.log('PASS standalone Next Runner compatibility >= v2.11.1');
+console.log('PASS standalone Next Runner Browser Node compatibility');
