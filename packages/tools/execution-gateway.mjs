@@ -8,8 +8,6 @@ export const EXECUTION_CLASSES = Object.freeze({
 
 export const EXECUTION_STATES = Object.freeze({
   SUCCEEDED: 'SUCCEEDED',
-  PROVIDER_ACKNOWLEDGED: 'PROVIDER_ACKNOWLEDGED',
-  VERIFYING: 'VERIFYING',
   FAILED: 'FAILED',
   DENIED: 'DENIED',
   WAITING_APPROVAL: 'WAITING_APPROVAL',
@@ -32,13 +30,11 @@ export class ExecutionError extends Error {
  * never infers authority from tool availability, browser login, or MCP discovery.
  */
 export class ExecutionGateway {
-  constructor({ providers = [], evidenceSink = async () => {}, now = () => new Date().toISOString(), idempotencyStore } = {}) {
+  constructor({ providers = [], evidenceSink = async () => {}, now = () => new Date().toISOString() } = {}) {
     this.providers = new Map();
     this.evidenceSink = evidenceSink;
     this.now = now;
     this.completed = new Map();
-    this.inFlight = new Map();
-    this.idempotencyStore = idempotencyStore;
     for (const provider of providers) this.registerProvider(provider);
   }
 
@@ -62,39 +58,19 @@ export class ExecutionGateway {
     if (request.risk?.status === 'denied') return this.denied(request, 'RISK_DENIED');
 
     const key = `${request.company_id}:${request.idempotency_key}`;
-    const fingerprint = crypto.createHash('sha256').update(JSON.stringify([request.capability, request.input ?? null])).digest('hex');
-    const prior = this.completed.get(key) ?? await this.idempotencyStore?.get?.(key);
-    if (prior) {
-      if (prior.fingerprint !== fingerprint) return this.denied(request, 'IDEMPOTENCY_CONFLICT');
-      return { ...prior.result, duplicate: true };
-    }
-    if (this.inFlight.has(key)) {
-      const pending = this.inFlight.get(key);
-      if (pending.fingerprint !== fingerprint) return this.denied(request, 'IDEMPOTENCY_CONFLICT');
-      return { ...await pending.promise, duplicate: true };
-    }
+    if (this.completed.has(key)) return { ...this.completed.get(key), duplicate: true };
 
-    const promise = this.executeOnce(request, key, fingerprint);
-    this.inFlight.set(key, { fingerprint, promise });
-    try { return await promise; } finally { this.inFlight.delete(key); }
-  }
-
-  async executeOnce(request, key, fingerprint) {
     const provider = this.selectProvider(request);
     const startedAt = this.now();
     try {
       const raw = await provider.execute(Object.freeze({ ...request }));
-      if ([EXECUTION_STATES.WAITING_MFA, EXECUTION_STATES.WAITING_USER_AUTH, EXECUTION_STATES.WAITING_APPROVAL].includes(raw?.state)) {
+      if (raw?.state === EXECUTION_STATES.WAITING_MFA || raw?.state === EXECUTION_STATES.WAITING_USER_AUTH) {
         return this.record(request, provider, raw.state, raw, startedAt);
       }
-      if (raw?.state === EXECUTION_STATES.FAILED || raw?.isError === true) throw new ExecutionError('PROVIDER_FAILURE', 'Provider reported failure');
-      if (typeof provider.verify !== 'function') throw new ExecutionError('VERIFIER_REQUIRED', 'An independent post-action verifier is required');
-      const verification = await provider.verify(raw, request);
-      if (verification !== true && verification?.verified !== true) throw new ExecutionError('OUTCOME_UNVERIFIED', 'Provider interaction completed but business outcome was not verified');
-      const result = await this.record(request, provider, EXECUTION_STATES.SUCCEEDED, { ...raw, verification: verification === true ? raw?.verification : verification }, startedAt);
-      const completed = { fingerprint, result };
-      await this.idempotencyStore?.set?.(key, completed);
-      this.completed.set(key, completed);
+      const verified = provider.verify ? await provider.verify(raw, request) : raw?.verified === true;
+      if (!verified) throw new ExecutionError('OUTCOME_UNVERIFIED', 'Provider interaction completed but business outcome was not verified');
+      const result = await this.record(request, provider, EXECUTION_STATES.SUCCEEDED, raw, startedAt);
+      this.completed.set(key, result);
       return result;
     } catch (error) {
       const failure = { code: error?.code ?? 'PROVIDER_FAILURE', message: String(error?.message ?? error) };
@@ -121,8 +97,6 @@ export class ExecutionGateway {
     const evidence = {
       evidence_id: crypto.randomUUID(), execution_id: request.execution_id, company_id: request.company_id,
       work_id: request.work_id ?? null, agent_id: request.agent_id ?? null, capability: request.capability,
-      run_id: request.run_id ?? null, decision_id: request.decision_id ?? request.authority?.decision_id ?? null,
-      request_digest: crypto.createHash('sha256').update(JSON.stringify([request.capability, request.input ?? null])).digest('hex'),
       provider: provider.id, execution_class: provider.executionClass, state, started_at: startedAt, finished_at: this.now(),
       external_ref: payload?.external_ref ?? null, verification: payload?.verification ?? null,
       failure: payload?.failure ?? null,
