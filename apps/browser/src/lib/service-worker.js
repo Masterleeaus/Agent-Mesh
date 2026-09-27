@@ -1792,7 +1792,6 @@ function sanitizeTitanAnalysisForStorage(analysis) {
 }
 
 async function analyzeTitanZeroSnapshot(snapshot, options = {}) {
-async function getTitanZeroStatus() {
     const ready = await ensureTitanZeroRegistered();
     const analysis = globalThis.CodeeTitanZeroHostIntegration.analyze(snapshot, ready.settings, options);
     const safeSummary = sanitizeTitanAnalysisForStorage(analysis);
@@ -1817,7 +1816,7 @@ async function getTitanZeroStatus() {
     };
 }
 
-
+async function getTitanZeroStatus() {
     const ready = await ensureTitanZeroRegistered();
     await titanAnalysisMutationQueue;
     const stored = await chrome.storage.local.get([TITAN_ZERO_ANALYSIS_STORAGE_KEY]);
