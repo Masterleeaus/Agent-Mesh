@@ -2260,8 +2260,8 @@
     },
     {
       "path": "src/lib/service-worker.js",
-      "bytes": 281820,
-      "sha256": "57ec0a6b8cd26cc8c4cd5b52b0b545407795e4ddb42a39a508c6bcd9c8ffa110"
+      "bytes": 261230,
+      "sha256": "481eb312b4be66fc74fc4569c17b368ab37e34210aa6560a8ecc31a1ace800b6"
     },
     {
       "path": "src/lib/titan-zero-host-integration.js",
