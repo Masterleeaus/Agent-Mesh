@@ -1,0 +1,1 @@
+Resolved agent/796 against current main. Stale overlapping implementation is superseded; canonical main retained.
