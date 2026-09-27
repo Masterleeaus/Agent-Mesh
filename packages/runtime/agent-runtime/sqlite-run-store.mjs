@@ -18,6 +18,7 @@ export class SqliteRunStore {
     )`);
     await this.storage.query(`CREATE INDEX IF NOT EXISTS agent_runs_recovery_idx ON agent_runs(company_id,state,updated_at)`);
     await this.storage.query(`CREATE INDEX IF NOT EXISTS agent_runs_conversation_idx ON agent_runs(company_id,conversation_id,updated_at)`);
+    await this.storage.query(`CREATE INDEX IF NOT EXISTS agent_runs_work_idx ON agent_runs(company_id,work_id,updated_at)`);
   }
 
   async create(run) {
@@ -39,6 +40,16 @@ export class SqliteRunStore {
     const result = await this.storage.query(`UPDATE agent_runs SET state=$3,conversation_id=$4,agent_id=$5,work_id=$6,payload=$7,updated_at=$8 WHERE company_id=$1 AND run_id=$2`, [run.company_id, run.run_id, run.state, run.conversation_id, run.agent_id, run.work_id ?? null, JSON.stringify(run), run.updated_at]);
     if (!result.rowCount) throw new Error('runtime-run-not-found');
     return structuredClone(run);
+  }
+
+  async findRecoverableByWork(company_id, work_id) {
+    await this.migrate();
+    const terminal = [...TERMINAL];
+    const result = await this.storage.query(
+      `SELECT payload FROM agent_runs WHERE company_id=$1 AND work_id=$2 AND state NOT IN ($3,$4,$5) ORDER BY updated_at DESC LIMIT 1`,
+      [company_id, work_id, ...terminal],
+    );
+    return result.rows[0] ? JSON.parse(result.rows[0].payload) : null;
   }
 
   async recoverable(company_id) {
