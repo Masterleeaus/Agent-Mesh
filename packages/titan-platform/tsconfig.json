@@ -20,6 +20,7 @@
     "src/intelligence.ts",
     "src/business-ops.ts",
     "src/storage/index.ts",
+    "src/personal-zero/index.ts",
     "src/interface-runtime.ts",
     "src/interface-registry.ts",
     "src/interface-discovery.ts",
