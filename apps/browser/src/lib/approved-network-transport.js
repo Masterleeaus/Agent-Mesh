@@ -24,19 +24,35 @@ function parseEventStream(text,expectedId){
  if(expectedId!==undefined&&expectedId!==null){const match=events.find(event=>String(event?.id??'')===String(expectedId));if(match)return match;}
  return events[events.length-1];
 }
-async function getJson(url,options={}){
+async function request(url,options={}){
  const u=safeUrl(url);await ensureOrigin(u);
+ const method=String(options.method||'GET').toUpperCase();
+ if(!['GET','POST','HEAD'].includes(method))throw new Error(`Approved network transport does not allow ${method}.`);
+ const requestHeaders=headers(options.headers);
+ const body=options.body;
+ if(body!==undefined&&body!==null&&byteLength(body)>MAX_REQUEST_BYTES)throw new Error('Approved network request exceeds the request-size limit.');
+ return fetch(u.toString(),{
+  method,
+  headers:requestHeaders,
+  body:method==='GET'||method==='HEAD'?undefined:body,
+  signal:options.signal,
+  redirect:'error',
+  credentials:'omit',
+  referrerPolicy:'no-referrer',
+  cache:'no-store'
+ });
+}
+async function getJson(url,options={}){
  const requestHeaders=headers(options.headers);if(!Object.keys(requestHeaders).some(k=>k.toLowerCase()==='accept'))requestHeaders.Accept='application/json';
- const response=await fetch(u.toString(),{method:'GET',headers:requestHeaders,redirect:'error',credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store'});
+ const response=await request(url,{method:'GET',headers:requestHeaders,signal:options.signal});
  const text=await response.text();if(byteLength(text)>MAX_RESPONSE_BYTES)throw new Error('Approved network response exceeds the response-size limit.');let json={};if(text){try{json=JSON.parse(text);}catch{throw new Error('Approved network response is not valid JSON.');}}return {ok:response.ok,status:response.status,headers:{contentType:String(response.headers?.get?.('Content-Type')||'').toLowerCase()||null},json};
 }
 async function postJson(url,body,options={}){
- const u=safeUrl(url);await ensureOrigin(u);
  const payload=JSON.stringify(body??{});
  if(byteLength(payload)>MAX_REQUEST_BYTES)throw new Error('Approved network request exceeds the request-size limit.');
  const requestHeaders=headers(options.headers);
  if(!Object.keys(requestHeaders).some(k=>k.toLowerCase()==='accept'))requestHeaders.Accept='application/json, text/event-stream';
- const response=await fetch(u.toString(),{method:'POST',headers:requestHeaders,body:payload,redirect:'error',credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store'});
+ const response=await request(url,{method:'POST',headers:requestHeaders,body:payload,signal:options.signal});
  const text=await response.text();
  if(byteLength(text)>MAX_RESPONSE_BYTES)throw new Error('Approved network response exceeds the response-size limit.');
  const contentType=String(response.headers?.get?.('Content-Type')||'').toLowerCase();
@@ -47,5 +63,6 @@ async function postJson(url,body,options={}){
  }
  return {ok:response.ok,status:response.status,headers:{protocolVersion:response.headers?.get?.('MCP-Protocol-Version')||null,contentType:contentType||null},json};
 }
-global.CodeeApprovedNetworkTransport=Object.freeze({getJson,postJson,parseEventStream,MAX_REQUEST_BYTES,MAX_RESPONSE_BYTES});
+global.CodeeApprovedNetworkTransport=Object.freeze({request,getJson,postJson,parseEventStream,MAX_REQUEST_BYTES,MAX_RESPONSE_BYTES});
+global.TitanZeroApprovedNetworkTransport=global.CodeeApprovedNetworkTransport;
 })(typeof globalThis!=='undefined'?globalThis:this);
