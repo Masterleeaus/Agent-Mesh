@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - browser-node-convergence-v2
+      - browser-node-postmerge-prune
     paths:
       - 'apps/browser/**'
       - '.github/workflows/browser-node-ci.yml'
@@ -32,6 +33,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Apply post-merge Browser Node prune
+        if: github.event_name == 'push' && github.ref_name == 'browser-node-postmerge-prune'
+        run: |
+          if [ -f tools/prune-legacy-manager-runtime.mjs ]; then
+            node tools/prune-legacy-manager-runtime.mjs
+            cd ../..
+            git config user.name "Titan Zero CI"
+            git config user.email "actions@users.noreply.github.com"
+            git add apps/browser/src/lib/service-worker.js
+            git commit -m "refactor(browser): remove legacy Agent Mesh manager runtime"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
 
       - name: Install dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
