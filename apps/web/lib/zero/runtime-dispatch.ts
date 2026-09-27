@@ -15,6 +15,8 @@ export type ZeroRuntimeDispatchInput = {
   client_message_id: string;
   text: string;
   correlation_id: string;
+  requested_agent_id?: string;
+  continuation_token?: string;
 };
 
 export type ZeroRuntimeDispatchResult = {
