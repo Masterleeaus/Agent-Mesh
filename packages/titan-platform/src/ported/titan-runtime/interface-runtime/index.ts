@@ -13,7 +13,6 @@ export function createInterfaceRuntimeEnvelope(input) {
   return Object.freeze({ ...envelope, runtime_id: RUNTIME_ID, runtime_kind: RUNTIME_KIND, authority_neutral: true, execution_authority: false, authority_conferred_by_activation: false });
 }
 
-
 export function createInterfaceReceipt(input: any = {}) {
   const envelope = createInterfaceRuntimeEnvelope(input);
   return Object.freeze({
@@ -36,3 +35,4 @@ export { auditPresentationAccessibility, auditResponsivePresentation } from './p
 export { composeObjectWorkspace } from './workspace.js';
 export { resolveOfflinePolicy, createOfflineQueue, planOfflineSync, resolveOfflineConflict, validateOfflineReplay } from './offline-sync.js';
 export { composeWorkingSetWorkspace } from './working-set.js';
+export { createZeroGeneratedUI, ZERO_GENERATED_UI_SCHEMA } from './zero-generated-ui.js';
