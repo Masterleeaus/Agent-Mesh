@@ -1,0 +1,54 @@
+{
+  "schema": "titan-zero-verification/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 6,
+  "status": "PASS",
+  "runtime_adapter_layers": 6,
+  "tests": [
+    {
+      "file": "tests/runtime_adapter_pass01_inventory.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass01 inventory invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass02_protocol.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass02 typed protocol invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass03_retriever.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass03 work-runtime + Retriever adapter invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass04_negotiation.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass04 negotiation + feature detection invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass05_legacy_fallback.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass05 legacy DOM fallback + deprecation telemetry invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass06_lifecycle.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass06 typed lifecycle invariants",
+      "stderr": ""
+    }
+  ],
+  "syntax": "PASS",
+  "json_parse": "PASS",
+  "company_id_audit": "PASS",
+  "authority_audit": "PASS_LIFECYCLE_NEVER_GRANTS_AUTHORITY",
+  "timeout": "PASS_FAIL_CLOSED",
+  "cancellation": "PASS_NEGOTIATED_CAPABILITY_REQUIRED",
+  "terminal_replay": "PASS_BLOCKED",
+  "protected_retriever_bridge_modified": false,
+  "shared_hotspots_touched": []
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "titan-zero-collision-record/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 6,
+  "frozen_base_merge": 39,
+  "live_manager_merge": 42,
+  "collision": "NONE",
+  "merge42_modified_files": [
+    "monicaOptions.html",
+    "sidePanel.html"
+  ],
+  "adapter_path_overlap": false,
+  "payload_performance_destructive_reduction_gate": "Runtime Adapters convergence required",
+  "shared_hotspots_touched": []
+}

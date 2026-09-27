@@ -1,0 +1,10 @@
+{
+  "schema": "titan-zero-semantic-change/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 1,
+  "summary": "Inventory-only pass mapping current DOM-driven Retriever/Monica seams and governed message contracts on Manager Merge39; no production code changed.",
+  "authority_changes": [],
+  "company_boundary": "company_id",
+  "execution_permitted": false,
+  "production_code_modified": false
+}

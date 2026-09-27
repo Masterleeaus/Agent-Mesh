@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('fs');const path=require('path');
+const root=path.resolve(__dirname,'../..');
+const runtime=fs.readFileSync(path.join(root,'src/browser/browser-developer-inspection.js'),'utf8');
+const sw=fs.readFileSync(path.join(root,'src/lib/service-worker.js'),'utf8');
+const sidebar=fs.readFileSync(path.join(root,'src/sidebar/sidebar.js'),'utf8');
+if(!runtime.includes('browser.styles')||!runtime.includes('browser.react_source')||!runtime.includes('browser.evaluate'))throw new Error('developer capability registry missing');
+if(!runtime.includes('requiresDeveloperExecuteGrant'))throw new Error('evaluate safety metadata missing');
+if(!sw.includes('GET_BROWSER_DEVELOPER_INSPECTION')||!sw.includes('executeBrowserDeveloperInspection'))throw new Error('service-worker developer route missing');
+if(!sidebar.includes('GET_BROWSER_DEVELOPER_INSPECTION')||!sidebar.includes('React source'))throw new Error('browser developer UI missing');
+console.log('PASS15 developer inspection wiring');

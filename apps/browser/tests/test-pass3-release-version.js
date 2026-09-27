@@ -1,0 +1,12 @@
+const assert = require('assert');
+const fs = require('fs');
+const manifest = JSON.parse(fs.readFileSync('manifest.json','utf8'));
+const pkg = JSON.parse(fs.readFileSync('package.json','utf8'));
+const readme = fs.readFileSync('README.md','utf8');
+const runtime = fs.readFileSync('src/integration/titan-mcp-runtime.js','utf8');
+const parts = manifest.version.split('.').map(Number);
+assert(parts[0] > 2 || (parts[0] === 2 && parts[1] >= 4), 'current release must remain at or above the Pass 3 v2.4.0 floor');
+assert.strictEqual(pkg.version, manifest.version);
+assert(readme.includes('## v2.4.0 Production Platform Completion — Master Pass 3/32'), 'README must retain Pass 3 release history');
+assert(runtime.includes(`clientInfo:{name:'Codee Chrome Extension',version:'${manifest.version}'}`), 'MCP clientInfo must match current release version');
+console.log('Pass 3 release history remains compatible with current release metadata');

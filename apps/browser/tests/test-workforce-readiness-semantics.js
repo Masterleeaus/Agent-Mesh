@@ -1,0 +1,11 @@
+const assert=require('assert');const {load}=require('./_workforce-test-loader');const g=load();
+const manager=g.CodeeManagerRegistry.get('laravel-manager');
+let resolved=g.CodeeCapabilityResolver.resolve(manager,['repository.laravel.trace']);
+assert.strictEqual(resolved.ready,false,'manager missing required tools must not be marked ready');
+assert(resolved.missing.includes('repository.search'));
+let health=g.CodeeManagerHealth.inspect(manager,{'repository.laravel.trace':true});
+assert.strictEqual(health.status,'degraded','absent capability keys must count as missing');
+assert(health.missing.includes('repository.search'));
+const unknown=g.CodeeWorkforceHostIntegration.callCapability('workforce.capabilities.resolve',{managerId:'does-not-exist'});
+assert.strictEqual(unknown.ok,false);assert.strictEqual(unknown.reason,'unknown-manager');
+console.log('workforce readiness semantics OK');

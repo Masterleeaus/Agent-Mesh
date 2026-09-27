@@ -1,0 +1,9 @@
+{
+  "schema": "titan-zero-semantic-change/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 4,
+  "summary": "Adds adapter feature detection and negotiation; capability compatibility never grants permission, approval, entitlement or execution authority.",
+  "company_boundary": "company_id",
+  "authority_changes": [],
+  "execution_permitted": false
+}

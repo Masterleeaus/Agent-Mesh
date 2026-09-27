@@ -1,0 +1,34 @@
+name: Manager Review Readiness
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, edited, ready_for_review, converted_to_draft]
+  workflow_run:
+    workflows: ["Titan Zero CI", "Agent Claim Gate"]
+    types: [completed]
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/scripts/manager-review-readiness.py"
+      - ".github/workflows/manager-review-readiness.yml"
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  actions: read
+  statuses: write
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v4
+
+      - name: Evaluate all open agent PRs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/manager-review-readiness.py --publish-status

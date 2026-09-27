@@ -1,0 +1,11 @@
+const assert=require('assert'),fs=require('fs');
+const manifest=JSON.parse(fs.readFileSync('manifest.json','utf8'));
+const permissions=new Set(manifest.permissions||[]);
+for(const forbidden of ['scripting','activeTab','webRequest','webNavigation']) assert(!permissions.has(forbidden),`Browser runtime must not request ${forbidden}`); assert(permissions.has('debugger'),'implemented CDP browser runtime requires debugger permission');
+assert.deepStrictEqual(manifest.host_permissions,['*://chatgpt.com/*','*://claude.ai/*'],'Pass 2 must not widen host access');
+const worker=fs.readFileSync('src/lib/service-worker.js','utf8');
+assert(!worker.includes("message.action === 'CALL_BROWSER_CAPABILITY'"),'Pass 2 must not expose browser execution endpoint');
+assert(worker.includes("message.action === 'BROWSER_POLICY_CONNECT'"),'Pass 2 must expose explicit policy connect');
+assert(worker.includes("message.action === 'BROWSER_POLICY_GRANT'"),'Pass 2 must expose explicit grant flow');
+assert(worker.includes("message.action === 'CHECK_BROWSER_CAPABILITY_AUTH'"),'Pass 2 must expose read-only authorization inspection');
+console.log('Pass 2 keeps Chrome privileges narrow while adding explicit policy gates');

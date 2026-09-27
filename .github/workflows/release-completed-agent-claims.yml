@@ -1,0 +1,31 @@
+name: Release Completed Agent Claims
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "43 3 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/scripts/release-safe-agent-claims.py"
+      - ".github/workflows/release-completed-agent-claims.yml"
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v4
+
+      - name: Release only provably safe claim branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/release-safe-agent-claims.py --apply

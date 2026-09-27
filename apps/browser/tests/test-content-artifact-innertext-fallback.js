@@ -1,0 +1,12 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const source=fs.readFileSync('src/content-script.js','utf8');
+const signature=`CODEE_ARTIFACT\nPROTOCOL_VERSION: 2\nPLAN_ID: p\nRUN_ID: r\nSTEP_ID: step-01\nSTEP_TOKEN: token-x\nSTEP_COMPLETED: 1\nSTEP_TOTAL: 2\nSTATUS: completed\nARTIFACT_ID: a\nZIP: build-v1.0.0.zip\nTYPE: cumulative\nVERSION: 1.0.0\nPARENT_SHA256: N/A\nSHA256: ${'a'.repeat(64)}\nZIP_SIZE: 1\nDELTA_SIZE: N/A\nFILES_CHANGED: 1\nTESTS: 1/1 PASS\nVERIFICATION: PASS\nCREATED_AT: 2026-08-16T00:00:00+10:00\nNEXT_ACTION: advance\nCODEE_ARTIFACT_READY`;
+const flattened=signature.replace(/\n/g,' ');
+const msg={textContent:flattened,innerText:signature};
+const document={addEventListener(){},querySelectorAll(){return [msg]},querySelector(){return null},body:{textContent:flattened,innerText:signature},documentElement:{textContent:flattened,innerText:signature}};
+const c={console:{log(){},warn(){},error(){}},document,chrome:{runtime:{id:'x',onMessage:{addListener(){}},sendMessage:async()=>({ok:true})}},window:{location:{hostname:'chatgpt.com'}},MutationObserver:class{observe(){} disconnect(){}},setInterval(){return 1},clearInterval(){},setTimeout(){return 1},clearTimeout(){},Set,Map,Array,String,Number,RegExp,JSON,Promise,Date,Math,sessionStorage:{getItem(){return null},setItem(){}}};
+vm.runInNewContext(source,c);
+const artifacts=c.collectCodeeArtifacts();
+assert.strictEqual(artifacts.length,1,'innerText must be scanned when textContent flattens rendered Markdown line breaks');
+assert.strictEqual(artifacts[0].stepToken,'token-x');
+console.log('rendered CODEE footer innerText fallback OK');

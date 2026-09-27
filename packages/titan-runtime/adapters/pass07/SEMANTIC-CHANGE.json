@@ -1,0 +1,9 @@
+{
+  "schema": "titan-zero-semantic-change/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 7,
+  "summary": "Adds fail-closed adapter session recovery for navigation/reload/restart with stale-session detection and mandatory fresh negotiation/authority evaluation.",
+  "company_boundary": "company_id",
+  "authority_changes": [],
+  "execution_authority": false
+}

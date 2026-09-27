@@ -1,0 +1,221 @@
+{
+  "schema": "titan-zero-cleaning-kpi-registry/v1",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 4,
+  "company_boundary": "company_id",
+  "authority": {
+    "derived_only": true,
+    "analytics_grants_authority": false,
+    "source_modules_remain_canonical": true
+  },
+  "metrics": [
+    {
+      "metric_id": "cleaning.jobs_completed",
+      "label": "Cleaning jobs completed",
+      "domain": "jobs",
+      "unit": "count",
+      "aggregation": "count",
+      "source_ids": [
+        "jobs-runtime",
+        "cleaning-workforce"
+      ],
+      "source_fields": [
+        "job.id",
+        "job.status",
+        "job.completed_at",
+        "job.service_type"
+      ],
+      "qualifier": "service_type is cleaning and status is completed"
+    },
+    {
+      "metric_id": "cleaning.rework_count",
+      "label": "Rework jobs",
+      "domain": "quality",
+      "unit": "count",
+      "aggregation": "count",
+      "source_ids": [
+        "supervisor-runtime",
+        "jobs-runtime"
+      ],
+      "source_fields": [
+        "job.id",
+        "rework_required",
+        "exception.type",
+        "created_at"
+      ],
+      "qualifier": "explicit rework flag or quality exception only"
+    },
+    {
+      "metric_id": "cleaning.rework_rate",
+      "label": "Rework rate",
+      "domain": "quality",
+      "unit": "ratio",
+      "aggregation": "ratio",
+      "source_ids": [
+        "supervisor-runtime",
+        "jobs-runtime"
+      ],
+      "source_fields": [
+        "job.id",
+        "rework_required",
+        "job.status"
+      ],
+      "notes": "Numerator and denominator observations must be explicit; no inferred denominator."
+    },
+    {
+      "metric_id": "cleaning.quote_conversion_rate",
+      "label": "Quote conversion rate",
+      "domain": "revenue",
+      "unit": "ratio",
+      "aggregation": "ratio",
+      "source_ids": [
+        "sales-contract",
+        "sales-lead-response"
+      ],
+      "source_fields": [
+        "quote.id",
+        "quote.status",
+        "lead.id",
+        "accepted_at"
+      ],
+      "notes": "Accepted quotes divided by explicit eligible quotes."
+    },
+    {
+      "metric_id": "cleaning.labour_utilisation",
+      "label": "Cleaning labour utilisation",
+      "domain": "workforce",
+      "unit": "ratio",
+      "aggregation": "ratio",
+      "source_ids": [
+        "workforce-runtime",
+        "workforce-graph"
+      ],
+      "source_fields": [
+        "worked_minutes",
+        "available_minutes",
+        "worker.id",
+        "cleaning_assignment"
+      ],
+      "notes": "No estimate when available minutes are unavailable."
+    },
+    {
+      "metric_id": "cleaning.recurring_revenue",
+      "label": "Recurring cleaning revenue",
+      "domain": "revenue",
+      "unit": "currency",
+      "aggregation": "sum",
+      "source_ids": [
+        "invoice-workflow",
+        "business-services"
+      ],
+      "source_fields": [
+        "invoice.total",
+        "invoice.recurring",
+        "invoice.status",
+        "invoice.currency"
+      ],
+      "qualifier": "invoice explicitly linked to recurring cleaning work"
+    },
+    {
+      "metric_id": "cleaning.qa_exception_count",
+      "label": "QA exceptions",
+      "domain": "quality",
+      "unit": "count",
+      "aggregation": "count",
+      "source_ids": [
+        "supervisor-runtime",
+        "evidence-quality"
+      ],
+      "source_fields": [
+        "exception.id",
+        "exception.severity",
+        "evidence.score",
+        "created_at"
+      ]
+    },
+    {
+      "metric_id": "cleaning.first_time_pass_rate",
+      "label": "First-time QA pass rate",
+      "domain": "quality",
+      "unit": "ratio",
+      "aggregation": "ratio",
+      "source_ids": [
+        "supervisor-runtime",
+        "evidence-quality"
+      ],
+      "source_fields": [
+        "job.id",
+        "qa_passed",
+        "inspection_attempt",
+        "evaluated_at"
+      ],
+      "notes": "First-attempt passes divided by explicit first-attempt inspections."
+    },
+    {
+      "metric_id": "cleaning.average_job_value",
+      "label": "Average cleaning job value",
+      "domain": "revenue",
+      "unit": "currency",
+      "aggregation": "average",
+      "source_ids": [
+        "invoice-workflow",
+        "jobs-context-bridge"
+      ],
+      "source_fields": [
+        "invoice.total",
+        "job.id",
+        "job.service_type",
+        "completed_at"
+      ]
+    },
+    {
+      "metric_id": "cleaning.repeat_customer_rate",
+      "label": "Repeat cleaning customer rate",
+      "domain": "customer",
+      "unit": "ratio",
+      "aggregation": "ratio",
+      "source_ids": [
+        "jobs-runtime",
+        "jobs-context-bridge"
+      ],
+      "source_fields": [
+        "customer_id",
+        "job.id",
+        "job.completed_at",
+        "service_type"
+      ]
+    },
+    {
+      "metric_id": "cleaning.schedule_completion_rate",
+      "label": "Scheduled cleaning completion rate",
+      "domain": "jobs",
+      "unit": "ratio",
+      "aggregation": "ratio",
+      "source_ids": [
+        "jobs-runtime",
+        "workforce-runtime"
+      ],
+      "source_fields": [
+        "job.id",
+        "scheduled_at",
+        "completed_at",
+        "status"
+      ]
+    },
+    {
+      "metric_id": "cleaning.evidence_quality_average",
+      "label": "Cleaning evidence quality",
+      "domain": "quality",
+      "unit": "score",
+      "aggregation": "average",
+      "source_ids": [
+        "evidence-quality"
+      ],
+      "source_fields": [
+        "evidence.score",
+        "job.id",
+        "evaluated_at"
+      ]
+    }
+  ]
+}

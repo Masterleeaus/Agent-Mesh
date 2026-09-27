@@ -1,0 +1,5 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');const c={};c.globalThis=c;vm.createContext(c);for(const f of ['src/repository/repository-policy.js','src/repository/mutation-envelope.js','src/repository/command-policy.js','src/integration/repository-host-adapter.js'])vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});
+const input=JSON.parse('{"__proto__":{"polluted":"yes"},"constructor":{"x":1},"safe":"ok"}');
+const meta=c.CodeeRepositoryHostAdapter.safeMeta(input);assert.strictEqual(Object.getPrototypeOf(meta),null,'safeMeta output must have null prototype');assert.strictEqual(meta.polluted,undefined,'metadata sanitization must not allow inherited pollution');assert.strictEqual(meta.safe,'ok');
+const evidence=c.CodeeRepositoryHostAdapter.sanitizeEvidence(input);assert.strictEqual(Object.getPrototypeOf(evidence),null,'evidence sanitizer output must have null prototype');assert.strictEqual(evidence.polluted,undefined);
+console.log('Repository host sanitizers are prototype-safe');

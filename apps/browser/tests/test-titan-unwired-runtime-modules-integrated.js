@@ -1,0 +1,11 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const worker=fs.readFileSync('src/lib/service-worker.js','utf8');
+assert(!worker.includes("'../titan-zero/titan-zero-pack.js'"),'legacy CorePack must not be loaded into production worker');
+const c={};c.globalThis=c;vm.createContext(c);
+c.CodeeTitanZeroCommandCatalog={COMMANDS:[{id:'x',command:'php artisan about'}]};
+c.CodeeTitanZeroPrompts=[];c.CodeeTitanZeroDevelopmentPrompts=[];c.CodeeTitanZeroSkills=[];c.CodeeTitanZeroDevelopmentSkills=[];c.CodeeTitanZeroDevelopmentProfiles=[];
+vm.runInContext(fs.readFileSync('src/titan-zero/titan-zero-developer-pack.js','utf8'),c,{filename:'developer-pack.js'});
+const descriptor=c.CodeeTitanZeroDeveloperPack.registrationDescriptor();assert.strictEqual(descriptor.commands?.length,1,'command catalog must be surfaced through developer-pack descriptor');
+const h={};h.globalThis=h;h.CodeeTitanZeroDeveloperPack={analyzeSnapshot(){return {project:{recognized:true},schemaGraph:{tables:[],stats:{}},migrations:{files:[],risks:[]},routes:{routes:[]},settings:{},context:'',projectGraph:{nodes:[],edges:[]}}}};h.CodeeTitanZeroErrorClassifier={classify(){return {category:'database',confidence:'high'}}};vm.createContext(h);vm.runInContext(fs.readFileSync('src/lib/titan-zero-host-integration.js','utf8'),h,{filename:'host.js'});
+const result=h.CodeeTitanZeroHostIntegration.analyze({}, {autoDetect:false}, {error:'SQLSTATE failure'});assert.strictEqual(result.report.errorClassification?.category,'database','Titan error classifier must be wired into analysis results');
+console.log('Previously unwired Titan runtime modules are integrated or removed from production load');

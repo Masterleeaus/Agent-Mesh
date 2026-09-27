@@ -1,0 +1,27 @@
+name: Reconcile Titan Change Order Routes
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reconcile-titan-change-orders.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          # [id] Titan concurrency guards were promoted to canonical root.
+          git rm -f 'titan/apps/web/app/api/v1/change-orders/[id]/route.ts'
+          # Collection route differs only by explicit application UUID generation;
+          # canonical Dovetails RETURNING-id implementation remains authoritative.
+          git rm -f 'titan/apps/web/app/api/v1/change-orders/route.ts'
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Reconcile Titan change order routes"
+          git push

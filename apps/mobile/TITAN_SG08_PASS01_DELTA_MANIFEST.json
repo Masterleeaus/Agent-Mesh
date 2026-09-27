@@ -1,0 +1,24 @@
+{
+  "schema": "titan-mobile-sg08-pass-manifest/v1",
+  "subgoal_id": "TZ-ROADMAP-47-SG-08",
+  "pass": 1,
+  "status": "IMPLEMENTED_STATIC_VALIDATION",
+  "parent": "Titan-Mobile-MVP-SG07-CHECKPOINT-Pass04.zip",
+  "scope": "Offline provenance and reconnect authority convergence over existing queue/replay infrastructure",
+  "invariants": [
+    "company_id actor_id device_id scope",
+    "canonical agent_id + capability_id provenance",
+    "offline authority contracted",
+    "approval revalidated on reconnect",
+    "Signal/evidence provenance retained",
+    "idempotency + revisions retained",
+    "server authority revalidation required",
+    "Command Bus required",
+    "Signal only after accepted mutation"
+  ],
+  "runtime_execution": {
+    "flutter_test": false,
+    "reason": "Flutter SDK unavailable"
+  },
+  "next_pass": 2
+}

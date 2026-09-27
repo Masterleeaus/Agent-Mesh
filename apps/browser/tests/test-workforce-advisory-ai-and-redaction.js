@@ -1,0 +1,12 @@
+const assert=require('assert');
+const {load}=require('./_workforce-test-loader'); const g=load();
+g.CodeeRepositoryPolicy={redactText:t=>String(t).replace(/secret-token/g,'[REDACTED]')};
+g.CodeeWorkforceHostIntegration.register({});
+const ai=g.CodeeWorkforceHostIntegration.createAdvisoryAiRequest({managerId:'architecture-manager',task:'Review secret-token architecture',reason:'tradeoff'},{});
+assert.strictEqual(ai.queued,true);
+assert.strictEqual(ai.request.authority.executeResult,false);
+assert.strictEqual(ai.request.authority.advancePlan,false);
+assert(!JSON.stringify(ai).includes('secret-token'));
+const evidence=g.CodeeWorkforceHostIntegration.callCapability('workforce.evidence.bundle',{managerId:'runtime-manager',items:[{kind:'log',value:'secret-token'}]},{});
+assert(!JSON.stringify(evidence).includes('secret-token'));
+console.log('Workforce advisory AI/redaction OK');

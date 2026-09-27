@@ -1,0 +1,22 @@
+name: Retire Migrated Titan Price Book Route
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-titan-price-book-route.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          git rm -f 'titan/apps/web/app/api/v1/price-book/route.ts'
+          find titan/apps -depth -type d -empty -delete || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Retire migrated Titan price book route"
+          git push

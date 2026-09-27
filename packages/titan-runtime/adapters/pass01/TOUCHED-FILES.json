@@ -1,0 +1,17 @@
+{
+  "schema": "titan-zero-touched-files/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 1,
+  "added": [
+    "titan-runtime/adapters/pass01/PASS01-INVENTORY.json",
+    "titan-runtime/adapters/pass01/SEMANTIC-CHANGE.json",
+    "titan-runtime/adapters/pass01/TOUCHED-FILES.json",
+    "titan-runtime/adapters/pass01/COLLISION-RECORD.json",
+    "titan-runtime/adapters/pass01/VERIFICATION.json",
+    "titan-runtime/adapters/pass01/HANDOFF.json",
+    "tests/runtime_adapter_pass01_inventory.test.mjs"
+  ],
+  "modified": [],
+  "deleted": [],
+  "protected_hotspots_touched": []
+}

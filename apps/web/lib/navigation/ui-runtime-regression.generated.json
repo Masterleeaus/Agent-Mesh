@@ -1,0 +1,35 @@
+{
+  "schema": "titan.zero.ui-runtime-regression.v1",
+  "generatedAgainst": {
+    "managerMerge": "62",
+    "artifact": "Titan-Zero-CANONICAL-2026-09-13-MERGE62-LIVE-LANES-CONVERGED.zip",
+    "sha256": "806ae84bee5c9b5911ef33c76581d222615abc4cb8fee1188aac60ade22603bb"
+  },
+  "results": {
+    "sourceRegressionContracts": {"passed": 29, "total": 29},
+    "typescriptSyntax": {"passed": 681, "total": 681},
+    "jsonParse": {"passed": 7, "total": 7},
+    "pageRoutes": 75,
+    "routeHandlers": 227,
+    "loadingBoundaries": 20,
+    "errorBoundaries": 1,
+    "unresolvedLiteralAppTargets": 0,
+    "compatibilityRedirectLoops": 0
+  },
+  "categories": [
+    "route-reachability",
+    "interaction-contracts",
+    "offline-refresh",
+    "accessibility-pwa",
+    "authority-regression",
+    "syntax-integrity"
+  ],
+  "environmentLimitations": [
+    "Canonical ZIP does not contain installed node_modules, so Vitest/browser E2E and full web typecheck cannot run in the reconstructed environment.",
+    "Pass 9 compensates with full source syntax parsing and source-level regression contracts; Manager canonical verification remains authoritative for dependency-resolved platform typecheck."
+  ],
+  "defectsFixed": [
+    "Refreshed stale Merge55 reachability boundary telemetry to Merge62.",
+    "Corrected stale inventory unit-test expectations from impossible >100 page count to exact current route/boundary counts."
+  ]
+}

@@ -1,0 +1,1100 @@
+{
+  "goal_id": "TZ-ROADMAP-15",
+  "priority": "P2",
+  "title": "Commerce & Revenue Expansion",
+  "objective": "Complete Titan Commerce for multichannel listings, inventory, orders and returns.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "title": "Audit commerce connectors/domain",
+      "status": "TODO",
+      "subgoal_order": 1,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Commerce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-15-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Commerce connector/catalogue/test/certification infrastructure is a domain capability layer. Existing marketing, sales, supply, finance and customer-care agents own outcomes; no generic commerce-platform agent is required.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Commerce connector/catalogue/test/certification infrastructure is a domain capability layer. Existing marketing, sales, supply, finance and customer-care agents own outcomes; no generic commerce-platform agent is required."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Commerce",
+            "file_id": "file_00000000b77481f8b88289c9af00bf28",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Commerce/Titan Commerce Master Step 37.zip",
+            "sha256": "c4eb0e0a8eddc4659e8136fd1b0ad5d7826427fa3e4612ad0d4fffba3266f499",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Commerce-Adapter-Architecture-Step37/README.md",
+              "Titan-Commerce-Adapter-Architecture-Step37/docs/ARCHITECTURE.md",
+              "Titan-Commerce-Adapter-Architecture-Step37/policies/commerce-adapter-architecture.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/policies/provider-adapter-contract.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/mappings/commerce-capability-registry.json"
+            ],
+            "finding": "Step 37 inventories provider-neutral commerce domains, adapter targets, authority ownership and read/propose/command capabilities for Shopify, WooCommerce, Amazon, eBay, Etsy and future providers."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Commerce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Use Step 37 as the canonical architecture donor; current master is compact contract/runtime code, not a complete marketplace implementation.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Unify catalogue/listing model",
+      "status": "TODO",
+      "subgoal_order": 2,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Commerce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-15-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Commerce connector/catalogue/test/certification infrastructure is a domain capability layer. Existing marketing, sales, supply, finance and customer-care agents own outcomes; no generic commerce-platform agent is required.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Commerce connector/catalogue/test/certification infrastructure is a domain capability layer. Existing marketing, sales, supply, finance and customer-care agents own outcomes; no generic commerce-platform agent is required."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Commerce",
+            "file_id": "file_00000000b77481f8b88289c9af00bf28",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Commerce/Titan Commerce Master Step 37.zip",
+            "sha256": "c4eb0e0a8eddc4659e8136fd1b0ad5d7826427fa3e4612ad0d4fffba3266f499",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommerceProduct.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommerceVariant.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommerceListing.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommerceStore.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/docs/ARCHITECTURE.md"
+            ],
+            "finding": "Canonical product/variant/listing/store contracts already separate product truth from provider-specific listing state and preserve company_id as the sole tenant boundary."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Commerce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Unification contract is strong; implementation should converge provider fields through metadata/mappings rather than creating channel-specific catalogues.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Build listing optimisation agent",
+      "status": "TODO",
+      "subgoal_order": 3,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Commerce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-15-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-MKT-PRESENCE-DISCOVERY-SPC",
+          "TZAG-MKT-LISTING-PRESENCE-WRK",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-MKT-PRESENCE-DISCOVERY-SPC",
+          "TZAG-MKT-LISTING-PRESENCE-WRK",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC"
+        ],
+        "canonical_agent_names": [
+          "Local Presence & Discovery Specialist",
+          "Listing & Presence Update Worker",
+          "Opportunity Discovery Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-MKT-PRESENCE-DISCOVERY-SPC",
+            "TZAG-MKT-LISTING-PRESENCE-WRK",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Listing optimisation extends existing presence/discovery and sales opportunity agents; marketplace listings are channels, not new workforce identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Commerce",
+            "file_id": "file_00000000b77481f8b88289c9af00bf28",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Commerce/Titan Commerce Master Step 37.zip",
+            "sha256": "c4eb0e0a8eddc4659e8136fd1b0ad5d7826427fa3e4612ad0d4fffba3266f499",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommerceListing.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommerceAnalyticsEvent.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/runtime/CommerceAutomationBridge.php",
+              "Titan-Commerce-Adapter-Architecture-Step37/mappings/commerce-capability-registry.json"
+            ],
+            "finding": "The donor exposes listing change preparation plus analytics and governed automation primitives, but no concrete listing optimisation/ranking agent was found."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Commerce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Reuse the listing and analytics contracts; implement optimisation as a governed Workforce capability rather than embedding business logic in adapters.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Build order aggregation",
+      "status": "TODO",
+      "subgoal_order": 4,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Commerce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-15-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR"
+        ],
+        "canonical_agent_names": [
+          "Supply Continuity Manager",
+          "Inventory Integrity Specialist",
+          "Revenue Conversion Outcome Manager"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SUPPLY-CONTINUITY-MGR",
+            "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Order aggregation extends existing supply/inventory and revenue-conversion ownership; order connectors remain tools."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Commerce",
+            "file_id": "file_00000000b77481f8b88289c9af00bf28",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Commerce/Titan Commerce Master Step 37.zip",
+            "sha256": "c4eb0e0a8eddc4659e8136fd1b0ad5d7826427fa3e4612ad0d4fffba3266f499",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommerceOrder.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommerceProviderEvent.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/runtime/CommerceEventNormalizer.php",
+              "Titan-Commerce-Adapter-Architecture-Step37/policies/provider-adapter-contract.json"
+            ],
+            "finding": "Order/event normalization, source revisions and idempotency are defined, but no multi-provider order aggregation service/state machine was found."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Commerce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Build aggregation above adapters using canonical CommerceOrder and normalized provider events; do not treat provider order stores as independent authority.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Build inventory synchronisation",
+      "status": "TODO",
+      "subgoal_order": 5,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Commerce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-15-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SUPPLY-CONTINUITY-MGR",
+          "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+          "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK"
+        ],
+        "canonical_agent_names": [
+          "Supply Continuity Manager",
+          "Inventory Integrity Specialist",
+          "Stock Movement & Reservation Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SUPPLY-CONTINUITY-MGR",
+            "TZAG-INV-INVENTORY-INTEGRITY-SPC",
+            "TZAG-INV-STOCK-MOVEMENT-RESERVATION-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Inventory synchronisation extends canonical supply/inventory agents across commerce channels."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Commerce",
+            "file_id": "file_00000000b77481f8b88289c9af00bf28",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Commerce/Titan Commerce Master Step 37.zip",
+            "sha256": "c4eb0e0a8eddc4659e8136fd1b0ad5d7826427fa3e4612ad0d4fffba3266f499",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/InventoryPosition.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/runtime/InventoryReconciler.php",
+              "Titan-Commerce-Adapter-Architecture-Step37/policies/provider-adapter-contract.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/tests/runtime.php"
+            ],
+            "finding": "Location-aware, revision-aware inventory contracts and a reconciliation primitive already exist with non-negative on-hand and reserved/available separation."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Commerce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Inventory synchronization still needs provider polling/webhook convergence, conflict policy and authoritative receipt handling around the existing reconciler.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Build returns/refunds workflow",
+      "status": "TODO",
+      "subgoal_order": 6,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Commerce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-15-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-FIN-RECONCILIATION-INTEGRITY-SPC",
+          "TZAG-PAY-PAYMENT-ACCEPTANCE-SPC"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+          "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+          "TZAG-FIN-RECONCILIATION-INTEGRITY-SPC",
+          "TZAG-PAY-PAYMENT-ACCEPTANCE-SPC"
+        ],
+        "canonical_agent_names": [
+          "Service Experience Manager",
+          "Complaint & Service Recovery Specialist",
+          "Financial Reconciliation & Integrity Specialist",
+          "Payment Acceptance Specialist"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-CX-SERVICE-EXPERIENCE-MGR",
+            "TZAG-CX-COMPLAINT-RECOVERY-SPC",
+            "TZAG-FIN-RECONCILIATION-INTEGRITY-SPC",
+            "TZAG-PAY-PAYMENT-ACCEPTANCE-SPC"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Returns/refunds span existing Customer Experience and Finance/Payment ownership; do not create a duplicate returns agent hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Commerce",
+            "file_id": "file_00000000b77481f8b88289c9af00bf28",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Commerce/Titan Commerce Master Step 37.zip",
+            "sha256": "c4eb0e0a8eddc4659e8136fd1b0ad5d7826427fa3e4612ad0d4fffba3266f499",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommerceOrder.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommercePaymentReference.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/mappings/commerce-capability-registry.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/docs/ARCHITECTURE.md"
+            ],
+            "finding": "Returned/refunded/partially_refunded states and commerce.refund.prepare exist, with payment authority explicitly external, but no complete return/refund workflow runtime was found."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Commerce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Implement governed return/refund workflow that coordinates Commerce order state with Financial/payment authority; never infer payment truth from order state.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add marketplace messaging/automation",
+      "status": "TODO",
+      "subgoal_order": 7,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Commerce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-15-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-ACCESS-OMNICHANNEL-RESPONSE-SPC",
+          "TZAG-ACCESS-OUTBOUND-RESPONSE-WRK",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-ACCESS-OMNICHANNEL-RESPONSE-SPC",
+          "TZAG-ACCESS-OUTBOUND-RESPONSE-WRK",
+          "TZAG-CX-SERVICE-EXPERIENCE-MGR"
+        ],
+        "canonical_agent_names": [
+          "Omnichannel Response Continuity Specialist",
+          "Outbound Response Execution Worker",
+          "Service Experience Manager"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-ACCESS-OMNICHANNEL-RESPONSE-SPC",
+            "TZAG-ACCESS-OUTBOUND-RESPONSE-WRK",
+            "TZAG-CX-SERVICE-EXPERIENCE-MGR"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Marketplace messaging/automation extends existing omnichannel response and customer-experience ownership."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Commerce",
+            "file_id": "file_00000000b77481f8b88289c9af00bf28",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Commerce/Titan Commerce Master Step 37.zip",
+            "sha256": "c4eb0e0a8eddc4659e8136fd1b0ad5d7826427fa3e4612ad0d4fffba3266f499",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommerceCommunicationRequest.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/mappings/commerce-capability-registry.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/policies/commerce-adapter-architecture.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/docs/ARCHITECTURE.md"
+            ],
+            "finding": "Commerce communication requests are explicitly delegated to Titan Connect/channel adapters; no duplicated marketplace messaging runtime is present in Commerce."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Commerce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Correct design is integration with communications authority, not a Commerce-local sender. Marketplace automation should prepare governed communication capabilities.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add commerce analytics/health scan",
+      "status": "TODO",
+      "subgoal_order": 8,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Commerce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-15-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-REPORT-QUERY-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+          "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+          "TZAG-INTEL-REPORT-QUERY-WRK"
+        ],
+        "canonical_agent_names": [
+          "Decision Intelligence Manager",
+          "Metric Integrity & Semantic Governance Specialist",
+          "Requested Report & Query Worker"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-INTEL-DECISION-INTELLIGENCE-MGR",
+            "TZAG-INTEL-METRIC-INTEGRITY-SPC",
+            "TZAG-INTEL-REPORT-QUERY-WRK"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Commerce analytics/health scanning extends existing Decision Intelligence and metric-integrity agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Commerce",
+            "file_id": "file_00000000b77481f8b88289c9af00bf28",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Commerce/Titan Commerce Master Step 37.zip",
+            "sha256": "c4eb0e0a8eddc4659e8136fd1b0ad5d7826427fa3e4612ad0d4fffba3266f499",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Commerce-Adapter-Architecture-Step37/contracts/CommerceAnalyticsEvent.schema.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/runtime/CommerceAutomationBridge.php",
+              "Titan-Commerce-Adapter-Architecture-Step37/policies/commerce-adapter-architecture.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/docs/ARCHITECTURE.md"
+            ],
+            "finding": "Analytics are explicitly projection-only and automation triggers include stock, checkout, payment, fulfilment, listing, customer, margin and conversion anomalies, but no finished commerce health-scan service was found."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Commerce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Build health/optimisation projections from authoritative events and receipts; analytics must never mutate transaction truth.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Run channel failure and reconciliation tests",
+      "status": "TODO",
+      "subgoal_order": 9,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Commerce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-15-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Commerce connector/catalogue/test/certification infrastructure is a domain capability layer. Existing marketing, sales, supply, finance and customer-care agents own outcomes; no generic commerce-platform agent is required.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Commerce connector/catalogue/test/certification infrastructure is a domain capability layer. Existing marketing, sales, supply, finance and customer-care agents own outcomes; no generic commerce-platform agent is required."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Commerce",
+            "file_id": "file_00000000b77481f8b88289c9af00bf28",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Commerce/Titan Commerce Master Step 37.zip",
+            "sha256": "c4eb0e0a8eddc4659e8136fd1b0ad5d7826427fa3e4612ad0d4fffba3266f499",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Commerce-Adapter-Architecture-Step37/runtime/CommerceEventNormalizer.php",
+              "Titan-Commerce-Adapter-Architecture-Step37/runtime/InventoryReconciler.php",
+              "Titan-Commerce-Adapter-Architecture-Step37/runtime/CommerceAuthorityGuard.php",
+              "Titan-Commerce-Adapter-Architecture-Step37/tests/runtime.php",
+              "Titan-Commerce-Adapter-Architecture-Step37/tests/verify.py",
+              "Titan-Commerce-Adapter-Architecture-Step37/recovery/STEP37-VERIFICATION.json"
+            ],
+            "finding": "Step 37 passes contract/runtime verification for company boundary, event idempotency, money, inventory reconciliation, governed automation and adapter authority separation."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Commerce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Existing tests are architecture/runtime focused. Multi-channel outage, replay, stale revision, duplicate order, partial failure and reconciliation scenarios still require broader integration tests.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Certify Commerce module",
+      "status": "TODO",
+      "subgoal_order": 10,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Commerce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-15-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Commerce connector/catalogue/test/certification infrastructure is a domain capability layer. Existing marketing, sales, supply, finance and customer-care agents own outcomes; no generic commerce-platform agent is required.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Commerce connector/catalogue/test/certification infrastructure is a domain capability layer. Existing marketing, sales, supply, finance and customer-care agents own outcomes; no generic commerce-platform agent is required."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Commerce",
+            "file_id": "file_00000000b77481f8b88289c9af00bf28",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Commerce/Titan Commerce Master Step 37.zip",
+            "sha256": "c4eb0e0a8eddc4659e8136fd1b0ad5d7826427fa3e4612ad0d4fffba3266f499",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Commerce-Adapter-Architecture-Step37/recovery/STEP37-VERIFICATION.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/PACKAGE-MANIFEST.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/mappings/commerce-capability-registry.json",
+              "Titan-Commerce-Adapter-Architecture-Step37/policies/provider-adapter-contract.json"
+            ],
+            "finding": "Step 37 has lint/runtime verification and exact parent-lineage evidence, but MASTER-STATUS still records last_verification=null and outstanding deep-scan/merge/verify work."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Commerce"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Treat Step 37 as validated donor architecture, not final Commerce certification. Certification requires implemented provider adapters, integration scenarios and end-to-end governed receipts.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "commerce"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": false,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan Commerce"
+  ],
+  "reuse_first": true,
+  "agent_goal_classification": "DOMAIN_WORKFORCE_ELIGIBLE",
+  "agent_goal_rule": "This goal owns durable business/domain outcomes and may reuse, extend or create canonical workforce identities subject to non-duplication and outcome-owner tests.",
+  "workforce_goal_classification": "DOMAIN_OUTCOME_AGENT_ELIGIBLE",
+  "workforce_goal_rule": "Agents are permitted only for durable business/operational outcomes with a distinct ownership boundary. Reuse or extend canonical identities before creating new ones."
+}

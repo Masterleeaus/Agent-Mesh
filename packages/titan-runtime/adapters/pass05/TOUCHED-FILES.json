@@ -1,0 +1,13 @@
+{
+  "schema": "titan-zero-touched-files/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 5,
+  "added": [
+    "titan-runtime/adapters/legacy-dom-discovery.mjs",
+    "titan-runtime/adapters/pass05/LEGACY-DOM-FALLBACK.md",
+    "tests/runtime_adapter_pass05_legacy_fallback.test.mjs"
+  ],
+  "modified": [],
+  "deleted": [],
+  "shared_hotspots_touched": []
+}

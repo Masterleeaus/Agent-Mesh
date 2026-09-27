@@ -1,0 +1,23 @@
+{
+  "schema": "titan-mobile-sg07-pass-manifest/v1",
+  "subgoal_id": "TZ-ROADMAP-47-SG-07",
+  "pass": 3,
+  "status": "IMPLEMENTED_STATIC_VALIDATION",
+  "parent": "Titan-Mobile-MVP-SG07-Pass02.zip",
+  "scope": "Canonical quote/revenue/accounts projection for Hub approvals, add-ons, invoices and payment intents",
+  "invariants": [
+    "company_id + customer binding",
+    "canonical revenue/accounts agent_id reused",
+    "no Hub commercial agent clone",
+    "quote revision retained when present",
+    "payment is intent only",
+    "authority_granted false",
+    "Command Bus required",
+    "server revalidation required"
+  ],
+  "runtime_execution": {
+    "flutter_test": false,
+    "reason": "Flutter SDK unavailable in execution environment"
+  },
+  "next_pass": 4
+}

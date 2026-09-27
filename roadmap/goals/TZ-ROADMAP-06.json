@@ -1,0 +1,172 @@
+{
+  "schema": "titan-zero-roadmap-goal/v3",
+  "goal_id": "TZ-ROADMAP-06",
+  "priority": "P0",
+  "title": "CRM Execution Core",
+  "objective": "Harden CRM as the authoritative business state/execution layer beneath agents.",
+  "status": "PLANNED",
+  "migration": {
+    "source": "authoritative legacy roadmap/index + verified discovery evidence",
+    "restored_to_github_v3": true,
+    "restored_at": "2026-09-21",
+    "note": "Restored after GitHub migration gap. Existing GitHub Issues remain execution records; current main and evidence must be reconciled before implementation."
+  },
+  "reuse_first": true,
+  "library_reuse_refs": [
+    "Titan CRM",
+    "Titan Bookings Quotes",
+    "Titan Field",
+    "Titan Financial Engine",
+    "Titan Ledger",
+    "WorkCore to Titan CRM Donor Pack"
+  ],
+  "architecture_rules": [
+    "company_id is the only canonical company boundary; legacy tenant fields normalize before authorization/storage/execution.",
+    "CRM is business-state authority for its owned entities; adjacent domain engines retain their canonical ownership rather than duplicating schemas.",
+    "Reuse and converge verified donor behavior before rebuilding.",
+    "Consequential mutations route through governed execution / Command Bus.",
+    "Agents must inspect current main and evidence and implement only remaining gaps."
+  ],
+  "subgoals": [
+    {
+      "subgoal_id": "TZ-ROADMAP-06-SG-01",
+      "subgoal_order": 1,
+      "title": "Audit company/customer/job/quote/invoice schemas",
+      "status": "TODO",
+      "priority": "P1",
+      "mvp_required": false,
+      "claimable": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "execution": {
+        "state": "UNCLAIMED"
+      },
+      "reuse_first": true
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-06-SG-02",
+      "subgoal_order": 2,
+      "title": "Enforce company_id isolation globally",
+      "status": "TODO",
+      "priority": "P0",
+      "mvp_required": true,
+      "claimable": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "execution": {
+        "state": "UNCLAIMED"
+      },
+      "reuse_first": true
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-06-SG-03",
+      "subgoal_order": 3,
+      "title": "Unify service request to work-order lifecycle",
+      "status": "TODO",
+      "priority": "P0",
+      "mvp_required": true,
+      "claimable": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "execution": {
+        "state": "UNCLAIMED"
+      },
+      "reuse_first": true
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-06-SG-04",
+      "subgoal_order": 4,
+      "title": "Harden customer/contact/location relationships",
+      "status": "TODO",
+      "priority": "P1",
+      "mvp_required": false,
+      "claimable": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "execution": {
+        "state": "UNCLAIMED"
+      },
+      "reuse_first": true
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-06-SG-05",
+      "subgoal_order": 5,
+      "title": "Harden quote/estimate lifecycle",
+      "status": "TODO",
+      "priority": "P0",
+      "mvp_required": true,
+      "claimable": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "execution": {
+        "state": "UNCLAIMED"
+      },
+      "reuse_first": true
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-06-SG-06",
+      "subgoal_order": 6,
+      "title": "Harden appointment/dispatch/task lifecycle",
+      "status": "TODO",
+      "priority": "P0",
+      "mvp_required": true,
+      "claimable": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "execution": {
+        "state": "UNCLAIMED"
+      },
+      "reuse_first": true
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-06-SG-07",
+      "subgoal_order": 7,
+      "title": "Harden invoice/payment operational state",
+      "status": "TODO",
+      "priority": "P0",
+      "mvp_required": true,
+      "claimable": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "execution": {
+        "state": "UNCLAIMED"
+      },
+      "reuse_first": true
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-06-SG-08",
+      "subgoal_order": 8,
+      "title": "Add revision/idempotency/conflict guarantees",
+      "status": "TODO",
+      "priority": "P0",
+      "mvp_required": true,
+      "claimable": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "execution": {
+        "state": "UNCLAIMED"
+      },
+      "reuse_first": true
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-06-SG-09",
+      "subgoal_order": 9,
+      "title": "Run tenant-isolation and lifecycle regression",
+      "status": "TODO",
+      "priority": "P1",
+      "mvp_required": false,
+      "claimable": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "execution": {
+        "state": "UNCLAIMED"
+      },
+      "reuse_first": true
+    },
+    {
+      "subgoal_id": "TZ-ROADMAP-06-SG-10",
+      "subgoal_order": 10,
+      "title": "Certify CRM contracts for agent use",
+      "status": "TODO",
+      "priority": "P1",
+      "mvp_required": false,
+      "claimable": true,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "execution": {
+        "state": "UNCLAIMED"
+      },
+      "reuse_first": true
+    }
+  ]
+}

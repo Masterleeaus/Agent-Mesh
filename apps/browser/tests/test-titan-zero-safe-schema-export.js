@@ -1,0 +1,12 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');
+const files=['titan-zero-core-profile.js','titan-zero-snapshot-policy.js','titan-zero-project-detector.js','titan-zero-sql-analyzer.js','titan-zero-route-analyzer.js','titan-zero-theme-analyzer.js','titan-zero-context.js','titan-zero-diagnostics.js','titan-zero-prompts.js','titan-zero-skills.js','titan-zero-pack.js','titan-zero-schema-graph.js','titan-zero-migration-analyzer.js','titan-zero-tenancy-analyzer.js','titan-zero-php-architecture.js','titan-zero-frontend-analyzer.js','titan-zero-navigation-analyzer.js','titan-zero-impact-engine.js','titan-zero-test-matrix.js','titan-zero-runtime-diagnostics.js','titan-zero-model-schema-analyzer.js','titan-zero-route-consumer-index.js','titan-zero-version-analyzer.js','titan-zero-config-analyzer.js','titan-zero-project-graph.js','titan-zero-context-selector.js','titan-zero-command-catalog.js','titan-zero-risk-rules.js','titan-zero-error-classifier.js','titan-zero-knowledge.js','titan-zero-development-prompts.js','titan-zero-development-skills.js','titan-zero-development-profiles.js','titan-zero-developer-pack.js','titan-zero-receiver-adapter.js'];
+const c={console,Map,Set,Object,Array,String,Number,Boolean,RegExp,JSON,Math};c.globalThis=c;vm.createContext(c);vm.runInContext(fs.readFileSync('src/lib/capability-registry.js','utf8'),c);for(const f of files)vm.runInContext(fs.readFileSync(`src/titan-zero/${f}`,'utf8'),c);vm.runInContext(fs.readFileSync('src/lib/titan-zero-host-integration.js','utf8'),c);
+const sql="CREATE TABLE `accounts` (`id` bigint NOT NULL, `api_token` varchar(255) DEFAULT 'SHOULD_NOT_EXPORT', KEY `idx_id` (`id`)) ENGINE=InnoDB;";
+const out=c.CodeeTitanZeroHostIntegration.analyze({files:{'composer.json':'{"require":{"laravel/framework":"^12"}}'},sqlText:sql},{},{task:'accounts',changedPaths:[]});
+assert(out.report && out.report.schemaGraph,'safe report must expose schema graph metadata');
+const serialized=JSON.stringify(out.report);
+assert(!serialized.includes('SHOULD_NOT_EXPORT'),'schema default values/definitions must not be exported');
+assert(serialized.includes('api_token'),'sensitive column names may remain as risk metadata');
+assert(Array.isArray(out.report.schemaGraph.indexes),'indexes must remain available');
+assert.strictEqual(out.report.files,undefined,'source file contents must never appear in exported report');
+console.log('Titan Zero safe schema export OK');

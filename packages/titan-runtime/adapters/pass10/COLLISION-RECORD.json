@@ -1,0 +1,11 @@
+{
+  "schema": "titan-zero-collision-record/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 10,
+  "frozen_base_merge": 39,
+  "live_manager_merge": 42,
+  "collision": "NONE",
+  "manager_phase3_slimming_observed": true,
+  "phase3_overlap": "NONE; Builder2 deletions/rewires are outside adapter-owned paths",
+  "retriever_retirement_still_blocked_until_manager_convergence": true
+}

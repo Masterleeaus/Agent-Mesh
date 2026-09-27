@@ -1,0 +1,14 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+const root=process.cwd();
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const j=p=>JSON.parse(read(p));
+const workflows=['new_customer','create_quote','service_booking','create_job','complete_job','create_invoice','payment_reconciliation'];
+test('canonical lifecycle workflows exist and preserve company_id provenance',()=>{for(const n of workflows){const d=j(`titan-business-services/workflows/${n}.json`);assert.equal(d._titan_provenance.company_boundary,'company_id');}});
+test('service booking already carries governed correlation context',()=>{const d=j('titan-business-services/workflows/service_booking.json');assert.ok(d.wizard.governance.required_context.includes('correlation_id'));assert.ok(d.wizard.governance.required_context.includes('company_id'));});
+test('sales handoff carries current journey and entity correlation without execution authority',()=>{const s=read('titan-workforce/starter-agents/sales/runtime/sales-structured-handoff.mjs');for(const token of ['journey_id','opportunity_id','customer_id','quote_id','correlation_id','execution_authority: false'])assert.ok(s.includes(token),token);});
+test('booking contract is authority neutral and does not own domain truths',()=>{const d=j('titan-workforce/starter-agents/booking/booking-agent-contract.json');assert.equal(d.company_boundary,'company_id');assert.equal(d.activation_confers_authority,false);assert.ok(d.never_owns.includes('customer truth'));assert.ok(d.never_owns.includes('job/work-order truth'));});
+test('jobs lifecycle is company-scoped and command-bus gated',()=>{const s=read('titan-workforce/starter-agents/jobs/jobs-lifecycle-contract.mjs');assert.ok(s.includes("company_boundary:'company_id'"));assert.ok(s.includes('requires_command_bus:true'));assert.ok(s.includes('identity_confers_authority:false'));});
+test('no durable revenue_journey_id contract exists yet',()=>{const roots=['titan-business-services','titan-workforce','titan-runtime'];let hits=[];for(const r of roots){const walk=d=>{for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(/\.(?:m?js|json)$/.test(e.name)){if(fs.readFileSync(p,'utf8').includes('revenue_journey_id'))hits.push(path.relative(root,p));}}};walk(path.join(root,r));}assert.deepEqual(hits,[]);});

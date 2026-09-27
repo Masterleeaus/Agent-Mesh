@@ -1,0 +1,123 @@
+{
+  "schema": "titan-zero-runtime-adapter-capability-parity/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 9,
+  "frozen_base_merge": 39,
+  "capabilities": [
+    {
+      "capability": "runtime readiness / negotiation",
+      "legacy_evidence": [
+        "TITAN_RETRIEVER_PING",
+        "TITAN_RETRIEVER_READY"
+      ],
+      "typed_evidence": [
+        "TITAN_ADAPTER_HELLO",
+        "TITAN_ADAPTER_HELLO_ACK"
+      ],
+      "status": "PRESERVED_WITH_TYPED_REPLACEMENT"
+    },
+    {
+      "capability": "work submission",
+      "legacy_evidence": [
+        "TITAN_EXECUTE_OUTCOME",
+        "TITAN_RETRIEVER_EXECUTE"
+      ],
+      "typed_evidence": [
+        "TITAN_WORK_SUBMIT",
+        "RetrieverAdapter -> TITAN_EXECUTE_OUTCOME"
+      ],
+      "status": "PRESERVED"
+    },
+    {
+      "capability": "progress observation",
+      "legacy_evidence": [
+        "TITAN_OUTCOME_PROGRESS"
+      ],
+      "typed_evidence": [
+        "TITAN_WORK_PROGRESS",
+        "progress_observation capability"
+      ],
+      "status": "PRESERVED"
+    },
+    {
+      "capability": "result delivery",
+      "legacy_evidence": [
+        "TITAN_OUTCOME_RESULT"
+      ],
+      "typed_evidence": [
+        "TITAN_WORK_COMPLETE",
+        "result_delivery capability"
+      ],
+      "status": "PRESERVED"
+    },
+    {
+      "capability": "error delivery",
+      "legacy_evidence": [
+        "TITAN_OUTCOME_ERROR"
+      ],
+      "typed_evidence": [
+        "TITAN_WORK_ERROR",
+        "fail_closed adapter errors"
+      ],
+      "status": "PRESERVED_AND_HARDENED"
+    },
+    {
+      "capability": "DOM discovery",
+      "legacy_evidence": [
+        "textarea",
+        "contenteditable",
+        "button/[role=button]"
+      ],
+      "typed_evidence": [
+        "legacy DOM fallback wrapper",
+        "protected bridge retained"
+      ],
+      "status": "PRESERVED_AS_FALLBACK_NOT_YET_RETIRABLE"
+    },
+    {
+      "capability": "company isolation",
+      "legacy_evidence": [
+        "company_id",
+        "requestId rebinding protection"
+      ],
+      "typed_evidence": [
+        "company_id required across envelope/gate/session/fallback"
+      ],
+      "status": "PRESERVED_AND_HARDENED"
+    },
+    {
+      "capability": "cancellation",
+      "legacy_evidence": [],
+      "typed_evidence": [
+        "TITAN_WORK_CANCEL",
+        "TITAN_WORK_CANCELLED"
+      ],
+      "status": "ADDED"
+    },
+    {
+      "capability": "navigation/restart recovery",
+      "legacy_evidence": [
+        "DOM MutationObserver / runtime rediscovery behavior"
+      ],
+      "typed_evidence": [
+        "adapter-session recovery",
+        "fresh negotiation + authority reevaluation"
+      ],
+      "status": "ADDED_AND_HARDENED"
+    },
+    {
+      "capability": "authority neutrality",
+      "legacy_evidence": [
+        "handoff grants execution authority false"
+      ],
+      "typed_evidence": [
+        "adapter never grants authority",
+        "fresh external gate required"
+      ],
+      "status": "PRESERVED_AND_HARDENED"
+    }
+  ],
+  "donor_capability_loss_detected": false,
+  "retriever_background_retirement_authorized_by_builder": false,
+  "reason": "Runtime adapters preserve or harden known handoff/runtime capabilities, but retriever-background.iife.js remains Manager-guarded until convergence and fresh reachability/equivalence scan."
+}

@@ -1,0 +1,37 @@
+name: Agent Claim Gate
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, edited, ready_for_review]
+  push:
+    branches: [main]
+    paths:
+      - "roadmap/**"
+      - ".github/scripts/validate-agent-claim.py"
+      - ".github/workflows/agent-claim-gate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate roadmap and claim
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            python3 .github/scripts/validate-agent-claim.py
+          else
+            python3 .github/scripts/validate-agent-claim.py --self-test
+          fi

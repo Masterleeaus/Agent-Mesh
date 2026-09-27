@@ -1,0 +1,25 @@
+name: Retire Superseded Titan Estimate API
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-titan-estimate-api.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          # Canonical estimate route is later evolved: it retains the archived
+          # contract and adds the commercial pricing_mode lane plus subsequent
+          # estimate creation behavior.
+          git rm -f 'titan/apps/web/app/api/v1/estimates/route.ts'
+          find titan/apps -depth -type d -empty -delete || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Retire superseded Titan estimate API route"
+          git push

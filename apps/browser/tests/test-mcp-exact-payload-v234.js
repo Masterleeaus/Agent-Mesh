@@ -1,0 +1,10 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const c={};c.globalThis=c;c.CodeeRemoteContextBroker={sanitizeArgs:v=>JSON.parse(JSON.stringify(v).replace(/abc123|demo-password|Bearer secret-token/g,'[redacted]'))};
+vm.createContext(c);vm.runInContext(fs.readFileSync('src/integration/mcp-governance-gateway.js','utf8'),c,{filename:'gateway'});
+const g=c.CodeeMcpGovernanceGateway;
+assert.strictEqual(g.MAX_MUTATION_ARGUMENT_BYTES,12*1024*1024,'Codee exact mutation ceiling must align with Titan MCP default ticket argument ceiling');
+const sensitive={path:'app/Config.php',content:'api_key = "abc123"\nAuthorization: Bearer secret-token\npassword: "demo-password"',reason:'preserve exact bytes'};
+let out=g.sanitizeCallArgs(sensitive);assert.strictEqual(out.ok,true);assert.deepStrictEqual(JSON.parse(JSON.stringify(out.args)),sensitive,'mutation arguments must remain byte-for-byte equivalent after validation');
+const large='x'.repeat(1024*1024);out=g.sanitizeCallArgs({path:'app/Large.php',content:large,reason:'large write'});assert.strictEqual(out.ok,true,'Codee must accept Titan-supported 1 MiB file payloads');assert.strictEqual(out.args.content.length,large.length);
+out=g.sanitizeCallArgs({path:'app/TooLarge.php',content:'x'.repeat(13*1024*1024+1),reason:'oversize'});assert.strictEqual(out.ok,false,'Codee must retain a hard bounded request ceiling');
+console.log('MCP exact mutation payload v2.3.4 OK');

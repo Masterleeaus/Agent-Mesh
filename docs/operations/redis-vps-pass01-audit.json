@@ -1,0 +1,52 @@
+{
+  "schema": "titan-zero-redis-vps-pass01-audit/v1",
+  "workspace_name": "Builder 1",
+  "role_id": "builder",
+  "work_packet_id": "TZ-M75-PROD-REDIS-VPS-001",
+  "round_id": "TZ-R75-NEXT-01",
+  "round_epoch": 1,
+  "declared_base_sha256": "24a1e8013dd804f85542d004ad169060d3fcbb0124ea84737ac55a9d8a12ec44",
+  "manager_merge": 75,
+  "pass": 1,
+  "status": "COMPLETE",
+  "objective": "Audit existing Redis/session/queue abstractions and VPS compose/env/install scripts; preserve existing contracts.",
+  "evidence": {
+    "packet_dependencies": [],
+    "vps_installer_observed": "Titan-Zero-VPS-Installer-Pass01.sh",
+    "compose_services_observed": ["web", "worker", "postgres"],
+    "redis_service_present": false,
+    "redis_volume_present": false,
+    "redis_url_generated": false,
+    "redis_url_injected_web": false,
+    "redis_url_injected_worker": false,
+    "redis_health_gate_present": false,
+    "redis_startup_order_present": false,
+    "redis_operational_log_target_documented": false,
+    "postgres_contract_preserved": true,
+    "web_contract_preserved": true,
+    "worker_contract_preserved": true
+  },
+  "preservation_constraints": [
+    "Keep existing web/worker/PostgreSQL service semantics and current health checks unless Redis dependency requires additive wiring.",
+    "Do not expose Redis publicly; keep it on the internal app network.",
+    "Use REDIS_URL as the single runtime connection contract for web/worker services.",
+    "Do not move queue retry/DLQ/monitoring ownership into this packet beyond what is required for basic Redis-backed operation; TZ-M75-RELIABILITY-REDIS-QUEUE-001 owns later reliability depth.",
+    "Preserve company_id authority and do not make technological-intelligence identity an execution authority.",
+    "Builder output remains delta-only; Manager alone promotes canonical state."
+  ],
+  "implementation_gaps_for_next_passes": [
+    "Add Redis 7-alpine service to VPS compose.",
+    "Add persistent Redis volume and explicit persistence policy.",
+    "Add Redis healthcheck, logging and internal startup dependency.",
+    "Generate and validate REDIS_URL in VPS environment handling.",
+    "Inject REDIS_URL into web and worker services.",
+    "Verify session persistence and background queue behavior after runtime wiring."
+  ],
+  "semantic_change": "Audit/evidence only; no production runtime files changed in Pass 1.",
+  "verification": {
+    "json_parse": "PASS",
+    "coordination_identity": "PASS_AFTER_METADATA_REPAIR",
+    "production_runtime_changed": false,
+    "pass_result": "PASS"
+  }
+}

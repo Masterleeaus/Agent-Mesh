@@ -1,0 +1,16 @@
+{
+  "name": "titan-code-extension",
+  "private": true,
+  "version": "2.11.9",
+  "description": "Canonical verification harness for the Titan Code Chrome MV3 extension.",
+  "scripts": {
+    "test": "node tools/verify-codee.mjs",
+    "source-manifest": "node tools/generate-source-manifest.mjs",
+    "interaction:typecheck": "tsc -p tsconfig.interaction.json --noEmit",
+    "interaction:build": "tsc -p tsconfig.interaction.json",
+    "interaction:test": "npm run interaction:build && node tests/test-interaction-engine-runtime-boundary.js && node tests/test-interaction-engine-contracts.js && node tests/test-interaction-engine-intent-classifier.js && node tests/test-interaction-engine-localbrain.js && node tests/test-interaction-engine-wizard-runtime.js && node tests/test-interaction-engine-journey-runtime.js && node tests/test-interaction-engine-indexeddb-store.js && node tests/test-interaction-engine-capability-router.js"
+  },
+  "devDependencies": {
+    "typescript": "5.8.3"
+  }
+}

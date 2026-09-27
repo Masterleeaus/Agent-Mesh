@@ -1,0 +1,30 @@
+{
+  "task_id": "TZ-CM-EXAMPLE-001",
+  "objective": "Example outcome-gated task",
+  "status": "PROPOSED",
+  "priority": 50,
+  "dependencies": [],
+  "owned_areas": [
+    "example/**"
+  ],
+  "shared_areas": [],
+  "acceptance_gates": [
+    {
+      "id": "G1",
+      "description": "Implementation exists",
+      "status": "TODO",
+      "evidence_ids": []
+    },
+    {
+      "id": "G2",
+      "description": "Independent verifier passes adversarial suite",
+      "status": "TODO",
+      "evidence_ids": []
+    }
+  ],
+  "claim": {
+    "status": "UNCLAIMED",
+    "claim_id": null,
+    "agent_id": null
+  }
+}

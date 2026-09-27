@@ -1,0 +1,27 @@
+name: Reconcile Titan Estimate Routes
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reconcile-titan-estimate-routes.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          # respond was promoted: Titan preserves first-writer-wins with row locking
+          # while avoiding PostgreSQL RETURNING and gates RLS set_config by dialect.
+          git rm -f 'titan/apps/web/app/api/v1/estimates/[id]/respond/route.ts'
+          # transition root is newer: job is created before deposit so deposit lands
+          # on the job, and COUNT(*)::int keeps line_item_count typed correctly.
+          git rm -f 'titan/apps/web/app/api/v1/estimates/[id]/transition/route.ts'
+          find titan/apps -depth -type d -empty -delete || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Reconcile Titan estimate response and transition routes"
+          git push

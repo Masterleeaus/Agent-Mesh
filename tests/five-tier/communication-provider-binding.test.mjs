@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import { resolveCommunicationProvider, prepareCommunicationExecution, listCommunicationWorkerBindings } from '../../titan-workforce/hierarchy/communication-provider-binding-runtime.mjs';
+
+const company_id='company_demo';
+assert.equal(listCommunicationWorkerBindings().length,13);
+const email=resolveCommunicationProvider({company_id,worker_id:'titan.worker.send_invoice_agent',channel:'email'});
+assert.equal(email.provider_id,'titan.connect.gmail');
+assert.equal(email.capability_id,'channel.gmail');
+assert.equal(email.execution_permitted,false);
+assert.equal(email.binding_grants_authority,false);
+const wa=resolveCommunicationProvider({company_id,worker_id:'titan.worker.send_customer_message_agent',channel:'whatsapp'});
+assert.equal(wa.provider_id,'titan.connect.whatsapp');
+const sms=resolveCommunicationProvider({company_id,worker_id:'titan.worker.send_customer_message_agent',channel:'sms'});
+assert.equal(sms.available,false);
+assert.equal(sms.execution_permitted,false);
+const blocked=prepareCommunicationExecution({company_id,worker_id:'titan.worker.send_quote_agent',channel:'email'});
+assert.equal(blocked.proposal.state,'BLOCKED');
+assert(blocked.proposal.blocked_reasons.includes('APPROVAL_REQUIRED'));
+const ready=prepareCommunicationExecution({company_id,worker_id:'titan.worker.send_quote_agent',channel:'email',approval_granted:true,idempotency_key:'quote-1',recipient_ref:'customer:1',content_ref:'quote:1'});
+assert.equal(ready.proposal.state,'READY_FOR_AUTHORITY_GATE');
+assert.equal(ready.execution_permitted,false);
+console.log('communication provider binding: PASS');

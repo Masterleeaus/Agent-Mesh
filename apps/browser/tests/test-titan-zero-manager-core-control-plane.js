@@ -1,0 +1,23 @@
+const assert=require('assert');
+const fs=require('fs');
+const vm=require('vm');
+const path=require('path');
+const root=path.resolve(__dirname,'..');
+const sandbox={console}; sandbox.globalThis=sandbox; vm.createContext(sandbox);
+function load(rel){vm.runInContext(fs.readFileSync(path.join(root,rel),'utf8'),sandbox,{filename:rel});}
+load('src/titan-zero/agent-mesh-role-topology.js');
+load('src/titan-zero/manager-control-plane.js');
+const cp=sandbox.TitanZeroManagerControlPlane;
+assert(cp,'manager control plane must export');
+assert.strictEqual(cp.SCHEMA,'titan-zero.manager.control-plane.v1');
+assert.strictEqual(cp.can('manager','canonical.promote'),true);
+assert.strictEqual(cp.can('builder','canonical.promote'),false);
+assert.strictEqual(cp.can('supervisor','verification.verdict'),true);
+assert.strictEqual(cp.can('librarian','cleanup.decide'),true);
+assert.strictEqual(cp.can('browserIntelligence','merge.execute'),false);
+assert.strictEqual(cp.isCanonicalManager({surface:'titan-code',role:'manager',authority:'canonical-manager'}),true);
+assert.strictEqual(cp.isCanonicalManager({surface:'titan-code',role:'workforce-manager',authority:'advisory'}),false);
+assert.throws(()=>cp.authorize({role:'builder',capability:'canonical.promote'}),/not authorized/i);
+assert.strictEqual(cp.authorize({role:'manager',capability:'canonical.promote'}).authorized,true);
+assert.strictEqual(cp.assertBoundary().ok,true);
+console.log('PASS test-titan-zero-manager-core-control-plane');

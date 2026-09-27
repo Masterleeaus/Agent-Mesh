@@ -1,0 +1,7 @@
+const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert');
+const root=path.resolve(__dirname,'..'),s={console,globalThis:{}};s.globalThis=s;vm.createContext(s);
+for(const f of ['manager-workspace-ledger','manager-self-claim','manager-idle-sweep'])vm.runInContext(fs.readFileSync(path.join(root,'src/titan-zero',f+'.js'),'utf8'),s,{filename:f});
+const base={revision:6,generation:2,canonical:{artifact:'Titan-Code-CANONICAL.zip'},maintenance_queue:{enabled:true,templates:['browser compatibility verification','flaky-test detection']},agents:{'Agent 3':{lane:'browser_intelligence',state:'AVAILABLE',execution_active:false,working_generation:2}},claims:[],packets:[],history:{reset_event:{event:'ORIGINAL'},manager_events:[]}};
+const out=s.TitanZeroManagerIdleSweep.sweep(base,6,{updated_at:'2026-09-13T14:30:00+10:00'});
+assert.equal(out.revision,7);assert.equal(out.agents['Agent 3'].state,'ACTIVE');assert.ok(out.agents['Agent 3'].current_work_packet.startsWith('TC-MAINT-AGENT3-'));assert.equal(out.claims.length,1);assert.equal(out.claims[0].agent,'Agent 3');assert.equal(out.claims[0].state,'ACTIVE');assert.equal(out.packets[0].maintenance_template,'browser compatibility verification');assert.equal(out.history.reset_event.event,'ORIGINAL');assert.equal(out.history.manager_events.at(-1).event,'MANAGER_IDLE_SWEEP');
+console.log('PASS test-titan-zero-manager-idle-sweep');

@@ -1,0 +1,11 @@
+const fs=require('fs'),assert=require('assert');
+const html=fs.readFileSync('src/sidebar/sidebar.html','utf8');
+const js=fs.readFileSync('src/sidebar/sidebar.js','utf8');
+const sw=fs.readFileSync('src/lib/service-worker.js','utf8');
+const nav=fs.readFileSync('src/lib/navigation-registry.js','utf8');
+for(const id of ['host-ops-summary','repository-host-capabilities','artifact-host-capabilities','artifact-host-receipt','host-ops-held-plans','host-ops-refresh-btn']) assert(html.includes(`id="${id}"`),`missing ${id}`);
+assert(js.includes("GET_HOST_OPERATIONS"),'sidebar must request host operations');
+assert(sw.includes("message.action === 'GET_HOST_OPERATIONS'"),'worker must expose host operations read model');
+assert(sw.includes('getHostOperationsPayload'),'worker must build bounded host operations payload');
+assert(nav.includes("page: 'repository-host'") && nav.includes("readiness: 'AVAILABLE'"),'Repository Host navigation must be AVAILABLE');
+console.log('PASS platform pass8 host operations');

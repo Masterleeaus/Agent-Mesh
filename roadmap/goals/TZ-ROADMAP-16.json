@@ -1,0 +1,1112 @@
+{
+  "goal_id": "TZ-ROADMAP-16",
+  "priority": "P2",
+  "title": "Vertical Builder & Templates",
+  "objective": "Turn Titan Sprout/vertical templates into reusable business operating blueprints.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "title": "Inventory existing vertical schemas/templates",
+      "status": "TODO",
+      "subgoal_order": 1,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan Builder",
+        "Titan Vertical Engine (donor lineage)"
+      ],
+      "subgoal_id": "TZ-ROADMAP-16-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "resources/builder/verticals/cleaning.json",
+              "resources/builder/verticals/plumbing.json",
+              "resources/builder/verticals/electrical.json",
+              "resources/builder/verticals/hvac.json",
+              "resources/builder/verticals/handyman-property-maintenance.json",
+              "resources/builder/verticals/landscaping-gardening.json",
+              "resources/builder/verticals/pest-control.json",
+              "resources/builder/verticals/locksmith-security.json",
+              "resources/builder/verticals/roofing-guttering.json",
+              "resources/builder/verticals/appliance-equipment-repair.json",
+              "resources/builder/templates/premium-booking-app.json",
+              "resources/builder/templates/premium-commerce-app.json",
+              "docs/FIELD-HOME-SERVICES-VERTICALS.md"
+            ],
+            "finding": "Builder already contains ten field/home-service vertical packs plus premium booking/commerce/service templates and canonical surface mappings."
+          },
+          {
+            "source_ref": "Titan Vertical Engine donor lineage",
+            "file_id": "file_00000000552881fa830e3d9c9d47bc61",
+            "library_path": "/Library artifact: Titan-Vertical-Engine-v0.1.0-Deep-Scan.md",
+            "sha256": null,
+            "verification": "PROVENANCE_ONLY_DEEP_SCAN_EXECUTABLE_PAYLOAD_NOT_RESOLVED",
+            "internal_paths": [
+              "deep-scan mission coverage matrix"
+            ],
+            "finding": "Historical Vertical Engine scan inventories intended vertical-definition responsibilities but proves the old engine was only a scaffold."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Builder",
+          "Titan Vertical Engine donor lineage"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Inventory is substantial in Builder; do not revive the old Vertical Engine scaffold as authority.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Define vertical capability/template contract",
+      "status": "TODO",
+      "subgoal_order": 2,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan Builder",
+        "Titan Vertical Engine (donor lineage)"
+      ],
+      "subgoal_id": "TZ-ROADMAP-16-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "resources/builder/schemas/builder.schema.json",
+              "resources/builder/contracts/contribution-provenance.schema.json",
+              "System/Verticals/CrmVerticalContextProvider.php",
+              "resources/builder/actions/builder-vertical-apply.json"
+            ],
+            "finding": "Builder provides presentation-only manifests, CRM-authoritative vertical context and governed vertical-apply action, but its builder.schema is too shallow to be the full vertical-definition contract."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "schemas/role-v1.schema.json",
+              "System/Validation/ValidatorRegistry.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Generation/StaticRoleTemplateEngine.php"
+            ],
+            "finding": "Forge supplies typed validation/generation infrastructure that can compile vertical definitions into governed artifacts."
+          },
+          {
+            "source_ref": "Titan Vertical Engine donor lineage",
+            "file_id": "file_00000000552881fa830e3d9c9d47bc61",
+            "library_path": "/Library artifact: Titan-Vertical-Engine-v0.1.0-Deep-Scan.md",
+            "sha256": null,
+            "verification": "PROVENANCE_ONLY_DEEP_SCAN_EXECUTABLE_PAYLOAD_NOT_RESOLVED",
+            "internal_paths": [
+              "recommended architecture: VerticalDefinitionRegistry/Repository/Validator/Resolver/CompositionEngine/Compiler/ExportRegistry"
+            ],
+            "finding": "Deep scan specifies the missing typed/versioned definition, composition, override and export contracts."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Builder",
+          "Titan Forge",
+          "Titan Vertical Engine donor lineage"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Define one canonical versioned VerticalDefinition contract; Builder remains presentation/configuration, CRM/domain owners remain business authority.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Build field/home services reference vertical",
+      "status": "TODO",
+      "subgoal_order": 3,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan Builder",
+        "Titan Vertical Engine (donor lineage)"
+      ],
+      "subgoal_id": "TZ-ROADMAP-16-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "docs/FIELD-HOME-SERVICES-VERTICALS.md",
+              "resources/builder/verticals/cleaning.json",
+              "resources/builder/verticals/plumbing.json",
+              "resources/builder/verticals/electrical.json",
+              "resources/builder/verticals/hvac.json",
+              "resources/builder/verticals/handyman-property-maintenance.json",
+              "resources/builder/verticals/landscaping-gardening.json",
+              "resources/builder/verticals/pest-control.json",
+              "resources/builder/verticals/locksmith-security.json",
+              "resources/builder/verticals/roofing-guttering.json",
+              "resources/builder/verticals/appliance-equipment-repair.json"
+            ],
+            "finding": "Ten canonical field/home-service configuration packs already exist, are presentation-only, and discover CRM capabilities/read models rather than owning business logic."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Builder"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Use these packs as the reference vertical family and enrich them through the canonical definition/compiler rather than duplicating service rules.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Build facilities/NDIS vertical",
+      "status": "TODO",
+      "subgoal_order": 4,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan Builder",
+        "Titan Vertical Engine (donor lineage)"
+      ],
+      "subgoal_id": "TZ-ROADMAP-16-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "resources/builder/templates/premium-service-app.json",
+              "resources/builder/templates/premium-field-app.json",
+              "System/Verticals/CrmVerticalContextProvider.php"
+            ],
+            "finding": "Generic service/field templates and CRM capability context are reusable foundations, but no facilities/NDIS vertical definition was found."
+          },
+          {
+            "source_ref": "Titan Vertical Engine donor lineage",
+            "file_id": "file_00000000552881fa830e3d9c9d47bc61",
+            "library_path": "/Library artifact: Titan-Vertical-Engine-v0.1.0-Deep-Scan.md",
+            "sha256": null,
+            "verification": "PROVENANCE_ONLY_DEEP_SCAN_EXECUTABLE_PAYLOAD_NOT_RESOLVED",
+            "internal_paths": [
+              "mission coverage matrix: jurisdiction requirements, risk matrices, evidence requirements, roles, inspections all missing"
+            ],
+            "finding": "The historical engine confirms compliance/evidence/jurisdiction semantics were never implemented."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Builder",
+          "Titan Vertical Engine donor lineage"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Facilities/NDIS remains genuine new vertical-definition work and must include jurisdiction, evidence, safeguards and role/capability overlays rather than UI-only branding.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Build booking/hire vertical",
+      "status": "TODO",
+      "subgoal_order": 5,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan Builder",
+        "Titan Vertical Engine (donor lineage)"
+      ],
+      "subgoal_id": "TZ-ROADMAP-16-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "resources/builder/templates/premium-booking-app.json",
+              "resources/builder/templates/premium-service-app.json",
+              "System/Publishing/VersionedPublisher.php"
+            ],
+            "finding": "Booking/service application shells and versioned publication already exist, but a booking/hire domain vertical with resource/rental lifecycle semantics was not found."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Builder"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Reuse premium booking/service templates as surfaces; author hire/resource lifecycle semantics through domain capabilities instead of embedding them in the template.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Build commerce/retail vertical",
+      "status": "TODO",
+      "subgoal_order": 6,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan Builder",
+        "Titan Vertical Engine (donor lineage)"
+      ],
+      "subgoal_id": "TZ-ROADMAP-16-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "resources/builder/templates/premium-commerce-app.json",
+              "resources/builder/templates/premium-customer-app.json",
+              "System/Publishing/VersionedPublisher.php"
+            ],
+            "finding": "Commerce/customer presentation templates exist and are company-scoped/version-published, but full commerce vertical semantics belong to Titan Commerce/domain owners."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Builder"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Bind the commerce/retail vertical to Titan Commerce capabilities and canonical customer/payment/inventory authorities; template remains presentation-only.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Build hospitality/fitness/salon/auto templates",
+      "status": "TODO",
+      "subgoal_order": 7,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan Builder",
+        "Titan Vertical Engine (donor lineage)"
+      ],
+      "subgoal_id": "TZ-ROADMAP-16-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "resources/builder/templates/premium-service-app.json",
+              "resources/builder/templates/premium-membership-app.json",
+              "resources/builder/templates/premium-booking-app.json",
+              "resources/builder/templates/premium-customer-app.json"
+            ],
+            "finding": "Generic service, membership, booking and customer templates can seed hospitality/fitness/salon/auto surfaces, but no explicit vertical definitions for those four families were found."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Builder"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "These vertical families remain authoring work; reuse generic templates only as UI scaffolds and define domain terminology/workflows/capabilities separately.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add vertical-specific agents/workflows/forms",
+      "status": "TODO",
+      "subgoal_order": 8,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan Builder",
+        "Titan Vertical Engine (donor lineage)"
+      ],
+      "subgoal_id": "TZ-ROADMAP-16-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "resources/builder/components/form-wizard.json",
+              "resources/builder/specs/dynamic-form.json",
+              "resources/builder/blocks/approval-workflow.json",
+              "resources/builder/actions/form-submit-preview.json",
+              "resources/builder/actions/builder-vertical-apply.json"
+            ],
+            "finding": "Builder already supplies governed forms, wizards, approval-workflow blocks and vertical application actions."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Workforce/RoleCatalog.php",
+              "System/Workforce/CapabilityResolver.php",
+              "resources/workforce/roles-bootstrap.json",
+              "resources/workforce/capability-bindings.json",
+              "System/Generation/StaticRoleTemplateEngine.php"
+            ],
+            "finding": "Forge supplies role/capability generation and workforce binding primitives for vertical-specific agents."
+          },
+          {
+            "source_ref": "Titan Vertical Engine donor lineage",
+            "file_id": "file_00000000552881fa830e3d9c9d47bc61",
+            "library_path": "/Library artifact: Titan-Vertical-Engine-v0.1.0-Deep-Scan.md",
+            "sha256": null,
+            "verification": "PROVENANCE_ONLY_DEEP_SCAN_EXECUTABLE_PAYLOAD_NOT_RESOLVED",
+            "internal_paths": [
+              "recommended compiler/export layers"
+            ],
+            "finding": "Historical design correctly calls for Workforce, Risk, Knowledge, Shield and Interaction Engine exports from a vertical compiler."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Builder",
+          "Titan Forge",
+          "Titan Vertical Engine donor lineage"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Compose existing Builder UI primitives with Forge workforce generation through a typed vertical compiler; do not create vertical-local agent runtimes.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Run template install/migration tests",
+      "status": "TODO",
+      "subgoal_order": 9,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan Builder",
+        "Titan Vertical Engine (donor lineage)"
+      ],
+      "subgoal_id": "TZ-ROADMAP-16-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Migration/LegacyBusinessSpecMigrator.php",
+              "System/Migration/CanonicalSurfaceResolver.php",
+              "System/Publishing/VersionedPublisher.php",
+              "tests/standalone/legacy_migration_v080.php",
+              "tests/standalone/template_surface_test.php",
+              "tests/Feature/Publishing/VersionedPublisherTest.php",
+              "tests/standalone/current_installer_contract.php"
+            ],
+            "finding": "Builder already tests legacy migration, canonical surface convergence, template surfaces, installer contracts and versioned publish/rollback."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_release_candidate_persistence.php",
+              "bin/verify-release-zip.py"
+            ],
+            "finding": "Forge supplies installer/release validation and artifact verification."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Builder",
+          "Titan Forge"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Extend existing migration/install tests into a vertical-definition compatibility matrix covering version upgrades, overrides, rollbacks and cross-engine exports.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Certify vertical builder",
+      "status": "TODO",
+      "subgoal_order": 10,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan Builder",
+        "Titan Vertical Engine (donor lineage)"
+      ],
+      "subgoal_id": "TZ-ROADMAP-16-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Vertical/template compiler infrastructure. Vertical packs may bind or configure existing canonical domain agents; any genuinely distinct vertical outcome owner must be defined once in its domain registry, not cloned by the builder."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Runtime/DefaultBuilderRuntimeHealth.php",
+              "System/Release/BuilderPackageManifestValidator.php",
+              "tests/standalone/agent4_builder_runtime_health.php",
+              "tests/standalone/agent4_suite_live_wiring_contract.php",
+              "tests/standalone/agent4_visual_runtime_contract_compatibility.php"
+            ],
+            "finding": "Builder has runtime health, package-manifest validation and live-wiring/visual compatibility tests."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Governance/ReleaseGovernanceService.php",
+              "System/Validation/ValidatorRegistry.php",
+              "tests/standalone/test_release_verifier.py",
+              "tests/standalone/verify_runtime_validation_wiring.php"
+            ],
+            "finding": "Forge has release governance, validation and release-verifier tests."
+          },
+          {
+            "source_ref": "Titan Vertical Engine donor lineage",
+            "file_id": "file_00000000552881fa830e3d9c9d47bc61",
+            "library_path": "/Library artifact: Titan-Vertical-Engine-v0.1.0-Deep-Scan.md",
+            "sha256": null,
+            "verification": "PROVENANCE_ONLY_DEEP_SCAN_EXECUTABLE_PAYLOAD_NOT_RESOLVED",
+            "internal_paths": [
+              "final assessment: functional maturity 1/10, production readiness 1/10"
+            ],
+            "finding": "Old Vertical Engine is explicitly not certifiable and should not be mistaken for production vertical capability."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Builder",
+          "Titan Forge",
+          "Titan Vertical Engine donor lineage"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Certification must target the converged Builder+Forge+domain-runtime architecture; old Vertical Engine scaffold is provenance only.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "ui",
+    "vertical"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan Forge",
+    "Titan Builder",
+    "Titan Vertical Engine (donor lineage)"
+  ],
+  "reuse_first": true,
+  "agent_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENTS",
+  "agent_goal_rule": "This goal is platform/runtime/interface/infrastructure work. Do not create a workforce identity for the technology itself. Existing canonical agents may consume its capabilities.",
+  "workforce_goal_classification": "DOMAIN_OUTCOME_AGENT_ELIGIBLE",
+  "workforce_goal_rule": "Agents are permitted only for durable business/operational outcomes with a distinct ownership boundary. Reuse or extend canonical identities before creating new ones."
+}

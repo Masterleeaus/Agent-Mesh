@@ -1,0 +1,25 @@
+name: Reconcile Titan Quick Book And Logo Routes
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reconcile-quick-book-logo.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          # Quick Book root is later: required house/property support + T&M pricing mode.
+          # Logo Titan portability improvement (DbClient) has been promoted to root.
+          git rm -f             'titan/apps/web/app/api/v1/quick-book/route.ts'             'titan/apps/web/app/api/v1/account/logo/route.ts'
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Reconcile Titan quick book and logo routes"
+          git push

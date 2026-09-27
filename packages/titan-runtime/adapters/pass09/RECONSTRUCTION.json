@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-reconstruction-verification/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 9,
+  "frozen_base_merge": 39,
+  "base_files": 2844,
+  "payload_files": 103,
+  "reconstructed_files": 2947,
+  "base_path_collisions": [],
+  "hash_differences": [],
+  "exact_additive_reconstruction": true,
+  "live_manager_merge": 42,
+  "forward_port_assessment": "CLEAN_ADDITIVE; Runtime Adapter payload remains under exclusive adapter/tests paths."
+}

@@ -1,0 +1,11 @@
+'use strict';
+const assert = require('node:assert/strict');
+const { sanitizeExportName, buildMarkdownExport, createZipBytes, capability } = require('../src/intelligence/export-utilities');
+assert.equal(sanitizeExportName('../bad:name?.md'), 'badname.md');
+const md = buildMarkdownExport([{ name:'Result', type:'evidence', text:'ok' }], { title:'Audit', exportedAt:'2026-09-13T00:00:00Z' });
+assert.match(md, /^# Audit/m); assert.match(md, /## Result/); assert.match(md, /ok/);
+const zip = createZipBytes([{ name:'evidence/result.txt', data:'ok' }]);
+assert.equal(Buffer.from(zip).readUInt32LE(0), 0x04034b50);
+assert.equal(capability().mutation_authority, false);
+assert.throws(() => createZipBytes(Array.from({ length: 501 }, (_,i) => ({ name:`${i}.txt`, data:'' }))), /entry count/i);
+console.log('PASS export-utilities donor integration');

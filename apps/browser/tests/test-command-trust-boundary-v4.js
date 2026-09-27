@@ -1,0 +1,27 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const c={};c.globalThis=c;vm.createContext(c);
+for(const f of ['src/repository/repository-policy.js','src/repository/command-policy.js','src/repository/mutation-envelope.js','src/integration/repository-host-adapter.js'])vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});
+const calls=[];
+const host={runCommand:async(cmd,opts)=>{calls.push({cmd,opts});return {ok:true};}};
+(async()=>{
+ const adapter=c.CodeeRepositoryHostAdapter.create(host);
+ const out=await adapter.runCommand('git status',{cwd:'.'},{readOnly:false,scope:{cwd:'../outside'},classification:{class:'WRITE'},token:'abc'});
+ assert.strictEqual(out.classification.class,'READ');
+ assert.strictEqual(calls.length,1);
+ assert.strictEqual(calls[0].opts.readOnly,true,'trusted readOnly must not be overridden by metadata');
+ assert.strictEqual(calls[0].opts.scope.cwd,'.','trusted scope must not be overridden by metadata');
+ assert.strictEqual(calls[0].opts.classification.class,'READ','trusted classification must be Codee-owned');
+ assert.strictEqual(calls[0].opts.meta.readOnly,undefined);
+ assert.strictEqual(calls[0].opts.meta.scope,undefined);
+ assert.strictEqual(calls[0].opts.meta.classification,undefined);
+ assert.strictEqual(calls[0].opts.meta.token,'[redacted]');
+ assert.strictEqual(c.CodeeCommandPolicy.classify('npm test').class,'EXECUTE');
+ assert.strictEqual(c.CodeeCommandPolicy.classify('php artisan test').class,'EXECUTE');
+ assert.strictEqual(c.CodeeCommandPolicy.classify('phpunit').class,'EXECUTE');
+ assert.strictEqual(c.CodeeCommandPolicy.classify('pytest').class,'EXECUTE');
+ assert.strictEqual(c.CodeeCommandPolicy.classify('php -l app/Foo.php').class,'VERIFY');
+ assert.strictEqual(c.CodeeCommandPolicy.classify('git diff --no-index ../../.env config/app.php').class,'INVALID');
+ assert.strictEqual(c.CodeeCommandPolicy.classify('git diff --no-index /etc/passwd /etc/hosts').class,'INVALID');
+ assert.strictEqual(c.CodeeCommandPolicy.classify('php -l ../../outside.php').class,'INVALID');
+ console.log('command trust boundary v4 OK');
+})().catch(e=>{console.error(e);process.exit(1)});

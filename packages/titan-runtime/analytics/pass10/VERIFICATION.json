@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-verification/v1",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 10,
+  "status": "PASS",
+  "analytics_tests": "10/10 PASS",
+  "runtime_syntax": "7/7 PASS",
+  "live_manager_sha256": "PASS",
+  "live_manager_files": "2932/2932 PASS",
+  "source_provenance": "PASS",
+  "ui_projection": "PASS",
+  "manager_43_44_collision": "NONE",
+  "exact_delta_reconstruction": "PASS 3036/3036 production files exact"
+}

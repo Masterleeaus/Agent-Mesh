@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, dev]
+
+jobs:
+  lint-and-test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint:n8n
+
+      - name: Creator Portal style lint (changed files)
+        env:
+          PORTAL_LINT_BASE: origin/${{ github.event.pull_request.base.ref || 'main' }}
+        run: npm run lint:portal:changed
+
+      - run: npm run build
+
+      - run: npm test
+        continue-on-error: true

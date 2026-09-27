@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Titan Code - Plan Runner</title>
+    <link rel="stylesheet" href="sidebar.css">
+</head>
+<body>
+    <div id="nav-backdrop" class="nav-backdrop" hidden></div>
+
+    <aside id="nav-drawer" class="nav-drawer" aria-label="Titan Code navigation" aria-hidden="true">
+        <div class="nav-drawer-header">
+            <div class="drawer-brand">
+                <img class="drawer-logo" src="../../public/branding/codee-logo.png" alt="Titan Code logo">
+                <div class="drawer-brand-copy">
+                    <strong>TITAN CODE</strong>
+                    <span>Workspace</span>
+                </div>
+            </div>
+            <button id="nav-close-btn" class="icon-btn nav-close-btn" type="button" title="Close menu" aria-label="Close menu">×</button>
+        </div>
+
+        <nav id="codee-nav-links" class="nav-links" aria-label="Titan Code pages">
+            <div class="nav-group-label">Workspace</div>
+            <button class="nav-link active" type="button" data-fallback-runner="true" aria-current="page"><span>▶</span><span>Runner</span></button>
+        </nav>
+    </aside>
+
+    <div class="container">
+        <header class="app-header">
+            <button id="menu-btn" class="header-menu-btn" type="button" title="Open menu" aria-label="Open menu" aria-expanded="false" aria-controls="nav-drawer">☰</button>
+            <div class="brand-block">
+                <img class="brand-logo" src="../../public/branding/codee-logo.png" alt="Titan Code logo">
+                <div class="brand-copy">
+                    <h1>TITAN CODE</h1>
+                    <p id="page-context">Conversation-aware plan orchestration</p>
+                </div>
+            </div>
+            <div class="header-menu-spacer" aria-hidden="true"></div>
+        </header>
+
+        <main id="app-pages">
+            <div class="app-page active" data-page="dashboard">
+                <section class="section dashboard-hero">
+                    <div class="section-heading-row">
+                        <div>
+                            <h2>🏠 Dashboard</h2>
+                            <p class="section-subtitle">Canonical project, plan, verification and dependency status. Dashboard data is read-only and derived from existing Titan Code authorities.</p>
+                        </div>
+                        <button id="dashboard-refresh-btn" class="icon-btn" type="button" title="Refresh dashboard" aria-label="Refresh dashboard">↻</button>
+                    </div>
+                    <p id="dashboard-generated-at" class="dashboard-generated-at">Loading current Titan Code status…</p>
+                </section>
+
+                <section class="dashboard-grid" aria-live="polite">
+                    <article id="dashboard-project-card" class="dashboard-card">
+                        <div class="dashboard-card-heading"><span>Project</span><span id="dashboard-project-state" class="health-badge neutral">Unknown</span></div>
+                        <strong id="dashboard-project-name">Titan Code Project</strong>
+                        <dl class="dashboard-kv"><div><dt>Branch</dt><dd id="dashboard-project-branch">—</dd></div><div><dt>Framework</dt><dd id="dashboard-project-framework">—</dd></div><div><dt>Runtime</dt><dd id="dashboard-project-runtime">—</dd></div><div><dt>Files</dt><dd id="dashboard-project-files">0</dd></div></dl>
+                    </article>
+                    <article id="dashboard-plan-card" class="dashboard-card">
+                        <div class="dashboard-card-heading"><span>Active Plan</span><span id="dashboard-plan-state" class="health-badge neutral">None</span></div>
+                        <strong id="dashboard-plan-id">No active plan</strong>
+                        <p id="dashboard-plan-step" class="dashboard-card-copy">No step is currently running.</p>
+                        <p id="dashboard-plan-count" class="dashboard-card-meta">0 active plans</p>
+                    </article>
+                    <article id="dashboard-artifact-card" class="dashboard-card">
+                        <div class="dashboard-card-heading"><span>Last Artifact</span><span id="dashboard-artifact-state" class="health-badge neutral">None</span></div>
+                        <strong id="dashboard-artifact-name">No verified artifact yet</strong>
+                        <p id="dashboard-artifact-hash" class="dashboard-card-copy mono">—</p>
+                        <p id="dashboard-artifact-time" class="dashboard-card-meta">—</p>
+                    </article>
+                    <article id="dashboard-ai-card" class="dashboard-card">
+                        <div class="dashboard-card-heading"><span>AI</span><span id="dashboard-ai-state" class="health-badge neutral">Unknown</span></div>
+                        <strong id="dashboard-ai-summary">Provider Gateway</strong>
+                        <p id="dashboard-ai-detail" class="dashboard-card-copy">Checking providers and local AI…</p>
+                    </article>
+                    <article id="dashboard-infrastructure-card" class="dashboard-card dashboard-card-wide">
+                        <div class="dashboard-card-heading"><span>Infrastructure</span><span class="dashboard-card-meta">Canonical health</span></div>
+                        <div id="dashboard-infrastructure-list" class="dashboard-health-list"></div>
+                    </article>
+                    <article id="dashboard-workforce-card" class="dashboard-card">
+                        <div class="dashboard-card-heading"><span>AI Workforce</span><span id="dashboard-workforce-state" class="health-badge neutral">Unknown</span></div>
+                        <strong id="dashboard-workforce-summary">14-manager runtime</strong>
+                        <p id="dashboard-workforce-detail" class="dashboard-card-copy">Checking manager readiness…</p>
+                    </article>
+                    <article id="dashboard-attention-card" class="dashboard-card dashboard-card-wide">
+                        <div class="dashboard-card-heading"><span>Needs Attention</span><span id="dashboard-attention-count" class="health-badge neutral">0</span></div>
+                        <div id="dashboard-attention-list" class="dashboard-attention-list"><p class="dashboard-empty">No current attention items.</p></div>
+                    </article>
+                </section>
+
+                <section class="section dashboard-actions">
+                    <div class="section-heading-row"><div><h2>Quick Actions</h2><p class="section-subtitle">Actions route into existing governed Titan Code surfaces; they do not bypass plan, host or verification authority.</p></div></div>
+                    <div class="dashboard-action-grid">
+                        <button class="btn btn-primary" type="button" data-dashboard-action="dashboard-new-plan">New Plan</button>
+                        <button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-continue-plan">Continue Plan</button>
+                        <button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-analyze-repository">Analyze Repository</button>
+                        <button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-ask-codee">Ask Titan Code</button>
+                        <button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-run-diagnostics">Run Diagnostics</button>
+                        <button class="btn btn-secondary" type="button" data-dashboard-action="dashboard-open-artifact">Open Last Artifact</button>
+                    </div>
+                    <p id="dashboard-action-status" class="settings-status">Ready.</p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="runner">
+                <section id="plan-section" class="section">
+                    <div class="section-heading-row">
+                        <div>
+                            <h2>▶ Run a Plan</h2>
+                            <p class="section-subtitle">Paste a plan or load a local Markdown/text file.</p>
+                        </div>
+                        <button id="refresh-tabs-btn" class="icon-btn" type="button" title="Refresh conversations" aria-label="Refresh conversations">↻</button>
+                    </div>
+
+                    <div id="current-target-summary" class="target-summary">Finding your current conversation…</div>
+
+                    <section class="next-runner-card" aria-labelledby="next-runner-heading">
+                        <div class="section-heading-row compact-heading">
+                            <div>
+                                <h3 id="next-runner-heading">Next Runner</h3>
+                                <p class="section-subtitle">Send <strong>next</strong> immediately, then repeat on your chosen timer. The runner is locked to the selected conversation and will stop rather than send into a different chat. Existing draft text is never overwritten.</p>
+                            </div>
+                            <span id="next-runner-badge" class="health-badge neutral">Stopped</span>
+                        </div>
+                        <div class="next-runner-controls">
+                            <label class="next-runner-interval" for="next-runner-minutes">Every <input id="next-runner-minutes" type="number" min="1" max="1440" step="0.5" value="5" inputmode="decimal"> minutes</label>
+                            <div class="diagnostic-actions">
+                                <button id="next-runner-start-btn" class="btn btn-primary" type="button">Start + Send Next</button>
+                                <button id="next-runner-apply-btn" class="btn btn-secondary" type="button">Apply Timer</button>
+                                <button id="next-runner-stop-btn" class="btn btn-secondary" type="button">Stop</button>
+                            </div>
+                        </div>
+                        <p id="next-runner-status" class="settings-status" aria-live="polite">Timer is stopped.</p>
+                    </section>
+
+                    <label class="field-label" for="tab-select">Target conversation</label>
+                    <select id="tab-select" class="tab-select">
+                        <option value="">Finding ChatGPT & Claude conversations…</option>
+                    </select>
+
+                    <label class="field-label" for="plan-input">Plan</label>
+                    <textarea id="plan-input" placeholder="Paste your plan here…&#10;&#10;1. Inspect current behavior&#10;2. Implement the change&#10;3. Run tests&#10;4. Package the build"></textarea>
+
+                    <div id="plan-file-drop" class="file-drop-zone" tabindex="0" role="button" aria-label="Drop or choose a Markdown or text plan file">
+                        <div class="file-drop-title">Drop a <strong>.md</strong> or <strong>.txt</strong> plan here</div>
+                        <div class="file-drop-subtitle">or</div>
+                        <button id="choose-plan-file-btn" class="btn btn-secondary btn-compact" type="button">Choose Plan File</button>
+                        <input id="plan-file-input" type="file" accept=".md,.txt,text/markdown,text/plain" hidden>
+                    </div>
+                    <p id="plan-file-name" class="file-name" aria-live="polite">No file selected</p>
+
+                    <div class="diagnostic-actions plan-recovery-actions">
+                        <button id="generate-debugging-plan-btn" class="btn btn-secondary" type="button">Generate 10-Pass Debugging Plan</button>
+                        <label class="plan-mode-row" for="debugging-plan-mode">
+                            <input id="debugging-plan-mode" type="checkbox">
+                            <span><strong>Debugging Plan mode</strong><small>Deep-scan, fix, re-scan and freshly verify every pass.</small></span>
+                        </label>
+                    </div>
+
+                    <section class="plan-requirements-preview" aria-labelledby="plan-requirements-heading">
+                        <div class="section-heading-row compact-heading">
+                            <div>
+                                <h3 id="plan-requirements-heading">Plan Requirements</h3>
+                                <p class="section-subtitle">Deterministic dependencies Titan Code derives before Step 1. Readiness/blocking is evaluated separately by preflight.</p>
+                            </div>
+                            <span id="plan-requirements-badge" class="health-badge neutral">Not analyzed</span>
+                        </div>
+                        <div class="diagnostic-actions">
+                            <button id="plan-requirements-btn" class="btn btn-secondary" type="button">Analyze Requirements</button>
+                        </div>
+                        <pre id="plan-requirements-details" class="workforce-details">No plan requirement analysis yet.</pre>
+                    </section>
+
+                    <section class="plan-requirements-preview" aria-labelledby="production-preflight-heading">
+                        <div class="section-heading-row compact-heading">
+                            <div>
+                                <h3 id="production-preflight-heading">Production Plan Preflight</h3>
+                                <p class="section-subtitle">Live readiness gate. BLOCKED plans cannot dispatch Step 1.</p>
+                            </div>
+                            <span id="production-preflight-badge" class="health-badge neutral">Not checked</span>
+                        </div>
+                        <div class="diagnostic-actions">
+                            <button id="production-preflight-btn" class="btn btn-secondary" type="button">Run Production Preflight</button>
+                        </div>
+                        <pre id="production-preflight-details" class="workforce-details">No production preflight yet.</pre>
+                    </section>
+
+                    <button id="confirm-btn" class="btn btn-primary" type="button">▶ Start Plan</button>
+                </section>
+
+                <section id="workforce-runner-section" class="section workforce-runner-section">
+                    <div class="section-heading-row">
+                        <div>
+                            <h2>◈ Managers & AI Workforce</h2>
+                            <p class="section-subtitle">Route the task to specialist managers and prepare evidence requests. Managers are advisory and cannot advance plans.</p>
+                        </div>
+                        <span id="workforce-runner-badge" class="health-badge neutral">Not analyzed</span>
+                    </div>
+                    <div class="diagnostic-actions">
+                        <button id="workforce-preflight-btn" class="btn btn-secondary" type="button">Analyze Managers</button>
+                        <button id="workforce-draft-btn" class="btn btn-secondary" type="button">Create Plan Draft</button>
+                        <button id="workforce-use-draft-btn" class="btn btn-primary" type="button" hidden>Use Draft</button>
+                    </div>
+                    <pre id="workforce-runner-details" class="workforce-details">No manager preflight yet.</pre>
+                    <pre id="workforce-draft-output" class="workforce-details" hidden></pre>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="plans">
+                <section class="section page-intro">
+                    <h2>▤ Active Plans</h2>
+                    <p class="section-subtitle">Inspect running plans and open live progress.</p>
+                </section>
+
+                <section id="tab-selector" class="section" style="display: none;">
+                    <div class="section-heading-row">
+                        <div>
+                            <h2>Running plans</h2>
+                            <p class="section-subtitle">Open a plan to view its live progress.</p>
+                        </div>
+                    </div>
+                    <div id="tabs-list" class="tabs-list"></div>
+                </section>
+
+                <section id="running-section" class="section" style="display: none;">
+                    <div class="section-heading-row running-heading">
+                        <div>
+                            <h2>🚀 Plan Progress</h2>
+                            <span id="tab-info" class="tab-info"></span>
+                        </div>
+                    </div>
+
+                    <div class="status">
+                        <div class="status-item">
+                            <span>Status:</span>
+                            <strong id="status-text">Ready</strong>
+                        </div>
+                        <div class="status-item">
+                            <span>Step:</span>
+                            <strong id="step-text">1/1</strong>
+                        </div>
+                        <div class="status-item">
+                            <span>Versions:</span>
+                            <strong id="version-text">0/5</strong>
+                        </div>
+                    </div>
+
+                    <div class="progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <span id="progress-percent">0%</span>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Current Step:</strong></p>
+                        <p id="current-step-text">—</p>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Next Step:</strong></p>
+                        <p id="next-step-text">—</p>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Manager Preflight:</strong></p>
+                        <p id="workforce-plan-summary">—</p>
+                    </div>
+
+                    <div class="versions-list">
+                        <p><strong>Versions:</strong></p>
+                        <div id="versions" class="versions"></div>
+                    </div>
+
+                    <button id="stop-btn" class="btn btn-danger" type="button">⏹ Stop This Plan</button>
+                    <button id="back-btn" class="btn btn-secondary" type="button">Hide Details</button>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="browser">
+                <section class="section library-page">
+                    <div class="section-heading-row"><div><h2>🌐 Browser Engine</h2><p class="section-subtitle">Private Titan Code governed browser runtime. Live governed tabs, semantic perception and policy-gated navigation controls.</p></div><button id="browser-refresh" class="btn btn-secondary" type="button">Refresh</button></div>
+                    <p id="browser-runtime-status" class="settings-status">Loading browser runtime…</p>
+                    <div id="browser-tab-list" class="library-grid" aria-live="polite"></div>
+                    <div class="info-box"><p><strong>Perception</strong></p><p id="browser-perception-status">Select Inspect on a tab to capture a governed semantic snapshot.</p><pre id="browser-snapshot-preview" class="diagnostics-output"></pre></div>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="prompts">
+                <section class="section library-page">
+                    <div class="section-heading-row">
+                        <div>
+                            <h2>✦ Prompts</h2>
+                            <p class="section-subtitle">Canonical Titan Code prompt library. Titan Zero host-development prompts are registered here.</p>
+                        </div>
+                        <span id="prompt-count" class="library-count">0</span>
+                    </div>
+                    <input id="prompt-search" class="library-search" type="search" placeholder="Search prompts by title, category, domain or text…" autocomplete="off">
+                    <div id="prompt-library" class="library-grid" aria-live="polite"></div>
+                    <p id="prompt-library-status" class="settings-status">Loading prompt library…</p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="skills">
+                <section class="section library-page">
+                    <div class="section-heading-row">
+                        <div>
+                            <h2>◆ Skills</h2>
+                            <p class="section-subtitle">Read-only capability guidance registered into Titan Code's canonical skill data layer.</p>
+                        </div>
+                        <span id="skill-count" class="library-count">0</span>
+                    </div>
+                    <input id="skill-search" class="library-search" type="search" placeholder="Search skills by name, domain, mode or rule…" autocomplete="off">
+                    <div id="skill-library" class="library-grid" aria-live="polite"></div>
+                    <p id="skill-library-status" class="settings-status">Loading skill library…</p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="connections">
+                <section class="section connections-page">
+                    <div class="section-heading-row">
+                        <div>
+                            <h2>🔌 Connections</h2>
+                            <p class="section-subtitle">Operational health for AI, Titan MCP and privileged Titan Code runtimes. A loaded object is never treated as a healthy connection.</p>
+                        </div>
+                        <button id="connections-refresh-btn" class="btn btn-secondary" type="button">Test All</button>
+                    </div>
+                    <div id="connections-summary" class="connections-summary">Connection health has not been checked yet.</div>
+                    <p id="connections-status" class="settings-status" aria-live="polite"></p>
+                    <div class="connections-grid">
+                        <article id="connections-free-ai" class="connection-card" data-connection-section="free-ai"></article>
+                        <article id="connections-local-ai" class="connection-card" data-connection-section="local-ai"></article>
+                        <article id="connections-premium-byo" class="connection-card" data-connection-section="premium-byo"></article>
+                        <article id="connections-mcp" class="connection-card" data-connection-section="mcp"></article>
+                        <article id="connections-repository-host" class="connection-card" data-connection-section="repository-host"></article>
+                        <article id="connections-artifact-host" class="connection-card" data-connection-section="artifact-host"></article>
+                        <article id="connections-browser" class="connection-card" data-connection-section="browser"></article>
+                    </div>
+                    <p class="connections-security-note">Secrets are never rendered here. Configure actions route to the subsystem that owns the credential or connection policy.</p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="mcp">
+                <section class="section mcp-inspector-page">
+                    <div class="section-heading-row">
+                        <div>
+                            <h2>🧰 MCP Inspector</h2>
+                            <p class="section-subtitle">Read-only inspection of Titan MCP servers, governed tools, prompts and mutation evidence. Unknown tools remain blocked.</p>
+                        </div>
+                        <div class="mcp-inspector-heading-actions">
+                            <button id="mcp-inspector-configure-btn" class="btn btn-secondary" type="button">Configure</button>
+                            <button id="mcp-inspector-refresh-btn" class="btn btn-secondary" type="button">Refresh</button>
+                        </div>
+                    </div>
+                    <div id="mcp-inspector-summary" class="mcp-inspector-summary">MCP inspection has not been loaded yet.</div>
+                    <p id="mcp-inspector-status" class="settings-status" aria-live="polite"></p>
+                    <div class="mcp-inspector-grid">
+                        <article class="mcp-inspector-card"><h3>Servers</h3><div id="mcp-inspector-servers" class="mcp-inspector-list">No server evidence yet.</div></article>
+                        <article class="mcp-inspector-card mcp-inspector-wide"><h3>Governed Tools</h3><div id="mcp-inspector-tools" class="mcp-inspector-list">No tool evidence yet.</div></article>
+                        <article class="mcp-inspector-card"><h3>Prompts</h3><div id="mcp-inspector-prompts" class="mcp-inspector-list">No prompts discovered.</div></article>
+                        <article class="mcp-inspector-card"><h3>Resources</h3><div id="mcp-inspector-resources" class="mcp-inspector-list">Titan MCP resources are not exposed.</div></article>
+                        <article class="mcp-inspector-card mcp-inspector-wide"><h3>Pending Approvals</h3><div id="mcp-inspector-approvals" class="mcp-inspector-list">No pending approvals.</div></article>
+                        <article class="mcp-inspector-card mcp-inspector-wide"><h3>Mutation Receipts</h3><div id="mcp-inspector-receipts" class="mcp-inspector-list">No mutation receipts.</div></article>
+                    </div>
+                    <p class="connections-security-note">This surface does not accept credentials or execute tools. Mutation authority remains in the canonical MCP governance gateway.</p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="repository-host">
+                <section class="section mcp-inspector-page">
+                    <div class="section-heading-row"><div><h2>🖥 Repository + Artifact Hosts</h2><p class="section-subtitle">Privileged mutation readiness and independent artifact verification evidence. Repository Intelligence remains separate and can stay available without mutation.</p></div><div class="mcp-inspector-heading-actions"><button id="host-ops-refresh-btn" class="btn btn-secondary" type="button">Refresh</button></div></div>
+                    <div id="host-ops-summary" class="mcp-inspector-summary">Host operations have not been loaded yet.</div><p id="host-ops-status" class="settings-status" aria-live="polite"></p>
+                    <div class="mcp-inspector-grid">
+                      <article class="mcp-inspector-card"><h3>Repository Host</h3><div id="repository-host-capabilities" class="mcp-inspector-list"></div></article>
+                      <article class="mcp-inspector-card"><h3>Artifact Verification Host</h3><div id="artifact-host-capabilities" class="mcp-inspector-list"></div></article>
+                      <article class="mcp-inspector-card mcp-inspector-wide"><h3>Latest Independent Receipt</h3><div id="artifact-host-receipt" class="mcp-inspector-list"></div></article>
+                      <article class="mcp-inspector-card mcp-inspector-wide"><h3>Held Plans</h3><div id="host-ops-held-plans" class="mcp-inspector-list"></div></article>
+                    </div><p class="connections-security-note">This surface is read-only. It exposes capability and verification evidence but never performs repository mutations.</p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="settings">
+                <section class="section settings-page">
+                    <div class="section-heading-row settings-heading">
+                        <div>
+                            <h2>⚙ Settings</h2>
+                            <p class="section-subtitle">Local Titan Code sidebar preferences. Plan safety and the one-minute recovery cadence remain protected.</p>
+                        </div>
+                        <img class="settings-logo" src="../../public/branding/codee-logo.png" alt="" aria-hidden="true">
+                    </div>
+
+                    <div class="settings-group">
+                        <div class="settings-group-title">Appearance</div>
+                        <label class="setting-row" for="setting-compact-mode">
+                            <span class="setting-copy"><strong>Compact density</strong><small>Reduce spacing to fit more controls and plan detail on screen.</small></span>
+                            <input id="setting-compact-mode" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-reduced-glow">
+                            <span class="setting-copy"><strong>Reduced neon glow</strong><small>Keep the blue/pink theme while reducing luminous shadows.</small></span>
+                            <input id="setting-reduced-glow" type="checkbox">
+                        </label>
+                    </div>
+
+                    <div class="settings-group">
+                        <div class="settings-group-title">Runner behavior</div>
+                        <label class="setting-row" for="setting-auto-open-plans">
+                            <span class="setting-copy"><strong>Open Active Plans after start</strong><small>Jump directly to live progress after a plan is accepted.</small></span>
+                            <input id="setting-auto-open-plans" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-confirm-stop">
+                            <span class="setting-copy"><strong>Confirm before stopping</strong><small>Ask before terminating an active plan.</small></span>
+                            <input id="setting-confirm-stop" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-remember-page">
+                            <span class="setting-copy"><strong>Remember last page</strong><small>Reopen Titan Code on the last hamburger-menu page you used.</small></span>
+                            <input id="setting-remember-page" type="checkbox">
+                        </label>
+                    </div>
+
+                    <div class="settings-group recovery-settings">
+                        <div class="settings-group-title">Plan Runner recovery</div>
+                        <p class="settings-note">Recovery always targets the exact bound conversation. It may temporarily focus/reload that tab, then restores the tab you were using. No scripting/debugger permission is added.</p>
+                        <label class="setting-row" for="setting-debugging-plan-default"><span class="setting-copy"><strong>Debugging Plan by default</strong><small>New plans start in deep-scan/fix/verify mode.</small></span><input id="setting-debugging-plan-default" type="checkbox"></label>
+                        <label class="setting-row" for="setting-auto-recovery-sweep"><span class="setting-copy"><strong>1-minute recovery sweep</strong><small>Reconcile artifacts, background tabs and pending sends every minute.</small></span><input id="setting-auto-recovery-sweep" type="checkbox"></label>
+                        <label class="setting-row" for="setting-next-nudger-feature"><span class="setting-copy"><strong>Enable 5-minute Next nudger</strong><small>Allow the optional literal “next” provider nudge while a submitted step is still awaiting its artifact.</small></span><input id="setting-next-nudger-feature" type="checkbox"></label>
+                        <label class="setting-row" for="setting-next-nudger-default"><span class="setting-copy"><strong>5-minute Next nudger by default</strong><small>Enable the optional nudge on newly created plans.</small></span><input id="setting-next-nudger-default" type="checkbox"></label>
+                        <label class="setting-row" for="setting-background-watchdog"><span class="setting-copy"><strong>Background-tab watchdog</strong><small>Wake the exact frozen/discarded Titan Code conversation when normal background messaging cannot run.</small></span><input id="setting-background-watchdog" type="checkbox"></label>
+                        <label class="setting-row" for="setting-composer-watchdog"><span class="setting-copy"><strong>Composer watchdog</strong><small>Detect missing composers and use the bounded recovery ladder while the provider is idle.</small></span><input id="setting-composer-watchdog" type="checkbox"></label>
+                        <label class="setting-row" for="setting-focus-pulse"><span class="setting-copy"><strong>Temporary focus wake</strong><small>Briefly activate the exact target tab when Chrome/provider background state prevents execution.</small></span><input id="setting-focus-pulse" type="checkbox"></label>
+                        <label class="setting-row" for="setting-targeted-reload"><span class="setting-copy"><strong>Targeted conversation reload</strong><small>As a last resort, reload only the stuck target conversation when the provider is not generating.</small></span><input id="setting-targeted-reload" type="checkbox"></label>
+                        <label class="setting-row" for="setting-restore-previous-tab"><span class="setting-copy"><strong>Restore previous tab</strong><small>Return to the tab you were using after Titan Code performs a recovery focus pulse.</small></span><input id="setting-restore-previous-tab" type="checkbox"></label>
+                        <label class="setting-row" for="setting-prevent-auto-discard"><span class="setting-copy"><strong>Protect active plan tabs from discard</strong><small>Ask Chrome not to auto-discard conversations with active Titan Code plans.</small></span><input id="setting-prevent-auto-discard" type="checkbox"></label>
+                    </div>
+
+                    <div class="settings-group titan-zero-settings">
+                        <div class="settings-group-title">Titan Zero Developer Intelligence</div>
+                        <p class="settings-note">Titan Zero project intelligence. Core and app/Extensions/** are both in scope; SQL row values and secrets remain hard-blocked.</p>
+                        <label class="setting-row" for="setting-tz-enabled">
+                            <span class="setting-copy"><strong>Enable Titan Zero intelligence</strong><small>Allow bounded Titan host context when a canonical repository snapshot is available.</small></span>
+                            <input id="setting-tz-enabled" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-tz-auto-detect">
+                            <span class="setting-copy"><strong>Auto-detect Titan Zero projects</strong><small>Recognize the host stack from safe repository metadata.</small></span>
+                            <input id="setting-tz-auto-detect" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-tz-sql">
+                            <span class="setting-copy"><strong>Analyze supplied SQL DDL</strong><small>Build schema/index/foreign-key metadata without retaining INSERT row values.</small></span>
+                            <input id="setting-tz-sql" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-tz-migrations">
+                            <span class="setting-copy"><strong>Analyze migrations</strong><small>Surface restartability, rollback and schema-safety findings.</small></span>
+                            <input id="setting-tz-migrations" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-tz-tenancy">
+                            <span class="setting-copy"><strong>Analyze tenancy</strong><small>Report tenant_company_id, company_id and user_id evidence without global rewrites.</small></span>
+                            <input id="setting-tz-tenancy" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-tz-navigation">
+                            <span class="setting-copy"><strong>Analyze safe navigation metadata</strong><small>Use only explicitly supplied navigation and permission metadata.</small></span>
+                            <input id="setting-tz-navigation" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-tz-frontend">
+                            <span class="setting-copy"><strong>Analyze frontend surfaces</strong><small>Map Blade, Livewire, React, Alpine, Vite, Tailwind and theme families.</small></span>
+                            <input id="setting-tz-frontend" type="checkbox">
+                        </label>
+                        <label class="setting-row setting-number-row" for="setting-tz-max-context">
+                            <span class="setting-copy"><strong>Maximum Titan context</strong><small>Bound derived host evidence attached to a Runner/Plan step.</small></span>
+                            <input id="setting-tz-max-context" type="number" min="4000" max="50000" step="1000">
+                        </label>
+                        <label class="setting-row setting-locked" for="setting-tz-ignore-extensions">
+                            <span class="setting-copy"><strong>Ignore app/Extensions/**</strong><small>Locked off. Extensions are now first-class Titan Zero repository code.</small></span>
+                            <input id="setting-tz-ignore-extensions" type="checkbox" disabled>
+                        </label>
+                        <label class="setting-row setting-locked" for="setting-tz-parse-sql-rows">
+                            <span class="setting-copy"><strong>Parse SQL INSERT rows</strong><small>Locked off. Titan intelligence operates on DDL/schema metadata only.</small></span>
+                            <input id="setting-tz-parse-sql-rows" type="checkbox" disabled>
+                        </label>
+                    </div>
+
+
+                    <div class="settings-group repository-settings">
+                        <div class="settings-group-title">Repository & Coding Intelligence</div>
+                        <p class="settings-note">Local/static repository intelligence. Privileged writes remain host-owned and are blocked unless a verified backup exists first.</p>
+                        <label class="setting-row" for="setting-repo-enabled">
+                            <span class="setting-copy"><strong>Enable repository intelligence</strong><small>Use bounded repository evidence for Runner and multi-step plan preflight.</small></span>
+                            <input id="setting-repo-enabled" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-repo-targeted-tests">
+                            <span class="setting-copy"><strong>Auto-select targeted verification</strong><small>Derive focused test/build/lint recommendations from changed files.</small></span>
+                            <input id="setting-repo-targeted-tests" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-repo-consume-mcp">
+                            <span class="setting-copy"><strong>Consume Titan Code MCP evidence</strong><small>Use the separate MCP runtime when it is installed; this pack never owns MCP transport.</small></span>
+                            <input id="setting-repo-consume-mcp" type="checkbox">
+                        </label>
+                        <label class="setting-row setting-number-row" for="setting-repo-max-search">
+                            <span class="setting-copy"><strong>Maximum search results</strong><small>Bound repository search evidence returned by one capability call.</small></span>
+                            <input id="setting-repo-max-search" type="number" min="20" max="1000" step="20">
+                        </label>
+                        <label class="setting-row setting-number-row" for="setting-repo-max-remote-context">
+                            <span class="setting-copy"><strong>Maximum MCP evidence characters</strong><small>Bound provenance-labelled remote evidence merged into repository analysis.</small></span>
+                            <input id="setting-repo-max-remote-context" type="number" min="1000" max="100000" step="1000">
+                        </label>
+                        <label class="setting-row setting-locked" for="setting-repo-include-extensions">
+                            <span class="setting-copy"><strong>Include app/Extensions/**</strong><small>Locked on. Extension code is first-class repository intelligence.</small></span>
+                            <input id="setting-repo-include-extensions" type="checkbox" checked disabled>
+                        </label>
+                        <label class="setting-row setting-locked" for="setting-repo-backup-required">
+                            <span class="setting-copy"><strong>Verified backup before mutations</strong><small>Locked on. Backup capture and verification must succeed before any managed write.</small></span>
+                            <input id="setting-repo-backup-required" type="checkbox" checked disabled>
+                        </label>
+                    </div>
+
+                    <div class="settings-group workforce-settings">
+                        <div class="settings-group-title">Managers & AI Workforce</div>
+                        <p class="settings-note">Specialist managers classify tasks, select evidence and prepare plan drafts. They never advance Titan Code plans or mutate systems directly.</p>
+                        <label class="setting-row" for="setting-workforce-enabled">
+                            <span class="setting-copy"><strong>Enable manager routing</strong><small>Select a primary manager plus bounded supporting specialists for each task.</small></span>
+                            <input id="setting-workforce-enabled" type="checkbox">
+                        </label>
+                        <label class="setting-row setting-number-row" for="setting-workforce-max-managers">
+                            <span class="setting-copy"><strong>Maximum managers per task</strong><small>Limit specialist fan-out for one task.</small></span>
+                            <input id="setting-workforce-max-managers" type="number" min="1" max="5" step="1">
+                        </label>
+                        <label class="setting-row" for="setting-workforce-advisory-ai">
+                            <span class="setting-copy"><strong>Allow advisory AI requests</strong><small>Managers may request external reasoning when a provider gateway exists; results remain advisory.</small></span>
+                            <input id="setting-workforce-advisory-ai" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-workforce-require-evidence">
+                            <span class="setting-copy"><strong>Require evidence-backed recommendations</strong><small>Managers should request repository/MCP evidence before recommendations.</small></span>
+                            <input id="setting-workforce-require-evidence" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-workforce-use-repository">
+                            <span class="setting-copy"><strong>Use Repository Intelligence</strong><small>Allow managers to request the existing Repository & Coding Intelligence capabilities.</small></span>
+                            <input id="setting-workforce-use-repository" type="checkbox">
+                        </label>
+                        <label class="setting-row" for="setting-workforce-use-mcp">
+                            <span class="setting-copy"><strong>Use Titan Code MCP evidence</strong><small>Consume the separately owned MCP runtime when it becomes available.</small></span>
+                            <input id="setting-workforce-use-mcp" type="checkbox">
+                        </label>
+                        <label class="setting-row setting-number-row" for="setting-workforce-max-context">
+                            <span class="setting-copy"><strong>Maximum manager context</strong><small>Bound advisory manager preflight attached to a plan step.</small></span>
+                            <input id="setting-workforce-max-context" type="number" min="2000" max="20000" step="1000">
+                        </label>
+                        <label class="setting-row setting-locked" for="setting-workforce-plan-advance">
+                            <span class="setting-copy"><strong>Managers may advance plans</strong><small>Locked off. Only Titan Code's deterministic plan state machine may advance steps.</small></span>
+                            <input id="setting-workforce-plan-advance" type="checkbox" disabled>
+                        </label>
+                        <label class="setting-row setting-locked" for="setting-workforce-direct-mutation">
+                            <span class="setting-copy"><strong>Managers may mutate directly</strong><small>Locked off. Writes require the privileged backup-before-write pipeline.</small></span>
+                            <input id="setting-workforce-direct-mutation" type="checkbox" disabled>
+                        </label>
+                    </div>
+
+
+                    <div class="settings-group mcp-settings">
+                        <div class="settings-group-title">Titan MCP Connection</div>
+                        <p class="settings-note">Connect Titan Code directly to Titan MCP. Tokens stay in trusted extension storage. Titan MCP 1.5 prepares and verifies recovery evidence before approval, then commits the exact sealed mutation ticket after approval.</p>
+                        <label class="setting-row" for="mcp-connection-name">
+                            <span class="setting-copy"><strong>Connection name</strong><small>Friendly label for this Titan installation.</small></span>
+                            <input id="mcp-connection-name" type="text" maxlength="120" placeholder="Titan Zero">
+                        </label>
+                        <label class="setting-row" for="mcp-connection-url">
+                            <span class="setting-copy"><strong>Titan URL</strong><small>Base URL only, for example https://titanzero.io.</small></span>
+                            <input id="mcp-connection-url" type="url" placeholder="https://titanzero.io">
+                        </label>
+                        <label class="setting-row" for="mcp-connection-token">
+                            <span class="setting-copy"><strong>Bearer token</strong><small>Stored only in trusted extension storage and never exposed to ChatGPT/Claude content scripts.</small></span>
+                            <input id="mcp-connection-token" type="password" autocomplete="off" placeholder="Titan API token">
+                        </label>
+                        <div class="setting-readonly"><span>Titan Code Chrome origin</span><strong id="mcp-client-origin">Loading…</strong></div>
+                        <div class="settings-actions">
+                            <button id="mcp-save-btn" class="btn btn-primary" type="button">Save Titan Connection</button>
+                            <button id="mcp-test-btn" class="btn btn-secondary" type="button">Test Selected</button>
+                            <button id="mcp-discover-btn" class="btn btn-secondary" type="button">Discover Tools</button>
+                            <button id="mcp-remove-btn" class="btn btn-secondary" type="button">Remove Selected</button>
+                            <button id="mcp-copy-origin-btn" class="btn btn-secondary" type="button">Copy Chrome Origin</button>
+                        </div>
+                        <p id="mcp-status" class="settings-status" aria-live="polite"></p>
+                        <div id="mcp-connections-list" class="diagnostic-recommendation">No Titan MCP connections loaded.</div>
+                        <div class="settings-group-title">Discovered Titan tools</div>
+                        <div id="mcp-tools-list" class="diagnostic-recommendation">Discover a selected Titan MCP connection to inspect its governed tools.</div>
+                        <div class="settings-group-title">Pending MCP approvals</div>
+                        <div id="mcp-approvals-list" class="diagnostic-recommendation">No pending approvals.</div>
+                        <div class="settings-group-title">Mutation receipts</div>
+                        <div id="mcp-receipts-list" class="diagnostic-recommendation">No mutation receipts.</div>
+                    </div>
+
+                    <div class="settings-group settings-runtime">
+                        <div class="settings-group-title">Runtime</div>
+                        <div class="setting-readonly"><span>Recovery scan</span><strong>Every 1 minute</strong></div>
+                        <div class="setting-readonly"><span>Artifact protocol</span><strong>TITAN CODE v2</strong></div>
+                        <div class="setting-readonly"><span>Theme</span><strong>Neon Black</strong></div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button id="settings-save-btn" class="btn btn-primary" type="button">Save Settings</button>
+                        <button id="settings-reset-btn" class="btn btn-secondary" type="button">Reset Defaults</button>
+                    </div>
+                    <p id="settings-status" class="settings-status" aria-live="polite"></p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="diagnostics">
+                <section class="section diagnostics-page">
+                    <div class="section-heading-row diagnostics-heading">
+                        <div>
+                            <h2>◫ Diagnostics & Recovery</h2>
+                            <p class="section-subtitle">See exactly why a step is stuck and repair safe recovery paths.</p>
+                        </div>
+                        <span id="diagnostics-health" class="health-badge neutral">Not checked</span>
+                    </div>
+
+                    <div id="diagnostics-summary" class="diagnostic-recommendation">Run diagnostics to inspect the active conversation.</div>
+
+                    <div class="diagnostics-grid">
+                        <article class="diagnostic-card">
+                            <h3>Plan State</h3>
+                            <pre id="diagnostics-plan">No diagnostic data yet.</pre>
+                        </article>
+                        <article class="diagnostic-card">
+                            <h3>Connection</h3>
+                            <pre id="diagnostics-connection">No diagnostic data yet.</pre>
+                        </article>
+                        <article class="diagnostic-card">
+                            <h3>Artifact Handshake</h3>
+                            <pre id="diagnostics-artifact">No diagnostic data yet.</pre>
+                        </article>
+                    </div>
+
+                    <article class="diagnostic-card runner-diagnostic-card">
+                        <div class="diagnostic-card-heading">
+                            <div>
+                                <h3>Plan Runner Deep Diagnostics</h3>
+                                <p class="section-subtitle">Binding, receiver, timer, recovery, failure and standalone Next Runner evidence.</p>
+                            </div>
+                        </div>
+                        <pre id="diagnostics-runner">Plan Runner diagnostics have not been collected yet.</pre>
+                    </article>
+
+                    <article class="diagnostic-card titan-zero-diagnostic-card">
+                        <div class="diagnostic-card-heading">
+                            <h3>Titan Zero Developer Intelligence</h3>
+                            <span id="diagnostics-titan-zero-badge" class="health-badge neutral">Not checked</span>
+                        </div>
+                        <pre id="diagnostics-titan-zero">Pack status has not been checked yet.</pre>
+                    </article>
+
+
+                    <article class="diagnostic-card repository-diagnostic-card">
+                        <div class="diagnostic-card-heading">
+                            <h3>Repository & Coding Intelligence</h3>
+                            <span id="diagnostics-repository-badge" class="health-badge neutral">Not checked</span>
+                        </div>
+                        <pre id="diagnostics-repository">Repository capability status has not been checked yet.</pre>
+                    </article>
+
+                    <article class="diagnostic-card workforce-diagnostic-card">
+                        <div class="diagnostic-card-heading">
+                            <h3>Managers & AI Workforce</h3>
+                            <span id="diagnostics-workforce-badge" class="health-badge neutral">Not checked</span>
+                        </div>
+                        <pre id="diagnostics-workforce">Workforce status has not been checked yet.</pre>
+                    </article>
+
+                    <article id="capability-registry-section" class="diagnostic-card capability-registry-card">
+                        <div class="diagnostic-card-heading">
+                            <div>
+                                <h3>Capability Registry</h3>
+                                <p class="section-subtitle">Runtime-derived readiness for Titan Code capabilities. This view never grants execution authority.</p>
+                            </div>
+                            <button id="capability-refresh-btn" class="text-btn" type="button">Refresh</button>
+                        </div>
+                        <div id="capability-summary" class="capability-summary">Capability status has not been loaded yet.</div>
+                        <div class="capability-filters">
+                            <label class="capability-filter capability-filter-search">
+                                <span>Search</span>
+                                <input id="capability-search" type="search" placeholder="Capability, owner or dependency" autocomplete="off">
+                            </label>
+                            <label class="capability-filter">
+                                <span>Readiness</span>
+                                <select id="capability-readiness-filter"><option value="">All states</option></select>
+                            </label>
+                            <label class="capability-filter">
+                                <span>Subsystem</span>
+                                <select id="capability-subsystem-filter"><option value="">All subsystems</option></select>
+                            </label>
+                        </div>
+                        <div class="capability-table-wrap" role="region" aria-label="Titan Code capability registry" tabindex="0">
+                            <table class="capability-table">
+                                <thead><tr><th>Capability</th><th>Readiness</th><th>Operation</th><th>Owner / dependency</th><th>Execution</th></tr></thead>
+                                <tbody id="capability-table-body"><tr><td colspan="5">Capability status has not been loaded yet.</td></tr></tbody>
+                            </table>
+                        </div>
+                    </article>
+
+                    <div class="diagnostic-actions">
+                        <button id="diagnostics-run-btn" class="btn btn-secondary" type="button">Run Diagnostics</button>
+                        <button id="diagnostics-copy-btn" class="btn btn-secondary" type="button">Copy All Diagnostics</button>
+                        <button id="diagnostics-repair-btn" class="btn btn-primary" type="button">Auto Repair & Resume</button>
+                        <button id="diagnostics-rescan-btn" class="btn btn-secondary" type="button">Re-scan Conversation</button>
+                        <button id="diagnostics-retry-btn" class="btn btn-secondary" type="button">Retry Current Step</button>
+                        <button id="diagnostics-alarm-btn" class="btn btn-secondary" type="button">Repair 1-Minute Timer</button>
+                        <button id="diagnostics-nudger-btn" class="btn btn-secondary" type="button">Enable 5-Minute Next</button>
+                    </div>
+
+                    <article class="diagnostic-card diagnostic-log-card">
+                        <div class="diagnostic-card-heading">
+                            <h3>Recovery Log</h3>
+                            <button id="diagnostics-clear-btn" class="text-btn" type="button">Clear</button>
+                        </div>
+                        <div id="diagnostics-log" class="diagnostics-log">No events recorded yet.</div>
+                    </article>
+                    <p id="diagnostics-status" class="settings-status" aria-live="polite"></p>
+                </section>
+            </div>
+
+
+            <div class="app-page" data-page="history">
+                <section class="section workspace-page">
+                    <div class="workspace-page-heading"><div><h2>History</h2><p>Completed, failed, blocked and stopped Titan Code runs.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="history">Refresh</button></div>
+                    <label class="field-label" for="history-search">Search history</label><input id="history-search" class="text-input" type="search" placeholder="Plan, conversation, status…">
+                    <div id="history-summary" class="workspace-summary">Loading history…</div><div id="history-list" class="workspace-list"></div><p id="history-status" class="settings-status" aria-live="polite"></p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="artifacts">
+                <section class="section workspace-page">
+                    <div class="workspace-page-heading"><div><h2>Artifacts</h2><p>Artifact receipts, verification state and build lineage retained by Titan Code.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="artifacts">Refresh</button></div>
+                    <label class="field-label" for="artifact-search">Search artifacts</label><input id="artifact-search" class="text-input" type="search" placeholder="ZIP, SHA, plan…">
+                    <div id="artifact-summary" class="workspace-summary">Loading artifacts…</div><div id="artifact-list" class="workspace-list"></div><pre id="artifact-detail" class="workforce-details" hidden></pre><p id="artifact-status" class="settings-status" aria-live="polite"></p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="intelligence">
+                <section class="section workspace-page">
+                    <div class="workspace-page-heading"><div><h2>Intelligence</h2><p>Runtime intelligence, provider readiness and capability coverage.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="intelligence">Refresh</button></div>
+                    <section id="system-integration-panel" class="workspace-control-panel"><h3>Local + Cloud Intelligence</h3><div class="workspace-control-grid"><label>Bridge endpoint<input id="system-bridge-endpoint" class="text-input" value="http://127.0.0.1:43127/v1/action"></label><label>Bridge token<input id="system-bridge-token" class="text-input" type="password" placeholder="Pair once, then Titan Code reconnects automatically"></label><label>Workspace path<input id="system-bridge-workspace" class="text-input" placeholder="C:\path\to\project or /path/to/project"></label><label>Gemini API key<input id="system-gemini-key" class="text-input" type="password" placeholder="Google AI Studio key"></label><label>Gemini model<select id="system-gemini-model" class="text-input"><option value="">Auto-select compatible free-tier candidate</option></select></label></div><div class="workspace-actions"><button id="system-save-connect" class="btn btn-primary" type="button">Save + Connect</button><button id="system-probe" class="btn btn-secondary" type="button">Probe providers</button></div><pre id="system-integration-status" class="workforce-details">Not probed yet.</pre></section><div id="intelligence-summary" class="workspace-summary">Loading intelligence…</div><div id="intelligence-list" class="workspace-list"></div><p id="intelligence-status" class="settings-status" aria-live="polite"></p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="workforce">
+                <section class="section workspace-page">
+                    <div class="workspace-page-heading"><div><h2>AI Workforce</h2><p>Managers, routing evidence, dependencies and authority boundaries.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="workforce">Refresh</button></div>
+                    <section class="workspace-control-panel"><label class="field-label" for="workforce-workspace-task">Task for AI Workforce</label><textarea id="workforce-workspace-task" class="text-input" rows="5" placeholder="Describe what the manager team should investigate, analyze or draft..."></textarea><label class="field-label" for="workforce-provider-select">Provider preference</label><select id="workforce-provider-select" class="text-input"><option value="auto">Auto · local/free first</option><option value="ollama">Ollama local</option><option value="gemini">Gemini</option></select><div class="workspace-actions"><button id="workforce-run-advisory" class="btn btn-primary" type="button">Run AI Workforce</button></div><pre id="workforce-advisory-output" class="workforce-details" hidden></pre></section><div id="workforce-summary" class="workspace-summary">Loading workforce…</div><div id="workforce-list" class="workspace-list"></div>
+                    <section class="workspace-control-panel deployment-workforce-gateway-panel" aria-label="Laravel Workforce Gateway">
+                        <div class="deployment-workforce-panel-heading"><div><h3>Laravel Workforce Gateway</h3><p>Connect Titan Code to the canonical Laravel Deployment Workforce. Chrome remains an operator surface; Laravel retains durable authority.</p></div><span id="workforce-gateway-badge" class="health-badge neutral">Not configured</span></div>
+                        <div class="workspace-control-grid deployment-workforce-config-grid">
+                            <label>Gateway endpoint<input id="workforce-gateway-endpoint" class="text-input" placeholder="https://your-titan-app/api/titan/workforce/gateway/v1"></label>
+                            <label>Gateway token<input id="workforce-gateway-token" class="text-input" type="password" placeholder="Scoped deployment-operator token"></label>
+                            <label>Client company_id<input id="workforce-gateway-company" class="text-input" placeholder="company-..."></label>
+                            <label>Deployment actor_id<input id="workforce-gateway-actor" class="text-input" placeholder="operator-..."></label>
+                        </div>
+                        <div class="workspace-actions"><button id="workforce-gateway-save" class="btn btn-primary" type="button">Save + Connect</button><button id="workforce-deployment-refresh" class="btn btn-secondary" type="button">Refresh Deployment</button></div>
+                        <pre id="workforce-gateway-status" class="workforce-details">Gateway not configured.</pre>
+                    </section>
+
+                    <section class="deployment-workforce-summary-grid" aria-label="Deployment workforce summary">
+                        <article class="deployment-workforce-stat"><span>Mission</span><strong id="workforce-deployment-summary">No mission loaded</strong></article>
+                        <article class="deployment-workforce-stat"><span>Phase</span><strong id="workforce-deployment-phase">—</strong></article>
+                        <article class="deployment-workforce-stat"><span>Readiness</span><strong id="workforce-deployment-readiness-score">—</strong></article>
+                        <article class="deployment-workforce-stat"><span>Receipts</span><strong id="workforce-deployment-receipt-count">0</strong></article>
+                    </section>
+
+                    <section class="workspace-control-panel deployment-workforce-mission-panel">
+                        <div class="deployment-workforce-panel-heading"><div><h3>Deployment Missions</h3><p>One durable deployment_mission_id across investigation → engineering → installation → commissioning → handover.</p></div></div>
+                        <div class="workspace-control-grid">
+                            <label>Active mission<select id="workforce-deployment-mission-select" class="text-input"><option value="">Select mission</option></select></label>
+                            <label>Next governed transition<select id="workforce-deployment-transition" class="text-input"><option value="">Choose transition</option><option value="operational_discovery">Operational discovery</option><option value="deep_investigation">Deep investigation</option><option value="solution_readiness">Solution readiness</option><option value="solution_engineering">Solution engineering</option><option value="installation">Installation</option><option value="commissioning">Commissioning</option><option value="handover">Handover</option></select></label>
+                        </div>
+                        <div class="workspace-actions"><button id="workforce-deployment-advance" class="btn btn-secondary" type="button">Request Transition</button><button id="workforce-deployment-create" class="btn btn-secondary" type="button">Create Mission Request</button></div>
+                        <div id="workforce-deployment-mission-detail" class="deployment-workforce-detail">No deployment mission selected.</div>
+                    </section>
+
+                    <div class="deployment-workforce-columns">
+                        <section class="workspace-control-panel deployment-workforce-column"><div class="deployment-workforce-panel-heading"><div><h3>Team & Assignments</h3><p>Investigation specialists, engineers, installers and reviewers coordinated under the mission.</p></div><button id="workforce-team-refresh" class="btn btn-secondary btn-compact" type="button">Refresh</button></div><label class="field-label" for="workforce-team-request">Team change request</label><input id="workforce-team-request" class="text-input" placeholder="e.g. add financial analyst + systems integration specialist"><div class="workspace-actions"><button id="workforce-team-propose" class="btn btn-secondary btn-compact" type="button">Propose Team Change</button></div><div id="workforce-deployment-team" class="deployment-workforce-list"><div class="workspace-empty">No team projection loaded.</div></div></section>
+                        <section class="workspace-control-panel deployment-workforce-column"><div class="deployment-workforce-panel-heading"><div><h3>Evidence</h3><p>Evidence requests and provenance remain linked to the durable discovery profile.</p></div><button id="workforce-evidence-request" class="btn btn-secondary btn-compact" type="button">Request Evidence</button></div><div id="workforce-deployment-evidence" class="deployment-workforce-list"><div class="workspace-empty">No evidence projection loaded.</div></div></section>
+                        <section class="workspace-control-panel deployment-workforce-column"><div class="deployment-workforce-panel-heading"><div><h3>Readiness & Approvals</h3><p>Blocking gaps, quality gates and approvals before engineering/install/commissioning.</p></div></div><div id="workforce-deployment-readiness" class="deployment-workforce-list"><div class="workspace-empty">No readiness projection loaded.</div></div></section>
+                        <section class="workspace-control-panel deployment-workforce-column"><div class="deployment-workforce-panel-heading"><div><h3>Engineering / Install / Commission</h3><p>Versioned proposals and governed execution state from Laravel.</p></div></div><div class="workspace-actions deployment-workforce-delivery-actions"><button id="workforce-engineering-propose" class="btn btn-secondary btn-compact" type="button">Prepare Engineering</button><button id="workforce-installation-propose" class="btn btn-secondary btn-compact" type="button">Prepare Install</button><button id="workforce-commissioning-propose" class="btn btn-secondary btn-compact" type="button">Prepare Commission</button></div><div id="workforce-deployment-delivery" class="deployment-workforce-list"><div class="workspace-empty">No delivery projection loaded.</div></div></section>
+                    </div>
+
+                    <section class="workspace-control-panel"><div class="deployment-workforce-panel-heading"><div><h3>Client Handover & Change Loop</h3><p>Verified handover bootstraps Client Workforce. Operational change requests return through Laravel for focused re-investigation.</p></div><button id="workforce-handover-prepare" class="btn btn-secondary btn-compact" type="button">Prepare Handover</button></div><div id="workforce-deployment-handover" class="deployment-workforce-list"><div class="workspace-empty">No handover or change-request projection loaded.</div></div></section>
+                    <section class="workspace-control-panel"><div class="deployment-workforce-panel-heading"><div><h3>Gateway Receipts</h3><p>Immutable request/receipt evidence. A prepared or accepted request is not itself execution authority.</p></div></div><div id="workforce-deployment-receipts" class="deployment-workforce-list"><div class="workspace-empty">No receipts yet.</div></div></section>
+<p id="workforce-status" class="settings-status" aria-live="polite"></p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="repository">
+                <section class="section workspace-page">
+                    <div class="workspace-page-heading"><div><h2>Repository</h2><p>Repository intelligence, analysis coverage and host readiness.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="repository">Refresh</button></div>
+                    <section class="workspace-control-panel"><div class="workspace-control-grid"><label>Repository search<input id="repository-bridge-query" class="text-input" placeholder="class, route, filename, symbol..."></label><label>File path<input id="repository-bridge-path" class="text-input" placeholder="src/lib/service-worker.js"></label></div><div class="workspace-actions"><button id="repository-search-btn" class="btn btn-primary" type="button">Search</button><button id="repository-read-btn" class="btn btn-secondary" type="button">Read file</button><button id="repository-status-btn" class="btn btn-secondary" type="button">Repository status</button></div><pre id="repository-bridge-output" class="workforce-details" hidden></pre></section><div id="repository-summary" class="workspace-summary">Loading repository…</div><div id="repository-list" class="workspace-list"></div><p id="repository-status" class="settings-status" aria-live="polite"></p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="titan-zero">
+                <section class="section workspace-page">
+                    <div class="workspace-page-heading"><div><h2>Titan Zero</h2><p>Titan Zero development intelligence, project analysis and safeguards.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="titan-zero">Refresh</button></div>
+                    <section class="workspace-control-panel manager-ai-panel"><div class="workspace-page-heading"><div><h3>Agent Mesh Manager AI</h3><p class="section-subtitle">ChatGPT/local-model advisory supervision of the private development Mesh. It watches supplied agent/queue evidence, builds multi-step recovery plans and never grants itself canonical authority.</p></div><span id="manager-ai-badge" class="health-badge neutral">Not checked</span></div><div class="workspace-control-grid"><label>Manager AI provider<select id="manager-ai-provider" class="text-input"><option value="auto">Auto</option><option value="chatgpt-subscription">ChatGPT subscription</option><option value="ollama">Ollama local</option></select></label><label class="setting-row"><span class="setting-copy"><strong>Allow ChatGPT/cloud</strong><small>Off keeps Mesh evidence local. On permits the selected subscription/cloud provider to advise.</small></span><input id="manager-ai-cloud" type="checkbox"></label></div><div class="workspace-actions"><button id="manager-ai-supervise" class="btn btn-primary" type="button">Analyze Mesh</button><button id="manager-ai-refresh" class="btn btn-secondary" type="button">Refresh</button></div><pre id="manager-ai-output" class="workforce-details">No Manager AI supervision run yet.</pre></section><div id="titan-zero-summary" class="workspace-summary">Loading Titan Zero…</div><div id="titan-zero-list" class="workspace-list"></div><p id="titan-zero-status" class="settings-status" aria-live="polite"></p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="knowledge">
+                <section class="section workspace-page">
+                    <div class="workspace-page-heading"><div><h2>Knowledge</h2><p>Governed prompts, skills, intelligence packs and retained project knowledge.</p></div><button class="btn btn-secondary" type="button" data-workspace-refresh="knowledge">Refresh</button></div>
+                    <label class="field-label" for="knowledge-search">Filter knowledge</label><input id="knowledge-search" class="text-input" type="search" placeholder="Prompt, skill, pack…">
+                    <div id="knowledge-summary" class="workspace-summary">Loading knowledge…</div><div id="knowledge-list" class="workspace-list"></div><p id="knowledge-status" class="settings-status" aria-live="polite"></p>
+                </section>
+            </div>
+
+            <div class="app-page" data-page="about">
+                <section class="section placeholder-page">
+                    <div class="placeholder-icon">ⓘ</div>
+                    <h2>About</h2>
+                    <p>About page scaffold is ready.</p>
+                    <span>Version, protocol and help content will be added in the next pass.</span>
+                </section>
+            </div>
+        </main>
+
+        <footer>
+            <p id="message" aria-live="polite"></p>
+        </footer>
+    </div>
+
+    <script src="sidebar.js"></script>
+</body>
+</html>

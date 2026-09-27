@@ -1,0 +1,1845 @@
+{
+  "goal_id": "TZ-ROADMAP-39",
+  "priority": "P0",
+  "title": "Innovative Workforce Registry & Outcome Certification",
+  "objective": "Make the named pain-point-solving capabilities mandatory canonical workforce outcomes available to every authorised surface.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Register Missed Revenue Recovery and Cancellation Gap Filling capabilities with five-tier plans",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-39-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-REV-MISSED-REVENUE-RECOVERY",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING"
+        ],
+        "created_agent_ids": [
+          "TZAG-REV-MISSED-REVENUE-RECOVERY",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "Missed Revenue Recovery Specialist",
+          "Cancellation Gap Filling Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "PENDING_DOMAIN_MANAGER -> TZAG-REV-MISSED-REVENUE-RECOVERY -> PENDING_CANONICAL_WORKERS/HUMANS",
+          "PENDING_DOMAIN_MANAGER -> TZAG-OPS-CANCELLATION-GAP-FILLING -> PENDING_CANONICAL_WORKERS/HUMANS"
+        ],
+        "pain_point_ids": [
+          "PAIN-REV-MISSED-ENQUIRY",
+          "PAIN-REV-UNFOLLOWED-LEAD",
+          "PAIN-CAPACITY-CANCELLATION-GAP"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-REV-MISSED-REVENUE-RECOVERY",
+          "OUTCOME-TZAG-OPS-CANCELLATION-GAP-FILLING"
+        ],
+        "recommendations": [
+          "Prioritise the highest-value unrecovered enquiry.",
+          "Switch channel when delivery/consent evidence supports it.",
+          "Escalate when high-value enquiries exceed recovery SLA.",
+          "Offer the slot to the highest-fit authorised candidate.",
+          "Leave capacity empty when fill risk exceeds expected value."
+        ],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-REV-MISSED-REVENUE-RECOVERY",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING"
+          ],
+          "definition_home": "TZ-ROADMAP-39-SG-01"
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "required-field completeness check",
+          "operational-binding reference check",
+          "duplicate agent_id scan"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 39 is the canonical definition/certification home. Actual domain implementation is embedded in operational_binding_subgoal_ids using the same immutable agent_id."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND_WITH_AGENT_REGISTRATION_DELTA_REQUIRED",
+        "last_scanned_at_utc": "2026-09-19T05:54:00Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72"
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0"
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_REMAINS_UNMANAGED",
+            "internal_paths": [
+              "resources/workforce/role-definitions.json",
+              "resources/workforce/role-definition.schema.json",
+              "resources/workforce/canonical-capability-binding-matrix.json",
+              "resources/workforce/cost-sovereignty-entitlement-catalog.json",
+              "System/Enums/WorkforceTier.php",
+              "System/Services/WorkforceEntitlementService.php",
+              "System/Services/WorkforceFinalAuthorityGateService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "System/Models/WorkforceOutcome.php",
+              "System/Models/WorkforcePerformanceMetric.php",
+              "resources/workforce/customer-revenue-operations.json",
+              "resources/workforce/customer-revenue-operations-workflows.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/policies/workforce-manager-model.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "MASTER_STATUS_PREVIOUSLY_SELECTED_CANONICAL_PLUS_PHYSICAL_RETRIEVAL_SHA_COMPUTED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/ClientWorkerInstance.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php"
+            ]
+          }
+        ],
+        "scan_notes": "The runtime machinery required by SG01 already exists. Titan AI Workforce has role/capability registries, provider binding matrices, entitlement enforcement, final authority gates, verified outcome feedback, performance metrics and the exact five business capability tiers free/team/business/autonomous/predictive. Workforce Manager verifies capabilities, entitlement, autonomy and governance before dispatch and supervises authoritative outcomes. Installed Client Workforce has company-scoped worker instances, role/capability bindings and fail-closed role activation proposals. The two new canonical Specialist IDs/names defined by this roadmap subgoal are not present in the scanned AI Workforce master, so the implementation delta is to register/project those roadmap definitions into the existing registries, five-tier entitlement plan, capability bindings and outcome certification pipeline rather than create a new workforce system.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 2,
+      "title": "Register Access Failure Prevention and Scope & Variation Guardian capabilities with five-tier plans",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-39-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN"
+        ],
+        "created_agent_ids": [
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "Access Failure Prevention Specialist",
+          "Scope & Variation Guardian Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "PENDING_DOMAIN_MANAGER -> TZAG-OPS-ACCESS-FAILURE-PREVENTION -> PENDING_CANONICAL_WORKERS/HUMANS",
+          "PENDING_DOMAIN_MANAGER -> TZAG-OPS-SCOPE-VARIATION-GUARDIAN -> PENDING_CANONICAL_WORKERS/HUMANS"
+        ],
+        "pain_point_ids": [
+          "PAIN-FIELD-NO-ACCESS",
+          "PAIN-SCOPE-DRIFT",
+          "PAIN-UNPRICED-VARIATION"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "OUTCOME-TZAG-OPS-SCOPE-VARIATION-GUARDIAN"
+        ],
+        "recommendations": [
+          "Request only the missing access detail.",
+          "Escalate high-risk/no-response access cases before dispatch.",
+          "Pause non-urgent out-of-scope work pending clarification.",
+          "Prepare a variation with evidence and estimated time/material impact."
+        ],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN"
+          ],
+          "definition_home": "TZ-ROADMAP-39-SG-02"
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "required-field completeness check",
+          "operational-binding reference check",
+          "duplicate agent_id scan"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 39 is the canonical definition/certification home. Actual domain implementation is embedded in operational_binding_subgoal_ids using the same immutable agent_id."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager",
+          "Titan Installed Client Workforce"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Support/WorkforceCapabilityBindingRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Services/WorkforceCapabilityAvailabilityService.php",
+              "System/Services/WorkforceCommercialCapabilityPolicyService.php",
+              "System/Services/WorkforceEntitlementService.php",
+              "System/Services/WorkforceAutonomyService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "resources/workforce/cost-sovereignty-entitlement-catalog.json",
+              "resources/workforce/canonical-capability-binding-matrix.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json",
+              "Titan-Workforce-Manager-Step30/recovery/STEP30-VERIFICATION.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/catalogue/installed-client-workforce-master.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/recovery/STEP28-VERIFICATION.json"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:49:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Register roadmap-canonical Specialist IDs ['TZAG-OPS-ACCESS-FAILURE-PREVENTION', 'TZAG-OPS-SCOPE-VARIATION-GUARDIAN'] through the existing manifest/role/capability registries. Five business capability tiers are already explicit (free, team, business, autonomous, predictive); role activation must remain non-authoritative and earned authority remains external/governed."
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Register Evidence-to-Cash and Cashflow Guardian capabilities with five-tier plans",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-39-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-FIN-EVIDENCE-TO-CASH",
+          "TZAG-FIN-CASHFLOW-GUARDIAN"
+        ],
+        "created_agent_ids": [
+          "TZAG-FIN-EVIDENCE-TO-CASH",
+          "TZAG-FIN-CASHFLOW-GUARDIAN"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "Evidence-to-Cash Specialist",
+          "Cashflow Guardian Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "PENDING_DOMAIN_MANAGER -> TZAG-FIN-EVIDENCE-TO-CASH -> PENDING_CANONICAL_WORKERS/HUMANS",
+          "PENDING_DOMAIN_MANAGER -> TZAG-FIN-CASHFLOW-GUARDIAN -> PENDING_CANONICAL_WORKERS/HUMANS"
+        ],
+        "pain_point_ids": [
+          "PAIN-COMPLETED-NOT-INVOICED",
+          "PAIN-INVOICE-MISSING-EVIDENCE",
+          "PAIN-AR-AGING",
+          "PAIN-CASHFLOW-LEAKAGE"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-FIN-EVIDENCE-TO-CASH",
+          "OUTCOME-TZAG-FIN-CASHFLOW-GUARDIAN"
+        ],
+        "recommendations": [
+          "Prepare invoice when evidence and scope reconcile.",
+          "Hold and request missing evidence when billing confidence is insufficient.",
+          "Use the least aggressive effective follow-up.",
+          "Escalate disputed/high-value/long-aged receivables rather than blindly automate."
+        ],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-FIN-EVIDENCE-TO-CASH",
+            "TZAG-FIN-CASHFLOW-GUARDIAN"
+          ],
+          "definition_home": "TZ-ROADMAP-39-SG-03"
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "required-field completeness check",
+          "operational-binding reference check",
+          "duplicate agent_id scan"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 39 is the canonical definition/certification home. Actual domain implementation is embedded in operational_binding_subgoal_ids using the same immutable agent_id."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager",
+          "Titan Installed Client Workforce"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Support/WorkforceCapabilityBindingRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Services/WorkforceCapabilityAvailabilityService.php",
+              "System/Services/WorkforceCommercialCapabilityPolicyService.php",
+              "System/Services/WorkforceEntitlementService.php",
+              "System/Services/WorkforceAutonomyService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "resources/workforce/cost-sovereignty-entitlement-catalog.json",
+              "resources/workforce/canonical-capability-binding-matrix.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json",
+              "Titan-Workforce-Manager-Step30/recovery/STEP30-VERIFICATION.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/catalogue/installed-client-workforce-master.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/recovery/STEP28-VERIFICATION.json"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:49:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Register roadmap-canonical Specialist IDs ['TZAG-FIN-EVIDENCE-TO-CASH', 'TZAG-FIN-CASHFLOW-GUARDIAN'] through the existing manifest/role/capability registries. Five business capability tiers are already explicit (free, team, business, autonomous, predictive); role activation must remain non-authoritative and earned authority remains external/governed."
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Register Route Compression and Workforce Load Balancing capabilities with five-tier plans",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-39-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING"
+        ],
+        "created_agent_ids": [
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "Route Compression Specialist",
+          "Workforce Load Balancing Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "PENDING_DOMAIN_MANAGER -> TZAG-OPS-ROUTE-COMPRESSION -> PENDING_CANONICAL_WORKERS/HUMANS",
+          "PENDING_DOMAIN_MANAGER -> TZAG-WF-LOAD-BALANCING -> PENDING_CANONICAL_WORKERS/HUMANS"
+        ],
+        "pain_point_ids": [
+          "PAIN-EXCESS-TRAVEL",
+          "PAIN-ROUTE-FRAGMENTATION",
+          "PAIN-WORKLOAD-IMBALANCE",
+          "PAIN-OVERLOAD-UNDERUTILISATION"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-OPS-ROUTE-COMPRESSION",
+          "OUTCOME-TZAG-WF-LOAD-BALANCING"
+        ],
+        "recommendations": [
+          "Resequence only when savings exceed disruption/risk.",
+          "Prefer no change when customer/SLA/skill cost outweighs travel gain.",
+          "Move only work that improves overall outcome after travel, skill and fairness costs.",
+          "Escalate chronic capacity shortage instead of endlessly reshuffling."
+        ],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-OPS-ROUTE-COMPRESSION",
+            "TZAG-WF-LOAD-BALANCING"
+          ],
+          "definition_home": "TZ-ROADMAP-39-SG-04"
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "required-field completeness check",
+          "operational-binding reference check",
+          "duplicate agent_id scan"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 39 is the canonical definition/certification home. Actual domain implementation is embedded in operational_binding_subgoal_ids using the same immutable agent_id."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager",
+          "Titan Installed Client Workforce"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Support/WorkforceCapabilityBindingRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Services/WorkforceCapabilityAvailabilityService.php",
+              "System/Services/WorkforceCommercialCapabilityPolicyService.php",
+              "System/Services/WorkforceEntitlementService.php",
+              "System/Services/WorkforceAutonomyService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "resources/workforce/cost-sovereignty-entitlement-catalog.json",
+              "resources/workforce/canonical-capability-binding-matrix.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json",
+              "Titan-Workforce-Manager-Step30/recovery/STEP30-VERIFICATION.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/catalogue/installed-client-workforce-master.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/recovery/STEP28-VERIFICATION.json"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:49:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Register roadmap-canonical Specialist IDs ['TZAG-OPS-ROUTE-COMPRESSION', 'TZAG-WF-LOAD-BALANCING'] through the existing manifest/role/capability registries. Five business capability tiers are already explicit (free, team, business, autonomous, predictive); role activation must remain non-authoritative and earned authority remains external/governed."
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Register First-Time-Fix Preparation and Callback Prevention capabilities with five-tier plans",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-39-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+          "TZAG-CX-CALLBACK-PREVENTION"
+        ],
+        "created_agent_ids": [
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+          "TZAG-CX-CALLBACK-PREVENTION"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "First-Time-Fix Preparation Specialist",
+          "Callback Prevention Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "PENDING_DOMAIN_MANAGER -> TZAG-FIELD-FIRST-TIME-FIX-PREPARATION -> PENDING_CANONICAL_WORKERS/HUMANS",
+          "PENDING_DOMAIN_MANAGER -> TZAG-CX-CALLBACK-PREVENTION -> PENDING_CANONICAL_WORKERS/HUMANS"
+        ],
+        "pain_point_ids": [
+          "PAIN-FIRST-VISIT-FAILURE",
+          "PAIN-REPEAT-CALLBACK",
+          "PAIN-QUALITY-ESCAPE"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+          "OUTCOME-TZAG-CX-CALLBACK-PREVENTION"
+        ],
+        "recommendations": [
+          "Request one high-value missing diagnostic detail.",
+          "Reserve likely required stock only when confidence/value supports it.",
+          "Escalate jobs with unresolved specialist skill needs.",
+          "Request one targeted proof/check when evidence is weak.",
+          "Escalate repeated patterns instead of repeatedly treating symptoms."
+        ],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+            "TZAG-CX-CALLBACK-PREVENTION"
+          ],
+          "definition_home": "TZ-ROADMAP-39-SG-05"
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "required-field completeness check",
+          "operational-binding reference check",
+          "duplicate agent_id scan"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 39 is the canonical definition/certification home. Actual domain implementation is embedded in operational_binding_subgoal_ids using the same immutable agent_id."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager",
+          "Titan Installed Client Workforce"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Support/WorkforceCapabilityBindingRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Services/WorkforceCapabilityAvailabilityService.php",
+              "System/Services/WorkforceCommercialCapabilityPolicyService.php",
+              "System/Services/WorkforceEntitlementService.php",
+              "System/Services/WorkforceAutonomyService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "resources/workforce/cost-sovereignty-entitlement-catalog.json",
+              "resources/workforce/canonical-capability-binding-matrix.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json",
+              "Titan-Workforce-Manager-Step30/recovery/STEP30-VERIFICATION.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/catalogue/installed-client-workforce-master.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/recovery/STEP28-VERIFICATION.json"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:49:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Register roadmap-canonical Specialist IDs ['TZAG-FIELD-FIRST-TIME-FIX-PREPARATION', 'TZAG-CX-CALLBACK-PREVENTION'] through the existing manifest/role/capability registries. Five business capability tiers are already explicit (free, team, business, autonomous, predictive); role activation must remain non-authoritative and earned authority remains external/governed."
+      }
+    },
+    {
+      "subgoal": 6,
+      "title": "Register Customer Expectation Management and Exception Resolution capabilities with five-tier plans",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-39-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-OPS-EXCEPTION-RESOLUTION"
+        ],
+        "created_agent_ids": [
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-OPS-EXCEPTION-RESOLUTION"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "Customer Expectation Management Specialist",
+          "Exception Resolution Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "PENDING_DOMAIN_MANAGER -> TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT -> PENDING_CANONICAL_WORKERS/HUMANS",
+          "PENDING_DOMAIN_MANAGER -> TZAG-OPS-EXCEPTION-RESOLUTION -> PENDING_CANONICAL_WORKERS/HUMANS"
+        ],
+        "pain_point_ids": [
+          "PAIN-EXPECTATION-MISMATCH",
+          "PAIN-UNRESOLVED-EXCEPTION",
+          "PAIN-EXCEPTION-BOUNCE"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "OUTCOME-TZAG-OPS-EXCEPTION-RESOLUTION"
+        ],
+        "recommendations": [
+          "Explain the actual change and next action without overpromising.",
+          "Escalate when the system cannot honour a prior commitment.",
+          "Route to the domain that can actually change the blocking state.",
+          "Escalate based on impact/evidence, not age alone.",
+          "Stop blind retries when the failure mode is unchanged."
+        ],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+            "TZAG-OPS-EXCEPTION-RESOLUTION"
+          ],
+          "definition_home": "TZ-ROADMAP-39-SG-06"
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "required-field completeness check",
+          "operational-binding reference check",
+          "duplicate agent_id scan"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 39 is the canonical definition/certification home. Actual domain implementation is embedded in operational_binding_subgoal_ids using the same immutable agent_id."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager",
+          "Titan Installed Client Workforce"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Support/WorkforceCapabilityBindingRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Services/WorkforceCapabilityAvailabilityService.php",
+              "System/Services/WorkforceCommercialCapabilityPolicyService.php",
+              "System/Services/WorkforceEntitlementService.php",
+              "System/Services/WorkforceAutonomyService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "resources/workforce/cost-sovereignty-entitlement-catalog.json",
+              "resources/workforce/canonical-capability-binding-matrix.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json",
+              "Titan-Workforce-Manager-Step30/recovery/STEP30-VERIFICATION.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/catalogue/installed-client-workforce-master.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/recovery/STEP28-VERIFICATION.json"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:49:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Register roadmap-canonical Specialist IDs ['TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT', 'TZAG-OPS-EXCEPTION-RESOLUTION'] through the existing manifest/role/capability registries. Five business capability tiers are already explicit (free, team, business, autonomous, predictive); role activation must remain non-authoritative and earned authority remains external/governed."
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Register Rebooking & Churn Prevention and Review & Referral Optimisation capabilities with five-tier plans",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-39-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION"
+        ],
+        "created_agent_ids": [
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "Rebooking & Churn Prevention Specialist",
+          "Review & Referral Optimisation Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "PENDING_DOMAIN_MANAGER -> TZAG-CX-REBOOKING-CHURN-PREVENTION -> PENDING_CANONICAL_WORKERS/HUMANS",
+          "PENDING_DOMAIN_MANAGER -> TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION -> PENDING_CANONICAL_WORKERS/HUMANS"
+        ],
+        "pain_point_ids": [
+          "PAIN-CHURN",
+          "PAIN-MISSED-REBOOK",
+          "PAIN-MISSED-ADVOCACY",
+          "PAIN-POOR-REVIEW-TIMING"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "OUTCOME-TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION"
+        ],
+        "recommendations": [
+          "Use service value/context rather than blanket discounting.",
+          "Do not pursue customers who clearly declined or are unsuitable.",
+          "Ask only after verified value and no unresolved material issue.",
+          "Route negative feedback to recovery rather than trying to manipulate review outcome."
+        ],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+            "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION"
+          ],
+          "definition_home": "TZ-ROADMAP-39-SG-07"
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "required-field completeness check",
+          "operational-binding reference check",
+          "duplicate agent_id scan"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 39 is the canonical definition/certification home. Actual domain implementation is embedded in operational_binding_subgoal_ids using the same immutable agent_id."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager",
+          "Titan Installed Client Workforce"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Support/WorkforceCapabilityBindingRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Services/WorkforceCapabilityAvailabilityService.php",
+              "System/Services/WorkforceCommercialCapabilityPolicyService.php",
+              "System/Services/WorkforceEntitlementService.php",
+              "System/Services/WorkforceAutonomyService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "resources/workforce/cost-sovereignty-entitlement-catalog.json",
+              "resources/workforce/canonical-capability-binding-matrix.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json",
+              "Titan-Workforce-Manager-Step30/recovery/STEP30-VERIFICATION.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/catalogue/installed-client-workforce-master.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/recovery/STEP28-VERIFICATION.json"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:49:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Register roadmap-canonical Specialist IDs ['TZAG-CX-REBOOKING-CHURN-PREVENTION', 'TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION'] through the existing manifest/role/capability registries. Five business capability tiers are already explicit (free, team, business, autonomous, predictive); role activation must remain non-authoritative and earned authority remains external/governed."
+      }
+    },
+    {
+      "subgoal": 8,
+      "title": "Register Weather Disruption Management and Supply Continuity capabilities with five-tier plans",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-39-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+        ],
+        "created_agent_ids": [
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "Weather Disruption Management Specialist",
+          "Supply Continuity Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [
+          "PENDING_DOMAIN_MANAGER -> TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT -> PENDING_CANONICAL_WORKERS/HUMANS",
+          "PENDING_DOMAIN_MANAGER -> TZAG-SUPPLY-SUPPLY-CONTINUITY -> PENDING_CANONICAL_WORKERS/HUMANS"
+        ],
+        "pain_point_ids": [
+          "PAIN-WEATHER-DISRUPTION",
+          "PAIN-SUPPLY-STOCKOUT",
+          "PAIN-JOB-BLOCKED-MATERIAL"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "OUTCOME-TZAG-SUPPLY-SUPPLY-CONTINUITY"
+        ],
+        "recommendations": [
+          "Protect high-risk jobs first.",
+          "Avoid unnecessary mass cancellation when confidence/impact is low.",
+          "Offer indoor/alternative timing where policy allows.",
+          "Use transfer/reallocation before rush purchase when total impact is lower.",
+          "Never substitute without verified compatibility/approval."
+        ],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+          ],
+          "definition_home": "TZ-ROADMAP-39-SG-08"
+        },
+        "verification_evidence": [
+          "canonical definition uniqueness check",
+          "required-field completeness check",
+          "operational-binding reference check",
+          "duplicate agent_id scan"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 39 is the canonical definition/certification home. Actual domain implementation is embedded in operational_binding_subgoal_ids using the same immutable agent_id."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager",
+          "Titan Installed Client Workforce"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Support/WorkforceCapabilityBindingRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Services/WorkforceCapabilityAvailabilityService.php",
+              "System/Services/WorkforceCommercialCapabilityPolicyService.php",
+              "System/Services/WorkforceEntitlementService.php",
+              "System/Services/WorkforceAutonomyService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "resources/workforce/cost-sovereignty-entitlement-catalog.json",
+              "resources/workforce/canonical-capability-binding-matrix.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json",
+              "Titan-Workforce-Manager-Step30/recovery/STEP30-VERIFICATION.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/catalogue/installed-client-workforce-master.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/recovery/STEP28-VERIFICATION.json"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:49:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Register roadmap-canonical Specialist IDs ['TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT', 'TZAG-SUPPLY-SUPPLY-CONTINUITY'] through the existing manifest/role/capability registries. Five business capability tiers are already explicit (free, team, business, autonomous, predictive); role activation must remain non-authoritative and earned authority remains external/governed."
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Implement authority/surface/escalation/failure/recovery/outcome matrices for every innovation capability",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-39-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-REV-MISSED-REVENUE-RECOVERY",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-FIN-EVIDENCE-TO-CASH",
+          "TZAG-FIN-CASHFLOW-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-REV-MISSED-REVENUE-RECOVERY",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-FIN-EVIDENCE-TO-CASH",
+          "TZAG-FIN-CASHFLOW-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+        ],
+        "canonical_agent_names": [
+          "Missed Revenue Recovery Specialist",
+          "Cancellation Gap Filling Specialist",
+          "Access Failure Prevention Specialist",
+          "Scope & Variation Guardian Specialist",
+          "Evidence-to-Cash Specialist",
+          "Cashflow Guardian Specialist",
+          "Route Compression Specialist",
+          "Workforce Load Balancing Specialist",
+          "First-Time-Fix Preparation Specialist",
+          "Callback Prevention Specialist",
+          "Customer Expectation Management Specialist",
+          "Exception Resolution Specialist",
+          "Rebooking & Churn Prevention Specialist",
+          "Review & Referral Optimisation Specialist",
+          "Weather Disruption Management Specialist",
+          "Supply Continuity Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-REV-MISSED-REVENUE-RECOVERY",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+            "TZAG-FIN-EVIDENCE-TO-CASH",
+            "TZAG-FIN-CASHFLOW-GUARDIAN",
+            "TZAG-OPS-ROUTE-COMPRESSION",
+            "TZAG-WF-LOAD-BALANCING",
+            "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+            "TZAG-CX-CALLBACK-PREVENTION",
+            "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+            "TZAG-OPS-EXCEPTION-RESOLUTION",
+            "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+            "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-39-SG-01",
+            "TZ-ROADMAP-39-SG-02",
+            "TZ-ROADMAP-39-SG-03",
+            "TZ-ROADMAP-39-SG-04",
+            "TZ-ROADMAP-39-SG-05",
+            "TZ-ROADMAP-39-SG-06",
+            "TZ-ROADMAP-39-SG-07",
+            "TZ-ROADMAP-39-SG-08"
+          ]
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding: do not redefine these agents here; implement/extend this sub-goal through the same canonical agent_id."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager",
+          "Titan Installed Client Workforce"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Support/WorkforceCapabilityBindingRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Services/WorkforceCapabilityAvailabilityService.php",
+              "System/Services/WorkforceCommercialCapabilityPolicyService.php",
+              "System/Services/WorkforceEntitlementService.php",
+              "System/Services/WorkforceAutonomyService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "resources/workforce/cost-sovereignty-entitlement-catalog.json",
+              "resources/workforce/canonical-capability-binding-matrix.json",
+              "System/Services/WorkforceAuthorityGraphValidator.php",
+              "System/Services/WorkforceGraphService.php",
+              "System/Services/WorkforcePostActionVerificationService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json",
+              "Titan-Workforce-Manager-Step30/recovery/STEP30-VERIFICATION.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/catalogue/installed-client-workforce-master.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/recovery/STEP28-VERIFICATION.json"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:49:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Existing workforce runtime already supplies authority graph validation, five-tier commercial/autonomy ceilings, capability bindings, outcome/performance evidence, client activation guards and manager outcome supervision. SG09 should materialise one matrix per canonical Specialist without granting authority by registry membership."
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Certify every mandatory innovation exists in canonical workforce registry, has measurable outcomes, and is exposed through every authorised surface",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan AI Workforce",
+        "Titan Workforce Manager",
+        "Titan Installed Client Workforce"
+      ],
+      "subgoal_id": "TZ-ROADMAP-39-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-REV-MISSED-REVENUE-RECOVERY",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-FIN-EVIDENCE-TO-CASH",
+          "TZAG-FIN-CASHFLOW-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-REV-MISSED-REVENUE-RECOVERY",
+          "TZAG-OPS-CANCELLATION-GAP-FILLING",
+          "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+          "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+          "TZAG-FIN-EVIDENCE-TO-CASH",
+          "TZAG-FIN-CASHFLOW-GUARDIAN",
+          "TZAG-OPS-ROUTE-COMPRESSION",
+          "TZAG-WF-LOAD-BALANCING",
+          "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+          "TZAG-CX-CALLBACK-PREVENTION",
+          "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+          "TZAG-OPS-EXCEPTION-RESOLUTION",
+          "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+          "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION",
+          "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+          "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+        ],
+        "canonical_agent_names": [
+          "Missed Revenue Recovery Specialist",
+          "Cancellation Gap Filling Specialist",
+          "Access Failure Prevention Specialist",
+          "Scope & Variation Guardian Specialist",
+          "Evidence-to-Cash Specialist",
+          "Cashflow Guardian Specialist",
+          "Route Compression Specialist",
+          "Workforce Load Balancing Specialist",
+          "First-Time-Fix Preparation Specialist",
+          "Callback Prevention Specialist",
+          "Customer Expectation Management Specialist",
+          "Exception Resolution Specialist",
+          "Rebooking & Churn Prevention Specialist",
+          "Review & Referral Optimisation Specialist",
+          "Weather Disruption Management Specialist",
+          "Supply Continuity Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-REV-MISSED-REVENUE-RECOVERY",
+            "TZAG-OPS-CANCELLATION-GAP-FILLING",
+            "TZAG-OPS-ACCESS-FAILURE-PREVENTION",
+            "TZAG-OPS-SCOPE-VARIATION-GUARDIAN",
+            "TZAG-FIN-EVIDENCE-TO-CASH",
+            "TZAG-FIN-CASHFLOW-GUARDIAN",
+            "TZAG-OPS-ROUTE-COMPRESSION",
+            "TZAG-WF-LOAD-BALANCING",
+            "TZAG-FIELD-FIRST-TIME-FIX-PREPARATION",
+            "TZAG-CX-CALLBACK-PREVENTION",
+            "TZAG-CX-CUSTOMER-EXPECTATION-MANAGEMENT",
+            "TZAG-OPS-EXCEPTION-RESOLUTION",
+            "TZAG-CX-REBOOKING-CHURN-PREVENTION",
+            "TZAG-GROWTH-REVIEW-REFERRAL-OPTIMISATION",
+            "TZAG-OPS-WEATHER-DISRUPTION-MANAGEMENT",
+            "TZAG-SUPPLY-SUPPLY-CONTINUITY"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-39-SG-01",
+            "TZ-ROADMAP-39-SG-02",
+            "TZ-ROADMAP-39-SG-03",
+            "TZ-ROADMAP-39-SG-04",
+            "TZ-ROADMAP-39-SG-05",
+            "TZ-ROADMAP-39-SG-06",
+            "TZ-ROADMAP-39-SG-07",
+            "TZ-ROADMAP-39-SG-08"
+          ]
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding: do not redefine these agents here; implement/extend this sub-goal through the same canonical agent_id."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan AI Workforce",
+          "Titan Workforce Manager",
+          "Titan Installed Client Workforce"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan AI Workforce",
+            "file_id": "file_00000000095081fb8e3987a897e74f5a",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan AI Workforce/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+            "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Support/WorkforceManifestRegistry.php",
+              "System/Support/WorkforceRoleRegistry.php",
+              "System/Support/WorkforceCapabilityBindingRegistry.php",
+              "System/Services/WorkforceManifestLifecycleService.php",
+              "System/Services/WorkforceCapabilityAvailabilityService.php",
+              "System/Services/WorkforceCommercialCapabilityPolicyService.php",
+              "System/Services/WorkforceEntitlementService.php",
+              "System/Services/WorkforceAutonomyService.php",
+              "System/Services/WorkforceOutcomeFeedbackService.php",
+              "System/Services/WorkforcePerformanceService.php",
+              "resources/workforce/cost-sovereignty-entitlement-catalog.json",
+              "resources/workforce/canonical-capability-binding-matrix.json",
+              "System/Services/WorkforceAuthorityGraphValidator.php",
+              "System/Services/WorkforceGraphService.php",
+              "System/Services/WorkforcePostActionVerificationService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Workforce Manager",
+            "file_id": "file_00000000668c81faab86f55118a08c55",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Workforce Manager/Titan Workforce Manager Master Step 30.zip",
+            "sha256": "84eb79a0abdbc864740aa3d5c69ede9f44ece57c6298b130bb40700e9c989ff0",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Workforce-Manager-Step30/runtime/WorkforceManager.php",
+              "Titan-Workforce-Manager-Step30/runtime/OutcomeSupervisor.php",
+              "Titan-Workforce-Manager-Step30/contracts/OutcomeRecord.schema.json",
+              "Titan-Workforce-Manager-Step30/recovery/STEP30-VERIFICATION.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Installed Client Workforce",
+            "file_id": "file_000000005ce481f8a31c9b46d73889c5",
+            "library_path": "/MASTER Software/Masters/Workforce/Titan Installed Client Workforce/Titan Installed Client Workforce Master Step 28.zip",
+            "sha256": "73190a42375f0e1b6d9509f2f46a39838c5864ada7c197498342f13d8c974967",
+            "verification": "PHYSICAL_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-Installed-Client-AI-Workforce-Step28/catalogue/installed-client-workforce-master.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleActivationProposal.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/contracts/RoleCapabilityBinding.schema.json",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/ClientWorkforceComposer.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/runtime/RoleActivationGuard.php",
+              "Titan-Installed-Client-AI-Workforce-Step28/recovery/STEP28-VERIFICATION.json"
+            ]
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:49:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Existing workforce runtime already supplies authority graph validation, five-tier commercial/autonomy ceilings, capability bindings, outcome/performance evidence, client activation guards and manager outcome supervision. SG10 should certify that all 16 canonical Specialists are present, measurable and exposed only through authorised projections using existing verification and outcome receipts."
+      }
+    }
+  ],
+  "affinity_tags": [
+    "agents",
+    "innovation",
+    "business-outcomes",
+    "workforce"
+  ],
+  "preferred_predecessors": [
+    "TZ-ROADMAP-07"
+  ],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "unified_architecture_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 1,
+  "library_reuse_refs": [
+    "Titan AI Workforce",
+    "Titan Workforce Manager",
+    "Titan Installed Client Workforce"
+  ],
+  "reuse_first": true,
+  "mvp_scope_note": "P0 demonstrates one representative innovative pain-point capability. Full mandatory innovation catalogue and cross-surface certification remain P1.",
+  "agent_goal_classification": "DOMAIN_WORKFORCE_ELIGIBLE",
+  "agent_goal_rule": "This goal owns durable business/domain outcomes and may reuse, extend or create canonical workforce identities subject to non-duplication and outcome-owner tests.",
+  "workforce_goal_classification": "WORKFORCE_DEFINITION_OR_HIERARCHY",
+  "workforce_goal_rule": "Canonical workforce identities/hierarchy may be defined here, but identities must remain domain/outcome based and surface-neutral."
+}

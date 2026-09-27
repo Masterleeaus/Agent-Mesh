@@ -1,0 +1,22 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const files=['src/ai/ai-sanitizer.js','src/ai/ai-audit-ledger.js','src/ai/ai-request-contract.js','src/ai/ai-response-contract.js','src/ai/provider-contract.js','src/ai/ai-provider-registry.js','src/ai/model-registry.js','src/ai/intelligence-catalogue.js','src/ai/provider-gateway.js','src/ai/subscription-transport-contract.js','src/ai/adapters/chatgpt-subscription-adapter.js'];
+for(const f of files)vm.runInThisContext(fs.readFileSync(f,'utf8'),{filename:f});
+(async()=>{
+ const missing=CodeeChatGPTSubscriptionAdapter.create();
+ assert.equal(missing.lifecycle,'CONFIGURATION_REQUIRED');
+ assert.equal((await missing.health()).ok,false);
+ await assert.rejects(()=>missing.complete({task:'x'}),/chatgpt-subscription-unavailable/);
+ assert.equal(missing.metadata.cookieScraping,false);assert.equal(missing.metadata.backendApiDirect,false);assert.equal(missing.metadata.webpageAutomation,false);assert.equal(missing.metadata.apiKeyProvider,false);
+ let calls=0;
+ const transport={id:'host-codex-client',supported:true,connect:async()=>({ok:true}),disconnect:async()=>({ok:true}),health:async()=>({ok:true}),listModels:async()=>[{id:'host-model'}],complete:async req=>{calls++;return {response:`ok:${req.task}`,model:'host-model',finishReason:'stop'};}};
+ const adapter=CodeeChatGPTSubscriptionAdapter.create({transport});CodeeProviderGateway.registerProvider(adapter);
+ CodeeAIModelRegistry.upsert({providerId:'chatgpt-subscription',modelId:'host-model',health:'READY',freeStatus:'UNKNOWN',capabilities:{text:true,reasoning:true}});
+ const cat=CodeeIntelligenceCatalogue.get('chatgpt-subscription');assert.equal(cat.kind,'INFERENCE');assert.equal(cat.locality,'SUBSCRIPTION');
+ assert.equal(CodeeIntelligenceCatalogue.get('webpage:chatgpt'),null);
+ const result=await CodeeProviderGateway.request({companyId:'company-pass08',purpose:'pass08-test',task:'hello',preferredProviders:['chatgpt-subscription'],requiredCapabilities:['text'],privacy:{allowCloud:true},costPolicy:{mode:'AUTO'}});
+ assert.equal(result.ok,true);assert.equal(result.provider,'chatgpt-subscription');assert.equal(calls,1);assert.equal(result.authority.mayExecuteMutation,false);
+ assert.equal(CodeeChatGPTSubscriptionAdapter.isConfigured({transport}),true);
+ const source=fs.readFileSync('src/ai/adapters/chatgpt-subscription-adapter.js','utf8');
+ assert(!source.includes('chatgpt.com/backend-api'));assert(!source.includes('auth.openai.com/oauth'));assert(!source.includes('document.cookie'));
+ console.log('PASS pass08 chatgpt subscription boundary');
+})().catch(e=>{console.error(e);process.exit(1)});

@@ -1,0 +1,90 @@
+{
+	"name": "n8n-nodes-vh3ai",
+	"version": "0.13.0",
+	"description": "n8n community node for the VH3 AI API — jobs, contacts, resources, vehicles, worksheets, invoices, quotes, teams, and more.",
+	"keywords": [
+		"n8n-community-node-package",
+		"n8n",
+		"vh3",
+		"vh3ai",
+		"connie",
+		"jobs",
+		"contacts",
+		"resources",
+		"vehicles",
+		"worksheets",
+		"invoices",
+		"quotes",
+		"reports",
+		"search",
+		"cases",
+		"investigate",
+		"intelligence",
+		"briefing",
+		"account-report",
+		"email",
+		"triage",
+		"teams",
+		"salma",
+		"quotient",
+		"quote-documents",
+		"field-service",
+		"bigchange"
+	],
+	"license": "MIT",
+	"homepage": "https://vh3.ai",
+	"author": {
+		"name": "VH3 AI",
+		"email": "support@vh3.ai"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/VH3DIGITAL/n8n-nodes-vh3ai.git"
+	},
+	"main": "index.js",
+	"scripts": {
+		"build": "tsc && gulp build:icons",
+		"dev": "tsc --watch",
+		"format": "prettier nodes credentials --write",
+		"lint": "eslint nodes/**/*.ts credentials/**/*.ts package.json",
+		"lint:manifest": "node scripts/validate-package-manifest.mjs",
+		"lint:package": "eslint package.json",
+		"lint:n8n": "npm run lint && npm run lint:manifest && npm run lint:package",
+		"lint:portal": "eslint -c .eslintrc.portal.js nodes/**/*.ts credentials/**/*.ts package.json",
+		"lint:portal:changed": "node scripts/lint-portal-changed.mjs",
+		"lint:portal:fix": "eslint -c .eslintrc.portal.js --fix nodes/**/*.ts credentials/**/*.ts package.json",
+		"lintfix": "eslint nodes/**/*.ts credentials/**/*.ts --fix",
+		"test": "jest",
+		"prepublishOnly": "npm run build && npm run lint:n8n"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"credentials": [
+			"dist/credentials/Vh3AiApi.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/Vh3Ai/Vh3Ai.node.js"
+		]
+	},
+	"devDependencies": {
+		"@types/jest": "^30.0.0",
+		"@typescript-eslint/parser": "^7.15.0",
+		"eslint": "^8.56.0",
+		"eslint-plugin-n8n-nodes-base": "^1.16.1",
+		"gulp": "^4.0.2",
+		"jest": "^30.2.0",
+		"n8n-workflow": "*",
+		"prettier": "^3.3.2",
+		"ts-jest": "^29.4.6",
+		"typescript": "^5.5.3"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	},
+	"engines": {
+		"node": ">=18.10"
+	}
+}

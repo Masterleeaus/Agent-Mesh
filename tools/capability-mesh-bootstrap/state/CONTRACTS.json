@@ -1,0 +1,21 @@
+{
+  "schema": "titan-zero-contract-index/v1",
+  "contracts": [
+    {
+      "id": "schema:task-packet/v1",
+      "path": "schemas/task-packet.schema.json"
+    },
+    {
+      "id": "schema:capability/v1",
+      "path": "schemas/capability.schema.json"
+    },
+    {
+      "id": "schema:evidence/v1",
+      "path": "schemas/evidence.schema.json"
+    },
+    {
+      "id": "schema:dependency-graph/v1",
+      "path": "schemas/dependency-graph.schema.json"
+    }
+  ]
+}

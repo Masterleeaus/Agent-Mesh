@@ -1,0 +1,54 @@
+name: Clean Archived Titan Duplicates V2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/clean-titan-duplicates-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Remove duplicate archived content and stale generated package output
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Exact duplicate files at the same relative path are no longer needed in /titan.
+          while IFS= read -r -d '' archived; do
+            rel="${archived#titan/}"
+            if [ -f "$rel" ] && cmp -s "$archived" "$rel"; then
+              git rm -f "$archived"
+            fi
+          done < <(find titan -type f -print0)
+
+          # These package directories are Dovetails packages already present at root.
+          # Remove only files that are identical to their canonical root counterpart.
+          for pkg in domain email-templates log money; do
+            [ -d "titan/packages/$pkg" ] || continue
+            while IFS= read -r -d '' archived; do
+              rel="${archived#titan/}"
+              if [ -f "$rel" ] && cmp -s "$archived" "$rel"; then
+                git rm -f "$archived"
+              fi
+            done < <(find "titan/packages/$pkg" -type f -print0)
+          done
+
+          # Generated test output should not have been migrated as source.
+          if [ -d packages/titan-platform/.test-dist ]; then
+            git rm -rf packages/titan-platform/.test-dist
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Clean duplicate Titan archive files and generated package output"
+          git push

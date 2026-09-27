@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(venv/Scripts/python.exe web/app.py)",
+      "Bash(disown sleep:*)",
+      "Bash(venv/Scripts/python -c \"from web.routes.parts_routes import parts_bp; print\\('Blueprint OK:', parts_bp.name\\)\")",
+      "Bash(venv/Scripts/python -c \"from web.app import app; print\\('App OK, rules:', len\\(list\\(app.url_map.iter_rules\\(\\)\\)\\)\\)\")",
+      "Bash(venv/Scripts/python seed_parts.py)",
+      "Bash(venv/Scripts/python -c \"from dateutil.relativedelta import relativedelta; print\\('dateutil OK'\\)\")",
+      "Bash(venv/Scripts/pip install:*)",
+      "Bash(venv/Scripts/python migrate_recurring.py)",
+      "Bash(venv/Scripts/python seed_recurring.py)",
+      "Bash(venv/Scripts/python migrate_warranty.py)",
+      "Bash(venv/Scripts/python seed_communications.py)",
+      "Bash(venv/Scripts/python migrate_expenses.py)",
+      "Bash(venv/Scripts/python seed_expenses.py)",
+      "Bash(pkill -f \"python.*58391\")",
+      "Bash(python -c \":*)",
+      "Bash(python -c \"import os, sys; sys.path.insert\\(0, ''''.''''\\); os.environ[''''SECRET_KEY'''']=''''test''''; from web.auth import demo; print\\(''''demo route imports OK:'''', callable\\(demo\\)\\)\")",
+      "Bash(ls \"C:/Users/aasha/OneDrive - Patriot Tech Systems Consulting LLC \\(1\\)/dev/FieldServicePro/web/static/\"*.ico)",
+      "Bash(ls \"C:/Users/aasha/OneDrive - Patriot Tech Systems Consulting LLC \\(1\\)/dev/FieldServicePro/\"favicon*)"
+    ]
+  }
+}

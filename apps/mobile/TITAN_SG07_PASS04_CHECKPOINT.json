@@ -1,0 +1,22 @@
+{
+  "schema": "titan-mobile-sg07-checkpoint/v1",
+  "subgoal_id": "TZ-ROADMAP-47-SG-07",
+  "pass": 4,
+  "status": "STATIC_CONTRACT_COMPLETE",
+  "parent": "Titan-Mobile-MVP-SG07-Pass03.zip",
+  "verified": [
+    "cross-company rejection",
+    "cross-customer rejection",
+    "internal secret/topology shielding",
+    "offline authority cannot elevate",
+    "Command Bus required",
+    "server revalidation required for consequential offline/commercial intents",
+    "canonical Hub surface only",
+    "no Hub-specific workforce clones"
+  ],
+  "runtime_certification": {
+    "complete": false,
+    "reason": "Flutter/device/backend runtime unavailable"
+  },
+  "subgoal_next": "select next eligible Goal 47 subgoal"
+}

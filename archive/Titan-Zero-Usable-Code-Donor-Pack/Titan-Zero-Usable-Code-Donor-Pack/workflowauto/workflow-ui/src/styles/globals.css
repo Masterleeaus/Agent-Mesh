@@ -1,0 +1,238 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import 'reactflow/dist/style.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ── Dark theme (default) ─────────────────────────────────────── */
+  :root {
+    --bg-canvas:    #0c0c10;
+    --bg-sidebar:   #111118;
+    --bg-panel:     #161620;
+    --bg-card:      #1c1c28;
+    --bg-card-hover:#222230;
+    --bg-input:     #12121c;
+
+    --border-subtle: #1e1e2c;
+    --border-default:#282840;
+    --border-focus:  #5b5bd6;
+
+    --text-primary:   #e8e8f5;   /* boosted: was #e2e2ef */
+    --text-secondary: #9090b8;   /* boosted: was #7070a0 */
+    --text-muted:     #5a5a82;   /* boosted: was #3a3a58 — was nearly invisible */
+
+    --color-saas:    #4d8ff8;
+    --color-saas-bg: rgba(77,143,248,0.13);
+    --color-ai:      #b06ef5;
+    --color-ai-bg:   rgba(176,110,245,0.13);
+    --color-logic:   #34d470;
+    --color-logic-bg:rgba(52,212,112,0.13);
+    --color-utility: #fbb040;
+    --color-utility-bg:rgba(251,176,64,0.13);
+
+    --accent:       #6366f1;
+    --accent-hover: #818cf8;
+    --accent-muted: rgba(99,102,241,0.18);
+
+    --status-success:#34d470;
+    --status-error:  #f87171;
+    --status-warning:#fbb040;
+    --status-running:#4d8ff8;
+
+    --shadow-md:  0 4px 16px rgba(0,0,0,0.55);
+    --shadow-node:0 2px 12px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.04) inset;
+  }
+
+  /* ── Light theme ──────────────────────────────────────────────── */
+  .light {
+    --bg-canvas:    #eeeef8;
+    --bg-sidebar:   #ffffff;
+    --bg-panel:     #f6f6fc;
+    --bg-card:      #ffffff;
+    --bg-card-hover:#f0f0f8;
+    --bg-input:     #f0f0f8;
+
+    --border-subtle: #e2e2ee;
+    --border-default:#d0d0e4;
+    --border-focus:  #6366f1;
+
+    --text-primary:   #16161e;
+    --text-secondary: #48486a;
+    --text-muted:     #8888aa;
+
+    --color-saas:    #2563eb;
+    --color-saas-bg: rgba(37,99,235,0.09);
+    --color-ai:      #7c3aed;
+    --color-ai-bg:   rgba(124,58,237,0.09);
+    --color-logic:   #16a34a;
+    --color-logic-bg:rgba(22,163,74,0.09);
+    --color-utility: #c2700a;
+    --color-utility-bg:rgba(194,112,10,0.09);
+
+    --accent:       #6366f1;
+    --accent-hover: #4f51d6;
+    --accent-muted: rgba(99,102,241,0.12);
+
+    --status-success:#16a34a;
+    --status-error:  #dc2626;
+    --status-warning:#c2700a;
+    --status-running:#2563eb;
+
+    --shadow-md:  0 2px 12px rgba(0,0,0,0.10);
+    --shadow-node:0 1px 6px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.05);
+  }
+}
+
+@layer base {
+  * { @apply border-border; box-sizing: border-box; }
+  body {
+    background: var(--bg-canvas);
+    color: var(--text-primary);
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  ::selection { background: rgba(91,91,214,0.35); color: var(--text-primary); }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(91,91,214,0.4); }
+}
+
+/* ─── ReactFlow Dark Theme ─────────────────────────────────────── */
+.react-flow { background: var(--bg-canvas) !important; }
+.react-flow__background { background: var(--bg-canvas) !important; }
+.react-flow__background pattern circle { fill: #1c1c2c; }
+
+.react-flow__edge-path {
+  stroke-width: 2;
+  transition: stroke-width 0.15s, filter 0.15s;
+}
+.react-flow__edge.selected .react-flow__edge-path { stroke-width: 2.5; }
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke-width: 3;
+  filter: drop-shadow(0 0 5px currentColor);
+}
+
+.react-flow__connection-path {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+  animation: dashFlow 0.4s linear infinite;
+}
+
+.react-flow__handle {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  border: 2px solid var(--bg-canvas) !important;
+  background: var(--text-muted) !important;
+  transition: all 0.15s ease !important;
+  z-index: 10;
+}
+.react-flow__handle:hover {
+  width: 14px !important;
+  height: 14px !important;
+  background: var(--accent) !important;
+  border-color: var(--bg-canvas) !important;
+  box-shadow: 0 0 0 3px rgba(91,91,214,0.3) !important;
+}
+.react-flow__handle-left  { left: -6px !important; }
+.react-flow__handle-right { right: -6px !important; }
+
+.react-flow__minimap {
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border-default) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+.react-flow__minimap-mask { fill: rgba(12,12,16,0.75) !important; }
+.react-flow__minimap-node { fill: var(--bg-card) !important; stroke: var(--border-default) !important; }
+
+.react-flow__controls {
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border-default) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-md) !important;
+}
+.react-flow__controls-button {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid var(--border-default) !important;
+  color: var(--text-secondary) !important;
+  width: 28px !important;
+  height: 28px !important;
+  transition: all 0.15s;
+}
+.react-flow__controls-button:last-child { border-bottom: none !important; }
+.react-flow__controls-button:hover {
+  background: var(--bg-card-hover) !important;
+  color: var(--text-primary) !important;
+}
+.react-flow__controls-button svg { fill: currentColor; }
+.react-flow__panel { margin: 12px; }
+
+/* ─── Light theme ReactFlow overrides ──────────────────────────── */
+.light .react-flow__background pattern circle { fill: #d8d8ea; }
+.light .react-flow__minimap-mask { fill: rgba(238,238,248,0.8) !important; }
+.light .react-flow__minimap-node { fill: #e8e8f4 !important; stroke: #d0d0e4 !important; }
+
+/* ─── Animations ────────────────────────────────────────────────── */
+@keyframes dashFlow {
+  from { stroke-dashoffset: 24; }
+  to   { stroke-dashoffset: 0; }
+}
+@keyframes nodeAppear {
+  from { opacity: 0; transform: scale(0.88) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes runningPulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+@keyframes shimmerLoading {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-spin-custom { animation: spin 0.9s linear infinite; }
+.animate-node-appear { animation: nodeAppear 0.22s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
+.animate-fade-in { animation: fadeIn 0.18s ease forwards; }
+.animate-slide-in-right { animation: slideInRight 0.2s ease forwards; }
+.animate-running { animation: runningPulse 1.4s ease-in-out infinite; }
+
+/* ─── Utilities ─────────────────────────────────────────────────── */
+.font-mono { font-family: 'JetBrains Mono', monospace !important; }
+
+.glass {
+  background: rgba(22,22,32,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

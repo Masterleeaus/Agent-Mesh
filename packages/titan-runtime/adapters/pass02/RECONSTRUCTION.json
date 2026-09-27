@@ -1,0 +1,13 @@
+{
+  "schema": "titan-zero-reconstruction-verification/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 2,
+  "base_merge": 39,
+  "base_files": 2844,
+  "payload_files_before_sidecar": 18,
+  "base_path_collisions": [],
+  "hash_differences": [],
+  "exact_additive_reconstruction": true,
+  "payload_files": 19,
+  "reconstructed_files": 2863
+}

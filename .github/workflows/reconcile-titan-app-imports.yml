@@ -1,0 +1,76 @@
+name: Reconcile Titan App Imports
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reconcile-titan-app-imports.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Merge import-only Titan differences
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess
+
+          def split_imports(text):
+              lines=text.splitlines(keepends=True)
+              imports=[]; rest=[]; in_import=False; buf=[]
+              for line in lines:
+                  s=line.lstrip()
+                  if not in_import and (s.startswith("import ") or s.startswith("export ") and " from " in s):
+                      buf=[line]
+                      if ";" in line or (s.startswith("import ") and (" from " not in s) and s.rstrip().endswith(("'",'"'))):
+                          imports.append("".join(buf)); buf=[]
+                      else: in_import=True
+                  elif in_import:
+                      buf.append(line)
+                      if ";" in line:
+                          imports.append("".join(buf)); buf=[]; in_import=False
+                  else:
+                      rest.append(line)
+              if buf: rest.extend(buf)
+              return imports, "".join(rest)
+
+          merged=0; preserved=0
+          for src in sorted(Path("titan/apps").rglob("*")):
+              if not src.is_file() or src.suffix not in {".ts",".tsx",".js",".jsx",".mjs",".mts"}: continue
+              dst=Path(str(src)[len("titan/"):])
+              if not dst.is_file(): continue
+              try: a=dst.read_text(); b=src.read_text()
+              except UnicodeDecodeError: continue
+              ai, ar=split_imports(a); bi, br=split_imports(b)
+              if ar == br and ai != bi:
+                  # Preserve Dovetails imports and append Titan-only imports.
+                  merged_imports=list(ai)
+                  norm={re.sub(r"\s+"," ",x.strip()) for x in ai}
+                  for imp in bi:
+                      if re.sub(r"\s+"," ",imp.strip()) not in norm:
+                          merged_imports.append(imp)
+                  dst.write_text("".join(merged_imports)+ar)
+                  subprocess.run(["git","add",str(dst)],check=True)
+                  subprocess.run(["git","rm","-f",str(src)],check=True)
+                  merged += 1
+              else:
+                  preserved += 1
+          print(f"Merged {merged} import-only conflicts; preserved {preserved} substantive conflicts.")
+          PY
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Reconcile import-only Titan app differences"
+          git push

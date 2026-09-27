@@ -1,0 +1,34 @@
+(function attachProjectMemoryCandidateStore(global){
+'use strict';
+const SCHEMA='titan-code-project-memory-candidates/v1';
+const EXPORT_SCHEMA='titan-code-project-memory-candidates-export/v1';
+const DEFAULT_MAX_ITEMS=128;
+const DEFAULT_MAX_BYTES=512*1024;
+const DEFAULT_MAX_ITEM_BYTES=16*1024;
+const DEFAULT_TTL_MS=7*24*60*60*1000;
+const MAX_PROVENANCE=32;
+function fail(code,message){const e=new Error(message);e.code=code;return e;}
+function clamp(n,min,max,fallback){n=Number(n);return Number.isFinite(n)?Math.max(min,Math.min(max,n)):fallback;}
+function stableHash(input){let h=2166136261;const s=String(input);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(16).padStart(8,'0');}
+function byteLength(value){return Buffer.byteLength?Buffer.byteLength(String(value),'utf8'):new TextEncoder().encode(String(value)).length;}
+function authority(){return {advisory_only:true,authority:false,canonical:false,mutation_authorized:false,plan_advance:false,promotion_authority:false};}
+function normalizeProvenance(items){const out=[];const seen=new Set();for(const raw of items||[]){if(!raw||typeof raw!=='object')continue;const source=String(raw.source||raw.source_kind||'unknown').slice(0,96);const evidenceId=raw.evidence_id==null?null:String(raw.evidence_id).slice(0,256);const artifact=raw.artifact==null?null:String(raw.artifact).slice(0,256);const sha256=raw.sha256==null?null:String(raw.sha256).slice(0,128);const path=raw.path==null?null:String(raw.path).replace(/\\/g,'/').slice(0,1024);const line=raw.line==null?null:clamp(raw.line,1,100000000,null);const deterministic=raw.deterministic===true;const confidence=deterministic?1:clamp(raw.confidence,0,1,0.5);const key=[source,evidenceId||'',artifact||'',sha256||'',path||'',line??''].join('\u241f');if(seen.has(key))continue;seen.add(key);out.push(Object.freeze({source,evidence_id:evidenceId,artifact,sha256,path,line,deterministic,confidence}));if(out.length>=MAX_PROVENANCE)break;}return Object.freeze(out);}
+function candidateId(input){return `memory-candidate:${stableHash([String(input.category||'general'),String(input.scope||'project'),String(input.text||'').trim()].join('\u241f'))}`;}
+function normalizeCandidate(input,now,ttlMs,maxItemBytes){if(!input||typeof input!=='object')throw fail('ERR_PROJECT_MEMORY_CANDIDATE_INVALID','Memory candidate must be an object');const text=String(input.text??input.statement??'').trim();if(!text)throw fail('ERR_PROJECT_MEMORY_CANDIDATE_EMPTY','Memory candidate requires text');const category=String(input.category||'general').slice(0,64);const scope=String(input.scope||'project').slice(0,128);const provenance=normalizeProvenance(input.provenance);if(!provenance.length)throw fail('ERR_PROJECT_MEMORY_PROVENANCE_REQUIRED','Memory candidate requires provenance');const modelDerived=input.model_derived===true||provenance.some(p=>String(p.source).includes('model')&&!p.deterministic);const deterministic=!modelDerived&&provenance.every(p=>p.deterministic===true);const confidence=deterministic?1:clamp(input.confidence,0,1,Math.max(...provenance.map(p=>p.confidence),0.5));const createdAt=Number.isFinite(Number(input.created_at))?Number(input.created_at):now;const expiresAt=Number.isFinite(Number(input.expires_at))?Number(input.expires_at):createdAt+ttlMs;const id=String(input.candidate_id||candidateId({category,scope,text})).slice(0,256);const candidate={schema:SCHEMA,candidate_id:id,status:'CANDIDATE',category,scope,text:text.slice(0,maxItemBytes),confidence,deterministic,model_derived:modelDerived,provenance,created_at:createdAt,updated_at:now,expires_at:Math.max(createdAt,expiresAt),promotion_state:'UNREVIEWED',...authority()};const bytes=byteLength(JSON.stringify(candidate));if(bytes>maxItemBytes)throw fail('ERR_PROJECT_MEMORY_CANDIDATE_TOO_LARGE','Memory candidate exceeds per-item byte limit');return Object.freeze({...candidate,bytes});}
+class ProjectMemoryCandidateStore{
+ constructor(options){options=options||{};this.maxItems=clamp(options.maxItems,1,2048,DEFAULT_MAX_ITEMS);this.maxBytes=clamp(options.maxBytes,4096,16*1024*1024,DEFAULT_MAX_BYTES);this.maxItemBytes=clamp(options.maxItemBytes,1024,256*1024,DEFAULT_MAX_ITEM_BYTES);this.ttlMs=clamp(options.ttlMs,60*1000,365*24*60*60*1000,DEFAULT_TTL_MS);this.now=typeof options.now==='function'?options.now:()=>Date.now();this.items=new Map();}
+ capability(){return Object.freeze({schema:SCHEMA,max_items:this.maxItems,max_bytes:this.maxBytes,max_item_bytes:this.maxItemBytes,ttl_ms:this.ttlMs,requires_provenance:true,automatic_promotion:false,...authority()});}
+ _prune(){const now=this.now();for(const [id,item] of this.items){if(item.expires_at<=now)this.items.delete(id);}this._enforceBounds();}
+ _enforceBounds(){let total=this._bytes();while(this.items.size>this.maxItems||total>this.maxBytes){const first=this.items.keys().next().value;if(first==null)break;this.items.delete(first);total=this._bytes();}}
+ _bytes(){let total=0;for(const item of this.items.values())total+=item.bytes||byteLength(JSON.stringify(item));return total;}
+ put(input){this._prune();const now=this.now();const candidate=normalizeCandidate(input,now,this.ttlMs,this.maxItemBytes);if(this.items.has(candidate.candidate_id))this.items.delete(candidate.candidate_id);this.items.set(candidate.candidate_id,candidate);this._enforceBounds();return this.items.get(candidate.candidate_id)||null;}
+ get(id){this._prune();return this.items.get(String(id))||null;}
+ list(options){this._prune();const limit=clamp(options?.limit,1,this.maxItems,this.maxItems);return Object.freeze(Array.from(this.items.values()).slice(-limit).reverse());}
+ remove(id){return this.items.delete(String(id));}
+ clear(){this.items.clear();}
+ stats(){this._prune();return Object.freeze({schema:SCHEMA,item_count:this.items.size,bytes:this._bytes(),max_items:this.maxItems,max_bytes:this.maxBytes,...authority()});}
+ export(){this._prune();return Object.freeze({schema:EXPORT_SCHEMA,exported_at:this.now(),items:Object.freeze(Array.from(this.items.values()).map(item=>Object.freeze({...item}))),...authority()});}
+ restore(payload){if(!payload||payload.schema!==EXPORT_SCHEMA||!Array.isArray(payload.items))throw fail('ERR_PROJECT_MEMORY_EXPORT_INVALID','Invalid project-memory candidate export');this.items.clear();for(const raw of payload.items){if(raw?.status!=='CANDIDATE'||raw?.promotion_state!=='UNREVIEWED')continue;try{const item=normalizeCandidate(raw,this.now(),this.ttlMs,this.maxItemBytes);if(item.expires_at>this.now())this.items.set(item.candidate_id,item);}catch(_){/* fail closed per item */}}this._enforceBounds();return this.stats();}
+}
+global.CodeeProjectMemoryCandidateStore=Object.freeze({SCHEMA,EXPORT_SCHEMA,DEFAULT_MAX_ITEMS,DEFAULT_MAX_BYTES,DEFAULT_MAX_ITEM_BYTES,DEFAULT_TTL_MS,MAX_PROVENANCE,ProjectMemoryCandidateStore,normalizeCandidate,normalizeProvenance,candidateId});
+})(typeof globalThis!=='undefined'?globalThis:this);

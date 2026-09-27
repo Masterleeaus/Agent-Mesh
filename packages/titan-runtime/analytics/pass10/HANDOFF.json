@@ -1,0 +1,9 @@
+{
+  "schema": "titan-zero-builder-handoff/v1",
+  "builder": "Builder 3",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 10,
+  "status": "READY_FOR_MANAGER_MERGE",
+  "recommended_convergence_class": "CLEAN_ADDITIVE_FORWARD_PORT_OVER_MERGE44",
+  "manager_strip_coordination_root": true
+}

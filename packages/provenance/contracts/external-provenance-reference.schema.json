@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Titan Zero External Provenance Reference",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "evidence_id",
+    "original_path",
+    "sha256",
+    "bytes",
+    "classification",
+    "logical_locator",
+    "runtime_packaged",
+    "resolution_required_for_audit"
+  ],
+  "properties": {
+    "schema": {
+      "const": "titan-zero-external-provenance-reference/v1"
+    },
+    "evidence_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "original_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "classification": {
+      "enum": [
+        "test-only",
+        "reconstruction-only",
+        "externalizable-evidence"
+      ]
+    },
+    "logical_locator": {
+      "type": "string",
+      "pattern": "^provenance://sha256/[a-f0-9]{64}$"
+    },
+    "runtime_packaged": {
+      "const": false
+    },
+    "resolution_required_for_audit": {
+      "const": true
+    },
+    "external_storage_binding": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_manager_merge": {
+      "type": "integer",
+      "minimum": 1
+    }
+  }
+}

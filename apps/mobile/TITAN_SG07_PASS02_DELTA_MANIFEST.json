@@ -1,0 +1,22 @@
+{
+  "schema": "titan-mobile-sg07-pass-manifest/v1",
+  "subgoal_id": "TZ-ROADMAP-47-SG-07",
+  "pass": 2,
+  "status": "IMPLEMENTED_STATIC_VALIDATION",
+  "parent": "Titan-Mobile-MVP-SG07-Pass01.zip",
+  "scope": "Bind canonical customer-care and booking/access workforce to status, booking, reschedule and messaging",
+  "invariants": [
+    "company_id + customer binding",
+    "canonical agent_id only",
+    "hub surface only",
+    "customer-safe capabilities only",
+    "authority_granted false",
+    "requires_command_bus true",
+    "unsupported request types fail closed"
+  ],
+  "runtime_execution": {
+    "flutter_test": false,
+    "reason": "Flutter SDK unavailable in execution environment"
+  },
+  "next_pass": 3
+}

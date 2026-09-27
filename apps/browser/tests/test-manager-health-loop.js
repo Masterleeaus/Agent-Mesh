@@ -1,0 +1,15 @@
+const fs=require('fs');
+const vm=require('vm');
+const sandbox={console,globalThis:{}}; sandbox.global=sandbox.globalThis; vm.createContext(sandbox);
+for(const f of ['src/titan-zero/manager-ai-supervisor.js','src/titan-zero/manager-health-loop.js']) vm.runInContext(fs.readFileSync(f,'utf8'),sandbox,{filename:f});
+const H=sandbox.globalThis.TitanCodeManagerHealthLoop;
+if(!H) throw new Error('Manager health loop missing');
+const snapshot={agents:{a:{id:'A1',state:'ACTIVE',last_error:'same-error',last_progress_summary:'same',current_pass:1},b:{id:'B2',state:'ACTIVE',last_error:'other',last_progress_summary:'moving',current_pass:2},c:{id:'C3',state:'AVAILABLE'}}};
+const result=H.analyze(snapshot,{agentHistory:{A1:{errors:['same-error','same-error'],lastProgress:'same',lastPass:1},B2:{errors:[],lastProgress:'old',lastPass:1},C3:{recoveryAttempts:3}}});
+if(result.repeatedErrors.length!==1||result.repeatedErrors[0].agent_id!=='A1') throw new Error('repeated-error detection failed');
+if(result.noProgress.length!==1||result.noProgress[0].agent_id!=='A1') throw new Error('no-progress detection failed');
+const loop=H.analyze(snapshot,{agentHistory:{C3:{recoveryAttempts:3}}});
+if(loop.noRecoveryLoops.length!==1||loop.noRecoveryLoops[0].agent_id!=='C3') throw new Error('recovery-loop detection failed');
+if(loop.plan.authority!=='Manager' && !Array.isArray(loop.plan.steps)) throw new Error('manager plan missing');
+const hist=H.nextHistory(snapshot,{}); if(!hist.A1||!hist.B2||!hist.C3) throw new Error('history reconstruction failed');
+console.log('Manager health loop tests OK');

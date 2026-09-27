@@ -1,0 +1,21 @@
+{
+  "schema": "titan-mobile-sg08-pass-manifest/v1",
+  "subgoal_id": "TZ-ROADMAP-47-SG-08",
+  "pass": 2,
+  "status": "IMPLEMENTED_STATIC_VALIDATION",
+  "parent": "Titan-Mobile-MVP-SG08-Pass01.zip",
+  "scope": "Deterministic offline replay ordering and revision/conflict convergence",
+  "implemented": [
+    "deterministic replay planner before transport",
+    "open conflict pre-block",
+    "duplicate idempotency rejection",
+    "non-monotonic mutation revision rejection",
+    "invalid revision dependency rejection",
+    "queue integrity audit"
+  ],
+  "runtime_execution": {
+    "flutter_test": false,
+    "reason": "Flutter SDK unavailable"
+  },
+  "next_pass": 3
+}

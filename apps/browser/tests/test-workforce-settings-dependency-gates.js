@@ -1,0 +1,10 @@
+const assert=require('assert');const {load}=require('./_workforce-test-loader');const g=load();
+g.CodeeWorkforceHostIntegration.register({});
+let p=g.CodeeWorkforceHostIntegration.prepare({text:'Laravel runtime error requiring MCP evidence'},{consumeRepositoryPack:false,consumeMcpRuntime:false});
+assert.strictEqual(p.evidenceRequired,true);
+assert(!p.requestedCapabilities.some(id=>id.startsWith('repository.')));
+assert(!p.requestedCapabilities.some(id=>id.startsWith('mcp.')));
+assert(p.readiness.some(r=>r.ready===false),'disabled dependencies must degrade readiness');
+p=g.CodeeWorkforceHostIntegration.prepare({text:'Laravel runtime error'},{requireEvidence:false});
+assert.strictEqual(p.evidenceRequired,false);
+console.log('workforce settings dependency gates OK');

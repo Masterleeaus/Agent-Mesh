@@ -1,0 +1,181 @@
+{
+  "schema": "titan-zero-agent-runtime-authority-map/v1",
+  "subgoal_id": "TZ-ROADMAP-01-SG-01",
+  "source_branch": "agent/TZ-ROADMAP-01-SG-01",
+  "scanned_from_main_sha": "7d061ef8b61677df476118967c42357bb34f0154",
+  "purpose": "Verified map of the current Titan Zero agent runtime, tool/capability contracts, invocation context, delegation flow, and authority/mutation boundaries. This map documents existing authority; it does not create a parallel runtime.",
+  "invariants": {
+    "canonical_company_boundary": "company_id",
+    "canonical_surfaces": [
+      "zero",
+      "go",
+      "hub"
+    ],
+    "identity_confers_authority": false,
+    "role_or_activation_confers_authority": false,
+    "titan_code_runtime_dependency": false,
+    "direct_mutation_default": false
+  },
+  "layers": [
+    {
+      "id": "interaction-context",
+      "responsibility": "Authority-neutral request/interactions context and correlation identity.",
+      "sources": [
+        "packages/titan-platform/src/ported/titan-runtime/contracts/schemas/InteractionContext.schema.json",
+        "app/titan/runtime/interaction-client.ts"
+      ],
+      "verified": [
+        "InteractionContext requires company_id and canonical zero/go/hub surface.",
+        "correlation_id, request_id, conversation_id and operation_id exist as context fields.",
+        "authority_neutral is required true."
+      ],
+      "authority_effect": false
+    },
+    {
+      "id": "agent-planning",
+      "responsibility": "Deterministic native workforce planning that proposes commands but does not grant execution authority.",
+      "sources": [
+        "packages/titan-platform/src/native-agents.ts",
+        "apps/web/app/api/v1/titan/workforce/agents/plan/route.ts"
+      ],
+      "verified": [
+        "Native dispatch/invoicing/rebooking/quote/CRM planning produces proposals/commands.",
+        "Server route overwrites company_id from authenticated session where supported.",
+        "Proposal structures explicitly keep execution_permitted/grants_authority false where defined."
+      ],
+      "authority_effect": false
+    },
+    {
+      "id": "capability-and-tool-discovery",
+      "responsibility": "Deterministic discovery of capabilities, tools and atomic worker bindings.",
+      "sources": [
+        "packages/titan-platform/src/ported/titan-capabilities/capability-registry.ts",
+        "packages/titan-platform/src/ported/titan-tools/tool-registry.ts",
+        "packages/titan-platform/src/ported/titan-workforce/hierarchy/atomic-worker-tool-binding-runtime.ts"
+      ],
+      "verified": [
+        "Capability registry scopes module contributions by company_id when a company scope exists.",
+        "Tool registry requires canonical company boundary company_id.",
+        "Tool definitions must set grants_execution_authority=false.",
+        "Atomic worker bindings must not grant authority or delegation rights."
+      ],
+      "authority_effect": false
+    },
+    {
+      "id": "decision-and-evidence",
+      "responsibility": "Decision/evidence projection before execution.",
+      "sources": [
+        "packages/titan-platform/src/ported/titan-runtime/contracts/schemas/DecisionPacket.schema.json",
+        "packages/titan-platform/src/ported/titan-intelligence/decision/adapter-registry.ts"
+      ],
+      "verified": [
+        "DecisionPacket requires company_id, evidence, risk, source provider/revision and recommended actions.",
+        "Decision adapters project/correlate domain evidence into DecisionPacket structures.",
+        "DecisionPacket can state authority_required but is not itself execution authority."
+      ],
+      "authority_effect": false
+    },
+    {
+      "id": "authority-evaluation",
+      "responsibility": "Fail-closed worker/business authority decision.",
+      "sources": [
+        "packages/titan-platform/src/ported/titan-runtime/authority/authority-evaluator.ts",
+        "packages/titan-platform/src/distributed/authority.ts",
+        "packages/domain/src/business-ops-authority.ts"
+      ],
+      "verified": [
+        "Authority evaluation binds company_id, worker, capability, operation/action, risk, approval and autonomy evidence.",
+        "Critical risk is denied; protected/high-risk work escalates or requires approval/evidence.",
+        "Self-approval is forbidden.",
+        "Identity, role, module activation, provider/model/node identity and trust do not positively grant authority.",
+        "Distributed placement/trust can constrain eligibility but cannot create business authority.",
+        "Business Ops role snapshots are affordance contracts only; server routes remain authoritative."
+      ],
+      "authority_effect": true
+    },
+    {
+      "id": "governed-command-envelope",
+      "responsibility": "Mutation handoff contract, replay/idempotency binding and authoritative execution evidence.",
+      "sources": [
+        "packages/titan-platform/src/ported/titan-runtime/authority/execution-boundary.ts"
+      ],
+      "verified": [
+        "prepareGovernedCommandEnvelope requires company_id, actor/action/capability/operation/idempotency and an ALLOW authority decision.",
+        "High-risk work requires approval refs, evidence refs and known reversibility; critical mutations are denied.",
+        "Envelope declares execution_transport=titan-command-bus, direct_mutation=false and authority_effect=false.",
+        "Replay binding covers authority proof, context, approvals, evidence, reversibility and expected effect.",
+        "Authoritative execution receipts and post-action verification are bound back to command/company/correlation context."
+      ],
+      "authority_effect": true
+    },
+    {
+      "id": "delegation",
+      "responsibility": "Organizational routing and handoff proposals from orchestrator/management layers to atomic workers.",
+      "sources": [
+        "packages/titan-platform/src/ported/titan-workforce/hierarchy/delegation-routing-runtime.ts",
+        "packages/titan-platform/src/ported/titan-workforce/hierarchy/atomic-worker-tool-binding-runtime.ts"
+      ],
+      "verified": [
+        "Delegation is proposal-only and requires later authority/capability evaluation.",
+        "Atomic workers cannot delegate further.",
+        "Delegation, worker identity and tool binding explicitly do not confer authority."
+      ],
+      "authority_effect": false
+    },
+    {
+      "id": "business-ops-command-catalogue",
+      "responsibility": "Native Business Ops commands, route materialization, role affordances and risk classification.",
+      "sources": [
+        "packages/titan-platform/src/business-ops.ts",
+        "packages/domain/src/business-ops-commands.ts",
+        "packages/domain/src/business-ops-authority.ts"
+      ],
+      "verified": [
+        "Command ids/methods/routes/mutating flags and allowed roles are server-owned definitions.",
+        "Command risk classification derives from company_id and command evidence.",
+        "Shared Business Ops action roles do not substitute for server-side authorization."
+      ],
+      "authority_effect": false
+    },
+    {
+      "id": "web-workforce-command-gateway",
+      "responsibility": "Authenticated web handoff from workforce agent command selection to native Business Ops routes.",
+      "sources": [
+        "apps/web/lib/titan/workforce-command-gateway.ts",
+        "apps/web/app/api/v1/titan/workforce/commands/route.ts"
+      ],
+      "verified": [
+        "Gateway checks known command, role and entity id and stamps company/user context.",
+        "Gateway assesses risk and routes to workforce metadata before execution.",
+        "Current executeWorkforceCommand performs a direct same-origin fetch to the native Business Ops API route."
+      ],
+      "authority_effect": "downstream-native-route",
+      "gap": "This gateway does not currently prove that mutating commands were wrapped by prepareGovernedCommandEnvelope / canonical Titan Command Bus before the fetch. Downstream route authorization may still be correct, but canonical governed-mutation convergence is not established at this handoff."
+    }
+  ],
+  "current_gaps": [
+    {
+      "id": "GAP-AOK-01",
+      "target_subgoal": "TZ-ROADMAP-01-SG-02",
+      "summary": "Invocation context is distributed across InteractionContext, plan APIs, command metadata and execution-boundary context rather than one canonical agent invocation envelope."
+    },
+    {
+      "id": "GAP-AOK-02",
+      "target_subgoal": "TZ-ROADMAP-01-SG-03",
+      "summary": "Capability/tool/action discovery authority is spread across capability registry, tool registry, Business Ops command catalogues and decision adapter registry; consolidation must avoid creating a second registry authority."
+    },
+    {
+      "id": "GAP-AOK-03",
+      "target_subgoal": "TZ-ROADMAP-01-SG-05",
+      "summary": "Web workforce mutating command handoff does not itself demonstrate canonical Command Bus/governed-envelope traversal before same-origin API execution."
+    }
+  ],
+  "exclusions": [
+    {
+      "system": "Titan Code",
+      "status": "private-development-only",
+      "rule": "Titan Code is not part of the Titan Zero production agent runtime and must not become a runtime dependency."
+    }
+  ],
+  "conclusion": "The current Titan Zero agent runtime already contains strong reusable authority, capability, delegation and execution primitives. Remaining work is convergence: unify invocation/correlation, establish one deterministic discovery authority, and ensure every mutating workforce path demonstrably traverses the governed command boundary rather than creating parallel runtime logic."
+}

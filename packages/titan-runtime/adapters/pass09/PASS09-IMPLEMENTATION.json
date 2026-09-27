@@ -1,0 +1,17 @@
+{
+  "schema": "titan-zero-runtime-adapters-pass/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "builder": "Builder 3",
+  "pass": 9,
+  "status": "COMPLETE",
+  "frozen_base_merge": 39,
+  "live_manager_observed_merge": 42,
+  "implemented": [
+    "legacy runtime hash snapshot",
+    "donor capability parity matrix",
+    "adapter hot-path benchmark",
+    "full Pass1-9 focused regression suite"
+  ],
+  "donor_capability_loss_detected": false,
+  "retriever_background_retirement_authorized": false
+}

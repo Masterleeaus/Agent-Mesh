@@ -1,0 +1,2319 @@
+{
+  "goal_id": "TZ-ROADMAP-29",
+  "priority": "P1",
+  "title": "Developer Platform, Skills & Extensibility",
+  "objective": "Create the platform for safely adding agents, tools, workflows, verticals and UI components without forking the core.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define the canonical Developer Platform, Skills & Extensibility workforce, extension boundaries and reuse map without turning skills, SDKs, templates or generators into agent identities",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan MCP",
+        "Titan Builder"
+      ],
+      "subgoal_id": "TZ-ROADMAP-29-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "CANONICAL_AGENT_DEFINITIONS_SEEDED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "TZAG-DEV-DOCS-SYNC-WRK",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "created_agent_ids": [
+          "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "TZAG-DEV-DOCS-SYNC-WRK",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "Extension Manifest Validation Worker",
+          "Extension Scaffold Generation Worker",
+          "Extension Test Harness Worker",
+          "Extension Migration Execution Worker",
+          "Extension Permission Declaration Worker",
+          "Generative UI Conformance Worker",
+          "Extension Package Assembly Worker",
+          "Developer Documentation Sync Worker",
+          "Extension Contract & Manifest Specialist",
+          "Developer Tooling & Scaffolding Specialist",
+          "Extension Quality & Compatibility Specialist",
+          "Extension Authority & Safety Specialist",
+          "Generative UI Extensibility Specialist",
+          "Developer Platform & Extensibility Manager",
+          "Extensibility Evolution Orchestrator"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC -> TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC -> TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC -> TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC -> TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC -> TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC -> TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC -> TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC -> TZAG-DEV-DOCS-SYNC-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH -> TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "pain_point_ids": [
+          "PAIN-DEV-MANIFEST-VALIDATION-WRK",
+          "PAIN-DEV-SCAFFOLD-GENERATION-WRK",
+          "PAIN-DEV-TEST-HARNESS-WRK",
+          "PAIN-DEV-MIGRATION-EXECUTION-WRK",
+          "PAIN-DEV-PERMISSION-DECLARATION-WRK",
+          "PAIN-DEV-GENUI-CONFORMANCE-WRK",
+          "PAIN-DEV-PACKAGE-ASSEMBLY-WRK",
+          "PAIN-DEV-DOCS-SYNC-WRK",
+          "PAIN-DEV-EXTENSION-CONTRACT-SPC",
+          "PAIN-DEV-TOOLING-SCAFFOLD-SPC",
+          "PAIN-DEV-QUALITY-COMPATIBILITY-SPC",
+          "PAIN-DEV-AUTHORITY-SAFETY-SPC",
+          "PAIN-DEV-GENUI-EXTENSIBILITY-SPC",
+          "PAIN-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "PAIN-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "OUTCOME-TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "OUTCOME-TZAG-DEV-TEST-HARNESS-WRK",
+          "OUTCOME-TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "OUTCOME-TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "OUTCOME-TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "OUTCOME-TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "OUTCOME-TZAG-DEV-DOCS-SYNC-WRK",
+          "OUTCOME-TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "OUTCOME-TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "OUTCOME-TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "OUTCOME-TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "OUTCOME-TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "OUTCOME-TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the least disruptive extension-platform correction or evolution path supported by current contracts, evidence, compatibility and authority."
+        ],
+        "registry_delta": {
+          "type": "CANONICAL_AGENT_SEED",
+          "agent_ids": [
+            "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+            "TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+            "TZAG-DEV-TEST-HARNESS-WRK",
+            "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+            "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+            "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+            "TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+            "TZAG-DEV-DOCS-SYNC-WRK",
+            "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+            "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+            "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+            "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+            "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+            "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+            "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+          ],
+          "definition_home": "TZ-ROADMAP-29-SG-01"
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "skills/SDK/templates/tools-not-agent boundary review",
+          "no-core-fork extensibility contract",
+          "authority/compatibility/test/package receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Canonical definitions appear exactly once here. Titan Forge, Titan Builder, Titan MCP, SDKs, skills, templates, schemas and generative-UI component types are tools/capabilities rather than agent identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan MCP",
+          "Titan Builder"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "schemas/role-v1.schema.json",
+              "System/Validation/ValidatorRegistry.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Generation/StaticRoleTemplateEngine.php",
+              "System/AI/SandboxedAiArtifactGenerator.php",
+              "System/Domain/BuildPlan.php",
+              "System/Models/ForgeReceipt.php",
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "bin/verify-release-zip.py",
+              "tests/standalone/verify_sandbox_validation_pipeline.php",
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_security_gates.py"
+            ],
+            "finding": "Forge, MCP and Builder already cover generation, inspection/tool exposure and governed presentation. Skills, SDKs, templates and generators should remain capabilities/artifacts, not separate workforce identities."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Mcp/Support/ExtensionInspector.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Architecture/TitanMcpExtensionContractTest.php",
+              "tests/Security/TitanMcpSecurityContractTest.php"
+            ],
+            "finding": "Forge, MCP and Builder already cover generation, inspection/tool exposure and governed presentation. Skills, SDKs, templates and generators should remain capabilities/artifacts, not separate workforce identities."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "resources/builder/manifest.json",
+              "System/GenerativeUI/BuilderRegistry.php",
+              "System/GenerativeUI/GenerativeUiSpecNormaliser.php",
+              "System/GenerativeUI/GenerativeUiSpecValidator.php",
+              "System/GenerativeUI/GenerativeUiResponseComposer.php",
+              "System/Publishing/VersionedPublisher.php",
+              "System/Release/BuilderPackageManifestValidator.php",
+              "System/Security/BuilderAuthorization.php",
+              "System/Migration/LegacyBusinessSpecMigrator.php",
+              "System/Migration/CanonicalSurfaceResolver.php",
+              "System/Runtime/DefaultBuilderRuntimeHealth.php",
+              "resources/builder/actions/builder-rollback.json",
+              "docs/GENERATIVE-UI-GOVERNANCE.md"
+            ],
+            "finding": "Forge, MCP and Builder already cover generation, inspection/tool exposure and governed presentation. Skills, SDKs, templates and generators should remain capabilities/artifacts, not separate workforce identities."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:15:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Forge, MCP and Builder already cover generation, inspection/tool exposure and governed presentation. Skills, SDKs, templates and generators should remain capabilities/artifacts, not separate workforce identities."
+      }
+    },
+    {
+      "subgoal": 2,
+      "title": "Define stable versioned manifests and schemas for agents, tools, workflows, goals, skills and extension packages through the canonical Extension Contract workforce",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan MCP",
+        "Titan Builder"
+      ],
+      "subgoal_id": "TZ-ROADMAP-29-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "canonical_agent_names": [
+          "Extension Contract & Manifest Specialist",
+          "Extension Manifest Validation Worker",
+          "Developer Platform & Extensibility Manager"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Worker",
+          "Manager"
+        ],
+        "parent_agent_ids": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC -> TZAG-DEV-MANIFEST-VALIDATION-WRK"
+        ],
+        "pain_point_ids": [
+          "PAIN-DEV-EXTENSION-CONTRACT-SPC",
+          "PAIN-DEV-MANIFEST-VALIDATION-WRK",
+          "PAIN-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "OUTCOME-TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "OUTCOME-TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "recommendations": [
+          "Recommend the least disruptive extension-platform correction or evolution path supported by current contracts, evidence, compatibility and authority."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+            "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+            "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-29-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "skills/SDK/templates/tools-not-agent boundary review",
+          "no-core-fork extensibility contract",
+          "authority/compatibility/test/package receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding to Goal 29 canonical identities; do not redefine them here."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan MCP",
+          "Titan Builder"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "schemas/role-v1.schema.json",
+              "System/Validation/ValidatorRegistry.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Generation/StaticRoleTemplateEngine.php",
+              "System/AI/SandboxedAiArtifactGenerator.php",
+              "System/Domain/BuildPlan.php",
+              "System/Models/ForgeReceipt.php",
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "bin/verify-release-zip.py",
+              "tests/standalone/verify_sandbox_validation_pipeline.php",
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_security_gates.py"
+            ],
+            "finding": "All three have versioned manifests/schemas, but there is no single canonical manifest family spanning agents, tools, workflows, goals, skills and extension packages. Converge schema ownership rather than inventing parallel formats."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Mcp/Support/ExtensionInspector.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Architecture/TitanMcpExtensionContractTest.php",
+              "tests/Security/TitanMcpSecurityContractTest.php"
+            ],
+            "finding": "All three have versioned manifests/schemas, but there is no single canonical manifest family spanning agents, tools, workflows, goals, skills and extension packages. Converge schema ownership rather than inventing parallel formats."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "resources/builder/manifest.json",
+              "System/GenerativeUI/BuilderRegistry.php",
+              "System/GenerativeUI/GenerativeUiSpecNormaliser.php",
+              "System/GenerativeUI/GenerativeUiSpecValidator.php",
+              "System/GenerativeUI/GenerativeUiResponseComposer.php",
+              "System/Publishing/VersionedPublisher.php",
+              "System/Release/BuilderPackageManifestValidator.php",
+              "System/Security/BuilderAuthorization.php",
+              "System/Migration/LegacyBusinessSpecMigrator.php",
+              "System/Migration/CanonicalSurfaceResolver.php",
+              "System/Runtime/DefaultBuilderRuntimeHealth.php",
+              "resources/builder/actions/builder-rollback.json",
+              "docs/GENERATIVE-UI-GOVERNANCE.md"
+            ],
+            "finding": "All three have versioned manifests/schemas, but there is no single canonical manifest family spanning agents, tools, workflows, goals, skills and extension packages. Converge schema ownership rather than inventing parallel formats."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:15:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "All three have versioned manifests/schemas, but there is no single canonical manifest family spanning agents, tools, workflows, goals, skills and extension packages. Converge schema ownership rather than inventing parallel formats."
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Build governed validation, scaffolding, SDK and contract-derived documentation tooling that generates extensions without core forks",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan MCP",
+        "Titan Builder"
+      ],
+      "subgoal_id": "TZ-ROADMAP-29-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "TZAG-DEV-DOCS-SYNC-WRK",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "TZAG-DEV-DOCS-SYNC-WRK",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "canonical_agent_names": [
+          "Developer Tooling & Scaffolding Specialist",
+          "Extension Scaffold Generation Worker",
+          "Developer Documentation Sync Worker",
+          "Extension Contract & Manifest Specialist",
+          "Extension Manifest Validation Worker",
+          "Developer Platform & Extensibility Manager"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Worker",
+          "Manager"
+        ],
+        "parent_agent_ids": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC -> TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC -> TZAG-DEV-DOCS-SYNC-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC -> TZAG-DEV-MANIFEST-VALIDATION-WRK"
+        ],
+        "pain_point_ids": [
+          "PAIN-DEV-TOOLING-SCAFFOLD-SPC",
+          "PAIN-DEV-SCAFFOLD-GENERATION-WRK",
+          "PAIN-DEV-DOCS-SYNC-WRK",
+          "PAIN-DEV-EXTENSION-CONTRACT-SPC",
+          "PAIN-DEV-MANIFEST-VALIDATION-WRK",
+          "PAIN-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "OUTCOME-TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "OUTCOME-TZAG-DEV-DOCS-SYNC-WRK",
+          "OUTCOME-TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "OUTCOME-TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "OUTCOME-TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "recommendations": [
+          "Recommend the least disruptive extension-platform correction or evolution path supported by current contracts, evidence, compatibility and authority."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+            "TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+            "TZAG-DEV-DOCS-SYNC-WRK",
+            "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+            "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+            "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-29-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "skills/SDK/templates/tools-not-agent boundary review",
+          "no-core-fork extensibility contract",
+          "authority/compatibility/test/package receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding to Goal 29 canonical identities; do not redefine them here."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan MCP",
+          "Titan Builder"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "schemas/role-v1.schema.json",
+              "System/Validation/ValidatorRegistry.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Generation/StaticRoleTemplateEngine.php",
+              "System/AI/SandboxedAiArtifactGenerator.php",
+              "System/Domain/BuildPlan.php",
+              "System/Models/ForgeReceipt.php",
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "bin/verify-release-zip.py",
+              "tests/standalone/verify_sandbox_validation_pipeline.php",
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_security_gates.py"
+            ],
+            "finding": "Forge provides sandboxed generation and validators, Builder provides registry-driven UI construction, and MCP provides inspection/introspection. Contract-derived docs/scaffolding should compose these without core forks."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Mcp/Support/ExtensionInspector.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Architecture/TitanMcpExtensionContractTest.php",
+              "tests/Security/TitanMcpSecurityContractTest.php"
+            ],
+            "finding": "Forge provides sandboxed generation and validators, Builder provides registry-driven UI construction, and MCP provides inspection/introspection. Contract-derived docs/scaffolding should compose these without core forks."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "resources/builder/manifest.json",
+              "System/GenerativeUI/BuilderRegistry.php",
+              "System/GenerativeUI/GenerativeUiSpecNormaliser.php",
+              "System/GenerativeUI/GenerativeUiSpecValidator.php",
+              "System/GenerativeUI/GenerativeUiResponseComposer.php",
+              "System/Publishing/VersionedPublisher.php",
+              "System/Release/BuilderPackageManifestValidator.php",
+              "System/Security/BuilderAuthorization.php",
+              "System/Migration/LegacyBusinessSpecMigrator.php",
+              "System/Migration/CanonicalSurfaceResolver.php",
+              "System/Runtime/DefaultBuilderRuntimeHealth.php",
+              "resources/builder/actions/builder-rollback.json",
+              "docs/GENERATIVE-UI-GOVERNANCE.md"
+            ],
+            "finding": "Forge provides sandboxed generation and validators, Builder provides registry-driven UI construction, and MCP provides inspection/introspection. Contract-derived docs/scaffolding should compose these without core forks."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:15:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Forge provides sandboxed generation and validators, Builder provides registry-driven UI construction, and MCP provides inspection/introspection. Contract-derived docs/scaffolding should compose these without core forks."
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Build the local isolation, failure, upgrade and regression test harness used by the canonical Extension Quality workforce",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan MCP",
+        "Titan Builder"
+      ],
+      "subgoal_id": "TZ-ROADMAP-29-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "canonical_agent_names": [
+          "Extension Quality & Compatibility Specialist",
+          "Extension Test Harness Worker",
+          "Developer Tooling & Scaffolding Specialist",
+          "Developer Platform & Extensibility Manager"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Worker",
+          "Manager"
+        ],
+        "parent_agent_ids": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC -> TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-TOOLING-SCAFFOLD-SPC"
+        ],
+        "pain_point_ids": [
+          "PAIN-DEV-QUALITY-COMPATIBILITY-SPC",
+          "PAIN-DEV-TEST-HARNESS-WRK",
+          "PAIN-DEV-TOOLING-SCAFFOLD-SPC",
+          "PAIN-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-DEV-TEST-HARNESS-WRK",
+          "OUTCOME-TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "OUTCOME-TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "recommendations": [
+          "Recommend the least disruptive extension-platform correction or evolution path supported by current contracts, evidence, compatibility and authority."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+            "TZAG-DEV-TEST-HARNESS-WRK",
+            "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+            "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-29-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "skills/SDK/templates/tools-not-agent boundary review",
+          "no-core-fork extensibility contract",
+          "authority/compatibility/test/package receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding to Goal 29 canonical identities; do not redefine them here."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan MCP",
+          "Titan Builder"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "schemas/role-v1.schema.json",
+              "System/Validation/ValidatorRegistry.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Generation/StaticRoleTemplateEngine.php",
+              "System/AI/SandboxedAiArtifactGenerator.php",
+              "System/Domain/BuildPlan.php",
+              "System/Models/ForgeReceipt.php",
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "bin/verify-release-zip.py",
+              "tests/standalone/verify_sandbox_validation_pipeline.php",
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_security_gates.py"
+            ],
+            "finding": "Forge has a substantial sandbox/security/installer regression harness; Builder and MCP add authorization/runtime/security tests. A unified third-party extension isolation + migration + UI + upgrade harness remains to be assembled."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Mcp/Support/ExtensionInspector.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Architecture/TitanMcpExtensionContractTest.php",
+              "tests/Security/TitanMcpSecurityContractTest.php"
+            ],
+            "finding": "Forge has a substantial sandbox/security/installer regression harness; Builder and MCP add authorization/runtime/security tests. A unified third-party extension isolation + migration + UI + upgrade harness remains to be assembled."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "resources/builder/manifest.json",
+              "System/GenerativeUI/BuilderRegistry.php",
+              "System/GenerativeUI/GenerativeUiSpecNormaliser.php",
+              "System/GenerativeUI/GenerativeUiSpecValidator.php",
+              "System/GenerativeUI/GenerativeUiResponseComposer.php",
+              "System/Publishing/VersionedPublisher.php",
+              "System/Release/BuilderPackageManifestValidator.php",
+              "System/Security/BuilderAuthorization.php",
+              "System/Migration/LegacyBusinessSpecMigrator.php",
+              "System/Migration/CanonicalSurfaceResolver.php",
+              "System/Runtime/DefaultBuilderRuntimeHealth.php",
+              "resources/builder/actions/builder-rollback.json",
+              "docs/GENERATIVE-UI-GOVERNANCE.md"
+            ],
+            "finding": "Forge has a substantial sandbox/security/installer regression harness; Builder and MCP add authorization/runtime/security tests. A unified third-party extension isolation + migration + UI + upgrade harness remains to be assembled."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:15:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Forge has a substantial sandbox/security/installer regression harness; Builder and MCP add authorization/runtime/security tests. A unified third-party extension isolation + migration + UI + upgrade harness remains to be assembled."
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Implement extension versioning, migrations, compatibility, deprecation and rollback contracts with receipt-backed upgrade execution",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan MCP",
+        "Titan Builder"
+      ],
+      "subgoal_id": "TZ-ROADMAP-29-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Extension Quality & Compatibility Specialist",
+          "Extension Migration Execution Worker",
+          "Extension Contract & Manifest Specialist",
+          "Developer Platform & Extensibility Manager",
+          "Extensibility Evolution Orchestrator"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Worker",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC -> TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH -> TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "pain_point_ids": [
+          "PAIN-DEV-QUALITY-COMPATIBILITY-SPC",
+          "PAIN-DEV-MIGRATION-EXECUTION-WRK",
+          "PAIN-DEV-EXTENSION-CONTRACT-SPC",
+          "PAIN-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "PAIN-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "OUTCOME-TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "OUTCOME-TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "OUTCOME-TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the least disruptive extension-platform correction or evolution path supported by current contracts, evidence, compatibility and authority."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+            "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+            "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+            "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+            "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-29-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "skills/SDK/templates/tools-not-agent boundary review",
+          "no-core-fork extensibility contract",
+          "authority/compatibility/test/package receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding to Goal 29 canonical identities; do not redefine them here."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan MCP",
+          "Titan Builder"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "schemas/role-v1.schema.json",
+              "System/Validation/ValidatorRegistry.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Generation/StaticRoleTemplateEngine.php",
+              "System/AI/SandboxedAiArtifactGenerator.php",
+              "System/Domain/BuildPlan.php",
+              "System/Models/ForgeReceipt.php",
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "bin/verify-release-zip.py",
+              "tests/standalone/verify_sandbox_validation_pipeline.php",
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_security_gates.py"
+            ],
+            "finding": "Builder has versioned publishing, rollback and migration normalization; Forge has release-candidate verification/receipts; manifests carry compatibility. Receipt-backed upgrade/deprecation/rollback semantics need one canonical extension lifecycle contract."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Mcp/Support/ExtensionInspector.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Architecture/TitanMcpExtensionContractTest.php",
+              "tests/Security/TitanMcpSecurityContractTest.php"
+            ],
+            "finding": "Builder has versioned publishing, rollback and migration normalization; Forge has release-candidate verification/receipts; manifests carry compatibility. Receipt-backed upgrade/deprecation/rollback semantics need one canonical extension lifecycle contract."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "resources/builder/manifest.json",
+              "System/GenerativeUI/BuilderRegistry.php",
+              "System/GenerativeUI/GenerativeUiSpecNormaliser.php",
+              "System/GenerativeUI/GenerativeUiSpecValidator.php",
+              "System/GenerativeUI/GenerativeUiResponseComposer.php",
+              "System/Publishing/VersionedPublisher.php",
+              "System/Release/BuilderPackageManifestValidator.php",
+              "System/Security/BuilderAuthorization.php",
+              "System/Migration/LegacyBusinessSpecMigrator.php",
+              "System/Migration/CanonicalSurfaceResolver.php",
+              "System/Runtime/DefaultBuilderRuntimeHealth.php",
+              "resources/builder/actions/builder-rollback.json",
+              "docs/GENERATIVE-UI-GOVERNANCE.md"
+            ],
+            "finding": "Builder has versioned publishing, rollback and migration normalization; Forge has release-candidate verification/receipts; manifests carry compatibility. Receipt-backed upgrade/deprecation/rollback semantics need one canonical extension lifecycle contract."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:15:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Builder has versioned publishing, rollback and migration normalization; Forge has release-candidate verification/receipts; manifests carry compatibility. Receipt-backed upgrade/deprecation/rollback semantics need one canonical extension lifecycle contract."
+      }
+    },
+    {
+      "subgoal": 6,
+      "title": "Implement least-privilege permission, data, side-effect, offline and authority declarations plus governed review gates for extensions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan MCP",
+        "Titan Builder"
+      ],
+      "subgoal_id": "TZ-ROADMAP-29-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Extension Authority & Safety Specialist",
+          "Extension Permission Declaration Worker",
+          "Developer Platform & Extensibility Manager",
+          "Extensibility Evolution Orchestrator"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Worker",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC -> TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH -> TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "pain_point_ids": [
+          "PAIN-DEV-AUTHORITY-SAFETY-SPC",
+          "PAIN-DEV-PERMISSION-DECLARATION-WRK",
+          "PAIN-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "PAIN-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "OUTCOME-TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "OUTCOME-TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "OUTCOME-TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the least disruptive extension-platform correction or evolution path supported by current contracts, evidence, compatibility and authority."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+            "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+            "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+            "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-29-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "skills/SDK/templates/tools-not-agent boundary review",
+          "no-core-fork extensibility contract",
+          "authority/compatibility/test/package receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding to Goal 29 canonical identities; do not redefine them here."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan MCP",
+          "Titan Builder"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "schemas/role-v1.schema.json",
+              "System/Validation/ValidatorRegistry.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Generation/StaticRoleTemplateEngine.php",
+              "System/AI/SandboxedAiArtifactGenerator.php",
+              "System/Domain/BuildPlan.php",
+              "System/Models/ForgeReceipt.php",
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "bin/verify-release-zip.py",
+              "tests/standalone/verify_sandbox_validation_pipeline.php",
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_security_gates.py"
+            ],
+            "finding": "MCP capability gating/secret redaction and Builder actor authorization/presentation-only authority provide least-privilege primitives; offline/data/side-effect declarations and review gates should be normalized in the extension manifest."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Mcp/Support/ExtensionInspector.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Architecture/TitanMcpExtensionContractTest.php",
+              "tests/Security/TitanMcpSecurityContractTest.php"
+            ],
+            "finding": "MCP capability gating/secret redaction and Builder actor authorization/presentation-only authority provide least-privilege primitives; offline/data/side-effect declarations and review gates should be normalized in the extension manifest."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "resources/builder/manifest.json",
+              "System/GenerativeUI/BuilderRegistry.php",
+              "System/GenerativeUI/GenerativeUiSpecNormaliser.php",
+              "System/GenerativeUI/GenerativeUiSpecValidator.php",
+              "System/GenerativeUI/GenerativeUiResponseComposer.php",
+              "System/Publishing/VersionedPublisher.php",
+              "System/Release/BuilderPackageManifestValidator.php",
+              "System/Security/BuilderAuthorization.php",
+              "System/Migration/LegacyBusinessSpecMigrator.php",
+              "System/Migration/CanonicalSurfaceResolver.php",
+              "System/Runtime/DefaultBuilderRuntimeHealth.php",
+              "resources/builder/actions/builder-rollback.json",
+              "docs/GENERATIVE-UI-GOVERNANCE.md"
+            ],
+            "finding": "MCP capability gating/secret redaction and Builder actor authorization/presentation-only authority provide least-privilege primitives; offline/data/side-effect declarations and review gates should be normalized in the extension manifest."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:15:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "MCP capability gating/secret redaction and Builder actor authorization/presentation-only authority provide least-privilege primitives; offline/data/side-effect declarations and review gates should be normalized in the extension manifest."
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Implement the generative UI extension model with surface capability, state, accessibility, action, approval and fallback conformance",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan MCP",
+        "Titan Builder"
+      ],
+      "subgoal_id": "TZ-ROADMAP-29-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "canonical_agent_names": [
+          "Generative UI Extensibility Specialist",
+          "Generative UI Conformance Worker",
+          "Developer Platform & Extensibility Manager"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Worker",
+          "Manager"
+        ],
+        "parent_agent_ids": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC -> TZAG-DEV-GENUI-CONFORMANCE-WRK"
+        ],
+        "pain_point_ids": [
+          "PAIN-DEV-GENUI-EXTENSIBILITY-SPC",
+          "PAIN-DEV-GENUI-CONFORMANCE-WRK",
+          "PAIN-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "OUTCOME-TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "OUTCOME-TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "recommendations": [
+          "Recommend the least disruptive extension-platform correction or evolution path supported by current contracts, evidence, compatibility and authority."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+            "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+            "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-29-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "skills/SDK/templates/tools-not-agent boundary review",
+          "no-core-fork extensibility contract",
+          "authority/compatibility/test/package receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding to Goal 29 canonical identities; do not redefine them here."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan MCP",
+          "Titan Builder"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "schemas/role-v1.schema.json",
+              "System/Validation/ValidatorRegistry.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Generation/StaticRoleTemplateEngine.php",
+              "System/AI/SandboxedAiArtifactGenerator.php",
+              "System/Domain/BuildPlan.php",
+              "System/Models/ForgeReceipt.php",
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "bin/verify-release-zip.py",
+              "tests/standalone/verify_sandbox_validation_pipeline.php",
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_security_gates.py"
+            ],
+            "finding": "Builder already has a strong declarative generative-UI registry, validator, normaliser, action catalogue and fallback constraints. The extension model should reuse this rather than defining another UI grammar."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Mcp/Support/ExtensionInspector.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Architecture/TitanMcpExtensionContractTest.php",
+              "tests/Security/TitanMcpSecurityContractTest.php"
+            ],
+            "finding": "Builder already has a strong declarative generative-UI registry, validator, normaliser, action catalogue and fallback constraints. The extension model should reuse this rather than defining another UI grammar."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "resources/builder/manifest.json",
+              "System/GenerativeUI/BuilderRegistry.php",
+              "System/GenerativeUI/GenerativeUiSpecNormaliser.php",
+              "System/GenerativeUI/GenerativeUiSpecValidator.php",
+              "System/GenerativeUI/GenerativeUiResponseComposer.php",
+              "System/Publishing/VersionedPublisher.php",
+              "System/Release/BuilderPackageManifestValidator.php",
+              "System/Security/BuilderAuthorization.php",
+              "System/Migration/LegacyBusinessSpecMigrator.php",
+              "System/Migration/CanonicalSurfaceResolver.php",
+              "System/Runtime/DefaultBuilderRuntimeHealth.php",
+              "resources/builder/actions/builder-rollback.json",
+              "docs/GENERATIVE-UI-GOVERNANCE.md"
+            ],
+            "finding": "Builder already has a strong declarative generative-UI registry, validator, normaliser, action catalogue and fallback constraints. The extension model should reuse this rather than defining another UI grammar."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:15:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Builder already has a strong declarative generative-UI registry, validator, normaliser, action catalogue and fallback constraints. The extension model should reuse this rather than defining another UI grammar."
+      }
+    },
+    {
+      "subgoal": 8,
+      "title": "Implement deterministic extension package assembly, registry metadata and certification handoff while reusing Goal 28 connector publication contracts where applicable",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan MCP",
+        "Titan Builder"
+      ],
+      "subgoal_id": "TZ-ROADMAP-29-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Extension Contract & Manifest Specialist",
+          "Extension Package Assembly Worker",
+          "Developer Platform & Extensibility Manager",
+          "Extensibility Evolution Orchestrator"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Worker",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC -> TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH -> TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "pain_point_ids": [
+          "PAIN-DEV-EXTENSION-CONTRACT-SPC",
+          "PAIN-DEV-PACKAGE-ASSEMBLY-WRK",
+          "PAIN-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "PAIN-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "OUTCOME-TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "OUTCOME-TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "OUTCOME-TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the least disruptive extension-platform correction or evolution path supported by current contracts, evidence, compatibility and authority."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+            "TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+            "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+            "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-29-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "skills/SDK/templates/tools-not-agent boundary review",
+          "no-core-fork extensibility contract",
+          "authority/compatibility/test/package receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding to Goal 29 canonical identities; do not redefine them here. Connector-specific certification/publication continues to reuse Goal 28 TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC, TZAG-INT-CONFORMANCE-TEST-WRK and TZAG-INT-ECOSYSTEM-PUBLISH-WRK."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan MCP",
+          "Titan Builder"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "schemas/role-v1.schema.json",
+              "System/Validation/ValidatorRegistry.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Generation/StaticRoleTemplateEngine.php",
+              "System/AI/SandboxedAiArtifactGenerator.php",
+              "System/Domain/BuildPlan.php",
+              "System/Models/ForgeReceipt.php",
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "bin/verify-release-zip.py",
+              "tests/standalone/verify_sandbox_validation_pipeline.php",
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_security_gates.py"
+            ],
+            "finding": "Forge provides deterministic release verification, Builder versioned publishing/manifest validation, and MCP inspection. Package assembly/registry metadata/certification handoff should converge on one deterministic publication pipeline and reuse Goal 28 connector publication contracts."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Mcp/Support/ExtensionInspector.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Architecture/TitanMcpExtensionContractTest.php",
+              "tests/Security/TitanMcpSecurityContractTest.php"
+            ],
+            "finding": "Forge provides deterministic release verification, Builder versioned publishing/manifest validation, and MCP inspection. Package assembly/registry metadata/certification handoff should converge on one deterministic publication pipeline and reuse Goal 28 connector publication contracts."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "resources/builder/manifest.json",
+              "System/GenerativeUI/BuilderRegistry.php",
+              "System/GenerativeUI/GenerativeUiSpecNormaliser.php",
+              "System/GenerativeUI/GenerativeUiSpecValidator.php",
+              "System/GenerativeUI/GenerativeUiResponseComposer.php",
+              "System/Publishing/VersionedPublisher.php",
+              "System/Release/BuilderPackageManifestValidator.php",
+              "System/Security/BuilderAuthorization.php",
+              "System/Migration/LegacyBusinessSpecMigrator.php",
+              "System/Migration/CanonicalSurfaceResolver.php",
+              "System/Runtime/DefaultBuilderRuntimeHealth.php",
+              "resources/builder/actions/builder-rollback.json",
+              "docs/GENERATIVE-UI-GOVERNANCE.md"
+            ],
+            "finding": "Forge provides deterministic release verification, Builder versioned publishing/manifest validation, and MCP inspection. Package assembly/registry metadata/certification handoff should converge on one deterministic publication pipeline and reuse Goal 28 connector publication contracts."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:15:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Forge provides deterministic release verification, Builder versioned publishing/manifest validation, and MCP inspection. Package assembly/registry metadata/certification handoff should converge on one deterministic publication pipeline and reuse Goal 28 connector publication contracts."
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Run third-party extension isolation, authority, compatibility, migration, UI and upgrade certification across the canonical platform workforce",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan MCP",
+        "Titan Builder"
+      ],
+      "subgoal_id": "TZ-ROADMAP-29-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Extension Quality & Compatibility Specialist",
+          "Extension Test Harness Worker",
+          "Extension Migration Execution Worker",
+          "Extension Authority & Safety Specialist",
+          "Extension Permission Declaration Worker",
+          "Generative UI Extensibility Specialist",
+          "Generative UI Conformance Worker",
+          "Developer Platform & Extensibility Manager",
+          "Extensibility Evolution Orchestrator"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Worker",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC -> TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC -> TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC -> TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC -> TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH -> TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "pain_point_ids": [
+          "PAIN-DEV-QUALITY-COMPATIBILITY-SPC",
+          "PAIN-DEV-TEST-HARNESS-WRK",
+          "PAIN-DEV-MIGRATION-EXECUTION-WRK",
+          "PAIN-DEV-AUTHORITY-SAFETY-SPC",
+          "PAIN-DEV-PERMISSION-DECLARATION-WRK",
+          "PAIN-DEV-GENUI-EXTENSIBILITY-SPC",
+          "PAIN-DEV-GENUI-CONFORMANCE-WRK",
+          "PAIN-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "PAIN-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-DEV-TEST-HARNESS-WRK",
+          "OUTCOME-TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "OUTCOME-TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "OUTCOME-TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "OUTCOME-TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "OUTCOME-TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "OUTCOME-TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "OUTCOME-TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the least disruptive extension-platform correction or evolution path supported by current contracts, evidence, compatibility and authority."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+            "TZAG-DEV-TEST-HARNESS-WRK",
+            "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+            "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+            "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+            "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+            "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+            "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+            "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-29-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "skills/SDK/templates/tools-not-agent boundary review",
+          "no-core-fork extensibility contract",
+          "authority/compatibility/test/package receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding to Goal 29 canonical identities; do not redefine them here."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan MCP",
+          "Titan Builder"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "schemas/role-v1.schema.json",
+              "System/Validation/ValidatorRegistry.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Generation/StaticRoleTemplateEngine.php",
+              "System/AI/SandboxedAiArtifactGenerator.php",
+              "System/Domain/BuildPlan.php",
+              "System/Models/ForgeReceipt.php",
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "bin/verify-release-zip.py",
+              "tests/standalone/verify_sandbox_validation_pipeline.php",
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_security_gates.py"
+            ],
+            "finding": "Existing Forge/MCP/Builder tests cover sandboxing, security, manifests, company boundary and UI governance. Third-party certification should combine these into a single cross-extension matrix rather than per-product test silos."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Mcp/Support/ExtensionInspector.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Architecture/TitanMcpExtensionContractTest.php",
+              "tests/Security/TitanMcpSecurityContractTest.php"
+            ],
+            "finding": "Existing Forge/MCP/Builder tests cover sandboxing, security, manifests, company boundary and UI governance. Third-party certification should combine these into a single cross-extension matrix rather than per-product test silos."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "resources/builder/manifest.json",
+              "System/GenerativeUI/BuilderRegistry.php",
+              "System/GenerativeUI/GenerativeUiSpecNormaliser.php",
+              "System/GenerativeUI/GenerativeUiSpecValidator.php",
+              "System/GenerativeUI/GenerativeUiResponseComposer.php",
+              "System/Publishing/VersionedPublisher.php",
+              "System/Release/BuilderPackageManifestValidator.php",
+              "System/Security/BuilderAuthorization.php",
+              "System/Migration/LegacyBusinessSpecMigrator.php",
+              "System/Migration/CanonicalSurfaceResolver.php",
+              "System/Runtime/DefaultBuilderRuntimeHealth.php",
+              "resources/builder/actions/builder-rollback.json",
+              "docs/GENERATIVE-UI-GOVERNANCE.md"
+            ],
+            "finding": "Existing Forge/MCP/Builder tests cover sandboxing, security, manifests, company boundary and UI governance. Third-party certification should combine these into a single cross-extension matrix rather than per-product test silos."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:15:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Existing Forge/MCP/Builder tests cover sandboxing, security, manifests, company boundary and UI governance. Third-party certification should combine these into a single cross-extension matrix rather than per-product test silos."
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Run Worker→Specialist→Manager→Orchestrator developer-platform acceptance and certify documentation, trust progression, upgrade safety, non-duplication and no-core-fork extensibility",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Forge",
+        "Titan MCP",
+        "Titan Builder"
+      ],
+      "subgoal_id": "TZ-ROADMAP-29-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "TZAG-DEV-DOCS-SYNC-WRK",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "TZAG-DEV-DOCS-SYNC-WRK",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "canonical_agent_names": [
+          "Extension Manifest Validation Worker",
+          "Extension Scaffold Generation Worker",
+          "Extension Test Harness Worker",
+          "Extension Migration Execution Worker",
+          "Extension Permission Declaration Worker",
+          "Generative UI Conformance Worker",
+          "Extension Package Assembly Worker",
+          "Developer Documentation Sync Worker",
+          "Extension Contract & Manifest Specialist",
+          "Developer Tooling & Scaffolding Specialist",
+          "Extension Quality & Compatibility Specialist",
+          "Extension Authority & Safety Specialist",
+          "Generative UI Extensibility Specialist",
+          "Developer Platform & Extensibility Manager",
+          "Extensibility Evolution Orchestrator"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "delegation_chain": [
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC -> TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC -> TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC -> TZAG-DEV-TEST-HARNESS-WRK",
+          "TZAG-DEV-QUALITY-COMPATIBILITY-SPC -> TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "TZAG-DEV-AUTHORITY-SAFETY-SPC -> TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "TZAG-DEV-GENUI-EXTENSIBILITY-SPC -> TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "TZAG-DEV-EXTENSION-CONTRACT-SPC -> TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "TZAG-DEV-TOOLING-SCAFFOLD-SPC -> TZAG-DEV-DOCS-SYNC-WRK",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR -> TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH -> TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+        ],
+        "pain_point_ids": [
+          "PAIN-DEV-MANIFEST-VALIDATION-WRK",
+          "PAIN-DEV-SCAFFOLD-GENERATION-WRK",
+          "PAIN-DEV-TEST-HARNESS-WRK",
+          "PAIN-DEV-MIGRATION-EXECUTION-WRK",
+          "PAIN-DEV-PERMISSION-DECLARATION-WRK",
+          "PAIN-DEV-GENUI-CONFORMANCE-WRK",
+          "PAIN-DEV-PACKAGE-ASSEMBLY-WRK",
+          "PAIN-DEV-DOCS-SYNC-WRK",
+          "PAIN-DEV-EXTENSION-CONTRACT-SPC",
+          "PAIN-DEV-TOOLING-SCAFFOLD-SPC",
+          "PAIN-DEV-QUALITY-COMPATIBILITY-SPC",
+          "PAIN-DEV-AUTHORITY-SAFETY-SPC",
+          "PAIN-DEV-GENUI-EXTENSIBILITY-SPC",
+          "PAIN-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "PAIN-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "outcome_ids": [
+          "OUTCOME-TZAG-DEV-MANIFEST-VALIDATION-WRK",
+          "OUTCOME-TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+          "OUTCOME-TZAG-DEV-TEST-HARNESS-WRK",
+          "OUTCOME-TZAG-DEV-MIGRATION-EXECUTION-WRK",
+          "OUTCOME-TZAG-DEV-PERMISSION-DECLARATION-WRK",
+          "OUTCOME-TZAG-DEV-GENUI-CONFORMANCE-WRK",
+          "OUTCOME-TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+          "OUTCOME-TZAG-DEV-DOCS-SYNC-WRK",
+          "OUTCOME-TZAG-DEV-EXTENSION-CONTRACT-SPC",
+          "OUTCOME-TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+          "OUTCOME-TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+          "OUTCOME-TZAG-DEV-AUTHORITY-SAFETY-SPC",
+          "OUTCOME-TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+          "OUTCOME-TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+          "OUTCOME-TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+        ],
+        "recommendations": [
+          "Recommend the least disruptive extension-platform correction or evolution path supported by current contracts, evidence, compatibility and authority."
+        ],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENT",
+          "agent_ids": [
+            "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+            "TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+            "TZAG-DEV-TEST-HARNESS-WRK",
+            "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+            "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+            "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+            "TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+            "TZAG-DEV-DOCS-SYNC-WRK",
+            "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+            "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+            "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+            "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+            "TZAG-DEV-GENUI-EXTENSIBILITY-SPC",
+            "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR",
+            "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+          ],
+          "canonical_definition_homes": [
+            "TZ-ROADMAP-29-SG-01"
+          ]
+        },
+        "verification_evidence": [
+          "canonical agent-id uniqueness check",
+          "W→S→M→O parent/child validation",
+          "skills/SDK/templates/tools-not-agent boundary review",
+          "no-core-fork extensibility contract",
+          "authority/compatibility/test/package receipt contract"
+        ],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Reference-only binding to Goal 29 canonical identities; do not redefine them here."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan MCP",
+          "Titan Builder"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "schemas/role-v1.schema.json",
+              "System/Validation/ValidatorRegistry.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Generation/StaticRoleTemplateEngine.php",
+              "System/AI/SandboxedAiArtifactGenerator.php",
+              "System/Domain/BuildPlan.php",
+              "System/Models/ForgeReceipt.php",
+              "System/Console/Commands/ForgeManifestCommand.php",
+              "bin/verify-release-zip.py",
+              "tests/standalone/verify_sandbox_validation_pipeline.php",
+              "tests/standalone/verify_installer_contract.php",
+              "tests/standalone/verify_security_gates.py"
+            ],
+            "finding": "The donors contain the machinery needed for Worker→Specialist→Manager→Orchestrator developer-platform acceptance; remaining work is one workforce/certification contract proving docs, upgrade safety, trust progression, no duplication and no core forks."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Mcp/Support/ExtensionInspector.php",
+              "System/Mcp/Support/CapabilityGate.php",
+              "System/Mcp/Support/SecretRedactor.php",
+              "System/Http/Transport/McpToolInvoker.php",
+              "schemas/workforce-integration-v1.5.schema.json",
+              "tests/Architecture/TitanMcpExtensionContractTest.php",
+              "tests/Security/TitanMcpSecurityContractTest.php"
+            ],
+            "finding": "The donors contain the machinery needed for Worker→Specialist→Manager→Orchestrator developer-platform acceptance; remaining work is one workforce/certification contract proving docs, upgrade safety, trust progression, no duplication and no core forks."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "resources/builder/manifest.json",
+              "System/GenerativeUI/BuilderRegistry.php",
+              "System/GenerativeUI/GenerativeUiSpecNormaliser.php",
+              "System/GenerativeUI/GenerativeUiSpecValidator.php",
+              "System/GenerativeUI/GenerativeUiResponseComposer.php",
+              "System/Publishing/VersionedPublisher.php",
+              "System/Release/BuilderPackageManifestValidator.php",
+              "System/Security/BuilderAuthorization.php",
+              "System/Migration/LegacyBusinessSpecMigrator.php",
+              "System/Migration/CanonicalSurfaceResolver.php",
+              "System/Runtime/DefaultBuilderRuntimeHealth.php",
+              "resources/builder/actions/builder-rollback.json",
+              "docs/GENERATIVE-UI-GOVERNANCE.md"
+            ],
+            "finding": "The donors contain the machinery needed for Worker→Specialist→Manager→Orchestrator developer-platform acceptance; remaining work is one workforce/certification contract proving docs, upgrade safety, trust progression, no duplication and no core forks."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:15:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "The donors contain the machinery needed for Worker→Specialist→Manager→Orchestrator developer-platform acceptance; remaining work is one workforce/certification contract proving docs, upgrade safety, trust progression, no duplication and no core forks."
+      }
+    }
+  ],
+  "affinity_tags": [
+    "agents",
+    "business-operations",
+    "developer"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan Forge",
+    "Titan MCP",
+    "Titan Builder"
+  ],
+  "reuse_first": true,
+  "canonical_workforce_roster": {
+    "status": "DEFINED_PLANNED_IMPLEMENTATION",
+    "canonical_definition_home": "TZ-ROADMAP-29-SG-01",
+    "orchestrator_ids": [
+      "TZAG-DEV-EXTENSIBILITY-EVOLUTION-ORCH"
+    ],
+    "manager_ids": [
+      "TZAG-DEV-PLATFORM-EXTENSIBILITY-MGR"
+    ],
+    "specialist_ids": [
+      "TZAG-DEV-EXTENSION-CONTRACT-SPC",
+      "TZAG-DEV-TOOLING-SCAFFOLD-SPC",
+      "TZAG-DEV-QUALITY-COMPATIBILITY-SPC",
+      "TZAG-DEV-AUTHORITY-SAFETY-SPC",
+      "TZAG-DEV-GENUI-EXTENSIBILITY-SPC"
+    ],
+    "worker_ids": [
+      "TZAG-DEV-MANIFEST-VALIDATION-WRK",
+      "TZAG-DEV-SCAFFOLD-GENERATION-WRK",
+      "TZAG-DEV-TEST-HARNESS-WRK",
+      "TZAG-DEV-MIGRATION-EXECUTION-WRK",
+      "TZAG-DEV-PERMISSION-DECLARATION-WRK",
+      "TZAG-DEV-GENUI-CONFORMANCE-WRK",
+      "TZAG-DEV-PACKAGE-ASSEMBLY-WRK",
+      "TZAG-DEV-DOCS-SYNC-WRK"
+    ],
+    "cross_domain_collaborator_ids": [
+      "TZAG-INT-ECOSYSTEM-CERTIFICATION-SPC",
+      "TZAG-INT-CONFORMANCE-TEST-WRK",
+      "TZAG-INT-ECOSYSTEM-PUBLISH-WRK"
+    ],
+    "new_agent_count": 15,
+    "core_domain_roster_count": 15,
+    "participating_roster_count": 18,
+    "boundary_rules": [
+      "Developer Platform owns generic extension contracts, SDK/scaffolding, isolation/compatibility, authority declarations, generative-UI extension conformance, package assembly and developer documentation.",
+      "Skills, manifests, SDKs, templates, code generators, test harnesses, UI component schemas and package registries are tools/capabilities/state, not workforce identities.",
+      "Goal 28 Integration Ecosystem retains connector-specific certification/runtime/publication ownership; Goal 29 reuses its connector certification/publication seams rather than cloning them.",
+      "Titan Forge remains governed generation infrastructure; Titan Builder remains build tooling; Titan MCP remains a tool/integration surface. None is reclassified as a workforce identity merely because Goal 29 uses it.",
+      "Governance/Risk/Assurance retain authority decisions; Developer Platform declares and validates extension authority requirements but cannot self-approve expanded authority.",
+      "Extensibility Evolution Orchestrator coordinates platform evolution but does not replace Titan Prime strategic orchestration or accountable business/platform Managers."
+    ]
+  },
+  "agent_goal_classification": "DOMAIN_WORKFORCE_ELIGIBLE",
+  "agent_goal_rule": "This goal owns durable business/domain outcomes and may reuse, extend or create canonical workforce identities subject to non-duplication and outcome-owner tests.",
+  "workforce_goal_classification": "DOMAIN_OUTCOME_AGENT_ELIGIBLE",
+  "workforce_goal_rule": "Agents are permitted only for durable business/operational outcomes with a distinct ownership boundary. Reuse or extend canonical identities before creating new ones."
+}

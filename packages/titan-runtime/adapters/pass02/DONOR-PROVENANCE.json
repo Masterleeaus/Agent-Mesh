@@ -1,0 +1,8 @@
+{
+  "schema": "titan-zero-donor-provenance/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 2,
+  "source": "TITAN-ZERO-MULTI-PHASE-FIX-PLAN.md + current Merge39 runtime semantics",
+  "direct_source_transplant": false,
+  "implementation": "independent protocol implementation preserving existing Titan message contracts"
+}

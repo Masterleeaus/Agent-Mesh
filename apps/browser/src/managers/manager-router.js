@@ -1,0 +1,3 @@
+(function(g){'use strict';
+function route(input={}){const c=g.CodeeWorkforceTaskClassifier.classify(input);const scored=g.CodeeManagerRegistry.list().map(m=>({manager:m,score:m.tags.reduce((n,t)=>n+(c.tags.includes(t)?2:0),0)})).sort((a,b)=>b.score-a.score||a.manager.id.localeCompare(b.manager.id));const candidates=scored.filter(x=>x.score>0).map(x=>({...x.manager,score:x.score}));const primary=(candidates[0]||g.CodeeManagerRegistry.get('architecture-manager'));return {classification:c,primary,candidates:candidates.length?candidates:[primary],authority:{advancePlan:false}};}
+g.CodeeManagerRouter=Object.freeze({route});})(globalThis);

@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Clients - FieldServicePro{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4);">
+    <div>
+        <h1 style="margin:0;">Clients</h1>
+        <p style="color:var(--color-text-muted);font-size:var(--font-size-sm);margin:var(--space-1) 0 0;">{{ clients|length }} client{{ 's' if clients|length != 1 else '' }}</p>
+    </div>
+</div>
+
+<!-- KPI Stats -->
+{% set commercial_count = clients|selectattr('client_type', 'equalto', 'commercial')|list|length %}
+{% set residential_count = clients|selectattr('client_type', 'equalto', 'residential')|list|length %}
+{% set recent_count = clients|selectattr('created_at')|list|length %}
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--space-3);margin-bottom:var(--space-4);">
+    <div class="card" style="padding:var(--space-3);border-left:3px solid var(--color-accent);">
+        <div style="font-size:var(--font-size-2xl);font-weight:700;">{{ clients|length }}</div>
+        <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);">Total Clients</div>
+    </div>
+    <div class="card" style="padding:var(--space-3);border-left:3px solid var(--color-info);">
+        <div style="font-size:var(--font-size-2xl);font-weight:700;">{{ commercial_count }}</div>
+        <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);">Commercial</div>
+    </div>
+    <div class="card" style="padding:var(--space-3);border-left:3px solid var(--color-text-muted);">
+        <div style="font-size:var(--font-size-2xl);font-weight:700;">{{ residential_count }}</div>
+        <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);">Residential</div>
+    </div>
+    <div class="card" style="padding:var(--space-3);border-left:3px solid var(--color-success);">
+        <div style="font-size:var(--font-size-2xl);font-weight:700;">{{ recent_count }}</div>
+        <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);">Total Active</div>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="card" style="padding:var(--space-2) var(--space-3);margin-bottom:var(--space-3);">
+    <div style="display:flex;gap:var(--space-2);align-items:center;flex-wrap:wrap;">
+        <select class="form-control" style="width:auto;min-width:140px;"
+                onchange="window.location.href='{{ url_for('clients_page') }}?type=' + this.value">
+            <option value="">All Types</option>
+            <option value="commercial" {% if client_type_filter == 'commercial' %}selected{% endif %}>Commercial</option>
+            <option value="residential" {% if client_type_filter == 'residential' %}selected{% endif %}>Residential</option>
+        </select>
+        <div style="position:relative;margin-left:auto;">
+            <i class="bi bi-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--color-text-muted);font-size:0.8rem;"></i>
+            <input type="text" id="clientSearch" class="form-control" placeholder="Search clients..." oninput="filterClients()"
+                   style="padding-left:2rem;width:240px;">
+        </div>
+        <a class="btn btn-accent" href="{{ url_for('client_new_page') }}">
+            <i class="bi bi-plus-lg"></i> New Client
+        </a>
+    </div>
+</div>
+
+<!-- Clients Table -->
+<div class="card">
+    <div style="overflow-x:auto;">
+        {% if clients %}
+        <table id="clientsTable" style="width:100%;border-collapse:collapse;">
+            <thead>
+                <tr style="border-bottom:2px solid var(--color-border);">
+                    <th style="padding:var(--space-2) var(--space-3);text-align:left;font-size:var(--font-size-xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.05em;min-width:200px;">Name</th>
+                    <th style="padding:var(--space-2) var(--space-3);text-align:left;font-size:var(--font-size-xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.05em;min-width:90px;">Type</th>
+                    <th style="padding:var(--space-2) var(--space-3);text-align:left;font-size:var(--font-size-xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.05em;min-width:180px;">Email</th>
+                    <th style="padding:var(--space-2) var(--space-3);text-align:left;font-size:var(--font-size-xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.05em;min-width:130px;">Phone</th>
+                    <th style="padding:var(--space-2) var(--space-3);text-align:left;font-size:var(--font-size-xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.05em;min-width:110px;">City</th>
+                    <th style="padding:var(--space-2) var(--space-3);text-align:center;font-size:var(--font-size-xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.05em;min-width:80px;">Properties</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in clients %}
+                <tr onclick="window.location.href='/clients/{{ client.id }}'"
+                    data-searchable="{{ client.display_name|lower }} {{ (client.company_name or '')|lower }} {{ (client.first_name or '')|lower }} {{ (client.last_name or '')|lower }} {{ (client.email or '')|lower }} {{ (client.phone or '')|lower }} {{ (client.billing_city or '')|lower }}"
+                    style="cursor:pointer;border-bottom:1px solid var(--color-border);{% if client.client_type == 'commercial' %}border-left:3px solid var(--color-info);{% else %}border-left:3px solid transparent;{% endif %}transition:background 0.1s;">
+                    <td style="padding:var(--space-2) var(--space-3);">
+                        <div style="font-weight:600;color:var(--color-accent);">{{ client.display_name }}</div>
+                        {% if client.client_type == 'commercial' and client.first_name %}
+                        <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:1px;">
+                            <i class="bi bi-person" style="font-size:0.65rem;"></i> {{ client.first_name }} {{ client.last_name or '' }}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td style="padding:var(--space-2) var(--space-3);">
+                        {% if client.client_type == 'commercial' %}
+                        <span style="display:inline-block;font-size:var(--font-size-xs);font-weight:600;padding:2px 10px;border-radius:999px;background:rgba(13,148,136,0.1);color:var(--color-accent);">Commercial</span>
+                        {% else %}
+                        <span style="display:inline-block;font-size:var(--font-size-xs);font-weight:600;padding:2px 10px;border-radius:999px;background:var(--color-surface-raised);color:var(--color-text-muted);">Residential</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding:var(--space-2) var(--space-3);font-size:var(--font-size-sm);">
+                        {% if client.email %}
+                        <a href="mailto:{{ client.email }}" onclick="event.stopPropagation();" style="color:var(--color-text-secondary);text-decoration:none;">{{ client.email }}</a>
+                        {% endif %}
+                    </td>
+                    <td style="padding:var(--space-2) var(--space-3);font-size:var(--font-size-sm);color:var(--color-text-secondary);white-space:nowrap;">
+                        {{ client.phone or '' }}
+                    </td>
+                    <td style="padding:var(--space-2) var(--space-3);font-size:var(--font-size-sm);color:var(--color-text-secondary);">
+                        {{ client.billing_city or '' }}
+                    </td>
+                    <td style="padding:var(--space-2) var(--space-3);text-align:center;">
+                        {% if client.property_count > 0 %}
+                        <span style="display:inline-block;font-size:var(--font-size-xs);font-weight:600;padding:2px 8px;border-radius:var(--radius-sm);background:var(--color-surface-raised);color:var(--color-text-secondary);">{{ client.property_count }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="padding:var(--space-6);text-align:center;">
+            <i class="bi bi-people" style="font-size:3rem;color:var(--color-text-muted);"></i>
+            <h3 style="margin:var(--space-2) 0 var(--space-1);">No clients yet</h3>
+            <p style="color:var(--color-text-muted);">Add your first client to start creating jobs and quotes</p>
+            <a class="btn btn-accent" href="{{ url_for('client_new_page') }}">
+                <i class="bi bi-plus-lg"></i> Add First Client
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+#clientsTable tbody tr:hover { background: var(--color-surface-raised); }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterClients() {
+    const term = (document.getElementById('clientSearch').value || '').toLowerCase();
+    const table = document.getElementById('clientsTable');
+    if (!table) return;
+    table.querySelectorAll('tbody tr').forEach(row => {
+        const searchable = row.getAttribute('data-searchable') || '';
+        row.style.display = (!term || searchable.includes(term)) ? '' : 'none';
+    });
+}
+</script>
+{% endblock %}

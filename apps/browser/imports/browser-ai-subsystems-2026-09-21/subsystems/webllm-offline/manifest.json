@@ -1,0 +1,31 @@
+{
+   "action": {
+      "default_icon": {
+         "128": "icons/icon128.png",
+         "16": "icons/icon16.png",
+         "48": "icons/icon48.png"
+      }
+   },
+   "background": {
+      "service_worker": "background-sidepanel.js"
+   },
+   "content_security_policy": {
+      "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+   },
+   "description": "Chat with AI using locally downloaded models (WebLLM) and current page context",
+   "host_permissions": [ "\u003Call_urls>" ],
+   "icons": {
+      "128": "icons/icon128.png",
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5HcO9EZN1gKbINW7GgpiNjvO8uTWTUGt2e5Q4efRdGkGrZbMdye6wPVuhzMDu5C7Mn9YX+LsJOVuLMIpybW/tNVRNrGJqJBlhssDCCl98CGhFb3jK7CKV8YyRU22TJoD6q2EkdeSRtWOuNzoy2NkZoq0iWHnPOoNCSTmFpBemjAju8xlZh/VHS9TIv7/dKt0Zpp8GUkJ7iilD465aKlhA8O70ppkKuCM380s8L2FxUw4bDFiXgESiutnB4I18bOALGELxa25PGsObn2VCXpbxC9iIIMS+u9H+DCh82NAqxlhszlRLrYzQkKBP2ppZakKpLm0qEzOa9p5Wd6nSKMmJQIDAQAB",
+   "manifest_version": 3,
+   "name": "Offline GPT: Offline (local) AI Chat Assistant",
+   "permissions": [ "activeTab", "scripting", "storage", "sidePanel" ],
+   "side_panel": {
+      "default_path": "sidepanel.html"
+   },
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "3.1"
+}

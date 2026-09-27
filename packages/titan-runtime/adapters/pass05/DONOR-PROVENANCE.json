@@ -1,0 +1,11 @@
+{
+  "schema": "titan-zero-donor-provenance/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 5,
+  "sources": [
+    "existing Merge39 Retriever compatibility transport semantics",
+    "Pass4 negotiation result contract"
+  ],
+  "direct_source_transplant": false,
+  "implementation": "independent fallback wrapper"
+}

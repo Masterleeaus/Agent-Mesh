@@ -1,0 +1,10 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');
+const source=fs.readFileSync('src/lib/service-worker.js','utf8');
+const chrome={sidePanel:{setPanelBehavior:async()=>{}},runtime:{onMessage:{addListener(){}},sendMessage:async()=>{}},alarms:{create(){},onAlarm:{addListener(){}}},tabs:{query(_q,cb){cb([])}},storage:{local:{get:async()=>({codeeState:{}}),set:async()=>{}}}};
+const context={chrome,console:{log(){},warn(){},error(){}},Map,Set,Promise,Date,Math,URL};vm.runInNewContext(source,context);
+const plan={stateVersion:3,protocolMode:'signature_v2',planId:'p',runId:'r',plan:[{number:1,text:'x'}],stepIndex:0,dispatchStatus:'awaiting_artifact'};
+context.normalizePlanState(plan);
+assert.strictEqual(plan.stateVersion,3,'an older Codee build must never downgrade a newer persisted state schema');
+assert.strictEqual(plan.requiresRestart,true,'newer unknown state must be held rather than executed');
+assert.strictEqual(plan.restartReason,'future-state-version');
+console.log('future plan-state version is held without downgrade OK');

@@ -1,0 +1,14 @@
+{
+  "schema": "titan-zero-reconstruction-verification/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 8,
+  "frozen_base_merge": 39,
+  "base_files": 2844,
+  "live_manager_merge": 42,
+  "live_manager_forward_port": "CLEAN; Merge42 production modifications are outside adapter-owned paths. Phase2 slimming explicitly retains Retriever runtime until Runtime Adapters Manager merge.",
+  "base_path_collisions": [],
+  "hash_differences": [],
+  "exact_additive_reconstruction": true,
+  "payload_files": 90,
+  "reconstructed_files": 2934
+}

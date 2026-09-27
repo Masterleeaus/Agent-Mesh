@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {createSchedulingIntent,transitionScheduling,schedulingCanHandOff} from '../../../titan-workforce/starter-agents/scheduling/scheduling-state-machine.mjs';
+import {buildSchedulingProposal,buildRescheduleRequest} from '../../../titan-workforce/starter-agents/scheduling/scheduling-adapter.mjs';
+const intent=createSchedulingIntent({company_id:'c1',worker_id:'scheduling',correlation_id:'corr',idempotency_key:'idem',schedule_intent_id:'si1',work_item_id:'job1',required_capacity_units:2});
+assert.equal(intent.grants_authority,false);assert.equal(intent.direct_mutation,false);assert.equal(intent.automatic_assignment,false);
+assert.throws(()=>createSchedulingIntent({company_id:'c1',tenant_id:'legacy',correlation_id:'c',idempotency_key:'i',schedule_intent_id:'s',work_item_id:'w'}));
+let s=transitionScheduling(intent,'requirements_ready');s=transitionScheduling(s,'capacity_evaluated');s=transitionScheduling(s,'proposal_ready');s=transitionScheduling(s,'approval_pending');s=transitionScheduling(s,'approved');assert.equal(schedulingCanHandOff(s),true);assert.throws(()=>transitionScheduling(intent,'approved'));assert.throws(()=>transitionScheduling(intent,'requirements_ready',{company_id:'c2'}));
+const cap={schema:'titan.workforce.workload-capacity.v1',company_id:'c1',worker_capacity:[{worker_id:'w2',available_units:4,capacity_units:8,utilization:.5,state:'BALANCED'},{worker_id:'w1',available_units:3,capacity_units:10,utilization:.3,state:'BALANCED'},{worker_id:'w3',available_units:10,capacity_units:10,utilization:1.2,state:'OVERLOADED'}]};
+const proposal=buildSchedulingProposal({...intent},cap);assert.deepEqual(proposal.eligible_workers.map(x=>x.worker_id),['w1','w2']);assert.equal(proposal.automatic_assignment,false);assert.equal(proposal.requires_fresh_authority_evaluation,true);assert.throws(()=>buildSchedulingProposal({...intent},{...cap,company_id:'c2'}));
+const noCap=buildSchedulingProposal({...intent,required_capacity_units:99},cap);assert.equal(noCap.conflict,'NO_CAPACITY');
+const rr=buildRescheduleRequest(s,'capacity-conflict',{idempotency_key:'idem-r'});assert.equal(rr.grants_authority,false);assert.equal(rr.automatic_assignment,false);assert.throws(()=>buildRescheduleRequest(s,'x',{company_id:'c2'}));
+console.log('PASS scheduling pass02 contract/state/adapter');

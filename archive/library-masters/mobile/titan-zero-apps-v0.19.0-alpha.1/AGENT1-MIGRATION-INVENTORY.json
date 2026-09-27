@@ -1,0 +1,34 @@
+{
+  "agent": 1,
+  "pass": 16,
+  "extension": "Titan Apps: Zero",
+  "version": "0.19.0-alpha.1",
+  "canonical": [
+    "TitanZeroPresentationService",
+    "TitanZeroPlatformWiringService",
+    "TitanZeroModuleDataProvider",
+    "ZeroWorkspaceStateMachine",
+    "TitanZeroLifecycleService",
+    "TitanZeroSuiteServices",
+    "ZeroShellDescriptor",
+    "ZeroShellContract",
+    "ZeroSurfaceMount",
+    "ZeroPresentationIntent"
+  ],
+  "canonical_surface_mount": "zero-workspace",
+  "visual_ownership": "Titan Apps: Visual Runtime",
+  "compatibility": [
+    "TitanBosPresentationService alias",
+    "TitanBosPlatformWiringService alias",
+    "TitanBosModuleDataProvider alias",
+    "legacy ext_chatbot_zero_workspace_contexts table",
+    "legacy chatbot_id workspace owner column",
+    "compatibility/chatbot controller retained but not booted",
+    "legacy dependency slugs retained as optional aliases"
+  ],
+  "removed_from_canonical_zero": [
+    "donor BOS/Alpine visual shell implementation",
+    "copied Zero visual assets/motion"
+  ],
+  "runtime_chatbot_namespace_refs": 0
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "titan-zero-dependency-graph/v1",
+  "nodes": [
+    {
+      "id": "mesh.task.claim",
+      "kind": "CAPABILITY"
+    },
+    {
+      "id": "mesh.impact.reverse-dependency",
+      "kind": "CAPABILITY"
+    },
+    {
+      "id": "mesh.completion.evidence",
+      "kind": "CAPABILITY"
+    },
+    {
+      "id": "mesh.working-memory.compact",
+      "kind": "CAPABILITY"
+    }
+  ],
+  "edges": [
+    {
+      "from": "mesh.impact.reverse-dependency",
+      "to": "mesh.task.claim",
+      "type": "DEPENDS_ON"
+    }
+  ]
+}

@@ -1,0 +1,6362 @@
+{
+  "generatedAt": "2026-08-15T14:58:08.316Z",
+  "scope": "Historical pre-Mega-Pack-2 host-only route reference; app/Extensions were excluded when this reference was generated. Current Codee runtime includes extension route surfaces.",
+  "stats": {
+    "totalRouteCalls": 645,
+    "namedRoutes": 472,
+    "duplicateNames": 104,
+    "controllerRoutes": 461
+  },
+  "routes": [
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "health",
+      "name": null,
+      "controller": "HealthController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "register",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "forgot-password",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "email/verify",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "email/verify/resend",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": [
+        "throttle:6,1"
+      ]
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "social-login",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "logo",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "google-login",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "apple-login",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/balance",
+      "name": null,
+      "controller": "App\\Http\\Controllers\\Api\\SharedCreditApiController",
+      "action": "balance",
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/history",
+      "name": null,
+      "controller": "App\\Http\\Controllers\\Api\\SharedCreditApiController",
+      "action": "history",
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/cost/{entity}",
+      "name": null,
+      "controller": "App\\Http\\Controllers\\Api\\SharedCreditApiController",
+      "action": "cost",
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "logout",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "patch",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "delete",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "email-confirmation-setting",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "get-setting",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "usage-data",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "currency/{id?}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "recent-documents",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "favorite-openai",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "search",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/stream-test",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/change-chat-title",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/{id?}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "patch",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "delete",
+      "uri": "/{id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/{conver_id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/{conver_id}/messages",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/{conver_id}/messages/{id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "match",
+      "uri": "get",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/new-chat",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/{cat_slug}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "delete",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "patch",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/search-history",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/recent-chats",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/search-recent-chats",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/stream-test",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/change-chat-title",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/{id?}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "patch",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "delete",
+      "uri": "/{id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/{conver_id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/{conver_id}/messages",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/{conver_id}/messages/{id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "match",
+      "uri": "get",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/new-chat",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/{cat_slug}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "delete",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "patch",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/search-history",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/recent-chats",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/search-recent-chats",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/websocket-credentials",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/save-conversation",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/generator/{slug}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/generator/{slug}/workbook",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/generate",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/generate-output",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/generate/lazyload",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/generate/save",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/openai-list",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/favorite-openai-list",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/favorite-openai-list-add",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/favorite-openai-list-remove",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/versions",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/check-availability",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/generate-image",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/recent-images",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/check-revenue-cat",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/plans/{plan_id?}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/orders/{order_id?}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/cancel-current",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/withdrawals",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/request-withdrawal",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/ticket/{ticket_id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/ticket/{ticket_id}/last-message",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/send-message",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/user/{ticket_id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/doc/{id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/doc/{id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "delete",
+      "uri": "/doc/{id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/recent",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/all-openai",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/openai-filters",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/{id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "delete",
+      "uri": "/{id}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/preview",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "post",
+      "uri": "/generate",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/api.php",
+      "method": "get",
+      "uri": "/list",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "register",
+      "name": "register",
+      "controller": "AuthenticationController",
+      "action": "registerCreate",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "post",
+      "uri": "register",
+      "name": null,
+      "controller": "AuthenticationController",
+      "action": "registerStore",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "login",
+      "name": "login",
+      "controller": "AuthenticatedSessionController",
+      "action": "create",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "post",
+      "uri": "login",
+      "name": null,
+      "controller": "AuthenticatedSessionController",
+      "action": "store",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "verify-otp",
+      "name": "verify-otp",
+      "controller": "AuthenticatedSessionController",
+      "action": "verifyOtpCode",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "post",
+      "uri": "verify-otp",
+      "name": "verify-otp",
+      "controller": "AuthenticatedSessionController",
+      "action": "verifyOtp",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "forgot-password",
+      "name": "forgot_password",
+      "controller": "AuthenticationController",
+      "action": "PasswordResetCreate",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "post",
+      "uri": "forgot-password",
+      "name": null,
+      "controller": "MailController",
+      "action": "sendPasswordResetMail",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "forgot-password/retrieve/{password_reset_code}",
+      "name": null,
+      "controller": "MailController",
+      "action": "passwordResetCallback",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "post",
+      "uri": "forgot-password/save",
+      "name": null,
+      "controller": "MailController",
+      "action": "passwordResetCallbackSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "github/redirect",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "google/redirect",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "twitter/redirect",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "/facebook/redirect",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "/github/callback",
+      "name": null,
+      "controller": "AuthenticationController",
+      "action": "githubCallback",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "/google/callback",
+      "name": null,
+      "controller": "AuthenticationController",
+      "action": "googleCallback",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "/twitter/callback",
+      "name": null,
+      "controller": "AuthenticationController",
+      "action": "twitterCallback",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "/facebook/callback",
+      "name": null,
+      "controller": "AuthenticationController",
+      "action": "facebookCallback",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "get",
+      "uri": "2fa/login",
+      "name": "2fa.login",
+      "controller": "Google2FAController",
+      "action": "login",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "post",
+      "uri": "2fa/login",
+      "name": null,
+      "controller": "Google2FAController",
+      "action": "verify",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "put",
+      "uri": "password",
+      "name": "password.update",
+      "controller": "PasswordController",
+      "action": "update",
+      "middleware": []
+    },
+    {
+      "path": "routes/auth.php",
+      "method": "post",
+      "uri": "logout",
+      "name": "logout",
+      "controller": "AuthenticatedSessionController",
+      "action": "destroy",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/livewire/update",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "context",
+      "name": "context",
+      "controller": "TitanPageStudioController",
+      "action": "context",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "library",
+      "name": "library",
+      "controller": "TitanPageStudioController",
+      "action": "library",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "media",
+      "name": "media",
+      "controller": "TitanPageStudioController",
+      "action": "media",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "media",
+      "name": "media-upload",
+      "controller": "TitanPageStudioController",
+      "action": "uploadMedia",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "widget/{widget}/wizard",
+      "name": "widget-wizard",
+      "controller": "TitanPageStudioController",
+      "action": "wizard",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "save",
+      "name": "save",
+      "controller": "TitanPageStudioController",
+      "action": "save",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "draft",
+      "name": "draft",
+      "controller": "TitanPageStudioController",
+      "action": "draft",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "publish",
+      "name": "publish",
+      "controller": "TitanPageStudioController",
+      "action": "publish",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "reset",
+      "name": "reset",
+      "controller": "TitanPageStudioController",
+      "action": "reset",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "history",
+      "name": "history",
+      "controller": "TitanPageStudioController",
+      "action": "history",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "rollback",
+      "name": "rollback",
+      "controller": "TitanPageStudioController",
+      "action": "rollback",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": ", [UserController::class, ",
+      "name": "index",
+      "controller": "UserController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "check/payment",
+      "name": "check.payment",
+      "controller": "PaymentProcessController",
+      "action": "checkSubscriptionStatusFromAjax",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "check/update-available",
+      "name": "check.update-available",
+      "controller": "UserController",
+      "action": "updateAvailable",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "mark-tour-seen",
+      "name": "markTourSeen",
+      "controller": "UserController",
+      "action": "markTourSeen",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "activate",
+      "name": "activate",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "activate",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "deactivate",
+      "name": "deactivate",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/dash_notify_seen",
+      "name": "dash_notify_seen",
+      "controller": "UserController",
+      "action": "markDashNotifySeen",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "premium-support",
+      "name": "premium-support",
+      "controller": "PremiumSupportController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "ugc-studio",
+      "name": "ugc-studio.index",
+      "controller": "UGCStudioController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "ugc-studio/outputs",
+      "name": "ugc-studio.outputs",
+      "controller": "UGCStudioController",
+      "action": "outputs",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "video-studio",
+      "name": "video-studio.index",
+      "controller": "VideoStudioController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "video-studio/outputs",
+      "name": "video-studio.outputs",
+      "controller": "VideoStudioController",
+      "action": "outputs",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/update",
+      "name": "update",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "share/{userIntegration}/workbook/{userOpenai}",
+      "name": "share.workbook",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "share/{userIntegration}/workbook/{userOpenai}",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "share/{userIntegration}/image/{userOpenai}",
+      "name": "share.image",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "integration",
+      "name": null,
+      "controller": "IntegrationController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "brand",
+      "name": "brand.index",
+      "controller": "BrandController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "brand",
+      "name": null,
+      "controller": "BrandController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "delete/{brand}",
+      "name": "delete",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "get-products/{brand?}",
+      "name": "brand.getProducts",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": ", ",
+      "name": "index",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "{team}/invitations",
+      "name": "invitations",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "{team}/invitation",
+      "name": "invitation.store",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "{team}/member/{teamMember}/edit",
+      "name": "member.edit",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "{team}/member/{teamMember}/update",
+      "name": "member.update",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "{team}/member/{teamMember}/delete",
+      "name": "member.delete",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "{workbook_slug?}",
+      "name": "index",
+      "controller": "GeneratorController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/option/{slug}",
+      "name": "options",
+      "controller": "GeneratorController",
+      "action": "generatorOptions",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/generate-stream",
+      "name": "stream.generate",
+      "controller": "GeneratorController",
+      "action": "buildStreamedOutput",
+      "middleware": [
+        "surveyMiddleware"
+      ]
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/reduce-tokens/{type}",
+      "name": "reduce-tokens",
+      "controller": "GeneratorController",
+      "action": "reduceTokensWhenIntterruptStream",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "list",
+      "controller": "UserController",
+      "action": "openAIList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/favorite-openai",
+      "name": "list.favorites",
+      "controller": "UserController",
+      "action": "openAIFavoritesList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/favorite",
+      "name": null,
+      "controller": "UserController",
+      "action": "openAIFavorite",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "generator/realtime",
+      "name": "realtime.chat",
+      "controller": "GeneratorController",
+      "action": "realtime",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "generator/check/status",
+      "name": "check.status",
+      "controller": "UserController",
+      "action": "checkStatus",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/generator/{slug}",
+      "name": "generator",
+      "controller": "UserController",
+      "action": "openAIGenerator",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/generator/{slug}/workbook",
+      "name": "generator.workbook",
+      "controller": "UserController",
+      "action": "openAIGeneratorWorkbook",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "list",
+      "controller": "UserController",
+      "action": "openAICustomList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/add-or-update/{id?}",
+      "name": "addOrUpdate",
+      "controller": "UserController",
+      "action": "openAICustomAddOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id?}",
+      "name": "delete",
+      "controller": "UserController",
+      "action": "openAICustomDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": null,
+      "controller": "UserController",
+      "action": "openAICustomAddOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/generate",
+      "name": "output",
+      "controller": "AIController",
+      "action": "buildOutput",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/generate",
+      "name": null,
+      "controller": "AIController",
+      "action": "streamedTextOutput",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/getYoutubeCaptions",
+      "name": null,
+      "controller": "AIController",
+      "action": "getYoutubeCaptions",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/check/videoprogress",
+      "name": null,
+      "controller": "AIController",
+      "action": "checkVideoProgress",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/rewrite",
+      "name": "rewriter",
+      "controller": "AIController",
+      "action": "reWrite",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/generate/lazyload",
+      "name": "lazyloadimage",
+      "controller": "AIController",
+      "action": "lazyLoadImage",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/image/generate",
+      "name": "chat.image",
+      "controller": "AIController",
+      "action": "chatImageOutput",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/add-fine-tune",
+      "name": null,
+      "controller": "AIFineTuneController",
+      "action": "addFineTune",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/delete-fine-tune",
+      "name": null,
+      "controller": "AIFineTuneController",
+      "action": "deleteFineTune",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/low/generate_save",
+      "name": null,
+      "controller": "AIController",
+      "action": "lowGenerateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "message/title_save",
+      "name": null,
+      "controller": "AIController",
+      "action": "messageTitleSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/generate-speech",
+      "name": null,
+      "controller": "TTSController",
+      "action": "generateSpeech",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/update-writing",
+      "name": null,
+      "controller": "AIController",
+      "action": "updateWriting",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/all/{id?}",
+      "name": "all",
+      "controller": "UserController",
+      "action": "documentsAll",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/images",
+      "name": "images",
+      "controller": "UserController",
+      "action": "documentsImages",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/single/{slug}",
+      "name": "single",
+      "controller": "UserController",
+      "action": "documentsSingle",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{slug}",
+      "name": "delete",
+      "controller": "UserController",
+      "action": "documentsDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/image/{slug}",
+      "name": "image.delete",
+      "controller": "UserController",
+      "action": "documentsImageDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/bulk-delete",
+      "name": "bulkDelete",
+      "controller": "UserController",
+      "action": "documentsBulkDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/workbook-save",
+      "name": null,
+      "controller": "UserController",
+      "action": "openAIGeneratorWorkbookSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/update-folder/{folder}",
+      "name": "update-folder",
+      "controller": "UserController",
+      "action": "updateFolder",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/update-file/{file}",
+      "name": "update-file",
+      "controller": "UserController",
+      "action": "updateFile",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/delete-folder/{folder}",
+      "name": "delete-folder",
+      "controller": "UserController",
+      "action": "deleteFolder",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/new-folder",
+      "name": "new-folder",
+      "controller": "UserController",
+      "action": "newFolder",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/move-to-folder",
+      "name": "move-to-folder",
+      "controller": "UserController",
+      "action": "moveToFolder",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/favorite",
+      "name": "favorite",
+      "controller": "UserController",
+      "action": "docsFavorite",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/overview",
+      "name": "overview",
+      "controller": "UserController",
+      "action": "overview",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/ai-chat-list",
+      "name": "list",
+      "controller": "AIChatController",
+      "action": "openAIChatList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/ai-chat/{slug?}",
+      "name": "chat",
+      "controller": "AIChatController",
+      "action": "openAIChat",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "match",
+      "uri": "get",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "chatOutput",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "match",
+      "uri": "get",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "chatbotOutput",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/open-chat-area-container",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "openChatAreaContainer",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/open-chatbot-area",
+      "name": "open-chatbot-area",
+      "controller": "AIChatController",
+      "action": "openChatBotArea",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/start-new-chat",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "startNewChat",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/start-new-doc-chat",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "startNewDocChat",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/start-new-chatbot",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "startNewChatBot",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/search",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "search",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/get-chats",
+      "name": "get-chats",
+      "controller": "AIChatController",
+      "action": "getChats",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/delete-chat",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "deleteChat",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/clear-chats",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "clearChats",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/rename-chat",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "renameChat",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/pin-conversation",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "pinConversation",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/transaudio",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "transAudio",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "prompts",
+      "name": "prompts",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "add-prompt",
+      "name": "add-prompt",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "update-prompt",
+      "name": "update-prompt",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "delete-prompt",
+      "name": "delete-prompt",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/generate-pdf",
+      "name": null,
+      "controller": "ExportChatController",
+      "action": "generatePdf",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/generate-word",
+      "name": null,
+      "controller": "ExportChatController",
+      "action": "generateWord",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/generate-txt",
+      "name": null,
+      "controller": "ExportChatController",
+      "action": "generateTxt",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/low/chat_save",
+      "name": null,
+      "controller": "AIChatController",
+      "action": "lowChatSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/new",
+      "name": "new",
+      "controller": "AIArticleWizardController",
+      "action": "newArticle",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/genarticle",
+      "name": "genarticle",
+      "controller": "AIArticleWizardController",
+      "action": "generateArticle",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/update",
+      "name": "update",
+      "controller": "AIArticleWizardController",
+      "action": "updateArticle",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/clear",
+      "name": "clear",
+      "controller": "AIArticleWizardController",
+      "action": "clearArticle",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/genkeywords",
+      "name": "genkeywords",
+      "controller": "AIArticleWizardController",
+      "action": "generateKeywords",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/gentitles",
+      "name": "gentitles",
+      "controller": "AIArticleWizardController",
+      "action": "generateTitles",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/genoutlines",
+      "name": "genoutlines",
+      "controller": "AIArticleWizardController",
+      "action": "generateOutlines",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/genimages",
+      "name": "genimages",
+      "controller": "AIArticleWizardController",
+      "action": "generateImages",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/remains",
+      "name": "remains",
+      "controller": "AIArticleWizardController",
+      "action": "userRemaining",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AIArticleWizardController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/{article}",
+      "name": "show",
+      "controller": "AIArticleWizardController",
+      "action": "show",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/{article}/edit",
+      "name": "edit",
+      "controller": "AIArticleWizardController",
+      "action": "editArticle",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/startover",
+      "name": "startover",
+      "controller": "AIArticleWizardController",
+      "action": "startover",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/ai-vision",
+      "name": "vision",
+      "controller": "AIVisionController",
+      "action": "openAIVision",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "UserController",
+      "action": "userSettings",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": null,
+      "controller": "UserController",
+      "action": "userSettingsSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete-account",
+      "name": "deleteAccount",
+      "controller": "UserController",
+      "action": "deleteAccount",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/delete-account",
+      "name": "deleteAccount.send",
+      "controller": "UserController",
+      "action": "deleteAccountRequest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "openai/test",
+      "name": "openai.test",
+      "controller": "SettingsController",
+      "action": "openaiTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "anthropic/test",
+      "name": "anthropic.test",
+      "controller": "SettingsController",
+      "action": "anthropicTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "gemini/test",
+      "name": "gemini.test",
+      "controller": "SettingsController",
+      "action": "geminiTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": null,
+      "name": "subscription",
+      "controller": "PlanAndPricingController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/prepaid/{planId}/{gatewayCode}",
+      "name": "startPrepaidPaymentProcess",
+      "controller": "PaymentProcessController",
+      "action": "startPrepaidPaymentProcess",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/subscribe/{planId}/{gatewayCode}",
+      "name": "startSubscriptionProcess",
+      "controller": "PaymentProcessController",
+      "action": "startSubscriptionProcess",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "match",
+      "uri": "get",
+      "name": "subscription.checkout",
+      "controller": "PaymentProcessController",
+      "action": "startSubscriptionCheckoutProcess",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "match",
+      "uri": "get",
+      "name": "prepaid.checkout",
+      "controller": "PaymentProcessController",
+      "action": "startPrepaidCheckoutProcess",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/subscribe-cancel",
+      "name": "cancelActiveSubscription",
+      "controller": "PaymentProcessController",
+      "action": "cancelActiveSubscription",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/paypal/create-paypal-order",
+      "name": "prepaid.createPayPalOrder",
+      "controller": "PaymentProcessController",
+      "action": "createPayPalOrder",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "iyzico/prepaid/callback",
+      "name": "iyzico.prepaid.callback",
+      "controller": "PaymentProcessController",
+      "action": "iyzicoPrepaidCallback",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "iyzico/subscribe/callback",
+      "name": "iyzico.subscribe.callback",
+      "controller": "PaymentProcessController",
+      "action": "iyzicoSubscribeCallback",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "iyzico/products",
+      "name": "iyzico.products",
+      "controller": "PaymentProcessController",
+      "action": "iyzicoProductsList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "succesful",
+      "name": "succesful",
+      "controller": "PaymentProcessController",
+      "action": "successful",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/user-subscribe-cancel/{id}",
+      "name": "cancelActiveSubscriptionByAdmin",
+      "controller": "PaymentProcessController",
+      "action": "cancelActiveSubscriptionByAdmin",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/assign-plan",
+      "name": "assignPlanByAdmin",
+      "controller": "PaymentProcessController",
+      "action": "assignPlanByAdmin",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/assign-token-plan",
+      "name": "assignTokenByAdmin",
+      "controller": "PaymentProcessController",
+      "action": "assignTokenByAdmin",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "update-address",
+      "name": "updateAddressDetails",
+      "controller": "UserController",
+      "action": "userSettingsUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/invoices/export",
+      "name": "invoices.export",
+      "controller": "UserController",
+      "action": "exportInvoices",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "UserController",
+      "action": "invoiceList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/order/{order_id}",
+      "name": "invoice",
+      "controller": "UserController",
+      "action": "invoiceSingle",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/export/{type}",
+      "name": "ordersExport",
+      "controller": "UserController",
+      "action": "ordersExport",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/list/{user_id?}",
+      "name": "list",
+      "controller": "UserController",
+      "action": "userOrdersList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "UserController",
+      "action": "affiliatesList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/send-invitation",
+      "name": null,
+      "controller": "UserController",
+      "action": "affiliatesListSendInvitation",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/send-request",
+      "name": null,
+      "controller": "UserController",
+      "action": "affiliatesListSendRequest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/users",
+      "name": "users",
+      "controller": "UserController",
+      "action": "affiliatesUsers",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "voice",
+      "name": null,
+      "controller": "ElevenlabVoiceController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "voice/{voice}",
+      "name": "voice.destroy",
+      "controller": "ElevenlabVoiceController",
+      "action": "delete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": ", [AiInfluencerController::class, ",
+      "name": "index",
+      "controller": "AiInfluencerController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "delete",
+      "uri": "delete-exported-video",
+      "name": "delete-exported-video",
+      "controller": "AiInfluencerController",
+      "action": "deleteExportedVideo",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "upload-files",
+      "name": "upload-files",
+      "controller": "AiInfluencerController",
+      "action": "uploadFiles",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "put",
+      "uri": "order",
+      "name": "order",
+      "controller": "AdminController",
+      "action": "dashboardWidgetOrderUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "put",
+      "uri": "{widget}/status",
+      "name": "status",
+      "controller": "AdminController",
+      "action": "updateDashboardWidgetStatus",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "ai-assistant",
+      "name": null,
+      "controller": "AssistantController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "users-credits",
+      "name": "users.credits",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "users-credits-engine",
+      "name": "users.credits.engine",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "plans-credits",
+      "name": "plans.credits",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "plans-credits-engine",
+      "name": "plans.credits.engine",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "text",
+      "name": "text",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "qa",
+      "name": "qa",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "training",
+      "name": "training",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "web-sites",
+      "name": "web-sites",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "web-sites",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "upload-pdf",
+      "name": "upload-pdf",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "delete",
+      "uri": "item/{id}",
+      "name": "item.delete",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": ", [AiChatbotModelController::class, ",
+      "name": "index",
+      "controller": "AiChatbotModelController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "all-models",
+      "name": "models.index",
+      "controller": "AiChatbotModelController",
+      "action": "modelsIndex",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "update-engine-images",
+      "name": "update.engine.images",
+      "controller": "AiChatbotModelController",
+      "action": "updateEngineImages",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": ", [AiChatbotModelController::class, ",
+      "name": "update",
+      "controller": "AiChatbotModelController",
+      "action": "update",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "chatbot/setting",
+      "name": "chatbot.setting",
+      "controller": "ChatbotController",
+      "action": "setting",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "chatbot/setting",
+      "name": null,
+      "controller": "ChatbotController",
+      "action": "putSetting",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "chatbot/external-settings",
+      "name": "chatbot.external_settings",
+      "controller": "ChatbotController",
+      "action": "externalChatSettings",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "chatbot",
+      "name": null,
+      "controller": "ChatbotController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "cart/delete-coupon",
+      "name": "cart.delete.coupon",
+      "controller": "MarketPlaceController",
+      "action": "deleteCoupon",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "cart/coupon",
+      "name": "cart.coupon",
+      "controller": "MarketPlaceController",
+      "action": "cartCoupon",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "cart",
+      "name": "cart",
+      "controller": "MarketPlaceController",
+      "action": "cart",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "cart",
+      "name": "cart",
+      "controller": "MarketPlaceController",
+      "action": "cart",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "cart/{id}/add-delete",
+      "name": "cart.add-delete",
+      "controller": "MarketPlaceController",
+      "action": "addDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": ", ",
+      "name": "index",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "custom-extensions",
+      "name": "custom",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/dry-run",
+      "name": "custom.dry-run",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/upload",
+      "name": "custom.upload",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "custom-extensions/install-reports/{installId}",
+      "name": "custom.install-report",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "custom-extensions/install-reports/{installId}/download",
+      "name": "custom.install-report.download",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/install-reports/{installId}/retry",
+      "name": "custom.install-report.retry",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/safe-mode",
+      "name": "custom.safe-mode",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/registry/refresh",
+      "name": "custom.registry.refresh",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/registry/{slug}/plan",
+      "name": "custom.registry.plan",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/registry/{slug}/install",
+      "name": "custom.registry.install",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/updates/check",
+      "name": "custom.updates.check",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/updates/bulk",
+      "name": "custom.updates.bulk",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/{slug}/update-policy",
+      "name": "custom.update-policy",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/{slug}/uninstall",
+      "name": "custom.uninstall",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/{slug}/enabled",
+      "name": "custom.enabled",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/{slug}/health",
+      "name": "custom.health",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/{slug}/rollback",
+      "name": "custom.rollback",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "custom-extensions/{slug}/doctor",
+      "name": "custom.doctor",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/{slug}/doctor/auto-repair",
+      "name": "custom.doctor.auto-repair",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/{slug}/doctor/repair",
+      "name": "custom.doctor.repair",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/{slug}/doctor/write",
+      "name": "custom.doctor.write",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/{slug}/doctor/propose",
+      "name": "custom.doctor.propose",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/{slug}/doctor/proposals/{proposalId}/apply",
+      "name": "custom.doctor.proposal.apply",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "custom-extensions/{slug}/doctor/repairs/{repairId}/rollback",
+      "name": "custom.doctor.repair.rollback",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "licensed-extensions",
+      "name": "liextension",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "{slug}",
+      "name": "extension",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "{slug}/buy",
+      "name": "buyextesion",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "extension/{token}/activate",
+      "name": "activate",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": ", [ThemeController::class, ",
+      "name": "index",
+      "controller": "ThemeController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "titan/upload",
+      "name": "titan.upload",
+      "controller": "ThemeController",
+      "action": "uploadLocal",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "titan/library/{slug}/install",
+      "name": "titan.library.install",
+      "controller": "ThemeController",
+      "action": "installBundledTheme",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "titan/{slug}/activate",
+      "name": "titan.activate",
+      "controller": "ThemeController",
+      "action": "activateLocal",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "titan/{slug}/clone",
+      "name": "titan.clone",
+      "controller": "ThemeController",
+      "action": "cloneLocal",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "titan/{slug}/customize",
+      "name": "titan.customize",
+      "controller": "ThemeController",
+      "action": "customizeLocal",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "titan/{slug}/rollback",
+      "name": "titan.rollback",
+      "controller": "ThemeController",
+      "action": "rollbackLocal",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "delete",
+      "uri": "titan/{slug}",
+      "name": "titan.delete",
+      "controller": "ThemeController",
+      "action": "deleteLocal",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "titan/{slug}/designer",
+      "name": "titan.designer",
+      "controller": "ThemeController",
+      "action": "designer",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "titan/{slug}/designer/registry",
+      "name": "titan.designer.registry",
+      "controller": "ThemeController",
+      "action": "designerRegistry",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "titan/{slug}/designer/widget/{widget}/wizard",
+      "name": "titan.designer.widget-wizard",
+      "controller": "ThemeController",
+      "action": "designerWidgetWizard",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "titan/{slug}/designer/draft",
+      "name": "titan.designer.draft",
+      "controller": "ThemeController",
+      "action": "saveDesignerDraft",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "titan/{slug}/designer/publish",
+      "name": "titan.designer.publish",
+      "controller": "ThemeController",
+      "action": "publishDesigner",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "titan/{slug}/designer/history/{revision}/restore",
+      "name": "titan.designer.restore",
+      "controller": "ThemeController",
+      "action": "restoreDesigner",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "titan/{slug}/designer/export",
+      "name": "titan.designer.export",
+      "controller": "ThemeController",
+      "action": "exportDesigner",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "titan/{slug}/designer/import",
+      "name": "titan.designer.import",
+      "controller": "ThemeController",
+      "action": "importDesigner",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "titan/{slug}/designer/audit",
+      "name": "titan.designer.audit",
+      "controller": "ThemeController",
+      "action": "auditDesigner",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "titan/{slug}/designer/sections",
+      "name": "titan.designer.sections.save",
+      "controller": "ThemeController",
+      "action": "saveDesignerSection",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "delete",
+      "uri": "titan/{slug}/designer/sections/{section}",
+      "name": "titan.designer.sections.delete",
+      "controller": "ThemeController",
+      "action": "deleteDesignerSection",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "activate/{slug}",
+      "name": "activate",
+      "controller": "InstallationController",
+      "action": "installTheme",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "buy/{slug}",
+      "name": "buyTheme",
+      "controller": "ThemeController",
+      "action": "buyTheme",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "{token}/activate",
+      "name": "paymentActivate",
+      "controller": "ThemeController",
+      "action": "themeActivate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "users",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/search",
+      "name": "search",
+      "controller": "AdminController",
+      "action": "usersSearch",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/add",
+      "name": "create",
+      "controller": "AdminController",
+      "action": "usersAdd",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/store",
+      "name": "store",
+      "controller": "AdminController",
+      "action": "usersStore",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "edit/{user}",
+      "name": "edit",
+      "controller": "AdminController",
+      "action": "usersEdit",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "usersDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "save",
+      "name": "update",
+      "controller": "AdminController",
+      "action": "usersSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "permissions",
+      "name": "permissions",
+      "controller": "AdminController",
+      "action": "userPermissions",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "permission-save",
+      "name": "permissionSave",
+      "controller": "AdminController",
+      "action": "userPermissionSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/finance/{id}",
+      "name": "finance",
+      "controller": "AdminController",
+      "action": "usersFinance",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "activity",
+      "name": "activity",
+      "controller": "AdminController",
+      "action": "usersActivity",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "dashboard",
+      "name": "dashboard",
+      "controller": "AdminController",
+      "action": "usersDashboard",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "export/{type}",
+      "name": "userExport",
+      "controller": "AdminController",
+      "action": "userExport",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "deletion/requests",
+      "name": "deletion.reqs",
+      "controller": "AdminController",
+      "action": "deletionRequests",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "deletion/requests/{id}",
+      "name": "deletion.req",
+      "controller": "AdminController",
+      "action": "deletionRequest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "{user}/shared-credit/adjust",
+      "name": "shared-credit.adjust",
+      "controller": "UserSharedCreditController",
+      "action": "adjust",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "put",
+      "uri": "{user}/credit-type",
+      "name": "credit-type.update",
+      "controller": "UserSharedCreditController",
+      "action": "updateType",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "announcements",
+      "name": null,
+      "controller": "AnnouncementController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "announcements/re_notify",
+      "name": "announcements.re_notify",
+      "controller": "AnnouncementController",
+      "action": "re_notify",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "announcements/reset",
+      "name": "announcements.reset",
+      "controller": "AnnouncementController",
+      "action": "reset",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdsController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/{id}/edit",
+      "name": "edit",
+      "controller": "AdsController",
+      "action": "edit",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "put",
+      "uri": "/{id}",
+      "name": "update",
+      "controller": "AdsController",
+      "action": "update",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/",
+      "name": "store",
+      "controller": "AdsController",
+      "action": "store",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "delete",
+      "uri": "/{ad}",
+      "name": "destroy",
+      "controller": "AdsController",
+      "action": "destroy",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/transactions",
+      "name": "transactions.list",
+      "controller": "PaymentProcessController",
+      "action": "bankTransactions",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id?}",
+      "name": "transactions.delete",
+      "controller": "PaymentProcessController",
+      "action": "bankDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": "transactions.update",
+      "controller": "PaymentProcessController",
+      "action": "bankUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "list",
+      "controller": "AdminController",
+      "action": "openAIList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/update-status",
+      "name": null,
+      "controller": "AdminController",
+      "action": "openAIListUpdateStatus",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/update-package-status",
+      "name": null,
+      "controller": "AdminController",
+      "action": "openAIListUpdatePackageStatus",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "list",
+      "controller": "AdminController",
+      "action": "openAICustomList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/add-or-update/{id?}",
+      "name": "addOrUpdate",
+      "controller": "AdminController",
+      "action": "openAICustomAddOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id?}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "openAICustomDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "openAICustomAddOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "list",
+      "controller": "AdminController",
+      "action": "openAICategoriesList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/add-or-update/{id?}",
+      "name": "addOrUpdate",
+      "controller": "AdminController",
+      "action": "openAICategoriesAddOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id?}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "openAICategoriesDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "openAICategoriesAddOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "list",
+      "controller": "AdminController",
+      "action": "openAIChatList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/add-or-update/{id?}",
+      "name": "addOrUpdate",
+      "controller": "AdminController",
+      "action": "openAIChatAddOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id?}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "openAIChatDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": "save",
+      "controller": "AdminController",
+      "action": "openAIChatAddOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/update-plan",
+      "name": "updatePlan",
+      "controller": "AdminController",
+      "action": "updatePlan",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/update-fav",
+      "name": "updateChatFav",
+      "controller": "AdminController",
+      "action": "updateChatFav",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/category",
+      "name": "category",
+      "controller": "AdminController",
+      "action": "categoryList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/category/add-or-update/{id?}",
+      "name": "addOrUpdateCategory",
+      "controller": "AdminController",
+      "action": "addOrUpdateCategory",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/category/save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "chatCategoriesAddOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/category/delete/{id?}",
+      "name": "deleteCategory",
+      "controller": "AdminController",
+      "action": "chatCategoriesDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "plan",
+      "name": null,
+      "controller": "PlanController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "plan/{plan}/delete",
+      "name": "plan.destroy",
+      "controller": "PlanController",
+      "action": "destroy",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "token-pack-plan",
+      "name": null,
+      "controller": "TokenPackPlanController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "free-feature",
+      "name": "free.feature",
+      "controller": "AdminController",
+      "action": "freeFeature",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "free-feature",
+      "name": null,
+      "controller": "AdminController",
+      "action": "freeFeatureSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "paymentPlans",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/subscription/create-or-update/{id?}",
+      "name": "SubscriptionNewOrEdit",
+      "controller": "AdminController",
+      "action": "paymentPlansSubscriptionNewOrEdit",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/pre-paid/create-or-update/{id?}",
+      "name": "PlanNewOrEdit",
+      "controller": "AdminController",
+      "action": "paymentPlansPrepaidNewOrEdit",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "paymentPlansDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": "save",
+      "controller": "AdminController",
+      "action": "paymentPlansSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "GatewayController",
+      "action": "paymentGateways",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/settings/{code}",
+      "name": "settings",
+      "controller": "GatewayController",
+      "action": "gatewaySettings",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/settings/country-tax-enabled/{code}",
+      "name": "country.tax.enabled",
+      "controller": "GatewayController",
+      "action": "countryTaxEnabled",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/settings/save",
+      "name": "settings.save",
+      "controller": "GatewayController",
+      "action": "gatewaySettingsSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/settings/tax/save",
+      "name": "settings.tax.save",
+      "controller": "GatewayController",
+      "action": "gatewaySettingsTaxSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/settings/tax/delete/{id}",
+      "name": "settings.tax.delete",
+      "controller": "GatewayController",
+      "action": "gatewaySettingsTaxDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "match",
+      "uri": "get",
+      "name": "index",
+      "controller": "MobilePaymentsController",
+      "action": "mobilePlanIdSettings",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "SharedCreditCostController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/",
+      "name": "store",
+      "controller": "SharedCreditCostController",
+      "action": "store",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "put",
+      "uri": "/{cost}",
+      "name": "update",
+      "controller": "SharedCreditCostController",
+      "action": "update",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "delete",
+      "uri": "/{cost}",
+      "name": "destroy",
+      "controller": "SharedCreditCostController",
+      "action": "destroy",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "credit-migration",
+      "name": "credit-migration.index",
+      "controller": "CreditMigrationController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "testimonials",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/create-or-update/{id?}",
+      "name": "TestimonialsNewOrEdit",
+      "controller": "AdminController",
+      "action": "testimonialsNewOrEdit",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "testimonialsDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "testimonialsSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "clients",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/create-or-update/{id?}",
+      "name": "ClientsNewOrEdit",
+      "controller": "AdminController",
+      "action": "clientsNewOrEdit",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "clientsDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "clientsSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "howitWorks",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/create-or-update/{id?}",
+      "name": "HowitWorksNewOrEdit",
+      "controller": "AdminController",
+      "action": "howitWorksNewOrEdit",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "howitWorksDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "howitWorksSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/bottom-line",
+      "name": null,
+      "controller": "AdminController",
+      "action": "howitWorksBottomLineSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "smtp/test",
+      "name": "smtp.test",
+      "controller": "SmtpController",
+      "action": "test",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "more",
+      "name": null,
+      "controller": "MoreController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "seo",
+      "name": null,
+      "controller": "SeoController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "ai-tools",
+      "name": null,
+      "controller": "AiToolsController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "finance",
+      "name": null,
+      "controller": "FinanceController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "smtp",
+      "name": null,
+      "controller": "SmtpController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "login",
+      "name": null,
+      "controller": "LoginController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "gdpr",
+      "name": null,
+      "controller": "GdprController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "storage",
+      "name": null,
+      "controller": "StorageController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "branding",
+      "name": null,
+      "controller": "BrandingController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "branding/favicon",
+      "name": "branding.favicon",
+      "controller": "BrandingController",
+      "action": "favicon",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": null,
+      "name": null,
+      "controller": "GeneralController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "premium-advantages",
+      "name": null,
+      "controller": "PremiumAdvantagesController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/general",
+      "name": "general",
+      "controller": "SettingsController",
+      "action": "general",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/general-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "generalSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "searchapi",
+      "name": "searchapi",
+      "controller": "SearchapiSettingController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "searchapi",
+      "name": null,
+      "controller": "SearchapiSettingController",
+      "action": "update",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/openai",
+      "name": "openai",
+      "controller": "SettingsController",
+      "action": "openai",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/openai/test",
+      "name": "openai.test",
+      "controller": "SettingsController",
+      "action": "openaiTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/openai-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "openaiSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/x-ai",
+      "name": "x-ai",
+      "controller": "SettingsController",
+      "action": "xAI",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/x-ai/test",
+      "name": "x-ai.test",
+      "controller": "SettingsController",
+      "action": "xAiTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/x-ai-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "xAiSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "anthropic",
+      "name": "anthropic",
+      "controller": "SettingsController",
+      "action": "anthropic",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "anthropic/test",
+      "name": "anthropic.test",
+      "controller": "SettingsController",
+      "action": "anthropicTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "anthropic",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "anthropicSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "deepseek",
+      "name": "deepseek",
+      "controller": "SettingsController",
+      "action": "deepseek",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "deepseek/test",
+      "name": "deepseek.test",
+      "controller": "SettingsController",
+      "action": "deepseekTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "deepseek",
+      "name": "deepseek.save",
+      "controller": "SettingsController",
+      "action": "deepseekSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "gemini",
+      "name": "gemini",
+      "controller": "SettingsController",
+      "action": "gemini",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "gemini/test",
+      "name": "gemini.test",
+      "controller": "SettingsController",
+      "action": "geminiTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "gemini",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "geminiSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/stablediffusion",
+      "name": "stablediffusion",
+      "controller": "SettingsController",
+      "action": "stablediffusion",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/stablediffusion/test",
+      "name": "stablediffusion.test",
+      "controller": "SettingsController",
+      "action": "stablediffusionTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/stablediffusion-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "stablediffusionSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/unsplashapi",
+      "name": "unsplashapi",
+      "controller": "SettingsController",
+      "action": "unsplashapi",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/unsplashapi/test",
+      "name": "unsplashapi.test",
+      "controller": "SettingsController",
+      "action": "unsplashapiTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/unsplashapi-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "unsplashapiSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/pexelsapi",
+      "name": "pexelsapi",
+      "controller": "SettingsController",
+      "action": "pexelsapi",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/pexelsapi/test",
+      "name": "pexelsapi.test",
+      "controller": "SettingsController",
+      "action": "pexelsapiTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/pexelsapi-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "pexelsapiSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/pixabayapi",
+      "name": "pixabayapi",
+      "controller": "SettingsController",
+      "action": "pixabayapi",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/pixabayapi/test",
+      "name": "pixabayapi.test",
+      "controller": "SettingsController",
+      "action": "pixabayapiTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/pixabayapi-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "pixabayapiSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "fal-ai",
+      "name": "fal-ai",
+      "controller": "CommonFalAISettingController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "fal-ai",
+      "name": "fal-ai.update",
+      "controller": "CommonFalAISettingController",
+      "action": "update",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/thumbnail",
+      "name": "thumbnail",
+      "controller": "SettingsController",
+      "action": "thumbnail",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/thumbnail-save",
+      "name": "thumbnail.save",
+      "controller": "SettingsController",
+      "action": "thumbnailSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/thumbnail-purge",
+      "name": "thumbnail.purge",
+      "controller": "SettingsController",
+      "action": "thumbnailPurge",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/serperapi",
+      "name": "serperapi",
+      "controller": "SettingsController",
+      "action": "serperapi",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/serperapi/test",
+      "name": "serperapi.test",
+      "controller": "SettingsController",
+      "action": "serperapiTest",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/serperapi-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "serperapiSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/tts",
+      "name": "tts",
+      "controller": "SettingsController",
+      "action": "tts",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/tts-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "ttsSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "ElevenLabsLibraryController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/add",
+      "name": "add",
+      "controller": "ElevenLabsLibraryController",
+      "action": "add",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/remove",
+      "name": "remove",
+      "controller": "ElevenLabsLibraryController",
+      "action": "remove",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/aimlapi",
+      "name": "aimlapi",
+      "controller": "SettingsController",
+      "action": "aimlapi",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/aimlapi-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "aimlapiSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/payment",
+      "name": "payment",
+      "controller": "SettingsController",
+      "action": "payment",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/payment-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "paymentSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/affiliate-status-save/{id}",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "affiliateStatusSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/privacy",
+      "name": "privacy",
+      "controller": "SettingsController",
+      "action": "privacy",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/privacy-save",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "privacySave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/get-privacy-terms-content",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "getPrivacyTermsContent",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/get-meta-content",
+      "name": null,
+      "controller": "SettingsController",
+      "action": "getMetaContent",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "affiliatesList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/sent/{id}",
+      "name": "sent",
+      "controller": "AdminController",
+      "action": "affiliatesListSent",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "couponsList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/used/{id}",
+      "name": "used",
+      "controller": "AdminController",
+      "action": "couponsListUsed",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "couponsDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/edit/{id}",
+      "name": "edit",
+      "controller": "AdminController",
+      "action": "couponsEdit",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/add",
+      "name": "add",
+      "controller": "AdminController",
+      "action": "couponsAdd",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "curtain",
+      "name": null,
+      "controller": "CurtainController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "channel-setting",
+      "name": null,
+      "controller": "ChannelSettingController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "content-box",
+      "name": null,
+      "controller": "ContentBoxController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "settings",
+      "controller": "AdminController",
+      "action": "frontendSettings",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/settings-save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "frontendSettingsSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/section-settings",
+      "name": "sectionsettings",
+      "controller": "AdminController",
+      "action": "frontendSectionSettings",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/section-settings-save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "frontendSectionSettingsSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/menu",
+      "name": "menusettings",
+      "controller": "AdminController",
+      "action": "menuSettings",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/menu-save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "menuSettingsSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/auth",
+      "name": "authsettings",
+      "controller": "AdminController",
+      "action": "authSettings",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/auth-save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "authsettingsSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "frontendFaq",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/create-or-update/{id?}",
+      "name": "createOrUpdate",
+      "controller": "AdminController",
+      "action": "frontendFaqcreateOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/action/delete/{id}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "frontendFaqDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/action/save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "frontendFaqcreateOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "frontendTools",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/create-or-update/{id?}",
+      "name": "createOrUpdate",
+      "controller": "AdminController",
+      "action": "frontendToolscreateOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/action/delete/{id}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "frontendToolsDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/action/save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "frontendToolscreateOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "frontendFuture",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/create-or-update/{id?}",
+      "name": "createOrUpdate",
+      "controller": "AdminController",
+      "action": "frontendFutureCreateOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/action/delete/{id}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "frontendFutureDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/action/save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "frontendFutureCreateOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "frontendWhois",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/create-or-update/{id?}",
+      "name": "createOrUpdate",
+      "controller": "AdminController",
+      "action": "frontendWhoisCreateOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/action/delete/{id}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "frontendWhoisDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/action/save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "frontendWhoisCreateOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "AdminController",
+      "action": "frontendGeneratorlist",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/create-or-update/{id?}",
+      "name": "createOrUpdate",
+      "controller": "AdminController",
+      "action": "frontendGeneratorlistCreateOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/action/delete/{id}",
+      "name": "delete",
+      "controller": "AdminController",
+      "action": "frontendGeneratorlistDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/action/save",
+      "name": null,
+      "controller": "AdminController",
+      "action": "frontendGeneratorlistCreateOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/socialmedia",
+      "name": "socialmedia",
+      "controller": "AdminController",
+      "action": "socialmedia",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/socialmedia",
+      "name": "socialmedia.save",
+      "controller": "AdminController",
+      "action": "socialmediaSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "advertis",
+      "name": null,
+      "controller": "AdvertisController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": ", [HealthController::class, ",
+      "name": "index",
+      "controller": "HealthController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "logs",
+      "name": "logs",
+      "controller": "HealthController",
+      "action": "logs",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "recover-views",
+      "name": "recover.views",
+      "controller": "HealthController",
+      "action": "recoverViews",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "artisan/run",
+      "name": "artisan.run",
+      "controller": "HealthController",
+      "action": "artisanRun",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "cache-clear",
+      "name": "cache.clear",
+      "controller": "HealthController",
+      "action": "cacheClear",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "translations/auto/{lang}",
+      "name": "translations.auto",
+      "controller": "TranslateController",
+      "action": "autoTranslate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/validate-coupon",
+      "name": "validate",
+      "controller": "AdminController",
+      "action": "couponsValidate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "change-chat-title",
+      "name": "change-chat-title",
+      "controller": "AIChatController",
+      "action": "changeChatTitle",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/my-requests",
+      "name": "list",
+      "controller": "SupportController",
+      "action": "list",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/new-support-request",
+      "name": "new",
+      "controller": "SupportController",
+      "action": "newTicket",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/new-support-request/send",
+      "name": null,
+      "controller": "SupportController",
+      "action": "newTicketSend",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/requests/{ticket_id}",
+      "name": "view",
+      "controller": "SupportController",
+      "action": "viewTicket",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/requests-action/send-message",
+      "name": null,
+      "controller": "SupportController",
+      "action": "viewTicketSendMessage",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "list",
+      "controller": "PageController",
+      "action": "pageList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/add-or-update/{id?}",
+      "name": "addOrUpdate",
+      "controller": "PageController",
+      "action": "pageAddOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id?}",
+      "name": "delete",
+      "controller": "PageController",
+      "action": "pageDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": null,
+      "controller": "PageController",
+      "action": "pageAddOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "email-templates/{id}/send",
+      "name": "email-templates.send",
+      "controller": "EmailTemplatesController",
+      "action": "sendView",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "email-templates/{id}/send",
+      "name": null,
+      "controller": "EmailTemplatesController",
+      "action": "sendQueue",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "resource",
+      "uri": "email-templates",
+      "name": null,
+      "controller": "EmailTemplatesController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "email-templates/{id}/delete",
+      "name": "email-templates.destroy",
+      "controller": "EmailTemplatesController",
+      "action": "delete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "list",
+      "controller": "BlogController",
+      "action": "blogList",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/add-or-update/{id?}",
+      "name": "addOrUpdate",
+      "controller": "BlogController",
+      "action": "blogAddOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id?}",
+      "name": "delete",
+      "controller": "BlogController",
+      "action": "blogDelete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": null,
+      "controller": "BlogController",
+      "action": "blogAddOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "notifications/mark-as-read",
+      "name": "notifications.markAllAsRead",
+      "controller": "NotificationController",
+      "action": "markAsRead",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/",
+      "name": "index",
+      "controller": "ChatBotController",
+      "action": "chatbotIndex",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/add-or-update/{id?}",
+      "name": "addOrUpdate",
+      "controller": "ChatBotController",
+      "action": "addOrUpdate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/delete/{id?}",
+      "name": "delete",
+      "controller": "ChatBotController",
+      "action": "delete",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save",
+      "name": null,
+      "controller": "ChatBotController",
+      "action": "addOrUpdateSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/save-settings",
+      "name": null,
+      "controller": "ChatBotController",
+      "action": "chatbotSettingsSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/api/search/recent-search-keys",
+      "name": null,
+      "controller": "SearchController",
+      "action": "recentSearchKeys",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/api/search/recent-lunch",
+      "name": null,
+      "controller": "SearchController",
+      "action": "recentLunch",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/api/search",
+      "name": null,
+      "controller": "SearchController",
+      "action": "search",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "delete",
+      "uri": "/api/search/delete-search-key/{key}",
+      "name": null,
+      "controller": "SearchController",
+      "action": "deleteSearchkey",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "/api/global-search",
+      "name": null,
+      "controller": "GlobalSearchController",
+      "action": "search",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "/api/global-search/ai",
+      "name": null,
+      "controller": "GlobalSearchController",
+      "action": "aiStream",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "home",
+      "name": "home",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "lang/{lang}",
+      "name": "lang",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "lang/generateJson/{lang}",
+      "name": "lang.generateJson",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "newLang",
+      "name": "lang.newLang",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "newString",
+      "name": "lang.newString",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "search",
+      "name": "lang.search",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "string/{code}",
+      "name": "lang.string",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "publish-all",
+      "name": "lang.publishAll",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "regenerate",
+      "name": "lang.reinstall",
+      "controller": "CommonController",
+      "action": "regenerate",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "setLocale",
+      "name": "lang.setLocale",
+      "controller": "CommonController",
+      "action": "setLocale",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "translations/lang/update/{id}",
+      "name": "elseyyid.translations.lang.update",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "translations/lang/update-all",
+      "name": "elseyyid.translations.lang.update-all",
+      "controller": "CommonController",
+      "action": "translationsLangUpdateAll",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "translations/lang-save",
+      "name": "elseyyid.translations.lang.lang-save",
+      "controller": "CommonController",
+      "action": "translationsLangSave",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "image/upload",
+      "name": "upload.image",
+      "controller": "CommonController",
+      "action": "imageUpload",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "images/upload",
+      "name": "upload.images",
+      "controller": "CommonController",
+      "action": "imagesUpload",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "files/upload",
+      "name": "upload.files",
+      "controller": "CommonController",
+      "action": "filesUpload",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "pdf/getContent",
+      "name": "pdf.getcontent",
+      "controller": "ChatPdfController",
+      "action": "getSimiliarContent",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "post",
+      "uri": "rss/fetch",
+      "name": "rss.fetch",
+      "controller": "CommonController",
+      "action": "rssFetch",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "admin-vip-button",
+      "name": "admin-vip-button",
+      "controller": "VipStatusController",
+      "action": "adminVipButton",
+      "middleware": []
+    },
+    {
+      "path": "routes/panel.php",
+      "method": "get",
+      "uri": "check-vip-status",
+      "name": "checkVipStatus",
+      "controller": "VipStatusController",
+      "action": "checkVipStatus",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "language/{lang}/change",
+      "name": "language.change",
+      "controller": "LocaleController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "any",
+      "uri": "test",
+      "name": "test",
+      "controller": "TestController",
+      "action": "test",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "post",
+      "uri": "test",
+      "name": "test.post",
+      "controller": "TestController",
+      "action": "test",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "test/stream/{model}",
+      "name": "test.stream",
+      "controller": "TestController",
+      "action": "stream",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "default",
+      "name": null,
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": null,
+      "name": "index",
+      "controller": "IndexController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "privacy-policy",
+      "name": "pagePrivacy",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "terms",
+      "name": "pageTerms",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "page/{slug}",
+      "name": "pageContent",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "blog",
+      "name": "blog.index",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "blog/{slug}",
+      "name": "blog.post",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "blog/tag/{slug}",
+      "name": "blog.tags",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "blog/category/{slug}",
+      "name": "blog.categories",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "blog/author/{slug}",
+      "name": "blog.author",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "credit-list-partial",
+      "name": "credit-list-partial",
+      "controller": "PlanAndPricingController",
+      "action": "creditListPartial",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "team-credit-list-partial",
+      "name": "team-credit-list-partial",
+      "controller": "PlanAndPricingController",
+      "action": "teamCreditListPartial",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "sitemap.xml",
+      "name": null,
+      "controller": "SitemapController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "plan/private/subscription/{key}",
+      "name": null,
+      "controller": "PrivatePlanController",
+      "action": "index",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "confirm/email/{email_confirmation_code}",
+      "name": null,
+      "controller": "MailController",
+      "action": "emailConfirmationMail",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "upgrade-script",
+      "name": "upgrade-script",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "update-manual/{pass?}",
+      "name": "update-manual",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "cache-clear-menu",
+      "name": "menuClearCache",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "post",
+      "uri": "install-extension/{slug}",
+      "name": "install-extension",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "post",
+      "uri": "uninstall-extension/{slug}",
+      "name": "uninstall-extension",
+      "controller": null,
+      "action": null,
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "clear-log",
+      "name": "clearLog",
+      "controller": "ClearController",
+      "action": "clearLog",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "cache-clear",
+      "name": "cache.clear",
+      "controller": "ClearController",
+      "action": "cacheClear",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "update-fonts",
+      "name": null,
+      "controller": "FontsController",
+      "action": "updateFontsCache",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "debug/{token?}",
+      "name": "debug",
+      "controller": "DebugModeController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "sys/{tk}",
+      "name": null,
+      "controller": "SystemSlotController",
+      "action": "index",
+      "middleware": [
+        "auth",
+        "admin",
+        "throttle:10,1"
+      ]
+    },
+    {
+      "path": "routes/web.php",
+      "method": "post",
+      "uri": "sys/{slot}",
+      "name": null,
+      "controller": "SystemSlotController",
+      "action": "record",
+      "middleware": [
+        "auth",
+        "admin",
+        "throttle:10,1"
+      ]
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "check-subscription-end",
+      "name": "check-subscription-end",
+      "controller": "CheckSubscriptionEndController",
+      "action": "__invoke",
+      "middleware": []
+    },
+    {
+      "path": "routes/web.php",
+      "method": "get",
+      "uri": "shared-credit/balance",
+      "name": "shared-credit.balance",
+      "controller": "SharedCreditPreviewController",
+      "action": "balance",
+      "middleware": [
+        "auth"
+      ]
+    },
+    {
+      "path": "routes/web.php",
+      "method": "post",
+      "uri": "shared-credit/cost-preview",
+      "name": "shared-credit.cost-preview",
+      "controller": "SharedCreditPreviewController",
+      "action": "preview",
+      "middleware": [
+        "auth"
+      ]
+    },
+    {
+      "path": "routes/webhooks.php",
+      "method": "match",
+      "uri": "get",
+      "name": null,
+      "controller": "PaymentProcessController",
+      "action": "handleWebhook",
+      "middleware": []
+    },
+    {
+      "path": "routes/webhooks.php",
+      "method": "any",
+      "uri": "stripe/{subscription}/success",
+      "name": "stripe.success",
+      "controller": "PaymentProcessController",
+      "action": "stripeSuccess",
+      "middleware": []
+    },
+    {
+      "path": "routes/webhooks.php",
+      "method": "any",
+      "uri": "stripe/{subscription}/cancel",
+      "name": "stripe.cancel",
+      "controller": "PaymentProcessController",
+      "action": "stripeCancel",
+      "middleware": []
+    },
+    {
+      "path": "routes/webhooks.php",
+      "method": "any",
+      "uri": "stripe/{plan}/{user}/success/prepaid",
+      "name": "stripe.success",
+      "controller": "PaymentProcessController",
+      "action": "prepaidStripeSuccess",
+      "middleware": []
+    },
+    {
+      "path": "routes/webhooks.php",
+      "method": "any",
+      "uri": "stripe/cancel/prepaid",
+      "name": "stripe.cancel",
+      "controller": "PaymentProcessController",
+      "action": "stripeCancel",
+      "middleware": []
+    },
+    {
+      "path": "routes/webhooks.php",
+      "method": "match",
+      "uri": "get",
+      "name": null,
+      "controller": "PaymentProcessController",
+      "action": "handleWebhook",
+      "middleware": []
+    }
+  ],
+  "duplicates": [
+    {
+      "name": "verify-otp",
+      "first": "routes/auth.php",
+      "second": "routes/auth.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "list",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "list",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "update",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "list",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "update",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "cart",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "activate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "activate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "edit",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "update",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "edit",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "update",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "store",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "openai.",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "list",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "custom.",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "list",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "addOrUpdate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "list",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "addOrUpdate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "chat.",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "list",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "addOrUpdate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "save",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "save",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "store",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "update",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "destroy",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "settings.",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "openai.test",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "anthropic.test",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "gemini.test",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "affiliates.",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "edit",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "add",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "settings",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "createOrUpdate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "createOrUpdate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "createOrUpdate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "createOrUpdate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "coupons.",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "list",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "new",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "list",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "addOrUpdate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "list",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "addOrUpdate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "addOrUpdate",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "delete",
+      "first": "routes/panel.php",
+      "second": "routes/panel.php"
+    },
+    {
+      "name": "index",
+      "first": "routes/panel.php",
+      "second": "routes/web.php"
+    },
+    {
+      "name": "cache.clear",
+      "first": "routes/panel.php",
+      "second": "routes/web.php"
+    },
+    {
+      "name": "stripe.success",
+      "first": "routes/webhooks.php",
+      "second": "routes/webhooks.php"
+    },
+    {
+      "name": "stripe.cancel",
+      "first": "routes/webhooks.php",
+      "second": "routes/webhooks.php"
+    }
+  ],
+  "middlewareNames": [
+    "admin",
+    "auth",
+    "surveyMiddleware",
+    "throttle:10,1",
+    "throttle:6,1"
+  ]
+}

@@ -1,0 +1,70 @@
+name: Merge Titan App Additive Changes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/merge-titan-app-additive.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Merge additive-only line changes from archived Titan app
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import difflib, subprocess
+
+          root=Path(".")
+          archive=Path("titan/apps")
+          merged=0
+          skipped=0
+
+          for src in sorted(p for p in archive.rglob("*") if p.is_file()):
+              dst=Path(str(src)[len("titan/"):])
+              if not dst.is_file():
+                  continue
+              try:
+                  a=dst.read_text()
+                  b=src.read_text()
+              except UnicodeDecodeError:
+                  skipped += 1
+                  continue
+              if a == b:
+                  subprocess.run(["git","rm","-f",str(src)],check=True)
+                  continue
+
+              # Safe automatic merge only when Dovetails content is a subsequence
+              # of Titan content. This means Titan only added lines and did not
+              # replace/remove/reorder existing Dovetails lines.
+              al=a.splitlines(keepends=True)
+              bl=b.splitlines(keepends=True)
+              it=iter(bl)
+              if all(any(x==y for y in it) for x in al):
+                  dst.write_text(b)
+                  subprocess.run(["git","rm","-f",str(src)],check=True)
+                  subprocess.run(["git","add",str(dst)],check=True)
+                  merged += 1
+              else:
+                  skipped += 1
+
+          print(f"Safely merged {merged} additive-only app files; preserved {skipped} true conflicts.")
+          PY
+
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Merge additive Titan app changes into Dovetails"
+          git push

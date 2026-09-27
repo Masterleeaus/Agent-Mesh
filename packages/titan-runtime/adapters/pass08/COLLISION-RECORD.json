@@ -1,0 +1,11 @@
+{
+  "schema": "titan-zero-collision-record/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 8,
+  "frozen_base_merge": 39,
+  "live_manager_merge": 42,
+  "collision": "NONE",
+  "manager_phase2_slimming_runtime_guard": "retriever-background.iife.js retained until Runtime Adapters Manager merge",
+  "adapter_path_overlap": false,
+  "shared_hotspots_touched": []
+}

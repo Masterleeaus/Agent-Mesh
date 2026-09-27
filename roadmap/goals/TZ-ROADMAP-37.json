@@ -1,0 +1,1139 @@
+{
+  "goal_id": "TZ-ROADMAP-37",
+  "priority": "P2",
+  "title": "Plugin Auto-Sync, Versioning & Compatibility Pipeline",
+  "objective": "Make external AI/plugin ecosystems generated release outputs of canonical Titan Zero rather than separate development streams.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define titanCoreVersion/capabilityRegistryVersion/agentRuntimeVersion/verticalManifestVersion/schemaVersion/mcpVersion compatibility manifest",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-37-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Code CANONICAL",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "manifest.json",
+              "source-manifest.json",
+              "tools/generate-source-manifest.mjs",
+              "src/lib/capability-registry.js"
+            ],
+            "finding": "Titan Code already has versioned package metadata and a deterministic SHA-256 per-file source manifest, but not the requested cross-product compatibility version tuple."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Http/Transport/McpTransportController.php"
+            ],
+            "finding": "Titan MCP carries package version and protocol version independently."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Publishing/VersionedPublisher.php"
+            ],
+            "finding": "Builder has package and publish-snapshot versions."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "extension.manifest.json",
+              "System/Validation/Validators/GenerationManifestValidator.php"
+            ],
+            "finding": "Forge has package/generation manifest versions."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Code CANONICAL",
+          "Titan MCP",
+          "Titan Builder",
+          "Titan Forge"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "No single manifest currently binds titanCoreVersion, capabilityRegistryVersion, agentRuntimeVersion, verticalManifestVersion, schemaVersion and mcpVersion. Create one canonical machine-readable compatibility contract rather than copying versions into each surface.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 2,
+      "title": "Implement changed-package and changed-capability detection on canonical merge",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-37-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Code CANONICAL",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "source-manifest.json",
+              "tools/generate-source-manifest.mjs",
+              "src/titan-zero/manager-delta-convergence.js"
+            ],
+            "finding": "Per-file SHA manifests and delta convergence gates provide deterministic change identity and base/hotspot/dependency checks."
+          },
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CURRENT_CANONICAL_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "CUMULATIVE-DELTA-MANIFEST.json",
+              "titan-runtime/compat-decomposition/pass03/PASS03-CHANGE-IMPACT.json",
+              "titan-runtime/compat-decomposition/pass10/CUMULATIVE-DELTA-MANIFEST.json"
+            ],
+            "finding": "Canonical history already records delta manifests and change-impact evidence."
+          },
+          {
+            "source_ref": "Titan Zero Artifact Registry",
+            "file_id": "file_000000001b0081faa8aabab4e5746dfd",
+            "library_path": "/Titan Zero/Agent Mesh Manager/REGISTRY/ARTIFACT-REGISTRY.json",
+            "verification": "LIVE_CONTENT_ADDRESSED_REGISTRY_READ_V30",
+            "finding": "Content-addressed registry tracks SHA, parents, state and physical locations, enabling reliable before/after artifact comparison."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Code CANONICAL",
+          "Titan Zero CURRENT Merge80",
+          "Titan Zero Artifact Registry"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Implement automatic changed-package and changed-capability detection by diffing canonical source/capability manifests at promotion time. Existing ingredients are present but no unified detector drives downstream regeneration.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Regenerate schemas, MCP catalogue, vertical manifests, clients and plugin metadata automatically",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-37-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/AI/SandboxedAiArtifactGenerator.php",
+              "System/Validation/Validators/GenerationManifestValidator.php",
+              "System/Governance/ReleaseGovernanceService.php"
+            ],
+            "finding": "Forge can generate and verify governed artifacts."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Publishing/VersionedPublisher.php",
+              "System/Mobile/JsonMobileApplicationDefinitionPublisher.php",
+              "System/Release/BuilderPackageManifestValidator.php"
+            ],
+            "finding": "Builder can emit versioned UI/mobile definitions."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Mcp/Support/McpCatalogue.php",
+              "extension.manifest.json"
+            ],
+            "finding": "MCP catalogue/metadata currently exists as a local source and should become generated from canonical definitions."
+          },
+          {
+            "source_ref": "Titan Code CANONICAL",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tools/generate-source-manifest.mjs"
+            ],
+            "finding": "Deterministic generation infrastructure exists for source manifests."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Forge",
+          "Titan Builder",
+          "Titan MCP",
+          "Titan Code CANONICAL"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Wire existing generators/publishers into one post-merge regeneration graph for schemas, MCP catalogue, vertical manifests, clients and plugin metadata. Do not hand-copy changed contracts.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Implement startup compatibility negotiation and compatibility-adapter selection",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-37-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CURRENT_CANONICAL_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "titan-runtime/compat-decomposition/compat-bootstrap.mjs",
+              "titan-runtime/compat-decomposition/pass03/EQUIVALENCE-MAP.json",
+              "packages/titan-zero-migration-source/contracts-and-specs/titan-runtime/adapters/pass10/RUNTIME-ADAPTER-PROTOCOL-v1.md"
+            ],
+            "finding": "Canonical runtime already has lazy compatibility bootstrap and typed major/minor adapter negotiation; incompatible majors fail closed and capabilities are intersected."
+          },
+          {
+            "source_ref": "Titan MCP",
+            "file_id": "file_000000008dfc81f6b514059607f61f97",
+            "library_path": "/MASTER Software/Masters/Platform/Titan MCP/Titan MCP Master v1.5.14.zip",
+            "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Http/Transport/McpTransportController.php"
+            ],
+            "finding": "MCP initialize negotiates a protocol version and exposes server capabilities."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan MCP"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Generalise existing runtime/MCP negotiation into startup compatibility negotiation for core/capability/agent/vertical/schema/MCP versions and deterministic adapter selection. Discovery never grants authority.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Implement v1/v2 contract coexistence, migrations, deprecation warnings and adapter tests",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-37-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CURRENT_CANONICAL_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/contracts-and-specs/titan-runtime/adapters/pass10/MIGRATION-GUIDE.md",
+              "packages/titan-zero-migration-source/contracts-and-specs/titan-runtime/adapters/pass10/RUNTIME-ADAPTER-PROTOCOL-v1.md",
+              "packages/titan-platform/src/ported/titan-runtime/adapters/legacy-dom-discovery.ts",
+              "titan-runtime/compat-decomposition/pass03/EQUIVALENCE-MAP.json"
+            ],
+            "finding": "Canonical runtime already preserves typed-vs-legacy coexistence, deprecation telemetry, equivalence evidence and migration ordering."
+          },
+          {
+            "source_ref": "Titan Code CANONICAL",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "src/repository/migration-guard.js",
+              "src/titan-zero/titan-zero-migration-analyzer.js",
+              "tests/test-legacy-plan-migration-hold.js",
+              "tests/test-future-state-version-guard.js"
+            ],
+            "finding": "Titan Code has migration risk guards and legacy/future-version tests."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Code CANONICAL"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Reuse the proven coexistence/deprecation model for all compatibility contracts. Add versioned adapter tests and deterministic retirement gates before removing v1 paths.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 6,
+      "title": "Build host/vertical impact reports and deployment eligibility reports",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-37-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CURRENT_CANONICAL_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "titan-runtime/compat-decomposition/pass03/PASS03-CHANGE-IMPACT.json",
+              "titan-runtime/compat-decomposition/pass10/PASS10-RECONSTRUCTION-CLOSURE.json",
+              "TITAN-CONVERGENCE-PASS-23-MANIFEST.json"
+            ],
+            "finding": "Canonical work already emits change-impact and reconstruction evidence."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domain/ReleaseGateResult.php",
+              "System/Governance/ReleaseGovernanceService.php"
+            ],
+            "finding": "Forge has release-gate semantics for generated artifacts."
+          },
+          {
+            "source_ref": "Titan Zero Sync State",
+            "file_id": "file_000000008be881faa7ef442d90f43c36",
+            "library_path": "/Titan Zero/Agent Mesh Manager/REGISTRY/SYNC-STATE.json",
+            "verification": "LIVE_CONTROL_PLANE_SYNC_STATE_READ_V25",
+            "finding": "Control-plane sync state already reports authoritative state, invariant health, remaining/blocking work and cleanup eligibility."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Forge",
+          "Titan Zero Sync State"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Build a generated host/vertical impact graph and deployment-eligibility report from changed capabilities + compatibility ranges + target profiles. Existing impact files are pass-local, not ecosystem-wide.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Automate plugin/package rebuild only where host/platform requires publication",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-37-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Code CANONICAL",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "source-manifest.json",
+              "tools/generate-source-manifest.mjs"
+            ],
+            "finding": "Content hashes can identify whether a projection actually changed."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domain/ReleaseCandidate.php",
+              "System/Governance/ReleaseGovernanceService.php"
+            ],
+            "finding": "Forge supports release candidate/gate behavior."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Publishing/VersionedPublisher.php"
+            ],
+            "finding": "Builder creates a new publish version only through explicit governed publishing."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Code CANONICAL",
+          "Titan Forge",
+          "Titan Builder"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Use output-content hashes plus host publication policy to rebuild/publish only affected packages. Rebuild is not required when host consumes canonical runtime contracts dynamically and generated bytes are unchanged.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 8,
+      "title": "Add rollback, partial-deploy and failed-generation recovery semantics",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-37-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero Canonical Promotion Policy",
+            "file_id": "file_000000000fa081fa9e4b772a1202c5e1",
+            "library_path": "/Titan Zero/Agent Mesh Manager/Manager/CANONICAL-PROMOTION-POLICY.json",
+            "verification": "ACTIVE_CONTROL_PLANE_POLICY_READ",
+            "finding": "Canonical promotion already fails closed, retains candidate/evidence, keeps immediate rollback, and updates CURRENT only after verified three-copy closure."
+          },
+          {
+            "source_ref": "Titan Zero Artifact Registry",
+            "file_id": "file_000000001b0081faa8aabab4e5746dfd",
+            "library_path": "/Titan Zero/Agent Mesh Manager/REGISTRY/ARTIFACT-REGISTRY.json",
+            "verification": "LIVE_CONTENT_ADDRESSED_REGISTRY_READ_V30",
+            "finding": "Artifact registry preserves parent lineage, merge-pending/canonical/rollback states and retrievable locations."
+          },
+          {
+            "source_ref": "Titan Forge",
+            "file_id": "file_00000000070881fa8dad5d2e5e480244",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Forge/Titan Forge Master v0.9.0-alpha.9.zip",
+            "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domain/ReleaseCandidate.php",
+              "System/Governance/ReleaseGovernanceService.php"
+            ],
+            "finding": "Forge keeps generated work as gated candidates before release."
+          },
+          {
+            "source_ref": "Titan Builder",
+            "file_id": "file_0000000050d481fab8f109179d5d8efd",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Builder/Titan Builder Master v0.10.2.zip",
+            "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Publishing/VersionedPublisher.php",
+              "resources/builder/actions/builder-rollback.json"
+            ],
+            "finding": "Builder supports versioned snapshots and governed rollback."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero Canonical Promotion Policy",
+          "Titan Zero Artifact Registry",
+          "Titan Forge",
+          "Titan Builder"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Compose existing candidate/rollback semantics into auto-sync transaction recovery: partial deploy must retain per-output receipts, allow safe retry/rollback, and never advance compatibility/current pointers on incomplete generation.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Prove a canonical capability change propagates without manual copying across all supported surfaces",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-37-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero CURRENT Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "CURRENT_CANONICAL_PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-capabilities/capability-registry.ts"
+            ],
+            "finding": "Canonical TypeScript capability registry is the source whose changes must propagate."
+          },
+          {
+            "source_ref": "Titan Code CANONICAL",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "source-manifest.json",
+              "src/lib/capability-registry.js"
+            ],
+            "finding": "Manifest/diff infrastructure can detect source/capability change."
+          },
+          {
+            "source_ref": "Titan Zero Sync State",
+            "file_id": "file_000000008be881faa7ef442d90f43c36",
+            "library_path": "/Titan Zero/Agent Mesh Manager/REGISTRY/SYNC-STATE.json",
+            "verification": "LIVE_CONTROL_PLANE_SYNC_STATE_READ_V25",
+            "finding": "Control plane already verifies canonical/reference-library synchronization, but not generated host-surface parity."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero CURRENT Merge80",
+          "Titan Code CANONICAL",
+          "Titan Zero Sync State"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "No end-to-end proof currently shows one canonical capability edit regenerating MCP, Chrome, PWA, Flutter/mobile and vertical/plugin outputs without manual copying. Add a golden propagation test with output hashes and zero-hand-edit assertion.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Certify auto-sync pipeline and publish machine-readable compatibility manifest",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P2",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-37-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P2",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero Artifact Registry",
+            "file_id": "file_000000001b0081faa8aabab4e5746dfd",
+            "library_path": "/Titan Zero/Agent Mesh Manager/REGISTRY/ARTIFACT-REGISTRY.json",
+            "verification": "LIVE_CONTENT_ADDRESSED_REGISTRY_READ_V30",
+            "finding": "Content-addressed artifact receipts and lineage can hold auto-sync outputs and compatibility manifest versions."
+          },
+          {
+            "source_ref": "Titan Zero Sync State",
+            "file_id": "file_000000008be881faa7ef442d90f43c36",
+            "library_path": "/Titan Zero/Agent Mesh Manager/REGISTRY/SYNC-STATE.json",
+            "verification": "LIVE_CONTROL_PLANE_SYNC_STATE_READ_V25",
+            "finding": "Machine-readable sync health exists for control-plane state and can become one certification input."
+          },
+          {
+            "source_ref": "Titan Zero Canonical Promotion Policy",
+            "file_id": "file_000000000fa081fa9e4b772a1202c5e1",
+            "library_path": "/Titan Zero/Agent Mesh Manager/Manager/CANONICAL-PROMOTION-POLICY.json",
+            "verification": "ACTIVE_CONTROL_PLANE_POLICY_READ",
+            "finding": "Canonical promotion policy provides the fail-closed closure pattern for publishing the compatibility manifest."
+          },
+          {
+            "source_ref": "Titan Code CANONICAL",
+            "file_id": "file_00000000374881fab26bc588c19df0f9",
+            "library_path": "/Titan Zero/Studio/System Development Workspace/Titan-Code-CANONICAL.zip",
+            "sha256": "2615227bbdf082a8ddd9cc1cbd52d3aae8cb35ae6a10c9b9353e30d1dab966fe",
+            "verification": "PHYSICALLY_RETRIEVED_SHA256_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "source-manifest.json"
+            ],
+            "finding": "Stable source hashes provide reproducible certification evidence."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero Artifact Registry",
+          "Titan Zero Sync State",
+          "Titan Zero Canonical Promotion Policy",
+          "Titan Code CANONICAL"
+        ],
+        "last_scanned_at_utc": "2026-09-20T05:42:00+10:00",
+        "scan_notes": "Publish one machine-readable compatibility manifest only after propagation, adapter, regeneration, rollback and multi-surface tests pass. The manifest should reference exact canonical SHA, registry versions, supported ranges, generated artifact SHAs and certification receipts.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "release",
+    "compatibility",
+    "plugins",
+    "ci-cd"
+  ],
+  "preferred_predecessors": [
+    "TZ-ROADMAP-31",
+    "TZ-ROADMAP-33",
+    "TZ-ROADMAP-36"
+  ],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "unified_architecture_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [],
+  "reuse_first": true,
+  "agent_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENTS",
+  "agent_goal_rule": "This goal is platform/runtime/interface/infrastructure work. Do not create a workforce identity for the technology itself. Existing canonical agents may consume its capabilities.",
+  "workforce_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENT_IDENTITY",
+  "workforce_goal_rule": "Shared platform/runtime infrastructure may be consumed by agents but must not create an agent merely to mirror a technology, runtime, engine, SDK, protocol, deployment target or UI."
+}

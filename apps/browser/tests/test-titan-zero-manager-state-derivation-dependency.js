@@ -1,0 +1,72 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm'),path=require('path');
+const root=path.resolve(__dirname,'..');const s={console};s.globalThis=s;vm.createContext(s);
+const load=r=>vm.runInContext(fs.readFileSync(path.join(root,r),'utf8'),s,{filename:r});
+[
+'manager-lifecycle','manager-eligibility','manager-live-state','manager-state-derivation','manager-dependency-engine','manager-queue-state','manager-restart-reconstruction'
+].forEach(n=>load(`src/titan-zero/${n}.js`));
+const L=s.TitanZeroManagerLifecycle,S=s.TitanZeroManagerStateDerivation,D=s.TitanZeroManagerDependencyEngine,Q=s.TitanZeroManagerQueueState,R=s.TitanZeroManagerRestartReconstruction;
+assert(L&&S&&D&&Q&&R,'new manager state modules must exist');
+assert.strictEqual(L.get({status:'DONE'}),'MERGED');
+assert.strictEqual(L.get({state:'MERGED'}),'MERGED');
+assert.strictEqual(L.get({status:'PROMOTED'}),'PROMOTED');
+assert.strictEqual(L.get({state:'ACTIVE',status:'DONE'}),'ACTIVE','canonical state wins conflicts');
+assert.strictEqual(L.get({status:'ACTIVE'}),'ACTIVE');
+assert.strictEqual(L.dependencySatisfied({status:'DONE'}),true);
+assert.strictEqual(L.dependencySatisfied({state:'MERGED'}),true);
+assert.strictEqual(L.dependencySatisfied({status:'PROMOTED'}),true);
+for(const x of ['CONVERGENCE_PENDING','ACTIVE','CLAIMED','VERIFYING']) assert.strictEqual(L.dependencySatisfied({status:x}),false,x+' must not satisfy hard dependencies');
+
+const lifecyclePackets=[
+ {packet_id:'LEGACY',status:'DONE'},
+ {packet_id:'MERGED',state:'MERGED'},
+ {packet_id:'PROMOTED',status:'PROMOTED'},
+ {packet_id:'PENDING',status:'CONVERGENCE_PENDING'},
+ {packet_id:'WAIT_LEGACY',state:'AVAILABLE',dependencies:['LEGACY'],priority:'P0',owner_lane:'Agent 1'},
+ {packet_id:'WAIT_MERGED',status:'AVAILABLE',dependencies:['MERGED'],priority:'P0',owner_lane:'Agent 1'},
+ {packet_id:'WAIT_PROMOTED',status:'AVAILABLE',dependencies:['PROMOTED'],priority:'P0',owner_lane:'Agent 1'},
+ {packet_id:'WAIT_PENDING',status:'AVAILABLE',dependencies:['PENDING'],priority:'P0',owner_lane:'Agent 1'},
+ {packet_id:'STATE_ONLY',state:'AVAILABLE',priority:'P1',owner_lane:'Agent 2'},
+ {packet_id:'STATUS_ONLY',status:'AVAILABLE',priority:'P1',owner_lane:'Agent 2'}
+];
+const lifeDep=D.derive(lifecyclePackets,{});
+assert.deepStrictEqual(Array.from(lifeDep.completedPackets),['LEGACY','MERGED','PROMOTED']);
+assert.strictEqual(lifeDep.byPacket.WAIT_LEGACY.eligible,true);
+assert.strictEqual(lifeDep.byPacket.WAIT_MERGED.eligible,true);
+assert.strictEqual(lifeDep.byPacket.WAIT_PROMOTED.eligible,true);
+assert.strictEqual(lifeDep.byPacket.WAIT_PENDING.eligible,false);
+const lifeQ=Q.project({packets:lifecyclePackets,claims:[],dependencyState:lifeDep});
+assert(lifeQ.eligible.includes('STATE_ONLY'));
+assert(lifeQ.eligible.includes('STATUS_ONLY'));
+
+const packets=[
+ {packet_id:'A',status:'DONE'},
+ {packet_id:'B',status:'AVAILABLE',dependencies:['A'],priority:'P0',owner_lane:'Agent 1'},
+ {packet_id:'C',status:'AVAILABLE',dependencies:['MISSING'],priority:'P1',owner_lane:'Agent 1'},
+ {packet_id:'D',status:'AVAILABLE',priority:'P2',owner_lane:'Agent 2',exclusive_hotspots:['bridge']}
+];
+const dep=D.derive(packets,{activeClaims:[{agent:'Agent 2',packet:'Z',lane:'bridge_only',status:'ACTIVE',exclusive_hotspots:['bridge']} ]});
+assert.deepStrictEqual(Array.from(dep.completedPackets),['A']);
+assert.strictEqual(dep.byPacket.B.eligible,true);
+assert.strictEqual(dep.byPacket.C.eligible,false);
+assert(dep.byPacket.C.blockers.includes('dependency:MISSING'));
+assert.strictEqual(dep.byPacket.D.eligible,false);
+assert(dep.byPacket.D.blockers.includes('exclusive-hotspot:bridge'));
+const q=Q.project({packets,claims:[{agent:'Agent 1',packet:'B',status:'ACTIVE'}],dependencyState:dep});
+assert.strictEqual(q.counts.active,1);
+assert.strictEqual(q.counts.availableEligible,1);
+assert.strictEqual(q.nextByLane['Agent 1'].packet_id,'B');
+const consistentPackets=packets.map(p=>p.packet_id==='B'?{...p,status:'ACTIVE'}:p);
+const st=S.derive({packets:consistentPackets,claims:[{agent:'Agent 1',packet:'B',status:'ACTIVE'}],agents:[{workspace:'Agent 1',status:'ACTIVE',current_work_packet:'B'}],deltas:[{packet_id:'X',status:'READY'}],handoffs:[{packet_id:'X',result:'READY_FOR_COORDINATOR_REVIEW'}],verification:[{packet_id:'X',result:'VERIFIED_LOCAL_LANE'}]});
+assert.strictEqual(st.status,'CONSISTENT');
+assert.strictEqual(st.activeClaims.length,1);
+assert.strictEqual(st.convergencePending.length,1);
+assert.strictEqual(st.queue.counts.pendingConvergence,1);
+const stale=S.derive({packets:[{packet_id:'B',status:'AVAILABLE'}],claims:[{agent:'Agent 1',packet:'B',status:'ACTIVE'}],agents:[{workspace:'Agent 1',status:'ACTIVE',current_work_packet:'B'}]});
+assert.strictEqual(stale.status,'STATE_DRIFT_DETECTED');
+assert(stale.drift.some(x=>x.code==='packet-claims-state-drift'));
+const snap=R.snapshot(st);const restored=R.restore(snap);
+assert.strictEqual(restored.schema,'titan-zero.manager.derived-state.v2');
+assert.strictEqual(restored.restart.reconstructed,true);
+assert.strictEqual(restored.restart.integrityVerified,true);
+assert.throws(()=>R.restore({...snap,checksum:'0'.repeat(64)}));
+console.log('PASS test-titan-zero-manager-state-derivation-dependency');

@@ -1,0 +1,22 @@
+{
+  "schema": "titan-zero-capability-ownership/v1",
+  "roles": {
+    "MANAGER": [
+      "canonical promotion",
+      "conflict resolution",
+      "task routing"
+    ],
+    "BUILDER": [
+      "bounded implementation"
+    ],
+    "AUDITOR": [
+      "adversarial defect search"
+    ],
+    "INTEGRATOR": [
+      "semantic forward-port and collision merge"
+    ],
+    "VERIFIER": [
+      "acceptance evidence certification"
+    ]
+  }
+}

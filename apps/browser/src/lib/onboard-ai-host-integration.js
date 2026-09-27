@@ -1,0 +1,7 @@
+(function attachCodeeOnboardAIHostIntegration(global){
+'use strict';
+const CAPABILITY=Object.freeze({id:'ai.gateway.status',title:'AI Provider Gateway Status',pack:'codee-onboard-ai',readOnly:true,operationClass:'READ',risk:'low',inputSchema:{type:'object',properties:{},additionalProperties:false},outputSchema:{type:'object'},authority:{mayAdvancePlan:false,mayMutateRepository:false,mayGrantBrowserPermission:false,mayVerifyArtifact:false}});
+function register(){if(!global.CodeeCapabilityRegistry)throw new Error('Codee capability registry unavailable');global.CodeeCapabilityRegistry.registerCapability(CAPABILITY);global.CodeeCapabilityRegistry.registerDiagnosticsSection({id:'onboard-ai',title:'Onboard AI',pack:'codee-onboard-ai',priority:72});return Object.freeze({registered:true,capabilities:1,providers:global.CodeeAIProviderRegistry?.list?.().length||0});}
+function status(){const base=global.CodeeProviderGateway?.status?.()||{gatewayInstalled:false,providers:0,models:0,inferenceReady:false};return Object.freeze({...base,contract:'codee.ai.request.v1/codee.ai.response.v1',providerRegistry:Boolean(global.CodeeAIProviderRegistry),modelRegistry:Boolean(global.CodeeAIModelRegistry),audit:global.CodeeAIAuditLedger?.status?.()||{entries:0,bounded:true,persistent:false},authority:{mayAdvancePlan:false,mayExecuteMutation:false,mayGrantBrowserPermission:false}});}
+global.CodeeOnboardAIHostIntegration=Object.freeze({register,status});
+})(typeof globalThis!=='undefined'?globalThis:this);

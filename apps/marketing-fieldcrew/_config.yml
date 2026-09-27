@@ -1,0 +1,33 @@
+title: "Titan Zero"
+description: "Managed Advanced Intelligence workforce for service businesses, integrated with the systems they already use."
+url: "https://titanzero.io"
+baseurl: ""
+theme: minima
+
+author: "Titan Zero"
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+feed:
+  path: feed.xml
+
+# All posts served at /blog/slug/
+permalink: /blog/:slug/
+
+social:
+  name: Titan Zero
+  links:
+    - https://titanzero.io
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - wrangler.toml
+
+include:
+  - _redirects
+  - _headers

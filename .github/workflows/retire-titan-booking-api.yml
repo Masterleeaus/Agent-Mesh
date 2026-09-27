@@ -1,0 +1,25 @@
+name: Retire Superseded Titan Booking API
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-titan-booking-api.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          # Canonical booking route establishes tenant/RLS context before public-form writes.
+          # Canonical booking unit test explicitly covers that extra set_config query.
+          git rm -f             'titan/apps/web/app/api/booking/route.ts'             'titan/apps/web/app/api/booking/__tests__/booking.unit.test.ts'
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Retire superseded Titan booking API"
+          git push

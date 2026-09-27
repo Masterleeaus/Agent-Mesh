@@ -1,0 +1,50 @@
+{
+  "schema": "titan-zero-manager-handoff/v2",
+  "builder": "Builder 3",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "title": "Typed Runtime Adapter & Retriever Integration Stabilization",
+  "status": "READY_FOR_MANAGER_MERGE",
+  "formal_passes_complete": 10,
+  "frozen_base": {
+    "merge": 39,
+    "artifact": "Titan-Zero-CANONICAL-MASTER-2026-09-08-MERGE-39-CHROME-REPAIR10-CONVERGED.zip",
+    "sha256": "c5c5bc321913dfd9f2d56847c43fa9cad3652907be94f163cbeacef9672c23c7"
+  },
+  "live_manager_observed": {
+    "merge": 42,
+    "artifact": "Titan-Zero-CANONICAL-MASTER-2026-09-09-MERGE-42-PERMISSION-HARDENING-CONVERGED.zip",
+    "sha256": "1c4b6f471ba16f44d7b27db546ba41db18032ce9967b1d725dc0926cd73cc930"
+  },
+  "convergence": {
+    "recommended_class": "CLEAN_ADDITIVE_FORWARD_PORT",
+    "shared_hotspots_touched": [],
+    "protected_retriever_bridge_modified": false,
+    "production_coordination_envelope": "STRIP Agent Mesh/ before production merge"
+  },
+  "capabilities": {
+    "typed_protocol": true,
+    "version_negotiation": true,
+    "capability_negotiation": true,
+    "external_authority_gate": true,
+    "retriever_compatibility_adapter": true,
+    "legacy_dom_fallback": true,
+    "fallback_deprecation_telemetry": true,
+    "typed_lifecycle": true,
+    "timeout": true,
+    "cancellation": true,
+    "session_recovery": true,
+    "e2e_verification": true,
+    "donor_capability_parity_evidence": true
+  },
+  "boundaries": {
+    "company_boundary": "company_id",
+    "legacy_tenant_aliases_rejected": true,
+    "identity_is_authority": false,
+    "adapter_grants_authority": false
+  },
+  "slimming_gate": {
+    "retriever_background_retirement_authorized_by_builder": false,
+    "manager_phase3_gate_observed": true,
+    "required_after_merge": "fresh reachability/equivalence scan before retirement"
+  }
+}

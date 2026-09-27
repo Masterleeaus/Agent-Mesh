@@ -1,0 +1,13 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const ctx={globalThis:{}};vm.createContext(ctx);
+vm.runInContext(fs.readFileSync('src/titan-zero/manager-github-state.js','utf8'),ctx);
+const G=ctx.globalThis.TitanCodeManagerGitHubState;
+assert(G,'GitHub state projection installed');
+const a='a'.repeat(40),b='b'.repeat(40);
+let s=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:a,baseSha:a,headSha:a,branch:'agent/SG722',claimBranchExists:true});
+assert.strictEqual(s.state,'CLAIMED');assert.strictEqual(s.authority.claim,'git-branch-ref');
+s=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:b,baseSha:a,headSha:b,branch:'agent/SG722',claimBranchExists:true,pr:{number:800,state:'OPEN'},checks:[{required:true,status:'SUCCESS'}]});
+assert.strictEqual(s.state,'READY');assert.strictEqual(s.git.behindMain,true);
+s=G.derive({issue:{number:722,subgoal_id:'SG722',state:'CLOSED'},mainSha:b,baseSha:a,headSha:b,branch:'agent/SG722',pr:{number:800,state:'CLOSED',merged:true},checks:[{required:true,status:'SUCCESS'}]});
+assert.strictEqual(s.state,'COMPLETED');assert.strictEqual(s.authority.baseline,'git-main-sha');
+console.log('manager GitHub state projection: ok');

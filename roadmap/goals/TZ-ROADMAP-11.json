@@ -1,0 +1,1271 @@
+{
+  "goal_id": "TZ-ROADMAP-11",
+  "priority": "P1",
+  "title": "Communications & Channels",
+  "objective": "Unify SMS/email/voice/chat/social channels under governed conversational automation.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "title": "Inventory channel adapters and inbox",
+      "status": "TODO",
+      "subgoal_order": 1,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Connect",
+        "Titan Omnichannel",
+        "Titan Omni",
+        "Titan Omni Nano"
+      ],
+      "subgoal_id": "TZ-ROADMAP-11-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Providers/ProviderRegistry.php",
+              "System/Inbox/UnifiedInboxService.php",
+              "System/Models/ChannelConnection.php",
+              "System/Services/OperatorInboxService.php",
+              "System/Providers/WhatsAppProvider.php",
+              "System/Providers/SmsProvider.php",
+              "System/Providers/TelegramProvider.php",
+              "System/Providers/MessengerProvider.php",
+              "System/Providers/PushProvider.php",
+              "System/Providers/VoiceProvider.php"
+            ],
+            "finding": "Connect already has the strongest company-scoped provider registry, connection model and unified inbox across external/internal communications."
+          },
+          {
+            "source_ref": "Titan Omnichannel",
+            "file_id": "file_00000000174c81fa8388d06b7eb7ca89",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Omnichannel/Titan Omnichannel Master v4.0.0-rc.4.zip",
+            "sha256": "37a7e38f2672fcf3d8733036a4064fa06b7a1f35fecc561db462c1a3aea98cf4",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Omnichannel/Services/ProviderRegistry.php",
+              "System/Omnichannel/Services/ExtendedChannelCatalog.php",
+              "System/Omnichannel/Services/UnifiedInboxPolicy.php",
+              "System/Omnichannel/Services/FieldServiceInbox.php",
+              "Tests/Pass20ExtendedChannelsProviderSdkTest.php"
+            ],
+            "finding": "Omnichannel contributes broader channel/catalog and field-service inbox behavior to inventory, but should not replace Connect's provider/inbox authority."
+          },
+          {
+            "source_ref": "Titan Omni donor extraction evidence",
+            "file_id": "file_00000000afcc81fa8225069fd5bddc62",
+            "library_path": "Titan-Omni-to-Titan-Connect-Deep-Scan.md",
+            "verification": "HISTORICAL_DONOR_DEEP_SCAN; ORIGINAL_MASTER_PATH_CURRENTLY_UNRESOLVED",
+            "finding": "Deep scan of 967-file Omni v4.5.0 bundle concluded generic channel runtime is weaker/duplicative versus Connect; selectively port communication preflight/compliance, Slack, WhatsApp templates, telephony provisioning/ConversationRelay, Gmail actions and optional Telegram group intelligence."
+          },
+          {
+            "source_ref": "Titan Omni Nano lineage",
+            "file_id": "file_00000000817481fdab04529df502bd1d",
+            "library_path": "LINEAGE-CONSOLIDATION-V0.1.44-to-V0.1.48.json",
+            "sha256": "9462dab015ee08bf917bb37ec9b4e26ee44232d4b60c3fc41f8ddd6b1a8e98e8",
+            "verification": "VERIFIED_LINEAGE_PROVENANCE; MASTER_PATH_CURRENTLY_UNRESOLVED",
+            "finding": "V0.1.48 is verified complete over v0.1.44–v0.1.48 with 55/55 payload byte matches and 78/78 tests; use as donor provenance, not active communication authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Connect",
+          "Titan Omnichannel",
+          "Titan Omni",
+          "Titan Omni Nano"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:07:54.551211Z",
+        "scan_notes": "Executable authority should converge around Titan Connect plus selected Omnichannel capabilities. Omni/Nano are donor/provenance only until their recorded master paths are physically restored.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Unify message/event schema",
+      "status": "TODO",
+      "subgoal_order": 2,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Connect",
+        "Titan Omnichannel",
+        "Titan Omni",
+        "Titan Omni Nano"
+      ],
+      "subgoal_id": "TZ-ROADMAP-11-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/DTO/NormalizedInboundMessage.php",
+              "System/DTO/NormalizedDeliveryReceipt.php",
+              "System/Models/ExternalMessage.php",
+              "System/Events/InboundMessageReceived.php",
+              "System/Events/ExternalMessageStatusChanged.php"
+            ],
+            "finding": "Connect already normalizes inbound messages, delivery receipts and message-status events into company-scoped canonical DTO/model/event shapes."
+          },
+          {
+            "source_ref": "Titan Omnichannel",
+            "file_id": "file_00000000174c81fa8388d06b7eb7ca89",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Omnichannel/Titan Omnichannel Master v4.0.0-rc.4.zip",
+            "sha256": "37a7e38f2672fcf3d8733036a4064fa06b7a1f35fecc561db462c1a3aea98cf4",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Omnichannel/ValueObjects/NormalizedInboundMessage.php",
+              "System/Omnichannel/ValueObjects/NormalizedRichInboundMessage.php",
+              "System/Omnichannel/ValueObjects/OutboundMessage.php",
+              "System/Omnichannel/ValueObjects/OutboundRichMessage.php",
+              "System/Omnichannel/Enums/MessageDirection.php",
+              "System/Omnichannel/Enums/DeliveryStatus.php",
+              "System/Omnichannel/Services/RichEventNormalizer.php"
+            ],
+            "finding": "Omnichannel contributes rich-content/channel event normalization. Converge these fields into Connect contracts rather than maintain parallel message/event schemas."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Connect",
+          "Titan Omnichannel"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:07:54.551211Z",
+        "scan_notes": "Primary gap is one cross-channel message/event envelope covering provider identity, company_id, thread/conversation, direction, delivery/read/failure state, attachments, agent/workforce provenance and trace IDs.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Harden consent/opt-out/quiet hours",
+      "status": "TODO",
+      "subgoal_order": 3,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Connect",
+        "Titan Omnichannel",
+        "Titan Omni",
+        "Titan Omni Nano"
+      ],
+      "subgoal_id": "TZ-ROADMAP-11-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Omnichannel",
+            "file_id": "file_00000000174c81fa8388d06b7eb7ca89",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Omnichannel/Titan Omnichannel Master v4.0.0-rc.4.zip",
+            "sha256": "37a7e38f2672fcf3d8733036a4064fa06b7a1f35fecc561db462c1a3aea98cf4",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Omnichannel/Services/ConsentAwareCommunicationPolicy.php",
+              "System/Omnichannel/Services/JourneyAutomationEngine.php",
+              "System/Omnichannel/Services/LifecycleEngagementEngine.php",
+              "database/migrations/2026_08_23_000005_messaging_convergence.php",
+              "Tests/Pass5MessagingConvergenceTest.php",
+              "Tests/Pass8CustomerJourneyAutomationTest.php"
+            ],
+            "finding": "Omnichannel explicitly models transactional/marketing permission, opted-out/do-not-call state, preferred channel and quiet-hour windows and exercises them in tests."
+          },
+          {
+            "source_ref": "Titan Omni donor extraction evidence",
+            "file_id": "file_00000000afcc81fa8225069fd5bddc62",
+            "library_path": "Titan-Omni-to-Titan-Connect-Deep-Scan.md",
+            "verification": "HISTORICAL_DONOR_DEEP_SCAN; ORIGINAL_MASTER_PATH_CURRENTLY_UNRESOLVED",
+            "finding": "Deep scan of 967-file Omni v4.5.0 bundle concluded generic channel runtime is weaker/duplicative versus Connect; selectively port communication preflight/compliance, Slack, WhatsApp templates, telephony provisioning/ConversationRelay, Gmail actions and optional Telegram group intelligence."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Omnichannel",
+          "Titan Omni"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:07:54.551211Z",
+        "scan_notes": "Use Omnichannel/Omni communication compliance only as a narrow preflight beneath Risk/Assurance/Autonomy; do not create a second governance engine. Persist consent purpose/evidence/expiry/revocation and suppression/quiet-hour reasons.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Implement provider-neutral outbound orchestration",
+      "status": "TODO",
+      "subgoal_order": 4,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Connect",
+        "Titan Omnichannel",
+        "Titan Omni",
+        "Titan Omni Nano"
+      ],
+      "subgoal_id": "TZ-ROADMAP-11-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-ACCESS-OMNICHANNEL-RESPONSE-SPC",
+          "TZAG-ACCESS-OUTBOUND-RESPONSE-WRK",
+          "TZAG-ACCESS-CUSTOMER-ACCESS-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-ACCESS-OMNICHANNEL-RESPONSE-SPC",
+          "TZAG-ACCESS-OUTBOUND-RESPONSE-WRK",
+          "TZAG-ACCESS-CUSTOMER-ACCESS-MGR"
+        ],
+        "canonical_agent_names": [
+          "Omnichannel Response Continuity Specialist",
+          "Outbound Response Execution Worker",
+          "Customer Access Outcome Manager"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-ACCESS-OMNICHANNEL-RESPONSE-SPC",
+            "TZAG-ACCESS-OUTBOUND-RESPONSE-WRK",
+            "TZAG-ACCESS-CUSTOMER-ACCESS-MGR"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Outbound orchestration extends existing omnichannel customer-access responsibility; provider adapters remain tools."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Contracts/MessagingProvider.php",
+              "System/Providers/ProviderRegistry.php",
+              "System/Delivery/OutboundDeliveryService.php",
+              "System/Http/Controllers/OutboundMessageController.php",
+              "System/Models/OutboundDelivery.php"
+            ],
+            "finding": "Connect already owns provider-neutral outbound orchestration with company scope, provider lookup, credential vault, idempotency, status lifecycle and retry."
+          },
+          {
+            "source_ref": "Titan Omnichannel",
+            "file_id": "file_00000000174c81fa8388d06b7eb7ca89",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Omnichannel/Titan Omnichannel Master v4.0.0-rc.4.zip",
+            "sha256": "37a7e38f2672fcf3d8733036a4064fa06b7a1f35fecc561db462c1a3aea98cf4",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Omnichannel/Contracts/MessagingProvider.php",
+              "System/Omnichannel/Contracts/EmailProvider.php",
+              "System/Omnichannel/Contracts/MobileMessagingProvider.php",
+              "System/Omnichannel/Services/ChannelCapabilityNegotiator.php",
+              "System/Omnichannel/Services/MessagingConvergence.php"
+            ],
+            "finding": "Omnichannel adds capability negotiation and richer channel contracts suitable for surgical convergence into Connect."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Connect",
+          "Titan Omnichannel",
+          "Titan Omni"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:07:54.551211Z",
+        "scan_notes": "Do not import Omni's generic sender/runtime wholesale. Extend Connect's canonical outbound lifecycle with PREPARED/AWAITING_APPROVAL, governance decision refs, Signal/Rewind receipts and cost/policy fields.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Implement inbound classification/routing",
+      "status": "TODO",
+      "subgoal_order": 5,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Connect",
+        "Titan Omnichannel",
+        "Titan Omni",
+        "Titan Omni Nano"
+      ],
+      "subgoal_id": "TZ-ROADMAP-11-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-ACCESS-INBOUND-CONTACT-CAPTURE-WRK",
+          "TZAG-ACCESS-ENQUIRY-ROUTING-SPC",
+          "TZAG-ACCESS-CUSTOMER-ACCESS-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-ACCESS-INBOUND-CONTACT-CAPTURE-WRK",
+          "TZAG-ACCESS-ENQUIRY-ROUTING-SPC",
+          "TZAG-ACCESS-CUSTOMER-ACCESS-MGR"
+        ],
+        "canonical_agent_names": [
+          "Inbound Contact Capture Worker",
+          "Enquiry Qualification & Routing Specialist",
+          "Customer Access Outcome Manager"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-ACCESS-INBOUND-CONTACT-CAPTURE-WRK",
+            "TZAG-ACCESS-ENQUIRY-ROUTING-SPC",
+            "TZAG-ACCESS-CUSTOMER-ACCESS-MGR"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Inbound classification/routing extends existing customer-access intake and routing agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Webhooks/InboundWebhookService.php",
+              "System/Jobs/ProcessInboundWebhookJob.php",
+              "System/DTO/NormalizedInboundMessage.php",
+              "System/Listeners/ForwardInboundToInteraction.php",
+              "System/Integration/EventInteractionMessagingBridge.php"
+            ],
+            "finding": "Connect verifies webhooks, normalizes provider payloads, persists events and forwards inbound work into the Interaction seam."
+          },
+          {
+            "source_ref": "Titan Omnichannel",
+            "file_id": "file_00000000174c81fa8388d06b7eb7ca89",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Omnichannel/Titan Omnichannel Master v4.0.0-rc.4.zip",
+            "sha256": "37a7e38f2672fcf3d8733036a4064fa06b7a1f35fecc561db462c1a3aea98cf4",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Omnichannel/Services/ConversationRouter.php",
+              "System/Omnichannel/Services/InboundCustomerOperationsPipeline.php",
+              "System/Omnichannel/Services/RuleBasedIntentClassifier.php",
+              "System/Omnichannel/Services/WorkforceAuthorityRouter.php",
+              "System/Omnichannel/Services/WebFormConversationMapper.php"
+            ],
+            "finding": "Omnichannel has reusable inbound classification, conversation routing and workforce-authority routing; these should feed canonical Interaction/Workforce rather than execute business mutations locally."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Connect",
+          "Titan Omnichannel"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:07:54.551211Z",
+        "scan_notes": "Inbound path exists; convergence should make classification/routing provider-neutral and preserve company_id, provider event ID, thread, agent/handoff state, evidence and correlation.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add unified inbox and agent handoff",
+      "status": "TODO",
+      "subgoal_order": 6,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Connect",
+        "Titan Omnichannel",
+        "Titan Omni",
+        "Titan Omni Nano"
+      ],
+      "subgoal_id": "TZ-ROADMAP-11-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-ACCESS-CUSTOMER-CONTINUITY-SPC",
+          "TZAG-ACCESS-HANDOFF-EXECUTION-WRK",
+          "TZAG-ACCESS-CUSTOMER-ACCESS-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-ACCESS-CUSTOMER-CONTINUITY-SPC",
+          "TZAG-ACCESS-HANDOFF-EXECUTION-WRK",
+          "TZAG-ACCESS-CUSTOMER-ACCESS-MGR"
+        ],
+        "canonical_agent_names": [
+          "Customer Access Continuity Specialist",
+          "Context-Preserving Handoff Worker",
+          "Customer Access Outcome Manager"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Specialist",
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "BIND_EXISTING_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-ACCESS-CUSTOMER-CONTINUITY-SPC",
+            "TZAG-ACCESS-HANDOFF-EXECUTION-WRK",
+            "TZAG-ACCESS-CUSTOMER-ACCESS-MGR"
+          ],
+          "surface_identity_created": false
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Unified inbox/handoff extends existing continuity and context-preserving handoff agents; the inbox remains a shared surface/capability."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Inbox/UnifiedInboxService.php",
+              "System/Services/ExternalHandoffService.php",
+              "System/Services/OperatorInboxService.php",
+              "System/Models/ExternalThread.php",
+              "System/Integration/EventInteractionMessagingBridge.php"
+            ],
+            "finding": "Connect unifies internal/external inbox items with company/actor access checks and explicit AI→pending_human→human→resolved handoff state."
+          },
+          {
+            "source_ref": "Titan Omnichannel",
+            "file_id": "file_00000000174c81fa8388d06b7eb7ca89",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Omnichannel/Titan Omnichannel Master v4.0.0-rc.4.zip",
+            "sha256": "37a7e38f2672fcf3d8733036a4064fa06b7a1f35fecc561db462c1a3aea98cf4",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Omnichannel/Services/UnifiedInboxPolicy.php",
+              "System/Omnichannel/Services/ConversationOwnershipPolicy.php",
+              "System/Omnichannel/Services/WorkforceAuthorityRouter.php",
+              "System/Omnichannel/Services/FieldServiceInbox.php",
+              "Tests/Pass21UnifiedInboxIdentityTest.php"
+            ],
+            "finding": "Omnichannel adds ownership/workforce/field-context policies and identity certification for a unified inbox."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Connect",
+          "Titan Omnichannel"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:07:54.551211Z",
+        "scan_notes": "Main convergence is a single handoff/ownership contract between Connect inbox state and canonical AI Workforce/Interaction state; surfaces must not invent their own handoff semantics.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add voice/call integration seams",
+      "status": "TODO",
+      "subgoal_order": 7,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Connect",
+        "Titan Omnichannel",
+        "Titan Omni",
+        "Titan Omni Nano"
+      ],
+      "subgoal_id": "TZ-ROADMAP-11-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Voice/VoiceSessionManager.php",
+              "System/Voice/CanonicalIntelligenceVoiceSessionGateway.php",
+              "System/Voice/OpenAiRealtimeVoiceGateway.php",
+              "System/Voice/ElevenLabsVoiceGateway.php",
+              "System/Models/VoiceCall.php",
+              "System/Models/VoiceTranscript.php"
+            ],
+            "finding": "Connect has company-scoped call/session/transcript persistence and interchangeable OpenAI Realtime/ElevenLabs voice gateways."
+          },
+          {
+            "source_ref": "Titan Omnichannel",
+            "file_id": "file_00000000174c81fa8388d06b7eb7ca89",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Omnichannel/Titan Omnichannel Master v4.0.0-rc.4.zip",
+            "sha256": "37a7e38f2672fcf3d8733036a4064fa06b7a1f35fecc561db462c1a3aea98cf4",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Omnichannel/Services/VoiceCallOrchestrator.php",
+              "System/Omnichannel/Services/VoiceConvergence.php",
+              "System/Omnichannel/Services/MissedCallRecovery.php",
+              "System/Omnichannel/Services/MissedCallRecoveryPlanner.php",
+              "System/Omnichannel/Contracts/VoiceProvider.php",
+              "System/Omnichannel/Contracts/VoiceRealtimeProvider.php",
+              "Tests/Pass18VoiceAiReceptionistTest.php"
+            ],
+            "finding": "Omnichannel contributes call orchestration, missed-call recovery and voice reception seams. Voice actions remain governed capabilities, not direct CRM/workforce authority."
+          },
+          {
+            "source_ref": "Titan Omni donor extraction evidence",
+            "file_id": "file_00000000afcc81fa8225069fd5bddc62",
+            "library_path": "Titan-Omni-to-Titan-Connect-Deep-Scan.md",
+            "verification": "HISTORICAL_DONOR_DEEP_SCAN; ORIGINAL_MASTER_PATH_CURRENTLY_UNRESOLVED",
+            "finding": "Deep scan of 967-file Omni v4.5.0 bundle concluded generic channel runtime is weaker/duplicative versus Connect; selectively port communication preflight/compliance, Slack, WhatsApp templates, telephony provisioning/ConversationRelay, Gmail actions and optional Telegram group intelligence."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Connect",
+          "Titan Omnichannel",
+          "Titan Omni"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:07:54.551211Z",
+        "scan_notes": "Surgically reuse Omni telephony provisioning/ConversationRelay patterns only after fail-closed webhook-secret repair; keep prompts, booking mutations and AI roles outside Connect.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Add delivery/retry/dedupe/rate limits",
+      "status": "TODO",
+      "subgoal_order": 8,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Connect",
+        "Titan Omnichannel",
+        "Titan Omni",
+        "Titan Omni Nano"
+      ],
+      "subgoal_id": "TZ-ROADMAP-11-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Delivery/OutboundDeliveryService.php",
+              "System/Console/RetryDueDeliveriesCommand.php",
+              "System/Http/Middleware/EnforceCompanyRateLimit.php",
+              "System/Webhooks/InboundWebhookService.php",
+              "System/Models/OutboundDelivery.php",
+              "System/Models/WebhookEvent.php"
+            ],
+            "finding": "Connect already implements idempotent outbound delivery, retry scheduling, provider/event identity and company-scoped rate limiting."
+          },
+          {
+            "source_ref": "Titan Omnichannel",
+            "file_id": "file_00000000174c81fa8388d06b7eb7ca89",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Omnichannel/Titan Omnichannel Master v4.0.0-rc.4.zip",
+            "sha256": "37a7e38f2672fcf3d8733036a4064fa06b7a1f35fecc561db462c1a3aea98cf4",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Omnichannel/Services/ProviderFailurePolicy.php",
+              "System/Omnichannel/Services/WebhookReplayGuard.php",
+              "System/Omnichannel/Services/DeliveryReceiptService.php",
+              "System/Omnichannel/Services/ReleaseCandidateAudit.php",
+              "Tests/Pass23ProductionHardeningReleaseCandidateTest.php"
+            ],
+            "finding": "Omnichannel adds explicit retryable failure taxonomy, backoff/dead-letter expectations, webhook freshness/replay protection and release-hardening assertions."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Connect",
+          "Titan Omnichannel"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:07:54.551211Z",
+        "scan_notes": "Converge one failure taxonomy and retry/dead-letter/receipt contract; preserve idempotency across retries and provider fallback. Rate limits must remain company-scoped.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Run multi-channel conversation scenarios",
+      "status": "TODO",
+      "subgoal_order": 9,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Connect",
+        "Titan Omnichannel",
+        "Titan Omni",
+        "Titan Omni Nano"
+      ],
+      "subgoal_id": "TZ-ROADMAP-11-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Omnichannel",
+            "file_id": "file_00000000174c81fa8388d06b7eb7ca89",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Omnichannel/Titan Omnichannel Master v4.0.0-rc.4.zip",
+            "sha256": "37a7e38f2672fcf3d8733036a4064fa06b7a1f35fecc561db462c1a3aea98cf4",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "Tests/Pass2OmnichannelCoreTest.php",
+              "Tests/Pass5MessagingConvergenceTest.php",
+              "Tests/Pass6VoiceRecoveryTest.php",
+              "Tests/Pass18VoiceAiReceptionistTest.php",
+              "Tests/Pass20ExtendedChannelsProviderSdkTest.php",
+              "Tests/Pass21UnifiedInboxIdentityTest.php",
+              "Tests/Pass23ProductionHardeningReleaseCandidateTest.php"
+            ],
+            "finding": "Omnichannel already has scenario coverage across core messaging, delivery receipts, voice recovery/reception, extended providers, unified inbox identity and production hardening."
+          },
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "tools/verify-package.php",
+              "System/Console/CertifyTitanConnectCommand.php"
+            ],
+            "finding": "Connect includes package verification/certification hooks suitable for adding cross-channel golden scenarios."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Connect",
+          "Titan Omnichannel"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:07:54.551211Z",
+        "scan_notes": "Existing tests are substantial but fragmented by extension. Add one end-to-end scenario matrix across inbound→classification→workforce handoff→outbound→receipt, including opt-out/quiet-hours, retries and voice.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "title": "Certify channels and communications",
+      "status": "TODO",
+      "subgoal_order": 10,
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Connect",
+        "Titan Omnichannel",
+        "Titan Omni",
+        "Titan Omni Nano"
+      ],
+      "subgoal_id": "TZ-ROADMAP-11-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Channel/message/consent/voice/retry/certification plumbing is provider-neutral communications infrastructure. It equips existing domain agents and does not justify a communications-technology agent identity."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Connect",
+            "file_id": "file_0000000089ac81fa8df12881aafa2fa7",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Connect/Titan Connect Master v0.10.7.zip",
+            "sha256": "c88c46822d6f8371101e626b9f6772b013b7b1a440b4ddeabc1e1033cf3cd238",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Console/CertifyTitanConnectCommand.php",
+              "tools/verify-package.php",
+              "extension.manifest.json",
+              "workforce-integration.json"
+            ],
+            "finding": "Connect has explicit certification/package/workforce integration surfaces."
+          },
+          {
+            "source_ref": "Titan Omnichannel",
+            "file_id": "file_00000000174c81fa8388d06b7eb7ca89",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Omnichannel/Titan Omnichannel Master v4.0.0-rc.4.zip",
+            "sha256": "37a7e38f2672fcf3d8733036a4064fa06b7a1f35fecc561db462c1a3aea98cf4",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED; SOURCE_REGISTRY_UNMANAGED_REQUIRES_REVALIDATION",
+            "internal_paths": [
+              "System/Omnichannel/Services/ReleaseCandidateAudit.php",
+              "System/Omnichannel/Services/OmnichannelReadinessGate.php",
+              "Tests/Pass23ProductionHardeningReleaseCandidateTest.php",
+              "extension.manifest.json",
+              "workforce-integration.json"
+            ],
+            "finding": "Omnichannel has release-readiness and production-hardening gates that can inform one canonical communications certification."
+          },
+          {
+            "source_ref": "Titan Omni donor extraction evidence",
+            "file_id": "file_00000000afcc81fa8225069fd5bddc62",
+            "library_path": "Titan-Omni-to-Titan-Connect-Deep-Scan.md",
+            "verification": "HISTORICAL_DONOR_DEEP_SCAN; ORIGINAL_MASTER_PATH_CURRENTLY_UNRESOLVED",
+            "finding": "Deep scan of 967-file Omni v4.5.0 bundle concluded generic channel runtime is weaker/duplicative versus Connect; selectively port communication preflight/compliance, Slack, WhatsApp templates, telephony provisioning/ConversationRelay, Gmail actions and optional Telegram group intelligence."
+          },
+          {
+            "source_ref": "Titan Omni Nano lineage",
+            "file_id": "file_00000000817481fdab04529df502bd1d",
+            "library_path": "LINEAGE-CONSOLIDATION-V0.1.44-to-V0.1.48.json",
+            "sha256": "9462dab015ee08bf917bb37ec9b4e26ee44232d4b60c3fc41f8ddd6b1a8e98e8",
+            "verification": "VERIFIED_LINEAGE_PROVENANCE; MASTER_PATH_CURRENTLY_UNRESOLVED",
+            "finding": "V0.1.48 is verified complete over v0.1.44–v0.1.48 with 55/55 payload byte matches and 78/78 tests; use as donor provenance, not active communication authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Connect",
+          "Titan Omnichannel",
+          "Titan Omni",
+          "Titan Omni Nano"
+        ],
+        "last_scanned_at_utc": "2026-09-19T17:07:54.551211Z",
+        "scan_notes": "Certification should designate Connect as communications execution authority, explicitly classify Omni/Nano as donor-only, and prove consent, provider abstraction, company isolation, handoff, voice, retries, replay protection and receipts.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "communications"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [
+    "Titan Connect",
+    "Titan Omnichannel",
+    "Titan Omni",
+    "Titan Omni Nano"
+  ],
+  "reuse_first": true,
+  "agent_goal_classification": "DOMAIN_WORKFORCE_ELIGIBLE",
+  "agent_goal_rule": "This goal owns durable business/domain outcomes and may reuse, extend or create canonical workforce identities subject to non-duplication and outcome-owner tests.",
+  "workforce_goal_classification": "DOMAIN_OUTCOME_AGENT_ELIGIBLE",
+  "workforce_goal_rule": "Agents are permitted only for durable business/operational outcomes with a distinct ownership boundary. Reuse or extend canonical identities before creating new ones."
+}

@@ -1,0 +1,1919 @@
+{
+  "goal_id": "TZ-ROADMAP-22",
+  "priority": "P1",
+  "title": "Sales & Revenue Growth Agents",
+  "objective": "Develop prospecting, qualification, quoting, follow-up and conversion as one governed multi-tier agent capability.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define the canonical Sales & Revenue Growth workforce, pipeline pain boundaries and cross-domain collaboration without duplicating Reception, Marketing, Finance or Scheduling agents",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-22-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "CREATE_NEW_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "created_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK"
+        ],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [
+          "Revenue Growth Orchestrator",
+          "Revenue Conversion Outcome Manager",
+          "Opportunity Discovery Specialist",
+          "Commercial Qualification Specialist",
+          "Quote Conversion Specialist",
+          "Pipeline Momentum Specialist",
+          "Prospect Research & Enrichment Worker",
+          "Prospect Outreach Execution Worker",
+          "Commercial Qualification Worker",
+          "Quote Draft Worker",
+          "Quote Delivery Worker",
+          "Sales Follow-Up Execution Worker",
+          "Objection Evidence Worker",
+          "Missed Revenue Recovery Specialist"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-GROWTH-REVENUE-OBJECTIVES-CONFLICT",
+          "PAIN-GROWTH-SALES-MARKETING-CAPACITY-MISALIGNMENT",
+          "PAIN-REV-MISSED-ENQUIRY",
+          "PAIN-REV-UNFOLLOWED-LEAD",
+          "PAIN-SALES-APPROVED-QUOTE-NOT-DELIVERED",
+          "PAIN-SALES-BAD-FIT-ADVANCES",
+          "PAIN-SALES-COMMERCIAL-FACTS-MISSING",
+          "PAIN-SALES-EMPTY-OR-LOW-QUALITY-TOP-OF-FUNNEL",
+          "PAIN-SALES-LOCAL-OPTIMISATION-HURTS-REVENUE",
+          "PAIN-SALES-NEXT-STEP-NOT-EXECUTED",
+          "PAIN-SALES-NEXT-STEP-UNKNOWN",
+          "PAIN-SALES-NO-ACCOUNTABLE-PIPELINE-OUTCOME",
+          "PAIN-SALES-OBJECTION-ANSWER-UNSUPPORTED",
+          "PAIN-SALES-OBJECTION-UNRESOLVED",
+          "PAIN-SALES-OPPORTUNITY-STALL",
+          "PAIN-SALES-OUTREACH-POLICY-BREACH",
+          "PAIN-SALES-PIPELINE-QUALITY-LOW",
+          "PAIN-SALES-PREPARED-PROSPECT-NOT-CONTACTED",
+          "PAIN-SALES-PROSPECT-DATA-INCOMPLETE",
+          "PAIN-SALES-PROSPECT-DUPLICATE-STALE",
+          "PAIN-SALES-PROSPECTING-UNFOCUSED",
+          "PAIN-SALES-QUALIFIED-NOT-QUOTED",
+          "PAIN-SALES-QUOTE-DELIVERY-UNVERIFIED",
+          "PAIN-SALES-QUOTE-DRAFT-ERROR",
+          "PAIN-SALES-QUOTE-SCOPE-PRICE-MISMATCH",
+          "PAIN-SALES-QUOTE-TO-DECISION-FRICTION",
+          "PAIN-SALES-STALE-OPPORTUNITY",
+          "PAIN-SALES-UNQUALIFIED-PIPELINE"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SALES-REVENUE-GROWTH-ORCH",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+            "TZAG-SALES-QUOTE-DRAFT-WRK",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-SALES-REVENUE-GROWTH-ORCH": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DRAFT-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY": "TZ-ROADMAP-39-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Goal 22 SG1 is the sole canonical definition home for the 13 new Sales identities.",
+          "Missed Revenue Recovery Specialist is reused by immutable agent_id from TZ-ROADMAP-39-SG-01; it is not redefined or re-parented here.",
+          "Reception ends at correct commercial routing/service-fit handoff. Sales begins at commercial opportunity progression.",
+          "Marketing campaign execution, finance collection, service-capacity scheduling and generic channel transport remain separate domains/tools."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-agent-contract.mjs",
+              "titan-revenue-journey/revenue-lead-opportunity-lifecycle.mjs",
+              "apps/web/lib/titan/workforce-native/sales.ts"
+            ],
+            "finding": "Canonical Titan Zero already contains a native sales worker contract, sales API/runtime and authority-neutral lead/opportunity lifecycle."
+          },
+          {
+            "source_ref": "Titan CRM",
+            "file_id": "file_00000000f7ec81fa9100e3081d9124fb",
+            "library_path": "/MASTER Software/Masters/Operations/Titan CRM/Titan CRM Master Step 41.zip",
+            "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-CRM-Master-Step41/contracts/CrmLead.schema.json",
+              "Titan-CRM-Master-Step41/contracts/RevenueJourney.schema.json"
+            ],
+            "finding": "CRM remains source of truth for lead/customer/commercial journey state."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan CRM"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:05:00+10:00",
+        "scan_notes": "Define workforce roles around the existing native sales runtime and CRM authority; keep Reception/Marketing/Finance/Scheduling outcome ownership separate.",
+        "exhaustion_evidence": null
+      },
+      "roadmap_workforce_plan_ref": "/Titan Zero/Agent Mesh Manager/ROADMAP/PLANS/WORKFORCE-SUBGOAL-BINDING-MULTI-PASS-PLAN.json",
+      "roadmap_workforce_plan_role": "ASSIGNED_EXECUTION_TARGET"
+    },
+    {
+      "subgoal": 2,
+      "title": "Complete shared sales tools, knowledge, workflows, pricing/quote integrations and evidence contracts used by the canonical sales roster",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-22-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "canonical_agent_names": [
+          "Revenue Growth Orchestrator",
+          "Revenue Conversion Outcome Manager",
+          "Opportunity Discovery Specialist",
+          "Commercial Qualification Specialist",
+          "Quote Conversion Specialist",
+          "Pipeline Momentum Specialist",
+          "Prospect Research & Enrichment Worker",
+          "Prospect Outreach Execution Worker",
+          "Commercial Qualification Worker",
+          "Quote Draft Worker",
+          "Quote Delivery Worker",
+          "Sales Follow-Up Execution Worker",
+          "Objection Evidence Worker",
+          "Missed Revenue Recovery Specialist"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-GROWTH-REVENUE-OBJECTIVES-CONFLICT",
+          "PAIN-GROWTH-SALES-MARKETING-CAPACITY-MISALIGNMENT",
+          "PAIN-REV-MISSED-ENQUIRY",
+          "PAIN-REV-UNFOLLOWED-LEAD",
+          "PAIN-SALES-APPROVED-QUOTE-NOT-DELIVERED",
+          "PAIN-SALES-BAD-FIT-ADVANCES",
+          "PAIN-SALES-COMMERCIAL-FACTS-MISSING",
+          "PAIN-SALES-EMPTY-OR-LOW-QUALITY-TOP-OF-FUNNEL",
+          "PAIN-SALES-LOCAL-OPTIMISATION-HURTS-REVENUE",
+          "PAIN-SALES-NEXT-STEP-NOT-EXECUTED",
+          "PAIN-SALES-NEXT-STEP-UNKNOWN",
+          "PAIN-SALES-NO-ACCOUNTABLE-PIPELINE-OUTCOME",
+          "PAIN-SALES-OBJECTION-ANSWER-UNSUPPORTED",
+          "PAIN-SALES-OBJECTION-UNRESOLVED",
+          "PAIN-SALES-OPPORTUNITY-STALL",
+          "PAIN-SALES-OUTREACH-POLICY-BREACH",
+          "PAIN-SALES-PIPELINE-QUALITY-LOW",
+          "PAIN-SALES-PREPARED-PROSPECT-NOT-CONTACTED",
+          "PAIN-SALES-PROSPECT-DATA-INCOMPLETE",
+          "PAIN-SALES-PROSPECT-DUPLICATE-STALE",
+          "PAIN-SALES-PROSPECTING-UNFOCUSED",
+          "PAIN-SALES-QUALIFIED-NOT-QUOTED",
+          "PAIN-SALES-QUOTE-DELIVERY-UNVERIFIED",
+          "PAIN-SALES-QUOTE-DRAFT-ERROR",
+          "PAIN-SALES-QUOTE-SCOPE-PRICE-MISMATCH",
+          "PAIN-SALES-QUOTE-TO-DECISION-FRICTION",
+          "PAIN-SALES-STALE-OPPORTUNITY",
+          "PAIN-SALES-UNQUALIFIED-PIPELINE"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SALES-REVENUE-GROWTH-ORCH",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+            "TZAG-SALES-QUOTE-DRAFT-WRK",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-SALES-REVENUE-GROWTH-ORCH": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DRAFT-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY": "TZ-ROADMAP-39-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Shared sales capabilities must serve one canonical roster; provider/channel/tool specialisation must not create parallel sales agents."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-qualification-readiness.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-structured-handoff.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-objection-handler.mjs",
+              "titan-revenue-journey/revenue-lead-opportunity-lifecycle.mjs"
+            ],
+            "finding": "Canonical sales tooling already covers qualification, objection evidence, handoff and opportunity lifecycle."
+          },
+          {
+            "source_ref": "Titan Bookings Quotes",
+            "file_id": "file_000000004d5881faa2df3db959a70bc5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Bookings Quotes/Titan Bookings Quotes Master v1.1.1.zip",
+            "sha256": "ba3251684967132c1eb11e9ce1bffab4baa9440f16b148d1cf1f9c6b2ab43588",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Domain/Quotes/DatabaseQuoteStore.php",
+              "System/Domain/Bookings/DatabaseBookingStore.php"
+            ],
+            "finding": "Bookings/Quotes owns quote/booking lifecycle."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Calculating/Engines/QuoteEstimateEngine.php",
+              "System/Models/FinancialQuote.php",
+              "System/Models/FinancialQuoteVersion.php"
+            ],
+            "finding": "Financial Engine provides quote costing/pricing-version donors."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Bookings Quotes",
+          "Titan Financial Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:05:00+10:00",
+        "scan_notes": "Expose shared sales capabilities over canonical CRM/quote/pricing authorities; do not duplicate commercial state.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Implement bounded Sales Workers for prospect research, compliant outreach, commercial qualification, quote drafting/delivery, follow-up and objection evidence",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-22-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK"
+        ],
+        "canonical_agent_names": [
+          "Prospect Research & Enrichment Worker",
+          "Prospect Outreach Execution Worker",
+          "Commercial Qualification Worker",
+          "Quote Draft Worker",
+          "Quote Delivery Worker",
+          "Sales Follow-Up Execution Worker",
+          "Objection Evidence Worker"
+        ],
+        "workforce_positions": [
+          "Worker"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-SALES-APPROVED-QUOTE-NOT-DELIVERED",
+          "PAIN-SALES-COMMERCIAL-FACTS-MISSING",
+          "PAIN-SALES-NEXT-STEP-NOT-EXECUTED",
+          "PAIN-SALES-OBJECTION-ANSWER-UNSUPPORTED",
+          "PAIN-SALES-OBJECTION-UNRESOLVED",
+          "PAIN-SALES-OUTREACH-POLICY-BREACH",
+          "PAIN-SALES-PREPARED-PROSPECT-NOT-CONTACTED",
+          "PAIN-SALES-PROSPECT-DATA-INCOMPLETE",
+          "PAIN-SALES-PROSPECT-DUPLICATE-STALE",
+          "PAIN-SALES-QUOTE-DELIVERY-UNVERIFIED",
+          "PAIN-SALES-QUOTE-DRAFT-ERROR",
+          "PAIN-SALES-QUOTE-SCOPE-PRICE-MISMATCH",
+          "PAIN-SALES-STALE-OPPORTUNITY",
+          "PAIN-SALES-UNQUALIFIED-PIPELINE"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+            "TZAG-SALES-QUOTE-DRAFT-WRK",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DRAFT-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK": "TZ-ROADMAP-22-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Implement seven bounded Workers. Workers act only from valid assignments and never choose pipeline strategy or delegate."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-lead-response-adapter.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-qualification-readiness.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-follow-up-policy.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-objection-handler.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-structured-handoff.mjs"
+            ],
+            "finding": "Bounded native worker primitives already exist for response, qualification, follow-up, objection handling and governed handoff."
+          },
+          {
+            "source_ref": "Titan Reach Flow",
+            "file_id": "file_00000000a58c8230b7c42ad0246e22d4",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Reach Flow/Titan Reach Flow Master v1.43.5.zip",
+            "sha256": "014c127fd6c3a5b93ac6160451674baefd1696d9f922d2c047c0cb9ec1cf2878",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/FieldService/FieldServiceSocialLeadService.php",
+              "System/Models/SocialLead.php",
+              "System/Support/PaidGrowthLeadAttentionBridge.php"
+            ],
+            "finding": "Reach Flow contributes company-scoped social-lead capture and attention classification."
+          },
+          {
+            "source_ref": "Titan Reach Campaigns",
+            "file_id": "file_00000000972481faae46767afe8bdd1b",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Reach Campaigns/Titan Reach Campaigns Master v4.55.5.zip",
+            "sha256": "7c3648696472cf6e45a518d9769b26b4a8f82b2ff6a93a407582fd2c34a07b0d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/FieldService/CampaignPlaybookGenerator.php"
+            ],
+            "finding": "Campaign playbook generation can supply compliant outreach planning but should not own sales identity."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Reach Flow",
+          "Titan Reach Campaigns"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:05:00+10:00",
+        "scan_notes": "Workers should prepare/recommend/hand off; execution authority and system-of-record writes remain governed.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Implement Specialist layer for opportunity discovery, commercial qualification, quote conversion and pipeline momentum, collaborating with the existing Missed Revenue Recovery Specialist",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-22-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "canonical_agent_names": [
+          "Opportunity Discovery Specialist",
+          "Commercial Qualification Specialist",
+          "Quote Conversion Specialist",
+          "Pipeline Momentum Specialist",
+          "Missed Revenue Recovery Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-REV-MISSED-ENQUIRY",
+          "PAIN-REV-UNFOLLOWED-LEAD",
+          "PAIN-SALES-BAD-FIT-ADVANCES",
+          "PAIN-SALES-EMPTY-OR-LOW-QUALITY-TOP-OF-FUNNEL",
+          "PAIN-SALES-NEXT-STEP-UNKNOWN",
+          "PAIN-SALES-OPPORTUNITY-STALL",
+          "PAIN-SALES-PIPELINE-QUALITY-LOW",
+          "PAIN-SALES-PROSPECTING-UNFOCUSED",
+          "PAIN-SALES-QUALIFIED-NOT-QUOTED",
+          "PAIN-SALES-QUOTE-TO-DECISION-FRICTION"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY": "TZ-ROADMAP-39-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Implement the four new Sales Specialists and integrate the existing Missed Revenue Recovery Specialist as a cross-domain collaborator, not a duplicate or subordinate Sales identity."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-explainable-priority.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-next-best-action.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-objection-handler.mjs",
+              "tests/revenue-journey/pass03-lead-opportunity-lifecycle.test.mjs"
+            ],
+            "finding": "Canonical code supports explainable priority, next-best-action, objections and opportunity progression."
+          },
+          {
+            "source_ref": "Titan Reach Pro",
+            "file_id": "file_000000007ee481fa9b50600b020437f0",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Reach Pro/Titan Reach Pro Master v5.59.8.zip",
+            "sha256": "1628f81f05ff6c356026ca40ded341a952bdc977fd5c212e49e741d6d1a2b2d3",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Models/FieldServiceConversionEvent.php",
+              "System/Support/EndToEndLeadFlowSimulation.php"
+            ],
+            "finding": "Reach Pro contributes conversion attribution and lead-flow simulation."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Reach Pro"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:05:00+10:00",
+        "scan_notes": "Specialists should extend canonical native sales logic and collaborate with Missed Revenue Recovery rather than duplicate it.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Implement Revenue Conversion Outcome Manager for pipeline objectives, prioritisation, bottleneck correction and specialist delegation",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-22-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC"
+        ],
+        "canonical_agent_names": [
+          "Revenue Conversion Outcome Manager",
+          "Opportunity Discovery Specialist",
+          "Commercial Qualification Specialist",
+          "Quote Conversion Specialist",
+          "Pipeline Momentum Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Manager"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-SALES-BAD-FIT-ADVANCES",
+          "PAIN-SALES-EMPTY-OR-LOW-QUALITY-TOP-OF-FUNNEL",
+          "PAIN-SALES-LOCAL-OPTIMISATION-HURTS-REVENUE",
+          "PAIN-SALES-NEXT-STEP-UNKNOWN",
+          "PAIN-SALES-NO-ACCOUNTABLE-PIPELINE-OUTCOME",
+          "PAIN-SALES-OPPORTUNITY-STALL",
+          "PAIN-SALES-PIPELINE-QUALITY-LOW",
+          "PAIN-SALES-PROSPECTING-UNFOCUSED",
+          "PAIN-SALES-QUALIFIED-NOT-QUOTED",
+          "PAIN-SALES-QUOTE-TO-DECISION-FRICTION"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SALES-REVENUE-CONVERSION-MGR",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-SALES-REVENUE-CONVERSION-MGR": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC": "TZ-ROADMAP-22-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Revenue Conversion Outcome Manager owns funnel outcomes and delegates domain work to the four Sales Specialists. Missed Revenue Recovery remains externally coordinated through its existing Customer Access hierarchy."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-explainable-priority.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-next-best-action.mjs",
+              "apps/web/app/api/v1/titan/workforce/native/sales/route.ts"
+            ],
+            "finding": "Priority/NBA logic and native sales endpoint form the basis for pipeline manager decisions."
+          },
+          {
+            "source_ref": "Titan CRM",
+            "file_id": "file_00000000f7ec81fa9100e3081d9124fb",
+            "library_path": "/MASTER Software/Masters/Operations/Titan CRM/Titan CRM Master Step 41.zip",
+            "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "Titan-CRM-Master-Step41/runtime/RevenueJourney.php"
+            ],
+            "finding": "CRM revenue journey supplies pipeline truth."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan CRM"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:05:00+10:00",
+        "scan_notes": "Manager should own objectives, prioritization and bottleneck correction while delegating bounded specialist actions.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 6,
+      "title": "Implement Revenue Growth Orchestrator coordinating Sales with customer access, marketing/demand, pricing/margin and service capacity through canonical Managers",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-22-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR"
+        ],
+        "canonical_agent_names": [
+          "Revenue Growth Orchestrator",
+          "Revenue Conversion Outcome Manager"
+        ],
+        "workforce_positions": [
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-GROWTH-REVENUE-OBJECTIVES-CONFLICT",
+          "PAIN-GROWTH-SALES-MARKETING-CAPACITY-MISALIGNMENT",
+          "PAIN-SALES-LOCAL-OPTIMISATION-HURTS-REVENUE",
+          "PAIN-SALES-NO-ACCOUNTABLE-PIPELINE-OUTCOME"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SALES-REVENUE-GROWTH-ORCH",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-SALES-REVENUE-GROWTH-ORCH": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR": "TZ-ROADMAP-22-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Revenue Growth Orchestrator owns revenue-growth coherence and coordinates through Managers. Cross-domain Customer Access, future Marketing/Demand, Pricing/Margin and Capacity Managers are collaborators, not duplicated Sales identities."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-structured-handoff.mjs",
+              "titan-revenue-journey/revenue-lead-opportunity-lifecycle.mjs"
+            ],
+            "finding": "Structured handoff and correlation support orchestration across domains."
+          },
+          {
+            "source_ref": "Titan Reach Campaigns",
+            "file_id": "file_00000000972481faae46767afe8bdd1b",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Reach Campaigns/Titan Reach Campaigns Master v4.55.5.zip",
+            "sha256": "7c3648696472cf6e45a518d9769b26b4a8f82b2ff6a93a407582fd2c34a07b0d",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/FieldService/CampaignPlaybookProHandoffEmitter.php",
+              "System/Services/FieldService/CampaignPlaybookGenerator.php"
+            ],
+            "finding": "Reach provides campaign-to-growth handoff patterns."
+          },
+          {
+            "source_ref": "Titan Financial Engine",
+            "file_id": "file_00000000882081fa9a9914d8a2de67a5",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Financial Engine/Titan Financial Engine Master v0.4.0.zip",
+            "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Calculating/Engines/QuoteEstimateEngine.php"
+            ],
+            "finding": "Pricing/margin calculations remain finance-owned."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Reach Campaigns",
+          "Titan Financial Engine"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:05:00+10:00",
+        "scan_notes": "Orchestrator coordinates managers via handoffs/correlation; it must not absorb Marketing, Finance, Reception or Capacity authority.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Implement earned proactive, autonomous and predictive sales behaviours across the existing hierarchy; no fifth Pro agent identity",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-22-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "canonical_agent_names": [
+          "Opportunity Discovery Specialist",
+          "Commercial Qualification Specialist",
+          "Quote Conversion Specialist",
+          "Pipeline Momentum Specialist",
+          "Revenue Conversion Outcome Manager",
+          "Revenue Growth Orchestrator",
+          "Missed Revenue Recovery Specialist"
+        ],
+        "workforce_positions": [
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-GROWTH-REVENUE-OBJECTIVES-CONFLICT",
+          "PAIN-GROWTH-SALES-MARKETING-CAPACITY-MISALIGNMENT",
+          "PAIN-REV-MISSED-ENQUIRY",
+          "PAIN-REV-UNFOLLOWED-LEAD",
+          "PAIN-SALES-BAD-FIT-ADVANCES",
+          "PAIN-SALES-EMPTY-OR-LOW-QUALITY-TOP-OF-FUNNEL",
+          "PAIN-SALES-LOCAL-OPTIMISATION-HURTS-REVENUE",
+          "PAIN-SALES-NEXT-STEP-UNKNOWN",
+          "PAIN-SALES-NO-ACCOUNTABLE-PIPELINE-OUTCOME",
+          "PAIN-SALES-OPPORTUNITY-STALL",
+          "PAIN-SALES-PIPELINE-QUALITY-LOW",
+          "PAIN-SALES-PROSPECTING-UNFOCUSED",
+          "PAIN-SALES-QUALIFIED-NOT-QUOTED",
+          "PAIN-SALES-QUOTE-TO-DECISION-FRICTION"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR",
+            "TZAG-SALES-REVENUE-GROWTH-ORCH",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-REVENUE-GROWTH-ORCH": "TZ-ROADMAP-22-SG-01",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY": "TZ-ROADMAP-39-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "No Pro identity is created. Predictive optimisation is an earned Orchestrator capability; proactive/autonomous states remain hierarchy-specific and trust/entitlement governed."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-next-best-action.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-follow-up-policy.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-adversarial-evals.mjs"
+            ],
+            "finding": "Canonical sales runtime already models recommendations, follow-up limits and adversarial evaluation without execution authority."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:05:00+10:00",
+        "scan_notes": "Earned proactive/autonomous/predictive modes should wrap existing sales behavior with Trust/Autonomy gates; no fifth Pro agent.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 8,
+      "title": "Implement sales authority, surface, approval, escalation and recovery matrices across Command/Hub/plugins/extensions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-22-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "canonical_agent_names": [
+          "Revenue Growth Orchestrator",
+          "Revenue Conversion Outcome Manager",
+          "Opportunity Discovery Specialist",
+          "Commercial Qualification Specialist",
+          "Quote Conversion Specialist",
+          "Pipeline Momentum Specialist",
+          "Prospect Research & Enrichment Worker",
+          "Prospect Outreach Execution Worker",
+          "Commercial Qualification Worker",
+          "Quote Draft Worker",
+          "Quote Delivery Worker",
+          "Sales Follow-Up Execution Worker",
+          "Objection Evidence Worker",
+          "Missed Revenue Recovery Specialist"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-GROWTH-REVENUE-OBJECTIVES-CONFLICT",
+          "PAIN-GROWTH-SALES-MARKETING-CAPACITY-MISALIGNMENT",
+          "PAIN-REV-MISSED-ENQUIRY",
+          "PAIN-REV-UNFOLLOWED-LEAD",
+          "PAIN-SALES-APPROVED-QUOTE-NOT-DELIVERED",
+          "PAIN-SALES-BAD-FIT-ADVANCES",
+          "PAIN-SALES-COMMERCIAL-FACTS-MISSING",
+          "PAIN-SALES-EMPTY-OR-LOW-QUALITY-TOP-OF-FUNNEL",
+          "PAIN-SALES-LOCAL-OPTIMISATION-HURTS-REVENUE",
+          "PAIN-SALES-NEXT-STEP-NOT-EXECUTED",
+          "PAIN-SALES-NEXT-STEP-UNKNOWN",
+          "PAIN-SALES-NO-ACCOUNTABLE-PIPELINE-OUTCOME",
+          "PAIN-SALES-OBJECTION-ANSWER-UNSUPPORTED",
+          "PAIN-SALES-OBJECTION-UNRESOLVED",
+          "PAIN-SALES-OPPORTUNITY-STALL",
+          "PAIN-SALES-OUTREACH-POLICY-BREACH",
+          "PAIN-SALES-PIPELINE-QUALITY-LOW",
+          "PAIN-SALES-PREPARED-PROSPECT-NOT-CONTACTED",
+          "PAIN-SALES-PROSPECT-DATA-INCOMPLETE",
+          "PAIN-SALES-PROSPECT-DUPLICATE-STALE",
+          "PAIN-SALES-PROSPECTING-UNFOCUSED",
+          "PAIN-SALES-QUALIFIED-NOT-QUOTED",
+          "PAIN-SALES-QUOTE-DELIVERY-UNVERIFIED",
+          "PAIN-SALES-QUOTE-DRAFT-ERROR",
+          "PAIN-SALES-QUOTE-SCOPE-PRICE-MISMATCH",
+          "PAIN-SALES-QUOTE-TO-DECISION-FRICTION",
+          "PAIN-SALES-STALE-OPPORTUNITY",
+          "PAIN-SALES-UNQUALIFIED-PIPELINE"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SALES-REVENUE-GROWTH-ORCH",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+            "TZAG-SALES-QUOTE-DRAFT-WRK",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-SALES-REVENUE-GROWTH-ORCH": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DRAFT-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY": "TZ-ROADMAP-39-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Certify authority/surface/approval/escalation/recovery for the exact canonical Sales roster and reused Missed Revenue identity."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-agent-contract.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-structured-handoff.mjs",
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-adversarial-evals.mjs"
+            ],
+            "finding": "Native sales contract/handoff/evals already enforce company boundaries and authority-neutral recommendations."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:05:00+10:00",
+        "scan_notes": "Compile one sales authority/surface/approval/escalation/recovery matrix over Command/Hub/plugins/extensions.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Measure conversion, speed-to-opportunity, quote cycle, revenue gained/protected, pricing leakage and sales workload reduction",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-22-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "canonical_agent_names": [
+          "Revenue Growth Orchestrator",
+          "Revenue Conversion Outcome Manager",
+          "Opportunity Discovery Specialist",
+          "Commercial Qualification Specialist",
+          "Quote Conversion Specialist",
+          "Pipeline Momentum Specialist",
+          "Prospect Research & Enrichment Worker",
+          "Prospect Outreach Execution Worker",
+          "Commercial Qualification Worker",
+          "Quote Draft Worker",
+          "Quote Delivery Worker",
+          "Sales Follow-Up Execution Worker",
+          "Objection Evidence Worker",
+          "Missed Revenue Recovery Specialist"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-GROWTH-REVENUE-OBJECTIVES-CONFLICT",
+          "PAIN-GROWTH-SALES-MARKETING-CAPACITY-MISALIGNMENT",
+          "PAIN-REV-MISSED-ENQUIRY",
+          "PAIN-REV-UNFOLLOWED-LEAD",
+          "PAIN-SALES-APPROVED-QUOTE-NOT-DELIVERED",
+          "PAIN-SALES-BAD-FIT-ADVANCES",
+          "PAIN-SALES-COMMERCIAL-FACTS-MISSING",
+          "PAIN-SALES-EMPTY-OR-LOW-QUALITY-TOP-OF-FUNNEL",
+          "PAIN-SALES-LOCAL-OPTIMISATION-HURTS-REVENUE",
+          "PAIN-SALES-NEXT-STEP-NOT-EXECUTED",
+          "PAIN-SALES-NEXT-STEP-UNKNOWN",
+          "PAIN-SALES-NO-ACCOUNTABLE-PIPELINE-OUTCOME",
+          "PAIN-SALES-OBJECTION-ANSWER-UNSUPPORTED",
+          "PAIN-SALES-OBJECTION-UNRESOLVED",
+          "PAIN-SALES-OPPORTUNITY-STALL",
+          "PAIN-SALES-OUTREACH-POLICY-BREACH",
+          "PAIN-SALES-PIPELINE-QUALITY-LOW",
+          "PAIN-SALES-PREPARED-PROSPECT-NOT-CONTACTED",
+          "PAIN-SALES-PROSPECT-DATA-INCOMPLETE",
+          "PAIN-SALES-PROSPECT-DUPLICATE-STALE",
+          "PAIN-SALES-PROSPECTING-UNFOCUSED",
+          "PAIN-SALES-QUALIFIED-NOT-QUOTED",
+          "PAIN-SALES-QUOTE-DELIVERY-UNVERIFIED",
+          "PAIN-SALES-QUOTE-DRAFT-ERROR",
+          "PAIN-SALES-QUOTE-SCOPE-PRICE-MISMATCH",
+          "PAIN-SALES-QUOTE-TO-DECISION-FRICTION",
+          "PAIN-SALES-STALE-OPPORTUNITY",
+          "PAIN-SALES-UNQUALIFIED-PIPELINE"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SALES-REVENUE-GROWTH-ORCH",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+            "TZAG-SALES-QUOTE-DRAFT-WRK",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-SALES-REVENUE-GROWTH-ORCH": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DRAFT-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY": "TZ-ROADMAP-39-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Attribute value to immutable agent_id + workflow/version + evidence/receipt. Do not award value to actions lacking verified outcomes."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/revenue-journey/pass02-lead-opportunity-evidence.test.mjs",
+              "tests/revenue-journey/pass03-lead-opportunity-lifecycle.test.mjs"
+            ],
+            "finding": "Revenue-journey tests preserve evidence, ownership, correlation and lead/opportunity transitions."
+          },
+          {
+            "source_ref": "Titan Reach Pro",
+            "file_id": "file_000000007ee481fa9b50600b020437f0",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Reach Pro/Titan Reach Pro Master v5.59.8.zip",
+            "sha256": "1628f81f05ff6c356026ca40ded341a952bdc977fd5c212e49e741d6d1a2b2d3",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Models/FieldServiceConversionEvent.php",
+              "resources/views/components/home/field-service-conversion-attribution.blade.php"
+            ],
+            "finding": "Reach Pro supplies conversion/value attribution donors."
+          },
+          {
+            "source_ref": "Titan Reach Flow",
+            "file_id": "file_00000000a58c8230b7c42ad0246e22d4",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Reach Flow/Titan Reach Flow Master v1.43.5.zip",
+            "sha256": "014c127fd6c3a5b93ac6160451674baefd1696d9f922d2c047c0cb9ec1cf2878",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Support/EndToEndLeadFlowSimulation.php"
+            ],
+            "finding": "Lead-flow simulation emits lead/conversion/review opportunity events."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Reach Pro",
+          "Titan Reach Flow"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:05:00+10:00",
+        "scan_notes": "Metrics should cover conversion, speed, quote cycle, protected/gained revenue, pricing leakage and workload reduction with canonical agent_id and anti-double-counting.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Run Worker → Specialist → Manager → Orchestrator sales acceptance, earned-mode simulations and non-duplication certification",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "subgoal_id": "TZ-ROADMAP-22-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_CANONICAL_AGENT_BINDING_PLANNED",
+        "workforce_impact": "EXTEND_EXISTING_AGENT",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "created_agent_ids": [],
+        "modified_agent_ids": [
+          "TZAG-SALES-REVENUE-GROWTH-ORCH",
+          "TZAG-SALES-REVENUE-CONVERSION-MGR",
+          "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+          "TZAG-SALES-QUOTE-CONVERSION-SPC",
+          "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+          "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+          "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+          "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+          "TZAG-SALES-QUOTE-DRAFT-WRK",
+          "TZAG-SALES-QUOTE-DELIVERY-WRK",
+          "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+          "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+          "TZAG-REV-MISSED-REVENUE-RECOVERY"
+        ],
+        "canonical_agent_names": [
+          "Revenue Growth Orchestrator",
+          "Revenue Conversion Outcome Manager",
+          "Opportunity Discovery Specialist",
+          "Commercial Qualification Specialist",
+          "Quote Conversion Specialist",
+          "Pipeline Momentum Specialist",
+          "Prospect Research & Enrichment Worker",
+          "Prospect Outreach Execution Worker",
+          "Commercial Qualification Worker",
+          "Quote Draft Worker",
+          "Quote Delivery Worker",
+          "Sales Follow-Up Execution Worker",
+          "Objection Evidence Worker",
+          "Missed Revenue Recovery Specialist"
+        ],
+        "workforce_positions": [
+          "Worker",
+          "Specialist",
+          "Manager",
+          "Orchestrator"
+        ],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [
+          "PAIN-GROWTH-REVENUE-OBJECTIVES-CONFLICT",
+          "PAIN-GROWTH-SALES-MARKETING-CAPACITY-MISALIGNMENT",
+          "PAIN-REV-MISSED-ENQUIRY",
+          "PAIN-REV-UNFOLLOWED-LEAD",
+          "PAIN-SALES-APPROVED-QUOTE-NOT-DELIVERED",
+          "PAIN-SALES-BAD-FIT-ADVANCES",
+          "PAIN-SALES-COMMERCIAL-FACTS-MISSING",
+          "PAIN-SALES-EMPTY-OR-LOW-QUALITY-TOP-OF-FUNNEL",
+          "PAIN-SALES-LOCAL-OPTIMISATION-HURTS-REVENUE",
+          "PAIN-SALES-NEXT-STEP-NOT-EXECUTED",
+          "PAIN-SALES-NEXT-STEP-UNKNOWN",
+          "PAIN-SALES-NO-ACCOUNTABLE-PIPELINE-OUTCOME",
+          "PAIN-SALES-OBJECTION-ANSWER-UNSUPPORTED",
+          "PAIN-SALES-OBJECTION-UNRESOLVED",
+          "PAIN-SALES-OPPORTUNITY-STALL",
+          "PAIN-SALES-OUTREACH-POLICY-BREACH",
+          "PAIN-SALES-PIPELINE-QUALITY-LOW",
+          "PAIN-SALES-PREPARED-PROSPECT-NOT-CONTACTED",
+          "PAIN-SALES-PROSPECT-DATA-INCOMPLETE",
+          "PAIN-SALES-PROSPECT-DUPLICATE-STALE",
+          "PAIN-SALES-PROSPECTING-UNFOCUSED",
+          "PAIN-SALES-QUALIFIED-NOT-QUOTED",
+          "PAIN-SALES-QUOTE-DELIVERY-UNVERIFIED",
+          "PAIN-SALES-QUOTE-DRAFT-ERROR",
+          "PAIN-SALES-QUOTE-SCOPE-PRICE-MISMATCH",
+          "PAIN-SALES-QUOTE-TO-DECISION-FRICTION",
+          "PAIN-SALES-STALE-OPPORTUNITY",
+          "PAIN-SALES-UNQUALIFIED-PIPELINE"
+        ],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": {
+          "type": "REFERENCE_CANONICAL_AGENTS",
+          "agent_ids": [
+            "TZAG-SALES-REVENUE-GROWTH-ORCH",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC",
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+            "TZAG-SALES-QUOTE-DRAFT-WRK",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY"
+          ],
+          "canonical_definition_homes": {
+            "TZAG-SALES-REVENUE-GROWTH-ORCH": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-REVENUE-CONVERSION-MGR": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-CONVERSION-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PIPELINE-MOMENTUM-SPC": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PROSPECT-RESEARCH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-PROSPECT-OUTREACH-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DRAFT-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-QUOTE-DELIVERY-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-FOLLOWUP-EXECUTION-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-SALES-OBJECTION-EVIDENCE-WRK": "TZ-ROADMAP-22-SG-01",
+            "TZAG-REV-MISSED-REVENUE-RECOVERY": "TZ-ROADMAP-39-SG-01"
+          }
+        },
+        "verification_evidence": [],
+        "no_agent_reason": null,
+        "required_before_completion": true,
+        "agent_binding_notes": [
+          "Acceptance must prove Worker→Specialist→Manager→Orchestrator delegation, earned trust progression, cross-domain collaboration, failure/recovery and no duplicate identity creation."
+        ],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "packages/titan-zero-migration-source/portable-core/titan-workforce/starter-agents/sales/runtime/sales-adversarial-evals.mjs",
+              "tests/revenue-journey/pass03-lead-opportunity-lifecycle.test.mjs",
+              "tests/revenue-journey/pass02-lead-opportunity-evidence.test.mjs"
+            ],
+            "finding": "Canonical adversarial and revenue-journey tests already exercise cross-company rejection, duplicate handoff suppression, lifecycle legality and evidence requirements."
+          },
+          {
+            "source_ref": "Titan Reach Flow",
+            "file_id": "file_00000000a58c8230b7c42ad0246e22d4",
+            "library_path": "/MASTER Software/Masters/Operations/Titan Reach Flow/Titan Reach Flow Master v1.43.5.zip",
+            "sha256": "014c127fd6c3a5b93ac6160451674baefd1696d9f922d2c047c0cb9ec1cf2878",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Support/EndToEndLeadFlowSimulation.php",
+              "tests/EndToEndLeadFlowSimulationStaticTest.php"
+            ],
+            "finding": "Reach contributes deterministic end-to-end lead-flow simulation."
+          }
+        ],
+        "relevant_source_refs": [
+          "Titan Zero",
+          "Titan Reach Flow"
+        ],
+        "last_scanned_at_utc": "2026-09-20T04:05:00+10:00",
+        "scan_notes": "Build Worker→Specialist→Manager→Orchestrator acceptance over existing canonical sales/evidence code and verify non-duplication across adjacent domains.",
+        "exhaustion_evidence": null
+      }
+    }
+  ],
+  "affinity_tags": [
+    "agent",
+    "agents",
+    "business-operations",
+    "sales"
+  ],
+  "preferred_predecessors": [],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "unified_architecture_contract_required": true,
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 0,
+  "library_reuse_refs": [],
+  "reuse_first": true,
+  "canonical_workforce_roster": {
+    "status": "DEFINED_PLANNED_IMPLEMENTATION",
+    "canonical_definition_home": "TZ-ROADMAP-22-SG-01",
+    "orchestrator_ids": [
+      "TZAG-SALES-REVENUE-GROWTH-ORCH"
+    ],
+    "manager_ids": [
+      "TZAG-SALES-REVENUE-CONVERSION-MGR"
+    ],
+    "specialist_ids": [
+      "TZAG-SALES-OPPORTUNITY-DISCOVERY-SPC",
+      "TZAG-SALES-COMMERCIAL-QUALIFICATION-SPC",
+      "TZAG-SALES-QUOTE-CONVERSION-SPC",
+      "TZAG-SALES-PIPELINE-MOMENTUM-SPC"
+    ],
+    "worker_ids": [
+      "TZAG-SALES-PROSPECT-RESEARCH-WRK",
+      "TZAG-SALES-PROSPECT-OUTREACH-WRK",
+      "TZAG-SALES-COMMERCIAL-QUALIFICATION-WRK",
+      "TZAG-SALES-QUOTE-DRAFT-WRK",
+      "TZAG-SALES-QUOTE-DELIVERY-WRK",
+      "TZAG-SALES-FOLLOWUP-EXECUTION-WRK",
+      "TZAG-SALES-OBJECTION-EVIDENCE-WRK"
+    ],
+    "reused_innovation_agent_ids": [
+      "TZAG-REV-MISSED-REVENUE-RECOVERY"
+    ],
+    "new_agent_count": 13,
+    "total_domain_roster_count": 14,
+    "boundary_rules": [
+      "Reception owns initial customer access, intent/service-fit routing and booking access; Sales owns commercial opportunity progression after valid routing/creation.",
+      "Missed Revenue Recovery remains one canonical Specialist under its existing Customer Access hierarchy and collaborates with Sales; no Sales Recovery clone is permitted.",
+      "Marketing campaigns/demand generation remain Marketing-domain capabilities; Sales may consume qualified demand and coordinate through Managers/Orchestrators.",
+      "Pricing, margin, finance collection, scheduling/capacity and channel transports are governed tools/domains, not separate Sales agent identities unless a distinct pain/outcome boundary later proves otherwise."
+    ]
+  },
+  "agent_goal_classification": "DOMAIN_WORKFORCE_ELIGIBLE",
+  "agent_goal_rule": "This goal owns durable business/domain outcomes and may reuse, extend or create canonical workforce identities subject to non-duplication and outcome-owner tests.",
+  "workforce_goal_classification": "DOMAIN_OUTCOME_AGENT_ELIGIBLE",
+  "workforce_goal_rule": "Agents are permitted only for durable business/operational outcomes with a distinct ownership boundary. Reuse or extend canonical identities before creating new ones."
+}

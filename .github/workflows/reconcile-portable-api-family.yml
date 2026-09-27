@@ -1,0 +1,70 @@
+name: Reconcile Titan Portable API Family
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reconcile-portable-api-family.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Promote portable API implementation family
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          promoted=0
+          api=Path("titan/apps/web/app/api")
+          for src in sorted(p for p in api.rglob("*") if p.is_file()):
+              dst=Path(str(src)[len("titan/"):])
+              if not dst.is_file(): continue
+              try:
+                  old=dst.read_text()
+                  new=src.read_text()
+              except UnicodeDecodeError:
+                  continue
+
+              # Promote remaining API files that belong to Titan's portable DB
+              # conversion family. Includes tests adjacent to portable routes.
+              portable_markers=(
+                  "@/lib/db/portable", "@/lib/db/dialect", "@/lib/db/contracts",
+                  "portableQuery", "withPortableTransaction", "mysql-portability",
+                  "portability.contract", "portable database"
+              )
+              titan_portable=any(m in new for m in portable_markers)
+              sibling_portable=False
+              if not titan_portable and ("__tests__" in src.parts or src.name.endswith(".test.ts")):
+                  parent=src.parent.parent if src.parent.name=="__tests__" else src.parent
+                  for cand in parent.glob("*.ts"):
+                      try:
+                          if any(m in cand.read_text() for m in portable_markers):
+                              sibling_portable=True; break
+                      except Exception: pass
+
+              if titan_portable or sibling_portable:
+                  dst.write_text(new)
+                  subprocess.run(["git","add",str(dst)],check=True)
+                  subprocess.run(["git","rm","-f",str(src)],check=True)
+                  promoted += 1
+
+          print(f"Promoted {promoted} additional portable API-family files.")
+          PY
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Reconcile remaining Titan portable API family"
+          git push

@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {evaluatePerformanceBudgets,createPerformanceSampleRecorder} from '../titan-runtime/performance/performance-budget-monitor.mjs';
+const budget=JSON.parse(fs.readFileSync(new URL('../titan-runtime/performance/performance-budgets-merge42.json',import.meta.url)));
+test('current reference measurements stay inside declared budgets',()=>{const r=evaluatePerformanceBudgets({package_zip_bytes:38364031,package_uncompressed_bytes:93343056,service_worker_static_closure_bytes:15179156,startup_p95_ms:33.214,startup_positive_heap_delta_bytes:206608},budget);assert.equal(r.ok,true);assert.ok(r.results.every(x=>x.pass));});
+test('budget breach fails closed',()=>{const r=evaluatePerformanceBudgets({package_zip_bytes:50000000,package_uncompressed_bytes:93343056,service_worker_static_closure_bytes:15179156,startup_p95_ms:33.214,startup_positive_heap_delta_bytes:206608},budget);assert.equal(r.ok,false);assert.equal(r.results.find(x=>x.key==='package_zip_bytes').pass,false);});
+test('missing/non-finite measurements fail',()=>{const r=evaluatePerformanceBudgets({package_zip_bytes:NaN},budget);assert.equal(r.ok,false);assert.ok(r.results.some(x=>x.valid===false));});
+test('measurement is authority neutral',()=>{const r=evaluatePerformanceBudgets({package_zip_bytes:1,package_uncompressed_bytes:1,service_worker_static_closure_bytes:1,startup_p95_ms:1,startup_positive_heap_delta_bytes:1},budget);assert.equal(r.grants_authority,false);assert.equal(r.identity_confers_authority,false);assert.equal(r.company_boundary,'company_id');});
+test('sample recorder is bounded and authority neutral',()=>{const events=[];const rec=createPerformanceSampleRecorder({limit:2,clock:()=>123,sink:e=>events.push(e)});rec.record({startup_p95_ms:10});rec.record({startup_p95_ms:11});rec.record({startup_p95_ms:12});assert.equal(rec.snapshot().length,2);assert.equal(events.length,3);assert.ok(rec.snapshot().every(x=>x.grants_authority===false));});

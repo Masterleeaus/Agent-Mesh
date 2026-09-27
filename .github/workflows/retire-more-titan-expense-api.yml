@@ -1,0 +1,28 @@
+name: Retire More Superseded Titan Expense API
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-more-titan-expense-api.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          # Root receipt upload is safer: it preserves an existing receipt and
+          # conditionally writes only when receipt_url is null.
+          # Root import commit uses cross-source expense fingerprints.
+          # Root receipt review supports reviewed state, tools, non-job
+          # destinations, recent closed jobs and billable/books-only handling.
+          git rm -f             'titan/apps/web/app/api/v1/expenses/[id]/receipt/route.ts'             'titan/apps/web/app/api/v1/expenses/import/commit/route.ts'             'titan/apps/web/app/api/v1/expenses/receipt-review/route.ts'
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Retire later superseded Titan expense routes"
+          git push

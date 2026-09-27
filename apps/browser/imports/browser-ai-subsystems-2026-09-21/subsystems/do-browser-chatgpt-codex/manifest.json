@@ -1,0 +1,56 @@
+{
+   "action": {
+   },
+   "background": {
+      "service_worker": "background.js"
+   },
+   "commands": {
+      "quick-command-palette": {
+         "description": "Open \"Do Browser\" quick command palette on the active page.",
+         "suggested_key": {
+            "default": "Ctrl+Shift+P",
+            "mac": "Command+Shift+P"
+         }
+      },
+      "toggle-sidebar": {
+         "description": "Toggle \"Do Browser\" sidepanel on the current page.",
+         "suggested_key": {
+            "default": "Ctrl+Shift+Period",
+            "mac": "Command+Shift+Period"
+         }
+      }
+   },
+   "content_scripts": [  ],
+   "content_security_policy": {
+      "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http:; child-src 'self' blob:"
+   },
+   "description": "Your Browser, Automated. Describe what you want, watch it happen.",
+   "externally_connectable": {
+      "matches": [ "https://*.dobrowser.io/*", "http://localhost:3000/*", "http://127.0.0.1:3000/*" ]
+   },
+   "host_permissions": [ "https://*.dobrowser.io/*", "https://platform.claude.com/*" ],
+   "icons": {
+      "128": "icon/128.png",
+      "16": "icon/16.png",
+      "32": "icon/32.png",
+      "48": "icon/48.png",
+      "96": "icon/96.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs/A+BBS56+dW1FK+JP03j4nzM1+FYncwXtvGgzMwrvdgBQ5MABuP7IaIyHMaDIigEVX/52YRZkGCUzWL/L6J+aYVRZeQ6y/KiGH/OjFmTuZyf2SRWC9CNcPjTA/MU4tSgm+kY6khHAHulUWDugigZMURIPp2k7MlkWkKEvKk/j1rJKLPmec7HSQVP7Xc++7sSdhJ87YyOSmAl+QfcL4bRzwSQhbf4MGelX2ryjqlTIB4zougtN2lRA2RGVsrd3LaVxe4fUJWA5uY3x1URoeHQuuUiADRveaBspF0YS8eb6N8aaePfHYXlRTSoCqIXiW1gyyX83YvPpOpLuMaLMBwbwIDAQAB",
+   "manifest_version": 3,
+   "name": "Do Browser: AI Browser Agent",
+   "omnibox": {
+      "keyword": "do"
+   },
+   "optional_host_permissions": [ "https://api.do.computer/*" ],
+   "optional_permissions": [ "offscreen", "alarms", "notifications", "clipboardRead", "clipboardWrite", "management", "history", "topSites", "tabGroups", "tabCapture" ],
+   "permissions": [ "sidePanel", "storage", "debugger", "tabs", "activeTab", "scripting" ],
+   "sandbox": {
+      "pages": [ "sandbox-render.html", "sandbox.html" ]
+   },
+   "side_panel": {
+      "default_path": "sidepanel.html"
+   },
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "3.1.35"
+}

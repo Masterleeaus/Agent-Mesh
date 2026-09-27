@@ -1,0 +1,11 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const c={};c.globalThis=c;vm.createContext(c);
+for(const f of ['src/titan-zero/titan-zero-snapshot-policy.js','src/titan-zero/titan-zero-route-consumer-index.js']) vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});
+const routes=[];for(let i=0;i<12000;i++)routes.push({name:`route.${i}`});routes.push({name:'__proto__'});
+const literals=Array.from({length:7000},(_,i)=>`'route.${i}'`).join(',');
+const r=c.CodeeTitanZeroRouteConsumerIndex.analyze({'resources/views/a.blade.php':`@php($x=[${literals}]) route('__proto__')`},{routes});
+assert(r.consumers.length<=20000,'consumer evidence must be bounded');
+assert(r.knownRoutes.length<=10000,'known route names must be bounded');
+assert.strictEqual(Object.getPrototypeOf(r.byRoute),null,'byRoute must be prototype safe');
+assert.strictEqual(r.truncated,true,'oversized route/reference inputs must report truncation');
+console.log('Titan route-consumer analysis is bounded and prototype-safe');

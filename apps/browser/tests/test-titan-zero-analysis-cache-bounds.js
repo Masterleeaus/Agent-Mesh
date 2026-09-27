@@ -1,0 +1,11 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const source=fs.readFileSync('src/lib/service-worker.js','utf8');
+const chrome={sidePanel:{setPanelBehavior:async()=>{}},runtime:{onMessage:{addListener(){}},sendMessage:async()=>({ok:true}),onStartup:{addListener(){}},onInstalled:{addListener(){}}},alarms:{create:async()=>{},get:async()=>({periodInMinutes:1}),onAlarm:{addListener(){}}},tabs:{query(_q,cb){cb([])},get:async()=>({url:'https://chatgpt.com/c/a'}),sendMessage:async()=>({ok:true})},storage:{local:{get:async()=>({}),set:async()=>{}}}};
+const c={chrome,console:{log(){},warn(){},error(){}},Map,Set,Promise,Date,Math,JSON,importScripts(){}};vm.runInNewContext(source,c);
+assert.strictEqual(typeof c.pruneTitanZeroAnalysisCache,'function','worker must bound persistent Titan analysis cache');
+const input={latest:{analyzedAt:'2026-01-01T00:00:00Z'}};for(let i=0;i<50;i++) input[`tab_${i}`]={analyzedAt:new Date(2026,0,1,0,0,i).toISOString(),context:'x'};
+const out=c.pruneTitanZeroAnalysisCache(input);
+const tabKeys=Object.keys(out).filter(k=>k.startsWith('tab_'));
+assert(tabKeys.length<=12,'persistent per-tab Titan analysis cache must stay bounded');
+assert(out.latest,'latest summary must be retained');
+console.log('Titan Zero persistent analysis cache bounds OK');

@@ -1,0 +1,10 @@
+{
+  "schema": "titan-zero-builder-handoff/v1",
+  "builder": "Builder 3",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 9,
+  "status": "PASS09_COMPLETE_CONTINUE_PASS10",
+  "next_pass": 10,
+  "next_pass_scope": "Certify KPI correctness, source provenance, UI projection, exact reconstruction and publish; STOP.",
+  "recommended_convergence_class": "CLEAN_ADDITIVE_FORWARD_PORT"
+}

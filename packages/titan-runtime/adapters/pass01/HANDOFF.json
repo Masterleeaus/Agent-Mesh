@@ -1,0 +1,13 @@
+{
+  "schema": "titan-zero-builder-handoff/v1",
+  "builder": "Builder 3",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 1,
+  "status": "PASS01_COMPLETE_CONTINUE_PASS02",
+  "manager_merge": 39,
+  "summary": "Mapped current DOM-driven Retriever composer/submit/progress discovery, Monica compatibility boundary, existing TITAN_OUTCOME transport and company/authority contracts without modifying production code.",
+  "next_pass": 2,
+  "next_pass_scope": "Define typed TITAN execution adapter envelope, versioning, capability negotiation and error semantics while preserving existing message compatibility.",
+  "claim_status": "ACTIVE",
+  "recommended_convergence_class": "CLEAN_ADDITIVE"
+}

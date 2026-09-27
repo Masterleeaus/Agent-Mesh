@@ -1,0 +1,15 @@
+{
+  "schema": "titan-zero-verification/v1",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 9,
+  "status": "PASS",
+  "focused_tests": "9/9 PASS",
+  "runtime_syntax": "7/7 PASS",
+  "cross_company_leakage": "PASS",
+  "duplicate_events": "PASS",
+  "partial_data": "PASS",
+  "stale_data": "PASS",
+  "melbourne_dst_boundary": "PASS",
+  "legacy_alias_rejection": "PASS",
+  "runtime_fixes_needed": "NONE"
+}

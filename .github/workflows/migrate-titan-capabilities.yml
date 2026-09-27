@@ -1,0 +1,42 @@
+name: Migrate Titan Capability Folders
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/migrate-titan-capabilities.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Move unique Titan capability folders into workspace packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          move_unique () {
+            src="$1"; dst="$2"
+            test -d "$src"
+            test ! -e "$dst"
+            git mv "$src" "$dst"
+          }
+
+          move_unique titan/titan-business-services packages/business-services
+          move_unique titan/titan-inventory packages/inventory
+          move_unique titan/titan-modules packages/modules
+          move_unique titan/titan-revenue-journey packages/revenue-journey
+          move_unique titan/titan-settings packages/settings
+          move_unique titan/titan-tools packages/tools
+
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Migrate Titan capability folders into Dovetails workspace"
+          git push

@@ -1,0 +1,139 @@
+{
+  "schema": "titan-zero-kpi-source-map/v1",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 1,
+  "title": "Business Analytics + KPI Runtime source inventory",
+  "status": "PASS01_COMPLETE",
+  "frozen_packet_base": {
+    "manager_merge": 24,
+    "artifact": "Titan-Zero-CANONICAL-MASTER-2026-09-07-MERGE-24-NANO-CONTROL-FENCE-ABSORBED.zip",
+    "sha256": "3fdd9627e0c6e88ed301d2675f27ef2f299cc6c8d8c5f840298bcca19c719fed"
+  },
+  "live_implementation_base": {
+    "manager_merge": 42,
+    "artifact": "Titan-Zero-CANONICAL-MASTER-2026-09-09-MERGE-42-PERMISSION-HARDENING-CONVERGED.zip",
+    "sha256": "1c4b6f471ba16f44d7b27db546ba41db18032ce9967b1d725dc0926cd73cc930",
+    "canonical_files": 3023
+  },
+  "design_rules": {
+    "company_boundary": "company_id",
+    "analytics_is_source_of_truth": false,
+    "analytics_grants_authority": false,
+    "identity_is_authority": false,
+    "metric_values_require_provenance": true,
+    "missing_data_must_not_be_fabricated": true,
+    "existing_authorities_remain_canonical": true
+  },
+  "source_authorities": [
+    {
+      "source_id": "event-ledger",
+      "category": "events_feed",
+      "path": "titan-runtime/event-ledger/event-ledger.mjs",
+      "role": "canonical event/provenance ledger candidate for metric evidence windows",
+      "authority": "OBSERVATION_SOURCE_ONLY"
+    },
+    {
+      "source_id": "feed-causality",
+      "category": "events_feed",
+      "path": "titan-runtime/feed/feed-causality.mjs",
+      "role": "causal feed metadata and event relationship source",
+      "authority": "OBSERVATION_SOURCE_ONLY"
+    },
+    {
+      "source_id": "workforce-runtime",
+      "category": "workforce",
+      "path": "runtime/workforce-runtime-background.mjs",
+      "role": "workforce state/runtime producer",
+      "authority": "EXISTING_WORKFORCE_AUTHORITY"
+    },
+    {
+      "source_id": "workforce-graph",
+      "category": "workforce",
+      "path": "titan-workforce/graph/workforce-graph.mjs",
+      "role": "workforce relationship/graph projection",
+      "authority": "EXISTING_WORKFORCE_AUTHORITY"
+    },
+    {
+      "source_id": "supervisor-runtime",
+      "category": "workforce_quality",
+      "path": "titan-workforce/supervision/supervisor-runtime.mjs",
+      "role": "supervision and exception/quality observations",
+      "authority": "EXISTING_SUPERVISION_AUTHORITY"
+    },
+    {
+      "source_id": "jobs-runtime",
+      "category": "jobs",
+      "path": "titan-workforce/starter-agents/jobs/jobs-agent-runtime.mjs",
+      "role": "job lifecycle/runtime state",
+      "authority": "EXISTING_JOBS_AUTHORITY"
+    },
+    {
+      "source_id": "jobs-context-bridge",
+      "category": "jobs",
+      "path": "titan-workforce/starter-agents/jobs/jobs-context-bridge.mjs",
+      "role": "job context and source linkage",
+      "authority": "PROJECTION_ONLY"
+    },
+    {
+      "source_id": "sales-contract",
+      "category": "sales_quotes",
+      "path": "payload/titan-workforce/starter-agents/sales/runtime/sales-agent-contract.mjs",
+      "role": "lead/sales response contract and structured sales state",
+      "authority": "EXISTING_SALES_AUTHORITY"
+    },
+    {
+      "source_id": "sales-lead-response",
+      "category": "sales_quotes",
+      "path": "payload/titan-workforce/starter-agents/sales/runtime/sales-lead-response-adapter.mjs",
+      "role": "lead-response and qualification observations",
+      "authority": "EXISTING_SALES_AUTHORITY"
+    },
+    {
+      "source_id": "invoice-workflow",
+      "category": "invoicing_cash",
+      "path": "titan-business-services/workflows/create_invoice.json",
+      "role": "invoice workflow contract; KPI layer must observe rather than own invoice state",
+      "authority": "EXISTING_BUSINESS_SERVICE_AUTHORITY"
+    },
+    {
+      "source_id": "business-services",
+      "category": "invoicing_cash",
+      "path": "titan-modules/builtin/business-services/index.mjs",
+      "role": "business-service workflow/runtime integration",
+      "authority": "EXISTING_BUSINESS_SERVICE_AUTHORITY"
+    },
+    {
+      "source_id": "client-workforce",
+      "category": "customer_operations",
+      "path": "titan-client-workforce.js",
+      "role": "customer-facing workforce/job projection and operational surface",
+      "authority": "PROJECTION_ONLY"
+    },
+    {
+      "source_id": "evidence-quality",
+      "category": "quality",
+      "path": "titan-intelligence/trust/evidence-quality-engine.js",
+      "role": "quality/evidence scoring source for evidence-backed KPI provenance",
+      "authority": "EXISTING_TRUST_AUTHORITY"
+    },
+    {
+      "source_id": "cleaning-workforce",
+      "category": "cleaning_operations",
+      "path": "titan-cleaning-workforce.js",
+      "role": "cleaning-specific operational producer and projection",
+      "authority": "EXISTING_WORKFORCE_AUTHORITY"
+    }
+  ],
+  "pass02_recommendation": {
+    "action": "Create additive KPI registry/contracts only; metric definitions reference these source IDs and never duplicate their business state.",
+    "initial_domains": [
+      "revenue",
+      "jobs",
+      "workforce",
+      "quality",
+      "customer",
+      "cash",
+      "operational_health"
+    ]
+  }
+}

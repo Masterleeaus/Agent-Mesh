@@ -1,0 +1,10 @@
+{
+  "schema": "titan-zero-semantic-change/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 3,
+  "summary": "Adds work-runtime and Retriever adapter modules that consume explicit external authority decisions and map typed TITAN_WORK_SUBMIT envelopes into the existing protected Retriever transport.",
+  "company_boundary": "company_id",
+  "identity_not_authority": true,
+  "adapter_grants_authority": false,
+  "execution_authority": false
+}

@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('fs');const vm=require('vm');const assert=require('assert');const path=require('path');
+const root=path.resolve(__dirname,'..');const ctx={console,Buffer};ctx.globalThis=ctx;vm.createContext(ctx);
+vm.runInContext(fs.readFileSync(path.join(root,'src/intelligence/project-memory-candidate-store.js'),'utf8'),ctx);
+const {ProjectMemoryCandidateStore}=ctx.CodeeProjectMemoryCandidateStore;
+let now=1000000;const store=new ProjectMemoryCandidateStore({maxItems:2,maxBytes:8192,maxItemBytes:2048,ttlMs:60000,now:()=>now});
+const a=store.put({category:'architecture',text:'Repository evidence remains authoritative over model speculation.',provenance:[{source:'repository.search',evidence_id:'repo:1',path:'src/a.js',line:2,deterministic:true}]});
+assert(a&&a.status==='CANDIDATE');assert.equal(a.confidence,1);assert.equal(a.deterministic,true);assert.equal(a.promotion_state,'UNREVIEWED');assert.equal(a.promotion_authority,false);assert.equal(a.canonical,false);
+const model=store.put({category:'risk',text:'This module may be fragile.',confidence:.8,model_derived:true,provenance:[{source:'browser-model',evidence_id:'model:1',deterministic:false,confidence:.7}]});
+assert.equal(model.model_derived,true);assert.equal(model.deterministic,false);assert.equal(model.promotion_authority,false);
+const exported=store.export();assert.equal(exported.items.length,2);assert.equal(exported.authority,false);
+const restored=new ProjectMemoryCandidateStore({maxItems:2,maxBytes:8192,maxItemBytes:2048,ttlMs:60000,now:()=>now});restored.restore(exported);assert.equal(restored.stats().item_count,2);assert(restored.get(a.candidate_id));
+store.put({category:'test',text:'Third candidate evicts oldest when capacity is exceeded.',provenance:[{source:'repository.test',evidence_id:'repo:3',deterministic:true}]});assert.equal(store.stats().item_count,2);assert.equal(store.get(a.candidate_id),null);
+now+=61000;assert.equal(store.stats().item_count,0);
+assert.throws(()=>store.put({text:'No provenance'}),e=>e.code==='ERR_PROJECT_MEMORY_PROVENANCE_REQUIRED');
+const tampered={...exported,items:[{...exported.items[0],status:'PROMOTED',promotion_state:'PROMOTED'}]};restored.restore(tampered);assert.equal(restored.stats().item_count,0);
+console.log('PASS project memory candidate store');

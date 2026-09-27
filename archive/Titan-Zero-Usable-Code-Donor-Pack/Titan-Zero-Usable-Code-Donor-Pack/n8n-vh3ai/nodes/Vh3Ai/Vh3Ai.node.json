@@ -1,0 +1,29 @@
+{
+	"node": "n8n-nodes-vh3ai.vh3Ai",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Miscellaneous"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://vh3.ai/docs"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://vh3.ai/docs"
+			}
+		]
+	},
+	"alias": [
+		"VH3",
+		"field service",
+		"FSI",
+		"intelligence",
+		"BigChange",
+		"job feed",
+		"report",
+		"enriched job",
+		"operational report"
+	]
+}

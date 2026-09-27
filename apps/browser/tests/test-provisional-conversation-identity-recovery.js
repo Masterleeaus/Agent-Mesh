@@ -1,0 +1,12 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const source=fs.readFileSync('src/lib/service-worker.js','utf8');
+let codeeState={plan_7:{stateVersion:2,protocolMode:'signature_v2',planId:'p',runId:'r',plan:[{number:1,text:'one'}],stepIndex:0,dispatchStatus:'awaiting_artifact',target:{provider:'ChatGPT',url:'https://chatgpt.com/',conversationIdentity:'chatgpt:page:new-chat:abc'}}};
+const chrome={sidePanel:{setPanelBehavior:async()=>{}},runtime:{onMessage:{addListener(){}},sendMessage:async()=>({ok:true})},alarms:{create(){},onAlarm:{addListener(){}}},tabs:{query(_q,cb){cb([])},async get(id){if(id===7)throw new Error('gone');return{id,url:'https://chatgpt.com/'};},sendMessage:async(_id,msg)=>msg.action==='GET_CONVERSATION_IDENTITY'?{ok:true,conversationIdentity:'chatgpt:page:new-chat:abc'}:{ok:true}},storage:{local:{get:async()=>({codeeState:JSON.parse(JSON.stringify(codeeState))}),set:async({codeeState:next})=>{codeeState=JSON.parse(JSON.stringify(next));}}}};
+const c={chrome,console:{log(){},warn(){},error(){}},setTimeout(fn){fn();return 1},Map,Set,Promise,Date,Math,URL,crypto:{randomUUID:()=> 'x'}};vm.runInNewContext(source,c);
+(async()=>{
+ const rebound=await c.rebindOrphanedPlanToTab(9,'https://chatgpt.com/','chatgpt:page:new-chat:abc');assert.strictEqual(rebound.rebound,true);assert(codeeState.plan_9);
+ const plan=codeeState.plan_9;const promoted=await c.reconcileConversationIdentity(plan,'https://chatgpt.com/c/structured','chatgpt:page:new-chat:abc');assert.strictEqual(promoted.promoted,true);assert.strictEqual(plan.target.conversationIdentity,'chatgpt:structured');
+ codeeState={plan_7:{stateVersion:2,protocolMode:'signature_v2',planId:'p2',runId:'r2',plan:[{number:1,text:'one'}],stepIndex:0,dispatchStatus:'awaiting_artifact',target:{provider:'ChatGPT',url:'https://chatgpt.com/',conversationIdentity:'chatgpt:page:new-chat:lost-session'}}};
+ const structuredRebind=await c.rebindOrphanedPlanToTab(10,'https://chatgpt.com/c/restored','','chatgpt:restored');assert.strictEqual(structuredRebind.rebound,false,'an orphaned provisional plan without matching lineage must fail closed instead of attaching to an arbitrary structured conversation');assert(codeeState.plan_7 && !codeeState.plan_10,'failed safe rebind must preserve the orphaned plan for explicit user recovery');
+ console.log('provisional new-chat identity promotes only with matching lineage and otherwise fails closed');
+})().catch(e=>{console.error(e);process.exit(1)});

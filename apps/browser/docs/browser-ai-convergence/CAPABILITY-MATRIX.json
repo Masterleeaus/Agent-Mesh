@@ -1,0 +1,408 @@
+{
+  "schema": "titan-code-convergence-matrix-v1",
+  "pass": 1,
+  "baselineVersion": "2.11.9",
+  "areas": [
+    {
+      "id": "plan_runner",
+      "name": "Plan Runner / recovery",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/lib/plan-requirement-analyzer.js",
+          "exists": true,
+          "kind": "file"
+        },
+        {
+          "path": "src/lib/production-plan-preflight.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "WORKING"
+    },
+    {
+      "id": "artifact_authority",
+      "name": "Artifact verification / receipts",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/integration/artifact-verification-adapter.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "WORKING"
+    },
+    {
+      "id": "provider_gateway",
+      "name": "Inference provider gateway",
+      "decision": "EXTEND",
+      "evidence": [
+        {
+          "path": "src/ai/provider-gateway.js",
+          "exists": true,
+          "kind": "file"
+        },
+        {
+          "path": "src/ai/ai-provider-registry.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini adapter",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/ai/adapters/gemini-adapter.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "WORKING"
+    },
+    {
+      "id": "ollama",
+      "name": "Ollama Bridge adapter",
+      "decision": "EXTEND",
+      "evidence": [
+        {
+          "path": "src/ai/adapters/ollama-bridge-adapter.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "model_registry",
+      "name": "Model registry",
+      "decision": "EXTEND",
+      "evidence": [
+        {
+          "path": "src/ai/model-registry.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "ai_audit",
+      "name": "AI audit ledger",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/ai/ai-audit-ledger.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "WORKING"
+    },
+    {
+      "id": "webgpu",
+      "name": "WebGPU capability/router",
+      "decision": "EXTEND",
+      "evidence": [
+        {
+          "path": "src/intelligence/webgpu-capability.js",
+          "exists": true,
+          "kind": "file"
+        },
+        {
+          "path": "src/intelligence/browser-model-resource-router.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "offscreen",
+      "name": "Offscreen model runtime",
+      "decision": "EXTEND",
+      "evidence": [
+        {
+          "path": "src/intelligence/offscreen-runtime.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "streaming",
+      "name": "Streaming inference",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/intelligence/streaming.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "WORKING"
+    },
+    {
+      "id": "working_memory",
+      "name": "Session working memory",
+      "decision": "EXTEND",
+      "evidence": [
+        {
+          "path": "src/intelligence/session-working-memory.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "project_memory",
+      "name": "Project memory governance",
+      "decision": "EXTEND",
+      "evidence": [
+        {
+          "path": "src/intelligence/project-memory-governance.js",
+          "exists": true,
+          "kind": "file"
+        },
+        {
+          "path": "src/intelligence/project-memory-candidate-store.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "rag",
+      "name": "Repository RAG / hybrid retrieval",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/intelligence/repository-hybrid-retriever.js",
+          "exists": true,
+          "kind": "file"
+        },
+        {
+          "path": "src/intelligence/repository-context-assembler.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "WORKING"
+    },
+    {
+      "id": "browser_contract",
+      "name": "Browser capability contract",
+      "decision": "EXTEND",
+      "evidence": [
+        {
+          "path": "src/browser/browser-capability-contract.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "CONTRACT_ONLY"
+    },
+    {
+      "id": "browser_execution",
+      "name": "Browser execution engine",
+      "decision": "DONOR_MERGE",
+      "evidence": [
+        {
+          "path": "imports/browser-ai-subsystems-2026-09-21/subsystems/auto-browser",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "STAGED_DONOR"
+    },
+    {
+      "id": "webmcp",
+      "name": "WebMCP semantic tools",
+      "decision": "DONOR_MERGE",
+      "evidence": [
+        {
+          "path": "imports/browser-ai-subsystems-2026-09-21/subsystems/auto-browser",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "STAGED_DONOR"
+    },
+    {
+      "id": "prompt_api",
+      "name": "Chrome Prompt API",
+      "decision": "DONOR_MERGE",
+      "evidence": [
+        {
+          "path": "imports/browser-ai-subsystems-2026-09-21/subsystems/chrome-prompt-api",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "STAGED_DONOR"
+    },
+    {
+      "id": "webllm",
+      "name": "WebLLM/offline local AI",
+      "decision": "DONOR_MERGE",
+      "evidence": [
+        {
+          "path": "imports/browser-ai-subsystems-2026-09-21/subsystems/webllm-offline",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "STAGED_DONOR"
+    },
+    {
+      "id": "chatgpt_subscription",
+      "name": "ChatGPT subscription transport",
+      "decision": "DONOR_MERGE",
+      "evidence": [
+        {
+          "path": "imports/browser-ai-subsystems-2026-09-21/subsystems/do-browser-chatgpt-codex",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "STAGED_DONOR"
+    },
+    {
+      "id": "react_runtime",
+      "name": "Browser ReAct runtime",
+      "decision": "DONOR_MERGE",
+      "evidence": [
+        {
+          "path": "imports/browser-ai-subsystems-2026-09-21/subsystems/auto-browser",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "STAGED_DONOR"
+    },
+    {
+      "id": "action_journal",
+      "name": "Browser action journal",
+      "decision": "DONOR_MERGE",
+      "evidence": [
+        {
+          "path": "imports/browser-ai-subsystems-2026-09-21/subsystems/auto-browser",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "STAGED_DONOR"
+    },
+    {
+      "id": "interaction_engine",
+      "name": "Interaction Engine",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/interaction-engine",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "WORKING"
+    },
+    {
+      "id": "mcp",
+      "name": "MCP runtime/governance",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/integration/titan-mcp-runtime.js",
+          "exists": true,
+          "kind": "file"
+        },
+        {
+          "path": "src/integration/mcp-governance-gateway.js",
+          "exists": true,
+          "kind": "file"
+        }
+      ],
+      "status": "WORKING"
+    },
+    {
+      "id": "repository",
+      "name": "Repository intelligence",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/repository",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "WORKING"
+    },
+    {
+      "id": "titan_zero",
+      "name": "Titan Zero development intelligence",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/titan-zero",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "WORKING"
+    },
+    {
+      "id": "workforce",
+      "name": "Workforce runtime/deployment",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/workforce",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "WORKING"
+    },
+    {
+      "id": "managers",
+      "name": "Manager control plane",
+      "decision": "REUSE",
+      "evidence": [
+        {
+          "path": "src/managers",
+          "exists": true,
+          "kind": "dir"
+        }
+      ],
+      "status": "WORKING"
+    }
+  ],
+  "statusVocabulary": [
+    "WORKING",
+    "PARTIAL",
+    "CONTRACT_ONLY",
+    "STAGED_DONOR",
+    "MISSING"
+  ],
+  "decisionVocabulary": [
+    "REUSE",
+    "EXTEND",
+    "DONOR_MERGE",
+    "BUILD",
+    "REMOVE"
+  ],
+  "rules": {
+    "tenantBoundary": "company_id",
+    "donorActivation": "never-direct-from-imports",
+    "browserAuthority": "canonical browser.* contracts",
+    "inferenceAuthority": "CodeeProviderGateway"
+  }
+}

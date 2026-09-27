@@ -1,0 +1,34 @@
+name: Agent work
+description: Claimable Titan Zero implementation work
+title: "[TZ-ROADMAP-XX-SG-XX] "
+body:
+  - type: input
+    id: subgoal
+    attributes:
+      label: Roadmap subgoal
+      placeholder: TZ-ROADMAP-01-SG-01
+    validations:
+      required: true
+  - type: textarea
+    id: remaining
+    attributes:
+      label: Remaining work
+      description: State only work that remains after checking main and existing evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Existing evidence / reuse targets
+      description: Files, contracts, tests, agents or capabilities that must be reused or extended.
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Agent Mesh rules
+      options:
+        - label: I will work from current GitHub main, not conversation memory or old ZIP/HEAD pointers.
+          required: true
+        - label: I will use a dedicated branch and linked PR; I will not push implementation directly to main.
+          required: true
+        - label: I will preserve company_id as the canonical boundary and reuse existing canonical identities.
+          required: true

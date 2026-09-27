@@ -1,0 +1,138 @@
+{
+  "schema": "titan.ui.native-service-reachability.v1",
+  "manager_base": 62,
+  "surfaces": [
+    {
+      "surface": "business",
+      "page": "apps/web/app/app/page.tsx",
+      "native_modules": [
+        "apps/web/lib/operations/business-day.ts",
+        "apps/web/lib/operations/state.ts"
+      ],
+      "api_routes": [
+        "apps/web/app/api/v1/business-day/transition/route.ts"
+      ],
+      "missing": [],
+      "ready": true
+    },
+    {
+      "surface": "workforce",
+      "page": "apps/web/app/app/settings/page.tsx",
+      "native_modules": [
+        "apps/web/lib/titan/workforce-lifecycle/inspection.ts",
+        "apps/web/lib/titan/workforce-command-gateway.ts"
+      ],
+      "api_routes": [
+        "apps/web/app/api/v1/titan/workforce/commands/route.ts",
+        "apps/web/app/api/v1/titan/workforce/agents/plan/route.ts"
+      ],
+      "missing": [],
+      "ready": true
+    },
+    {
+      "surface": "customers",
+      "page": "apps/web/app/app/clients/page.tsx",
+      "native_modules": [
+        "apps/web/lib/crm/normalization.ts"
+      ],
+      "api_routes": [
+        "apps/web/app/api/v1/clients/route.ts",
+        "apps/web/app/api/v1/clients/[id]/route.ts"
+      ],
+      "missing": [],
+      "ready": true
+    },
+    {
+      "surface": "jobs",
+      "page": "apps/web/app/app/jobs/page.tsx",
+      "native_modules": [
+        "apps/web/lib/jobs/project-board.ts",
+        "apps/web/lib/jobs/schedule-guard.ts"
+      ],
+      "api_routes": [
+        "apps/web/app/api/v1/jobs/route.ts",
+        "apps/web/app/api/v1/jobs/[id]/route.ts",
+        "apps/web/app/api/v1/jobs/[id]/transition/route.ts"
+      ],
+      "missing": [],
+      "ready": true
+    },
+    {
+      "surface": "quotes",
+      "page": "apps/web/app/app/estimates/page.tsx",
+      "native_modules": [
+        "apps/web/lib/estimates/repository.ts",
+        "apps/web/lib/estimates/transitions.ts"
+      ],
+      "api_routes": [
+        "apps/web/app/api/v1/estimates/route.ts",
+        "apps/web/app/api/v1/estimates/[id]/route.ts",
+        "apps/web/app/api/v1/estimates/[id]/transition/route.ts"
+      ],
+      "missing": [],
+      "ready": true
+    },
+    {
+      "surface": "scheduling",
+      "page": "apps/web/app/app/schedule/page.tsx",
+      "native_modules": [
+        "apps/web/lib/visits/queries.ts",
+        "apps/web/lib/jobs/schedule-guard.ts"
+      ],
+      "api_routes": [
+        "apps/web/app/api/v1/visits/[id]/route.ts",
+        "apps/web/app/api/v1/visits/[id]/transition/route.ts",
+        "apps/web/app/api/v1/titan/workforce/native/scheduling/route.ts"
+      ],
+      "missing": [],
+      "ready": true
+    },
+    {
+      "surface": "invoices",
+      "page": "apps/web/app/app/invoices/page.tsx",
+      "native_modules": [
+        "apps/web/lib/invoices/db.ts",
+        "apps/web/lib/invoices/payments.ts"
+      ],
+      "api_routes": [
+        "apps/web/app/api/v1/invoices/route.ts",
+        "apps/web/app/api/v1/invoices/[id]/route.ts",
+        "apps/web/app/api/v1/invoices/[id]/transition/route.ts"
+      ],
+      "missing": [],
+      "ready": true
+    },
+    {
+      "surface": "marketplace",
+      "page": "apps/web/app/app/settings/page.tsx",
+      "native_modules": [
+        "packages/titan-platform/src/ported/cleaning-marketplace.ts",
+        "packages/titan-platform/src/ported/cleaning-workforce-marketplace.ts"
+      ],
+      "api_routes": [],
+      "missing": [],
+      "ready": true
+    },
+    {
+      "surface": "settings",
+      "page": "apps/web/app/app/settings/page.tsx",
+      "native_modules": [
+        "apps/web/lib/pricing/settings.ts",
+        "apps/web/lib/travel/settings.ts",
+        "apps/web/lib/integrations/square-payments.ts"
+      ],
+      "api_routes": [
+        "apps/web/app/api/v1/pricing/settings/route.ts",
+        "apps/web/app/api/v1/travel/settings/route.ts",
+        "apps/web/app/api/v1/users/[id]/route.ts"
+      ],
+      "missing": [],
+      "ready": true
+    }
+  ],
+  "all_ready": true,
+  "generated_against": {
+    "artifact": "Titan-Zero-CANONICAL-2026-09-13-MERGE62-LIVE-LANES-CONVERGED.zip",
+    "sha256": "806ae84bee5c9b5911ef33c76581d222615abc4cb8fee1188aac60ade22603bb"
+  }
+}

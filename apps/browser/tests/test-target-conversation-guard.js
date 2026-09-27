@@ -1,0 +1,22 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');
+const source=fs.readFileSync('src/lib/service-worker.js','utf8');
+let liveUrl='https://chatgpt.com/c/wrong';
+let codeeState={plan_7:{stateVersion:2,protocolMode:'signature_v2',planId:'p',runId:'r',plan:[{number:1,text:'one'}],stepIndex:0,knownVersions:[],versions:[],knownArtifactHashes:[],consumedArtifactHashes:[],artifactHistory:[],dispatchStatus:'pending_send',target:{provider:'ChatGPT',url:'https://chatgpt.com/c/right',conversationIdentity:'chatgpt:right'}}};
+let sends=0;
+const chrome={sidePanel:{setPanelBehavior:async()=>{}},runtime:{onMessage:{addListener(){}},sendMessage:async()=>({ok:true})},alarms:{create(){},onAlarm:{addListener(){}}},tabs:{query(_q,cb){cb([]);},get:async()=>({id:7,url:liveUrl}),async sendMessage(_id,msg){if(msg.action==='GET_PAGE_STATE')return{ok:true,versions:[],artifacts:[]};if(msg.action==='SEND_PROMPT'){sends++;return{ok:true};}return{ok:true};}},storage:{sync:{get:async()=>({})},local:{get:async()=>({codeeState:JSON.parse(JSON.stringify(codeeState))}),set:async({codeeState:next})=>{codeeState=JSON.parse(JSON.stringify(next));}}}};
+const context={chrome,console:{log(){},warn(){},error(){}},setTimeout(fn){fn();return 1;},Map,Set,Promise,Date,Math,URL,crypto:{randomUUID:()=> 'x'}};
+vm.runInNewContext(source,context);
+(async()=>{
+ const bad=await context.retryPendingPlanOnTab(7);
+ assert.strictEqual(bad.ok,false);
+ assert.strictEqual(sends,0,'Codee must never send a saved plan into a different structured conversation in the same tab');
+ assert(String(bad.error).includes('no longer on the conversation'));
+ codeeState.plan_7.target={provider:'ChatGPT',url:'https://chatgpt.com/'};
+ codeeState.plan_7.nextRetryAt=0; codeeState.plan_7.deliveryRetryCount=0;
+ liveUrl='https://chatgpt.com/c/promoted';
+ const promoted=await context.retryPendingPlanOnTab(7);
+ assert.strictEqual(promoted.ok,true);
+ assert.strictEqual(sends,1);
+ assert.strictEqual(codeeState.plan_7.target.conversationIdentity,'chatgpt:promoted','provisional target should promote to the structured conversation id');
+ console.log('target conversation guard/promotion OK');
+})().catch(e=>{console.error(e);process.exit(1)});

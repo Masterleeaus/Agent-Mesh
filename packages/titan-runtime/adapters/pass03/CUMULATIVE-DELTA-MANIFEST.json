@@ -1,0 +1,17 @@
+{
+  "schema": "titan-zero-cumulative-agent-delta-manifest/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "builder": "Builder 3",
+  "pass": 3,
+  "frozen_base_artifact": "Titan-Zero-CANONICAL-MASTER-2026-09-08-MERGE-39-CHROME-REPAIR10-CONVERGED.zip",
+  "frozen_base_sha256": "c5c5bc321913dfd9f2d56847c43fa9cad3652907be94f163cbeacef9672c23c7",
+  "live_manager_observed": {
+    "merge": 40,
+    "artifact": "Titan-Zero-CANONICAL-MASTER-2026-09-08-MERGE-40-SALES-CONVERGED.zip",
+    "sha256": "f76946a12d6f17194a8af909105371c7d92dce8d05e9846ae860749d802e19e5"
+  },
+  "apply_mode": "overlay_additive",
+  "payload_root": "payload/",
+  "deleted": [],
+  "supersedes": "Builder 3__TZ-FIX-RUNTIME-ADAPTERS-001__PASS-02__CUMULATIVE-DELTA.zip"
+}

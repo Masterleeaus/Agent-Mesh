@@ -1,0 +1,10 @@
+{
+  "schema": "titan-zero-builder-handoff/v1",
+  "builder": "Builder 3",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 6,
+  "status": "PASS06_COMPLETE_CONTINUE_PASS07",
+  "next_pass": 7,
+  "next_pass_scope": "Add drill-down evidence links from KPI values back to source events/entities.",
+  "recommended_convergence_class": "CLEAN_ADDITIVE_FORWARD_PORT"
+}

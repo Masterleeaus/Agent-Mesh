@@ -1,0 +1,10 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const c={};c.globalThis=c;vm.createContext(c);vm.runInContext(fs.readFileSync('src/titan-zero/titan-zero-schema-graph.js','utf8'),c,{filename:'schema-graph.js'});
+const defs=Array.from({length:7000},(_,i)=>`\`c${i}\` varchar(255)`).join(',');
+const sql=`CREATE TABLE \`toString\` (${defs}) ENGINE=InnoDB;`;
+const r=c.CodeeTitanZeroSchemaGraph.build(sql,{ignoredTablePrefixes:[]});
+assert(r.tables[0].columns.length<=5000,'columns per table must be bounded');
+assert.strictEqual(Object.getPrototypeOf(r.tableMap),null,'schema tableMap must be prototype-safe');
+assert.strictEqual(r.tableMap['missing'],undefined,'missing table lookup must not fall through to Object prototype');
+assert.strictEqual(r.truncated,true,'oversized schema definitions must report truncation');
+console.log('Titan schema graph is bounded and prototype-safe');

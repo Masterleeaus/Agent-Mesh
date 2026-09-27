@@ -1,0 +1,44 @@
+name: Install new Titan Zero marketing sites
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install NexJob and TryDrafted source trees
+        shell: bash
+        run: |
+          set -euo pipefail
+          NEX="archive/marketing-sites-extracted/marketing-sites-extracted/nexjob-marketing-main/nexjob-marketing-main"
+          DRAFT="archive/marketing-sites-extracted/marketing-sites-extracted/trydrafted-landing-main/trydrafted-landing-main"
+          test -d "$NEX"
+          test -d "$DRAFT"
+          rm -rf apps/marketing-nexjob apps/marketing-trydrafted
+          mkdir -p apps/marketing-nexjob apps/marketing-trydrafted
+          cp -a "$NEX"/. apps/marketing-nexjob/
+          cp -a "$DRAFT"/. apps/marketing-trydrafted/
+          rm -rf apps/marketing-nexjob/.git apps/marketing-trydrafted/.git
+          find apps/marketing-nexjob apps/marketing-trydrafted -type d -name node_modules -prune -exec rm -rf {} +
+          find apps/marketing-nexjob apps/marketing-trydrafted -type d -name dist -prune -exec rm -rf {} +
+      - name: Commit installed standalone sites
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/marketing-nexjob apps/marketing-trydrafted
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git commit -m "marketing: install NexJob and TryDrafted standalone sites"
+          git pull --rebase origin main
+          git push origin HEAD:main

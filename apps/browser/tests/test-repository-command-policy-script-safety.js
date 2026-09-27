@@ -1,0 +1,12 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');const c={};c.globalThis=c;vm.createContext(c);vm.runInContext(fs.readFileSync('src/repository/command-policy.js','utf8'),c);
+const C=cmd=>c.CodeeCommandPolicy.classify(cmd).class;
+assert.strictEqual(C('npm test -- --runInBand'),'EXECUTE');
+assert.strictEqual(C('npm audit'),'VERIFY');
+assert.strictEqual(C('npm run deploy'),'EXECUTE');
+assert.strictEqual(C('pnpm run build'),'EXECUTE');
+assert.strictEqual(C('yarn run build'),'EXECUTE');
+assert.strictEqual(C('git branch'),'READ');
+assert.strictEqual(C('git branch --list'),'READ');
+assert.strictEqual(C('git branch feature/new'),'WRITE');
+assert.strictEqual(C('git branch -d old'),'WRITE');
+console.log('Repository command script/branch safety OK');

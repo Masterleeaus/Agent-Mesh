@@ -1,0 +1,68 @@
+name: Unpack Merge84 source
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unpack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify Merge84 split archives
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "7a9d9db0b8d3fcabc4d47088fe75c9e319d9ba945b7677c2cbdbb9583ed0ef39  Titan-Zero-MERGE84-Part1-of-3.zip" | sha256sum -c -
+          echo "97ca62a68fe7bafd74d09a678198d48b75f23536067b80a6313998b6951631ab  Titan-Zero-MERGE84-Part2-of-3.zip" | sha256sum -c -
+          echo "5f9a734cf9dcf513e5c9cd6da657e57b52efaafbcc2a6bdd1cdebd753e7a0822  Titan-Zero-MERGE84-Part3-of-3.zip" | sha256sum -c -
+
+      - name: Extract all three archive parts
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          for z in Titan-Zero-MERGE84-Part{1,2,3}-of-3.zip; do
+            unzip -q -o "$z" -d "$tmp"
+          done
+
+          # Detect whether the split archives contain one common wrapper directory.
+          shopt -s dotglob nullglob
+          entries=("$tmp"/*)
+          if [ "${#entries[@]}" -eq 1 ] && [ -d "${entries[0]}" ]; then
+            cp -a "${entries[0]}/." .
+          else
+            cp -a "$tmp/." .
+          fi
+
+          rm -rf "$tmp"
+          rm -f Titan-Zero-MERGE84-Part1-of-3.zip                 Titan-Zero-MERGE84-Part2-of-3.zip                 Titan-Zero-MERGE84-Part3-of-3.zip
+
+      - name: Sanity check extracted source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f package.json || { echo "package.json missing after extraction"; exit 1; }
+          echo "Extracted file count: $(git status --porcelain | wc -l)"
+          git status --short | head -200 || true
+
+      - name: Commit extracted Merge84 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "titan-zero-agent-mesh"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No extraction changes to commit."
+            exit 0
+          fi
+          git commit -m "Import extracted Titan Zero Merge84 source"
+          git push origin HEAD:main

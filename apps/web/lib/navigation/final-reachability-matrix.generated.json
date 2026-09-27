@@ -1,0 +1,2397 @@
+{
+  "schema": "titan.zero.final-reachability-matrix.v1",
+  "generatedAgainst": {
+    "managerMerge": "62",
+    "artifact": "Titan-Zero-CANONICAL-2026-09-13-MERGE62-LIVE-LANES-CONVERGED.zip",
+    "sha256": "806ae84bee5c9b5911ef33c76581d222615abc4cb8fee1188aac60ade22603bb"
+  },
+  "packet": "TZ-FINISH-UI-RUNTIME-WIRING-001",
+  "summary": {
+    "pageRoutes": 75,
+    "routeHandlers": 227,
+    "layouts": 7,
+    "loadingBoundaries": 20,
+    "errorBoundaries": 1,
+    "notFoundBoundaries": 1,
+    "literalNavigationTargets": 41,
+    "unresolvedLiteralNavigationTargets": 0,
+    "compatibilityRoutes": 1,
+    "deadRuntimeExportsRemoved": [
+      "STANDALONE_ROUTE_ALIASES"
+    ],
+    "knownDeadPagePaths": 0,
+    "nativeServiceSurfacesReady": 9,
+    "nativeServiceSurfacesTotal": 9
+  },
+  "compatibilityRoutes": [
+    {
+      "from": "/app/my-day",
+      "to": "/app/my-work",
+      "retained": true,
+      "reason": "backward-compatible deep link"
+    }
+  ],
+  "pageMatrix": [
+    {
+      "route": "/login",
+      "file": "apps/web/app/(auth)/login/page.tsx",
+      "surfaceClass": "auth",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/login",
+      "literalInboundSources": 59,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/app/action-queue",
+      "file": "apps/web/app/app/action-queue/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/action-queue",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/automations",
+      "file": "apps/web/app/app/automations/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/automations",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/capture",
+      "file": "apps/web/app/app/capture/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/capture",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/clients/[id]",
+      "file": "apps/web/app/app/clients/[id]/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/clients/[id]",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/clients/[id]/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/clients/import",
+      "file": "apps/web/app/app/clients/import/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/clients/import",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/clients/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/clients/new",
+      "file": "apps/web/app/app/clients/new/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/clients/new",
+      "literalInboundSources": 3,
+      "loadingBoundary": "apps/web/app/app/clients/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/clients",
+      "file": "apps/web/app/app/clients/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/clients",
+      "literalInboundSources": 2,
+      "loadingBoundary": "apps/web/app/app/clients/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [
+        "customers"
+      ],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/day-review",
+      "file": "apps/web/app/app/day-review/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/day-review",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/dispatch",
+      "file": "apps/web/app/app/dispatch/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/dispatch",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/dispatch/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/estimates/[id]",
+      "file": "apps/web/app/app/estimates/[id]/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/estimates/[id]",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/estimates/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": true,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/estimates/[id]/print",
+      "file": "apps/web/app/app/estimates/[id]/print/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/estimates/[id]/print",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/estimates/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": true,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/estimates/[id]/shopping-list",
+      "file": "apps/web/app/app/estimates/[id]/shopping-list/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/estimates/[id]/shopping-list",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/estimates/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": true,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/estimates/new",
+      "file": "apps/web/app/app/estimates/new/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/estimates/new",
+      "literalInboundSources": 2,
+      "loadingBoundary": "apps/web/app/app/estimates/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": true,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/estimates",
+      "file": "apps/web/app/app/estimates/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/estimates",
+      "literalInboundSources": 6,
+      "loadingBoundary": "apps/web/app/app/estimates/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": true,
+      "nativeServiceBindings": [
+        "quotes"
+      ],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/estimates/quick",
+      "file": "apps/web/app/app/estimates/quick/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/estimates/quick",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/estimates/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": true,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/expenses/[id]",
+      "file": "apps/web/app/app/expenses/[id]/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/expenses/[id]",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/expenses/[id]/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/expenses/import",
+      "file": "apps/web/app/app/expenses/import/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/expenses/import",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/expenses/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/expenses/new",
+      "file": "apps/web/app/app/expenses/new/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/expenses/new",
+      "literalInboundSources": 8,
+      "loadingBoundary": "apps/web/app/app/expenses/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/expenses",
+      "file": "apps/web/app/app/expenses/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/expenses",
+      "literalInboundSources": 8,
+      "loadingBoundary": "apps/web/app/app/expenses/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/expenses/receipt-review",
+      "file": "apps/web/app/app/expenses/receipt-review/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/expenses/receipt-review",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/expenses/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/intake/new",
+      "file": "apps/web/app/app/intake/new/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/intake/new",
+      "literalInboundSources": 2,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/invoices/[id]",
+      "file": "apps/web/app/app/invoices/[id]/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/invoices/[id]",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/invoices/[id]/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": true,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/invoices/[id]/print",
+      "file": "apps/web/app/app/invoices/[id]/print/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/invoices/[id]/print",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/invoices/[id]/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": true,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/invoices/new",
+      "file": "apps/web/app/app/invoices/new/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/invoices/new",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/invoices/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": true,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/invoices",
+      "file": "apps/web/app/app/invoices/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/invoices",
+      "literalInboundSources": 6,
+      "loadingBoundary": "apps/web/app/app/invoices/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": true,
+      "nativeServiceBindings": [
+        "invoices"
+      ],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/jobs/[id]/materials",
+      "file": "apps/web/app/app/jobs/[id]/materials/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/jobs/[id]/materials",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/jobs/[id]/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/jobs/[id]",
+      "file": "apps/web/app/app/jobs/[id]/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/jobs/[id]",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/jobs/[id]/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/jobs/[id]/visits/new",
+      "file": "apps/web/app/app/jobs/[id]/visits/new/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/jobs/[id]/visits/new",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/jobs/[id]/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/jobs/new",
+      "file": "apps/web/app/app/jobs/new/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/jobs/new",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/jobs/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/jobs",
+      "file": "apps/web/app/app/jobs/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/jobs",
+      "literalInboundSources": 5,
+      "loadingBoundary": "apps/web/app/app/jobs/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [
+        "jobs"
+      ],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/materials",
+      "file": "apps/web/app/app/materials/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/materials",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/materials/quick",
+      "file": "apps/web/app/app/materials/quick/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/materials/quick",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/mileage/new",
+      "file": "apps/web/app/app/mileage/new/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/mileage/new",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/mileage",
+      "file": "apps/web/app/app/mileage/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/mileage",
+      "literalInboundSources": 5,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/mileage/vehicles/[id]",
+      "file": "apps/web/app/app/mileage/vehicles/[id]/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/mileage/vehicles/[id]",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/mileage/vehicles",
+      "file": "apps/web/app/app/mileage/vehicles/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/mileage/vehicles",
+      "literalInboundSources": 4,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/my-day",
+      "file": "apps/web/app/app/my-day/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "compatibility-redirect",
+      "canonicalTarget": "/app/my-work",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "navigation-only/no-authority"
+    },
+    {
+      "route": "/app/my-work/[workOrderId]",
+      "file": "apps/web/app/app/my-work/[workOrderId]/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/my-work/[workOrderId]",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/my-work",
+      "file": "apps/web/app/app/my-work/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/my-work",
+      "literalInboundSources": 13,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app",
+      "file": "apps/web/app/app/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app",
+      "literalInboundSources": 19,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [
+        "business"
+      ],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/price-book",
+      "file": "apps/web/app/app/price-book/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/price-book",
+      "literalInboundSources": 2,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/properties/[id]",
+      "file": "apps/web/app/app/properties/[id]/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/properties/[id]",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/properties/[id]/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/properties/new",
+      "file": "apps/web/app/app/properties/new/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/properties/new",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/properties/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/properties",
+      "file": "apps/web/app/app/properties/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/properties",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/properties/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/reports/close",
+      "file": "apps/web/app/app/reports/close/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/reports/close",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/reports/close/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/reports",
+      "file": "apps/web/app/app/reports/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/reports",
+      "literalInboundSources": 2,
+      "loadingBoundary": "apps/web/app/app/reports/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/reports/referrals",
+      "file": "apps/web/app/app/reports/referrals/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/reports/referrals",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/reports/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/requests/[id]",
+      "file": "apps/web/app/app/requests/[id]/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/requests/[id]",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/requests",
+      "file": "apps/web/app/app/requests/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/requests",
+      "literalInboundSources": 3,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/schedule",
+      "file": "apps/web/app/app/schedule/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/schedule",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/schedule/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [
+        "scheduling"
+      ],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/settings",
+      "file": "apps/web/app/app/settings/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/settings",
+      "literalInboundSources": 2,
+      "loadingBoundary": "apps/web/app/app/settings/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [
+        "workforce",
+        "marketplace",
+        "settings"
+      ],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/settings/system-health",
+      "file": "apps/web/app/app/settings/system-health/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/settings/system-health",
+      "literalInboundSources": 1,
+      "loadingBoundary": "apps/web/app/app/settings/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/timeline",
+      "file": "apps/web/app/app/timeline/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/timeline",
+      "literalInboundSources": 6,
+      "loadingBoundary": "apps/web/app/app/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/visits/[id]/assessment",
+      "file": "apps/web/app/app/visits/[id]/assessment/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/visits/[id]/assessment",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/visits/[id]/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/visits/[id]",
+      "file": "apps/web/app/app/visits/[id]/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/visits/[id]",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/visits/[id]/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/visits/[id]/print",
+      "file": "apps/web/app/app/visits/[id]/print/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/visits/[id]/print",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/visits/[id]/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/visits",
+      "file": "apps/web/app/app/visits/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/visits",
+      "literalInboundSources": 2,
+      "loadingBoundary": "apps/web/app/app/visits/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/work-orders/[id]",
+      "file": "apps/web/app/app/work-orders/[id]/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/app/work-orders/[id]",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/work-orders/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/work-orders/new",
+      "file": "apps/web/app/app/work-orders/new/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/work-orders/new",
+      "literalInboundSources": 0,
+      "loadingBoundary": "apps/web/app/app/work-orders/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/app/work-orders",
+      "file": "apps/web/app/app/work-orders/page.tsx",
+      "surfaceClass": "standalone-app",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/app/work-orders",
+      "literalInboundSources": 2,
+      "loadingBoundary": "apps/web/app/app/work-orders/loading.tsx",
+      "errorBoundary": "apps/web/app/app/error.tsx",
+      "offlineIndicator": "apps/web/components/ConnectionStatus.tsx",
+      "explicitEmptyState": true,
+      "explicitPermissionState": false,
+      "nativeServiceBindings": [],
+      "authorityModel": "server/session/permission-gated"
+    },
+    {
+      "route": "/booking",
+      "file": "apps/web/app/booking/page.tsx",
+      "surfaceClass": "public",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/booking",
+      "literalInboundSources": 3,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/estimate/respond",
+      "file": "apps/web/app/estimate/respond/page.tsx",
+      "surfaceClass": "public",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/estimate/respond",
+      "literalInboundSources": 0,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/estimate/thanks",
+      "file": "apps/web/app/estimate/thanks/page.tsx",
+      "surfaceClass": "public",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/estimate/thanks",
+      "literalInboundSources": 0,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/intake/[token]",
+      "file": "apps/web/app/intake/[token]/page.tsx",
+      "surfaceClass": "public",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/intake/[token]",
+      "literalInboundSources": 0,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/",
+      "file": "apps/web/app/page.tsx",
+      "surfaceClass": "public",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/",
+      "literalInboundSources": 2,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/portal/[clientToken]",
+      "file": "apps/web/app/portal/[clientToken]/page.tsx",
+      "surfaceClass": "portal",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/portal/[clientToken]",
+      "literalInboundSources": 0,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/portal/[clientToken]/property/[propertyId]",
+      "file": "apps/web/app/portal/[clientToken]/property/[propertyId]/page.tsx",
+      "surfaceClass": "portal",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/portal/[clientToken]/property/[propertyId]",
+      "literalInboundSources": 0,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/portal/auth/confirm",
+      "file": "apps/web/app/portal/auth/confirm/page.tsx",
+      "surfaceClass": "portal",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/portal/auth/confirm",
+      "literalInboundSources": 0,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/portal/estimates/[token]",
+      "file": "apps/web/app/portal/estimates/[token]/page.tsx",
+      "surfaceClass": "portal",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/portal/estimates/[token]",
+      "literalInboundSources": 0,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/portal/invoices/[token]",
+      "file": "apps/web/app/portal/invoices/[token]/page.tsx",
+      "surfaceClass": "portal",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/portal/invoices/[token]",
+      "literalInboundSources": 0,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/portal/login",
+      "file": "apps/web/app/portal/login/page.tsx",
+      "surfaceClass": "portal",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/portal/login",
+      "literalInboundSources": 2,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/portal/service-reports/[token]",
+      "file": "apps/web/app/portal/service-reports/[token]/page.tsx",
+      "surfaceClass": "portal",
+      "routeKind": "dynamic",
+      "status": "canonical",
+      "canonicalTarget": "/portal/service-reports/[token]",
+      "literalInboundSources": 0,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/privacy",
+      "file": "apps/web/app/privacy/page.tsx",
+      "surfaceClass": "public",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/privacy",
+      "literalInboundSources": 4,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    },
+    {
+      "route": "/terms",
+      "file": "apps/web/app/terms/page.tsx",
+      "surfaceClass": "public",
+      "routeKind": "static",
+      "status": "canonical",
+      "canonicalTarget": "/terms",
+      "literalInboundSources": 4,
+      "loadingBoundary": null,
+      "errorBoundary": null,
+      "offlineIndicator": null,
+      "explicitEmptyState": null,
+      "explicitPermissionState": null,
+      "nativeServiceBindings": [],
+      "authorityModel": "surface-specific"
+    }
+  ],
+  "routeHandlerMatrix": [
+    {
+      "route": "/api/booking",
+      "file": "apps/web/app/api/booking/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/health",
+      "file": "apps/web/app/api/health/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/intake/[token]",
+      "file": "apps/web/app/api/intake/[token]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/internal/arrival-prompt",
+      "file": "apps/web/app/api/internal/arrival-prompt/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/internal/day-review-prompt",
+      "file": "apps/web/app/api/internal/day-review-prompt/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/internal/location",
+      "file": "apps/web/app/api/internal/location/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/internal/push/day-review-reminder",
+      "file": "apps/web/app/api/internal/push/day-review-reminder/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/internal/sms/outbound",
+      "file": "apps/web/app/api/internal/sms/outbound/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/internal/sms",
+      "file": "apps/web/app/api/internal/sms/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/internal/start-day-prompt",
+      "file": "apps/web/app/api/internal/start-day-prompt/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/portal/[clientToken]/sms-opt-out",
+      "file": "apps/web/app/api/portal/[clientToken]/sms-opt-out/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/portal/clients/[token]",
+      "file": "apps/web/app/api/portal/clients/[token]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/portal/estimates/[token]",
+      "file": "apps/web/app/api/portal/estimates/[token]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/portal/invoices/[token]/logo",
+      "file": "apps/web/app/api/portal/invoices/[token]/logo/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/portal/invoices/[token]",
+      "file": "apps/web/app/api/portal/invoices/[token]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/account/logo",
+      "file": "apps/web/app/api/v1/account/logo/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/account",
+      "file": "apps/web/app/api/v1/account/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/action-items/[id]/resolve",
+      "file": "apps/web/app/api/v1/action-items/[id]/resolve/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/activities/[id]",
+      "file": "apps/web/app/api/v1/activities/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/activities/[id]/split",
+      "file": "apps/web/app/api/v1/activities/[id]/split/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/activities/insert",
+      "file": "apps/web/app/api/v1/activities/insert/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/activities/log",
+      "file": "apps/web/app/api/v1/activities/log/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/activities/segments/[id]",
+      "file": "apps/web/app/api/v1/activities/segments/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/activities/segments/geometry",
+      "file": "apps/web/app/api/v1/activities/segments/geometry/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/activities/segments",
+      "file": "apps/web/app/api/v1/activities/segments/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/activities/stop",
+      "file": "apps/web/app/api/v1/activities/stop/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/activities/switch",
+      "file": "apps/web/app/api/v1/activities/switch/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/assets/[id]",
+      "file": "apps/web/app/api/v1/assets/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/assets/homebox",
+      "file": "apps/web/app/api/v1/assets/homebox/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/assets",
+      "file": "apps/web/app/api/v1/assets/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/attention/entity-read",
+      "file": "apps/web/app/api/v1/attention/entity-read/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/attention/events/[id]/read",
+      "file": "apps/web/app/api/v1/attention/events/[id]/read/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/attention/events/read-all",
+      "file": "apps/web/app/api/v1/attention/events/read-all/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/attention/events",
+      "file": "apps/web/app/api/v1/attention/events/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/attention/summary",
+      "file": "apps/web/app/api/v1/attention/summary/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/auth/login",
+      "file": "apps/web/app/api/v1/auth/login/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/auth/logout",
+      "file": "apps/web/app/api/v1/auth/logout/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/automations/[id]",
+      "file": "apps/web/app/api/v1/automations/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/automations/[id]/run",
+      "file": "apps/web/app/api/v1/automations/[id]/run/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/automations",
+      "file": "apps/web/app/api/v1/automations/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/booking-requests/[id]/convert",
+      "file": "apps/web/app/api/v1/booking-requests/[id]/convert/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/booking-requests/[id]/repair",
+      "file": "apps/web/app/api/v1/booking-requests/[id]/repair/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/booking-requests/[id]",
+      "file": "apps/web/app/api/v1/booking-requests/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/booking-requests/[id]/send-intake",
+      "file": "apps/web/app/api/v1/booking-requests/[id]/send-intake/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/booking-requests/[id]/summary",
+      "file": "apps/web/app/api/v1/booking-requests/[id]/summary/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/booking-requests",
+      "file": "apps/web/app/api/v1/booking-requests/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/bootstrap",
+      "file": "apps/web/app/api/v1/bootstrap/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/business-day/transition",
+      "file": "apps/web/app/api/v1/business-day/transition/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/captures/[id]/audio",
+      "file": "apps/web/app/api/v1/captures/[id]/audio/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/captures/[id]/photo",
+      "file": "apps/web/app/api/v1/captures/[id]/photo/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/captures/[id]/review",
+      "file": "apps/web/app/api/v1/captures/[id]/review/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/captures",
+      "file": "apps/web/app/api/v1/captures/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/change-orders/[id]",
+      "file": "apps/web/app/api/v1/change-orders/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/change-orders",
+      "file": "apps/web/app/api/v1/change-orders/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/clients/[id]",
+      "file": "apps/web/app/api/v1/clients/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/clients/[id]/sms",
+      "file": "apps/web/app/api/v1/clients/[id]/sms/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/clients/import",
+      "file": "apps/web/app/api/v1/clients/import/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/clients",
+      "file": "apps/web/app/api/v1/clients/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/day-review/[date]/draft",
+      "file": "apps/web/app/api/v1/day-review/[date]/draft/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/day-review/close",
+      "file": "apps/web/app/api/v1/day-review/close/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/dispatch/assign",
+      "file": "apps/web/app/api/v1/dispatch/assign/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/dispatch/attendance",
+      "file": "apps/web/app/api/v1/dispatch/attendance/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/dispatch/route-preview",
+      "file": "apps/web/app/api/v1/dispatch/route-preview/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/dispatch/vehicle-assignment",
+      "file": "apps/web/app/api/v1/dispatch/vehicle-assignment/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/dispatch/workforce",
+      "file": "apps/web/app/api/v1/dispatch/workforce/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/documents/[id]",
+      "file": "apps/web/app/api/v1/documents/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/documents/paperless",
+      "file": "apps/web/app/api/v1/documents/paperless/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/documents",
+      "file": "apps/web/app/api/v1/documents/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/convert",
+      "file": "apps/web/app/api/v1/estimates/[id]/convert/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/create-job",
+      "file": "apps/web/app/api/v1/estimates/[id]/create-job/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/decompose/apply",
+      "file": "apps/web/app/api/v1/estimates/[id]/decompose/apply/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/decompose",
+      "file": "apps/web/app/api/v1/estimates/[id]/decompose/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/document-links",
+      "file": "apps/web/app/api/v1/estimates/[id]/document-links/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/pdf",
+      "file": "apps/web/app/api/v1/estimates/[id]/pdf/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/respond",
+      "file": "apps/web/app/api/v1/estimates/[id]/respond/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/review",
+      "file": "apps/web/app/api/v1/estimates/[id]/review/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]",
+      "file": "apps/web/app/api/v1/estimates/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/send",
+      "file": "apps/web/app/api/v1/estimates/[id]/send/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/transition",
+      "file": "apps/web/app/api/v1/estimates/[id]/transition/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/[id]/travel",
+      "file": "apps/web/app/api/v1/estimates/[id]/travel/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/ai-draft",
+      "file": "apps/web/app/api/v1/estimates/ai-draft/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/ai-interview",
+      "file": "apps/web/app/api/v1/estimates/ai-interview/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/ai-items",
+      "file": "apps/web/app/api/v1/estimates/ai-items/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/ai-materials",
+      "file": "apps/web/app/api/v1/estimates/ai-materials/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/ai-scope",
+      "file": "apps/web/app/api/v1/estimates/ai-scope/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates/ai-tm-briefing",
+      "file": "apps/web/app/api/v1/estimates/ai-tm-briefing/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/estimates",
+      "file": "apps/web/app/api/v1/estimates/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/expenses/[id]/line-items",
+      "file": "apps/web/app/api/v1/expenses/[id]/line-items/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/expenses/[id]/parse-line-items",
+      "file": "apps/web/app/api/v1/expenses/[id]/parse-line-items/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/expenses/[id]/receipt",
+      "file": "apps/web/app/api/v1/expenses/[id]/receipt/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/expenses/[id]",
+      "file": "apps/web/app/api/v1/expenses/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/expenses/import/commit",
+      "file": "apps/web/app/api/v1/expenses/import/commit/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/expenses/import/preview",
+      "file": "apps/web/app/api/v1/expenses/import/preview/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/expenses/receipt-review",
+      "file": "apps/web/app/api/v1/expenses/receipt-review/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/expenses",
+      "file": "apps/web/app/api/v1/expenses/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/expenses/scan-receipt",
+      "file": "apps/web/app/api/v1/expenses/scan-receipt/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/field/end-site-timer",
+      "file": "apps/web/app/api/v1/field/end-site-timer/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/field/site-context",
+      "file": "apps/web/app/api/v1/field/site-context/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/field-job-templates",
+      "file": "apps/web/app/api/v1/field-job-templates/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/intake",
+      "file": "apps/web/app/api/v1/intake/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/integrations/square",
+      "file": "apps/web/app/api/v1/integrations/square/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/integrations/square/test",
+      "file": "apps/web/app/api/v1/integrations/square/test/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/document-links",
+      "file": "apps/web/app/api/v1/invoices/[id]/document-links/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/labor-from-time",
+      "file": "apps/web/app/api/v1/invoices/[id]/labor-from-time/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/labor-rate",
+      "file": "apps/web/app/api/v1/invoices/[id]/labor-rate/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/line-items/[lineItemId]",
+      "file": "apps/web/app/api/v1/invoices/[id]/line-items/[lineItemId]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/line-items",
+      "file": "apps/web/app/api/v1/invoices/[id]/line-items/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/link-expenses",
+      "file": "apps/web/app/api/v1/invoices/[id]/link-expenses/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/linkable-expenses",
+      "file": "apps/web/app/api/v1/invoices/[id]/linkable-expenses/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/materials-from-expenses",
+      "file": "apps/web/app/api/v1/invoices/[id]/materials-from-expenses/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/payments",
+      "file": "apps/web/app/api/v1/invoices/[id]/payments/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/pdf",
+      "file": "apps/web/app/api/v1/invoices/[id]/pdf/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]",
+      "file": "apps/web/app/api/v1/invoices/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/send",
+      "file": "apps/web/app/api/v1/invoices/[id]/send/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/square-link",
+      "file": "apps/web/app/api/v1/invoices/[id]/square-link/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/transition",
+      "file": "apps/web/app/api/v1/invoices/[id]/transition/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices/[id]/travel",
+      "file": "apps/web/app/api/v1/invoices/[id]/travel/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/invoices",
+      "file": "apps/web/app/api/v1/invoices/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/link-expenses",
+      "file": "apps/web/app/api/v1/jobs/[id]/link-expenses/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/linkable-expenses",
+      "file": "apps/web/app/api/v1/jobs/[id]/linkable-expenses/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/materials/[lineId]",
+      "file": "apps/web/app/api/v1/jobs/[id]/materials/[lineId]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/materials/build",
+      "file": "apps/web/app/api/v1/jobs/[id]/materials/build/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/materials",
+      "file": "apps/web/app/api/v1/jobs/[id]/materials/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/jobs/[id]",
+      "file": "apps/web/app/api/v1/jobs/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/sub-status",
+      "file": "apps/web/app/api/v1/jobs/[id]/sub-status/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/transition",
+      "file": "apps/web/app/api/v1/jobs/[id]/transition/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/visits/bulk",
+      "file": "apps/web/app/api/v1/jobs/[id]/visits/bulk/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/jobs/[id]/visits",
+      "file": "apps/web/app/api/v1/jobs/[id]/visits/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/jobs",
+      "file": "apps/web/app/api/v1/jobs/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/location-settings",
+      "file": "apps/web/app/api/v1/location-settings/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/materials/[id]",
+      "file": "apps/web/app/api/v1/materials/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/materials/import",
+      "file": "apps/web/app/api/v1/materials/import/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/materials/quick",
+      "file": "apps/web/app/api/v1/materials/quick/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/materials",
+      "file": "apps/web/app/api/v1/materials/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/materials/supplier-preferences",
+      "file": "apps/web/app/api/v1/materials/supplier-preferences/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/navigation/capabilities",
+      "file": "apps/web/app/api/v1/navigation/capabilities/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/navigation/commands",
+      "file": "apps/web/app/api/v1/navigation/commands/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/operations/current",
+      "file": "apps/web/app/api/v1/operations/current/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/payments/[id]",
+      "file": "apps/web/app/api/v1/payments/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/portal/auth/confirm",
+      "file": "apps/web/app/api/v1/portal/auth/confirm/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/portal/auth/verify",
+      "file": "apps/web/app/api/v1/portal/auth/verify/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/portal/logout",
+      "file": "apps/web/app/api/v1/portal/logout/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/portal/request-access",
+      "file": "apps/web/app/api/v1/portal/request-access/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/price-book/material-templates",
+      "file": "apps/web/app/api/v1/price-book/material-templates/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/price-book",
+      "file": "apps/web/app/api/v1/price-book/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/pricing/settings",
+      "file": "apps/web/app/api/v1/pricing/settings/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/properties/[id]/issues/[issueId]",
+      "file": "apps/web/app/api/v1/properties/[id]/issues/[issueId]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/properties/[id]/issues",
+      "file": "apps/web/app/api/v1/properties/[id]/issues/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/properties/[id]/notes",
+      "file": "apps/web/app/api/v1/properties/[id]/notes/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/properties/[id]",
+      "file": "apps/web/app/api/v1/properties/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/properties/[id]/vault-items",
+      "file": "apps/web/app/api/v1/properties/[id]/vault-items/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/properties",
+      "file": "apps/web/app/api/v1/properties/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/push/public-key",
+      "file": "apps/web/app/api/v1/push/public-key/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/push/subscribe",
+      "file": "apps/web/app/api/v1/push/subscribe/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/push/test",
+      "file": "apps/web/app/api/v1/push/test/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/push/unsubscribe",
+      "file": "apps/web/app/api/v1/push/unsubscribe/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/quick-book",
+      "file": "apps/web/app/api/v1/quick-book/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/reports/mileage-export",
+      "file": "apps/web/app/api/v1/reports/mileage-export/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/reports/month-end-export",
+      "file": "apps/web/app/api/v1/reports/month-end-export/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/reports/period-closes",
+      "file": "apps/web/app/api/v1/reports/period-closes/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/scope-templates",
+      "file": "apps/web/app/api/v1/scope-templates/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/search",
+      "file": "apps/web/app/api/v1/search/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/sessions/[id]/activities",
+      "file": "apps/web/app/api/v1/sessions/[id]/activities/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/sessions/[id]/checkpoint",
+      "file": "apps/web/app/api/v1/sessions/[id]/checkpoint/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/sessions/[id]",
+      "file": "apps/web/app/api/v1/sessions/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/sessions/open",
+      "file": "apps/web/app/api/v1/sessions/open/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/sessions",
+      "file": "apps/web/app/api/v1/sessions/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/sessions/start",
+      "file": "apps/web/app/api/v1/sessions/start/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/sessions/suggestions",
+      "file": "apps/web/app/api/v1/sessions/suggestions/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/sessions/switch",
+      "file": "apps/web/app/api/v1/sessions/switch/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/time-clock/[id]/correct",
+      "file": "apps/web/app/api/v1/time-clock/[id]/correct/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/time-clock/[id]/void",
+      "file": "apps/web/app/api/v1/time-clock/[id]/void/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/time-clock/clock-in",
+      "file": "apps/web/app/api/v1/time-clock/clock-in/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/time-clock/clock-out",
+      "file": "apps/web/app/api/v1/time-clock/clock-out/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/time-clock/current",
+      "file": "apps/web/app/api/v1/time-clock/current/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/time-clock/today",
+      "file": "apps/web/app/api/v1/time-clock/today/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/titan/workforce/agents/plan",
+      "file": "apps/web/app/api/v1/titan/workforce/agents/plan/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/titan/workforce/commands",
+      "file": "apps/web/app/api/v1/titan/workforce/commands/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/booking",
+      "file": "apps/web/app/api/v1/titan/workforce/native/booking/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/customer-care",
+      "file": "apps/web/app/api/v1/titan/workforce/native/customer-care/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/jobs",
+      "file": "apps/web/app/api/v1/titan/workforce/native/jobs/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/reception",
+      "file": "apps/web/app/api/v1/titan/workforce/native/reception/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/sales",
+      "file": "apps/web/app/api/v1/titan/workforce/native/sales/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/titan/workforce/native/scheduling",
+      "file": "apps/web/app/api/v1/titan/workforce/native/scheduling/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/travel/calculate",
+      "file": "apps/web/app/api/v1/travel/calculate/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/travel/rates",
+      "file": "apps/web/app/api/v1/travel/rates/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/travel/settings",
+      "file": "apps/web/app/api/v1/travel/settings/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/users/[id]/password",
+      "file": "apps/web/app/api/v1/users/[id]/password/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/users/[id]",
+      "file": "apps/web/app/api/v1/users/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/users",
+      "file": "apps/web/app/api/v1/users/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/vault-items/[itemId]/media/[mediaId]/image",
+      "file": "apps/web/app/api/v1/vault-items/[itemId]/media/[mediaId]/image/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/vault-items/[itemId]/media/[mediaId]",
+      "file": "apps/web/app/api/v1/vault-items/[itemId]/media/[mediaId]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/vault-items/[itemId]/media",
+      "file": "apps/web/app/api/v1/vault-items/[itemId]/media/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/vault-items/[itemId]",
+      "file": "apps/web/app/api/v1/vault-items/[itemId]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/vehicles/[id]/fuel",
+      "file": "apps/web/app/api/v1/vehicles/[id]/fuel/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/vehicles/[id]/overview",
+      "file": "apps/web/app/api/v1/vehicles/[id]/overview/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/vehicles/[id]",
+      "file": "apps/web/app/api/v1/vehicles/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/vehicles/[id]/service",
+      "file": "apps/web/app/api/v1/vehicles/[id]/service/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/vehicles",
+      "file": "apps/web/app/api/v1/vehicles/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visit-candidates/[id]",
+      "file": "apps/web/app/api/v1/visit-candidates/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visit-candidates",
+      "file": "apps/web/app/api/v1/visit-candidates/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/acknowledgement",
+      "file": "apps/web/app/api/v1/visits/[id]/acknowledgement/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/assessment",
+      "file": "apps/web/app/api/v1/visits/[id]/assessment/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/checklist/[itemId]",
+      "file": "apps/web/app/api/v1/visits/[id]/checklist/[itemId]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/checklist",
+      "file": "apps/web/app/api/v1/visits/[id]/checklist/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/completion-packet",
+      "file": "apps/web/app/api/v1/visits/[id]/completion-packet/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/media/[mediaId]/image",
+      "file": "apps/web/app/api/v1/visits/[id]/media/[mediaId]/image/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/media/[mediaId]",
+      "file": "apps/web/app/api/v1/visits/[id]/media/[mediaId]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/media",
+      "file": "apps/web/app/api/v1/visits/[id]/media/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/on-my-way",
+      "file": "apps/web/app/api/v1/visits/[id]/on-my-way/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/parts/[partId]",
+      "file": "apps/web/app/api/v1/visits/[id]/parts/[partId]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/parts",
+      "file": "apps/web/app/api/v1/visits/[id]/parts/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/report-delivery",
+      "file": "apps/web/app/api/v1/visits/[id]/report-delivery/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]",
+      "file": "apps/web/app/api/v1/visits/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/sub-status",
+      "file": "apps/web/app/api/v1/visits/[id]/sub-status/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/tasks",
+      "file": "apps/web/app/api/v1/visits/[id]/tasks/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/visits/[id]/transition",
+      "file": "apps/web/app/api/v1/visits/[id]/transition/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/apply-template",
+      "file": "apps/web/app/api/v1/work-orders/[id]/apply-template/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/complete",
+      "file": "apps/web/app/api/v1/work-orders/[id]/complete/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/completion-criteria",
+      "file": "apps/web/app/api/v1/work-orders/[id]/completion-criteria/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/open-tasks",
+      "file": "apps/web/app/api/v1/work-orders/[id]/open-tasks/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]",
+      "file": "apps/web/app/api/v1/work-orders/[id]/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/split",
+      "file": "apps/web/app/api/v1/work-orders/[id]/split/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/start-visit",
+      "file": "apps/web/app/api/v1/work-orders/[id]/start-visit/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/work-orders/[id]/travel",
+      "file": "apps/web/app/api/v1/work-orders/[id]/travel/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/v1/work-orders",
+      "file": "apps/web/app/api/v1/work-orders/route.ts",
+      "surfaceClass": "api"
+    },
+    {
+      "route": "/api/webhooks/square",
+      "file": "apps/web/app/api/webhooks/square/route.ts",
+      "surfaceClass": "api"
+    }
+  ],
+  "verificationNotes": [
+    "All 75 page routes are physically present in the final reconstructed working tree.",
+    "All 227 route handlers are physically present in the final reconstructed working tree.",
+    "No unresolved literal internal navigation target remains.",
+    "Compatibility /app/my-day is retained intentionally and canonicalises to /app/my-work.",
+    "No page route was removed because zero static inbound links alone does not prove a deep-link/API-driven route is dead.",
+    "One zero-consumer runtime export (STANDALONE_ROUTE_ALIASES) was removed after canonical compatibility registry adoption."
+  ]
+}

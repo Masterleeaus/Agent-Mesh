@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "baselineVersion": "2.11.9",
+  "program": "Codee Browser Intelligence",
+  "pass": 7,
+  "statusVocabulary": [
+    "COMPLETE",
+    "PARTIAL",
+    "CONTRACT_ONLY",
+    "DEAD",
+    "DUPLICATE",
+    "MISSING"
+  ],
+  "invariants": [
+    "Preserve multi-conversation plan concurrency.",
+    "AI remains advisory and cannot self-authorize privileged mutations or plan advancement.",
+    "Reuse existing provider, workforce, repository, browser-policy and governance modules before creating replacements.",
+    "Browser-native intelligence is the default target; Ollama remains an optional accelerator through the bridge.",
+    "Machine-consumed model output must be schema-validated before use."
+  ],
+  "subsystems": [
+    {
+      "id": "ai.provider-contract",
+      "status": "COMPLETE",
+      "evidence": [
+        "src/ai/provider-contract.js",
+        "src/ai/ai-request-contract.js",
+        "src/ai/ai-response-contract.js"
+      ],
+      "next": "Adapt browser model runtime to the existing provider/request contracts."
+    },
+    {
+      "id": "ai.provider-gateway",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/ai/provider-gateway.js",
+        "src/ai/ai-provider-registry.js",
+        "src/ai/model-registry.js"
+      ],
+      "next": "Add browser-native provider, cancellation lifecycle, queueing and capability discovery."
+    },
+    {
+      "id": "ai.adapters.ollama",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/ai/adapters/ollama-bridge-adapter.js",
+        "src/lib/onboard-ai-host-integration.js"
+      ],
+      "next": "Retain as optional escalation provider rather than primary onboard intelligence."
+    },
+    {
+      "id": "ai.adapters.gemini",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/ai/adapters/gemini-adapter.js"
+      ],
+      "next": "Keep behind shared gateway; do not couple browser intelligence to cloud availability."
+    },
+    {
+      "id": "ai.audit-sanitization",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/ai/ai-audit-ledger.js",
+        "src/ai/ai-sanitizer.js"
+      ],
+      "next": "Expand to persistent bounded request lifecycle and intelligence provenance."
+    },
+    {
+      "id": "intelligence.controller",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/intelligence/intelligence-contract.js",
+        "src/intelligence/intelligence-rpc.js",
+        "src/intelligence/streaming.js"
+      ],
+      "next": "Integrate browser-native model providers through the bounded shared RPC/stream/host path."
+    },
+    {
+      "id": "intelligence.browser-model-host",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/intelligence/intelligence-host.js",
+        "src/intelligence/webgpu-capability.js",
+        "src/intelligence/offscreen-runtime.js",
+        "src/intelligence/offscreen-document.js",
+        "src/intelligence/offscreen.html",
+        "src/intelligence/intelligence-rpc.js",
+        "src/intelligence/streaming.js"
+      ],
+      "next": "Attach actual browser-native model adapters; preserve bounded streaming and one shared host/runtime boundary."
+    },
+    {
+      "id": "intelligence.inference-scheduler",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/intelligence/intelligence-host.js"
+      ],
+      "next": "Add fair multi-conversation scheduling and priority controls in Pass 12-13."
+    },
+    {
+      "id": "memory.working",
+      "status": "MISSING",
+      "evidence": [],
+      "next": "Add bounded task-scoped working memory."
+    },
+    {
+      "id": "memory.episodic",
+      "status": "MISSING",
+      "evidence": [],
+      "next": "Add evidence-backed local episodic records for completed work and failures."
+    },
+    {
+      "id": "memory.procedural",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/catalog/repository-skills.js",
+        "src/catalog/workforce-skills.js"
+      ],
+      "next": "Promote static catalogs into versioned executable skill/procedural memory records."
+    },
+    {
+      "id": "memory.project-knowledge",
+      "status": "MISSING",
+      "evidence": [],
+      "next": "Add project-scoped verified knowledge with provenance, expiry and invalidation."
+    },
+    {
+      "id": "memory.embeddings",
+      "status": "MISSING",
+      "evidence": [],
+      "next": "Add a lightweight browser embedding runtime and local vector index."
+    },
+    {
+      "id": "skills.catalog",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/catalog/repository-skills.js",
+        "src/catalog/workforce-skills.js",
+        "src/catalog/repository-prompts.js",
+        "src/catalog/workforce-prompts.js"
+      ],
+      "next": "Create common skill schema, discovery, composition, versioning and verification."
+    },
+    {
+      "id": "skills.execution-runtime",
+      "status": "MISSING",
+      "evidence": [],
+      "next": "Implement governed skill execution that can request tools but cannot expand authority."
+    },
+    {
+      "id": "repository.intelligence",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/repository/repository-inventory.js",
+        "src/repository/repository-search.js",
+        "src/repository/symbol-index.js",
+        "src/repository/dependency-graph.js",
+        "src/repository/diff-engine.js",
+        "src/repository/impact-engine.js",
+        "src/repository/test-selector.js",
+        "src/repository/git-intelligence.js"
+      ],
+      "next": "Converge modules behind evidence retrieval/RAG and fill shallow implementations."
+    },
+    {
+      "id": "repository.mutation-governance",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/repository/repository-policy.js",
+        "src/repository/mutation-envelope.js",
+        "src/repository/command-policy.js",
+        "src/repository/rollback-planner.js",
+        "src/repository/verification-planner.js"
+      ],
+      "next": "Keep as authority boundary for model-requested changes and strengthen transactional execution."
+    },
+    {
+      "id": "repository.bridge-host",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/integration/repository-host-adapter.js",
+        "src/lib/repository-host-integration.js"
+      ],
+      "next": "Use Titan Bridge as governed desktop execution plane, not as required intelligence host."
+    },
+    {
+      "id": "workforce.foundation",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/workforce/manager-session.js",
+        "src/workforce/task-classifier.js",
+        "src/workforce/capability-resolver.js",
+        "src/workforce/delegation-policy.js",
+        "src/workforce/evidence-bundle.js",
+        "src/workforce/tool-request.js",
+        "src/workforce/verification-request.js"
+      ],
+      "next": "Connect workforce decisions to unified intelligence controller, memory and skills."
+    },
+    {
+      "id": "workforce.context-bridge",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/integration/workforce-context-bridge.js",
+        "src/integration/workforce-host-contract.js",
+        "src/integration/workforce-receiver-adapter.js"
+      ],
+      "next": "Feed bounded evidence/memory bundles through one intelligence context contract."
+    },
+    {
+      "id": "browser.capability-contract",
+      "status": "COMPLETE",
+      "evidence": [
+        "src/browser/browser-capability-contract.js"
+      ],
+      "next": "Reuse canonical browser capability definitions; do not create a second browser tool taxonomy."
+    },
+    {
+      "id": "browser.policy",
+      "status": "COMPLETE",
+      "evidence": [
+        "src/browser/browser-policy.js",
+        "src/browser/browser-policy-store.js"
+      ],
+      "next": "Preserve exact-origin temporary grants and fail-closed behavior as browser execution is added."
+    },
+    {
+      "id": "browser.execution-engine",
+      "status": "CONTRACT_ONLY",
+      "evidence": [
+        "docs/browser/INTEGRATION-PLAN-STATUS.md",
+        "src/lib/browser-host-integration.js"
+      ],
+      "next": "Implement canonical tab registry and governed execution before model-driven browser action loops."
+    },
+    {
+      "id": "mcp.governance",
+      "status": "PARTIAL",
+      "evidence": [
+        "src/integration/mcp-adapter.js",
+        "src/integration/mcp-governance-gateway.js",
+        "src/lib/mcp-inspector.js"
+      ],
+      "next": "Expose MCP capabilities to intelligence only through governed tool requests."
+    },
+    {
+      "id": "rag.repository",
+      "status": "MISSING",
+      "evidence": [],
+      "next": "Combine lexical/symbol/dependency retrieval with embeddings and evidence ranking."
+    },
+    {
+      "id": "verification.model-output",
+      "status": "MISSING",
+      "evidence": [],
+      "next": "Add schema validation, evidence checks, confidence and hallucination gates for AI-produced coding decisions."
+    }
+  ]
+}

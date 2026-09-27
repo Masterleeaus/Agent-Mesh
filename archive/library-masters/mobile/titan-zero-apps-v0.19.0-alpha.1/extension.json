@@ -1,0 +1,75 @@
+{
+  "schema": "titan-extension-v1",
+  "slug": "titan-apps-zero",
+  "name": "Titan Apps: Zero",
+  "version": "0.19.0-alpha.1",
+  "folder": "TitanAppsZero",
+  "provider": "App\\Extensions\\TitanAppsZero\\System\\TitanAppsZeroServiceProvider",
+  "migrations": false,
+  "suite": "Titan Apps",
+  "description": "Titan Apps owner/manager Zero application with host diagnostics, evidence-gated legacy compatibility, canonical workspace mount, governed read gateway and structured working context.",
+  "dependencies": {
+    "titan-apps-core": "*",
+    "titan-interface-runtime": ">=1.0.4-recovery.2",
+    "titan-interaction-engine": ">=10.11.2",
+    "titan-visual-runtime": ">=1.6.1"
+  },
+  "optional_dependencies": {
+    "titan-builder": ">=0.9.8",
+    "chatbot": "*"
+  },
+  "requires": {
+    "php": ">=8.2",
+    "titan_platform": ">=1.0"
+  },
+  "capabilities": [
+    "titan.apps.zero",
+    "titan.apps.zero.compatibility-retirement",
+    "titan.apps.zero.current-package-aliases",
+    "titan.apps.zero.donor-decommission-gate",
+    "titan.apps.zero.external-caller-evidence",
+    "titan.apps.zero.generative-decision-ui",
+    "titan.apps.zero.generative-ui",
+    "titan.apps.zero.host-diagnostics",
+    "titan.apps.zero.install-readiness",
+    "titan.apps.zero.lifecycle",
+    "titan.apps.zero.multimodal-shell",
+    "titan.apps.zero.onboarding-journey",
+    "titan.apps.zero.presentation-intent",
+    "titan.apps.zero.read-gateway",
+    "titan.apps.zero.readiness",
+    "titan.apps.zero.six-suite-integration",
+    "titan.apps.zero.suite-service-discovery",
+    "titan.apps.zero.surface-mount",
+    "titan.apps.zero.visual-contributions",
+    "titan.apps.zero.visual-runtime-integration",
+    "titan.apps.zero.workspace"
+  ],
+  "integrity": {
+    "algorithm": "sha256",
+    "file_count": 100,
+    "manifest": "PACKAGE-FILES.sha256"
+  },
+  "public_contracts": [
+    "App\\Extensions\\TitanAppsZero\\System\\Contracts\\ZeroRuntimeGateway",
+    "App\\Extensions\\TitanAppsZero\\System\\Contracts\\ZeroPlatformReadGateway",
+    "App\\Extensions\\TitanAppsZero\\System\\Contracts\\ZeroPresentationRequest",
+    "App\\Extensions\\TitanAppsZero\\System\\Contracts\\ZeroWorkspaceContextRepository",
+    "App\\Extensions\\TitanAppsZero\\System\\Contracts\\ProviderInterfaceContributionSource"
+  ],
+  "runtime": {
+    "surface": "zero",
+    "interface_mount": "zero-workspace",
+    "interface_runtime": "App\\Extensions\\TitanInterfaceRuntime\\System\\Contracts\\InterfaceRuntime",
+    "interaction_planning": "App\\Extensions\\InteractionEngine\\System\\Contracts\\PublicInteractionEngineInterface",
+    "interaction_execution": "App\\Extensions\\InteractionEngine\\System\\Contracts\\CapabilityIntentGatewayInterface",
+    "visual_runtime": "App\\Extensions\\TitanVisualRuntime\\System\\Contracts\\VisualRuntime",
+    "builder": "optional",
+    "execution_authority": false
+  },
+  "data_boundary": {
+    "canonical_company_key": "company_id",
+    "legacy_storage_owner_column": "chatbot_id",
+    "legacy_storage_authority": false
+  }
+}

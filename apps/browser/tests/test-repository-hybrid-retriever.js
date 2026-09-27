@@ -1,0 +1,22 @@
+'use strict';
+const fs=require('fs'),vm=require('vm'),assert=require('assert'),path=require('path');
+const root=path.join(__dirname,'..');const c={console,Map,Set,Object,Array,String,Number,Boolean,RegExp,JSON,Math,Date,Float32Array};c.globalThis=c;vm.createContext(c);
+for(const f of ['src/repository/repository-policy.js','src/repository/repository-search.js','src/repository/symbol-index.js','src/repository/dependency-graph.js','src/intelligence/repository-evidence-contract.js','src/intelligence/repository-chunker.js','src/intelligence/repository-embeddings.js','src/intelligence/repository-hybrid-retriever.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),c,{filename:f});
+(async()=>{
+ const snapshot={files:{'src/search.js':'function findUser(){ return userRepository.search(); }','src/user-repository.js':'class UserRepository { search(){ return "user"; } }','src/other.js':'function unrelated(){ return 1; }'}};
+ const embeddings=new c.CodeeRepositoryEmbeddings.RepositoryEmbeddings({dimensions:32});
+ const retriever=new c.CodeeRepositoryHybridRetriever.HybridRepositoryRetriever({embeddings});
+ const out=await retriever.retrieve(snapshot,'UserRepository search',{limit:10});
+ assert.equal(out.authority,false);assert.equal(out.canonical,false);assert.equal(out.plan_advance,false);assert.ok(out.results.length>=2);
+ assert.ok(out.results.some(r=>r.score_components.lexical>0),'lexical score present');
+ assert.ok(out.results.some(r=>r.score_components.symbol>0),'symbol score present');
+ assert.ok(out.results.some(r=>r.score_components.vector>0),'vector score present');
+ assert.ok(out.results.every(r=>r.evidence.authority===false&&r.authority===false));
+ for(let i=1;i<out.results.length;i++)assert.ok(out.results[i-1].score>=out.results[i].score,'ranked descending');
+ assert.equal(out.vector_status,'degraded','deterministic fallback must be surfaced as degraded vector mode');
+ const lexicalOnly=new c.CodeeRepositoryHybridRetriever.HybridRepositoryRetriever();
+ const lo=await lexicalOnly.retrieve(snapshot,'findUser',{vector:false,limit:5});assert.equal(lo.vector_status,'not_requested');assert.ok(lo.results[0].score_components.lexical>0);
+ const weights=c.CodeeRepositoryHybridRetriever.normalizeWeights({lexical:1,symbol:1,dependency:1,vector:1});assert.ok(Math.abs((weights.lexical+weights.symbol+weights.dependency+weights.vector)-1)<1e-9);
+ await assert.rejects(()=>retriever.retrieve(snapshot,''),e=>e.code==='ERR_REPOSITORY_HYBRID_QUERY');
+ console.log('PASS repository hybrid retriever');
+})().catch(e=>{console.error(e);process.exit(1);});

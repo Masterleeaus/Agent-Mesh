@@ -1,0 +1,258 @@
+{
+  "format": 1,
+  "pack": "Codee-Repository-Coding-Intelligence-Mega-Pack-v1.0.0",
+  "files": [
+    {
+      "path": "AGENT-HANDOFF.md",
+      "bytes": 735,
+      "sha256": "5d28f7404777374122a19fa681b6f834b24b8976ae22fc62b7277b6b44f0d2ad"
+    },
+    {
+      "path": "AGENT-INTEGRATION-PROMPT.md",
+      "bytes": 8870,
+      "sha256": "192ace8531d6df336525e7bf844bb33800cc8d3f906840609592a88325091e5b"
+    },
+    {
+      "path": "CODEE-HANDOFF.json",
+      "bytes": 546,
+      "sha256": "447358d3f4e988c486a09922becbeb93c9b82f74d7ab492b62b99e3af00774f9"
+    },
+    {
+      "path": "INTEGRATION-CONTRACT.md",
+      "bytes": 4111,
+      "sha256": "c9915d5d6c25d3ac0ee47afc251e24455945356d32682b7128586479e8bcb2a1"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3066,
+      "sha256": "e092624272deda58d8dad521f23355fba52bb9afdd78ede23c239d3580bf98d2"
+    },
+    {
+      "path": "START-HERE.txt",
+      "bytes": 639,
+      "sha256": "4a401112f694b7ff7ef20c1c9d63bd40318e4a65a008089aedbfeb2d0728fa83"
+    },
+    {
+      "path": "pack.json",
+      "bytes": 2433,
+      "sha256": "97ee4e8e441109e300ffc92f8483a3e623e8357c0c45b9cba8f2a2e0b26fb47e"
+    },
+    {
+      "path": "compat/MEGA-PACK-1-EXTENSION-SCOPE-REBASE.md",
+      "bytes": 875,
+      "sha256": "e9cf51a06bee9998c7ccc01146c52744de40fab8203541eeee468b45d370bf4c"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-16-codee-repository-coding-intelligence-plan.md",
+      "bytes": 4199,
+      "sha256": "64805dc744b4feaf4fd24230e515650b3bc6c4d535c21c8bfb7f8818e52d529e"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-08-16-codee-repository-coding-intelligence-design.md",
+      "bytes": 3189,
+      "sha256": "5829e26ffb1b66972ba7456fa7bdc864e818ac56efebacc40c017609e4a0c7d1"
+    },
+    {
+      "path": "reference/integration-baseline.json",
+      "bytes": 1416,
+      "sha256": "2246324d0792c88c0b6450ffc1ae45c0d99a0080125a04625a8a074e1bc8a8aa"
+    },
+    {
+      "path": "reference/titan-zero-repository-inventory.json",
+      "bytes": 2390,
+      "sha256": "9b97b5eb7013b06ba6ff5d466f1e022cbf85eaac88da4923ef5d40b3075c6630"
+    },
+    {
+      "path": "src/catalog/repository-profiles.js",
+      "bytes": 1677,
+      "sha256": "021959470091531744c0dd8060d5313bb726036004ce5f360e80d5dd1bebb3ec"
+    },
+    {
+      "path": "src/catalog/repository-prompts.js",
+      "bytes": 4341,
+      "sha256": "45301df174f6f847c3537b13150f6b7b047160c16ae1e0090bc5c3f745aca046"
+    },
+    {
+      "path": "src/catalog/repository-skills.js",
+      "bytes": 2732,
+      "sha256": "4b748f4ae20b189cffcabc0c3b02feb5c0ab0f15f26c6fd1dc9b6f28a8030a66"
+    },
+    {
+      "path": "src/integration/host-capabilities.js",
+      "bytes": 891,
+      "sha256": "e52f8a4f1737225730e626b5d2dbfa543e328a00cda61039d5338e926d09f0b0"
+    },
+    {
+      "path": "src/integration/mcp-adapter.js",
+      "bytes": 879,
+      "sha256": "21bb674c734e6aca9026ae8613ffc6e28c5c64f160970984a3940ef7976f35c0"
+    },
+    {
+      "path": "src/integration/receiver-adapter.js",
+      "bytes": 2435,
+      "sha256": "e493cd9178fae3a2c7c6e94d1716db850f2d549b8ffe4fb8cf693c0405685645"
+    },
+    {
+      "path": "src/integration/remote-context-broker.js",
+      "bytes": 1444,
+      "sha256": "aa53cd02f447a3d17038e7c896bf66aaeb362226ad18b88696769fddbdf2064f"
+    },
+    {
+      "path": "src/integration/repository-host-adapter.js",
+      "bytes": 4360,
+      "sha256": "1a71126a2d73c4f6afc9412f1b49536c0d54568f7bacd507adb9056b9261d260"
+    },
+    {
+      "path": "src/repository/change-set.js",
+      "bytes": 997,
+      "sha256": "c88ec2e399dbfca132cabd8e1f60f9afa565d4f247f5be9bcf2511193a021080"
+    },
+    {
+      "path": "src/repository/command-policy.js",
+      "bytes": 2197,
+      "sha256": "3c341914046957a81026fef7bf03cf87a631973844e2403dc1888596b1ad1ad7"
+    },
+    {
+      "path": "src/repository/dependency-analyzer.js",
+      "bytes": 1396,
+      "sha256": "5be18c918f5320a52636a3fa642722fb2e16676226251b71143d3d8b1fe2245b"
+    },
+    {
+      "path": "src/repository/dependency-graph.js",
+      "bytes": 1453,
+      "sha256": "00d5d918866fbb17e323dcb6c16bb23e8599e6156a55eef32bfe159fbfcbed42"
+    },
+    {
+      "path": "src/repository/diff-engine.js",
+      "bytes": 2126,
+      "sha256": "b9a79ab9812e80e51ca8e5919b67b180f51b12c7df7294c6da93e194949c451a"
+    },
+    {
+      "path": "src/repository/error-classifier.js",
+      "bytes": 1349,
+      "sha256": "a4665fcc906ec15fc65a8d8dc50f7862f3d8fa26db5a0c65922f6a700adffe45"
+    },
+    {
+      "path": "src/repository/git-intelligence.js",
+      "bytes": 1101,
+      "sha256": "d6d424ab5c2de5fec4c6f82b565d14a3972b4aab6f5b5a2680d9845b4230f3ed"
+    },
+    {
+      "path": "src/repository/impact-engine.js",
+      "bytes": 1585,
+      "sha256": "f5a653c0c817eccad22ea268052a3809e1458da4b5c7c80fdebafeb00054ee24"
+    },
+    {
+      "path": "src/repository/laravel-tracer.js",
+      "bytes": 1726,
+      "sha256": "56def360d45bf5f0f9d24ab9bb240a29c96866407bee6070b28253a1d5cf42d2"
+    },
+    {
+      "path": "src/repository/log-analyzer.js",
+      "bytes": 1012,
+      "sha256": "ae67f2d9dbdc65d62e59d60a932eaba6b0d9c7f702bae747ed1cfc7eb46203fa"
+    },
+    {
+      "path": "src/repository/migration-guard.js",
+      "bytes": 1635,
+      "sha256": "6cf06eed649886b6f66ba321bf39aff2a68ade5f482a3e4ca43c548d3e0fd651"
+    },
+    {
+      "path": "src/repository/mutation-envelope.js",
+      "bytes": 2006,
+      "sha256": "5922d801ace4df0bf4f131dc8a85064c8749485636ba1902222d5d701966c2fd"
+    },
+    {
+      "path": "src/repository/repository-coding-pack.js",
+      "bytes": 2887,
+      "sha256": "88784b525515c041bce04e71179b35d9c14729d9a4d1e2edd4f8e3559c873ca1"
+    },
+    {
+      "path": "src/repository/repository-inventory.js",
+      "bytes": 1173,
+      "sha256": "77d4eaa0ede92235bb52a2a63d887c8f576b6202ccd4c731b73278f5aae5b9c5"
+    },
+    {
+      "path": "src/repository/repository-policy.js",
+      "bytes": 2915,
+      "sha256": "f7fa6baa1f43abf9cfeca08827b99168ad278e3dfce9f39c947612f52b8e6e4a"
+    },
+    {
+      "path": "src/repository/repository-search.js",
+      "bytes": 1500,
+      "sha256": "bea161630bbb118210582cd9cefaaa507d653edd3daa6a2c1104812d1bbd77a2"
+    },
+    {
+      "path": "src/repository/rollback-planner.js",
+      "bytes": 674,
+      "sha256": "868df65e5d8cd673fc384abed9b1f46d6b75bf8296ae82eb0de8f47f9ed3e24c"
+    },
+    {
+      "path": "src/repository/symbol-index.js",
+      "bytes": 1543,
+      "sha256": "311c1be6108dcd237c31d41d894469c65464633df8506bd227889a2f328392db"
+    },
+    {
+      "path": "src/repository/test-selector.js",
+      "bytes": 1456,
+      "sha256": "42618694cf9f6adf69457a3bb34e82d98f9d841e44176b4ddf41d0113f399c93"
+    },
+    {
+      "path": "src/repository/verification-planner.js",
+      "bytes": 733,
+      "sha256": "226d2280dd5e0954e2049074405e7a5a42a0e686cbeb7021dc6c82bf6dad6fc3"
+    },
+    {
+      "path": "tests/advanced-intelligence.test.js",
+      "bytes": 2795,
+      "sha256": "fb188c7e40dad507099c39481543ec16c88dca1ffeb4b4ceac1ad1faf3c3a688"
+    },
+    {
+      "path": "tests/catalog-pack.test.js",
+      "bytes": 2305,
+      "sha256": "ea5bdbf70aefa96422d602c3283aa840d49ee8431404626f32d881b961f31d8f"
+    },
+    {
+      "path": "tests/change-verification.test.js",
+      "bytes": 2450,
+      "sha256": "1adea71dbccccb2887c144d66a7e7f47bacb3c8552561b4c179b0119bb93ea42"
+    },
+    {
+      "path": "tests/integration.test.js",
+      "bytes": 1469,
+      "sha256": "47adf6b37116dbf47e5a2f3feeca2b5ae56def45ba9369e8dbb812941f0c5637"
+    },
+    {
+      "path": "tests/load-pack.js",
+      "bytes": 585,
+      "sha256": "83cb8f76bcefa4ca7bc6de82e14cb55c7b819230c64f72aac5a5630bbc2ea138"
+    },
+    {
+      "path": "tests/real-titan-sample.json",
+      "bytes": 93385,
+      "sha256": "cf3b6d5ce0d5f94848436583ac62559fb8e270b1a93f0d97b79d4da4c590bfc6"
+    },
+    {
+      "path": "tests/real-titan-sample.test.js",
+      "bytes": 1270,
+      "sha256": "b61131f31c873f202541d1593d8c97863dfc18881b4603e5fcba5d6d2475612e"
+    },
+    {
+      "path": "tests/repository-core.test.js",
+      "bytes": 3541,
+      "sha256": "070d6427914af982925006405e08fbed98b66559084aa691a475efd141fb333c"
+    },
+    {
+      "path": "tests/repository-host-adapter.test.js",
+      "bytes": 1795,
+      "sha256": "b4906eb9ba58518812f994174a0a33c92b7f81d50e4e4d03c242e83f556c6b40"
+    },
+    {
+      "path": "tools/verify-pack.js",
+      "bytes": 2164,
+      "sha256": "1baf1229c6be4718b2144590e4b6e1ddad9c2ed392e608a8b652a5bc8ad578a7"
+    }
+  ],
+  "file_count": 50,
+  "aggregate_sha256": "b6d60c148a4f7501011ed6413dfd1be5779f2250d8d84f323d6a4dc8ff804b5a"
+}

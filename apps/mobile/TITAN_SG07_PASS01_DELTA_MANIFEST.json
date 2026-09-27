@@ -1,0 +1,21 @@
+{
+  "schema": "titan-mobile-sg07-pass-manifest/v1",
+  "subgoal_id": "TZ-ROADMAP-47-SG-07",
+  "pass": 1,
+  "status": "IMPLEMENTED_STATIC_VALIDATION",
+  "parent": "Titan-Mobile-MVP-Pass60.zip",
+  "scope": "Project Titan Hub as customer-authorised window into the same canonical workforce",
+  "invariants": [
+    "company_id + actor binding required",
+    "surface hub only",
+    "canonical agent_id reused; no Hub agent clones",
+    "exactly three home staff cards",
+    "customer-safe capability projection only",
+    "projection grants no authority"
+  ],
+  "runtime_execution": {
+    "flutter_test": false,
+    "reason": "Flutter SDK unavailable in execution environment"
+  },
+  "next_pass": 2
+}

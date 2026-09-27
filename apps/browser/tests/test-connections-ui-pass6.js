@@ -1,0 +1,15 @@
+const assert = require('assert');
+const fs = require('fs');
+const nav = fs.readFileSync('src/lib/navigation-registry.js','utf8');
+const html = fs.readFileSync('src/sidebar/sidebar.html','utf8');
+const js = fs.readFileSync('src/sidebar/sidebar.js','utf8');
+const worker = fs.readFileSync('src/lib/service-worker.js','utf8');
+assert(nav.includes("id: 'infrastructure.connections'") && nav.includes("page: 'connections'") && nav.includes("readiness: 'AVAILABLE'"), 'Connections navigation must be AVAILABLE');
+assert(html.includes('data-page="connections"'), 'Connections page must exist');
+for (const id of ['connections-free-ai','connections-local-ai','connections-premium-byo','connections-mcp','connections-repository-host','connections-artifact-host','connections-browser','connections-refresh-btn']) assert(html.includes(`id="${id}"`), `missing ${id}`);
+assert(js.includes("action: 'GET_CONNECTION_WORKSPACE'"), 'UI must load canonical connection workspace');
+assert(js.includes('loadConnectionsWorkspace'), 'UI must render the workspace');
+assert(js.includes('connections-refresh-btn'), 'UI must support explicit connection testing/refresh');
+assert(worker.includes("message.action === 'GET_CONNECTION_WORKSPACE'"), 'worker must expose sanitized connection workspace');
+assert(worker.includes("'connections-workspace.js'"), 'worker must load the workspace projection module');
+console.log('Connections page is wired to the canonical connection registry projection');

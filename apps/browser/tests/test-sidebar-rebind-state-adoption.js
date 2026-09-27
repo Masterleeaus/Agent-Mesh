@@ -1,0 +1,12 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');
+const source=fs.readFileSync('src/sidebar/sidebar.js','utf8');
+const document={getElementById(){return null},addEventListener(){}};
+const chrome={runtime:{onMessage:{addListener(){}},sendMessage:async()=>({ok:true})},storage:{local:{get:async()=>({})}},tabs:{onActivated:{addListener(){}},onUpdated:{addListener(){}},onRemoved:{addListener(){}},query:async()=>[]}};
+const context={chrome,document,console:{log(){},warn(){},error(){}},Map,Set,Promise,Date,Math,URL,crypto:{randomUUID:()=> 'x'}};vm.runInNewContext(source,context);
+assert.strictEqual(typeof context.adoptPlanStateUpdate,'function','sidebar must expose a helper that adopts worker plan updates/rebinds');
+const plans=new Map([[7,{planId:'p',plan:[{number:1,text:'one'}],stepIndex:0}]]);
+const result=context.adoptPlanStateUpdate(plans,7,9,{planId:'p',plan:[{number:1,text:'one'}],stepIndex:0});
+assert.strictEqual(plans.has(7),false,'sidebar must remove stale old-tab binding when worker rebinds the same plan');
+assert.strictEqual(plans.get(9).planId,'p');
+assert.strictEqual(result.currentTabId,9,'open plan detail view must follow the rebound tab id');
+console.log('sidebar adopts worker plan rebind updates OK');

@@ -1,0 +1,26 @@
+{
+  "schema": "titan-zero-provenance-retirement-ledger/v1",
+  "packet_id": "TZ-FIX-PROVENANCE-RUNTIME-DECOUPLING-001",
+  "pass": 10,
+  "state": "PREPARED_NOT_FINAL_CERTIFIED",
+  "manager_merge": 46,
+  "retired": [
+    {
+      "path": "workforce/donor/installed-client-workforce-master.json",
+      "sha256": "fbbce3b2854aa43a2ac3dd5c5dd719630113776457fee168c7f34df0996d2148",
+      "canonical_equivalent": "titan-workforce/catalogue/installed-client-workforce-master.json",
+      "byte_identical_before_retirement": true,
+      "uncompressed_bytes": 70169,
+      "compressed_bytes": 7573
+    }
+  ],
+  "preserved": [
+    {
+      "path": "titan-agent/history/**",
+      "reason": "external provenance bindings incomplete",
+      "history_reference_count": 51
+    }
+  ],
+  "authority_change": false,
+  "company_boundary": "company_id only"
+}

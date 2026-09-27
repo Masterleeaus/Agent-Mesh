@@ -1,0 +1,13 @@
+const fs=require('fs'); const vm=require('vm'); const assert=require('assert');
+const context={console:{log(){},warn(){},error(){}},Map,Set,Object,Array,String,Number,Boolean,RegExp,JSON,Math,Date}; context.globalThis=context; vm.createContext(context);
+const load=f=>vm.runInContext(fs.readFileSync(f,'utf8'),context,{filename:f});
+load('src/titan-zero/titan-zero-snapshot-policy.js');
+context.CodeeCapabilityRegistry={}; context.CodeeTitanZeroReceiverAdapter={};
+load('src/lib/titan-zero-host-integration.js');
+const settings=context.CodeeTitanZeroHostIntegration.normalizeSettings({ignoreExtensions:true});
+assert.strictEqual(settings.ignoreExtensions,false,'legacy ignoreExtensions must be rebased off');
+assert.strictEqual(settings.includeExtensions,true,'extensions must be explicitly included');
+assert.strictEqual(context.CodeeTitanZeroHostIntegration.shouldIncludePath('app/Extensions/Crm/Services/LeadService.php'),true,'Titan host intelligence must include extension code');
+assert.strictEqual(context.CodeeTitanZeroHostIntegration.shouldIgnorePath('app/Extensions/Crm/Services/LeadService.php'),false);
+assert.strictEqual(context.CodeeTitanZeroHostIntegration.shouldIncludePath('.env.production'),false,'secret policy remains enforced');
+console.log('Mega Pack 1 extension scope rebase OK');

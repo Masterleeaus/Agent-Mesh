@@ -1,0 +1,15 @@
+const fs=require('fs'); const vm=require('vm'); const assert=require('assert');
+const source=fs.readFileSync('src/lib/service-worker.js','utf8');
+const chrome={sidePanel:{setPanelBehavior:async()=>{}},runtime:{onMessage:{addListener(){}},sendMessage:async()=>({ok:true}),onStartup:{addListener(){}},onInstalled:{addListener(){}}},alarms:{create:async()=>{},get:async()=>({name:'ZIP_POLL',periodInMinutes:1}),onAlarm:{addListener(){}}},tabs:{query(_q,cb){cb([])},get:async()=>({id:1,url:'https://chatgpt.com/c/a'}),sendMessage:async()=>({ok:true,versions:[],artifacts:[],hasSubmittedStepToken:false})},storage:{local:{get:async()=>({}),set:async()=>{}}}};
+const context={chrome,console:{log(){},warn(){},error(){}},setTimeout(fn){fn();},clearTimeout(){},setInterval(){},clearInterval(){},Map,Set,Promise,Date,Math,crypto:{randomUUID:()=> 'uuid'},importScripts(){}};
+vm.createContext(context); vm.runInContext(source,context);
+const state={plan:[{text:'Exact approved step'}],stepIndex:0,planId:'plan-1',runId:'run-1',currentStepId:'step-01',currentStepToken:'token-1',protocolMode:'signature_v2',lastArtifactSha256:null,repositoryContext:'# Repo evidence\n- affected app/Extensions/Crm',titanZeroContext:'# Titan evidence\n- live fact'};
+const out=context.buildPrompt(state);
+const repoPos=out.indexOf('CODEE REPOSITORY & CODING CONTEXT — GOVERNED EVIDENCE');
+const titanPos=out.indexOf('TITAN ZERO HOST CONTEXT — READ-ONLY EVIDENCE');
+const contractPos=out.indexOf('CODEE COMPLETION CONTRACT — REQUIRED FOR THIS CODE ZIP');
+assert(repoPos>0,'repository context must be attached');
+assert(titanPos>repoPos,'Titan context should follow repository context');
+assert(contractPos>titanPos,'completion contract must remain last authority section');
+assert(out.trim().endsWith('CODEE_ARTIFACT_READY'));
+console.log('Repository/Titan context order preserves final CODEE contract');

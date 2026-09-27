@@ -1,0 +1,1417 @@
+{
+  "goal_id": "TZ-ROADMAP-34",
+  "priority": "P0",
+  "title": "Unified Identity, Agent State & Cross-Surface Continuity",
+  "objective": "Make every surface access the same Titan identity, workforce instances, task state, interaction sessions and receipts.",
+  "status": "PLANNED",
+  "subgoals": [
+    {
+      "subgoal": 1,
+      "title": "Define unified Titan OAuth/session/actor/company/role/vertical context contract",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Zero",
+        "Titan Trust",
+        "Titan Autonomy"
+      ],
+      "subgoal_id": "TZ-ROADMAP-34-SG-01",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND_WITH_UNIFIED_OAUTH_CONTEXT_GAP",
+        "last_scanned_at_utc": "2026-09-19T05:51:13Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "PROMOTION_MANIFEST_CANONICAL_THREE_COPY_SHA_AND_ZIP_VERIFIED_TYPECHECK_PASS",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219"
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PLUS_PHYSICAL_SHA_MATCH",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963"
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958"
+          },
+          {
+            "source_ref": "Titan Trust",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PROMOTION_MANIFEST_CANONICAL_THREE_COPY_SHA_AND_ZIP_VERIFIED_TYPECHECK_PASS",
+            "internal_paths": [
+              "apps/web/lib/auth/session.ts",
+              "packages/titan-platform/src/ported/titan-runtime/company-context.ts",
+              "packages/titan-platform/src/ported/titan-runtime/operation-identity/identity.ts",
+              "packages/titan-platform/src/ported/titan-runtime/operation-identity/session.ts",
+              "packages/titan-platform/src/ported/titan-runtime/contracts/schemas/OperationIdentity.schema.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Company/AuthenticatedUserCompanyContextResolver.php",
+              "System/Company/CompanyExecutionContext.php",
+              "System/Contracts/InteractionContext.php",
+              "System/Context/InteractionContextFactory.php",
+              "System/Profile/FieldHomeServicesVerticalPackRegistry.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Context/AuthenticatedContextPrincipal.php",
+              "System/Context/InterfaceContext.php",
+              "System/Context/InterfaceContextResolver.php",
+              "System/Http/Middleware/BindInterfaceContext.php",
+              "System/Context/LaravelAuthenticatedContextPrincipalProvider.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "file_id": "file_0000000028f881faa94c136cee53317a",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Autonomy/Titan Autonomy Master v1.8.3.zip",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Infrastructure/LaravelAuthHostContextBridge.php",
+              "System/Infrastructure/CrmCompanyHostContextBridge.php",
+              "System/Contracts/HostContextBridgeContract.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Trust",
+            "file_id": "file_0000000071788230b0a9df377eb77ccf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Trust/Titan Trust Master v2.1.0.zip",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Support/CompanyContext.php",
+              "System/Audit/RequestContext.php"
+            ]
+          }
+        ],
+        "scan_notes": "A strong shared principal/context spine already exists: company_id, actor/user, roles, capabilities, surface/device/conversation/journey and trace lineage are represented across Interaction Engine, Interface Runtime, Autonomy and Merge80. However no active oauth-named artifact or one explicit Titan OAuth context contract was found in Merge80. apps/web auth/session.ts uses accountId while the canonical runtime uses company_id, and vertical context is not uniformly bound into the authenticated principal. Converge these seams explicitly; do not create a parallel tenant boundary.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 2,
+      "title": "Persist canonical agent identity, goals, policies, authority, working state, history, events and performance",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Zero",
+        "Titan Trust",
+        "Titan Autonomy"
+      ],
+      "subgoal_id": "TZ-ROADMAP-34-SG-02",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND_WITH_AGENT_RECORD_CONVERGENCE_REQUIRED",
+        "last_scanned_at_utc": "2026-09-19T05:51:13Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "PROMOTION_MANIFEST_CANONICAL_THREE_COPY_SHA_AND_ZIP_VERIFIED_TYPECHECK_PASS",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219"
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958"
+          },
+          {
+            "source_ref": "Titan Trust",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/State/StateManager.php",
+              "System/Goals/GoalEngine.php",
+              "System/Policy/PolicyEngine.php",
+              "System/Cognition/Events/EloquentCognitiveEventStore.php",
+              "database/migrations/2026_08_04_000000_create_interaction_cognitive_events_table.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "file_id": "file_0000000028f881faa94c136cee53317a",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Autonomy/Titan Autonomy Master v1.8.3.zip",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/DTOs/CapabilityState.php",
+              "System/Infrastructure/DatabaseCapabilityStateStore.php",
+              "database/migrations/2026_08_10_000100_add_titan_autonomy_runtime_policy_tables.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Zero Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PROMOTION_MANIFEST_CANONICAL_THREE_COPY_SHA_AND_ZIP_VERIFIED_TYPECHECK_PASS",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-runtime/operation-identity/store.ts",
+              "packages/titan-platform/src/ported/titan-runtime/authority/history-integrity.ts",
+              "packages/titan-platform/src/ported/titan-workforce/contracts/ClientWorkerInstance.schema.json",
+              "packages/titan-platform/src/ported/titan-workforce/performance/PerformanceOutcomeEvidence.schema.json",
+              "packages/titan-platform/src/ported/titan-workforce/contracts/OutcomeRecord.schema.json"
+            ]
+          },
+          {
+            "source_ref": "Titan Trust",
+            "file_id": "file_0000000071788230b0a9df377eb77ccf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Trust/Titan Trust Master v2.1.0.zip",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Audit/JobEventWriter.php",
+              "System/Http/Middleware/CaptureAuditContext.php"
+            ]
+          }
+        ],
+        "scan_notes": "Identity, goals, policy, working state, cognitive events, autonomy capability state, authority history, worker instances and performance evidence all already exist. No single durable canonical agent aggregate was found that unifies identity + active goals + policies + effective authority + working state + history/events + performance. Build a canonical aggregate/projection over these existing authorities rather than duplicating their storage semantics; performance evidence must remain non-authoritative for authority grants.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 3,
+      "title": "Implement cross-host lookup of the same agent instance and active plans",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Zero",
+        "Titan Trust",
+        "Titan Autonomy"
+      ],
+      "subgoal_id": "TZ-ROADMAP-34-SG-03",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Interaction Engine",
+          "Titan Zero canonical_ref CURRENT (resolved Merge80 at scan time)",
+          "Titan Zero LLM Plugin Workspace / ChatGPT App"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/State/StateManager.php",
+              "System/Goals/GoalEngine.php",
+              "System/Contracts/InteractionContext.php"
+            ],
+            "finding": "Agent goals/state stores and worker-instance records exist, but no one cross-host resolver was found that accepts canonical agent_id + company_id and returns the same agent instance plus active plans everywhere. Build a projection/lookup over existing authorities; do not create host-local agents."
+          },
+          {
+            "source_ref": "Titan Zero canonical_ref CURRENT (resolved Merge80 at scan time)",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "RESOLVED_FROM_MANAGER_CANONICAL_JSON_AT_SCAN_TIME__DO_NOT_TREAT_CURRENT_FOLDER_AS_AUTHORITY",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-workforce/contracts/ClientWorkerInstance.schema.json",
+              "packages/titan-platform/src/ported/titan-runtime/operation-identity/store.ts"
+            ],
+            "finding": "Agent goals/state stores and worker-instance records exist, but no one cross-host resolver was found that accepts canonical agent_id + company_id and returns the same agent instance plus active plans everywhere. Build a projection/lookup over existing authorities; do not create host-local agents."
+          },
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/contracts.ts"
+            ],
+            "file_ids": [
+              "file_00000000f7cc81fa870c0322a2189df4",
+              "file_000000005e2481fa9d740d08a3f5f072"
+            ],
+            "finding": "Agent goals/state stores and worker-instance records exist, but no one cross-host resolver was found that accepts canonical agent_id + company_id and returns the same agent instance plus active plans everywhere. Build a projection/lookup over existing authorities; do not create host-local agents."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:25:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Agent goals/state stores and worker-instance records exist, but no one cross-host resolver was found that accepts canonical agent_id + company_id and returns the same agent instance plus active plans everywhere. Build a projection/lookup over existing authorities; do not create host-local agents."
+      }
+    },
+    {
+      "subgoal": 4,
+      "title": "Implement shared interaction-session and task-state continuation across surfaces",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Zero",
+        "Titan Trust",
+        "Titan Autonomy"
+      ],
+      "subgoal_id": "TZ-ROADMAP-34-SG-04",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Interaction Engine",
+          "Titan Interface Runtime",
+          "Titan Zero LLM Plugin Workspace / ChatGPT App"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Wizard/WizardSession.php",
+              "System/Wizard/Storage/CacheWizardSessionStore.php",
+              "System/State/StateManager.php",
+              "System/Event/EventRecorder.php"
+            ],
+            "finding": "Interaction Engine already persists resumable wizard/session state, history and company-scoped interaction events. Interface context carries conversation/journey/device/workspace identity. Missing is one shared continuation token/task-state contract across all surfaces."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Context/InterfaceContext.php",
+              "System/Context/InterfaceContextResolver.php",
+              "docs/WORKING-SETS-WORKSPACE-CONTEXT.md"
+            ],
+            "finding": "Interaction Engine already persists resumable wizard/session state, history and company-scoped interaction events. Interface context carries conversation/journey/device/workspace identity. Missing is one shared continuation token/task-state contract across all surfaces."
+          },
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts"
+            ],
+            "file_ids": [
+              "file_00000000f7cc81fa870c0322a2189df4",
+              "file_00000000dbb4820b90c0cb6639d7a6ac"
+            ],
+            "finding": "Interaction Engine already persists resumable wizard/session state, history and company-scoped interaction events. Interface context carries conversation/journey/device/workspace identity. Missing is one shared continuation token/task-state contract across all surfaces."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:25:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Interaction Engine already persists resumable wizard/session state, history and company-scoped interaction events. Interface context carries conversation/journey/device/workspace identity. Missing is one shared continuation token/task-state contract across all surfaces."
+      }
+    },
+    {
+      "subgoal": 5,
+      "title": "Implement receipt/event correlation across ChatGPT/Claude/Copilot/Titan/PWA/browser transitions",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Zero",
+        "Titan Trust",
+        "Titan Autonomy"
+      ],
+      "subgoal_id": "TZ-ROADMAP-34-SG-05",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Interface Runtime",
+          "Titan Autonomy",
+          "Titan Interaction Engine",
+          "Titan Zero LLM Plugin Workspace / ChatGPT App"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Receipts/InterfaceReceipt.php",
+              "System/Receipts/GovernanceReceiptPresenter.php"
+            ],
+            "finding": "Cross-surface correlation primitives are strong: InterfaceReceipt has correlation/causation IDs, Autonomy deduplicates receipts by company+correlation and stores interaction/session IDs, Interaction records company-scoped run events, and Rewind correlation is additive. Converge one end-to-end receipt/event lineage contract."
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "file_id": "file_0000000028f881faa94c136cee53317a",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Autonomy/Titan Autonomy Master v1.8.3.zip",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Infrastructure/DatabaseExecutionReceiptStore.php",
+              "System/Services/RewindCorrelationService.php",
+              "System/Contracts/ExecutionReceiptReconcilerContract.php"
+            ],
+            "finding": "Cross-surface correlation primitives are strong: InterfaceReceipt has correlation/causation IDs, Autonomy deduplicates receipts by company+correlation and stores interaction/session IDs, Interaction records company-scoped run events, and Rewind correlation is additive. Converge one end-to-end receipt/event lineage contract."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Event/EventRecorder.php",
+              "System/Cognition/Events/EloquentCognitiveEventStore.php"
+            ],
+            "finding": "Cross-surface correlation primitives are strong: InterfaceReceipt has correlation/causation IDs, Autonomy deduplicates receipts by company+correlation and stores interaction/session IDs, Interaction records company-scoped run events, and Rewind correlation is additive. Converge one end-to-end receipt/event lineage contract."
+          },
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": null,
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts",
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/gateway.ts"
+            ],
+            "file_ids": [
+              "file_00000000f7cc81fa870c0322a2189df4",
+              "file_00000000dbb4820b90c0cb6639d7a6ac"
+            ],
+            "finding": "Cross-surface correlation primitives are strong: InterfaceReceipt has correlation/causation IDs, Autonomy deduplicates receipts by company+correlation and stores interaction/session IDs, Interaction records company-scoped run events, and Rewind correlation is additive. Converge one end-to-end receipt/event lineage contract."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:25:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Cross-surface correlation primitives are strong: InterfaceReceipt has correlation/causation IDs, Autonomy deduplicates receipts by company+correlation and stores interaction/session IDs, Interaction records company-scoped run events, and Rewind correlation is additive. Converge one end-to-end receipt/event lineage contract."
+      }
+    },
+    {
+      "subgoal": 6,
+      "title": "Enforce server-side company and actor scope on every resumed interaction",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Zero",
+        "Titan Trust",
+        "Titan Autonomy"
+      ],
+      "subgoal_id": "TZ-ROADMAP-34-SG-06",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Interaction Engine",
+          "Titan Interface Runtime",
+          "Titan Autonomy",
+          "Titan Zero LLM Plugin Workspace / ChatGPT App"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Wizard/Security/WizardSessionAccessPolicy.php",
+              "System/Company/AuthenticatedUserCompanyContextResolver.php"
+            ],
+            "finding": "Server-side scope enforcement already exists: WizardSessionAccessPolicy checks company/user/delegated actors; InterfaceContextResolver rejects caller-supplied roles/capabilities and conflicting company aliases; ChatGPT context accepts identity only from a trusted server-side session exchange. Apply the same resolver contract to every resumed surface."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Context/InterfaceContextResolver.php",
+              "System/Context/AuthenticatedContextPrincipal.php",
+              "System/Http/Middleware/BindInterfaceContext.php"
+            ],
+            "finding": "Server-side scope enforcement already exists: WizardSessionAccessPolicy checks company/user/delegated actors; InterfaceContextResolver rejects caller-supplied roles/capabilities and conflicting company aliases; ChatGPT context accepts identity only from a trusted server-side session exchange. Apply the same resolver contract to every resumed surface."
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "file_id": "file_0000000028f881faa94c136cee53317a",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Autonomy/Titan Autonomy Master v1.8.3.zip",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Infrastructure/LaravelAuthHostContextBridge.php",
+              "tests/Smoke/LiveHostContextSmokeTest.php"
+            ],
+            "finding": "Server-side scope enforcement already exists: WizardSessionAccessPolicy checks company/user/delegated actors; InterfaceContextResolver rejects caller-supplied roles/capabilities and conflicting company aliases; ChatGPT context accepts identity only from a trusted server-side session exchange. Apply the same resolver contract to every resumed surface."
+          },
+          {
+            "source_ref": "Titan Zero LLM Plugin Workspace / ChatGPT App",
+            "file_id": "file_00000000f7cc81fa870c0322a2189df4",
+            "library_path": "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App",
+            "sha256": null,
+            "verification": "LIVE_IMPLEMENTATION_FILES_READABLE__NON_CANONICAL_SURFACE_WORKSPACE",
+            "internal_paths": [
+              "/Titan Zero/LLM Plugin Workspace/ChatGPT/Titan Zero ChatGPT App/lib/titan/context.ts"
+            ],
+            "file_ids": [
+              "file_00000000f7cc81fa870c0322a2189df4"
+            ],
+            "finding": "Server-side scope enforcement already exists: WizardSessionAccessPolicy checks company/user/delegated actors; InterfaceContextResolver rejects caller-supplied roles/capabilities and conflicting company aliases; ChatGPT context accepts identity only from a trusted server-side session exchange. Apply the same resolver contract to every resumed surface."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:25:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Server-side scope enforcement already exists: WizardSessionAccessPolicy checks company/user/delegated actors; InterfaceContextResolver rejects caller-supplied roles/capabilities and conflicting company aliases; ChatGPT context accepts identity only from a trusted server-side session exchange. Apply the same resolver contract to every resumed surface."
+      }
+    },
+    {
+      "subgoal": 7,
+      "title": "Handle stale sessions, revoked delegation and authority reduction during surface changes",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P0",
+      "mvp_required": true,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Zero",
+        "Titan Trust",
+        "Titan Autonomy"
+      ],
+      "subgoal_id": "TZ-ROADMAP-34-SG-07",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P0",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_FOUND",
+        "last_scanned_at_utc": "2026-09-19T05:51:13Z",
+        "relevant_source_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "verification": "PROMOTION_MANIFEST_CANONICAL_THREE_COPY_SHA_AND_ZIP_VERIFIED_TYPECHECK_PASS",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c"
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958"
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219"
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PLUS_PHYSICAL_SHA_MATCH",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963"
+          }
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Zero Merge80",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "PROMOTION_MANIFEST_CANONICAL_THREE_COPY_SHA_AND_ZIP_VERIFIED_TYPECHECK_PASS",
+            "internal_paths": [
+              "packages/titan-platform/src/ported/titan-runtime/authority/delegation.ts",
+              "packages/titan-platform/src/ported/titan-runtime/authority/lease-control.ts",
+              "titan-runtime/authority/tests/lease-narrowing-revocation.test.mjs",
+              "titan-runtime/authority/tests/autonomy-contraction.test.mjs",
+              "packages/titan-platform/src/ported/titan-offline/authority-continuity.ts",
+              "packages/titan-platform/src/offline/authorization-contraction.ts",
+              "packages/titan-platform/src/ported/titan-runtime/adapters/adapter-session-recovery.ts",
+              "apps/web/lib/auth/session.ts"
+            ]
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "file_id": "file_0000000028f881faa94c136cee53317a",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Autonomy/Titan Autonomy Master v1.8.3.zip",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED_SOURCE_REGISTRY_UNMANAGED",
+            "internal_paths": [
+              "System/Services/DelegatedAuthorityEnvelopeService.php",
+              "System/Services/ExecutionAuthorityGuard.php",
+              "System/Services/CapabilityStateTransitionService.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Policy/PolicyEngine.php",
+              "System/Wizard/Security/WizardSessionAccessPolicy.php"
+            ]
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Context/InterfaceContext.php",
+              "System/Context/InterfaceContextResolver.php"
+            ]
+          }
+        ],
+        "scan_notes": "Strong authority-contraction primitives already exist: delegated authority expires and becomes extinct when parents are suspended/revoked/expired; lease control prevents authority increase, expiry extension and revival after revocation; offline authorization contracts on stale/revoked authority; Autonomy issues short-lived signed delegated envelopes tied to company, capability, workflow, user/session/interaction/correlation. Main implementation is to bind these primitives to every surface/session transition so stale sessions cannot carry delegated authority across Command/Go/Hub changes.",
+        "exhaustion_evidence": null
+      }
+    },
+    {
+      "subgoal": 8,
+      "title": "Add privacy-safe history projection and host-specific context minimisation",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Zero",
+        "Titan Trust",
+        "Titan Autonomy"
+      ],
+      "subgoal_id": "TZ-ROADMAP-34-SG-08",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Autonomy",
+          "Titan Interaction Engine",
+          "Titan Interface Runtime",
+          "Titan Trust"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Autonomy",
+            "file_id": "file_0000000028f881faa94c136cee53317a",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Autonomy/Titan Autonomy Master v1.8.3.zip",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/ExecutionReceiptSanitizer.php",
+              "tests/Smoke/ExecutionReceiptSanitizerSmokeTest.php"
+            ],
+            "finding": "Privacy primitives exist but are distributed: Autonomy sanitizes secrets from receipts, Interaction has TemporaryChatPolicy, and interface receipts can project bounded metadata. Missing is one host-specific context-minimisation/history projection policy with explicit field allowlists and retention semantics."
+          },
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/TitanAI/features/temp-chat/System/Privacy/TemporaryChatPolicy.php",
+              "System/Cognition/Events/CognitiveEvent.php"
+            ],
+            "finding": "Privacy primitives exist but are distributed: Autonomy sanitizes secrets from receipts, Interaction has TemporaryChatPolicy, and interface receipts can project bounded metadata. Missing is one host-specific context-minimisation/history projection policy with explicit field allowlists and retention semantics."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Receipts/InterfaceReceipt.php",
+              "System/Inspector/ContextInspector.php"
+            ],
+            "finding": "Privacy primitives exist but are distributed: Autonomy sanitizes secrets from receipts, Interaction has TemporaryChatPolicy, and interface receipts can project bounded metadata. Missing is one host-specific context-minimisation/history projection policy with explicit field allowlists and retention semantics."
+          },
+          {
+            "source_ref": "Titan Trust",
+            "file_id": "file_0000000071788230b0a9df377eb77ccf",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Trust/Titan Trust Master v2.1.0.zip",
+            "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Audit/RequestContext.php",
+              "System/Http/Middleware/CaptureAuditContext.php"
+            ],
+            "finding": "Privacy primitives exist but are distributed: Autonomy sanitizes secrets from receipts, Interaction has TemporaryChatPolicy, and interface receipts can project bounded metadata. Missing is one host-specific context-minimisation/history projection policy with explicit field allowlists and retention semantics."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:25:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Privacy primitives exist but are distributed: Autonomy sanitizes secrets from receipts, Interaction has TemporaryChatPolicy, and interface receipts can project bounded metadata. Missing is one host-specific context-minimisation/history projection policy with explicit field allowlists and retention semantics."
+      }
+    },
+    {
+      "subgoal": 9,
+      "title": "Run cross-model and cross-device continuity/replay/conflict tests",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Zero",
+        "Titan Trust",
+        "Titan Autonomy"
+      ],
+      "subgoal_id": "TZ-ROADMAP-34-SG-09",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Interaction Engine",
+          "Titan Interface Runtime",
+          "Titan Autonomy"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Offline/ConflictResolver.php",
+              "resources/ts/offline/cognitive-event-outbox.ts",
+              "tests/offline_only_run.php",
+              "tests/phase2_offline_security.php",
+              "tests/Contract/OfflineIntegrityPass8Test.js"
+            ],
+            "finding": "Offline conflict and replay-related primitives already exist: Interaction has ConflictResolver/event outbox and offline security tests; Interface presents non-executable sync conflicts; Autonomy isolates reconciliation by company and correlates Rewind. No full cross-model/cross-device replay matrix exists."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "System/Offline/SyncConflictItem.php",
+              "tests/Feature/OfflineSyncQualityBindingTest.php",
+              "tests/Unit/OfflineSyncAccessibilityPerformanceTest.php"
+            ],
+            "finding": "Offline conflict and replay-related primitives already exist: Interaction has ConflictResolver/event outbox and offline security tests; Interface presents non-executable sync conflicts; Autonomy isolates reconciliation by company and correlates Rewind. No full cross-model/cross-device replay matrix exists."
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "file_id": "file_0000000028f881faa94c136cee53317a",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Autonomy/Titan Autonomy Master v1.8.3.zip",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "System/Services/RewindCorrelationService.php",
+              "tests/Smoke/ScheduledReconciliationTenantIsolationSmokeTest.php"
+            ],
+            "finding": "Offline conflict and replay-related primitives already exist: Interaction has ConflictResolver/event outbox and offline security tests; Interface presents non-executable sync conflicts; Autonomy isolates reconciliation by company and correlates Rewind. No full cross-model/cross-device replay matrix exists."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:25:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Offline conflict and replay-related primitives already exist: Interaction has ConflictResolver/event outbox and offline security tests; Interface presents non-executable sync conflicts; Autonomy isolates reconciliation by company and correlates Rewind. No full cross-model/cross-device replay matrix exists."
+      }
+    },
+    {
+      "subgoal": 10,
+      "title": "Certify surface switching without duplicate agents, state divergence or authority inflation",
+      "status": "TODO",
+      "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
+      "pass_plan": {
+        "status": "BUILDER_CREATES_ON_CLAIM",
+        "expected_range": "adaptive; no fixed pass count",
+        "documentation": "lightweight outcome-oriented",
+        "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
+      },
+      "completion_basis": "acceptance gates and complete outcome, not planned pass count",
+      "claimable": true,
+      "priority": "P1",
+      "mvp_required": false,
+      "reuse_first": true,
+      "reuse_instruction": "Deep-scan and compare the referenced Library donor code before implementation. Converge/port/adapt verified behavior; do not rebuild an existing system from scratch unless donor incompatibility or absence is proven and recorded.",
+      "library_reuse_refs": [
+        "Titan Interaction Engine",
+        "Titan Interface Runtime",
+        "Titan Zero",
+        "Titan Trust",
+        "Titan Autonomy"
+      ],
+      "subgoal_id": "TZ-ROADMAP-34-SG-10",
+      "execution": {
+        "state": "UNCLAIMED",
+        "claimed_by": null,
+        "claimed_at": null,
+        "last_heartbeat_at": null,
+        "plan_path": null,
+        "current_pass_id": null,
+        "passes": [],
+        "final_cumulative_delta": null,
+        "checkpoint_counter": 0,
+        "checkpoint_history": [],
+        "next_checkpoint_due_after_pass": 4
+      },
+      "agent_model": {
+        "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
+        "status": "ASSESSED_NO_DISTINCT_AGENT",
+        "workforce_impact": "NO_AGENT_INFRASTRUCTURE_ONLY",
+        "workforce_impact_options": [
+          "REUSE_EXISTING_AGENT",
+          "EXTEND_EXISTING_AGENT",
+          "CREATE_NEW_AGENT",
+          "SURFACE_BINDING_EXISTING_AGENTS",
+          "NO_AGENT_INFRASTRUCTURE_ONLY"
+        ],
+        "owning_agent_ids": [],
+        "created_agent_ids": [],
+        "modified_agent_ids": [],
+        "canonical_agent_names": [],
+        "workforce_positions": [],
+        "parent_agent_ids": [],
+        "delegation_chain": [],
+        "pain_point_ids": [],
+        "outcome_ids": [],
+        "recommendations": [],
+        "registry_delta": null,
+        "verification_evidence": [],
+        "no_agent_reason": "Infrastructure/platform work with no distinct business-outcome owner; canonical agents may consume the capability but the technology is not an agent identity.",
+        "required_before_completion": true,
+        "agent_binding_notes": [],
+        "workforce_architecture_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/WORKFORCE-ARCHITECTURE.json",
+        "capability_registry_ref": "/Titan Zero/Agent Mesh Manager/WORKFORCE/CAPABILITY-REGISTRY.json"
+      },
+      "code_discovery": {
+        "lane": "P1",
+        "status": "DEEP_SCANNED_RELEVANT_CODE_VALIDATED",
+        "relevant_source_refs": [
+          "Titan Interaction Engine",
+          "Titan Interface Runtime",
+          "Titan Autonomy",
+          "Titan Zero canonical_ref CURRENT (resolved Merge80 at scan time)"
+        ],
+        "relevant_file_refs": [
+          {
+            "source_ref": "Titan Interaction Engine",
+            "file_id": "file_00000000602c81f58f5568b07af14d5f",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip",
+            "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+            "verification": "MASTER_STATUS_VERIFIED_ZERO_LOSS_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "tests/company_boundary.php",
+              "tests/company_boundary_active_runtime.php",
+              "tests/phase6_authority.php",
+              "tests/phase6_offline_go.php"
+            ],
+            "finding": "Existing tests cover company boundaries, context binding, offline security, delegated-authority contraction and tenant-isolated reconciliation, but there is no single certification proving surface switches cannot duplicate agent identity, fork state, replay consequential work, or inflate authority."
+          },
+          {
+            "source_ref": "Titan Interface Runtime",
+            "file_id": "file_000000007b5081fab6122ad2d725365e",
+            "library_path": "/MASTER Software/Masters/Mobile Apps/Titan Interface Runtime/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+            "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+            "verification": "MASTER_STATUS_SOURCE_VERIFIED_PLUS_PHYSICAL_SHA_MATCH",
+            "internal_paths": [
+              "tests/CompanyBoundaryTest.php",
+              "tests/Feature/ContextSpineBindingTest.php",
+              "tests/ActionAuthorityTest.php",
+              "tests/Feature/OfflineSyncQualityBindingTest.php"
+            ],
+            "finding": "Existing tests cover company boundaries, context binding, offline security, delegated-authority contraction and tenant-isolated reconciliation, but there is no single certification proving surface switches cannot duplicate agent identity, fork state, replay consequential work, or inflate authority."
+          },
+          {
+            "source_ref": "Titan Autonomy",
+            "file_id": "file_0000000028f881faa94c136cee53317a",
+            "library_path": "/MASTER Software/Masters/Platform/Titan Autonomy/Titan Autonomy Master v1.8.3.zip",
+            "sha256": "2287c743123c55d53d536f4e699749a80cce36baab8ec59db89bc570f3afb958",
+            "verification": "PHYSICALLY_RETRIEVED_SHA_VERIFIED_CONTENT_SCANNED",
+            "internal_paths": [
+              "tests/Smoke/DelegatedAuthorityEnvelopeSmokeTest.php",
+              "tests/Smoke/LiveHostContextSmokeTest.php",
+              "tests/Smoke/ScheduledReconciliationTenantIsolationSmokeTest.php"
+            ],
+            "finding": "Existing tests cover company boundaries, context binding, offline security, delegated-authority contraction and tenant-isolated reconciliation, but there is no single certification proving surface switches cannot duplicate agent identity, fork state, replay consequential work, or inflate authority."
+          },
+          {
+            "source_ref": "Titan Zero canonical_ref CURRENT (resolved Merge80 at scan time)",
+            "file_id": "file_00000000a848820a8ffdd0bde8782670",
+            "library_path": "/Titan Zero/Canonical Releases/Current/Titan-Zero-CANONICAL-MERGE80-CUSTOMER-CARE-RUNTIME-CLOSURE-2026-09-17.zip",
+            "sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+            "verification": "RESOLVED_FROM_MANAGER_CANONICAL_JSON_AT_SCAN_TIME__DO_NOT_TREAT_CURRENT_FOLDER_AS_AUTHORITY",
+            "internal_paths": [
+              "titan-runtime/authority/tests/lease-narrowing-revocation.test.mjs",
+              "titan-runtime/authority/tests/autonomy-contraction.test.mjs",
+              "packages/titan-platform/src/ported/titan-runtime/adapters/adapter-session-recovery.ts"
+            ],
+            "finding": "Existing tests cover company boundaries, context binding, offline security, delegated-authority contraction and tenant-isolated reconciliation, but there is no single certification proving surface switches cannot duplicate agent identity, fork state, replay consequential work, or inflate authority."
+          }
+        ],
+        "last_scanned_at_utc": "2026-09-19T18:25:00Z",
+        "exhaustion_evidence": null,
+        "scan_notes": "Existing tests cover company boundaries, context binding, offline security, delegated-authority contraction and tenant-isolated reconciliation, but there is no single certification proving surface switches cannot duplicate agent identity, fork state, replay consequential work, or inflate authority."
+      }
+    }
+  ],
+  "affinity_tags": [
+    "identity",
+    "agents",
+    "continuity",
+    "surfaces"
+  ],
+  "preferred_predecessors": [
+    "TZ-ROADMAP-31"
+  ],
+  "preferred_successors": [],
+  "agent_tier_contract_required": true,
+  "unified_architecture_contract_required": true,
+  "last_canonical_revalidation": null,
+  "progress_percent": 0,
+  "goal_is_planning_container": true,
+  "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
+  "claimable": false,
+  "claim_rule": "PLANNING_CONTAINER_ONLY_NEVER_BUILDER_CLAIMABLE",
+  "mvp_p0_subgoal_count": 3,
+  "library_reuse_refs": [
+    "Titan Interaction Engine",
+    "Titan Interface Runtime",
+    "Titan Zero",
+    "Titan Trust",
+    "Titan Autonomy"
+  ],
+  "reuse_first": true,
+  "agent_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENTS",
+  "agent_goal_rule": "This goal is platform/runtime/interface/infrastructure work. Do not create a workforce identity for the technology itself. Existing canonical agents may consume its capabilities.",
+  "workforce_goal_classification": "INFRASTRUCTURE_NO_DISTINCT_AGENT_IDENTITY",
+  "workforce_goal_rule": "Shared platform/runtime infrastructure may be consumed by agents but must not create an agent merely to mirror a technology, runtime, engine, SDK, protocol, deployment target or UI."
+}

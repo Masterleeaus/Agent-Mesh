@@ -1,0 +1,4 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');const c={};c.globalThis=c;vm.createContext(c);
+for(const f of ['src/repository/repository-policy.js','src/integration/remote-context-broker.js'])vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});
+let called=false;const adapter={callTool:async(_cid,_tool,args)=>{called=true;return args;},getPrompt:async()=>({}),readResource:async()=>({})};
+(async()=>{const huge='x'.repeat(300000);const out=await c.CodeeRemoteContextBroker.gather(adapter,[{connectionId:'c',tool:'t',args:{payload:huge}}],{});assert.strictEqual(called,false,'oversized MCP args must not be forwarded');assert.strictEqual(out.items[0].ok,false);assert.match(out.items[0].error,/argument|payload|large|limit/i);console.log('MCP evidence requests reject oversized arguments before transport');})().catch(e=>{console.error(e);process.exit(1)});

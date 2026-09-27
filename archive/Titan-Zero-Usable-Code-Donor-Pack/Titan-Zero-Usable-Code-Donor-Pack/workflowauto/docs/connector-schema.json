@@ -1,0 +1,378 @@
+{
+  "$schema": "https://your-platform.io/schemas/connector/v1",
+  "connector": {
+    "id": "aspire-field-management",
+    "name": "Aspire Field Management",
+    "version": "1.0.0",
+    "description": "Connector for Aspire field management platform — opportunities, proposals, properties, and work orders.",
+    "source": {
+      "type": "openapi",
+      "spec_url": "https://api.youraspire.com/swagger/v1/swagger.json",
+      "generated_by": "connector-agent",
+      "generated_at": "2026-02-25T00:00:00Z",
+      "reviewed_by": "human",
+      "reviewed_at": "2026-02-25T00:00:00Z"
+    },
+    "auth": {
+      "type": "oauth2_client_credentials",
+      "token_url": "https://api.youraspire.com/oauth/token",
+      "scopes": ["read", "write"],
+      "credential_fields": [
+        { "key": "client_id", "label": "Client ID", "secret": false },
+        { "key": "client_secret", "label": "Client Secret", "secret": true }
+      ]
+    },
+    "base_url": "https://api.youraspire.com/api/v1",
+    "pagination": {
+      "strategy": "offset",
+      "page_param": "pageNumber",
+      "size_param": "pageSize",
+      "default_page_size": 50,
+      "max_page_size": 250,
+      "total_field": "totalCount"
+    },
+    "rate_limits": {
+      "requests_per_minute": 300,
+      "retry_on": [429, 503],
+      "backoff_strategy": "exponential"
+    }
+  },
+
+  "objects": {
+    "opportunity": {
+      "label": "Opportunity",
+      "description": "A sales opportunity representing potential work for a property.",
+      "primary_key": "opportunityId",
+      "display_field": "opportunityName",
+      "fields": {
+        "opportunityId": {
+          "type": "integer",
+          "label": "Opportunity ID",
+          "writable": false,
+          "nullable": false,
+          "description": "Unique identifier for the opportunity."
+        },
+        "opportunityName": {
+          "type": "string",
+          "label": "Opportunity Name",
+          "writable": true,
+          "nullable": false
+        },
+        "opportunityStatusId": {
+          "type": "enum",
+          "label": "Status",
+          "writable": true,
+          "nullable": false,
+          "enum_ref": "opportunity_status",
+          "description": "Current pipeline status of the opportunity."
+        },
+        "propertyId": {
+          "type": "reference",
+          "label": "Property",
+          "writable": false,
+          "nullable": false,
+          "references": "property",
+          "foreign_key": "propertyId"
+        },
+        "contactId": {
+          "type": "reference",
+          "label": "Contact",
+          "writable": true,
+          "nullable": true,
+          "references": "contact",
+          "foreign_key": "contactId"
+        },
+        "assignedRepId": {
+          "type": "reference",
+          "label": "Assigned Rep",
+          "writable": true,
+          "nullable": true,
+          "references": "employee",
+          "foreign_key": "employeeId"
+        },
+        "totalRevenue": {
+          "type": "decimal",
+          "label": "Total Revenue",
+          "writable": false,
+          "nullable": true,
+          "description": "Computed total revenue across all services. Read-only, derived from line items."
+        },
+        "createdDate": {
+          "type": "datetime",
+          "label": "Created Date",
+          "writable": false,
+          "nullable": false
+        },
+        "notes": {
+          "type": "string",
+          "label": "Notes",
+          "writable": true,
+          "nullable": true
+        }
+      },
+      "relationships": {
+        "property": {
+          "type": "belongs_to",
+          "object": "property",
+          "foreign_key": "propertyId"
+        },
+        "services": {
+          "type": "has_many",
+          "object": "opportunity_service",
+          "foreign_key": "opportunityId"
+        },
+        "proposals": {
+          "type": "has_many",
+          "object": "proposal",
+          "foreign_key": "opportunityId"
+        },
+        "attachments": {
+          "type": "has_many",
+          "object": "attachment",
+          "foreign_key": "opportunityId"
+        }
+      }
+    },
+
+    "property": {
+      "label": "Property",
+      "description": "A physical site or location associated with a customer.",
+      "primary_key": "propertyId",
+      "display_field": "propertyName",
+      "fields": {
+        "propertyId": { "type": "integer", "label": "Property ID", "writable": false, "nullable": false },
+        "propertyName": { "type": "string", "label": "Property Name", "writable": true, "nullable": false },
+        "address": { "type": "string", "label": "Street Address", "writable": true, "nullable": true },
+        "city": { "type": "string", "label": "City", "writable": true, "nullable": true },
+        "state": { "type": "string", "label": "State", "writable": true, "nullable": true },
+        "zip": { "type": "string", "label": "Zip Code", "writable": true, "nullable": true },
+        "latitude": { "type": "decimal", "label": "Latitude", "writable": false, "nullable": true },
+        "longitude": { "type": "decimal", "label": "Longitude", "writable": false, "nullable": true },
+        "squareFootage": { "type": "decimal", "label": "Square Footage", "writable": true, "nullable": true },
+        "propertyTypeId": {
+          "type": "enum",
+          "label": "Property Type",
+          "writable": true,
+          "nullable": true,
+          "enum_ref": "property_type"
+        }
+      }
+    },
+
+    "proposal": {
+      "label": "Proposal",
+      "description": "A formal proposal document linked to an opportunity.",
+      "primary_key": "proposalId",
+      "display_field": "proposalName",
+      "fields": {
+        "proposalId": { "type": "integer", "label": "Proposal ID", "writable": false, "nullable": false },
+        "proposalName": { "type": "string", "label": "Proposal Name", "writable": true, "nullable": false },
+        "opportunityId": { "type": "reference", "label": "Opportunity", "writable": false, "nullable": false, "references": "opportunity", "foreign_key": "opportunityId" },
+        "proposalStatusId": { "type": "enum", "label": "Status", "writable": true, "nullable": false, "enum_ref": "proposal_status" },
+        "sentDate": { "type": "datetime", "label": "Sent Date", "writable": true, "nullable": true },
+        "expirationDate": { "type": "date", "label": "Expiration Date", "writable": true, "nullable": true },
+        "totalAmount": { "type": "decimal", "label": "Total Amount", "writable": false, "nullable": true },
+        "notes": { "type": "string", "label": "Notes", "writable": true, "nullable": true },
+        "templateId": { "type": "reference", "label": "Template", "writable": true, "nullable": true, "references": "proposal_template", "foreign_key": "templateId" }
+      },
+      "relationships": {
+        "opportunity": { "type": "belongs_to", "object": "opportunity", "foreign_key": "opportunityId" },
+        "line_items": { "type": "has_many", "object": "proposal_line_item", "foreign_key": "proposalId" },
+        "attachments": { "type": "has_many", "object": "attachment", "foreign_key": "proposalId" }
+      }
+    },
+
+    "attachment": {
+      "label": "Attachment",
+      "description": "A file attachment linked to an opportunity or proposal.",
+      "primary_key": "attachmentId",
+      "display_field": "fileName",
+      "fields": {
+        "attachmentId": { "type": "integer", "label": "Attachment ID", "writable": false, "nullable": false },
+        "fileName": { "type": "string", "label": "File Name", "writable": true, "nullable": false },
+        "fileType": { "type": "string", "label": "File Type", "writable": false, "nullable": true },
+        "fileUrl": { "type": "string", "label": "File URL", "writable": false, "nullable": true, "description": "Presigned URL for download. Short-lived." },
+        "uploadedAt": { "type": "datetime", "label": "Uploaded At", "writable": false, "nullable": true },
+        "isBeforeImage": {
+          "type": "boolean",
+          "label": "Is Before Image",
+          "writable": true,
+          "nullable": true,
+          "description": "Agent-inferred flag. True if this image was taken before work was performed.",
+          "agent_inferred": true,
+          "confidence_note": "Inferred from filename patterns and metadata. Validate manually."
+        }
+      }
+    }
+  },
+
+  "enums": {
+    "opportunity_status": {
+      "label": "Opportunity Status",
+      "agent_confidence": "low",
+      "review_required": true,
+      "note": "Status IDs retrieved from API response samples. Semantic labels assigned by agent — verify against Aspire documentation.",
+      "values": [
+        { "id": 1, "label": "New Lead", "agent_inferred": true },
+        { "id": 2, "label": "Contacted", "agent_inferred": true },
+        { "id": 3, "label": "Proposal Sent", "agent_inferred": true },
+        { "id": 4, "label": "Won", "agent_inferred": true },
+        { "id": 5, "label": "Lost", "agent_inferred": true }
+      ]
+    },
+    "proposal_status": {
+      "label": "Proposal Status",
+      "agent_confidence": "low",
+      "review_required": true,
+      "note": "Same caveat as opportunity_status — numeric IDs confirmed, labels inferred.",
+      "values": [
+        { "id": 1, "label": "Draft", "agent_inferred": true },
+        { "id": 2, "label": "Sent", "agent_inferred": true },
+        { "id": 3, "label": "Accepted", "agent_inferred": true },
+        { "id": 4, "label": "Declined", "agent_inferred": true }
+      ]
+    },
+    "property_type": {
+      "label": "Property Type",
+      "agent_confidence": "high",
+      "review_required": false,
+      "values": [
+        { "id": 1, "label": "Residential", "agent_inferred": false },
+        { "id": 2, "label": "Commercial", "agent_inferred": false },
+        { "id": 3, "label": "HOA", "agent_inferred": false }
+      ]
+    }
+  },
+
+  "actions": {
+    "fetch_opportunity": {
+      "label": "Fetch Opportunity",
+      "description": "Retrieve a single opportunity by ID, including nested property and contact.",
+      "type": "read",
+      "http_method": "GET",
+      "path": "/opportunities/{opportunityId}",
+      "path_params": {
+        "opportunityId": { "type": "integer", "required": true, "source_field": "opportunity.opportunityId" }
+      },
+      "query_params": {
+        "includeServices": { "type": "boolean", "default": true },
+        "includeProposals": { "type": "boolean", "default": true }
+      },
+      "output_schema": {
+        "root_object": "opportunity",
+        "includes": ["property", "contact", "services", "proposals"]
+      },
+      "safe": true
+    },
+
+    "list_opportunity_attachments": {
+      "label": "List Opportunity Attachments",
+      "description": "Retrieve all file attachments for a given opportunity.",
+      "type": "read",
+      "http_method": "GET",
+      "path": "/opportunities/{opportunityId}/attachments",
+      "path_params": {
+        "opportunityId": { "type": "integer", "required": true }
+      },
+      "output_schema": {
+        "root_object": "attachment",
+        "is_list": true
+      },
+      "safe": true
+    },
+
+    "create_proposal": {
+      "label": "Create Proposal",
+      "description": "Create a new proposal linked to an opportunity.",
+      "type": "write",
+      "http_method": "POST",
+      "path": "/proposals",
+      "body_schema": {
+        "required": ["opportunityId", "proposalName"],
+        "fields": {
+          "opportunityId": { "type": "integer" },
+          "proposalName": { "type": "string" },
+          "notes": { "type": "string" },
+          "templateId": { "type": "integer" },
+          "expirationDate": { "type": "date" }
+        }
+      },
+      "output_schema": {
+        "root_object": "proposal"
+      },
+      "safe": false,
+      "confirmation_required": false
+    },
+
+    "update_proposal": {
+      "label": "Update Proposal",
+      "description": "Update fields on an existing proposal.",
+      "type": "write",
+      "http_method": "PATCH",
+      "path": "/proposals/{proposalId}",
+      "path_params": {
+        "proposalId": { "type": "integer", "required": true }
+      },
+      "body_schema": {
+        "fields": {
+          "proposalName": { "type": "string" },
+          "proposalStatusId": { "type": "integer" },
+          "notes": { "type": "string" },
+          "expirationDate": { "type": "date" }
+        }
+      },
+      "safe": false,
+      "confirmation_required": false,
+      "guard_fields": ["proposalStatusId"],
+      "guard_note": "Changing proposal status may trigger downstream Aspire automations. Validate before writing."
+    },
+
+    "upload_attachment": {
+      "label": "Upload Attachment",
+      "description": "Upload a file and attach it to an opportunity or proposal.",
+      "type": "write",
+      "http_method": "POST",
+      "path": "/attachments",
+      "body_schema": {
+        "required": ["fileName", "fileContent", "parentType", "parentId"],
+        "fields": {
+          "fileName": { "type": "string" },
+          "fileContent": { "type": "base64", "description": "Base64-encoded file content." },
+          "parentType": { "type": "enum", "values": ["opportunity", "proposal"] },
+          "parentId": { "type": "integer" }
+        }
+      },
+      "safe": false,
+      "confirmation_required": false
+    }
+  },
+
+  "agent_generation_metadata": {
+    "spec_coverage": {
+      "total_endpoints_in_spec": 87,
+      "endpoints_mapped_to_actions": 12,
+      "objects_identified": 8,
+      "objects_fully_mapped": 4,
+      "objects_partially_mapped": 4
+    },
+    "confidence_summary": {
+      "high_confidence": ["object schemas", "action http methods", "path params", "auth flow"],
+      "low_confidence": ["enum label semantics", "guard field rules", "attachment parent type values"],
+      "requires_human_review": ["all enum values", "guard_fields on write actions", "rate limit values"]
+    },
+    "unmapped_endpoints": [
+      "/workorders",
+      "/invoices",
+      "/schedules",
+      "/employees",
+      "/services",
+      "/properties/{id}/contacts"
+    ],
+    "agent_notes": [
+      "Enum IDs confirmed from response samples but semantic labels inferred from naming conventions only.",
+      "Pagination strategy inferred from pageNumber/pageSize params — verify totalCount field name.",
+      "isBeforeImage flag on attachments is a platform extension, not an Aspire native field.",
+      "Rate limit values not found in spec — defaulted to conservative estimates."
+    ]
+  }
+}

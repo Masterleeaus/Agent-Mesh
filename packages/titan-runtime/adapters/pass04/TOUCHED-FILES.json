@@ -1,0 +1,13 @@
+{
+  "schema": "titan-zero-touched-files/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 4,
+  "added": [
+    "titan-runtime/adapters/adapter-negotiation.mjs",
+    "titan-runtime/adapters/pass04/ADAPTER-NEGOTIATION.md",
+    "tests/runtime_adapter_pass04_negotiation.test.mjs"
+  ],
+  "modified": [],
+  "deleted": [],
+  "shared_hotspots_touched": []
+}

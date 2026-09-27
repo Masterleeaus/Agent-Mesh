@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% block title %}New Invoice - FieldServicePro{% endblock %}
+{% block page_title %}New Invoice{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb" style="margin: 0;">
+    <li class="breadcrumb-item"><a href="{{ url_for('invoices_page') }}">Invoices</a></li>
+    <li class="breadcrumb-item active">New</li>
+  </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 1100px;">
+  <form method="POST" action="{{ url_for('invoice_new') }}" id="invoice-form">
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-4);">
+
+      <!-- Left: Main form -->
+      <div>
+        <!-- Basic Info -->
+        <div class="card" style="margin-bottom: var(--space-4);">
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+              <div class="form-group">
+                <label class="form-label">Client <span style="color: var(--color-danger);">*</span></label>
+                <select class="form-control" id="client_id" name="client_id" required>
+                  <option value="">-- Select client --</option>
+                  {% for c in clients %}
+                  <option value="{{ c.id }}" data-type="{{ c.client_type }}">
+                    {{ c.display_name }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Job / Work Order</label>
+                <select class="form-control" id="job_id" name="job_id">
+                  <option value="">-- No linked job --</option>
+                  {% for j in jobs %}
+                  <option value="{{ j.id }}">#{{ j.job_number }} -- {{ j.title }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+              <div class="form-group">
+                <label class="form-label">Invoice Date</label>
+                <input type="date" class="form-control" id="invoice_date" name="invoice_date"
+                       value="{{ today.isoformat() if today else '' }}" required>
+              </div>
+              {% if all_divisions is defined and all_divisions %}
+              <div class="form-group">
+                <label class="form-label">Division</label>
+                <select class="form-control" id="division_id" name="division_id">
+                  <option value="">-- None --</option>
+                  {% for d in all_divisions %}
+                  <option value="{{ d.id }}">{{ d.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Notes</label>
+              <textarea class="form-control" id="notes" name="notes" rows="2"
+                        placeholder="Internal notes or description..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Commercial Fields (PO, terms, etc.) -->
+        {% include 'partials/_invoice_commercial_fields.html' %}
+
+        <!-- Line Items -->
+        <div class="card" style="margin-bottom: var(--space-4);">
+          <div class="card-header" style="display: flex; justify-content: space-between;">
+            <h3 class="card-title"><i class="bi bi-list-ul" style="color: var(--color-text-secondary);"></i> Line Items</h3>
+            <button type="button" class="btn btn-sm btn-ghost" id="add-line-item"><i class="bi bi-plus"></i> Add Item</button>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <div class="fsp-table-wrapper" style="border: none; border-radius: 0;">
+              <table class="fsp-table" id="line-items-table">
+                <thead>
+                  <tr>
+                    <th style="width: 40%;">Description</th>
+                    <th style="width: 12%;">Qty</th>
+                    <th style="width: 15%;">Rate</th>
+                    <th style="width: 8%; text-align: center;">Tax</th>
+                    <th style="width: 15%; text-align: right;">Total</th>
+                    <th style="width: 5%;"></th>
+                  </tr>
+                </thead>
+                <tbody id="line-items-body">
+                  <tr class="line-item-row">
+                    <td><input type="text" class="form-control" name="item_desc[]" placeholder="Service description"></td>
+                    <td><input type="number" class="form-control li-qty" name="item_qty[]" value="1" step="0.01" min="0"></td>
+                    <td><input type="number" class="form-control li-rate" name="item_rate[]" value="" step="0.01" min="0" placeholder="0.00"></td>
+                    <td style="text-align: center;"><input type="checkbox" class="li-tax" name="item_tax[]" value="0" checked style="accent-color: var(--color-accent);"></td>
+                    <td style="text-align: right; font-weight: var(--font-weight-semibold);" class="li-total">$0.00</td>
+                    <td><button type="button" class="btn btn-sm btn-ghost remove-line" style="color: var(--color-danger);"><i class="bi bi-trash"></i></button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div style="padding: var(--space-3) var(--space-4); border-top: 1px solid var(--color-border);">
+            <div style="display: flex; justify-content: flex-end;">
+              <div style="width: 250px;">
+                <div style="display: flex; justify-content: space-between; font-size: var(--font-size-sm); margin-bottom: 4px;">
+                  <span style="color: var(--color-text-muted);">Subtotal</span>
+                  <span id="display-subtotal">$0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: var(--font-size-sm); margin-bottom: 4px;">
+                  <span style="color: var(--color-text-muted);">HST (13%)</span>
+                  <span id="display-tax">$0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-weight: var(--font-weight-bold); border-top: 1px solid var(--color-border); padding-top: var(--space-2);">
+                  <span>Total</span>
+                  <span id="invoice-grand-total" style="font-size: var(--font-size-lg);">$0.00</span>
+                </div>
+                <input type="hidden" name="total_amount" id="total_amount_hidden">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right sidebar: Submit + summary -->
+      <div>
+        <div class="card" style="position: sticky; top: 80px;">
+          <div class="card-body">
+            <h6 style="font-weight: var(--font-weight-semibold); margin-bottom: var(--space-3);">Save Invoice</h6>
+            <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+              <button type="submit" name="status" value="draft" class="btn btn-ghost" style="width: 100%;">
+                <i class="bi bi-floppy"></i> Save as Draft
+              </button>
+              <button type="submit" name="status" value="sent" class="btn btn-accent" style="width: 100%;">
+                <i class="bi bi-send"></i> Save &amp; Send
+              </button>
+            </div>
+
+            <hr style="margin: var(--space-3) 0;">
+
+            <div id="credit-limit-warning" style="display: none; padding: var(--space-2); background: rgba(245,158,11,0.08); border-radius: var(--radius-sm); margin-bottom: var(--space-3); font-size: var(--font-size-xs); color: var(--color-warning-dark);">
+              <i class="bi bi-exclamation-triangle-fill"></i> <span id="credit-limit-msg"></span>
+            </div>
+
+            <div id="tax-exempt-notice" style="display: none; padding: var(--space-2); background: rgba(13,148,136,0.06); border-radius: var(--radius-sm); margin-bottom: var(--space-3); font-size: var(--font-size-xs); color: var(--color-accent-dark);">
+              <i class="bi bi-info-circle"></i> This client is tax-exempt. HST will not be applied.
+            </div>
+
+            <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span>Subtotal</span><span id="sidebar-subtotal">$0.00</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span>Tax</span><span id="sidebar-tax">$0.00</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-weight: var(--font-weight-bold); color: var(--color-text-primary); border-top: 1px solid var(--color-border); padding-top: var(--space-2);">
+                <span>Total</span><span id="sidebar-total">$0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/invoice_form.js') }}"></script>
+<script>
+(function () {
+  var TAX_RATE = 0.13;
+  var rowIndex = 1;
+
+  function recalcAll() {
+    var subtotal = 0, tax = 0;
+    document.querySelectorAll('.line-item-row').forEach(function (row, i) {
+      var qty = parseFloat(row.querySelector('.li-qty') ? row.querySelector('.li-qty').value : 0) || 0;
+      var rate = parseFloat(row.querySelector('.li-rate') ? row.querySelector('.li-rate').value : 0) || 0;
+      var taxed = row.querySelector('.li-tax') ? row.querySelector('.li-tax').checked : false;
+      var taxCb = row.querySelector('.li-tax');
+      if (taxCb) taxCb.value = i;
+
+      var lineTotal = qty * rate;
+      var lineTax = taxed ? lineTotal * TAX_RATE : 0;
+      subtotal += lineTotal;
+      tax += lineTax;
+
+      var totalEl = row.querySelector('.li-total');
+      if (totalEl) totalEl.textContent = '$' + (lineTotal + lineTax).toFixed(2);
+    });
+
+    var grandTotal = subtotal + tax;
+    setText('display-subtotal', '$' + subtotal.toFixed(2));
+    setText('sidebar-subtotal', '$' + subtotal.toFixed(2));
+    setText('display-tax', '$' + tax.toFixed(2));
+    setText('sidebar-tax', '$' + tax.toFixed(2));
+    setText('invoice-grand-total', '$' + grandTotal.toFixed(2));
+    setText('sidebar-total', '$' + grandTotal.toFixed(2));
+
+    var hidden = document.getElementById('total_amount_hidden');
+    if (hidden) hidden.value = grandTotal.toFixed(2);
+
+    document.dispatchEvent(new CustomEvent('lineItemsChanged', { detail: { total: grandTotal } }));
+  }
+
+  function addRow() {
+    var tbody = document.getElementById('line-items-body');
+    var tr = document.createElement('tr');
+    tr.className = 'line-item-row';
+    tr.innerHTML = '<td><input type="text" class="form-control" name="item_desc[]" placeholder="Description"></td>'
+      + '<td><input type="number" class="form-control li-qty" name="item_qty[]" value="1" step="0.01" min="0"></td>'
+      + '<td><input type="number" class="form-control li-rate" name="item_rate[]" value="" step="0.01" min="0" placeholder="0.00"></td>'
+      + '<td style="text-align:center;"><input type="checkbox" class="li-tax" name="item_tax[]" value="' + rowIndex + '" checked style="accent-color:var(--color-accent);"></td>'
+      + '<td style="text-align:right;font-weight:var(--font-weight-semibold);" class="li-total">$0.00</td>'
+      + '<td><button type="button" class="btn btn-sm btn-ghost remove-line" style="color:var(--color-danger);"><i class="bi bi-trash"></i></button></td>';
+    tbody.appendChild(tr);
+    rowIndex++;
+    bindRow(tr);
+  }
+
+  function bindRow(row) {
+    row.querySelectorAll('input').forEach(function (inp) { inp.addEventListener('input', recalcAll); });
+    var removeBtn = row.querySelector('.remove-line');
+    if (removeBtn) removeBtn.addEventListener('click', function () { row.remove(); recalcAll(); });
+  }
+
+  document.querySelectorAll('.line-item-row').forEach(bindRow);
+  var addBtn = document.getElementById('add-line-item');
+  if (addBtn) addBtn.addEventListener('click', addRow);
+
+  function setText(id, text) { var el = document.getElementById(id); if (el) el.textContent = text; }
+
+  recalcAll();
+})();
+</script>
+{% endblock %}

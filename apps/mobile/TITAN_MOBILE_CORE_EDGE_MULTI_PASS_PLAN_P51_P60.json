@@ -1,0 +1,379 @@
+{
+  "schema": "titan-mobile-core-edge-convergence-multi-pass-plan-v1",
+  "plan_id": "TZ-MOBILE-P51-P60-CORE-EDGE-CONVERGENCE",
+  "created_from": {
+    "mobile_base": "Titan-Mobile-MVP-Pass50",
+    "canonical_base": "Titan Zero Merge80",
+    "canonical_sha256": "81547400718aee217d574d0c012064cbe7c3df6b09a0fa8eec2232764013870c",
+    "roadmap_version": 96,
+    "gap_ledger": "TITAN_BASE_APP_MOBILE_INTEGRATION_GAP_LEDGER_P50.json"
+  },
+  "principles": [
+    "company_id is the sole tenant boundary",
+    "zero/go/hub are the only canonical surfaces",
+    "mobile implements device-specific capability; Core owns policy/authority/routing",
+    "node/model/provider identity never grants business authority",
+    "offline only contracts authority",
+    "canonical business mutations stay on Command Bus",
+    "accepted canonical changes continue through Signal",
+    "device -> customer local -> BYO -> customer service -> Titan entitled -> explicit Titan metered",
+    "no silent Titan-funded Free-tier provider use",
+    "exactly three proactive staff cards remain on the home experience",
+    "do not duplicate Goal48 work while its canonical convergence subgoal is claimed"
+  ],
+  "checkpoint_policy": {
+    "conversation_build": "produce cumulative Pass ZIP every pass",
+    "agent_mesh_checkpoint": "substantial cumulative convergence checkpoints at Pass55 and Pass60 or sooner if canonical Core changes require rebase"
+  },
+  "passes": [
+    {
+      "pass": 51,
+      "title": "Canonical operation identity, Interaction/Interface runtime and event causality wiring",
+      "roadmap": [
+        "TZ-ROADMAP-47-SG-02",
+        "TZ-ROADMAP-47-SG-04",
+        "TZ-ROADMAP-47-SG-08",
+        "TZ-ROADMAP-49-SG-08",
+        "TZ-ROADMAP-51-SG-09",
+        "TZ-ROADMAP-51-SG-10"
+      ],
+      "goals": [
+        "wire Pass50 operation identity into all chat/capability/offline/server requests",
+        "make canonical InteractionContext and InterfaceContext the shared mobile context",
+        "map mobile Edge execution events to canonical event categories/causality",
+        "preserve existing correlation/idempotency/replay semantics",
+        "bind LocalBrain as interpretation/reasoning handoff without execution authority"
+      ],
+      "acceptance": [
+        "one operation/request/correlation/trace identity across the complete mobile journey",
+        "no mobile context can grant authority",
+        "existing offline replay remains deterministic and company/device/actor scoped"
+      ],
+      "status": "IMPLEMENTED_PASS51",
+      "outputs": [
+        "canonical mobile operation identity",
+        "encrypted operation journal",
+        "conversation Core-context wiring",
+        "generated-action parent causality",
+        "schema3 offline command causality",
+        "Flutter/Laravel replay-envelope convergence",
+        "authoritative change/Signal causality"
+      ]
+    },
+    {
+      "pass": 52,
+      "title": "Canonical Edge Fabric enrollment, heartbeat, revocation and capability publication",
+      "roadmap": [
+        "TZ-ROADMAP-49-SG-01",
+        "TZ-ROADMAP-49-SG-02",
+        "TZ-ROADMAP-49-SG-03",
+        "TZ-ROADMAP-49-SG-04",
+        "TZ-ROADMAP-49-SG-08",
+        "TZ-ROADMAP-49-SG-10"
+      ],
+      "dependencies": [
+        "canonical Goal49 server/control-plane contracts must exist; otherwise retain disconnected fail-closed adapter"
+      ],
+      "goals": [
+        "bind node advertisement to canonical Edge registry",
+        "publish coarse resource/capability health",
+        "consume remote revoke/limited/re-enrollment states",
+        "seal/clear credentials and contract authority on revoke",
+        "add Edge lifecycle event/incident integration"
+      ],
+      "acceptance": [
+        "unregistered node never gains workload authority",
+        "cross-company enrollment rejected",
+        "revocation is effective offline on next verified state and never self-recovers authority"
+      ],
+      "status": "MOBILE_SIDE_IMPLEMENTED_FAIL_CLOSED_PENDING_CANONICAL_GOAL49_CORE",
+      "outputs": [
+        "canonical-receipt-only activation",
+        "encrypted control-plane state",
+        "enrollment and heartbeat validators",
+        "revocation/compromise/re-enrollment contraction",
+        "capability advertisement privacy minimisation",
+        "foreground heartbeat pulse",
+        "distributed workload canonical enrollment gate",
+        "opt-in future Goal49 authenticated client"
+      ],
+      "dependency_state": "GOAL49_SG01_SG02_TODO_UNCLAIMED_AT_PASS52_SCAN"
+    },
+    {
+      "pass": 53,
+      "title": "Local Bridge discovery, authenticated pairing and private Edge Hub execution",
+      "roadmap": [
+        "TZ-ROADMAP-49-SG-02",
+        "TZ-ROADMAP-49-SG-05",
+        "TZ-ROADMAP-49-SG-06",
+        "TZ-ROADMAP-49-SG-07",
+        "TZ-ROADMAP-51-SG-06"
+      ],
+      "goals": [
+        "add native mDNS/Bonjour discovery as untrusted discovery only",
+        "retain QR/deep-link explicit pairing path",
+        "replace bootstrap pairing proof with canonical key/certificate handshake when Desktop Edge Hub contract exists",
+        "pin trusted node identity and certificate/public key",
+        "execute private workloads through trusted HTTPS Edge Hub",
+        "support unavailable/revoked/failover states without cloud jump"
+      ],
+      "acceptance": [
+        "LAN presence never equals trust",
+        "impostor node/certificate fails closed",
+        "private local workload provenance reports local_network egress only"
+      ],
+      "status": "MOBILE_SIDE_IMPLEMENTED_NATIVE_DISCOVERY_PINNED_PAIRING_PRIVATE_COMPUTE_PENDING_CANONICAL_GOAL49",
+      "outputs": [
+        "Android DNS-SD and iOS Bonjour discovery",
+        "untrusted discovery semantics",
+        "private-network endpoint policy",
+        "certificate-pinned HTTPS pairing and transport",
+        "challenge-confirmed secure session",
+        "health/capability refresh",
+        "fresh deterministic peer selection",
+        "digest-bound authority-neutral workload receipt",
+        "Hub private Edge firewall",
+        "owner System scan/pair UX"
+      ],
+      "dependency_state": "GOAL49_SG02_SG03_TODO_UNCLAIMED_AT_PASS53_SCAN"
+    },
+    {
+      "pass": 54,
+      "title": "Real on-device intelligence runtime and governed model packs",
+      "roadmap": [
+        "TZ-ROADMAP-51-SG-01",
+        "TZ-ROADMAP-51-SG-02",
+        "TZ-ROADMAP-51-SG-03",
+        "TZ-ROADMAP-51-SG-04",
+        "TZ-ROADMAP-51-SG-10"
+      ],
+      "goals": [
+        "implement one real platform inference adapter behind TitanOnDeviceIntelligenceProvider",
+        "select runtime by supported device/platform rather than hard-code one model technology",
+        "verify signed/hash-pinned model manifests",
+        "resource-gate inference by memory/storage/battery/thermal state",
+        "support cancellation/timeouts and local execution provenance"
+      ],
+      "acceptance": [
+        "at least one supported physical platform can execute a real model locally",
+        "corrupt/unsupported model never activates",
+        "failure remains local and does not silently call cloud"
+      ],
+      "status": "MOBILE_RUNTIME_IMPLEMENTED_GGUF_LLAMA_CPP_PENDING_NATIVE_LIBRARY_PACKAGING_AND_PHYSICAL_DEVICE_EXECUTION",
+      "outputs": [
+        "real llama.cpp/GGUF provider adapter",
+        "worker-isolate execution with hard timeout",
+        "resource pressure gating",
+        "full pre-execution model SHA-256 verification",
+        "Ed25519 governed model packs with trusted issuer keys",
+        "deterministic model/runtime manifest settings",
+        "zero-egress authority-neutral provenance",
+        "offline local-compute authority separation",
+        "no silent cloud fallback",
+        "embedding capability held unavailable until Pass55"
+      ],
+      "dependency_state": "GOAL51_SG01_SG02_TODO_UNCLAIMED_AT_PASS54_SCAN",
+      "acceptance_state": {
+        "runtime_adapter": "IMPLEMENTED",
+        "corrupt_model_block": "IMPLEMENTED_STATIC_AND_TEST_AUTHORED",
+        "no_cloud_fallback": "IMPLEMENTED_STATIC_AND_TEST_AUTHORED",
+        "physical_platform_real_model_execution": "PENDING_NATIVE_LIBRARY_PACKAGING_AND_DEVICE_ENVIRONMENT"
+      }
+    },
+    {
+      "pass": 55,
+      "title": "Embeddings, encrypted vector RAG and Knowledge Authority synchronisation",
+      "roadmap": [
+        "TZ-ROADMAP-50-SG-08",
+        "TZ-ROADMAP-50-SG-09",
+        "TZ-ROADMAP-51-SG-02",
+        "TZ-ROADMAP-51-SG-04",
+        "TZ-ROADMAP-51-SG-10"
+      ],
+      "goals": [
+        "connect real local embedding provider to Pass50 vector store",
+        "hybrid lexical/vector search",
+        "ingest only Knowledge Authority-approved provenance/version/freshness records",
+        "expire/delete/supersede local knowledge deterministically",
+        "surface-specific knowledge minimisation for Go/Hub/Command"
+      ],
+      "acceptance": [
+        "private knowledge never crosses company/surface scope",
+        "stale/contradicted/unprovenanced knowledge is blocked from authoritative reasoning use",
+        "local knowledge remains usable without internet"
+      ],
+      "checkpoint": "MIDPOINT_CUMULATIVE_CONVERGENCE_CHECKPOINT",
+      "status": "IMPLEMENTED_MOBILE_SIDE_REAL_EMBEDDINGS_HYBRID_RAG_KNOWLEDGE_SYNC_PENDING_CANONICAL_CORE_AND_PHYSICAL_RUNTIME",
+      "outputs": [
+        "llama.cpp local embedding provider",
+        "encrypted chunk-level vector store integration",
+        "model fingerprint-bound vector spaces",
+        "hybrid lexical/vector RRF",
+        "semantic-only match preservation",
+        "Knowledge Authority gated ingest",
+        "expiry/delete/supersession cleanup",
+        "encrypted monotonic sync cursor",
+        "idempotent replay",
+        "complete snapshot pruning",
+        "surface minimisation and Hub firewall"
+      ],
+      "acceptance_state": {
+        "private_knowledge_company_surface_scope": "IMPLEMENTED",
+        "stale_contradicted_unprovenanced_block": "IMPLEMENTED",
+        "offline_local_knowledge": "IMPLEMENTED_WITH_LEXICAL_FALLBACK_AND_LOCAL_VECTOR_WHEN_RUNTIME_AVAILABLE",
+        "real_physical_embedding_execution": "PENDING_NATIVE_LIBRARY_AND_DEVICE_ENVIRONMENT"
+      },
+      "checkpoint_state": "MIDPOINT_CUMULATIVE_CONVERGENCE_CHECKPOINT_CREATED"
+    },
+    {
+      "pass": 56,
+      "title": "Storage Fabric topology synchronisation and sovereign mobile storage execution",
+      "roadmap": [
+        "TZ-ROADMAP-50-SG-01",
+        "TZ-ROADMAP-50-SG-02",
+        "TZ-ROADMAP-50-SG-07",
+        "TZ-ROADMAP-50-SG-08",
+        "TZ-ROADMAP-50-SG-09",
+        "TZ-ROADMAP-50-SG-10"
+      ],
+      "dependencies": [
+        "canonical Goal50 topology/role contracts must exist; until then mobile manifest stays non-canonical compatibility projection"
+      ],
+      "goals": [
+        "consume canonical storage topology for each mobile data class",
+        "map device store to projection/cache/working_set/evidence_staging/local_RAG/model_store",
+        "route evidence staging to canonical object destination via existing upload authority",
+        "expose NAS/AWS/Drive/Dropbox/etc status from Core without embedding provider credentials in mobile",
+        "handle canonical storage loss/degraded state and recovery instructions"
+      ],
+      "acceptance": [
+        "phone cannot promote itself to canonical storage",
+        "Drive/Dropbox never become transactional CRM by generic selection",
+        "offline copies retain bounded projection semantics"
+      ],
+      "status": "IMPLEMENTED_MOBILE_SIDE_STORAGE_TOPOLOGY_PROVIDER_EXECUTION_AND_STAGED_RECOVERY_PENDING_GOAL50_CORE_ENDPOINTS",
+      "outputs": [
+        "canonical snake_case Storage Fabric topology projection",
+        "transactional/object/document/projection data-class classification",
+        "one-canonical-owner invariant validation",
+        "encrypted monotonic topology state and authenticated Core pull client",
+        "device/node bounded projection/cache/evidence staging projection",
+        "encrypted device/local-filesystem object adapters",
+        "delegated ticket adapters for NAS/S3-compatible/customer document/archive storage",
+        "host-allowlisted digest-bound short-lived transfer tickets",
+        "no direct database adapter for PostgreSQL/MySQL/RDS",
+        "backup/evidence/archive endpoint failover among pre-authorised endpoints",
+        "encrypted staged restore without canonical promotion",
+        "Storage-Fabric-aware evidence routing",
+        "System storage health/degraded status"
+      ],
+      "acceptance_state": {
+        "phone_cannot_promote_itself_to_canonical": "IMPLEMENTED",
+        "drive_dropbox_onedrive_sharepoint_not_transactional_crm": "IMPLEMENTED",
+        "object_stores_can_own_object_class_without_becoming_crm": "IMPLEMENTED",
+        "offline_copies_bounded_projection_semantics": "IMPLEMENTED",
+        "provider_credentials_not_embedded": "IMPLEMENTED",
+        "live_core_storage_endpoints": "PENDING_GOAL50_TYPESCRIPT_CORE",
+        "live_provider_transfer_smoke": "PENDING_RUNTIME_CREDENTIALLED_ENVIRONMENT"
+      },
+      "dependency_state": "GOAL50_CANONICAL_CORE_ENDPOINTS_NOT_PRESENT_IN_MOBILE_ZIP"
+    },
+    {
+      "pass": 57,
+      "title": "Canonical Intelligence Router, privacy/egress and cost-sovereignty convergence",
+      "roadmap": [
+        "TZ-ROADMAP-51-SG-01",
+        "TZ-ROADMAP-51-SG-04",
+        "TZ-ROADMAP-51-SG-05",
+        "TZ-ROADMAP-51-SG-06",
+        "TZ-ROADMAP-51-SG-07",
+        "TZ-ROADMAP-51-SG-08",
+        "TZ-ROADMAP-51-SG-09"
+      ],
+      "goals": [
+        "replace local policy source with canonical Core routing decision when Goal51 is ready",
+        "device first, trusted Edge Hub second, then explicitly permitted external tiers",
+        "context minimisation/redaction before external egress",
+        "BYO credential boundary and entitlement checks",
+        "Titan metered route requires explicit approval",
+        "record reason-coded execution/fallback provenance"
+      ],
+      "acceptance": [
+        "Free cannot silently incur Titan provider cost",
+        "egress-denied tasks remain local/unavailable rather than bypass policy",
+        "workforce agents stay provider-neutral"
+      ]
+    },
+    {
+      "pass": 58,
+      "title": "Workforce, Capability Router, Builder, Interface and Visual Runtime mobile convergence",
+      "roadmap": [
+        "TZ-ROADMAP-47-SG-04",
+        "TZ-ROADMAP-47-SG-05",
+        "TZ-ROADMAP-47-SG-06",
+        "TZ-ROADMAP-47-SG-07",
+        "TZ-ROADMAP-49-SG-09",
+        "TZ-ROADMAP-51-SG-10"
+      ],
+      "goals": [
+        "replace hardcoded workforce fallbacks where canonical workforce projections exist",
+        "bind staff cards/actions to canonical agent IDs and governance evidence",
+        "route intents through LocalBrain + Capability Router contracts",
+        "render Builder/Interface Runtime generated UI schema through Flutter adapters",
+        "use Visual Runtime only for presentation/accessibility, never business meaning"
+      ],
+      "acceptance": [
+        "no surface-specific duplicate agents",
+        "exactly three proactive home cards",
+        "presentation state cannot change authority or canonical data"
+      ]
+    },
+    {
+      "pass": 59,
+      "title": "Push, deep links, background wake, voice continuation and mobile lifecycle",
+      "roadmap": [
+        "TZ-ROADMAP-47-SG-04",
+        "TZ-ROADMAP-47-SG-08",
+        "TZ-ROADMAP-47-SG-09"
+      ],
+      "goals": [
+        "iOS/Android push registration and scoped notification routing",
+        "deep-link into canonical conversation/journey/object context",
+        "background refresh/wake with bounded authority",
+        "voice continuation through Interaction Engine context",
+        "reconnect Edge/Signal/storage health without duplicate mutation replay"
+      ],
+      "acceptance": [
+        "push payload cannot smuggle company/authority scope",
+        "background processing never elevates authority",
+        "deep links restore canonical surface/context safely"
+      ]
+    },
+    {
+      "pass": 60,
+      "title": "Physical-device hardening, incident recovery, release pipeline and final convergence",
+      "roadmap": [
+        "TZ-ROADMAP-47-SG-09",
+        "TZ-ROADMAP-47-SG-10",
+        "TZ-ROADMAP-49-SG-10",
+        "TZ-ROADMAP-50-SG-10",
+        "TZ-ROADMAP-51-SG-10"
+      ],
+      "goals": [
+        "hardware-backed identity/key path where available",
+        "remote revoke/seal/wipe/re-enrollment tests",
+        "Edge/model/RAG/storage incident reporting and safe repair",
+        "iOS/Android signing/update/rollback/store pipeline",
+        "physical-device low-connectivity/accessibility/performance/isolation certification",
+        "cross-surface parity and release provenance"
+      ],
+      "acceptance": [
+        "physical devices tested",
+        "release artifacts reproducibly identified",
+        "company isolation and authority contraction certified",
+        "no competing Edge/Storage/Intelligence contracts remain in mobile"
+      ],
+      "checkpoint": "FINAL_CUMULATIVE_CONVERGENCE_CHECKPOINT"
+    }
+  ]
+}

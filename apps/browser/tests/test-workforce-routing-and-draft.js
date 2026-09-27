@@ -1,0 +1,15 @@
+const assert=require('assert');
+const {load}=require('./_workforce-test-loader'); const g=load();
+g.CodeeWorkforceHostIntegration.register({});
+const pre=g.CodeeWorkforceHostIntegration.prepare({text:'Laravel 500 runtime exception in invoice controller'}, {maxManagersPerTask:3});
+assert(pre.classification.tags.includes('laravel'));
+assert(pre.classification.tags.includes('runtime'));
+const ids=[pre.primary,...pre.supporting].map(x=>x.id);
+assert(ids.includes('laravel-manager'),'Laravel manager must be selected');
+assert(ids.includes('runtime-manager'),'Runtime manager must be selected');
+assert(ids.length<=3);
+const draft=g.CodeeWorkforceHostIntegration.makePlanDraft({goal:'Add invoice dashboard'},{});
+assert.strictEqual(draft.authority.createOnly,true);
+assert.strictEqual(draft.authority.advance,false);
+assert(draft.suggestedSteps.length>=3);
+console.log('Workforce routing/plan draft OK');

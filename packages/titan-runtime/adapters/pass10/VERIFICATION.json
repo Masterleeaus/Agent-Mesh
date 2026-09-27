@@ -1,0 +1,87 @@
+{
+  "schema": "titan-zero-verification/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 10,
+  "status": "PASS",
+  "lane_status": "READY_FOR_MANAGER_MERGE",
+  "formal_test_files": 11,
+  "tests": [
+    {
+      "file": "tests/runtime_adapter_pass01_inventory.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass01 inventory invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass02_protocol.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass02 typed protocol invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass03_retriever.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass03 work-runtime + Retriever adapter invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass04_negotiation.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass04 negotiation + feature detection invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass05_legacy_fallback.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass05 legacy DOM fallback + deprecation telemetry invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass06_lifecycle.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass06 typed lifecycle invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass07_session_recovery.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass07 session recovery invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass08_e2e.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass08 end-to-end typed/fallback/failure/company/authority invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass09_performance.test.mjs",
+      "exit": 0,
+      "stdout": "{\"schema\":\"titan-zero-runtime-adapter-performance/v1\",\"iterations\":10000,\"rows\":[{\"name\":\"negotiate\",\"iterations\":10000,\"total_ms\":42.934577000000004,\"avg_us\":4.2934577,\"ops_per_sec\":232912.50779063223},{\"name\":\"prepare_typed_submission\",\"iterations\":10000,\"total_ms\":21.512536999999995,\"avg_us\":2.1512536999999994,\"ops_per_sec\":464845.22025458934},{\"name\":\"prepare_retriever_compat\",\"iterations\":10000,\"total_ms\":30.363893999999988,\"avg_us\":3.036389399999999,\"ops_per_sec\":329338.5229180422},{\"name\":\"create_lifecycle\",\"iterations\":10000,\"total_ms\":4.064071999999982,\"avg_us\":0.4064071999999982,\"ops_per_sec\":2460586.328194984}],\"threshold_avg_us\":5000,\"status\":\"PASS\"}",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass09_regression.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass09 donor capability parity invariants",
+      "stderr": ""
+    },
+    {
+      "file": "tests/runtime_adapter_pass10_certification.test.mjs",
+      "exit": 0,
+      "stdout": "PASS runtime adapter Pass10 final certification invariants",
+      "stderr": ""
+    }
+  ],
+  "runtime_adapter_syntax_files": 7,
+  "syntax": "PASS",
+  "json_parse_files": 85,
+  "json_parse": "PASS",
+  "company_id_audit": "PASS",
+  "authority_audit": "PASS_NO_ADAPTER_AUTHORITY_ESCALATION",
+  "donor_capability_loss": "NONE_KNOWN_PER_PASS09_PARITY_MATRIX",
+  "protected_retriever_bridge_modified": false,
+  "shared_hotspots_touched": [],
+  "live_chrome": "NOT_CERTIFIED_FROM_BUILDER_ENVIRONMENT",
+  "manager_forward_port": "REQUIRED_ON_CURRENT_CANONICAL"
+}

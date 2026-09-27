@@ -1,0 +1,611 @@
+{% extends "base.html" %}
+
+{% block title %}Schedule - FieldServicePro{% endblock %}
+
+{% block head %}
+<!-- FullCalendar CDN -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<style>
+/* ══════ SCHEDULE LAYOUT ══════ */
+.sched-wrap { display:flex; height:calc(100vh - 80px); overflow:hidden; }
+
+/* Left Panel */
+.sched-left {
+    width:280px; flex-shrink:0; background:var(--color-surface);
+    border-right:1px solid var(--color-border); display:flex; flex-direction:column; overflow:hidden;
+}
+.sched-left-tabs {
+    display:flex; border-bottom:2px solid var(--color-border); flex-shrink:0;
+}
+.sched-left-tab {
+    flex:1; padding:var(--space-2); text-align:center; font-size:var(--font-size-xs);
+    font-weight:600; cursor:pointer; border:none; background:none; color:var(--color-text-muted);
+    border-bottom:2px solid transparent; margin-bottom:-2px; font-family:inherit;
+}
+.sched-left-tab.active { color:var(--color-accent); border-bottom-color:var(--color-accent); }
+.sched-left-search {
+    padding:var(--space-2); border-bottom:1px solid var(--color-border); flex-shrink:0;
+}
+.sched-left-search input {
+    width:100%; padding:6px 10px 6px 30px; border:1px solid var(--color-border);
+    border-radius:var(--radius-md); font-size:var(--font-size-xs); font-family:inherit;
+}
+.sched-left-body { flex:1; overflow-y:auto; padding:var(--space-2); }
+.sched-panel { display:none; }
+.sched-panel.active { display:block; }
+
+/* Tech Cards */
+.tech-card {
+    background:#fff; border:1px solid var(--color-border); border-radius:var(--radius-md);
+    padding:var(--space-2); margin-bottom:var(--space-2); cursor:grab;
+    transition:box-shadow 0.15s, transform 0.1s;
+}
+.tech-card:hover { box-shadow:0 2px 8px rgba(0,0,0,0.08); transform:translateY(-1px); }
+.tech-card:active { cursor:grabbing; }
+.tech-card__name { font-weight:600; font-size:var(--font-size-sm); }
+.tech-card__meta { font-size:var(--font-size-xs); color:var(--color-text-muted); display:flex; align-items:center; gap:var(--space-1); margin-top:2px; }
+.tech-card__dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.tech-card__dot--green { background:#16a34a; }
+.tech-card__dot--amber { background:#d97706; }
+.tech-card__dot--red { background:#dc2626; }
+
+/* Unassigned Job Cards */
+.unassigned-card {
+    background:#fff; border:1px solid var(--color-border); border-radius:var(--radius-md);
+    padding:var(--space-2); margin-bottom:var(--space-2); cursor:grab;
+    transition:box-shadow 0.15s;
+}
+.unassigned-card:hover { box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+.unassigned-card__num { font-weight:600; font-size:var(--font-size-xs); color:var(--color-accent); }
+.unassigned-card__title { font-size:var(--font-size-xs); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.unassigned-card__client { font-size:0.65rem; color:var(--color-text-muted); }
+
+/* Right Panel */
+.sched-right { flex:1; display:flex; flex-direction:column; min-width:0; overflow:hidden; }
+.sched-filters {
+    display:flex; gap:var(--space-2); padding:var(--space-2) var(--space-3);
+    border-bottom:1px solid var(--color-border); align-items:center; flex-shrink:0; flex-wrap:wrap;
+}
+.sched-filter-pill {
+    display:inline-block; font-size:var(--font-size-xs); font-weight:600;
+    padding:3px 12px; border-radius:999px; cursor:pointer; border:none;
+    background:var(--color-surface-raised); color:var(--color-text-muted); font-family:inherit;
+    transition:all 0.15s;
+}
+.sched-filter-pill.active { background:var(--color-accent); color:#fff; }
+.sched-calendar { flex:1; padding:var(--space-2) var(--space-3); overflow:auto; }
+
+/* FullCalendar Overrides */
+.fc { font-family:inherit; }
+.fc .fc-toolbar-title { font-size:var(--font-size-base)!important; font-weight:600; }
+.fc .fc-button { font-size:var(--font-size-xs)!important; padding:4px 10px; border-radius:var(--radius-sm); }
+.fc .fc-button-primary { background:var(--color-accent); border-color:var(--color-accent); }
+.fc .fc-button-primary:not(:disabled).fc-button-active { background:var(--color-accent-dark, #0b7e74); border-color:var(--color-accent-dark, #0b7e74); }
+.fc .fc-button-primary:hover { background:var(--color-accent-dark, #0b7e74); border-color:var(--color-accent-dark, #0b7e74); }
+.fc .fc-event { border-radius:4px!important; font-size:0.7rem!important; padding:2px 4px; border:none!important; }
+.fc .fc-event-title { font-weight:500; }
+.fc .fc-timegrid-slot { height:28px; }
+.fc .fc-col-header-cell { font-size:var(--font-size-xs); font-weight:600; }
+.fc .fc-daygrid-day-number { font-size:var(--font-size-sm); }
+.fc-theme-standard td, .fc-theme-standard th { border-color:var(--color-border)!important; }
+.fc .fc-now-indicator-line { border-color:var(--color-danger); }
+.fc-timegrid-event .fc-event-main { padding:2px 4px; }
+
+/* Event tooltip */
+.sched-tooltip {
+    position:absolute; z-index:9999; background:#fff; border:1px solid var(--color-border);
+    border-radius:var(--radius-md); padding:var(--space-3); box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    font-size:var(--font-size-sm); max-width:280px; pointer-events:none;
+}
+
+/* Assign Modal */
+.sched-modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999;
+    display:flex; align-items:center; justify-content:center;
+}
+.sched-modal {
+    background:#fff; border-radius:var(--radius-lg); width:90%; max-width:480px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+}
+.sched-modal__header {
+    padding:var(--space-3) var(--space-4); border-bottom:1px solid var(--color-border);
+    display:flex; justify-content:space-between; align-items:center;
+}
+.sched-modal__header h3 { margin:0; font-size:var(--font-size-base); }
+.sched-modal__body { padding:var(--space-4); }
+.sched-modal__footer {
+    padding:var(--space-3) var(--space-4); border-top:1px solid var(--color-border);
+    display:flex; justify-content:flex-end; gap:var(--space-2);
+}
+
+/* Responsive */
+@media (max-width:768px) {
+    .sched-wrap { flex-direction:column; height:auto; }
+    .sched-left { width:100%; height:200px; border-right:none; border-bottom:1px solid var(--color-border); }
+    .sched-calendar { min-height:500px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sched-wrap">
+    <!-- ══════ LEFT PANEL ══════ -->
+    <div class="sched-left">
+        <div class="sched-left-tabs">
+            <button class="sched-left-tab active" onclick="switchLeftTab('techs')">Technicians</button>
+            <button class="sched-left-tab" onclick="switchLeftTab('unassigned')">Unassigned</button>
+        </div>
+        <div class="sched-left-search">
+            <div style="position:relative;">
+                <i class="bi bi-search" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--color-text-muted);font-size:0.7rem;"></i>
+                <input type="text" id="leftSearch" placeholder="Filter..." oninput="filterLeftPanel()">
+            </div>
+        </div>
+        <div class="sched-left-body">
+            <!-- Technicians Panel -->
+            <div class="sched-panel active" id="panel-techs">
+                {% for tech in technicians %}
+                <div class="tech-card"
+                     data-tech-id="{{ tech.id }}"
+                     data-tech-name="{{ tech.full_name }}"
+                     data-searchable="{{ tech.full_name|lower }}">
+                    <div class="tech-card__name">{{ tech.full_name }}</div>
+                    <div class="tech-card__meta">
+                        <span class="tech-card__dot tech-card__dot--green" id="techDot{{ tech.id }}"></span>
+                        <span id="techCount{{ tech.id }}">0 jobs today</span>
+                        {% if tech.division_id %}
+                        <span style="display:inline-block;font-size:0.55rem;font-weight:600;padding:1px 5px;border-radius:999px;background:{{ tech.color or '#2563eb' }};color:#fff;">
+                            {% for d in divisions if d.id == tech.division_id %}{{ d.name[:4] }}{% endfor %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Unassigned Jobs Panel -->
+            <div class="sched-panel" id="panel-unassigned">
+                <div id="unassignedList">
+                    <!-- Populated via JS -->
+                    <div style="padding:var(--space-3);color:var(--color-text-muted);font-size:var(--font-size-xs);text-align:center;">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════ RIGHT PANEL ══════ -->
+    <div class="sched-right">
+        <!-- Filters -->
+        <div class="sched-filters">
+            <button class="sched-filter-pill active" onclick="filterDivision(null, this)">All</button>
+            {% for div in divisions %}
+            <button class="sched-filter-pill" onclick="filterDivision({{ div.id }}, this)" style="{% if div.color %}border:1px solid {{ div.color }};{% endif %}">{{ div.name }}</button>
+            {% endfor %}
+            <select id="techFilter" class="form-control" style="width:auto;min-width:140px;font-size:var(--font-size-xs);margin-left:auto;" onchange="filterTechnician(this.value)">
+                <option value="">All Technicians</option>
+                {% for tech in technicians %}
+                <option value="{{ tech.id }}">{{ tech.full_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Calendar -->
+        <div class="sched-calendar" id="calendarEl"></div>
+    </div>
+</div>
+
+<!-- ══════ ASSIGN MODAL ══════ -->
+<div class="sched-modal-overlay" id="assignModal" style="display:none;">
+    <div class="sched-modal">
+        <div class="sched-modal__header">
+            <h3 id="assignModalTitle">Assign Job</h3>
+            <button onclick="closeAssignModal()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--color-text-muted);">&times;</button>
+        </div>
+        <div class="sched-modal__body">
+            <div id="assignConflictWarning" style="display:none;padding:var(--space-2);background:rgba(245,158,11,0.1);border:1px solid var(--color-warning);border-radius:var(--radius-sm);margin-bottom:var(--space-3);font-size:var(--font-size-sm);color:var(--color-warning);">
+                <i class="bi bi-exclamation-triangle"></i> <span id="conflictText"></span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Technician</label>
+                <select id="assignTechSelect" class="form-control">
+                    <option value="">Select technician...</option>
+                    {% for tech in technicians %}
+                    <option value="{{ tech.id }}">{{ tech.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Job</label>
+                <select id="assignJobSelect" class="form-control">
+                    <option value="">Select job...</option>
+                </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2);">
+                <div class="form-group">
+                    <label class="form-label">Start Time</label>
+                    <input type="datetime-local" id="assignStart" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">End Time</label>
+                    <input type="datetime-local" id="assignEnd" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="sched-modal__footer">
+            <button class="btn btn-ghost" onclick="closeAssignModal()">Cancel</button>
+            <button class="btn btn-accent" id="assignSubmitBtn" onclick="submitAssignment()">Assign</button>
+        </div>
+    </div>
+</div>
+
+<!-- Tooltip container -->
+<div class="sched-tooltip" id="eventTooltip" style="display:none;"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const CAN_EDIT = {{ 'true' if user.role in ('owner', 'admin', 'dispatcher') else 'false' }};
+let calendar;
+let currentDivisionFilter = {{ active_division|tojson if active_division is defined and active_division else 'null' }};
+let currentTechFilter = null;
+
+// ══════ FULLCALENDAR INIT ══════
+document.addEventListener('DOMContentLoaded', function() {
+    const calEl = document.getElementById('calendarEl');
+
+    calendar = new FullCalendar.Calendar(calEl, {
+        initialView: 'timeGridWeek',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'timeGridDay,timeGridWeek,dayGridMonth'
+        },
+        slotDuration: '00:30:00',
+        slotMinTime: '06:00:00',
+        slotMaxTime: '20:00:00',
+        businessHours: { daysOfWeek: [1,2,3,4,5], startTime: '07:00', endTime: '18:00' },
+        nowIndicator: true,
+        editable: CAN_EDIT,
+        droppable: CAN_EDIT,
+        selectable: CAN_EDIT,
+        eventOverlap: true,
+        height: '100%',
+        allDaySlot: false,
+
+        // Load events from API
+        events: function(info, successCallback, failureCallback) {
+            let url = '/api/schedule/events?start=' + info.startStr + '&end=' + info.endStr;
+            if (currentDivisionFilter) url += '&division=' + currentDivisionFilter;
+            if (currentTechFilter) url += '&technician_id=' + currentTechFilter;
+            fetch(url).then(r => r.json()).then(successCallback).catch(failureCallback);
+        },
+
+        // Drop from external (tech or unassigned job)
+        drop: function(info) {
+            // Don't add event yet — modal will handle it
+        },
+
+        eventReceive: function(info) {
+            // External event dropped on calendar
+            info.event.remove(); // Remove the auto-created event
+            const props = info.event.extendedProps;
+            if (props.technicianId) {
+                // Tech dropped — open modal to select job
+                openAssignModal({
+                    techId: props.technicianId,
+                    techName: info.event.title,
+                    start: info.event.start,
+                    end: info.event.end || new Date(info.event.start.getTime() + 2*60*60000),
+                });
+            } else if (props.jobId) {
+                // Unassigned job dropped — open modal to select tech
+                openAssignModal({
+                    jobId: props.jobId,
+                    jobTitle: info.event.title,
+                    start: info.event.start,
+                    end: info.event.end || new Date(info.event.start.getTime() + 2*60*60000),
+                });
+            }
+        },
+
+        // Drag existing event to reschedule
+        eventDrop: function(info) {
+            if (!CAN_EDIT) { info.revert(); return; }
+            const jobId = info.event.extendedProps.jobId;
+            if (!jobId) { info.revert(); return; }
+
+            fetch('/api/schedule/reschedule', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    job_id: jobId,
+                    new_start: info.event.start.toISOString(),
+                    new_end: info.event.end ? info.event.end.toISOString() : null,
+                }),
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) { alert('Error: ' + data.error); info.revert(); }
+            })
+            .catch(() => info.revert());
+        },
+
+        // Resize event
+        eventResize: function(info) {
+            if (!CAN_EDIT) { info.revert(); return; }
+            const jobId = info.event.extendedProps.jobId;
+            if (!jobId) { info.revert(); return; }
+
+            fetch('/api/schedule/reschedule', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    job_id: jobId,
+                    new_start: info.event.start.toISOString(),
+                    new_end: info.event.end ? info.event.end.toISOString() : null,
+                }),
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) { alert('Error: ' + data.error); info.revert(); }
+            })
+            .catch(() => info.revert());
+        },
+
+        // Click on empty time to create
+        select: function(info) {
+            if (!CAN_EDIT) return;
+            openAssignModal({ start: info.start, end: info.end });
+        },
+
+        // Tooltip on hover
+        eventMouseEnter: function(info) {
+            const p = info.event.extendedProps;
+            const tip = document.getElementById('eventTooltip');
+            tip.innerHTML = `
+                <div style="font-weight:600;margin-bottom:4px;">${p.jobNumber || ''} — ${p.jobTitle || ''}</div>
+                <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);">
+                    <div><i class="bi bi-person"></i> ${p.clientName || ''}</div>
+                    <div><i class="bi bi-wrench"></i> ${p.technicianName || 'Unassigned'}</div>
+                    ${p.propertyAddress ? '<div><i class="bi bi-geo-alt"></i> ' + p.propertyAddress + '</div>' : ''}
+                    <div style="margin-top:4px;">
+                        <span style="text-transform:capitalize;">${p.priority || ''}</span> · ${p.division || ''} · ${p.status || ''}
+                    </div>
+                </div>
+                <a href="/jobs/${p.jobId}" style="font-size:var(--font-size-xs);color:var(--color-accent);margin-top:4px;display:block;">View Job →</a>
+            `;
+            tip.style.display = 'block';
+
+            const rect = info.el.getBoundingClientRect();
+            tip.style.top = (rect.top + window.scrollY - 10) + 'px';
+            tip.style.left = (rect.right + 8) + 'px';
+        },
+
+        eventMouseLeave: function() {
+            document.getElementById('eventTooltip').style.display = 'none';
+        },
+
+        // Event content
+        eventContent: function(arg) {
+            const p = arg.event.extendedProps;
+            return {
+                html: `<div style="padding:1px 2px;line-height:1.2;">
+                    <div style="font-weight:600;font-size:0.65rem;">${arg.event.title}</div>
+                    <div style="font-size:0.6rem;opacity:0.85;">${p.clientName || ''}</div>
+                    <div style="font-size:0.55rem;opacity:0.7;">${p.technicianName || ''}</div>
+                </div>`
+            };
+        },
+    });
+
+    calendar.render();
+
+    // ══════ DRAGGABLE TECH CARDS ══════
+    if (CAN_EDIT) {
+        new FullCalendar.Draggable(document.getElementById('panel-techs'), {
+            itemSelector: '.tech-card',
+            eventData: function(el) {
+                return {
+                    title: el.dataset.techName,
+                    duration: '02:00',
+                    extendedProps: { technicianId: parseInt(el.dataset.techId) },
+                };
+            },
+        });
+    }
+
+    // Load unassigned jobs
+    loadUnassignedJobs();
+    loadTechCounts();
+});
+
+// ══════ LEFT PANEL TABS ══════
+function switchLeftTab(tab) {
+    document.querySelectorAll('.sched-left-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.sched-panel').forEach(p => p.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+}
+
+function filterLeftPanel() {
+    const q = document.getElementById('leftSearch').value.toLowerCase();
+    document.querySelectorAll('.tech-card, .unassigned-card').forEach(card => {
+        const s = (card.dataset.searchable || card.textContent).toLowerCase();
+        card.style.display = s.includes(q) ? '' : 'none';
+    });
+}
+
+// ══════ UNASSIGNED JOBS ══════
+function loadUnassignedJobs() {
+    fetch('/api/schedule/unassigned-jobs')
+    .then(r => r.json())
+    .then(jobs => {
+        const container = document.getElementById('unassignedList');
+        if (!jobs.length) {
+            container.innerHTML = '<div style="padding:var(--space-3);color:var(--color-text-muted);font-size:var(--font-size-xs);text-align:center;">All jobs assigned</div>';
+            return;
+        }
+        container.innerHTML = jobs.map(j => `
+            <div class="unassigned-card"
+                 data-job-id="${j.id}"
+                 data-job-title="${j.jobNumber} — ${j.title}"
+                 data-estimated-hours="02:00"
+                 data-searchable="${j.jobNumber.toLowerCase()} ${j.title.toLowerCase()} ${j.clientName.toLowerCase()}">
+                <div class="unassigned-card__num">${j.jobNumber}</div>
+                <div class="unassigned-card__title">${j.title}</div>
+                <div class="unassigned-card__client">${j.clientName}</div>
+                <div style="display:flex;gap:4px;margin-top:2px;">
+                    <span style="font-size:0.55rem;font-weight:600;padding:1px 5px;border-radius:999px;background:${
+                        j.priority === 'emergency' ? 'rgba(220,38,38,0.1)' :
+                        j.priority === 'high' ? 'rgba(217,119,6,0.1)' : 'var(--color-surface-raised)'
+                    };color:${
+                        j.priority === 'emergency' ? 'var(--color-danger)' :
+                        j.priority === 'high' ? 'var(--color-warning)' : 'var(--color-text-muted)'
+                    };">${j.priority}</span>
+                    <span style="font-size:0.55rem;font-weight:600;padding:1px 5px;border-radius:999px;background:${j.divisionColor};color:#fff;">${j.division.substring(0,4)}</span>
+                </div>
+            </div>
+        `).join('');
+
+        // Make them draggable
+        if (CAN_EDIT) {
+            new FullCalendar.Draggable(container, {
+                itemSelector: '.unassigned-card',
+                eventData: function(el) {
+                    return {
+                        title: el.dataset.jobTitle,
+                        duration: el.dataset.estimatedHours || '02:00',
+                        extendedProps: { jobId: parseInt(el.dataset.jobId) },
+                    };
+                },
+            });
+        }
+    });
+}
+
+// ══════ TECH JOB COUNTS ══════
+function loadTechCounts() {
+    const now = new Date();
+    const today = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+    {% for tech in technicians %}
+    fetch('/api/schedule/tech-availability?technician_id={{ tech.id }}&date=' + today)
+    .then(r => r.json())
+    .then(data => {
+        const count = data.count || 0;
+        const countEl = document.getElementById('techCount{{ tech.id }}');
+        const dotEl = document.getElementById('techDot{{ tech.id }}');
+        if (countEl) countEl.textContent = count + ' job' + (count !== 1 ? 's' : '') + ' today';
+        if (dotEl) {
+            dotEl.className = 'tech-card__dot tech-card__dot--' + (count < 3 ? 'green' : count < 5 ? 'amber' : 'red');
+        }
+    });
+    {% endfor %}
+}
+
+// ══════ CALENDAR FILTERS ══════
+function filterDivision(divId, btn) {
+    currentDivisionFilter = divId;
+    document.querySelectorAll('.sched-filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    calendar.refetchEvents();
+}
+
+function filterTechnician(techId) {
+    currentTechFilter = techId || null;
+    calendar.refetchEvents();
+}
+
+// ══════ ASSIGN MODAL ══════
+let pendingAssignment = {};
+
+function openAssignModal(opts) {
+    pendingAssignment = opts;
+    const modal = document.getElementById('assignModal');
+    const techSelect = document.getElementById('assignTechSelect');
+    const jobSelect = document.getElementById('assignJobSelect');
+    const startInput = document.getElementById('assignStart');
+    const endInput = document.getElementById('assignEnd');
+
+    document.getElementById('assignConflictWarning').style.display = 'none';
+
+    // Set times
+    if (opts.start) {
+        const s = new Date(opts.start);
+        startInput.value = s.toISOString().slice(0, 16);
+    }
+    if (opts.end) {
+        const e = new Date(opts.end);
+        endInput.value = e.toISOString().slice(0, 16);
+    }
+
+    // Pre-select tech if provided
+    if (opts.techId) techSelect.value = opts.techId;
+    else techSelect.value = '';
+
+    // Load unassigned jobs into dropdown
+    fetch('/api/schedule/unassigned-jobs')
+    .then(r => r.json())
+    .then(jobs => {
+        jobSelect.innerHTML = '<option value="">Select job...</option>';
+        jobs.forEach(j => {
+            const opt = document.createElement('option');
+            opt.value = j.id;
+            opt.textContent = j.jobNumber + ' — ' + j.title + ' (' + j.clientName + ')';
+            jobSelect.appendChild(opt);
+        });
+        if (opts.jobId) jobSelect.value = opts.jobId;
+    });
+
+    modal.style.display = 'flex';
+}
+
+function closeAssignModal() {
+    document.getElementById('assignModal').style.display = 'none';
+    pendingAssignment = {};
+}
+
+function submitAssignment() {
+    const techId = document.getElementById('assignTechSelect').value;
+    const jobId = document.getElementById('assignJobSelect').value;
+    const startTime = document.getElementById('assignStart').value;
+    const endTime = document.getElementById('assignEnd').value;
+
+    if (!jobId || !startTime) {
+        alert('Please select a job and start time.');
+        return;
+    }
+
+    const btn = document.getElementById('assignSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Assigning...';
+
+    fetch('/api/schedule/assign', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            job_id: parseInt(jobId),
+            technician_id: techId ? parseInt(techId) : null,
+            start_time: new Date(startTime).toISOString(),
+            end_time: endTime ? new Date(endTime).toISOString() : null,
+        }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.textContent = 'Assign';
+        if (data.success) {
+            closeAssignModal();
+            calendar.refetchEvents();
+            loadUnassignedJobs();
+            loadTechCounts();
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        btn.textContent = 'Assign';
+    });
+}
+</script>
+{% endblock %}

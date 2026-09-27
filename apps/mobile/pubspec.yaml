@@ -1,0 +1,37 @@
+name: titan_zero_mobile
+description: Titan Zero shared Flutter mobile surface for Command, Go and Hub.
+publish_to: 'none'
+version: 2.0.0+2
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+dependencies:
+  flutter:
+    sdk: flutter
+  smooth_page_indicator: ^1.0.0+2
+  smooth_star_rating_null_safety: ^1.0.4+2
+  country_calling_code_picker: ^2.0.1
+  intl: ^0.18.1
+  mobx: 2.2.0
+  flutter_mobx: 2.0.6+5
+  shared_preferences: ^2.1.2
+  cupertino_icons: ^1.0.5
+  google_maps_flutter: ^2.7.0
+  geolocator: ^12.0.0
+  image_picker: ^1.1.2
+  camera: ^0.11.0+1
+  signature: ^5.5.0
+  qr_flutter: ^4.1.0
+  cunning_document_scanner: ^1.2.3
+  url_launcher: ^6.3.0
+  path_provider: ^2.1.4
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.2
+  build_runner: 2.4.5
+  mobx_codegen: 2.3.0
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/

@@ -1,0 +1,26 @@
+name: Retire Superseded Titan Web Metadata
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/retire-titan-web-metadata.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  retire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retire archived metadata where Dovetails is demonstrably newer
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm -f titan/apps/web/next-env.d.ts titan/apps/web/vitest.integration.config.ts
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Retire superseded Titan web metadata"
+          git push

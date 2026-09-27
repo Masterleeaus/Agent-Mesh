@@ -1,0 +1,12 @@
+const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert');let listener=null;
+const source=fs.readFileSync('src/lib/service-worker.js','utf8');const memory={};const local={async get(keys){const out={};for(const k of Array.isArray(keys)?keys:[keys])if(Object.prototype.hasOwnProperty.call(memory,k))out[k]=memory[k];return out;},async set(obj){Object.assign(memory,JSON.parse(JSON.stringify(obj)));}};
+const chrome={sidePanel:{setPanelBehavior:async()=>{}},runtime:{onMessage:{addListener(fn){listener=fn}},sendMessage:async()=>({ok:true}),onStartup:{addListener(){}},onInstalled:{addListener(){}}},alarms:{create:async()=>{},get:async()=>({name:'ZIP_POLL',periodInMinutes:1}),onAlarm:{addListener(){}}},tabs:{query(_q,cb){cb([])},get:async()=>({id:1,url:'https://chatgpt.com/c/a'}),sendMessage:async()=>({ok:true})},storage:{local}};
+const c={chrome,console:{log(){},warn(){},error(){}},setTimeout(){return 1},clearTimeout(){},setInterval(){return 1},clearInterval(){},Map,Set,WeakMap,WeakSet,Promise,Date,Math,JSON,Object,Array,String,Number,Boolean,RegExp,Uint32Array,crypto:{randomUUID:()=> 'uuid'}};c.globalThis=c;vm.createContext(c);c.importScripts=(...urls)=>{for(const u of urls){const f=path.resolve('src/lib',u);vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});}};vm.runInContext(source,c,{filename:'service-worker.js'});
+function send(message){return new Promise((resolve,reject)=>{try{const keep=listener(message,{},resolve);if(keep!==true&&keep!==undefined){} }catch(e){reject(e)}})}
+(async()=>{
+ let out=await send({action:'CALL_WORKFORCE_CAPABILITY',capability:'does.not.exist',payload:{}});assert.strictEqual(out.ok,false);assert.strictEqual(out.result.ok,false);
+ out=await send({action:'EXECUTE_WORKFORCE_TOOL_REQUEST',request:{capability:'repository.host.write',args:{}}});assert.strictEqual(out.ok,false);assert.strictEqual(out.result.forbidden,true);
+ vm.runInContext("requestWorkforceGovernedMutation = async () => ({kind:'file_write',backupReceipt:{id:'b'},verification:{verified:true},auditReceipt:{id:'a'}})", c);
+ out=await send({action:'REQUEST_WORKFORCE_GOVERNED_MUTATION',request:{managerId:'repository-manager',action:'repository.write',target:'README.md',change:{content:'x'}}});assert.strictEqual(out.ok,true,'successful governed receipt without explicit ok:true must still acknowledge success');
+ console.log('workforce service message acknowledgement semantics OK');
+})().catch(e=>{console.error(e);process.exit(1)});

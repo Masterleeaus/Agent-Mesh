@@ -1,0 +1,11 @@
+{
+  "schema": "titan-zero-donor-provenance/v1",
+  "packet_id": "TZ-FIX-RUNTIME-ADAPTERS-001",
+  "pass": 3,
+  "sources": [
+    "Merge39 side-panel/titan-retriever-bridge.js semantics",
+    "Pass2 TITAN execution adapter protocol"
+  ],
+  "direct_source_transplant": false,
+  "implementation": "independent adapter implementation preserving current compatibility transport"
+}

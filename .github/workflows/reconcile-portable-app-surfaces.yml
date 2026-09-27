@@ -1,0 +1,55 @@
+name: Reconcile Titan Portable App Surfaces
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/reconcile-portable-app-surfaces.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Promote Titan app surfaces converted to portable runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          markers=(
+            "@/lib/db/portable","portableQuery","withPortableTransaction",
+            "@/lib/db/dialect","@/lib/db/contracts","businessToday(",
+            "bindNativeSurface(","loadFieldDayData("
+          )
+          promoted=0
+          base=Path("titan/apps/web/app/app")
+          for src in sorted(p for p in base.rglob("*") if p.is_file()):
+              dst=Path(str(src)[len("titan/"):])
+              if not dst.is_file(): continue
+              try:
+                  old=dst.read_text(); new=src.read_text()
+              except UnicodeDecodeError:
+                  continue
+              if any(m in new for m in markers) and new != old:
+                  dst.write_text(new)
+                  subprocess.run(["git","add",str(dst)],check=True)
+                  subprocess.run(["git","rm","-f",str(src)],check=True)
+                  promoted += 1
+          print(f"Promoted {promoted} Titan portable/runtime-aware app surfaces.")
+          PY
+          find titan/apps -depth -type d -empty -delete || true
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Reconcile Titan portable app surfaces"
+          git push

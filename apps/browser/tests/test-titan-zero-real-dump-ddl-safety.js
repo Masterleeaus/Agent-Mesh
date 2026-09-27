@@ -1,0 +1,12 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');
+const context={console,Map,Set,Object,Array,String,Number,Boolean,RegExp,JSON,Math};context.globalThis=context;vm.createContext(context);
+vm.runInContext(fs.readFileSync('src/lib/capability-registry.js','utf8'),context);
+vm.runInContext(fs.readFileSync('src/titan-zero/titan-zero-snapshot-policy.js','utf8'),context);
+vm.runInContext(fs.readFileSync('src/lib/titan-zero-host-integration.js','utf8'),context);
+const dump=`-- MySQL dump\n-- Table structure for table users\nDROP TABLE IF EXISTS \`users\`;\nCREATE TABLE \`users\` (\n  \`id\` bigint NOT NULL,\n  \`name\` varchar(255) DEFAULT NULL\n) ENGINE=InnoDB;\n-- Dumping data\nINSERT INTO \`users\` VALUES (1,'secret;still-secret'),(2,'another secret');\n-- Table structure\nCREATE TABLE \`projects\` (\`id\` bigint NOT NULL) ENGINE=InnoDB;`;
+const ddl=context.CodeeTitanZeroHostIntegration.extractDdlOnly(dump);
+assert(ddl.includes('CREATE TABLE `users`'),'comment-prefixed real dump must retain users DDL');
+assert(ddl.includes('CREATE TABLE `projects`'),'later DDL must remain');
+assert(!ddl.includes('secret;still-secret'),'INSERT values must be removed even when strings contain semicolons');
+assert(!/INSERT\s+INTO/i.test(ddl),'no INSERT statement may survive');
+console.log('Titan Zero real-dump DDL filtering OK');

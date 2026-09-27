@@ -1,0 +1,10 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const c={};c.globalThis=c;vm.createContext(c);
+for(const f of ['src/repository/repository-policy.js','src/repository/dependency-graph.js']) vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});
+const text=Array.from({length:60000},(_,i)=>`Symbol${i}`).join(' ');
+const byName=Object.create(null); for(let i=0;i<60000;i++) byName[`Symbol${i}`]=[{path:`app/Models/T${i}.php`}];
+const r=c.CodeeDependencyGraph.build({files:{'app/Services/Huge.php':text}},{byName});
+assert(r.edges.length<=20000,'edge output must remain bounded');
+assert.strictEqual(r.truncated,true,'token/work truncation must be reported');
+assert(c.CodeeDependencyGraph.MAX_TOKENS_PER_FILE<=20000,'per-file token budget must be exported and bounded');
+console.log('Repository dependency graph uses bounded token extraction');

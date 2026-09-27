@@ -1,0 +1,40 @@
+{
+  "schema": "titan-zero-analytics-ui-contributions/v1",
+  "packet_id": "TZ-NEXT-012",
+  "pass": 6,
+  "company_boundary": "company_id",
+  "existing_contribution_framework": {
+    "path": "titan-capabilities/contributions/",
+    "registry_schema": "titan.contribution-registry.v2",
+    "integration_mode": "registerMany via existing ContributionRegistry",
+    "shared_hotspot_edit_required": false
+  },
+  "contributions": [
+    {
+      "id": "analytics.business-kpis.projection",
+      "kind": "projection",
+      "provider_id": "titan.analytics",
+      "placements": [
+        "dashboard",
+        "daily-operations"
+      ],
+      "read_only": true,
+      "replaces_existing_page": false
+    },
+    {
+      "id": "analytics.business-kpis.cards",
+      "kind": "presentation",
+      "provider_id": "titan.analytics",
+      "placements": [
+        "dashboard"
+      ],
+      "read_only": true,
+      "replaces_existing_page": false
+    }
+  ],
+  "authority": {
+    "registration_grants_authority": false,
+    "activation_confers_authority": false,
+    "analytics_grants_authority": false
+  }
+}

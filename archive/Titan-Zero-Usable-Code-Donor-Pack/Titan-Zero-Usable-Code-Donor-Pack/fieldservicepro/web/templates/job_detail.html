@@ -1,0 +1,846 @@
+{% extends "base.html" %}
+
+{% block title %}{{ job.title }} - FieldServicePro{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/phases.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <div style="display:flex;align-items:center;gap:var(--space-1);margin-bottom:0.25rem;font-size:var(--font-size-sm);">
+            {% if job_obj.project %}
+            <a href="{{ url_for('projects_bp.project_list') }}" style="color:var(--color-text-muted);text-decoration:none;">Projects</a>
+            <span style="color:var(--color-text-muted);">/</span>
+            <a href="{{ url_for('projects_bp.project_detail', project_id=job_obj.project_id) }}" style="color:var(--color-text-muted);text-decoration:none;">{{ job_obj.project.project_number }}</a>
+            <span style="color:var(--color-text-muted);">/</span>
+            {% endif %}
+            <a href="{{ url_for('jobs_page') }}" style="color:var(--color-text-muted);text-decoration:none;">
+                <i class="bi bi-arrow-left"></i> Jobs
+            </a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <span class="badge badge-{{ job.status }}" style="font-size: 0.8rem; padding: 0.3rem 0.75rem;">{{ job.status | replace('_', ' ') | title }}</span>
+            <span style="font-size: 0.85rem; color: var(--text-secondary);">Job #{{ job.job_number }}</span>
+        </div>
+        <h1 style="font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem;">{{ client_name }}</h1>
+        <p style="color: var(--text-secondary); margin: 0;">{{ job.title }}</p>
+        {% if job_obj.project %}
+        <div style="margin-top:var(--space-2);padding:var(--space-1) var(--space-2);background:rgba(13,148,136,0.06);border-radius:var(--radius-sm);display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--font-size-sm);">
+            <i class="bi bi-kanban" style="color:var(--color-accent);"></i>
+            Part of <a href="{{ url_for('projects_bp.project_detail', project_id=job_obj.project_id) }}" style="font-weight:600;color:var(--color-accent);text-decoration:none;">{{ job_obj.project.project_number }}</a> — {{ job_obj.project.title }}
+            <span style="font-size:var(--font-size-xs);font-weight:600;padding:1px 6px;border-radius:999px;background:var(--color-surface-raised);color:var(--color-{{ job_obj.project.status_color }});">{{ job_obj.project.status_label }}</span>
+        </div>
+        {% endif %}
+    </div>
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <button class="btn btn-secondary" onclick="updateStatus('{{ job.id }}')"><i class="bi bi-pencil"></i> Edit</button>
+        <div style="display: flex; gap: 0.25rem;">
+            {% if job.status == 'scheduled' %}
+            <button class="btn btn-primary" onclick="changeStatus({{ job.id }}, 'in_progress')">Start Job</button>
+            {% elif job.status == 'in_progress' %}
+            <button class="btn btn-primary" style="background: var(--success);" onclick="changeStatus({{ job.id }}, 'completed')">Complete Job</button>
+            {% elif job.status == 'completed' %}
+            {% if job_obj.is_warranty_work or job_obj.is_callback %}
+            <span style="font-size:var(--font-size-xs);color:var(--color-warning);margin-right:4px;" title="This job is {% if job_obj.is_warranty_work %}warranty work{% endif %}{% if job_obj.is_callback %} callback{% endif %} — typically non-billable"><i class="bi bi-exclamation-triangle"></i></span>
+            {% endif %}
+            <button class="btn btn-primary" onclick="window.location.href='/invoices'">Create Invoice</button>
+            {% if not job_warranty and user.role in ('owner','admin','dispatcher') %}
+            <a href="{{ url_for('warranty.warranty_new', job_id=job_obj.id) }}" class="btn btn-ghost" style="font-size:var(--font-size-sm);color:var(--color-success);"><i class="bi bi-shield-plus"></i></a>
+            {% endif %}
+            {% if not job_obj.callback_record and user.role in ('owner','admin','dispatcher') %}
+            <a href="{{ url_for('callback.callback_new', original_job_id=job_obj.id) }}" class="btn btn-ghost" style="font-size:var(--font-size-sm);color:var(--color-warning);" title="Log Callback"><i class="bi bi-arrow-return-left"></i></a>
+            {% endif %}
+            {% elif job.status == 'draft' %}
+            <button class="btn btn-primary" onclick="changeStatus({{ job.id }}, 'scheduled')">Schedule</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- SLA Tracking Card -->
+{% if show_sla_details and job_obj.sla_id and job_obj.contract_id %}
+{% set sla_st = job_obj.sla_status %}
+<div class="card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-{% if sla_st == 'breached' %}danger{% elif sla_st == 'at_risk' %}warning{% elif sla_st == 'met' %}success{% else %}accent{% endif %});">
+  <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; background: {% if sla_st == 'breached' %}var(--color-danger-light){% elif sla_st == 'at_risk' %}rgba(245,158,11,0.08){% elif sla_st == 'met' %}var(--color-success-light){% else %}rgba(13,148,136,0.06){% endif %};">
+    <div style="display: flex; align-items: center; gap: var(--space-2);">
+      <i class="bi bi-shield{% if sla_st == 'met' %}-fill{% elif sla_st == 'breached' %}-exclamation{% else %}-check{% endif %}" style="color: var(--color-{% if sla_st == 'met' %}success{% elif sla_st == 'breached' %}danger{% elif sla_st == 'at_risk' %}warning{% else %}accent{% endif %});"></i>
+      <strong>SLA Tracking</strong>
+      {% if job_obj.contract %}
+      <a href="{{ url_for('contracts.contract_detail', contract_id=job_obj.contract.id) }}" class="badge badge-draft" style="text-decoration: none; margin-left: 4px;">{{ job_obj.contract.contract_number }}</a>
+      {% endif %}
+    </div>
+    <span class="badge badge-{% if sla_st == 'breached' %}danger{% elif sla_st == 'at_risk' %}pending{% elif sla_st == 'met' %}completed{% else %}active{% endif %}">
+      {% if sla_st == 'breached' %}SLA Breached{% elif sla_st == 'at_risk' %}At Risk{% elif sla_st == 'met' %}SLA Met{% else %}On Track{% endif %}
+    </span>
+  </div>
+  <div class="card-body">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: var(--space-4);">
+      <!-- Response Deadline -->
+      <div>
+        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-bottom: 2px;">Response Deadline</div>
+        {% if job_obj.sla_response_deadline %}
+        <div style="font-weight: var(--font-weight-semibold); {% if job_obj.sla_response_breached %}color: var(--color-danger);{% endif %}">
+          {{ job_obj.sla_response_deadline.strftime('%b %d, %Y %H:%M') }}
+        </div>
+        {% if job_obj.actual_response_time %}
+        <div style="font-size: var(--font-size-xs); color: var(--color-success);"><i class="bi bi-check-circle"></i> Responded {{ job_obj.actual_response_time.strftime('%H:%M') }}</div>
+        {% elif job_obj.sla_response_breached %}
+        <div style="font-size: var(--font-size-xs); color: var(--color-danger);"><i class="bi bi-x-circle"></i> Missed</div>
+        {% else %}
+        <div style="font-size: var(--font-size-xs);" id="response-countdown" data-deadline="{{ job_obj.sla_response_deadline.isoformat() }}">Calculating...</div>
+        {% endif %}
+        {% else %}<span style="color: var(--color-text-muted);">---</span>{% endif %}
+      </div>
+      <!-- Resolution Deadline -->
+      <div>
+        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-bottom: 2px;">Resolution Deadline</div>
+        {% if job_obj.sla_resolution_deadline %}
+        <div style="font-weight: var(--font-weight-semibold); {% if job_obj.sla_resolution_breached %}color: var(--color-danger);{% endif %}">
+          {{ job_obj.sla_resolution_deadline.strftime('%b %d, %Y %H:%M') }}
+        </div>
+        {% if job_obj.actual_resolution_time %}
+        <div style="font-size: var(--font-size-xs); color: var(--color-success);"><i class="bi bi-check-circle"></i> Resolved {{ job_obj.actual_resolution_time.strftime('%H:%M') }}</div>
+        {% elif job_obj.sla_resolution_breached %}
+        <div style="font-size: var(--font-size-xs); color: var(--color-danger);"><i class="bi bi-x-circle"></i> Missed</div>
+        {% else %}
+        <div style="font-size: var(--font-size-xs);" id="resolution-countdown" data-deadline="{{ job_obj.sla_resolution_deadline.isoformat() }}">Calculating...</div>
+        {% endif %}
+        {% else %}<span style="color: var(--color-text-muted);">Best effort</span>{% endif %}
+      </div>
+      <!-- SLA Name -->
+      <div>
+        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-bottom: 2px;">SLA Template</div>
+        <div style="font-weight: var(--font-weight-semibold);">{{ job_obj.sla.sla_name if job_obj.sla else '---' }}</div>
+        {% if job_obj.sla %}
+        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+          {{ job_obj.sla.business_hours_start }}–{{ job_obj.sla.business_hours_end }}
+          {% if job_obj.sla.business_hours_only %}(Biz hrs){% else %}(24/7){% endif %}
+        </div>
+        {% endif %}
+      </div>
+      <!-- Elapsed -->
+      <div>
+        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted); margin-bottom: 2px;">Elapsed Time</div>
+        <div style="font-weight: var(--font-weight-semibold);" id="elapsed-time" data-created="{{ job_obj.created_at.isoformat() if job_obj.created_at else '' }}">---</div>
+      </div>
+    </div>
+    {% if job_obj.sla_resolution_deadline and not job_obj.actual_resolution_time %}
+    {% set total_secs = (job_obj.sla_resolution_deadline - job_obj.created_at).total_seconds() %}
+    {% set elapsed_secs = ([0, (now_utc() - job_obj.created_at).total_seconds()]|max) %}
+    {% set pct = ([elapsed_secs / total_secs * 100, 100]|min) if total_secs > 0 else 0 %}
+    <div style="margin-top: var(--space-3);">
+      <div style="display: flex; justify-content: space-between; font-size: var(--font-size-xs); color: var(--color-text-muted); margin-bottom: 4px;">
+        <span>Time consumed</span><span id="resolution-pct">{{ '{:.0f}'.format(pct) }}%</span>
+      </div>
+      <div style="height: 6px; background: var(--color-border); border-radius: var(--radius-full); overflow: hidden;">
+        <div id="resolution-progress-bar" style="height: 100%; width: {{ pct }}%; background: var(--color-{% if pct >= 100 %}danger{% elif pct >= 80 %}warning{% else %}success{% endif %}); border-radius: var(--radius-full); transition: width 0.3s;"></div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Warranty / Callback Banners -->
+{% set job_warranty = job_obj.warranties[0] if job_obj.warranties else none %}
+{% if job_warranty and job_warranty.status in ('active', 'expiring_soon') %}
+<div style="display:flex;align-items:center;gap:var(--space-2);background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:var(--radius-md);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-3);">
+    <i class="bi bi-shield-check" style="color:var(--color-success);font-size:1.1rem;"></i>
+    <span style="font-size:var(--font-size-sm);"><strong>Warranty Active:</strong> <a href="{{ url_for('warranty.warranty_detail', warranty_id=job_warranty.id) }}" style="color:var(--color-accent);">{{ job_warranty.warranty_number }}</a> — expires {{ job_warranty.end_date.strftime('%b %d, %Y') }}{% if job_warranty.days_remaining is not none and job_warranty.days_remaining <= 30 %} <span style="font-size:var(--font-size-xs);font-weight:600;padding:1px 6px;border-radius:999px;background:rgba(245,158,11,0.15);color:var(--color-warning);">Expiring Soon</span>{% endif %}</span>
+</div>
+{% elif not job_warranty and job.status == 'completed' and user.role in ('owner','admin','dispatcher') %}
+<div style="display:flex;align-items:center;justify-content:space-between;background:var(--color-surface-raised);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-3);">
+    <span style="font-size:var(--font-size-sm);color:var(--color-text-muted);"><i class="bi bi-shield" style="margin-right:4px;"></i>No warranty created for this job.</span>
+    <a href="{{ url_for('warranty.warranty_new', job_id=job_obj.id) }}" class="btn btn-ghost" style="font-size:var(--font-size-xs);color:var(--color-success);border-color:var(--color-success);"><i class="bi bi-plus"></i> Create Warranty</a>
+</div>
+{% endif %}
+
+{% if job_obj.is_warranty_work %}
+<div style="display:flex;align-items:center;gap:var(--space-2);background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-md);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-3);">
+    <i class="bi bi-shield-fill-check" style="color:var(--color-info);font-size:1.1rem;"></i>
+    <span style="font-size:var(--font-size-sm);"><strong>Warranty Work</strong> — This job is covered under a warranty. Time entries and materials default to non-billable.</span>
+</div>
+{% endif %}
+
+{% if job_obj.is_callback and job_obj.callback_record %}
+<div style="display:flex;align-items:center;gap:var(--space-2);background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:var(--radius-md);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-3);">
+    <i class="bi bi-arrow-return-left" style="color:var(--color-warning);font-size:1.1rem;"></i>
+    <span style="font-size:var(--font-size-sm);"><strong>Callback Job</strong> <span style="font-size:var(--font-size-xs);font-weight:600;padding:1px 6px;border-radius:999px;background:var(--color-surface-raised);color:var(--color-{{ job_obj.callback_record.severity_color }});">{{ job_obj.callback_record.severity_display }}</span> — Return visit for <a href="/jobs/{{ job_obj.callback_record.original_job_id }}" style="color:var(--color-accent);">original job</a></span>
+</div>
+{% endif %}
+
+<!-- Warranty Prompt Modal (on completion) -->
+{% if not job_warranty and job.status == 'completed' and request.args.get('prompt_warranty') %}
+<div id="warrantyPromptOverlay" style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;">
+<div style="background:var(--color-surface);border-radius:var(--radius-lg);padding:var(--space-4);width:420px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+    <h3 style="margin:0 0 var(--space-3);color:var(--color-success);"><i class="bi bi-shield-check" style="margin-right:var(--space-2);"></i>Create Warranty?</h3>
+    <p style="font-size:var(--font-size-sm);margin:0 0 var(--space-2);">Job <strong>{{ job_obj.title }}</strong> has been completed.</p>
+    <p style="font-size:var(--font-size-sm);color:var(--color-text-muted);margin:0 0 var(--space-3);">Would you like to create a warranty for this work?</p>
+    <div style="display:flex;gap:var(--space-2);justify-content:flex-end;">
+        <button onclick="document.getElementById('warrantyPromptOverlay').style.display='none'" class="btn btn-ghost">Skip</button>
+        <a href="{{ url_for('warranty.warranty_new', job_id=job_obj.id) }}" class="btn btn-accent" style="background:var(--color-success);border-color:var(--color-success);"><i class="bi bi-shield-plus"></i> Create Warranty</a>
+    </div>
+</div>
+</div>
+{% endif %}
+
+<!-- Phase Timeline -->
+{% set can_edit_phases = can_edit_phases if can_edit_phases is defined else (user.role in ('owner', 'admin', 'dispatcher') or user.role == 'technician') %}
+{% include 'phases/_phase_timeline.html' %}
+
+<!-- Change Orders Summary (if any exist) -->
+{% if job_obj.change_orders %}
+<div class="card" style="margin-bottom: var(--space-4);">
+  <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <h3 class="card-title"><i class="bi bi-file-diff" style="color: var(--color-warning);"></i> Change Orders ({{ job_obj.change_orders|length }})</h3>
+    {% if user.role != 'viewer' and job_obj.status in ('scheduled', 'in_progress') %}
+    <a href="{{ url_for('change_orders.new_change_order', job_id=job_obj.id) }}" class="btn btn-sm btn-warning"><i class="bi bi-plus"></i> New CO</a>
+    {% endif %}
+  </div>
+  <div class="card-body" style="padding: 0;">
+    <div class="fsp-table-wrapper" style="border: none; border-radius: 0;">
+      <table class="fsp-table" style="font-size: var(--font-size-sm);">
+        <thead><tr><th>CO #</th><th>Title</th><th style="text-align:center;">Status</th><th style="text-align:right;">Cost Impact</th><th>Reason</th><th></th></tr></thead>
+        <tbody>
+          {% for co in job_obj.change_orders %}
+          <tr {% if co.awaiting_approval %}style="background:rgba(245,158,11,0.04);"{% endif %}>
+            <td><a href="{{ url_for('change_orders.co_detail', job_id=job_obj.id, co_id=co.id) }}" style="font-weight:var(--font-weight-semibold);">{{ co.change_order_number }}</a></td>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ co.title }}</td>
+            <td style="text-align:center;"><span class="badge badge-{{ co.status_badge_class }}">{{ co.status_label }}</span></td>
+            <td class="col-number" style="color:{% if co.cost_difference >= 0 %}var(--color-success){% else %}var(--color-danger){% endif %};font-weight:var(--font-weight-semibold);">{{ '+' if co.cost_difference >= 0 }}${{ "{:,.2f}".format(co.cost_difference) }}</td>
+            <td style="font-size:var(--font-size-xs);color:var(--color-text-secondary);">{{ co.reason_label }}</td>
+            <td><a href="{{ url_for('change_orders.co_detail', job_id=job_obj.id, co_id=co.id) }}" class="btn btn-sm btn-ghost">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% elif job_obj.status in ('scheduled', 'in_progress') and user.role in ('owner', 'admin', 'dispatcher', 'technician') %}
+<div style="text-align:center;padding:var(--space-3);margin-bottom:var(--space-4);">
+  <a href="{{ url_for('change_orders.new_change_order', job_id=job_obj.id) }}" class="btn btn-sm btn-ghost" style="color:var(--color-warning);"><i class="bi bi-file-diff"></i> Create Change Order</a>
+</div>
+{% endif %}
+
+<!-- Financial Quick Stats (multi-phase) -->
+{% if job_obj.is_multi_phase and financial_summary is defined %}
+<div class="card" style="margin-bottom: var(--space-4);">
+  <div class="card-header"><h3 class="card-title"><i class="bi bi-currency-dollar" style="color: var(--color-text-secondary);"></i> Financial Summary</h3></div>
+  <div class="card-body">
+    <div class="perf-fin-rows">
+      <div class="perf-fin-row"><span>Original Estimate</span><span class="money">${{ "{:,.2f}".format(job_obj.original_estimated_cost or job_obj.estimated_amount or 0) }}</span></div>
+      {% if job_obj.total_change_order_value %}
+      <div class="perf-fin-row"><span>Change Orders ({{ job_obj.total_change_orders }})</span><span class="money {% if job_obj.total_change_order_value >= 0 %}money-green{% else %}money-red{% endif %}">{{ '+' if job_obj.total_change_order_value >= 0 }}${{ "{:,.2f}".format(job_obj.total_change_order_value) }}</span></div>
+      {% endif %}
+      <div class="perf-fin-row" style="border-top:1px solid var(--color-border);padding-top:var(--space-2);"><span style="font-weight:var(--font-weight-semibold);">Current Total</span><span class="money" style="font-weight:var(--font-weight-bold);color:var(--color-accent);">${{ "{:,.2f}".format(job_obj.current_contract_value) }}</span></div>
+      <div class="perf-fin-row"><span>Invoiced</span><span class="money">${{ "{:,.2f}".format(financial_summary.invoiced_total) }}</span></div>
+      <div class="perf-fin-row"><span>Remaining</span><span class="money {% if financial_summary.remaining < 0 %}money-red{% else %}money-green{% endif %}" style="font-weight:var(--font-weight-bold);">${{ "{:,.2f}".format(financial_summary.remaining) }}</span></div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- PM Notes -->
+{% if job_obj.project_manager_notes or user.role in ('owner', 'admin', 'dispatcher') %}
+<div class="card" style="margin-bottom: var(--space-4);">
+  <div class="card-header"><h3 class="card-title"><i class="bi bi-sticky" style="color: var(--color-text-secondary);"></i> Project Manager Notes</h3></div>
+  <div class="card-body">
+    <form method="POST" action="{{ url_for('update_pm_notes', job_id=job_obj.id) }}">
+      <textarea name="project_manager_notes" class="form-control" rows="3" {% if user.role not in ('owner', 'admin', 'dispatcher') %}readonly{% endif %}>{{ job_obj.project_manager_notes or '' }}</textarea>
+      {% if user.role in ('owner', 'admin', 'dispatcher') %}
+      <button type="submit" class="btn btn-sm btn-ghost" style="margin-top: var(--space-2);">Save Notes</button>
+      {% endif %}
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<!-- Two-column layout -->
+<div class="job-detail-layout">
+    <!-- Main column -->
+    <div class="job-main-col">
+
+        <!-- Job Details Card -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-body">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <div class="jd-label">Job details</div>
+                        <div class="jd-row"><span>Job type</span><span>{{ (job.job_type or 'service_call') | replace('_', ' ') | title }}</span></div>
+                        <div class="jd-row"><span>Started on</span><span>{{ job.scheduled_date[:10] if job.scheduled_date else '—' }}</span></div>
+                        <div class="jd-row"><span>Ends on</span><span>{{ (job.scheduled_end or job.completed_at or '')[:10] if (job.scheduled_end or job.completed_at) else '—' }}</span></div>
+                        <div class="jd-row"><span>Billing frequency</span><span>Upon job completion</span></div>
+                    </div>
+                    <div>
+                        <div class="jd-label">Contact details</div>
+                        {% if property_address %}
+                        <div class="jd-row"><span>Property address</span><span>{{ property_address }}</span></div>
+                        {% endif %}
+                        {% if client.email %}
+                        <div class="jd-row"><span>Email</span><span>{{ client.email }}</span></div>
+                        {% endif %}
+                        {% if client.phone %}
+                        <div class="jd-row"><span>Phone</span><span>{{ client.phone }}</span></div>
+                        {% endif %}
+                        <div class="jd-row"><span>Salesperson</span><span>{{ user.first_name }}</span></div>
+                        <div class="jd-row"><span>Created by</span><span>{{ user.first_name }}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Profitability -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Job Profitability</span>
+            </div>
+            <div class="card-body">
+                <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 1rem;">
+                    <!-- Profit circle -->
+                    <div style="position: relative; width: 80px; height: 80px;">
+                        <svg viewBox="0 0 36 36" style="width: 80px; height: 80px; transform: rotate(-90deg);">
+                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none" stroke="#e2e8f0" stroke-width="3" />
+                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none" stroke="var(--success)" stroke-width="3"
+                                stroke-dasharray="{{ profit_pct }}, 100" />
+                        </svg>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1rem; font-weight: 700;">{{ "{:.0f}".format(profit_pct) }}%</div>
+                    </div>
+                    <!-- Financial breakdown -->
+                    <div style="display: flex; gap: 2rem; flex-wrap: wrap; font-size: 0.85rem;">
+                        <div><div style="color: var(--text-secondary);">Total price</div><div style="font-weight: 600;">${{ "{:,.2f}".format(total_price) }}</div></div>
+                        <div><div style="color: var(--text-secondary);">Line item cost</div><div style="font-weight: 600;">- ${{ "{:,.2f}".format(line_item_cost) }}</div></div>
+                        <div><div style="color: var(--text-secondary);">Labour</div><div style="font-weight: 600;">- ${{ "{:,.2f}".format(labour_cost) }}</div></div>
+                        <div><div style="color: var(--text-secondary);">Expenses</div><div style="font-weight: 600;">- ${{ "{:,.2f}".format(expenses) }}</div></div>
+                        <div><div style="color: var(--text-secondary);">Profit</div><div style="font-weight: 600; color: var(--success);">${{ "{:,.2f}".format(profit) }}</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line Items -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Line Items</span>
+                <button class="btn btn-sm btn-secondary">New Line Item</button>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Product / Service</th>
+                            <th style="text-align: center;">Quantity</th>
+                            <th style="text-align: right;">Cost</th>
+                            <th style="text-align: right;">Price</th>
+                            <th style="text-align: right;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if job.estimated_amount %}
+                        <tr>
+                            <td>
+                                <div style="font-weight: 500;">{{ job.title }}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ (job.job_type or '') | replace('_', ' ') | title }}</div>
+                            </td>
+                            <td style="text-align: center;">1</td>
+                            <td style="text-align: right;">$0.00</td>
+                            <td style="text-align: right;">${{ "{:,.2f}".format(job.estimated_amount or 0) }}</td>
+                            <td style="text-align: right; font-weight: 600;">${{ "{:,.2f}".format(job.estimated_amount or 0) }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 1.5rem;">No line items yet</td></tr>
+                        {% endif %}
+                    </tbody>
+                    <tfoot style="border-top: 2px solid var(--border);">
+                        <tr>
+                            <td colspan="4" style="text-align: right; font-weight: 600; padding: 0.75rem 1rem;">Total price</td>
+                            <td style="text-align: right; font-weight: 700; padding: 0.75rem 1rem;">${{ "{:,.2f}".format(total_price) }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Labour -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Labour</span>
+                <button class="btn btn-sm btn-secondary">New Time Entry</button>
+            </div>
+            <div class="card-body">
+                <p style="color: var(--text-secondary); font-size: 0.875rem; margin: 0;">Time tracked to this job by you or your team will show here</p>
+            </div>
+        </div>
+
+        <!-- Expenses -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Expenses</span>
+                <button class="btn btn-sm btn-secondary">New Expense</button>
+            </div>
+            <div class="card-body">
+                <p style="color: var(--text-secondary); font-size: 0.875rem; margin: 0;">Get an accurate picture of various job costs by recording expenses.</p>
+            </div>
+        </div>
+
+        <!-- Visits -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Visits</span>
+                <button class="btn btn-sm btn-secondary">New Visit</button>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                {% if job.scheduled_date %}
+                <div class="appt-item">
+                    <div class="appt-item-main">
+                        <div class="appt-item-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                            {% if job.status == 'overdue' or (job.status == 'scheduled' and job.scheduled_date and job.scheduled_date[:10] < now().strftime('%Y-%m-%d')) %}
+                            <span style="font-size: 0.7rem; font-weight: 600; color: var(--danger); text-transform: uppercase;">Overdue</span>
+                            {% endif %}
+                            {{ job.scheduled_date[:10] if job.scheduled_date else '' }}
+                            {% if job.scheduled_date and 'T' in (job.scheduled_date or '') %}
+                                {{ job.scheduled_date.split('T')[1][:5] }}
+                            {% endif %}
+                        </div>
+                        <div class="appt-item-time">{{ job.title }}</div>
+                    </div>
+                    <div class="appt-item-right">
+                        <span style="font-size: 0.8rem; color: var(--text-secondary);">Assigned to {{ technician_name }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <div style="padding: 1.25rem; color: var(--text-secondary); font-size: 0.875rem;">No visits scheduled</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Invoices -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Invoices</span>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                {% if job_invoices %}
+                <div style="padding: 0.75rem 1rem; font-size: 0.8rem; color: var(--text-secondary); border-bottom: 1px solid var(--border);">
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" checked disabled> Split into multiple invoices with a payment schedule
+                    </label>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Subject</th>
+                            <th style="text-align: right;">Balance</th>
+                            <th style="text-align: right;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inv in job_invoices %}
+                        <tr>
+                            <td><strong>{{ inv.invoice_number }}</strong></td>
+                            <td style="font-size: 0.8rem;">{{ inv.due_date[:10] if inv.due_date else '—' }}</td>
+                            <td><span class="badge badge-{{ inv.status }}">{{ inv.status }}</span></td>
+                            <td style="font-size: 0.85rem;">For Services Rendered</td>
+                            <td style="text-align: right;" class="money">${{ "{:,.2f}".format(inv.balance_due or 0) }}</td>
+                            <td style="text-align: right;" class="money">${{ "{:,.2f}".format(inv.total or 0) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div style="padding: 1.25rem; color: var(--text-secondary); font-size: 0.875rem;">
+                    No invoices yet
+                    {% if job.status == 'completed' %}
+                    — <a href="#" style="color: var(--primary);">Create invoice</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Internal Notes -->
+        <div class="card">
+            <div class="card-header">Internal notes</div>
+            <div class="card-body">
+                <form onsubmit="addNote(event)" style="margin-bottom: 1rem;">
+                    <textarea id="noteContent" placeholder="Note details..." style="width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.875rem; min-height: 60px; resize: vertical;"></textarea>
+                    <div style="text-align: right; margin-top: 0.5rem;">
+                        <button type="submit" class="btn btn-sm btn-primary">Add Note</button>
+                    </div>
+                </form>
+                {% if job_notes %}
+                <div style="border-top: 1px solid var(--border);">
+                    {% for note in job_notes %}
+                    <div class="client-note">
+                        <div class="note-header">
+                            <div class="note-avatar">{{ user.first_name[0] if user.first_name else 'U' }}</div>
+                            <div class="note-meta">
+                                <span class="note-author">{{ user.first_name }} {{ user.last_name }}</span>
+                                <span class="note-date">{{ note.created_at[:10] if note.created_at else '' }}</span>
+                            </div>
+                        </div>
+                        <div class="note-content">{{ note.content }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="job-sidebar-col">
+        <!-- Client Info -->
+        <div class="card" style="margin-bottom: 1rem;">
+            <div class="card-header"><i class="bi bi-person"></i> Client</div>
+            <div class="card-body">
+                <a href="/clients/{{ client.id }}" style="font-weight: 600; color: var(--primary); text-decoration: none;">{{ client_name }}</a>
+                {% if client.phone %}
+                <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                    <i class="bi bi-telephone" style="font-size: 0.75rem;"></i> {{ client.phone }}
+                </div>
+                {% endif %}
+                {% if client.email %}
+                <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                    <i class="bi bi-envelope" style="font-size: 0.75rem;"></i> {{ client.email }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Property -->
+        {% if property_address %}
+        <div class="card" style="margin-bottom: 1rem;">
+            <div class="card-header"><i class="bi bi-building"></i> Property</div>
+            <div class="card-body" style="font-size: 0.85rem;">
+                {{ property_address }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Division -->
+        <div class="card" style="margin-bottom: 1rem;">
+            <div class="card-header"><i class="bi bi-tag"></i> Division</div>
+            <div class="card-body">
+                <span class="division-badge" style="background: {{ division_color }}">{{ division_name }}</span>
+            </div>
+        </div>
+
+        <!-- Technician -->
+        <div class="card" style="margin-bottom: 1rem;">
+            <div class="card-header"><i class="bi bi-person-badge"></i> Assigned Technician</div>
+            <div class="card-body" style="font-size: 0.85rem;">
+                {{ technician_name }}
+            </div>
+        </div>
+
+        <!-- Job Summary -->
+        <div class="card" style="margin-bottom: 1rem;">
+            <div class="card-header"><i class="bi bi-calculator"></i> Financial Summary</div>
+            <div class="card-body">
+                <div class="perf-fin-rows">
+                    <div class="perf-fin-row"><span>Estimated</span><span class="money">${{ "{:,.2f}".format(total_price) }}</span></div>
+                    <div class="perf-fin-row"><span>Invoiced</span><span class="money">${{ "{:,.2f}".format(total_invoiced) }}</span></div>
+                    <div class="perf-fin-row"><span>Paid</span><span class="money money-green">${{ "{:,.2f}".format(total_paid) }}</span></div>
+                    <div class="perf-fin-row"><span>Balance</span><span class="money {% if total_balance > 0 %}money-orange{% endif %}">${{ "{:,.2f}".format(total_balance) }}</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cost Breakdown -->
+        {% if cost_breakdown is defined and cost_breakdown %}
+        <div class="card" style="margin-bottom:1rem;">
+            <div class="card-header"><i class="bi bi-calculator" style="color:var(--color-accent);"></i> Cost Breakdown</div>
+            <div class="card-body">
+                {% include 'partials/_cost_breakdown.html' %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Timeline -->
+        <div class="card">
+            <div class="card-header"><i class="bi bi-clock-history"></i> Timeline</div>
+            <div class="card-body" style="font-size: 0.8rem;">
+                <div class="jd-timeline">
+                    <div class="jd-timeline-item">
+                        <div class="jd-tl-dot"></div>
+                        <div>
+                            <strong>Created</strong>
+                            <div style="color: var(--text-secondary);">{{ job.created_at[:10] if job.created_at else '—' }}</div>
+                        </div>
+                    </div>
+                    {% if job.scheduled_date %}
+                    <div class="jd-timeline-item">
+                        <div class="jd-tl-dot" style="background: var(--primary);"></div>
+                        <div>
+                            <strong>Scheduled</strong>
+                            <div style="color: var(--text-secondary);">{{ job.scheduled_date[:10] }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if job.completed_at %}
+                    <div class="jd-timeline-item">
+                        <div class="jd-tl-dot" style="background: var(--success);"></div>
+                        <div>
+                            <strong>Completed</strong>
+                            <div style="color: var(--text-secondary);">{{ job.completed_at[:10] }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Compliance Section -->
+{% if compliance_status is defined %}
+<div class="card" style="margin-top:var(--space-4);">
+  <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+    <h3 class="card-title">
+      <i class="bi bi-shield-check" style="color:{% if compliance_status.status == 'blocked' %}var(--color-danger){% elif compliance_status.status == 'warning' %}var(--color-warning){% else %}var(--color-success){% endif %};"></i>
+      Compliance
+    </h3>
+  </div>
+  <div class="card-body">
+    {% include 'partials/_job_compliance_tab.html' %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Customer Feedback Section -->
+{% set survey = job.feedback_surveys | selectattr('status','ne','cancelled') | first if job.feedback_surveys else None %}
+<div class="card" style="margin-top:var(--space-4);">
+  <div style="padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-border);display:flex;justify-content:space-between;align-items:center;">
+    <h3 style="margin:0;font-size:var(--font-size-sm);font-weight:700;"><i class="bi bi-star-fill" style="color:var(--color-warning);"></i> Customer Feedback</h3>
+    {% if job.status == 'completed' and not survey %}
+    <form method="POST" action="{{ url_for('feedback.send_survey_manual') }}">
+      <input type="hidden" name="job_id" value="{{ job.id }}">
+      <button type="submit" class="btn btn-ghost" style="font-size:var(--font-size-xs);"><i class="bi bi-send"></i> Send Survey</button>
+    </form>
+    {% endif %}
+  </div>
+  <div style="padding:var(--space-2) var(--space-3);">
+    {% if not survey %}
+      {% if job.status != 'completed' %}
+      <p style="color:var(--color-text-muted);font-size:var(--font-size-sm);margin:0;">Feedback request available after job completion.</p>
+      {% else %}
+      <p style="color:var(--color-text-muted);font-size:var(--font-size-sm);margin:0;">No survey sent yet.</p>
+      {% endif %}
+    {% elif survey.status == 'completed' %}
+      <div style="display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;">
+        <div>
+          <span style="color:var(--color-warning);font-size:1.3rem;">{% for i in range(survey.overall_rating or 0) %}&#9733;{% endfor %}{% for i in range(5 - (survey.overall_rating or 0)) %}<span style="color:var(--color-text-muted);">&#9734;</span>{% endfor %}</span>
+          <strong style="margin-left:4px;">{{ survey.overall_rating }}/5</strong>
+        </div>
+        {% if survey.nps_score is not none %}
+        <span style="font-size:var(--font-size-xs);padding:2px 8px;border-radius:10px;color:#fff;background:{% if survey.nps_category == 'promoter' %}var(--color-success){% elif survey.nps_category == 'passive' %}var(--color-warning){% else %}var(--color-danger){% endif %};">NPS {{ survey.nps_score }}</span>
+        {% endif %}
+        <a href="{{ url_for('feedback.detail', survey_id=survey.id) }}" class="btn btn-ghost" style="font-size:var(--font-size-xs);margin-left:auto;">View Full Feedback</a>
+      </div>
+      {% if survey.comments %}
+      <div style="margin-top:var(--space-2);padding-left:var(--space-2);border-left:3px solid var(--color-warning);">
+        <p style="font-size:var(--font-size-sm);color:var(--color-text-muted);font-style:italic;margin:0;">"{{ survey.comments[:200] }}{% if survey.comments|length > 200 %}...{% endif %}"</p>
+      </div>
+      {% endif %}
+      {% if survey.overall_rating and survey.overall_rating <= 2 and survey.follow_up_required and not survey.follow_up_completed %}
+      <div style="margin-top:var(--space-2);padding:8px 12px;background:rgba(239,68,68,0.08);border-radius:var(--radius-sm);border-left:4px solid var(--color-danger);font-size:var(--font-size-sm);">
+        <i class="bi bi-exclamation-triangle" style="color:var(--color-danger);"></i> <strong>Negative feedback</strong> — follow-up required.
+        <a href="{{ url_for('feedback.detail', survey_id=survey.id) }}" style="color:var(--color-accent);">Handle &rarr;</a>
+      </div>
+      {% endif %}
+    {% elif survey.status in ('sent','opened') %}
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:var(--font-size-sm);color:var(--color-text-muted);"><i class="bi bi-clock"></i> Survey sent {{ survey.sent_at.strftime('%b %d') if survey.sent_at else '' }} — awaiting response{% if survey.status == 'opened' %} <span style="font-size:var(--font-size-xs);padding:2px 6px;border-radius:var(--radius-sm);background:var(--color-accent);color:#fff;">Opened</span>{% endif %}</span>
+        {% if not survey.reminder_sent %}
+        <form method="POST" action="{{ url_for('feedback.send_reminder', survey_id=survey.id) }}"><button type="submit" class="btn btn-ghost" style="font-size:var(--font-size-xs);">Send Reminder</button></form>
+        {% endif %}
+      </div>
+    {% elif survey.status == 'expired' %}
+      <p style="font-size:var(--font-size-sm);color:var(--color-text-muted);margin:0;">Survey expired without response.</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Materials Section -->
+<div class="card" style="margin-top:var(--space-4);">
+  <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+    <h3 class="card-title"><i class="bi bi-tools" style="color:var(--color-warning);"></i> Materials</h3>
+  </div>
+  <div class="card-body">
+    {% include 'partials/_materials_tab.html' %}
+  </div>
+</div>
+
+<!-- Communications Section -->
+{% if job_communications is defined %}
+<div class="card" style="margin-top:var(--space-4);">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+        <h3 class="card-title"><i class="bi bi-chat-dots" style="color:var(--color-info);"></i> Communications{% if job_comm_count %} <span style="font-size:var(--font-size-xs);font-weight:600;padding:2px 8px;border-radius:999px;background:var(--color-surface-raised);color:var(--color-text-muted);margin-left:var(--space-1);">{{ job_comm_count }}</span>{% endif %}</h3>
+        <a href="{{ url_for('communications.communication_new', client_id=job_obj.client_id, job_id=job_obj.id) }}" class="btn btn-ghost" style="font-size:var(--font-size-sm);"><i class="bi bi-plus-lg"></i> Log Communication</a>
+    </div>
+    <div class="card-body" style="padding:0;">
+        {% if job_communications %}
+        {% for log in job_communications %}
+        <div style="padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--color-border);display:flex;align-items:center;gap:var(--space-3);{% if log.is_escalation %}background:rgba(239,68,68,0.04);{% endif %}">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--color-surface-raised);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="{{ log.type_icon }}" style="color:var(--color-accent);font-size:0.9rem;"></i>
+            </div>
+            <div style="flex:1;min-width:0;">
+                <a href="{{ url_for('communications.communication_detail', log_id=log.id) }}" style="color:var(--color-accent);text-decoration:none;font-weight:500;font-size:var(--font-size-sm);">{{ log.subject }}</a>
+                {% if log.is_escalation %}<span style="font-size:var(--font-size-xs);font-weight:600;padding:1px 6px;border-radius:999px;background:rgba(239,68,68,0.1);color:var(--color-danger);margin-left:4px;">Escalation</span>{% endif %}
+                <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);">
+                    {{ log.type_display }} &middot; {{ log.communication_date.strftime('%b %d, %H:%M') if log.communication_date else '' }} &middot; {{ log.logged_by.full_name if log.logged_by else '' }}
+                    {% if log.follow_up_required and not log.follow_up_completed %}
+                        &middot; <span style="color:{% if log.is_follow_up_overdue %}var(--color-danger){% else %}var(--color-warning){% endif %};">Follow-up {% if log.is_follow_up_overdue %}overdue{% else %}{{ log.follow_up_date.strftime('%b %d') if log.follow_up_date else 'pending' }}{% endif %}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div style="padding:var(--space-4);text-align:center;color:var(--color-text-muted);font-size:var(--font-size-sm);">No communications yet. <a href="{{ url_for('communications.communication_new', client_id=job_obj.client_id, job_id=job_obj.id) }}" style="color:var(--color-accent);">Log one</a></div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Set context for Quick Log FAB -->
+<script>document.body.dataset.clientId = '{{ job_obj.client_id }}'; document.body.dataset.jobId = '{{ job_obj.id }}';</script>
+
+<!-- Activity Log -->
+{% if activity_log is defined and activity_log %}
+<div class="card" style="margin-top: var(--space-4);">
+  <div class="card-header"><h3 class="card-title"><i class="bi bi-clock-history" style="color: var(--color-text-secondary);"></i> Activity Log</h3></div>
+  <div class="card-body">
+    {% for entry in activity_log[:10] %}
+    <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-3);">
+      <div style="width: 2rem; height: 2rem; border-radius: var(--radius-full); background: var(--color-surface-raised); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <i class="bi bi-{{ entry.icon }}" style="font-size: var(--font-size-xs); color: var(--color-{{ entry.type_class }});"></i>
+      </div>
+      <div style="flex: 1;">
+        <div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold);">{{ entry.title }}</div>
+        <div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">{{ entry.description }}</div>
+        <div style="font-size: 0.65rem; color: var(--color-text-muted); margin-top: 2px;">
+          {{ entry.timestamp.strftime('%b %d, %Y %H:%M') if entry.timestamp else '' }}
+          {% if entry.actor %} &middot; {{ entry.actor }}{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/phase_manager.js') }}"></script>
+<script>
+function changeStatus(jobId, newStatus, complianceOverride) {
+    const payload = {status: newStatus};
+    if (complianceOverride) payload.compliance_override = true;
+
+    fetch('/api/jobs/' + jobId + '/status', {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+    })
+    .then(r => r.json().then(data => ({status: r.status, data})))
+    .then(({status, data}) => {
+        if (data.success) {
+            if (data.prompt_warranty) {
+                window.location.href = window.location.pathname + '?prompt_warranty=1';
+            } else {
+                window.location.reload();
+            }
+        } else if (data.compliance_warnings) {
+            showComplianceWarnings(jobId, newStatus, data.compliance_warnings, data.can_override);
+        } else {
+            alert('Error: ' + data.error);
+        }
+    });
+}
+
+function showComplianceWarnings(jobId, newStatus, warnings, canOverride) {
+    const existing = document.getElementById('complianceModal');
+    if (existing) existing.remove();
+
+    const warningList = warnings.map(w => '<li>' + w + '</li>').join('');
+    const overrideBtn = canOverride
+        ? '<button class="btn btn-accent" style="background:var(--color-warning);color:#000;" onclick="changeStatus(' + jobId + ', \'' + newStatus + '\', true);document.getElementById(\'complianceModal\').remove();">' +
+          '<i class="bi bi-shield-exclamation"></i> Override &amp; Proceed</button>'
+        : '<div style="font-size:var(--font-size-sm);color:var(--color-danger);">Contact an admin to override these warnings.</div>';
+
+    const modal = document.createElement('div');
+    modal.id = 'complianceModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    modal.innerHTML = '<div class="card" style="max-width:550px;width:90%;margin:var(--space-4);">' +
+        '<div class="card-header" style="background:rgba(245,158,11,0.1);display:flex;align-items:center;gap:var(--space-2);">' +
+        '<i class="bi bi-shield-exclamation" style="color:var(--color-warning);font-size:1.25rem;"></i>' +
+        '<h4 style="margin:0;">Compliance Warnings</h4></div>' +
+        '<div class="card-body">' +
+        '<p>The following compliance issues were detected:</p>' +
+        '<div style="background:rgba(245,158,11,0.06);border:1px solid var(--color-warning);border-radius:var(--radius-md);padding:var(--space-3);margin-bottom:var(--space-3);">' +
+        '<ul style="margin:0;padding-left:var(--space-4);">' + warningList + '</ul></div>' +
+        '<div style="display:flex;justify-content:flex-end;gap:var(--space-2);">' +
+        '<button class="btn btn-ghost" onclick="document.getElementById(\'complianceModal\').remove()">Cancel</button>' +
+        overrideBtn + '</div></div></div>';
+    document.body.appendChild(modal);
+}
+
+function addNote(e) {
+    e.preventDefault();
+    const content = document.getElementById('noteContent').value.trim();
+    if (!content) return;
+    fetch('/api/jobs/{{ job.id }}/notes', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({content: content})
+    })
+    .then(r => r.json())
+    .then(result => {
+        if (result.success) window.location.reload();
+        else alert('Error: ' + (result.error || 'Unknown error'));
+    });
+}
+
+// SLA Countdown timers
+function formatCountdown(targetIso) {
+  var target = new Date(targetIso);
+  var now    = new Date();
+  var diff   = target - now;
+  if (diff <= 0) return '<span style="color:var(--color-danger);">Overdue</span>';
+  var h = Math.floor(diff / 3600000);
+  var m = Math.floor((diff % 3600000) / 60000);
+  var color = diff < 3600000 ? 'var(--color-danger)' : diff < 7200000 ? 'var(--color-warning)' : 'var(--color-text-muted)';
+  return '<span style="color:' + color + ';">' + h + 'h ' + m + 'm remaining</span>';
+}
+
+function updateCountdowns() {
+  var rc = document.getElementById('response-countdown');
+  var rl = document.getElementById('resolution-countdown');
+  if (rc) rc.innerHTML = formatCountdown(rc.dataset.deadline);
+  if (rl) rl.innerHTML = formatCountdown(rl.dataset.deadline);
+
+  var et = document.getElementById('elapsed-time');
+  if (et && et.dataset.created) {
+    var created = new Date(et.dataset.created);
+    var diff    = new Date() - created;
+    var h = Math.floor(diff / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    et.textContent = h + 'h ' + m + 'm';
+  }
+}
+
+updateCountdowns();
+setInterval(updateCountdowns, 60000);
+</script>
+{% endblock %}

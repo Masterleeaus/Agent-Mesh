@@ -1,0 +1,6 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');const source=fs.readFileSync('src/sidebar/sidebar.js','utf8');
+const elements=new Map([['settings-status',{textContent:''}],['message',{textContent:''}]]);
+const document={addEventListener(){},getElementById(id){return elements.get(id)||null;},querySelectorAll(){return[];},body:{classList:{toggle(){},add(){},remove(){}}}};
+const chrome={runtime:{onMessage:{addListener(){}},sendMessage:async msg=>msg.action==='UPDATE_TITAN_ZERO_SETTINGS'?{ok:false,error:'worker sync unavailable'}:{ok:true}},storage:{local:{set:async()=>{},get:async()=>({})}}};
+const c={console:{log(){},warn(){},error(){}},document,chrome,Map,Promise,URL,navigator:{clipboard:{writeText:async()=>{}}},setTimeout(){return 1},clearTimeout(){}};vm.runInNewContext(source,c);
+(async()=>{const ok=await c.savePreferences();assert.strictEqual(ok,false,'settings save must not report full success when Titan runtime rejects sync');assert(/saved locally/i.test(elements.get('settings-status').textContent),'UI must acknowledge that local persistence succeeded');assert(/runtime sync/i.test(elements.get('settings-status').textContent),'UI must surface the failed runtime sync');console.log('sidebar settings reports runtime sync failures honestly')})().catch(e=>{console.error(e);process.exit(1)});

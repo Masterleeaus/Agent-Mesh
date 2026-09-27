@@ -1,0 +1,12 @@
+const fs=require('fs');const vm=require('vm');const assert=require('assert');
+const source=fs.readFileSync('src/sidebar/sidebar.js','utf8');
+const els={};
+for(const id of ['tab-info','step-text','progress-fill','progress-percent','current-step-text','next-step-text','status-text','version-text','versions']) els[id]={textContent:'',style:{},replaceChildren(){this.textContent='';},appendChild(){}};
+const context={console:{log(){},warn(){},error(){}},document:{addEventListener(){},getElementById(id){return els[id]||null;},createElement(){return {textContent:''};}},chrome:{runtime:{onMessage:{addListener(){}}}},Map,Promise,URL};
+vm.runInNewContext(source + `\nthis.__setPlanForTest = (tabId, state) => { activePlans.set(tabId, state); currentTabId = tabId; };`,context);
+context.__setPlanForTest(7,{plan:[{number:1,text:'one'},{number:2,text:'two'}],stepIndex:1,versions:[],dispatchStatus:'complete',target:{title:'Test',provider:'ChatGPT'}});
+context.currentTabId=7;
+context.updateUI();
+assert.strictEqual(els['progress-percent'].textContent,'100%','completed plans must render 100% progress');
+assert.strictEqual(els['progress-fill'].style.width,'100%');
+console.log('complete plan progress reaches 100% OK');

@@ -1,0 +1,19 @@
+{
+  "schema":"titan-zero-durable-checkpoint-enforcement/v1",
+  "status":"ACTIVE_P0",
+  "purpose":"Prevent verified Builder work from existing only in ephemeral execution workspaces.",
+  "rules":[
+    "Every implementation pass increments passes_since_durable_checkpoint.",
+    "At 4 implementation passes a cumulative recovery checkpoint is DUE.",
+    "At 6 implementation passes a cumulative recovery checkpoint is MANDATORY and no further implementation pass may start until it is durably uploaded and read-back verified.",
+    "Any execution-environment reset, workspace remount, permission-mode change, or missing prior worktree triggers an immediate RECOVERY_BARRIER before new implementation.",
+    "A RECOVERY_BARRIER resolves the latest durable checkpoint, reconstructs a writable worktree, reruns validation, creates a new cumulative checkpoint when recovered work exceeds the durable checkpoint, uploads it, and verifies read-back metadata.",
+    "Temporary /mnt/data worktrees are caches, never authoritative recovery state.",
+    "A checkpoint is durable only after SHA256 calculation, ZIP integrity verification, Library upload receipt, and Library read-back verification.",
+    "Builder must record checkpoint file_id, library_file_id, path, SHA256, pass range, validated base and test result before continuing.",
+    "If a user explicitly requests delta-queue placement, the recovery artifact may be copied there but must be marked RECOVERY_ONLY / NOT_PRODUCTION_MERGE_INPUT unless it is a valid CUMULATIVE_SUBGOAL_FINAL.",
+    "Final convergence still requires a CUMULATIVE_SUBGOAL_FINAL independently applicable from the validated current canonical base."
+  ],
+  "counters":{"checkpoint_due_after":4,"checkpoint_mandatory_by":6},
+  "failure_mode":"FAIL_CLOSED_BEFORE_NEXT_IMPLEMENTATION_PASS"
+}

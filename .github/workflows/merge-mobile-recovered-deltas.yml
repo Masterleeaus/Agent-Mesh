@@ -1,0 +1,55 @@
+name: Merge Titan Mobile Delta ZIPs
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/merge-mobile-recovered-deltas.yml"
+permissions:
+  contents: write
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Merge recovered deltas
+        shell: bash
+        run: |
+          set -e
+          SRC=apps/mobile/recovered-deltas/mobile_deltas
+          test -d "$SRC"
+          find "$SRC" -maxdepth 1 -type f -name '*.zip' | sort -V > /tmp/zips
+          test -s /tmp/zips
+          while IFS= read -r ZIP
+          do
+            echo "Applying $ZIP"
+            TMP=$(mktemp -d)
+            unzip -q -o "$ZIP" -d "$TMP"
+            ROOT="$TMP"
+            if [ -d "$TMP/apps/mobile" ]; then
+              ROOT="$TMP/apps/mobile"
+            else
+              FIRST=$(find "$TMP" -mindepth 1 -maxdepth 1 -type d | head -n 1 || true)
+              COUNT=$(find "$TMP" -mindepth 1 -maxdepth 1 | wc -l)
+              if [ "$COUNT" -eq 1 ] && [ -n "$FIRST" ]; then
+                ROOT="$FIRST"
+                if [ -d "$ROOT/apps/mobile" ]; then
+                  ROOT="$ROOT/apps/mobile"
+                fi
+              fi
+            fi
+            rsync -a --exclude='.git' --exclude='*.zip' "$ROOT/" apps/mobile/
+            rm -rf "$TMP"
+          done < /tmp/zips
+          rm -rf apps/mobile/recovered-deltas
+      - name: Commit
+        shell: bash
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A apps/mobile
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Merge recovered Titan mobile deltas"
+          git push origin HEAD:main

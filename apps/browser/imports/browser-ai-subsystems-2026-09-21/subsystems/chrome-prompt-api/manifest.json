@@ -1,0 +1,25 @@
+{
+   "action": {
+      "default_title": "Toggle Local Browser AI"
+   },
+   "background": {
+      "service_worker": "background.js",
+      "type": "module"
+   },
+   "description": "A simple Browser extension for using the Prompt API.",
+   "icons": {
+      "128": "images/icon-128.png",
+      "16": "images/icon-16.png",
+      "32": "images/icon-32.png",
+      "48": "images/icon-48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4eJDfxDNTurdakWbsY2i6AFHIYZFRgc1pRT60R3IS4B1rJw8E6opXPwowyTNHInpYdBUmuVVThaXqWOom21Y9Jka07x65ZgZ0rabwR6i3bERvqt5zJT+qOzzWzmJ/5PmfkIgUE9ySnibbsVtzl2HlfEd7eG//I1kJ7UJS2+X/5g8OlNSjAbsyu0sUDyMRKFkA1kL07M4eD2axBpGACY2CVToA2VOqWgzSheKbsoEpp7tRz134bzYmu9X1/EynBUvaL7LobP5tlo4VWXICZpk2oBJ4LNc4y2WJwiG5/2noMul04PTsRi2ZObyA8/gly6X58z8D73OVw6kiJtX2X454QIDAQAB",
+   "manifest_version": 3,
+   "name": "Local Browser AI",
+   "permissions": [ "sidePanel", "scripting", "activeTab", "contextMenus" ],
+   "side_panel": {
+      "default_path": "side-panel.html"
+   },
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "2.2.0"
+}

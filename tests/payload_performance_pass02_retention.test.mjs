@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+const root=path.resolve(import.meta.dirname,'..');
+const read=(p)=>fs.readFileSync(path.join(root,p),'utf8');
+const inv=JSON.parse(read('titan-runtime/performance/retained-optional-inventory-merge42.json'));
+test('phase1 retired files are absent',()=>{for(const p of inv.removed_now) assert.equal(fs.existsSync(path.join(root,p)),false,p)});
+test('protected compat files remain',()=>{for(const p of inv.must_preserve_now) assert.equal(fs.existsSync(path.join(root,p)),true,p)});
+test('original Runtime Adapters gate is preserved as historical inventory evidence',()=>assert.equal(inv.rules.runtime_adapters_required_before_phase2,true));
+test('company boundary remains company_id only',()=>assert.equal(inv.rules.company_id_only,true));
+test('manifest has no retired phase1 direct resources',()=>{const m=read('manifest.json');for(const p of inv.removed_now) assert.equal(m.includes(p),false,p)});
+test('background boundary does not import retired monica background',()=>assert.equal(read('compatibility/monica/background-runtime-boundary.mjs').includes('monica-background.js'),false));

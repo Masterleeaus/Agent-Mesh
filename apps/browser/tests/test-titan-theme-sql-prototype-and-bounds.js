@@ -1,0 +1,12 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const c={};c.globalThis=c;vm.createContext(c);
+for(const f of ['src/titan-zero/titan-zero-theme-analyzer.js','src/titan-zero/titan-zero-sql-analyzer.js']) vm.runInContext(fs.readFileSync(f,'utf8'),c,{filename:f});
+const tr=c.CodeeTitanZeroThemeAnalyzer.analyze(['resources/views/__proto__/a.blade.php','app/Extensions/X/resources/views/constructor/b.blade.php']);
+assert.strictEqual(tr.themeCount,2,'prototype-like theme names must be counted safely');
+const cols=Array.from({length:7000},(_,i)=>`\`c${i}\` varchar(255),`).join('\n');
+const sql=`CREATE TABLE \`__proto___x\` (${cols}\`last\` int) ENGINE=InnoDB;`;
+const sr=c.CodeeTitanZeroSqlAnalyzer.analyze(sql,{ignoredTablePrefixes:[]});
+assert.strictEqual(Object.getPrototypeOf(sr.prefixCounts),null,'SQL prefix counts must be prototype-safe');
+assert(sr.tables[0].columns.length<=5000,'legacy SQL analyzer columns must be bounded');
+assert.strictEqual(sr.truncated,true,'legacy SQL analyzer must report truncation');
+console.log('Titan theme and legacy SQL analyzers are prototype-safe and bounded');

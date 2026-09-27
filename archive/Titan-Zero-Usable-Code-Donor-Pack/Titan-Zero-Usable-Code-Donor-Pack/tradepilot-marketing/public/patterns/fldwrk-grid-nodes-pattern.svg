@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <defs>
+    <pattern id="grid-nodes" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <!-- Grid lines -->
+      <line x1="0" y1="0" x2="40" y2="0" stroke="#E8352A" stroke-width="0.5" opacity="0.4"/>
+      <line x1="0" y1="0" x2="0" y2="40" stroke="#E8352A" stroke-width="0.5" opacity="0.4"/>
+      <!-- Node dots at intersections -->
+      <circle cx="0" cy="0" r="1.5" fill="#E8352A" opacity="0.7"/>
+      <circle cx="40" cy="0" r="1.5" fill="#E8352A" opacity="0.7"/>
+      <circle cx="0" cy="40" r="1.5" fill="#E8352A" opacity="0.7"/>
+      <circle cx="40" cy="40" r="1.5" fill="#E8352A" opacity="0.7"/>
+      <!-- Center node -->
+      <circle cx="20" cy="20" r="1" fill="#E8352A" opacity="0.4"/>
+    </pattern>
+  </defs>
+  <rect width="120" height="120" fill="url(#grid-nodes)"/>
+</svg>
