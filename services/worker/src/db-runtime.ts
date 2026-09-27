@@ -1,6 +1,8 @@
 import { Client as PgClient } from "pg";
 import mysql, { type PoolConnection } from "mysql2/promise";
 import Database from "better-sqlite3";
+import { mkdirSync } from "node:fs";
+import { dirname } from "node:path";
 import type { DatabaseClient, DatabaseDialect, DatabaseQueryResult } from "./db-client.js";
 
 export interface WorkerDatabaseClient extends DatabaseClient {
@@ -19,10 +21,18 @@ export function normalizeWorkerDialect(value: string | undefined): DatabaseDiale
 function rewritePositionalSql(text: string, params: unknown[] = []): { sql: string; params: unknown[] } {
   const expanded: unknown[] = [];
   const sql = text.replace(/\$(\d+)/g, (_match, rawIndex: string) => {
-    expanded.push(params[Number(rawIndex) - 1]);
+    const index = Number(rawIndex) - 1;
+    if (index < 0 || index >= params.length) throw new Error(`sqlite/mysql parameter $${rawIndex} is not bound`);
+    expanded.push(params[index]);
     return "?";
   });
   return { sql, params: expanded };
+}
+
+function ensureSqliteParent(path: string): void {
+  if (path === ":memory:" || path.startsWith("file:")) return;
+  const parent = dirname(path);
+  if (parent && parent !== ".") mkdirSync(parent, { recursive: true });
 }
 
 class SqliteWorkerClient implements WorkerDatabaseClient {
@@ -68,9 +78,12 @@ export async function createWorkerDatabaseClient(databaseUrl?: string): Promise<
   const dialect = normalizeWorkerDialect(process.env.DATABASE_DIALECT);
   if (dialect === "sqlite") {
     const path = process.env.SQLITE_PATH ?? (databaseUrl?.startsWith("file:") ? databaseUrl.slice(5) : databaseUrl) ?? "./data/titan-zero.sqlite";
+    ensureSqliteParent(path);
     const db = new Database(path);
     db.pragma("journal_mode = WAL");
     db.pragma("foreign_keys = ON");
+    db.pragma("busy_timeout = 5000");
+    db.pragma("synchronous = NORMAL");
     return new SqliteWorkerClient(db);
   }
   if (!databaseUrl) throw new Error("DATABASE_URL is required for non-SQLite worker storage");
