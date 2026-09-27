@@ -6,7 +6,7 @@ const main='a'.repeat(40),head='b'.repeat(40);
 let x=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:main,baseSha:main,headSha:main,branch:'agent/SG722',claimBranchExists:false});
 assert.strictEqual(x.state,'AVAILABLE');assert.strictEqual(x.git.claimExists,false);
 x=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:main,baseSha:main,headSha:main,branch:'agent/SG722',claimBranchExists:true});
-assert.strictEqual(x.state,'CLAIMED');assert.strictEqual(x.authority.claim,'git-branch-ref');
+assert.strictEqual(x.state,'CLAIMED');assert.strictEqual(x.authority.claim,'git-branch-ref');assert.strictEqual(x.authority.aiMaySet,false);
 x=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:main,baseSha:main,headSha:main,branch:'agent/OTHER',claimBranchExists:true});
 assert.strictEqual(x.state,'AVAILABLE');assert.strictEqual(x.git.claimExists,false);
 x=G.derive({issue:{number:722,subgoal_id:'SG722',state:'OPEN'},mainSha:main,baseSha:main,headSha:head,branch:'agent/SG722',claimBranchExists:true});
