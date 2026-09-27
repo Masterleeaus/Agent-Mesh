@@ -3,18 +3,18 @@ WORKDIR /app
 RUN corepack enable
 
 FROM base AS deps
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/web/package.json apps/web/package.json
-COPY packages/domain/package.json packages/domain/package.json
-COPY packages/log/package.json packages/log/package.json
-COPY packages/money/package.json packages/money/package.json
-COPY packages/email-templates/package.json packages/email-templates/package.json
-COPY services/worker/package.json services/worker/package.json
-RUN pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm install --no-frozen-lockfile
 
 FROM deps AS build
-COPY . .
-RUN pnpm --filter @ai-fsm/web build
+# Legacy source imports still use @ai-fsm/* while workspace package names have
+# moved to @titan-zero/*. Keep a compatibility link until those imports migrate.
+RUN mkdir -p node_modules/@ai-fsm apps/web/node_modules/@ai-fsm \
+ && for pkg in domain log money email-templates; do \
+      ln -s /app/packages/$pkg node_modules/@ai-fsm/$pkg; \
+      ln -s /app/packages/$pkg apps/web/node_modules/@ai-fsm/$pkg; \
+    done \
+ && pnpm --filter @titan-zero/web build
 
 FROM node:20-alpine AS run
 WORKDIR /app

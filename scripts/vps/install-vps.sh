@@ -217,7 +217,7 @@ else
 fi
 [[ -n "$REPO_SRC" ]] || die "Could not locate Titan Zero repository root in ZIP"
 
-for required in package.json pnpm-workspace.yaml apps/web/Dockerfile services/worker/Dockerfile scripts/db-migrate.sh; do
+for required in package.json pnpm-workspace.yaml apps/web/Dockerfile services/worker/Dockerfile scripts/db-migrate.sh infra/compose.vps.yml; do
   [[ -e "$REPO_SRC/$required" ]] || die "Required application file missing: $required"
 done
 
@@ -307,141 +307,11 @@ set_env REDIS_URL "redis://redis:6379/0" "$ENV_FILE"
 [[ -n "$(get_env REDIS_CONTAINER_MEMORY_LIMIT "$ENV_FILE")" ]] || set_env REDIS_CONTAINER_MEMORY_LIMIT "384M" "$ENV_FILE"
 [[ -n "$(get_env REDIS_CONTAINER_MEMORY_RESERVATION "$ENV_FILE")" ]] || set_env REDIS_CONTAINER_MEMORY_RESERVATION "128M" "$ENV_FILE"
 
-cat > "$RELEASE_DIR/infra/compose.vps.yml" <<'YAML'
-name: titan-zero
-services:
-  web:
-    build:
-      context: ..
-      dockerfile: apps/web/Dockerfile
-    image: titan-zero-web:${APP_TAG:-latest}
-    restart: unless-stopped
-    env_file:
-      - ${TZ_ENV_FILE}
-    environment:
-      NODE_ENV: production
-      APP_PORT: "3000"
-      SECURE_COOKIES: "${SECURE_COOKIES:-true}"
-      REDIS_URL: "${REDIS_URL:?required}"
-    ports:
-      - "127.0.0.1:${APP_PORT:-3000}:3000"
-    depends_on:
-      redis:
-    image: redis:7-alpine
-    restart: unless-stopped
-    stop_grace_period: 30s
-    command:
-      - redis-server
-      - --appendonly
-      - "yes"
-      - --appendfsync
-      - everysec
-      - --aof-use-rdb-preamble
-      - "yes"
-      - --save
-      - "60"
-      - "1000"
-      - --maxmemory
-      - ${REDIS_MAXMEMORY:-256mb}
-      - --maxmemory-policy
-      - noeviction
-      - --tcp-keepalive
-      - "60"
-    volumes:
-      - titan_zero_redis:/data
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep -q PONG && redis-cli INFO persistence | grep -q 'loading:0' && redis-cli INFO persistence | grep -q 'aof_enabled:1'"]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 10s
-    deploy:
-      resources:
-        limits:
-          memory: ${REDIS_CONTAINER_MEMORY_LIMIT:-384M}
-        reservations:
-          memory: ${REDIS_CONTAINER_MEMORY_RESERVATION:-128M}
-    networks: [app]
-    logging:
-      driver: json-file
-      options: {max-size: "50m", max-file: "3"}
-
-  postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - ${TZ_DATA_ROOT}/uploads:/app/uploads
-    networks: [app]
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health >/dev/null 2>&1 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 6
-      start_period: 30s
-    logging:
-      driver: json-file
-      options: {max-size: "50m", max-file: "3"}
-
-  worker:
-    build:
-      context: ..
-      dockerfile: services/worker/Dockerfile
-    image: titan-zero-worker:${APP_TAG:-latest}
-    restart: unless-stopped
-    env_file:
-      - ${TZ_ENV_FILE}
-    environment:
-      NODE_ENV: production
-      REDIS_URL: "${REDIS_URL:?required}"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - ${TZ_DATA_ROOT}/uploads:/app/uploads
-    networks: [app]
-    logging:
-      driver: json-file
-      options: {max-size: "50m", max-file: "3"}
-
-  postgres:
-    image: postgres:16
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:?required}
-      POSTGRES_USER: ${POSTGRES_USER:?required}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?required}
-    volumes:
-      - ${TZ_DATA_ROOT}/postgres:/var/lib/postgresql/data
-    # Loopback-only exposure is intentional: the migration script can use the
-    # host psql client without making PostgreSQL Internet-accessible.
-    ports:
-      - "127.0.0.1:5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 10s
-    networks: [app]
-    logging:
-      driver: json-file
-      options: {max-size: "50m", max-file: "3"}
-
-volumes:
-  titan_zero_redis:
-
-networks:
-  app:
-    driver: bridge
-YAML
+# The repository owns the Compose definition. Validate that exact file rather
+# than generating a second, potentially divergent deployment topology.
 
 chmod 600 "$ENV_FILE"
-ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
-
-COMPOSE_FILE="$CURRENT_LINK/infra/compose.vps.yml"
+COMPOSE_FILE="$RELEASE_DIR/infra/compose.vps.yml"
 export TZ_ENV_FILE="$ENV_FILE"
 export TZ_DATA_ROOT="$DATA_DIR"
 export APP_PORT
@@ -472,6 +342,11 @@ docker image inspect redis:7-alpine >/dev/null 2>&1 || log "Redis image not cach
 
 log "Validating Docker Compose configuration"
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" config >/dev/null
+
+# Build before touching the live database. A broken source release must not
+# leave a migrated database behind before we know its images can be built.
+log "Building Titan Zero containers"
+docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" build web worker
 
 log "Starting PostgreSQL and Redis"
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d postgres redis
@@ -510,12 +385,9 @@ grep -q 'aof_enabled:1' <<<"$redis_persistence" || { redis_diagnostics; die "Red
 log "Applying database migrations"
 HOST_DATABASE_URL="postgresql://${DB_USER}:${DB_PASS}@127.0.0.1:5432/${DB_NAME}"
 (
-  cd "$CURRENT_LINK"
-  DATABASE_URL="$HOST_DATABASE_URL" bash scripts/db-migrate.sh
+  cd "$RELEASE_DIR"
+  MIGRATION_DATABASE_URL="$HOST_DATABASE_URL" bash scripts/db-migrate.sh
 )
-
-log "Building Titan Zero containers"
-docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" build web worker
 
 log "Starting Titan Zero"
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d
@@ -814,6 +686,7 @@ EOF_LOGS
 chmod 755 /usr/local/bin/titan-zero-logs
 
 FINAL_URL="${PUBLIC_URL}"
+ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
 log "Installation complete"
 printf '\nTitan Zero URL:       %s\n' "$FINAL_URL"
 printf 'Install root:         %s\n' "$INSTALL_ROOT"
