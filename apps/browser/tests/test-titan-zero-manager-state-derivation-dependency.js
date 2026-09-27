@@ -28,9 +28,9 @@ const rebuilt=R.reconstruct(snap,{issue:{number:734,subgoal_id:'TZ-ROADMAP-55-SG
 assert.strictEqual(rebuilt.restart.reconstructed,true);assert.strictEqual(rebuilt.restart.githubReconciled,true);assert.strictEqual(rebuilt.authority.durableTruth,'github');
 
 const live=s.TitanZeroManagerLiveState.reconcile({});assert.strictEqual(live.source,'unavailable');assert.strictEqual(live.failClosed,true);
-console.log('PASS test-titan-zero-manager-state-derivation-dependency');
 
-const unavailable=Q.project({});assert.strictEqual(unavailable.source,'unavailable');assert.strictEqual(unavailable.nextGlobal,null);assert.strictEqual(unavailable.authority.maySelectClaimCandidate,false);const legacy=Q.project({allowLegacyProjection:true,packets:[],claims:[],dependencyState:{byPacket:{}}});assert.strictEqual(legacy.source,'legacy-projection');
+const queueUnavailable=Q.project({});assert.strictEqual(queueUnavailable.source,'unavailable');assert.strictEqual(queueUnavailable.nextGlobal,null);assert.strictEqual(queueUnavailable.authority.maySelectClaimCandidate,false);const legacy=Q.project({allowLegacyProjection:true,packets:[],claims:[],dependencyState:{byPacket:{}}});assert.strictEqual(legacy.source,'legacy-projection');
 assert.strictEqual(S.derive({packets:[{packet_id:'LEGACY',status:'AVAILABLE'}],claims:[],agents:[],deltas:[],handoffs:[],verification:[]}).operational,false);assert.strictEqual(S.derive({packets:[{packet_id:'LEGACY',status:'AVAILABLE'}],claims:[],agents:[],deltas:[],handoffs:[],verification:[]}).authority.operationalUse,'diagnostic-only');
 assert.strictEqual(S.derive({githubProjection:{state:'AVAILABLE',git:{mainSha:'a'.repeat(40),headSha:'b'.repeat(40),branch:'agent/LEGACY'}}}).operational,undefined);
 const q=S.derive({packets:[{packet_id:'LEGACY',status:'AVAILABLE'}],claims:[],agents:[],deltas:[],handoffs:[],verification:[]}).queue;assert.strictEqual(q.operational,false);assert.deepStrictEqual(q.eligible,[]);assert.strictEqual(q.nextGlobal,null);assert.strictEqual(q.authority.mayUnlockDependency,false);
+console.log('PASS test-titan-zero-manager-state-derivation-dependency');
