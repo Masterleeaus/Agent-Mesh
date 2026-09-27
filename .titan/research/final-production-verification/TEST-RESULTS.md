@@ -55,10 +55,34 @@ This run combined the exact relevant Agent 1 PR #801 runtime/workforce recovery 
 
 This pass certifies PR #799's contract semantics when composed with the current converged SQLite/runtime/workforce path. It does **not** certify durable atomic idempotency across process crashes, live MCP/Browser/native production providers, or restart in the middle of an already-effected provider mutation; PR #799 explicitly leaves those as remaining gaps.
 
+## Pass 6 — Zero governance and production-front-door isolation
+
+Focused workflow: `Agent 4 Final Production Verification`, run `36302602263`.
+
+### Passed
+
+The independent `zero-governance` job completed successfully. Three focused source-level tests prove the already-merged Zero contracts:
+
+1. Runtime events preserve canonical `company_id`, conversation/correlation identity and approval presentation while rejecting any attempt to inject authority through a runtime event.
+2. A Zero authority request that still needs approval returns `approval_required` and performs **zero** gateway calls.
+3. Zero can dispatch only after the Decision boundary allows the request, and execution occurs through the governed capability gateway while Zero itself continues to report `authority_granted=false` and `execution_authority_granted=false`.
+
+### Production seam isolated
+
+Agent 3 PR #798 and its own gap ledger confirm the remaining front-door failure is **not** the Zero authority/runtime-event contract. The missing production seam is:
+
+`authenticated Zero message → Interaction Engine → company/actor-scoped conversation + WorkItem → persistent Agent Runtime → durable event projection back to Zero`
+
+with subscribe-before-dispatch and persisted/replayable events so reconnect cannot lose early transitions.
+
+### Separate known verifier state
+
+The `cleaning-convergence` job on this branch currently fails because the Pass 5 harness asserts Agent 2 evidence fields (`run_id`, `decision_id`, verifier output) while Agent 2 PR #799 has deliberately been removed from Agent 4's branch after verification. That is a branch-composition mismatch, not a regression in the Pass 5 proof. The Pass 5 green run remains the evidence for #799 composition.
+
 ### Not yet production-certified
 
 - Agent 1 PR #801 remains a separate draft until merged.
 - Agent 2 PR #799 remains a separate draft until merged.
+- Agent 3 PR #798 still does not connect authenticated Zero chat to the persistent runtime.
 - Exactly one canonical workforce implementation still needs to be selected/converged.
-- Zero chat -> persistent runtime production composition is still being completed separately.
 - Live native/MCP/Browser Node provider bindings, durable cross-process idempotency, restart during consequential execution, frozen-lockfile repair, and full SQLite-only application boot remain release gates.
