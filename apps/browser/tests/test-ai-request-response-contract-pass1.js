@@ -14,7 +14,8 @@ const req = context.CodeeAIRequestContract.create({
   temperature: 0.2, reasoningLevel: 'medium', tools: [{name:'repository.search'}], requiredSchema: { type:'object', required:['findings'] }, timeoutMs: 45000,
   retryPolicy: { maxAttempts: 2 }
 });
-assert.strictEqual(req.schema, 'codee.ai.request.v1');
+assert.strictEqual(req.schema, 'codee.ai.request.v2');
+assert.strictEqual(context.CodeeAIRequestContract.SCHEMA, 'codee.ai.request.v2');
 assert.strictEqual(req.requestId, 'req-1');
 assert.strictEqual(req.privacy.level, 'CONFIDENTIAL');
 assert.strictEqual(req.costPolicy.mode, 'FREE_ONLY');
@@ -33,4 +34,4 @@ assert.strictEqual(res.authority.mayAdvancePlan, false);
 assert.strictEqual(res.authority.mayExecuteMutation, false);
 assert.strictEqual(res.cost.usd, 0);
 assert(Object.isFrozen(res));
-console.log('AI request/response contracts pass');
+console.log('PASS AI request/response contracts');
