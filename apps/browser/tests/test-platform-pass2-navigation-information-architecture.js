@@ -12,37 +12,30 @@ registry.clear();
 registry.installDefaults();
 const entries = registry.list();
 const groups = entries.filter(row => row.kind === 'group').sort((a,b) => a.order-b.order);
-assert.deepStrictEqual(Array.from(groups, row => row.label), ['Workspace','Intelligence','Infrastructure','Knowledge','System']);
+assert.deepStrictEqual(Array.from(groups, row => row.label), ['Titan Zero','Workforce','Systems','Browser Node']);
 
 const expected = {
-  'group.workspace': [
-    ['workspace.dashboard','Dashboard','dashboard','AVAILABLE'],
-    ['workspace.runner','Runner','runner','AVAILABLE'],
-    ['workspace.plans','Active Plans','plans','AVAILABLE'],
-    ['workspace.history','History','history','AVAILABLE'],
-    ['workspace.artifacts','Artifacts','artifacts','AVAILABLE']
+  'group.zero': [
+    ['zero.overview','Zero','dashboard','AVAILABLE'],
+    ['zero.work','Work','runner','AVAILABLE'],
+    ['zero.active-work','Active Work','plans','AVAILABLE'],
+    ['zero.outcomes','Outcomes','history','AVAILABLE'],
+    ['zero.evidence','Evidence','artifacts','AVAILABLE']
   ],
-  'group.intelligence': [
-    ['intelligence.brain','Intelligence','intelligence','AVAILABLE'],
-    ['intelligence.workforce','AI Workforce','workforce','AVAILABLE'],
-    ['intelligence.repository','Repository','repository','AVAILABLE'],
-    ['intelligence.titan','Titan Zero','titan-zero','AVAILABLE'],
-    ['intelligence.browser','Browser','browser','AVAILABLE']
+  'group.workforce': [
+    ['workforce.control','Workforce','workforce','AVAILABLE'],
+    ['workforce.browser','Browser','browser','AVAILABLE'],
+    ['workforce.intelligence','Intelligence','intelligence','AVAILABLE']
   ],
-  'group.infrastructure': [
-    ['infrastructure.connections','Connections','connections','AVAILABLE'],
-    ['infrastructure.mcp','MCP','mcp','AVAILABLE'],
-    ['infrastructure.repository-host','Repository Host','repository-host','AVAILABLE']
+  'group.systems': [
+    ['systems.connections','Connections','connections','AVAILABLE'],
+    ['systems.mcp','Tools & MCP','mcp','AVAILABLE'],
+    ['systems.knowledge','Knowledge','knowledge','AVAILABLE']
   ],
-  'group.knowledge': [
-    ['knowledge.prompts','Prompts','prompts','AVAILABLE'],
-    ['knowledge.skills','Skills','skills','AVAILABLE'],
-    ['knowledge.knowledge','Knowledge','knowledge','AVAILABLE']
-  ],
-  'group.system': [
-    ['system.diagnostics','Diagnostics','diagnostics','AVAILABLE'],
-    ['system.settings','Settings','settings','AVAILABLE'],
-    ['system.about','About','about','AVAILABLE']
+  'group.node': [
+    ['node.diagnostics','Diagnostics','diagnostics','AVAILABLE'],
+    ['node.settings','Settings','settings','AVAILABLE'],
+    ['node.about','About','about','AVAILABLE']
   ]
 };
 for (const [parent, rows] of Object.entries(expected)) {
@@ -50,22 +43,20 @@ for (const [parent, rows] of Object.entries(expected)) {
   assert.strictEqual(actual.length, rows.length, `${parent} child count`);
   assert.deepStrictEqual(Array.from(actual, row => [row.id,row.label,row.page,row.readiness]), rows, `${parent} ordering/content`);
 }
-assert.strictEqual(entries.filter(row => row.kind === 'page').length, 19, 'full product navigation must have 19 pages');
+assert.strictEqual(entries.filter(row => row.kind === 'page').length, 14, 'Browser Node navigation must expose only operational pages');
 
-const availableViews = ['dashboard','runner','plans','history','artifacts','intelligence','workforce','repository','titan-zero','browser','connections','mcp','repository-host','prompts','skills','knowledge','settings','diagnostics','about'];
+const availableViews = ['dashboard','runner','plans','history','artifacts','intelligence','workforce','browser','connections','mcp','knowledge','settings','diagnostics','about'];
 const validation = registry.validate({ availableViews });
 assert.strictEqual(validation.ok, true, JSON.stringify(validation.errors));
 const resolved = context.CodeeNavigationReadiness.resolveAll(entries, {
   availableViews,
-  capabilities:['browser.snapshot'],
-  dependencies:{'browser.execution':true}
+  capabilities:['browser.snapshot','ai.gateway.status'],
+  dependencies:{}
 });
-assert.strictEqual(resolved.find(row => row.id === 'workspace.runner').resolved.interactive, true);
-assert.strictEqual(resolved.find(row => row.id === 'workspace.dashboard').resolved.state, 'AVAILABLE');
-assert.strictEqual(resolved.find(row => row.id === 'workspace.dashboard').resolved.interactive, true);
-assert.strictEqual(resolved.find(row => row.id === 'intelligence.browser').resolved.state, 'AVAILABLE');
-assert.strictEqual(resolved.find(row => row.id === 'infrastructure.connections').resolved.state, 'AVAILABLE');
-assert.strictEqual(resolved.find(row => row.id === 'infrastructure.connections').resolved.interactive, true);
-assert.strictEqual(resolved.find(row => row.id === 'infrastructure.mcp').resolved.state, 'AVAILABLE');
-assert.strictEqual(resolved.find(row => row.id === 'infrastructure.mcp').resolved.interactive, true);
-console.log('Platform navigation remains canonical with all implemented workspace, intelligence and knowledge pages activated');
+assert.strictEqual(resolved.find(row => row.id === 'zero.work').resolved.interactive, true);
+assert.strictEqual(resolved.find(row => row.id === 'zero.overview').resolved.state, 'AVAILABLE');
+assert.strictEqual(resolved.find(row => row.id === 'workforce.browser').resolved.state, 'AVAILABLE');
+assert.strictEqual(resolved.find(row => row.id === 'systems.connections').resolved.interactive, true);
+assert.strictEqual(resolved.find(row => row.id === 'systems.mcp').resolved.interactive, true);
+assert(!entries.some(row => ['repository','titan-zero','repository-host','prompts','skills'].includes(row.page)), 'development-only pages must not be exposed in Browser Node navigation');
+console.log('Titan Zero Browser Node navigation is operational, company-oriented and free of development-only menu surfaces');

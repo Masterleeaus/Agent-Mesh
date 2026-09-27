@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "description": "Governed Chrome MV3 browser node for Titan Zero field-service operations and workforce execution.",
   "scripts": {
-    "test": "node tools/verify-codee.mjs",
+    "test": "node tools/verify-browser-node.mjs",
+    "test:legacy": "node tools/verify-codee.mjs",
     "source-manifest": "node tools/generate-source-manifest.mjs",
     "interaction:typecheck": "tsc -p tsconfig.interaction.json --noEmit",
     "interaction:build": "tsc -p tsconfig.interaction.json",

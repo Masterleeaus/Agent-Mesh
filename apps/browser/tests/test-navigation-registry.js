@@ -7,20 +7,20 @@ context.globalThis = context;
 vm.runInContext(fs.readFileSync('src/lib/navigation-registry.js', 'utf8'), context, { filename: 'navigation-registry.js' });
 
 const registry = context.CodeeNavigationRegistry;
-assert(registry, 'CodeeNavigationRegistry must exist');
+assert(registry, 'CodeeNavigationRegistry compatibility alias must exist');
+assert.strictEqual(context.TitanZeroBrowserNavigationRegistry, registry, 'Titan Zero navigation alias must be canonical');
 registry.clear();
 registry.installDefaults();
 
 const entries = registry.list();
-assert(entries.length >= 11, 'default navigation should include groups and current/future pages');
-const runner = registry.get('workspace.runner');
-assert(runner, 'runner navigation entry must exist');
-assert.strictEqual(runner.page, 'runner');
-assert.strictEqual(runner.parent, 'group.workspace');
-assert(Object.isFrozen(runner), 'registry records must be deeply immutable');
-assert(Object.isFrozen(runner.capabilityRequirements), 'nested arrays must be immutable');
-
-assert.throws(() => registry.register({ ...runner }), /duplicate navigation id/i, 'duplicate ids must fail closed');
+assert(entries.length >= 10, 'default navigation should include Titan Zero groups and operational pages');
+const work = registry.get('zero.work');
+assert(work, 'Titan Zero Work navigation entry must exist');
+assert.strictEqual(work.page, 'runner');
+assert.strictEqual(work.parent, 'group.zero');
+assert(Object.isFrozen(work), 'registry records must be deeply immutable');
+assert(Object.isFrozen(work.capabilityRequirements), 'nested arrays must be immutable');
+assert.throws(() => registry.register({ ...work }), /duplicate navigation id/i, 'duplicate ids must fail closed');
 
 registry.clear();
 registry.registerMany([
@@ -37,6 +37,10 @@ assert(invalid.errors.some(row => row.code === 'VIEW_UNAVAILABLE' && row.id === 
 
 registry.clear();
 registry.installDefaults();
-const valid = registry.validate({ availableViews: ['dashboard','runner','plans','history','artifacts','intelligence','workforce','repository','titan-zero','browser','connections','mcp','repository-host','prompts','skills','knowledge','settings','diagnostics','about'] });
+const operationalViews = ['dashboard','runner','plans','history','artifacts','intelligence','workforce','browser','connections','mcp','knowledge','settings','diagnostics','about'];
+const valid = registry.validate({ availableViews: operationalViews });
 assert.strictEqual(valid.ok, true, JSON.stringify(valid.errors));
-console.log(`Navigation registry validated ${registry.list().length} canonical entries`);
+assert.strictEqual(registry.get('intelligence.repository'), null, 'development repository page must not be in Browser Node navigation');
+assert.strictEqual(registry.get('knowledge.prompts'), null, 'development prompt library must not be in Browser Node navigation');
+assert.strictEqual(registry.get('knowledge.skills'), null, 'development skills library must not be in Browser Node navigation');
+console.log(`Titan Zero Browser Node navigation validated ${registry.list().length} canonical entries`);

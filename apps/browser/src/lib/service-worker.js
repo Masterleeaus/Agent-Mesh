@@ -1,12 +1,8 @@
-// PRIVATE TITAN CODE DEVELOPMENT-ONLY
-// NOT FOR TITAN ZERO PRODUCTION USE
-// NOT A TITAN ZERO RUNTIME DEPENDENCY
-//
-// Canonical Titan Code remains this worker. The mature imported browser-agent
-// runtime is loaded as an ESM sidecar so its ReAct/MV3/session implementation is
-// preserved rather than rewritten. It owns Auto Browser message types; Titan
-// Code retains Plan Runner, AI/provider, repository, workforce and Titan Zero
-// development authorities below.
+// TITAN ZERO BROWSER NODE
+// Governed browser execution surface for Titan Zero field-service operations.
+// The imported browser-agent runtime provides browser mechanics only; canonical
+// business authority, company_id, WorkItems, decisions, execution and evidence
+// remain owned by Titan Zero runtime systems.
 import '../browser/agent-runtime/background.js';
 
 // Local capability runtime. Donor modules remain read-only; this worker retains all execution authority.
@@ -2018,7 +2014,8 @@ async function bootstrapAgentMeshResume(snapshot){
     try{const bootstrap=C.bootstrap({checkpoint:cp,github:githubProjection||raw});return {ok:bootstrap.status==='READY_TO_RESUME',mayMutate:bootstrap.authority?.mayMutate===true,bootstrap};}
     catch(error){return {ok:false,mayMutate:false,reason:String(error?.message||error).slice(0,500)};}
 }
-globalThis.getManagerAISnapshot=getManagerAISnapshot;\nglobalThis.bootstrapAgentMeshResume=bootstrapAgentMeshResume;
+globalThis.getManagerAISnapshot=getManagerAISnapshot;
+globalThis.bootstrapAgentMeshResume=bootstrapAgentMeshResume;
 globalThis.getAgentMeshWorkContext=getAgentMeshWorkContext;
 async function managerAIWatchSweep(){try{const live=await fetchLiveManagerAISnapshot();const snapshot=live.snapshot||await getManagerAISnapshot();const inspection=globalThis.TitanCodeManagerAISupervisor.inspect(snapshot);const plan=globalThis.TitanCodeManagerAISupervisor.deterministicPlan(inspection);await chrome.storage.local.set({[MANAGER_AI_LAST_STORAGE_KEY]:{schema:'titan-code.manager-ai-watch.v2',generatedAt:new Date().toISOString(),inspection,deterministicPlan:plan,watchdog:true,source:live.source,bridgeReason:live.reason||null,health:live.health||null}});}catch(error){console.warn('[Codee] Manager AI watchdog failed:',error);}}
 async function runStoredManagerAISupervision(options={}){const live=await fetchLiveManagerAISnapshot();const snapshot=live.snapshot||await getManagerAISnapshot();const result=await globalThis.TitanCodeManagerAISupervisor.advise(snapshot,options);await chrome.storage.local.set({[MANAGER_AI_LAST_STORAGE_KEY]:{...result,source:live.source,bridgeReason:live.reason||null,health:live.health||null}});return {...result,source:live.source,bridgeReason:live.reason||null,health:live.health||null};}

@@ -19,7 +19,7 @@
 const SIGNALS = [
   {
     key: "network",
-    // `fetch(`, XHR, beacons, sockets — anything that can move data off-page.
+    // `globalThis.CodeeApprovedNetworkTransport.request(`, XHR, beacons, sockets — anything that can move data off-page.
     re: /\bfetch\s*\(|\bXMLHttpRequest\b|sendBeacon\s*\(|\bWebSocket\b|\bEventSource\b|\$\.(?:ajax|post|get)\s*\(/,
     text: "sends or receives network requests",
   },

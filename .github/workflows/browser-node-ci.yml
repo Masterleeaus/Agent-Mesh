@@ -1,0 +1,56 @@
+name: Titan Zero Browser Node CI
+
+on:
+  push:
+    branches:
+      - browser-node-convergence-v2
+    paths:
+      - 'apps/browser/**'
+      - '.github/workflows/browser-node-ci.yml'
+  pull_request:
+    paths:
+      - 'apps/browser/**'
+      - '.github/workflows/browser-node-ci.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-browser-node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: apps/browser
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Regenerate Browser Node source manifest
+        if: github.event_name == 'push'
+        run: |
+          npm run source-manifest
+          cd ../..
+          if ! git diff --quiet -- apps/browser/source-manifest.json; then
+            git config user.name "Titan Zero CI"
+            git config user.email "actions@users.noreply.github.com"
+            git add apps/browser/source-manifest.json
+            git commit -m "chore(browser): refresh Browser Node source manifest"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
+
+      - name: Interaction Engine typecheck
+        run: npm run interaction:typecheck
+
+      - name: Browser Node verifier
+        run: npm test
