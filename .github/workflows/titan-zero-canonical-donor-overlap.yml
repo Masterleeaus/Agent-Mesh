@@ -1,0 +1,137 @@
+name: Titan Zero Canonical Donor Overlap Detector
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  detect-overlap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect duplicate and parallel-system candidates
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess,re,json,hashlib,itertools,collections
+
+          out=Path("canonical-donor-overlap")
+          out.mkdir(exist_ok=True)
+          files=subprocess.check_output(["git","ls-files"],text=True).splitlines()
+
+          caps={
+            "zero-memory": r"memory|context|experience|longitudinal|anti.?repeat",
+            "reality-evidence": r"reality|observation|evidence|provenance|freshness|fact",
+            "authority-trust": r"authority|trust|delegat|autonom|continuance|assurance|governance",
+            "decision-intelligence": r"decision|council|confidence|uncertainty|divergence|convergence|causal",
+            "onboarding-evolution": r"onboard|discovery|reconfigur|diagnostic|intervention|outcome",
+            "knowledge": r"knowledge|rag|retrieval|knowledge.?authority",
+            "rewind": r"rewind|rollback|reversal|compensation|supersed",
+            "workforce": r"workforce|worker|agent|capability.?registry|capability.?binding",
+            "interaction": r"interaction|interface|visual|voice|vision|camera|generative.?ui",
+            "coordination": r"signal|prime|nexus|forge|command.?bus|operation.?identity",
+            "local-model": r"local.?bridge|ollama|local.?model|provider.?routing",
+            "security-privacy": r"shield|security|privacy|consent|signing|poison|injection",
+          }
+
+          def cls(path):
+            p=path.lower()
+            if re.search(r"(^|/)(archive|library)(/|$)|onboardingpro|titan-onboarding",p):
+              return "DONOR/HISTORICAL"
+            if "docs/archive/" in p or "docs/generated/" in p:
+              return "HISTORICAL EVIDENCE"
+            if "docs/canonical/" in p:
+              return "CANONICAL DOC"
+            if p.endswith((".ts",".tsx",".mts",".cts",".sql")):
+              return "CURRENT IMPLEMENTATION"
+            return "SUPPORTING"
+
+          records=[]
+          exports=re.compile(r'\b(?:export\s+)?(?:class|interface|type|function|const)\s+([A-Za-z_$][\w$]*)')
+          for f in files:
+            p=Path(f)
+            if p.suffix.lower() not in {".ts",".tsx",".mts",".cts",".js",".jsx",".md",".sql",".json"}: continue
+            try: text=p.read_text(errors="ignore")[:800000]
+            except: continue
+            hay=(f+"\n"+text)
+            matched=[k for k,v in caps.items() if re.search(v,hay,re.I)]
+            if not matched: continue
+            syms=sorted(set(exports.findall(text)))
+            tokens=set(re.findall(r'[a-z][a-z0-9_-]{3,}',hay.lower()))
+            stop={"this","that","with","from","return","const","string","number","boolean","export","import","function","interface","class","type","async","await"}
+            tokens-=stop
+            records.append({
+              "path":f,"class":cls(f),"caps":matched,"symbols":syms[:200],
+              "tokens":tokens,"company_id":"company_id" in text,
+              "legacy_tenant":bool(re.search(r"tenant_id|tenant_company_id",text)),
+              "authority":bool(re.search(r"authority|delegat|autonom|execute|permission|trust",text,re.I))
+            })
+
+          pairs=[]
+          for a,b in itertools.combinations(records,2):
+            shared_caps=set(a["caps"]) & set(b["caps"])
+            if not shared_caps: continue
+            # Focus on cross-boundary overlap or two current implementations.
+            if a["class"]==b["class"]=="SUPPORTING": continue
+            sym=set(a["symbols"]) & set(b["symbols"])
+            union=a["tokens"]|b["tokens"]
+            jac=len(a["tokens"]&b["tokens"])/len(union) if union else 0
+            cross=(a["class"]!=b["class"])
+            score=min(100, len(shared_caps)*18 + len(sym)*12 + int(jac*60) + (10 if cross else 0))
+            if score < 28: continue
+            reasons=[]
+            if shared_caps: reasons.append("capabilities="+",".join(sorted(shared_caps)))
+            if sym: reasons.append("shared-symbols="+",".join(sorted(sym)[:8]))
+            if jac>=.10: reasons.append(f"token-similarity={jac:.2f}")
+            if a["company_id"] != b["company_id"]: reasons.append("tenancy-signal-differs")
+            if a["authority"] != b["authority"]: reasons.append("authority-signal-differs")
+            pairs.append({
+              "score":score,"a":a["path"],"a_class":a["class"],"b":b["path"],"b_class":b["class"],
+              "reasons":reasons,
+              "warning":"Review candidate only; overlap does not prove duplication or superiority."
+            })
+
+          pairs.sort(key=lambda x:(-x["score"],x["a"],x["b"]))
+          md=[
+            "# Titan Zero Canonical vs Donor Overlap Candidates","",
+            "> Read-only heuristic evidence. A match is not permission to merge, delete, replace, or promote a donor. Verify source semantics, contracts, tests, tenancy and authority before any architecture decision.","",
+            f"Commit: `{subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()}`","",
+            "| Score | Source A | Class A | Source B | Class B | Why review |",
+            "|---:|---|---|---|---|---|"
+          ]
+          for x in pairs[:500]:
+            why="; ".join(x["reasons"]).replace("|","\\|")
+            md.append(f"| {x['score']} | `{x['a']}` | {x['a_class']} | `{x['b']}` | {x['b_class']} | {why} |")
+          if not pairs: md.append("| - | - | - | - | - | No heuristic overlap candidates found. |")
+          (out/"overlap-candidates.md").write_text("\n".join(md)+"\n")
+
+          # Capability ownership matrix: exposes places where several current implementations may own one concern.
+          matrix=collections.defaultdict(list)
+          for r in records:
+            for c in r["caps"]: matrix[c].append(r)
+          own=["# Capability Ownership Evidence","",
+               "> Multiple files under one capability are not automatically duplicates. This matrix identifies where source-level ownership review is needed.","",
+               "| Capability | Current implementation candidates | Donor/historical candidates | Canonical docs |",
+               "|---|---:|---:|---:|"]
+          for c,rs in sorted(matrix.items()):
+            cur=sum(r["class"]=="CURRENT IMPLEMENTATION" for r in rs)
+            donor=sum(r["class"] in {"DONOR/HISTORICAL","HISTORICAL EVIDENCE"} for r in rs)
+            docs=sum(r["class"]=="CANONICAL DOC" for r in rs)
+            own.append(f"| {c} | {cur} | {donor} | {docs} |")
+          (out/"capability-ownership-matrix.md").write_text("\n".join(own)+"\n")
+
+          (out/"overlap-candidates.json").write_text(json.dumps(pairs,indent=2))
+
+      - name: Upload overlap evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: titan-zero-canonical-donor-overlap-${{ github.sha }}
+          path: canonical-donor-overlap/
+          retention-days: 30
+          if-no-files-found: error
