@@ -1,12 +1,17 @@
 import Link from "next/link";
 import styles from "./marketing.module.css";
 
+const IMG = "https://raw.githubusercontent.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/main/docs/images";
+
 const capabilities = [
   ["AI Workforce", "A managed team that handles calls, follow-up, booking, coordination and routine operations across the systems you already use."],
   ["Works with your stack", "Titan Zero upgrades the business you already have. It connects existing software and fills only the gaps that matter."],
   ["Human authority", "Consequential actions stay governed. Review, approve, reverse and progressively automate as trust is earned."],
   ["Private by design", "Use local models and customer-controlled providers where practical, with clear boundaries around business data and AI costs."],
 ];
+
+const graphicStyle = { width: "100%", height: "auto", display: "block", borderRadius: "14px" } as const;
+const graphicSectionStyle = { maxWidth: "1380px", margin: "0 auto", padding: "32px 28px 72px" } as const;
 
 export default function HomePage() {
   return (
@@ -15,6 +20,10 @@ export default function HomePage() {
         <Link href="/" className={styles.brand}><span>T0</span><strong>TITAN ZERO<small>ADVANCED INTELLIGENCE FOR BUSINESS</small></strong></Link>
         <nav><Link href="/workforce">Workforce</Link><Link href="/assessment">Assessment</Link><a href="#how">How it works</a><Link href="/app" className={styles.cta}>Open Command →</Link></nav>
       </header>
+
+      <section style={{ maxWidth: "520px", margin: "0 auto", padding: "54px 28px 0" }}>
+        <img src={`${IMG}/CB4FE4C8-1FF9-4228-8DAC-98FED23D43A3.png`} alt="Titan Zero Field Service Workforce" style={graphicStyle} />
+      </section>
 
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
@@ -30,6 +39,10 @@ export default function HomePage() {
           <div className={styles.chatAI}><small>TITAN ZERO</small><p>Three customer follow-ups are ready, tomorrow has a capacity gap, and I prepared two options. Nothing consequential has been executed without your authority.</p></div>
           <div className={styles.cards}><article><b>12</b><span>leads handled</span></article><article><b>3</b><span>decisions ready</span></article><article><b>4.8h</b><span>admin avoided</span></article></div>
         </div>
+      </section>
+
+      <section style={graphicSectionStyle}>
+        <img src={`${IMG}/F2BED790-8EF0-473B-988E-F42E9488B1AE.png`} alt="Titan Zero field service workforce operating model" style={graphicStyle} />
       </section>
 
       <section className={styles.strip}><span>CHAT</span><span>VOICE</span><span>CAMERA</span><span>GENERATIVE UI</span><span>LOCAL + CLOUD AI</span></section>
@@ -57,6 +70,10 @@ export default function HomePage() {
         <p className={styles.kicker}>YOUR TEAM, NOT ANOTHER DASHBOARD</p>
         <h2>An AI workforce that operates the business with you.</h2>
         <div className={styles.grid}>{capabilities.map(([title,body])=><article key={title}><span>0{capabilities.findIndex(x=>x[0]===title)+1}</span><h3>{title}</h3><p>{body}</p></article>)}</div><div className={styles.actions}><Link href="/workforce">Explore the AI workforce →</Link></div>
+      </section>
+
+      <section style={graphicSectionStyle}>
+        <img src={`${IMG}/4FE3482C-D943-4405-86CF-143AAFEF52C5.png`} alt="Titan Zero Field Service Workforce system architecture" style={graphicStyle} />
       </section>
 
       <section className={styles.operations}>
