@@ -1,0 +1,10 @@
+# Findings
+
+## Pass 1
+
+1. `packages/storage/src/index.ts` already establishes SQLite as the canonical local storage implementation, but file-backed startup could fail when the default parent directory did not exist. Fixed.
+2. `services/worker/src/db-runtime.ts` already defaults to SQLite and does not require `DATABASE_URL` in that mode. Its default `./data/titan-zero.sqlite` had the same missing-parent-directory bootstrap risk. Fixed.
+3. `packages/runtime/agent-runtime/sqlite-run-store.mjs` persists `company_id`, `run_id`, state, `conversation_id`, `agent_id`, `work_id`, the full runtime payload, and `updated_at`.
+4. Runtime recovery currently permits an unscoped `recoverable()` query when no company is supplied. This is a tenancy-audit target; changing it requires checking all production recovery callers first.
+5. `services/workforce/src/sqlite-store.ts` uses composite `(company_id, work_id)` and `(company_id, worker_id)` keys and company-scoped queries.
+6. PostgreSQL/MySQL compatibility still exists in the worker database runtime. Compatibility is not currently the SQLite default, but PostgreSQL-specific SQL remains in dialect branches and requires a broader behaviour-preserving audit.
