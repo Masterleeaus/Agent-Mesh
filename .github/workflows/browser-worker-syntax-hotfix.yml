@@ -1,0 +1,43 @@
+name: Browser Worker Syntax Hotfix
+
+on:
+  push:
+    branches:
+      - browser-node-convergence-v2
+    paths:
+      - .github/workflows/browser-worker-syntax-hotfix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-worker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: browser-node-convergence-v2
+          fetch-depth: 1
+      - name: Repair accidental literal line continuation
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('apps/browser/src/lib/service-worker.js')
+          s = p.read_text()
+          bad = 'globalThis.getManagerAISnapshot=getManagerAISnapshot;\\\nglobalThis.bootstrapAgentMeshResume=bootstrapAgentMeshResume;'
+          good = 'globalThis.getManagerAISnapshot=getManagerAISnapshot;\nglobalThis.bootstrapAgentMeshResume=bootstrapAgentMeshResume;'
+          if bad not in s:
+              raise SystemExit('expected malformed worker sequence not found')
+          s = s.replace(bad, good, 1)
+          p.write_text(s)
+          PY
+          node --check apps/browser/src/lib/service-worker.js
+      - name: Commit worker repair
+        shell: bash
+        run: |
+          git config user.name "Titan Zero CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add apps/browser/src/lib/service-worker.js
+          git commit -m "fix(browser): repair malformed worker bootstrap newline"
+          git push origin HEAD:browser-node-convergence-v2
