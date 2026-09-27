@@ -2,9 +2,6 @@ name: Titan Zero Browser Node CI
 
 on:
   push:
-    branches:
-      - browser-node-convergence-v2
-      - browser-node-runtime-prune-v2
     paths:
       - 'apps/browser/**'
       - '.github/workflows/browser-node-ci.yml'
@@ -34,24 +31,24 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Apply Browser Node runtime scope prune
-        if: github.event_name == 'push' && github.ref_name == 'browser-node-runtime-prune-v2'
+      - name: Apply Browser Node surface convergence
+        if: (github.event_name == 'push' && github.ref_name == 'browser-node-surface-convergence-v3') || (github.event_name == 'pull_request' && github.head_ref == 'browser-node-surface-convergence-v3')
         run: |
-          node tools/prune-development-runtime-pass22.mjs
+          node tools/apply-browser-node-surface-pass23.mjs
           cd ../..
-          if ! git diff --quiet -- apps/browser/src/lib/service-worker.js; then
+          if ! git diff --quiet -- apps/browser/src/lib/service-worker.js apps/browser/src/sidebar/sidebar.html; then
             git config user.name "Titan Zero CI"
             git config user.email "actions@users.noreply.github.com"
-            git add apps/browser/src/lib/service-worker.js
-            git commit -m "refactor(browser): prune development-only startup runtime"
-            git push origin HEAD:${{ github.ref_name }}
+            git add apps/browser/src/lib/service-worker.js apps/browser/src/sidebar/sidebar.html
+            git commit -m "refactor(browser): converge Browser Node runtime and visible surface"
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
           fi
 
       - name: Install dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
 
       - name: Regenerate Browser Node source manifest
-        if: github.event_name == 'push'
+        if: (github.event_name == 'push' && github.ref_name == 'browser-node-surface-convergence-v3') || (github.event_name == 'pull_request' && github.head_ref == 'browser-node-surface-convergence-v3')
         run: |
           npm run source-manifest
           cd ../..
@@ -60,7 +57,7 @@ jobs:
             git config user.email "actions@users.noreply.github.com"
             git add apps/browser/source-manifest.json
             git commit -m "chore(browser): refresh Browser Node source manifest"
-            git push origin HEAD:${{ github.ref_name }}
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
           fi
 
       - name: Interaction Engine typecheck
