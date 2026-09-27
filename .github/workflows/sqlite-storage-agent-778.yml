@@ -1,0 +1,48 @@
+name: SQLite Storage Agent 778
+
+on:
+  push:
+    branches: ["agent/778"]
+  pull_request:
+    paths:
+      - "apps/web/lib/db/**"
+      - "apps/web/lib/db.ts"
+      - "db/sqlite/**"
+      - "scripts/sqlite-migrate.mjs"
+      - "apps/web/package.json"
+      - "package.json"
+      - ".env.example"
+      - "infra/compose.dev.yml"
+      - ".github/workflows/sqlite-storage-agent-778.yml"
+
+jobs:
+  sqlite-storage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --no-frozen-lockfile
+      - name: Fresh SQLite migration
+        env:
+          DATABASE_DIALECT: sqlite
+          DATABASE_URL: file:./data/ci-titan-zero.db
+          AUTH_SECRET: ci-auth-secret-that-is-definitely-at-least-32-characters
+        run: pnpm db:migrate
+      - name: Storage unit tests
+        env:
+          DATABASE_DIALECT: sqlite
+          DATABASE_URL: file:./data/ci-titan-zero.db
+          AUTH_SECRET: ci-auth-secret-that-is-definitely-at-least-32-characters
+        run: pnpm --filter @titan-zero/web test:unit -- lib/db/__tests__/company-context.test.ts lib/db/__tests__/sqlite.test.ts
+      - name: Web typecheck
+        env:
+          DATABASE_DIALECT: sqlite
+          DATABASE_URL: file:./data/ci-titan-zero.db
+          AUTH_SECRET: ci-auth-secret-that-is-definitely-at-least-32-characters
+        run: pnpm --filter @titan-zero/web typecheck
