@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { ZeroWorkforceDispatcher } from "./workforce-dispatcher";
+import { ZeroWorkforceDispatcher, type ZeroWorkforceDispatchPort } from "./workforce-dispatcher";
 
 const input = {
   company_id: "company-1",
@@ -12,9 +12,9 @@ const input = {
 };
 
 describe("ZeroWorkforceDispatcher", () => {
-  it("creates canonical company-scoped work instead of executing directly", async () => {
-    const create = vi.fn(async (work) => ({ ...work, state: "READY", created_at: "now", updated_at: "now", context_refs: [], evidence_refs: [] }));
-    const workforce = { create, resume: vi.fn() } as any;
+  it("creates company-scoped work through the workforce port instead of executing directly", async () => {
+    const create = vi.fn(async (work) => ({ company_id: work.company_id, work_id: work.work_id, state: "READY" as const, assignee: work.assignee }));
+    const workforce: ZeroWorkforceDispatchPort = { create, resume: vi.fn() };
     const dispatcher = new ZeroWorkforceDispatcher(workforce, () => "dispatch-agent");
 
     const result = await dispatcher.dispatch(input);
@@ -24,19 +24,15 @@ describe("ZeroWorkforceDispatcher", () => {
       creator: "one-1",
       assignee: "dispatch-agent",
       objective: input.text,
-      origin: expect.objectContaining({
-        conversation_id: "conversation-1",
-        surface: "zero",
-        correlation_id: "correlation-1",
-      }),
+      origin: expect.objectContaining({ conversation_id: "conversation-1", surface: "zero", correlation_id: "correlation-1" }),
     }));
     expect(result.continuation_token).toBe("zero:interaction-1");
     expect(result.events[0]).toMatchObject({ kind: "work.accepted", company_id: "company-1", conversation_id: "conversation-1" });
   });
 
-  it("resumes the existing WorkItem when a continuation token is supplied", async () => {
-    const resume = vi.fn(async (company_id, work_id) => ({ company_id, work_id, state: "READY", assignee: "dispatch-agent" }));
-    const workforce = { create: vi.fn(), resume } as any;
+  it("resumes existing work when a continuation token is supplied", async () => {
+    const resume = vi.fn(async (company_id: string, work_id: string) => ({ company_id, work_id, state: "READY" as const, assignee: "dispatch-agent" }));
+    const workforce: ZeroWorkforceDispatchPort = { create: vi.fn(), resume };
     const dispatcher = new ZeroWorkforceDispatcher(workforce, () => "dispatch-agent");
 
     const result = await dispatcher.dispatch({ ...input, continuation_token: "work-existing", requested_agent_id: "dispatch-agent" });
@@ -44,5 +40,15 @@ describe("ZeroWorkforceDispatcher", () => {
     expect(resume).toHaveBeenCalledWith("company-1", "work-existing", "one-1");
     expect(workforce.create).not.toHaveBeenCalled();
     expect(result.continuation_token).toBe("work-existing");
+  });
+
+  it("fails closed when the workforce response crosses company or work boundaries", async () => {
+    const workforce: ZeroWorkforceDispatchPort = {
+      create: vi.fn(async () => ({ company_id: "company-2", work_id: "zero:interaction-1", state: "READY" })),
+      resume: vi.fn(),
+    };
+    const dispatcher = new ZeroWorkforceDispatcher(workforce, () => "dispatch-agent");
+
+    await expect(dispatcher.dispatch(input)).rejects.toThrow("zero-workforce-boundary-mismatch");
   });
 });
