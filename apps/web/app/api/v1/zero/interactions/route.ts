@@ -30,6 +30,8 @@ export async function POST(req: NextRequest) {
   const conversation_id = String(body.conversation_id ?? "").trim();
   const text = String(body.text ?? "").trim();
   const client_message_id = String(body.client_message_id ?? "").trim();
+  const requested_agent_id = String(body.requested_agent_id ?? "").trim() || undefined;
+  const continuation_token = String(body.continuation_token ?? "").trim() || undefined;
 
   if (!company_id || !conversation_id || !text || !client_message_id) {
     return NextResponse.json({ error: "Missing required interaction fields" }, { status: 400 });
@@ -61,6 +63,8 @@ export async function POST(req: NextRequest) {
       client_message_id,
       text,
       correlation_id: client_message_id,
+      requested_agent_id,
+      continuation_token,
     });
 
     return NextResponse.json(result, { status: 202 });
