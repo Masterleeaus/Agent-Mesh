@@ -3335,8 +3335,8 @@
     },
     {
       "path": "tests/test-browser-node-no-devpack-startup.js",
-      "bytes": 1292,
-      "sha256": "f1cae077d1e260b7378a7226260510719b91f8b1a0c42084513b1aa99e99573f"
+      "bytes": 1726,
+      "sha256": "b4a5dbad5bf333d5d1588d7984d2687091b0ac815dab54f1d60a7c9a7179fd91"
     },
     {
       "path": "tests/test-browser-node-postmerge-prune.js",
