@@ -1,0 +1,1 @@
+Stale branch `agent/796` has been reconciled. Current main remains authoritative for its overlapping Zero/runtime/SQLite/workforce implementation; no stale production snapshot is restored.
