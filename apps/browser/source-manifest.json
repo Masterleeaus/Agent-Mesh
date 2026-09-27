@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1059,
+  "fileCount": 1060,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -3332,6 +3332,11 @@
       "path": "tests/test-browser-navigation-pass11.cjs",
       "bytes": 1332,
       "sha256": "fdc8f161182bcd2df5030bd7751530df8f4f7bebdb9f4cfdddfd2ea4cbab0483"
+    },
+    {
+      "path": "tests/test-browser-node-postmerge-prune.js",
+      "bytes": 1176,
+      "sha256": "12b3d8d5ac88ea1cd7866683951b23338c8f06ca07f9181de68a7d4089736175"
     },
     {
       "path": "tests/test-browser-node-product-surface-pass23.js",
