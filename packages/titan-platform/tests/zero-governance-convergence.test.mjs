@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { zeroChatEventFromRuntime } from '../.zero-test-dist/ported/titan-runtime/interaction-engine/zero-runtime-events.js';
-import { createZeroAuthorityRequest, dispatchZeroAuthorityRequest } from '../.zero-test-dist/ported/titan-runtime/interaction-engine/zero-authority-bridge.js';
+import { zeroChatEventFromRuntime } from '../.zero-test-dist/src/ported/titan-runtime/interaction-engine/zero-runtime-events.js';
+import { createZeroAuthorityRequest, dispatchZeroAuthorityRequest } from '../.zero-test-dist/src/ported/titan-runtime/interaction-engine/zero-authority-bridge.js';
 
 test('Zero runtime projection preserves company/correlation and cannot grant authority', () => {
   const event = zeroChatEventFromRuntime({
