@@ -1,6 +1,6 @@
-import type { Client } from "pg";
+import type { DatabaseClient } from "./db-client.js";
 import { logger } from "./logger.js";
-import { seasonalReminderHtml } from "@ai-fsm/email-templates";
+import { seasonalReminderHtml } from "@titan-zero/email-templates";
 import type { AutomationRow, RunResult } from "./automations/types.js";
 import { enqueueNotification } from "./notification/enqueue.js";
 import { PRIORITY } from "./notification/priority.js";
@@ -37,16 +37,16 @@ export function nextSeasonStartDate(season: Season): Date {
   return new Date(Date.UTC(year, startMonth - 1, 1, 0, 0, 0));
 }
 
-export async function findDueSeasonalSpring(client: Client): Promise<AutomationRow[]> {
+export async function findDueSeasonalSpring(client: DatabaseClient): Promise<AutomationRow[]> {
   return findDueSeasonalRemindersForType(client, "seasonal_reminder_spring");
 }
 
-export async function findDueSeasonalFall(client: Client): Promise<AutomationRow[]> {
+export async function findDueSeasonalFall(client: DatabaseClient): Promise<AutomationRow[]> {
   return findDueSeasonalRemindersForType(client, "seasonal_reminder_fall");
 }
 
 async function findDueSeasonalRemindersForType(
-  client: Client,
+  client: DatabaseClient,
   type: string
 ): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
@@ -61,7 +61,7 @@ async function findDueSeasonalRemindersForType(
 }
 
 async function findEligibleSeasonalClients(
-  client: Client,
+  client: DatabaseClient,
   automation: AutomationRow
 ): Promise<SeasonalClient[]> {
   const year = new Date().getFullYear();
@@ -88,7 +88,7 @@ async function findEligibleSeasonalClients(
 }
 
 async function emitSeasonalReminder(
-  client: Client,
+  client: DatabaseClient,
   seasonClient: SeasonalClient,
   automation: AutomationRow
 ): Promise<boolean> {
@@ -153,7 +153,7 @@ async function emitSeasonalReminder(
 }
 
 export async function processSeasonalReminder(
-  client: Client,
+  client: DatabaseClient,
   automation: AutomationRow
 ): Promise<RunResult> {
   const result: RunResult = {

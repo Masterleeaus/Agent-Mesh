@@ -1,6 +1,6 @@
-import type { Client } from "pg";
+import type { DatabaseClient } from "./db-client.js";
 import { logger } from "./logger.js";
-import { reviewRequestEmailHtml } from "@ai-fsm/email-templates";
+import { reviewRequestEmailHtml } from "@titan-zero/email-templates";
 import type { AutomationRow, RunResult } from "./automations/types.js";
 import { enqueueNotification } from "./notification/enqueue.js";
 import { PRIORITY } from "./notification/priority.js";
@@ -29,7 +29,7 @@ interface EligibleJob {
   tech_name: string | null;
 }
 
-export async function findDueReviewRequests(client: Client): Promise<AutomationRow[]> {
+export async function findDueReviewRequests(client: DatabaseClient): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
     `SELECT id, account_id, type, config, enabled, next_run_at::text
      FROM automations
@@ -41,7 +41,7 @@ export async function findDueReviewRequests(client: Client): Promise<AutomationR
 }
 
 export async function findEligibleJobs(
-  client: Client,
+  client: DatabaseClient,
   automation: AutomationRow
 ): Promise<EligibleJob[]> {
   const daysAfter = (automation.config as { days_after?: number }).days_after ?? 1;
@@ -79,7 +79,7 @@ export async function findEligibleJobs(
 }
 
 async function emitReviewRequest(
-  client: Client,
+  client: DatabaseClient,
   job: EligibleJob,
   automationId: string
 ): Promise<boolean> {
@@ -141,7 +141,7 @@ async function emitReviewRequest(
 }
 
 export async function processReviewRequests(
-  client: Client,
+  client: DatabaseClient,
   automation: AutomationRow
 ): Promise<RunResult> {
   const result: RunResult = {

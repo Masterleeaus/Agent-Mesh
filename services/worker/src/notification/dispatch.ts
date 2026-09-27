@@ -1,4 +1,4 @@
-import type { Client } from "pg";
+import type { DatabaseClient } from "../db-client.js";
 import { sendEmail } from "../mailer.js";
 import { logger } from "../logger.js";
 import { getRules, checkGovernor, updateCooldown } from "./governor.js";
@@ -36,7 +36,7 @@ function nextAttemptAt(attemptCount: number): Date {
   return new Date(Date.now() + delayMs);
 }
 
-export async function dispatchNotificationQueue(client: Client): Promise<DispatchResult> {
+export async function dispatchNotificationQueue(client: DatabaseClient): Promise<DispatchResult> {
   const result: DispatchResult = { sent: 0, failed: 0, retried: 0, delayed: 0, cancelled: 0 };
 
   // Wrap in a transaction so FOR UPDATE SKIP LOCKED holds row locks throughout
