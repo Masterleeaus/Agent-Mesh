@@ -2,7 +2,7 @@
   "schema": 1,
   "product": "Titan Zero Browser Node",
   "version": "0.1.0",
-  "generatedAt": "2026-09-27T13:39:38.801Z",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
   "algorithm": "sha256",
   "excludes": [
     "source-manifest.json",
@@ -5275,8 +5275,8 @@
     },
     {
       "path": "tools/generate-source-manifest.mjs",
-      "bytes": 1504,
-      "sha256": "01496e1e4c26691f7a471a8904b401824ca564f783d911014863bd807e53a68d"
+      "bytes": 1676,
+      "sha256": "678948639231452dbd05e94ff40f81c511f98c92f29c8dfe7a48f641464da702"
     },
     {
       "path": "tools/test-worker-vm-preload.cjs",
