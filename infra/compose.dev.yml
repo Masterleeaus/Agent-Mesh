@@ -1,7 +1,13 @@
+# Local Titan Zero does not require Docker for persistence.
+# Run `pnpm db:migrate && pnpm dev` for the canonical SQLite-first path.
+# This compose file retains PostgreSQL only for compatibility/import testing:
+#   docker compose -f infra/compose.dev.yml --profile postgres up -d
+
 services:
   postgres:
+    profiles: ["postgres"]
     image: postgres:16
-    container_name: ai-fsm-postgres-dev
+    container_name: titan-zero-postgres-compat
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-ai_fsm}
       POSTGRES_USER: ${POSTGRES_USER:-ai_fsm}
@@ -15,7 +21,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
 
 volumes:
   pgdata_dev:
