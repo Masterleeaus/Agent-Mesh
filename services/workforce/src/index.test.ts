@@ -45,7 +45,7 @@ function productionFiles(dir:string):string[]{
     if(entry==="node_modules"||entry===".git"||entry.endsWith(".test.ts")||entry.endsWith(".test.mjs"))continue;
     const stat=statSync(full);
     if(stat.isDirectory())out.push(...productionFiles(full));
-    else if(/\.(?:ts|tsx|js|mjs|cjs|json)$/.test(entry))out.push(full);
+    else if(/\.(?:ts|tsx|js|mjs|cjs)$/.test(entry)||entry==="package.json")out.push(full);
   }
   return out;
 }
