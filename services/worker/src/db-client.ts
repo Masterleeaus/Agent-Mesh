@@ -1,5 +1,5 @@
-/** Database-portable worker query contract. */
-export type DatabaseDialect = "postgres" | "mysql";
+/** Database-portable worker query contract. SQLite is the canonical local/runtime dialect. */
+export type DatabaseDialect = "sqlite" | "postgres" | "mysql";
 
 export interface DatabaseQueryResult<T = Record<string, unknown>> {
   rows: T[];
@@ -12,5 +12,5 @@ export interface DatabaseClient {
 }
 
 export function databaseDialect(client: DatabaseClient): DatabaseDialect {
-  return client.dialect ?? "postgres";
+  return client.dialect ?? "sqlite";
 }
