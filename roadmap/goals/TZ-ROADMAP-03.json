@@ -143,7 +143,7 @@
     },
     {
       "title": "Define company-scoped memory schema and provenance",
-      "status": "TODO",
+      "status": "COMPLETE",
       "subgoal_order": 2,
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -153,7 +153,7 @@
         "manager_review": "ASYNCHRONOUS_APPROVE_OR_MODIFY_REMAINING_PASSES; BUILDER_STARTS_IMMEDIATELY"
       },
       "completion_basis": "acceptance gates and complete outcome, not planned pass count",
-      "claimable": true,
+      "claimable": false,
       "priority": "P1",
       "mvp_required": false,
       "reuse_first": true,
@@ -166,7 +166,7 @@
       ],
       "subgoal_id": "TZ-ROADMAP-03-SG-02",
       "execution": {
-        "state": "UNCLAIMED",
+        "state": "COMPLETE",
         "claimed_by": null,
         "claimed_at": null,
         "last_heartbeat_at": null,
@@ -176,7 +176,11 @@
         "final_cumulative_delta": null,
         "checkpoint_counter": 0,
         "checkpoint_history": [],
-        "next_checkpoint_due_after_pass": 4
+        "next_checkpoint_due_after_pass": 4,
+        "completed_at": "2026-09-27T04:41:53Z",
+        "merged_pr_number": 782,
+        "merge_sha": "287ddbc8908d07849aa418fa0e46ca81f5f2910d",
+        "claim_branch": "agent/TZ-ROADMAP-03-SG-02"
       },
       "agent_model": {
         "schema": "titan-zero-subgoal-agent-model/v4-workforce-reference-only",
@@ -263,6 +267,14 @@
         "last_scanned_at_utc": "2026-09-20T02:33:00+10:00",
         "scan_notes": "Do not invent a separate memory tenant boundary. Normalize all memory scope to company_id and preserve source/version/evidence provenance.",
         "exhaustion_evidence": null
+      },
+      "completion_receipt": {
+        "source": "GITHUB_MANAGER_MERGE",
+        "pr_number": 782,
+        "issue_number": 780,
+        "merge_sha": "287ddbc8908d07849aa418fa0e46ca81f5f2910d",
+        "head_branch": "agent/TZ-ROADMAP-03-SG-02",
+        "merged_at_utc": "2026-09-27T04:41:53Z"
       }
     },
     {
@@ -1195,7 +1207,7 @@
   "preferred_successors": [],
   "agent_tier_contract_required": false,
   "last_canonical_revalidation": null,
-  "progress_percent": 0,
+  "progress_percent": 10,
   "goal_is_planning_container": true,
   "goal_claim_rule": "NEVER CLAIMABLE: this Goal is a planning container only. Builders claim one contained sub-goal.",
   "unified_architecture_contract_required": true,

@@ -283,7 +283,7 @@
     "goal_id": "TZ-ROADMAP-03",
     "goal_title": "Business Memory & Knowledge",
     "title": "Define company-scoped memory schema and provenance",
-    "status": "TODO",
+    "status": "COMPLETE",
     "priority": "P1",
     "mvp_required": false
   },
