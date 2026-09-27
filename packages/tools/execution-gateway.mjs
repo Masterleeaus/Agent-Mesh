@@ -96,7 +96,8 @@ export class ExecutionGateway {
   async record(request, provider, state, payload, startedAt) {
     const evidence = {
       evidence_id: crypto.randomUUID(), execution_id: request.execution_id, company_id: request.company_id,
-      work_id: request.work_id ?? null, agent_id: request.agent_id ?? null, capability: request.capability,
+      work_id: request.work_id ?? null, run_id: request.run_id ?? null, decision_id: request.decision_id ?? null,
+      agent_id: request.agent_id ?? null, capability: request.capability,
       provider: provider.id, execution_class: provider.executionClass, state, started_at: startedAt, finished_at: this.now(),
       external_ref: payload?.external_ref ?? null, verification: payload?.verification ?? null,
       failure: payload?.failure ?? null,
