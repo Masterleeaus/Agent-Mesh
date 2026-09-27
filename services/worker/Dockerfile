@@ -1,25 +1,19 @@
 FROM node:20-alpine AS base
 WORKDIR /app
+RUN apk add --no-cache python3 make g++
 RUN corepack enable
 
 FROM base AS deps
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/web/package.json apps/web/package.json
-COPY packages/domain/package.json packages/domain/package.json
-COPY packages/log/package.json packages/log/package.json
-COPY packages/money/package.json packages/money/package.json
-COPY packages/email-templates/package.json packages/email-templates/package.json
-COPY services/worker/package.json services/worker/package.json
-RUN pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm install --no-frozen-lockfile
 
 FROM deps AS build
-COPY packages/log packages/log
-COPY packages/money packages/money
-COPY packages/email-templates packages/email-templates
-COPY packages/domain/src/promise-capture.ts packages/domain/src/promise-capture.ts
-COPY packages/domain/package.json packages/domain/package.json
-COPY services/worker services/worker
-RUN pnpm --filter @ai-fsm/log --filter @ai-fsm/money --filter @ai-fsm/email-templates --filter @ai-fsm/worker build \
+RUN mkdir -p node_modules/@ai-fsm services/worker/node_modules/@ai-fsm \
+ && for pkg in domain log money email-templates; do \
+      ln -s /app/packages/$pkg node_modules/@ai-fsm/$pkg; \
+      ln -s /app/packages/$pkg services/worker/node_modules/@ai-fsm/$pkg; \
+    done \
+ && pnpm --filter @titan-zero/log --filter @titan-zero/money --filter @titan-zero/email-templates --filter @titan-zero/worker build \
  && pnpm exec tsc packages/domain/src/promise-capture.ts --module commonjs --target ES2022 --rootDir packages/domain/src --outDir packages/domain/dist --esModuleInterop --skipLibCheck
 
 FROM node:20-alpine AS run

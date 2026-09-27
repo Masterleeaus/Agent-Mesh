@@ -7,6 +7,11 @@ const nextConfig = {
     "@titan-zero/log",
     "@titan-zero/money",
     "@titan-zero/email-templates",
+    // Compatibility for source imports that still use the previous scope.
+    "@ai-fsm/domain",
+    "@ai-fsm/log",
+    "@ai-fsm/money",
+    "@ai-fsm/email-templates",
   ],
   webpack: (config) => {
     config.resolve.extensionAlias = {
