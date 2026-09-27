@@ -19,6 +19,7 @@
     "@titan-zero/money": "workspace:*",
     "@anthropic-ai/sdk": "^0.92.0",
     "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.11.1",
     "jose": "^6.1.3",
     "leaflet": "^1.9.4",
     "next": "15.5.25",
@@ -34,6 +35,7 @@
     "@titan-zero/titan-platform": "workspace:*"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/leaflet": "^1.9.12",
     "@types/node": "^22.10.2",
     "@types/nodemailer": "~6.4.17",
