@@ -1,9 +1,10 @@
-name: VPS installer smoke
+name: VPS SQLite production smoke
 
 on:
   pull_request:
     paths:
       - 'scripts/vps/**'
+      - 'scripts/sqlite-migrate.mjs'
       - 'infra/compose.vps.yml'
       - 'infra/vps.env.example'
       - 'apps/web/Dockerfile'
@@ -13,23 +14,57 @@ on:
   workflow_dispatch:
 
 jobs:
-  compose-and-build:
+  sqlite-compose-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Validate VPS scripts and Compose
+      - name: Validate SQLite VPS scripts and topology
         shell: bash
         run: |
+          set -euo pipefail
           bash -n scripts/vps/install-vps.sh
+          bash -n scripts/vps/install-sqlite-vps.sh
           bash -n scripts/vps/backup-vps.sh
           bash -n scripts/vps/update-vps.sh
           cp infra/vps.env.example .env.vps
           sed -i 's/GENERATED_BY_INSTALLER/local-smoke-test-only/g' .env.vps
-          TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
-            docker compose --env-file .env.vps -f infra/compose.vps.yml config -q
+          mkdir -p "$RUNNER_TEMP/titan-data/sqlite" "$RUNNER_TEMP/titan-data/uploads"
+          export TZ_ENV_FILE="$PWD/.env.vps"
+          export TZ_DATA_ROOT="$RUNNER_TEMP/titan-data"
+          docker compose --env-file .env.vps -f infra/compose.vps.yml config > "$RUNNER_TEMP/compose.yml"
+          if grep -Eiq '(^|[[:space:]])postgres:|postgresql://' "$RUNNER_TEMP/compose.yml"; then
+            echo 'PostgreSQL leaked into canonical VPS topology' >&2
+            exit 1
+          fi
+          grep -q 'DATABASE_DIALECT: sqlite' "$RUNNER_TEMP/compose.yml"
+          grep -q 'SQLITE_PATH: /app/data/titan-zero.db' "$RUNNER_TEMP/compose.yml"
       - name: Build VPS images
         shell: bash
         run: |
           TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
             docker compose --env-file .env.vps -f infra/compose.vps.yml build web worker
+      - name: Create and verify fresh SQLite database
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/titan-data/sqlite"
+          docker run --rm \
+            --env-file "$PWD/.env.vps" \
+            -e DATABASE_DIALECT=sqlite \
+            -e DATABASE_URL=file:/app/data/titan-zero.db \
+            -e SQLITE_PATH=/app/data/titan-zero.db \
+            -v "$PWD:/app" \
+            -v "$RUNNER_TEMP/titan-data/sqlite:/app/data" \
+            -w /app \
+            titan-zero-web:latest node scripts/sqlite-migrate.mjs
+          python3 - "$RUNNER_TEMP/titan-data/sqlite/titan-zero.db" <<'PY'
+          import sqlite3, sys
+          db = sqlite3.connect(sys.argv[1])
+          try:
+              assert db.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
+              assert db.execute('PRAGMA foreign_keys').fetchone()[0] == 1
+          finally:
+              db.close()
+          print('sqlite-production-database: PASS')
+          PY

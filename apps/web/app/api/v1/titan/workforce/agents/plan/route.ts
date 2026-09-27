@@ -1,15 +1,23 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import {
-  getTitanBusinessOpsAgentProfile,
-  planTitanNativeAgent,
-  type TitanNativeAgentPlanInput,
-} from "@titan-zero/titan-platform/native-agents";
+  TITAN_BUSINESS_OPS_AGENT_COMMANDS,
+  routeTitanBusinessOpsAgent,
+  type TitanBusinessOpsAgentCommandId,
+} from "@titan-zero/titan-platform/business-ops";
 
 export const dynamic = "force-dynamic";
 
-type SupportedAgentKey = TitanNativeAgentPlanInput["agentKey"];
+type SupportedAgentKey = "dispatch" | "invoicing" | "rebooking" | "quote" | "crm";
 const SUPPORTED = new Set<SupportedAgentKey>(["dispatch", "invoicing", "rebooking", "quote", "crm"]);
+
+const AGENT_DOMAINS: Record<SupportedAgentKey, readonly string[]> = {
+  dispatch: ["dispatch", "field", "projects"],
+  invoicing: ["invoicing"],
+  rebooking: ["dispatch", "projects", "intake"],
+  quote: ["estimating", "crm"],
+  crm: ["crm", "intake"],
+};
 
 export async function POST(request: Request) {
   const session = await getSession();
@@ -21,22 +29,26 @@ export async function POST(request: Request) {
     if (!SUPPORTED.has(agentKey)) {
       return NextResponse.json({ error: { code: "UNSUPPORTED_NATIVE_AGENT" } }, { status: 400 });
     }
-    const profile = getTitanBusinessOpsAgentProfile(agentKey);
-    if (!profile) return NextResponse.json({ error: { code: "UNKNOWN_AGENT_PROFILE" } }, { status: 400 });
 
-    const payload = { ...(raw.payload ?? {}) } as Record<string, unknown>;
-    // Server-side company authority always wins over supplied agent payload.
-    if (agentKey === "dispatch" || agentKey === "invoicing" || agentKey === "rebooking") {
-      payload.company_id = session.accountId;
-      if (agentKey === "dispatch" && payload.job && typeof payload.job === "object") {
-        payload.job = { ...(payload.job as Record<string, unknown>), company_id: session.accountId };
-      }
-    }
+    const domains = AGENT_DOMAINS[agentKey];
+    const commands = TITAN_BUSINESS_OPS_AGENT_COMMANDS
+      .filter((command) => domains.includes(command.domain) && command.allowedRoles.includes(session.role))
+      .map((command) => ({
+        ...command,
+        workforce: routeTitanBusinessOpsAgent(command.id as TitanBusinessOpsAgentCommandId),
+      }));
 
-    const plan = planTitanNativeAgent({ agentKey, payload } as TitanNativeAgentPlanInput);
     return NextResponse.json({
-      data: plan,
-      agent: profile,
+      data: {
+        agentKey,
+        payload: raw.payload ?? {},
+        commands,
+      },
+      agent: {
+        key: agentKey,
+        domains,
+        commandCount: commands.length,
+      },
       companyBoundary: session.accountId,
       commandExecutionEndpoint: "/api/v1/titan/workforce/commands",
       authority: "native-business-ops-routes",
