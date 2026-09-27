@@ -10,6 +10,7 @@ export { createConversationState, createJourneyState } from "./state.js";
 export { createConversationStateRuntime, CONVERSATION_STATE_RUNTIME_SCHEMA, CONVERSATION_STATE_MODULE_ID, CONVERSATION_STATE_COLLECTIONS } from "./conversation-state-runtime.js";
 export { createZeroInteraction, ZERO_INTERACTION_SCHEMA } from "./zero-interaction.js";
 export { zeroChatEventFromRuntime, ZERO_RUNTIME_EVENT_SCHEMA } from "./zero-runtime-events.js";
+export { createZeroAuthorityRequest, dispatchZeroAuthorityRequest, assertZeroOfflineExecutionBoundary, ZERO_AUTHORITY_BRIDGE_SCHEMA } from "./zero-authority-bridge.js";
 export const RUNTIME_ID = "interaction-engine";
 export const RUNTIME_NAME = "Interaction Engine";
 export const RUNTIME_KIND = "intent";
