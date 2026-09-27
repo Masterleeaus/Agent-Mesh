@@ -15,11 +15,18 @@ export class McpCapabilityAdapter {
         if(request.company_id!==this.company_id) throw new ExecutionError('MCP_COMPANY_SCOPE','MCP server is scoped to another company');
         let lastError;
         for(let attempt=0;attempt<=(retrySafe?this.safeRetries:0);attempt++) try {
-          const result=await withTimeout(this.client.callTool(externalTool,request.input??{}, {signal:request.signal}),this.timeoutMs);
+          const result=await callToolWithTimeout(this.client,externalTool,request.input??{},request.signal,this.timeoutMs);
           if(result?.requiresAuth) return {state:EXECUTION_STATES.WAITING_USER_AUTH,external_ref:result?.requestId??null,result};
+          if(result?.requiresMfa) return {state:EXECUTION_STATES.WAITING_MFA,external_ref:result?.requestId??null,result};
+          if(result?.requiresApproval) return {state:EXECUTION_STATES.WAITING_APPROVAL,external_ref:result?.requestId??null,result};
           if(result?.isError===true) throw new ExecutionError('MCP_PROVIDER_ERROR',result?.message??'MCP provider returned an error');
           return {external_ref:result?.requestId??result?.id??null,result};
-        } catch(error) { lastError=error; if(attempt>=(retrySafe?this.safeRetries:0)) throw error; }
+        } catch(error) {
+          lastError=error;
+          // An aborted caller must never be retried. Timeout retry is permitted only
+          // when the capability mapping explicitly declares retrySafe.
+          if(request.signal?.aborted || error?.code==='MCP_ABORTED' || attempt>=(retrySafe?this.safeRetries:0)) throw error;
+        }
         throw lastError;
       },
       verify:async(raw,request)=>verify({raw,request,client:this.client,serverId:this.serverId}),
@@ -27,4 +34,28 @@ export class McpCapabilityAdapter {
   }
 }
 
-async function withTimeout(promise,ms) { let timer; try { return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new ExecutionError('MCP_TIMEOUT','MCP invocation timed out')),ms);})]); } finally { clearTimeout(timer); } }
+async function callToolWithTimeout(client,tool,input,parentSignal,ms) {
+  if(parentSignal?.aborted) throw new ExecutionError('MCP_ABORTED','MCP invocation aborted before execution');
+  const controller=new AbortController();
+  const onAbort=()=>controller.abort(parentSignal?.reason);
+  parentSignal?.addEventListener?.('abort',onAbort,{once:true});
+  let timer;
+  try {
+    const timeout=new Promise((_,reject)=>{
+      timer=setTimeout(()=>{
+        controller.abort(new ExecutionError('MCP_TIMEOUT','MCP invocation timed out'));
+        reject(new ExecutionError('MCP_TIMEOUT','MCP invocation timed out'));
+      },ms);
+    });
+    return await Promise.race([
+      client.callTool(tool,input,{signal:controller.signal}),
+      timeout,
+    ]);
+  } catch(error) {
+    if(parentSignal?.aborted) throw new ExecutionError('MCP_ABORTED','MCP invocation aborted');
+    throw error;
+  } finally {
+    clearTimeout(timer);
+    parentSignal?.removeEventListener?.('abort',onAbort);
+  }
+}
