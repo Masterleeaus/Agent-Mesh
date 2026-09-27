@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1060,
+  "fileCount": 1062,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -2265,8 +2265,8 @@
     },
     {
       "path": "src/lib/service-worker.js",
-      "bytes": 261167,
-      "sha256": "30f65f1e0795d70b1901f8011a4fb8093e0363210071283d7c51d24f75de42b1"
+      "bytes": 260721,
+      "sha256": "f5376210ec016e3b0a7452393ef5b36952896a2e0fdd7bea955d6053496e2f86"
     },
     {
       "path": "src/lib/titan-zero-host-integration.js",
@@ -3332,6 +3332,11 @@
       "path": "tests/test-browser-navigation-pass11.cjs",
       "bytes": 1332,
       "sha256": "fdc8f161182bcd2df5030bd7751530df8f4f7bebdb9f4cfdddfd2ea4cbab0483"
+    },
+    {
+      "path": "tests/test-browser-node-no-devpack-startup.js",
+      "bytes": 1292,
+      "sha256": "f1cae077d1e260b7378a7226260510719b91f8b1a0c42084513b1aa99e99573f"
     },
     {
       "path": "tests/test-browser-node-postmerge-prune.js",
@@ -5292,6 +5297,11 @@
       "path": "tools/generate-source-manifest.mjs",
       "bytes": 1676,
       "sha256": "678948639231452dbd05e94ff40f81c511f98c92f29c8dfe7a48f641464da702"
+    },
+    {
+      "path": "tools/prune-browser-node-devpacks.mjs",
+      "bytes": 1698,
+      "sha256": "aff6b1dacee5c6d08b14bf6e4aca4196051761acdbab32bbbad30d737aabcbaa"
     },
     {
       "path": "tools/test-worker-vm-preload.cjs",
