@@ -1,38 +1,20 @@
-import type { Client } from "pg";
+import type { DatabaseClient } from "./db-client.js";
+import { databaseDialect } from "./db-client.js";
 import { logger } from "./logger.js";
 
-export interface ExpireEstimatesResult {
-  expired: number;
-  errors: number;
-}
+export interface ExpireEstimatesResult { expired: number; errors: number; }
 
-/**
- * Marks sent estimates as expired when their expires_at date has passed.
- * Runs on every worker poll iteration — no automation record required.
- * Safe to run repeatedly; the WHERE clause is idempotent.
- */
-export async function expireEstimates(client: Client): Promise<ExpireEstimatesResult> {
+export async function expireEstimates(client: DatabaseClient): Promise<ExpireEstimatesResult> {
   try {
+    const dialect = databaseDialect(client);
+    const now = dialect === "sqlite" ? "datetime('now')" : dialect === "mysql" ? "current_timestamp" : "now()";
     const result = await client.query<{ id: string; account_id: string }>(
-      `UPDATE estimates
-       SET status = 'expired', updated_at = now()
-       WHERE status = 'sent'
-         AND expires_at IS NOT NULL
-         AND expires_at < now()
+      `UPDATE estimates SET status = 'expired', updated_at = ${now}
+       WHERE status = 'sent' AND expires_at IS NOT NULL AND expires_at < ${now}
        RETURNING id, account_id`
     );
-
     const expired = result.rowCount ?? 0;
-    if (expired > 0) {
-      logger.info("expire-estimates: marked expired", {
-        count: expired,
-        ids: result.rows.map((r) => r.id),
-      });
-    }
-
+    if (expired > 0) logger.info("expire-estimates: marked expired", { count: expired, ids: result.rows.map(r => r.id) });
     return { expired, errors: 0 };
-  } catch (error) {
-    logger.error("expire-estimates: failed", error);
-    return { expired: 0, errors: 1 };
-  }
+  } catch (error) { logger.error("expire-estimates: failed", error); return { expired: 0, errors: 1 }; }
 }
