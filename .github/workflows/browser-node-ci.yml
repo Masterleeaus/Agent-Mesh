@@ -1,0 +1,43 @@
+name: Titan Zero Browser Node CI
+
+on:
+  push:
+    branches:
+      - browser-node-convergence-v2
+    paths:
+      - 'apps/browser/**'
+      - '.github/workflows/browser-node-ci.yml'
+  pull_request:
+    paths:
+      - 'apps/browser/**'
+      - '.github/workflows/browser-node-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-browser-node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: apps/browser
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/browser/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Interaction Engine typecheck
+        run: npm run interaction:typecheck
+
+      - name: Browser Node verifier
+        run: npm test
