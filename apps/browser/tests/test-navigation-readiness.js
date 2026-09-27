@@ -11,12 +11,12 @@ context.CodeeNavigationRegistry.installDefaults();
 const readiness = context.CodeeNavigationReadiness;
 assert(readiness, 'CodeeNavigationReadiness must exist');
 
-const runner = readiness.resolve(context.CodeeNavigationRegistry.get('workspace.runner'), { availableViews:['runner'] });
-assert.strictEqual(runner.state, 'AVAILABLE');
-assert.strictEqual(runner.interactive, true);
+const work = readiness.resolve(context.CodeeNavigationRegistry.get('zero.work'), { availableViews:['runner'] });
+assert.strictEqual(work.state, 'AVAILABLE');
+assert.strictEqual(work.interactive, true);
 
-const browser = readiness.resolve(context.CodeeNavigationRegistry.get('intelligence.browser'), {
-  availableViews:['browser'], capabilities:['browser.snapshot'], dependencies:{'browser.execution':true}
+const browser = readiness.resolve(context.CodeeNavigationRegistry.get('workforce.browser'), {
+  availableViews:['browser'], capabilities:['browser.snapshot'], dependencies:{}
 });
 assert.strictEqual(browser.state, 'AVAILABLE');
 assert.strictEqual(browser.interactive, true);
@@ -35,4 +35,4 @@ assert.strictEqual(disabled.state, 'DISABLED');
 const beta = readiness.resolve({ id:'z', kind:'page', page:'z', label:'Z', readiness:'BETA' }, { availableViews:['z'] });
 assert.strictEqual(beta.state, 'BETA');
 assert.strictEqual(beta.interactive, true);
-console.log('Navigation readiness states resolve fail-closed');
+console.log('Titan Zero Browser Node navigation readiness states resolve fail-closed');
