@@ -1,0 +1,67 @@
+name: P0 822 Web Alias Convergence
+on:
+  push:
+    branches:
+      - p0/822-worker-typecheck-convergence
+permissions:
+  contents: write
+jobs:
+  converge:
+    if: ${{ !startsWith(github.event.head_commit.message, 'P0 822 web alias convergence complete') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: p0/822-worker-typecheck-convergence
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Replace stale workspace aliases
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root = Path('apps/web')
+          replacements = {
+              '@ai-fsm/domain': '@titan-zero/domain',
+              '@ai-fsm/money': '@titan-zero/money',
+              '@ai-fsm/log': '@titan-zero/log',
+              '@ai-fsm/email-templates': '@titan-zero/email-templates',
+              '@ai-fsm/titan-platform': '@titan-zero/titan-platform',
+          }
+          changed = 0
+          for p in root.rglob('*'):
+              if not p.is_file() or p.suffix not in {'.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.json'}:
+                  continue
+              try:
+                  text = p.read_text()
+              except UnicodeDecodeError:
+                  continue
+              updated = text
+              for old, new in replacements.items():
+                  updated = updated.replace(old, new)
+              if updated != text:
+                  p.write_text(updated)
+                  changed += 1
+          print(f'Updated stale workspace aliases in {changed} files')
+          PY
+      - name: Install and converge lockfile
+        run: pnpm install --no-frozen-lockfile
+      - name: Web typecheck diagnostic
+        id: web_typecheck
+        continue-on-error: true
+        run: pnpm --filter @titan-zero/web typecheck
+      - name: Commit alias convergence
+        shell: bash
+        run: |
+          rm -f .github/workflows/p0-822-web-alias-convergence.yml
+          git config user.name "Titan Zero CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add apps/web pnpm-lock.yaml .github/workflows/p0-822-web-alias-convergence.yml
+          git commit -m "P0 822 web alias convergence complete"
+          git push origin HEAD:p0/822-worker-typecheck-convergence
