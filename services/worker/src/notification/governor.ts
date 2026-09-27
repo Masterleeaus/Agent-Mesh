@@ -1,4 +1,4 @@
-import type { Client } from "pg";
+import type { DatabaseClient } from "../db-client.js";
 import { COOLDOWN_BYPASS_MINIMUM } from "./priority.js";
 
 interface NotificationSettings {
@@ -52,7 +52,7 @@ function nextWorkingHoursStart(rules: NotificationSettings): Date {
   return new Date(now.getTime() + hoursUntilStart * 3_600_000);
 }
 
-export async function getRules(client: Client, accountId: string): Promise<NotificationSettings> {
+export async function getRules(client: DatabaseClient, accountId: string): Promise<NotificationSettings> {
   const { rows } = await client.query<NotificationSettings>(
     `SELECT cooldown_hours, max_per_day, working_hours_start, working_hours_end, working_hours_tz
      FROM automation_settings WHERE account_id = $1`,
@@ -68,7 +68,7 @@ export async function getRules(client: Client, accountId: string): Promise<Notif
 }
 
 export async function checkGovernor(
-  client: Client,
+  client: DatabaseClient,
   notification: NotificationRow,
   rules: NotificationSettings
 ): Promise<GovernorResult> {
@@ -108,7 +108,7 @@ export async function checkGovernor(
 }
 
 export async function updateCooldown(
-  client: Client,
+  client: DatabaseClient,
   accountId: string,
   clientId: string
 ): Promise<void> {

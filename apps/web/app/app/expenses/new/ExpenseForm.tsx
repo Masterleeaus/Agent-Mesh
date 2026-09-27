@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import { Input, Select, Textarea, Button } from "@/components/ui";
-import { EXPENSE_CATEGORIES, EXPENSE_CATEGORY_LABELS, formatJobPickerLabel } from "@ai-fsm/domain";
+import { EXPENSE_CATEGORIES, EXPENSE_CATEGORY_LABELS, formatJobPickerLabel } from "@titan-zero/domain";
 import { parseDollarsToCents } from "@/lib/expenses/math";
 import { currentMonthKey } from "@/lib/expenses/ui";
 import { buildPoMatchText, suggestJobFromPoText } from "@/lib/expenses/match-job-po";

@@ -12,4 +12,4 @@ export {
   type TitanWorkforceEscalationTier,
   type TitanWorkforceHierarchyApprovalGate,
   type TitanWorkforceHierarchyEscalation,
-} from "@ai-fsm/titan-platform/workforce";
+} from "@titan-zero/titan-platform/workforce";

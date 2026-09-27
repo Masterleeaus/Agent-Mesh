@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { OWNER_PROMISE_ACTION_TYPE, promiseBucketTone } from "@ai-fsm/domain";
+import { OWNER_PROMISE_ACTION_TYPE, promiseBucketTone } from "@titan-zero/domain";
 import {
   CUSTOMER_PROMISE_BUCKET_DETAIL,
   CUSTOMER_PROMISE_BUCKET_HREF,

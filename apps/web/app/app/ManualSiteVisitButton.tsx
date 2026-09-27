@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button, useToast } from "@/components/ui";
-import { VISIT_CLASSIFICATIONS, type VisitClassification } from "@ai-fsm/domain";
+import { VISIT_CLASSIFICATIONS, type VisitClassification } from "@titan-zero/domain";
 
 // EPIC-007 TASK-045: "I'm at customer site" — manually record a visit when GPS
 // missed or the address is new. Posts a confirmed visit_candidate (ledger entry)

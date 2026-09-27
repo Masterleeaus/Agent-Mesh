@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, useToast } from "@/components/ui";
-import { formatCents } from "@ai-fsm/money";
+import { formatCents } from "@titan-zero/money";
 
 type LineItem = { sku: string | null; name: string; category: string; unit_cost_cents: number; quantity: number };
 type Txn = {

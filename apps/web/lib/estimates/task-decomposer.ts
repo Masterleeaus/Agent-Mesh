@@ -91,7 +91,7 @@ const DECOMPOSE_TOOL: Anthropic.Tool = {
   },
 };
 
-import { detectTradeProfiles, getConcealedRiskDisclaimers } from "@ai-fsm/domain";
+import { detectTradeProfiles, getConcealedRiskDisclaimers } from "@titan-zero/domain";
 
 function buildUserMessage(input: DecomposeInput): string {
   const rooms = input.rooms.length

@@ -1,4 +1,4 @@
-import type { ChecklistDisposition, VisitChecklistItem, VaultCategory } from "@ai-fsm/domain";
+import type { ChecklistDisposition, VisitChecklistItem, VaultCategory } from "@titan-zero/domain";
 
 const SUGGESTED_DISPOSITIONS = new Set<ChecklistDisposition>(["fix_now", "monitor", "refer"]);
 

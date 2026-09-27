@@ -13,7 +13,7 @@ import {
   displayPoForExpense,
   suggestJobFromPoText,
 } from "@/lib/expenses/match-job-po";
-import { formatJobPickerLabel } from "@ai-fsm/domain";
+import { formatJobPickerLabel } from "@titan-zero/domain";
 import { patchForNonJobDestination } from "@/lib/expenses/destinations";
 import type { ReceiptDestination } from "@/lib/expenses/destinations";
 

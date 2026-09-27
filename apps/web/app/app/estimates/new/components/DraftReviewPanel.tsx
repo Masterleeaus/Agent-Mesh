@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui";
 import type { DraftEstimate } from "@/lib/estimates/ai-draft";
-import type { ShoppingList } from "@ai-fsm/domain";
+import type { ShoppingList } from "@titan-zero/domain";
 
 interface DraftReviewPanelProps {
   draft: DraftEstimate;

@@ -9,8 +9,8 @@ import {
   roomSpecsToEstimateSpec,
   buildShoppingListFromEstimateResult,
   CURRENT_RULES,
-} from "@ai-fsm/domain";
-import type { EstimateStatus, RoomSpec } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { EstimateStatus, RoomSpec } from "@titan-zero/domain";
 import { PrintButton } from "./PrintButton";
 import { buildClientDocumentFilename } from "@/lib/estimates/guardrails";
 import { resolveCompanyBranding, type CompanyProfileSettings } from "@/lib/company/branding";

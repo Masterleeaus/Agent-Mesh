@@ -1,7 +1,7 @@
 import type { PoolClient } from "pg";
 import { getPool } from "@/lib/db";
 import type { SessionPayload } from "@/lib/auth/session";
-import type { AssetLinkStatus } from "@ai-fsm/domain";
+import type { AssetLinkStatus } from "@titan-zero/domain";
 
 export async function withAssetContext<T>(
   session: SessionPayload,

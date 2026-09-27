@@ -10,7 +10,7 @@ import {
   CUSTOMER_STAGE_LABELS,
   CUSTOMER_STAGE_COLORS,
   SUB_STATUS_LABELS,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { StatusKanbanBoard } from "@/components/kanban/StatusKanbanBoard";
 import { canJobBoardDrop } from "@/lib/kanban/board-transitions";
 

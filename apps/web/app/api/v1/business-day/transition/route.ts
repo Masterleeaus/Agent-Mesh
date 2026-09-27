@@ -11,7 +11,7 @@ import { z } from "zod";
 import { withAuth } from "@/lib/auth/middleware";
 import { withDbSession } from "@/lib/db";
 import { logger } from "@/lib/logger";
-import { BUSINESS_DAY_STATUSES, checkBusinessDayTransition } from "@ai-fsm/domain";
+import { BUSINESS_DAY_STATUSES, checkBusinessDayTransition } from "@titan-zero/domain";
 import { getBusinessDayById, setBusinessDayStatus } from "@/lib/operations/business-day";
 import { assertDayCloseAllowed } from "@/lib/day-review/close-status";
 

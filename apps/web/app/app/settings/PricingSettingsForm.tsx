@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button, Input } from "@/components/ui";
-import { DEFAULT_PRICING_SETTINGS, type BusinessPricingSettings } from "@ai-fsm/domain";
+import { DEFAULT_PRICING_SETTINGS, type BusinessPricingSettings } from "@titan-zero/domain";
 
 function centsToDollars(cents: number): string {
   return (cents / 100).toFixed(2);

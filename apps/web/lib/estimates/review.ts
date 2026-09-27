@@ -3,7 +3,7 @@ import {
   PAINTING_RATE_LABOR_CENTS,
   PREP_LEVEL_MULTIPLIERS,
   PAINTING_TRIM_ADD_CENTS,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export interface EstimateReviewSuggestion {
   type: "warning" | "info" | "tip";

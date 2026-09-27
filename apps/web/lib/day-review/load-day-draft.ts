@@ -6,7 +6,7 @@ import {
   type DayDraftEvidenceCandidate,
   type DayDraftEvidenceExpense,
   type DayDraftEvidenceSegment,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export async function loadDayDraft(accountId: string, date: string): Promise<DayDraft | null> {
   const day = await queryOne<{

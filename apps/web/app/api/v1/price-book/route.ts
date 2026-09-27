@@ -4,7 +4,7 @@ import { withAuth } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
 import { listPriceBook } from "@/lib/pricing/price-book-repository";
 import { logger } from "@/lib/logger";
-import { priceBookCategorySchema, priceBookTierSchema } from "@ai-fsm/domain";
+import { priceBookCategorySchema, priceBookTierSchema } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

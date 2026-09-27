@@ -25,8 +25,8 @@ import {
   estimateResultToLegacyFields,
   buildShoppingListFromEstimateResult,
   CURRENT_RULES,
-} from "@ai-fsm/domain";
-import type { RoomSpec, ProjectOptions, EstimateResult } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { RoomSpec, ProjectOptions, EstimateResult } from "@titan-zero/domain";
 import type { OptionTier } from "@/lib/estimates/form-helpers";
 import { parseCents, lineTotal, EMPTY_ROW, type LineItemRow } from "@/lib/estimates/form-helpers";
 import { RoomByRoomEditor } from "../../estimates/new/components/RoomByRoomEditor";

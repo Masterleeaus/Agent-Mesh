@@ -1,4 +1,4 @@
-import type { InvoiceStatus } from "@ai-fsm/domain";
+import type { InvoiceStatus } from "@titan-zero/domain";
 import type { DbClient } from "@/lib/db-contract";
 
 /**

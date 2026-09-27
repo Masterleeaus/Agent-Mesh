@@ -43,7 +43,7 @@ import {
   CHECKLIST_SECTIONS,
   CHECKLIST_DISPOSITION_LABELS,
   checklistDispositionSchema,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 const ACCOUNT_ID = "00000000-0000-0000-0000-000000000001";
 const VISIT_ID = "cccccccc-cccc-cccc-cccc-cccccccccccc";

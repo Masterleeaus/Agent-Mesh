@@ -8,8 +8,8 @@ import {
   priceBookCodesFromLineRows,
   serviceCodesForSnapshots,
   DOOR_HARDWARE_PRICE_BOOK_CODE,
-} from "@ai-fsm/domain";
-import type { ComplexityValues, ScopeComponentValues, ServiceMaterial } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { ComplexityValues, ScopeComponentValues, ServiceMaterial } from "@titan-zero/domain";
 import {
   mapRecomputedSectionsToLines,
   mapShoppingListJsonToLines,

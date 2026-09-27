@@ -9,8 +9,8 @@ import {
   type TravelPolicyTier,
   type TripCalculationMethod,
   type TripDirectionMode,
-} from "@ai-fsm/domain";
-import { formatCents } from "@ai-fsm/money";
+} from "@titan-zero/domain";
+import { formatCents } from "@titan-zero/money";
 import { Card, SectionHeader } from "@/components/ui";
 
 interface Calculation {

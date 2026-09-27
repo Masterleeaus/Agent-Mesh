@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ACTIVITY_TYPE_META, type ActivityType } from "@ai-fsm/domain";
+import { ACTIVITY_TYPE_META, type ActivityType } from "@titan-zero/domain";
 import { ClockCorrections } from "./ClockCorrections";
 import { formatBusinessTime } from "@/lib/time/business-tz";
 

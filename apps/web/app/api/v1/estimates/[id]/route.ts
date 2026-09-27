@@ -12,7 +12,7 @@ import {
   estimateFinishExpectationSchema,
   estimateMinimumOverrideReasonSchema,
   estimateTripCountSchema,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { logger } from "@/lib/logger";
 import { getPathId } from "@/lib/route-utils";
 

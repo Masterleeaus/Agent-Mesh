@@ -12,4 +12,4 @@ export {
   type TitanWorkforceWorkerRuntime,
   type TitanWorkforceWorkerState,
   type TitanWorkforceWorkerTask,
-} from "@ai-fsm/titan-platform/workforce";
+} from "@titan-zero/titan-platform/workforce";

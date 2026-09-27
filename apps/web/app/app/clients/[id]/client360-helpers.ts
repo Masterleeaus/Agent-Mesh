@@ -1,4 +1,4 @@
-import { formatCents } from "@ai-fsm/money";
+import { formatCents } from "@titan-zero/money";
 
 // Pure helper functions for the Client 360 page.
 // Kept in a separate file so they can be imported by tests without pulling in

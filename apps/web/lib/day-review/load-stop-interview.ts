@@ -8,7 +8,7 @@ import {
   stopReasonOptions,
   type HomeFence,
   type StopReason,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export type StopInterviewCard = {
   segmentId: string;

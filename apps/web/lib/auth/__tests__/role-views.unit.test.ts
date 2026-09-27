@@ -9,7 +9,7 @@ import {
   canViewAllVisits,
   canTransitionJob as _canTransitionJob,
 } from "../permissions";
-import type { Role } from "@ai-fsm/domain";
+import type { Role } from "@titan-zero/domain";
 
 // ============================================================
 // canCreateVisit

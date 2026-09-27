@@ -1,7 +1,7 @@
 /**
  * Prefill change-order payload from Job Ledger variance (pure).
  */
-import type { JobLedgerSummary } from "@ai-fsm/domain";
+import type { JobLedgerSummary } from "@titan-zero/domain";
 
 export type CoDraftPayload = {
   estimate_id: string;

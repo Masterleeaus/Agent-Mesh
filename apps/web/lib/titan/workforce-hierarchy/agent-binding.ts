@@ -8,4 +8,4 @@ export {
   type TitanWorkforceAgentBinding,
   type TitanWorkforceAgentInvocationPlan,
   type TitanWorkforceStandaloneAgentDescriptor,
-} from "@ai-fsm/titan-platform/workforce";
+} from "@titan-zero/titan-platform/workforce";

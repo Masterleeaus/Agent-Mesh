@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "./session";
 import { hasRole } from "./permissions";
-import type { Role } from "@ai-fsm/domain";
+import type { Role } from "@titan-zero/domain";
 import { getTraceId } from "../tracing";
 
 export interface AuthSession {

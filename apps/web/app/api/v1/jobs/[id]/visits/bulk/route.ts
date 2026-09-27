@@ -11,8 +11,8 @@ import {
   EXECUTION_VISIT_TYPES,
   FIELD_ACTIVE_VISIT_STATUSES,
   VISIT_TYPES,
-} from "@ai-fsm/domain";
-import type { VisitType } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { VisitType } from "@titan-zero/domain";
 import { withRole, type AuthSession } from "@/lib/auth/middleware";
 import { withPortableTransaction } from "@/lib/db/portable";
 import { appendAuditLog } from "@/lib/db/audit";

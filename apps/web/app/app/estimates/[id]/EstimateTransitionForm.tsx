@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import type { EstimateStatus } from "@ai-fsm/domain";
+import type { EstimateStatus } from "@titan-zero/domain";
 
 interface Props {
   estimateId: string;

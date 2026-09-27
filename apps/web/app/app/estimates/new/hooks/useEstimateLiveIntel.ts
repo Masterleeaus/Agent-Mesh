@@ -10,8 +10,8 @@ import {
   type BusinessPricingSettings,
   type ComputedMaterial,
   type ServiceMaterial,
-} from "@ai-fsm/domain";
-import type { MaterialsBySection } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { MaterialsBySection } from "@titan-zero/domain";
 import { reviewEstimateGuardrails } from "@/lib/estimates/guardrails";
 import type { EstimateGuardrailReview } from "@/lib/estimates/guardrails";
 import type { PaintingEstimateResult } from "./useEstimatePricing";

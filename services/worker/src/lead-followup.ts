@@ -1,4 +1,4 @@
-import type { Client } from "pg";
+import type { DatabaseClient } from "./db-client.js";
 import { logger } from "./logger.js";
 import { appUrl } from "./mailer.js";
 import type { AutomationRow, RunResult } from "./automations/types.js";
@@ -30,7 +30,7 @@ interface StaleLead {
   owner_email: string | null;
 }
 
-export async function findDueLeadFollowups(client: Client): Promise<AutomationRow[]> {
+export async function findDueLeadFollowups(client: DatabaseClient): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
     `SELECT id, account_id, type, config, enabled, next_run_at::text
        FROM automations
@@ -42,7 +42,7 @@ export async function findDueLeadFollowups(client: Client): Promise<AutomationRo
 }
 
 export async function findStaleLeads(
-  client: Client,
+  client: DatabaseClient,
   automation: AutomationRow
 ): Promise<StaleLead[]> {
   const hoursThreshold = (automation.config as { hours_threshold?: number }).hours_threshold ?? 24;
@@ -82,7 +82,7 @@ function leadFollowupHtml(lead: StaleLead): string {
 }
 
 async function emitLeadFollowup(
-  client: Client,
+  client: DatabaseClient,
   lead: StaleLead,
   automationId: string
 ): Promise<boolean> {
@@ -139,7 +139,7 @@ async function emitLeadFollowup(
   return true;
 }
 
-export async function processLeadFollowups(client: Client, automation: AutomationRow): Promise<RunResult> {
+export async function processLeadFollowups(client: DatabaseClient, automation: AutomationRow): Promise<RunResult> {
   const result: RunResult = {
     automationId: automation.id,
     accountId: automation.account_id,

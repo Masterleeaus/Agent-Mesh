@@ -14,7 +14,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { invoiceTransitions } from "@ai-fsm/domain";
+import { invoiceTransitions } from "@titan-zero/domain";
 import {
   canCreateInvoices,
   canSendInvoices,

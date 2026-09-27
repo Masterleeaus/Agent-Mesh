@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { narrateDayDraft } from "../interpret-day-draft";
-import type { DayDraft } from "@ai-fsm/domain";
+import type { DayDraft } from "@titan-zero/domain";
 
 const empty: DayDraft = {
   items: [],

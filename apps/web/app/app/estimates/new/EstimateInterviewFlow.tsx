@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui";
 import { DraftReviewPanel } from "./components/DraftReviewPanel";
 import type { DraftEstimate } from "@/lib/estimates/ai-draft";
-import type { ShoppingList, ExtractedFacts } from "@ai-fsm/domain";
-import type { InterviewMessage } from "@ai-fsm/domain";
+import type { ShoppingList, ExtractedFacts } from "@titan-zero/domain";
+import type { InterviewMessage } from "@titan-zero/domain";
 
 // ---------------------------------------------------------------------------
 // Types

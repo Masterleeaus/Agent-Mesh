@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import type { JobStatus } from "@ai-fsm/domain";
+import type { JobStatus } from "@titan-zero/domain";
 import { Button, ConfirmDialog } from "@/components/ui";
 
 const DANGER_TRANSITIONS: JobStatus[] = ["cancelled"];

@@ -1,4 +1,4 @@
-import { formatCents } from "@ai-fsm/money";
+import { formatCents } from "@titan-zero/money";
 
 export type MaterialsBudgetCopy =
   | { kind: "empty" }

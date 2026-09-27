@@ -3,7 +3,7 @@
 import React from "react";
 import { Card, Input, SectionHeader } from "@/components/ui";
 import { formatCents } from "@/lib/estimates/pricing";
-import { PREP_LEVEL_MULTIPLIERS } from "@ai-fsm/domain";
+import { PREP_LEVEL_MULTIPLIERS } from "@titan-zero/domain";
 
 export interface PaintingPreviewResult {
   labor_flat_rate_cents: number;

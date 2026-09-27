@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { canCreateEstimates } from "@/lib/auth/permissions";
 import { query } from "@/lib/db";
-import { buildWorkOrderDraft } from "@ai-fsm/domain";
+import { buildWorkOrderDraft } from "@titan-zero/domain";
 import { PageContainer, PageHeader, Card, EmptyState } from "@/components/ui";
 import { loadAssessmentSummary } from "@/lib/estimates/assessment-summary-loader";
 import { WorkOrderForm } from "../WorkOrderForm";

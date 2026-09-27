@@ -6,8 +6,8 @@ import { logger } from "@/lib/logger";
 import { draftEstimate } from "@/lib/estimates/ai-draft";
 import type { TradeDefinition } from "@/lib/estimates/ai-draft";
 import type { PriceBookEntry } from "@/lib/estimates/item-suggester";
-import { computeMaterials, computeScopeModifier, buildShoppingList } from "@ai-fsm/domain";
-import type { ScopeTemplate, ScopeComponent, ComplexityFactor, ScopeComponentOption, ServiceMaterial, ScopeComponentValues, ComplexityValues } from "@ai-fsm/domain";
+import { computeMaterials, computeScopeModifier, buildShoppingList } from "@titan-zero/domain";
+import type { ScopeTemplate, ScopeComponent, ComplexityFactor, ScopeComponentOption, ServiceMaterial, ScopeComponentValues, ComplexityValues } from "@titan-zero/domain";
 import { validateMaterialsForTrade } from "@/lib/estimates/guardrails";
 
 export const dynamic = "force-dynamic";
@@ -260,7 +260,7 @@ export const POST = withAuth(async (request: NextRequest, session) => {
 
     // Compute materials and adjusted price for each service.
     // adjusted_price_cents = (base × sqft if per_sqft) × scope_modifier — shown in review panel.
-    const computedByService: Array<{ service_name: string; materials: import("@ai-fsm/domain").ComputedMaterial[] }> = [];
+    const computedByService: Array<{ service_name: string; materials: import("@titan-zero/domain").ComputedMaterial[] }> = [];
 
     if (draft && draft.services.length > 0) {
       const categories = [...new Set(draft.services.map((s) => s.service_category))];

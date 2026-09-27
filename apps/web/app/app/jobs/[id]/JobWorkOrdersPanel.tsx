@@ -7,7 +7,7 @@ import Link from "next/link";
 import {
   WORK_ORDER_STATUS_LABELS,
   type WorkOrderUiStatus,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { Button, LinkButton, useToast } from "@/components/ui";
 import { canDeleteUnusedWorkOrder } from "@/lib/work-orders/can-delete-unused";
 

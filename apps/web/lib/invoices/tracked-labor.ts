@@ -2,7 +2,7 @@ import type { PoolClient } from "pg";
 import {
   LABOR_COST_CENTS_PER_HOUR,
   LABOR_CUSTOMER_RATE_CENTS_PER_HOUR,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 /**
  * Tracked minutes → billable hours, rounded to the nearest quarter hour. The unit

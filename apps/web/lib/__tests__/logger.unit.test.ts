@@ -2,7 +2,7 @@
  * Logger unit tests
  *
  * Tier: Unit (Tier 1) — no external dependencies.
- * Tests the web logger wrapper (service=web) around @ai-fsm/log.
+ * Tests the web logger wrapper (service=web) around @titan-zero/log.
  */
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";

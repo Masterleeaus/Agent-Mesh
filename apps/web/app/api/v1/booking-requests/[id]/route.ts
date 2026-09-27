@@ -7,7 +7,7 @@ import { recordStatusChange } from "../../../../../lib/status-history";
 import {
   bookingRequestClosedReasonSchema,
   bookingRequestPatchStatusSchema,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

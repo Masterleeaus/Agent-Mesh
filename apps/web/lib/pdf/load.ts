@@ -7,7 +7,7 @@
  * caller via withInvoiceContext / withEstimateContext).
  */
 import type { PoolClient } from "pg";
-import { buildClientDocumentFilename } from "@ai-fsm/domain";
+import { buildClientDocumentFilename } from "@titan-zero/domain";
 import { requestedDepositCents, type InvoiceDepositType } from "@/lib/invoices/deposit";
 import {
   resolveCompanyBranding,

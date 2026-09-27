@@ -3,7 +3,7 @@ import { z } from "zod";
 import { withRole } from "@/lib/auth/middleware";
 import { withAssetContext, deleteAssetLink, updateAssetLinkStatus } from "@/lib/homebox/db";
 import { appendAuditLog } from "@/lib/db/audit";
-import { assetLinkStatusSchema } from "@ai-fsm/domain";
+import { assetLinkStatusSchema } from "@titan-zero/domain";
 import { logger } from "@/lib/logger";
 import { getPathId } from "@/lib/route-utils";
 

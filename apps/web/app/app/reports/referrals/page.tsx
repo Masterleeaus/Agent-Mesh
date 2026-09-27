@@ -5,7 +5,7 @@ import {
   buildReferralRoiRow,
   sortReferralRoiRows,
   type ReferralRoiRow,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { getSession } from "@/lib/auth/session";
 import { canViewReports } from "@/lib/auth/permissions";
 import {

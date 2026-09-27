@@ -6,7 +6,7 @@ import {
 import {
   shouldEnsureFieldDayVisit,
   shouldRelearnPropertyCoords,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 describe("entityLinkFromCandidate", () => {
   it("prefers work_order over visit for billable assignment", () => {

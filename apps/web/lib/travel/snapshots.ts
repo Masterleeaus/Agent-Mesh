@@ -7,7 +7,7 @@ import {
   type TravelChargeMode,
   type TripCalculationMethod,
   type TripDirectionMode,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export interface TravelSnapshotRow {
   id: string;

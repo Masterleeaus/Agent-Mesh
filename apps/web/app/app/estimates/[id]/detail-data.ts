@@ -1,6 +1,6 @@
 import { withEstimateContext } from "@/lib/estimates/db";
 import { getPool } from "@/lib/db";
-import type { EstimateStatus } from "@ai-fsm/domain";
+import type { EstimateStatus } from "@titan-zero/domain";
 import type { SessionPayload } from "@/lib/auth/session";
 import {
   documentJoins,

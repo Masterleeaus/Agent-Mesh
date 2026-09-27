@@ -1,6 +1,6 @@
 /**
  * Web helpers for matching expenses / OCR text to jobs via Supply PO.
- * Pure domain logic lives in @ai-fsm/domain job-po.
+ * Pure domain logic lives in @titan-zero/domain job-po.
  */
 
 import {
@@ -9,7 +9,7 @@ import {
   toSupplyPo,
   type JobPoMatch,
   type JobPoMatchInput,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { extractReceiptPo } from "@/lib/invoices/receipt-po";
 
 export type { JobPoMatch };

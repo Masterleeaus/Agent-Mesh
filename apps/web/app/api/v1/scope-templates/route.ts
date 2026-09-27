@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "@/lib/auth/middleware";
 import { query } from "@/lib/db";
 import { logger } from "@/lib/logger";
-import type { ScopeTemplate, ScopeComponent, ComplexityFactor, ProfitabilityRule, ScopeComponentOption, ServiceMaterial, ProductionRate, ProductionRateModifier } from "@ai-fsm/domain";
+import type { ScopeTemplate, ScopeComponent, ComplexityFactor, ProfitabilityRule, ScopeComponentOption, ServiceMaterial, ProductionRate, ProductionRateModifier } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

@@ -9,7 +9,7 @@ import {
   CLASSIFICATION_TO_ACTIVITY,
   activityCategoryFor,
   type VisitClassification,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

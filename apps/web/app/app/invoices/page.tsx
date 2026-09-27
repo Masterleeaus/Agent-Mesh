@@ -4,8 +4,8 @@ import type { Route } from "next";
 import { getSession } from "@/lib/auth/session";
 import { canCreateInvoices } from "@/lib/auth/permissions";
 import { withInvoiceContext } from "@/lib/invoices/db";
-import type { InvoiceStatus } from "@ai-fsm/domain";
-import { invoiceDueOnCompletion, daysUntilInvoiceDue } from "@ai-fsm/domain";
+import type { InvoiceStatus } from "@titan-zero/domain";
+import { invoiceDueOnCompletion, daysUntilInvoiceDue } from "@titan-zero/domain";
 import {
   PageContainer,
   PageHeader,

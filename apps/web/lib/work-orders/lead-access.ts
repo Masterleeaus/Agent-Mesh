@@ -1,5 +1,5 @@
 import type { DbClient } from "@/lib/db-contract";
-import type { CompletionCriterion } from "@ai-fsm/domain";
+import type { CompletionCriterion } from "@titan-zero/domain";
 import { withPortableTransaction } from "@/lib/db/portable";
 import type { SessionPayload } from "@/lib/auth/session";
 

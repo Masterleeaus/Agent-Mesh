@@ -6,7 +6,7 @@ import {
   type TravelTimeRounding,
   type TripCalculationMethod,
   type TripDirectionMode,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export interface TravelSettingsRow extends TravelSettings {
   account_id: string;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildAssessmentSummary } from "@ai-fsm/domain";
+import { buildAssessmentSummary } from "@titan-zero/domain";
 import {
   buildMaterialsUserMessage,
   generateMaterials,

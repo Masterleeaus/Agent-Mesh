@@ -7,7 +7,7 @@ import {
   buildJobLedger,
   type JobLedgerSummary,
   type ExpenseCommercialTag,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 type EstimateLineRow = {
   description: string;

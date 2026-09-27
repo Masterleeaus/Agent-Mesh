@@ -11,8 +11,8 @@ import {
   isValidMonthKey,
   recentMonthOptions,
 } from "@/lib/expenses/ui";
-import type { ExpenseCategory } from "@ai-fsm/domain";
-import { EXPENSE_CATEGORIES, EXPENSE_CATEGORY_LABELS } from "@ai-fsm/domain";
+import type { ExpenseCategory } from "@titan-zero/domain";
+import { EXPENSE_CATEGORIES, EXPENSE_CATEGORY_LABELS } from "@titan-zero/domain";
 import {
   PageContainer,
   PageHeader,

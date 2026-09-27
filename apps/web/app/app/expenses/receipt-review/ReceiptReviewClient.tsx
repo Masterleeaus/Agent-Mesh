@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import { Card, Button, useToast } from "@/components/ui";
-import { formatCents } from "@ai-fsm/money";
+import { formatCents } from "@titan-zero/money";
 
 type Suggestion = {
   job_id: string;

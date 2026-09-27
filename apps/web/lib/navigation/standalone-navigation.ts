@@ -1,4 +1,4 @@
-import { sanitizeBusinessOpsTarget } from "@ai-fsm/domain";
+import { sanitizeBusinessOpsTarget } from "@titan-zero/domain";
 import { UI_RUNTIME_REACHABILITY_INVENTORY } from "./reachability-inventory";
 import { canonicalStandalonePathname } from "./compatibility-routes";
 

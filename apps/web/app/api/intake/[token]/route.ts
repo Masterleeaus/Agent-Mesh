@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withPortableTransaction } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";
-import { scoreSiteVisitProbability } from "@ai-fsm/domain";
+import { scoreSiteVisitProbability } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { JOB_TYPE_MATERIALS } from "@ai-fsm/domain";
-import type { ShoppingList, SpecifiedMaterial } from "@ai-fsm/domain";
+import { JOB_TYPE_MATERIALS } from "@titan-zero/domain";
+import type { ShoppingList, SpecifiedMaterial } from "@titan-zero/domain";
 import type { PriceBookService } from "@/components/PriceBookSelector";
 import type { DraftEstimate, DraftConfidence } from "@/lib/estimates/ai-draft";
 import type { LineItemRow, OptionTier } from "@/lib/estimates/form-helpers";

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { estimateEmailHtml, estimateEmailText } from "@ai-fsm/email-templates";
+import { estimateEmailHtml, estimateEmailText } from "@titan-zero/email-templates";
 import { calculateDepositPolicy, depositDueTriggerLabel, estimateMaterialsDepositBasis } from "../deposit-policy";
 import { createApprovalArtifacts } from "../approve";
 

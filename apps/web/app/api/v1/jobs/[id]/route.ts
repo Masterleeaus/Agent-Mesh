@@ -5,7 +5,7 @@ import type { AuthSession } from "../../../../../lib/auth/middleware";
 import { portableQueryOne, withPortableTransaction } from "../../../../../lib/db/portable";
 import { appendAuditLog } from "../../../../../lib/db/audit";
 import { logger } from "../../../../../lib/logger";
-import { JOB_ACCEPTANCE_CATEGORIES, JOB_INTAKE_DECISIONS, VENDOR_COORDINATION_MODES } from "@ai-fsm/domain";
+import { JOB_ACCEPTANCE_CATEGORIES, JOB_INTAKE_DECISIONS, VENDOR_COORDINATION_MODES } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

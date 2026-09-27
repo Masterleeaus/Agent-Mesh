@@ -6,7 +6,7 @@ import {
   STANDARD_DEPOSIT_TERMS,
   STANDARD_ESTIMATE_TERMS,
   STANDARD_INVOICE_TERMS,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { useToast } from "@/components/ui/Toast";
 
 interface AccountSettings {

@@ -4,7 +4,7 @@ import {
   rankVisitCandidates,
   relocationRadiusMeters,
   type VisitMatchCandidate,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 /** Hard cap — auto-detect never fires beyond ~250 ft even if geofence is wider. */
 export const MAX_AUTO_DETECT_METERS = 250 * 0.3048;

@@ -1,6 +1,6 @@
 import type { PoolClient } from "pg";
-import type { MilesSource } from "@ai-fsm/domain";
-import { isGpsEstimateSource } from "@ai-fsm/domain";
+import type { MilesSource } from "@titan-zero/domain";
+import { isGpsEstimateSource } from "@titan-zero/domain";
 import { completedSessionMiles, type SessionMiles } from "./sessions";
 
 /** Miles match GPS pre-fill within one decimal place (segment rounds to 0.1 mi). */

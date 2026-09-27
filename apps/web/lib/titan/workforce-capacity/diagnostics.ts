@@ -1,4 +1,4 @@
-import { buildWorkforceCapacityDiagnostics, type WorkforceDiagnosticsInput } from '@ai-fsm/titan-platform/workforce-capacity';
+import { buildWorkforceCapacityDiagnostics, type WorkforceDiagnosticsInput } from '@titan-zero/titan-platform/workforce-capacity';
 
 /**
  * Read-only adapter for Titan Zero operational inspection surfaces.

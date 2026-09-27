@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { PoolClient } from "pg";
-import type { Role } from "@ai-fsm/domain";
+import type { Role } from "@titan-zero/domain";
 
 const ensureFieldDayVisit = vi.fn();
 const runVisitCloseout = vi.fn();

@@ -5,7 +5,7 @@ import {
   materializeTitanBusinessOpsPath,
   routeTitanBusinessOpsAgent,
   type TitanBusinessOpsAgentCommandId,
-} from "@ai-fsm/titan-platform/business-ops";
+} from "@titan-zero/titan-platform/business-ops";
 
 export type WorkforceCommandRequest = {
   commandId: TitanBusinessOpsAgentCommandId;

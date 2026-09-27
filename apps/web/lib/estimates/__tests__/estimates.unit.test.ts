@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { estimateTransitions } from "@ai-fsm/domain";
+import { estimateTransitions } from "@titan-zero/domain";
 import { calcTotals, lineItemTotal } from "../math";
 import {
   canCreateEstimates,

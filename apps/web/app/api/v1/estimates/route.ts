@@ -7,19 +7,19 @@ import {
   calcTotals,
   lineItemTotal,
 } from "@/lib/estimates/db";
-import { computeEstimate, sqftPaintingToSpec, ENGINE_VERSION } from "@ai-fsm/domain";
+import { computeEstimate, sqftPaintingToSpec, ENGINE_VERSION } from "@titan-zero/domain";
 import {
   estimateAdjustmentTypeSchema,
   estimateFinishExpectationSchema,
   estimateMinimumOverrideReasonSchema,
   estimateStatusSchema,
   estimateTripCountSchema,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { logger } from "@/lib/logger";
 import { reviewEstimateGuardrails, computeConditionTier } from "@/lib/estimates/guardrails";
 import { computeAndPersist } from "@/lib/estimates/compute";
 import { calculateDepositPolicy, estimateMaterialsDepositBasis } from "@/lib/estimates/deposit-policy";
-import type { EstimateSpec } from "@ai-fsm/domain";
+import type { EstimateSpec } from "@titan-zero/domain";
 import { getPool } from "@/lib/db";
 import { loadPricingRules } from "@/lib/pricing/settings";
 import { laborCostCentsFromHours } from "@/lib/pricing/labor-hours";

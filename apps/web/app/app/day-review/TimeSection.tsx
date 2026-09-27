@@ -1,4 +1,4 @@
-import { ACTIVITY_TYPE_META, type ActivityType } from "@ai-fsm/domain";
+import { ACTIVITY_TYPE_META, type ActivityType } from "@titan-zero/domain";
 import { BUSINESS_TIMEZONE } from "@/lib/operations/business-day";
 import type { DayReviewPayload } from "@/lib/day-review/queries";
 

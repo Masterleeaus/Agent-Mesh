@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import {
   DEFAULT_PRICING_SETTINGS,
   type BusinessPricingSettings,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 /**
  * Client-side account pricing rates for live margin / T&M previews.

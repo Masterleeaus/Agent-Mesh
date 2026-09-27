@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "@/lib/auth/middleware";
 import { queryForSession } from "@/lib/db";
 import { logger } from "@/lib/logger";
-import { isPrivateLocation } from "@ai-fsm/domain";
+import { isPrivateLocation } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

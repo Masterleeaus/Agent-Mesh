@@ -1,5 +1,5 @@
 import { portableQuery } from "@/lib/db/portable";
-import { projectTitanSignalsForBuilder, type BuilderSignalProjectionProvider, type TitanSignalProjectionEnvelope } from "@ai-fsm/titan-platform/titan-builder";
+import { projectTitanSignalsForBuilder, type BuilderSignalProjectionProvider, type TitanSignalProjectionEnvelope } from "@titan-zero/titan-platform/titan-builder";
 
 type Row=Record<string,unknown>;
 const jsonObject=(value:unknown):Record<string,unknown>=>{if(value&&typeof value==="object"&&!Array.isArray(value))return value as Record<string,unknown>;if(typeof value==="string"){try{const x=JSON.parse(value);return x&&typeof x==="object"&&!Array.isArray(x)?x:{};}catch{return {};}}return {};};

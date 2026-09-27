@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import type { InvoiceStatus } from "@ai-fsm/domain";
+import type { InvoiceStatus } from "@titan-zero/domain";
 
 interface Props {
   invoiceId: string;

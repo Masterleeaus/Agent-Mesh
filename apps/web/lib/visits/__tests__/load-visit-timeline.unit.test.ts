@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildVisitTimeline } from "@ai-fsm/domain";
+import { buildVisitTimeline } from "@titan-zero/domain";
 import { groupActivitiesByVisitId } from "../load-visit-timeline";
 
 describe("groupActivitiesByVisitId", () => {

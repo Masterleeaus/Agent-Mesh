@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import type { VisitStatus } from "@ai-fsm/domain";
-import { SUB_STATUS_LABELS } from "@ai-fsm/domain";
+import type { VisitStatus } from "@titan-zero/domain";
+import { SUB_STATUS_LABELS } from "@titan-zero/domain";
 import {
   ItemCard,
   StatusSection,

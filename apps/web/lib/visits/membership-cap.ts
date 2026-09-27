@@ -1,4 +1,4 @@
-import type { MembershipCapStatus, MembershipVisitPhase } from "@ai-fsm/domain";
+import type { MembershipCapStatus, MembershipVisitPhase } from "@titan-zero/domain";
 
 export function computeCapStatus(
   minutesUsed: number,

@@ -1,5 +1,5 @@
 /**
- * Web application logger — thin wrapper around @ai-fsm/log.
+ * Web application logger — thin wrapper around @titan-zero/log.
  *
  * Usage:
  *   import { logger } from "@/lib/logger";
@@ -10,7 +10,7 @@
  *   import { _setWriter } from "@/lib/logger";  // test-only
  */
 
-import { createLogger, type LogLevel, type LogRecord } from "@ai-fsm/log";
+import { createLogger, type LogLevel, type LogRecord } from "@titan-zero/log";
 
 const { logger, _setWriter } = createLogger({ service: "web" });
 

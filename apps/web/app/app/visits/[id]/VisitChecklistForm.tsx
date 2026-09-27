@@ -3,8 +3,8 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui";
-import type { VisitChecklistItem, ChecklistDisposition } from "@ai-fsm/domain";
-import { CHECKLIST_DISPOSITION_LABELS, CHECKLIST_SECTIONS } from "@ai-fsm/domain";
+import type { VisitChecklistItem, ChecklistDisposition } from "@titan-zero/domain";
+import { CHECKLIST_DISPOSITION_LABELS, CHECKLIST_SECTIONS } from "@titan-zero/domain";
 import { VaultSuggestionButton } from "./VaultSuggestionButton";
 
 interface Props {

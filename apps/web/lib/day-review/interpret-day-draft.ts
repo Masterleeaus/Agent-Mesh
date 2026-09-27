@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
-import { formatHours, type DayDraft } from "@ai-fsm/domain";
+import { formatHours, type DayDraft } from "@titan-zero/domain";
 
 const narrativeSchema = z.object({
   summary: z.string(),

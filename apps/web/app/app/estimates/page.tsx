@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { canCreateEstimates } from "@/lib/auth/permissions";
 import { withEstimateContext } from "@/lib/estimates/db";
-import type { EstimateStatus } from "@ai-fsm/domain";
+import type { EstimateStatus } from "@titan-zero/domain";
 import {
   PageContainer,
   PageHeader,

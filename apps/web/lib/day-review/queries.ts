@@ -4,7 +4,7 @@ import {
   preSelectCandidates,
   isPrivateLocation,
   type MilesSource,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { loadHybridMileageForDay } from "@/lib/mileage/hybrid-day";
 
 export type DayReviewPayload = {

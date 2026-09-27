@@ -11,18 +11,18 @@ import {
   STANDARD_DEPOSIT_PERCENT,
   type MaterialSuggestion,
   type EstimateSpec,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { useEstimateAI } from "./useEstimateAI";
 import {
   resolveAssessmentContext,
   type AssessmentContext,
 } from "@/lib/estimates/assessment-context";
-import type { ShoppingList, SpecifiedMaterial, RoomSpec, ProjectOptions, EstimateResult } from "@ai-fsm/domain";
+import type { ShoppingList, SpecifiedMaterial, RoomSpec, ProjectOptions, EstimateResult } from "@titan-zero/domain";
 import {
   estimateResultToLegacyFields,
   buildShoppingListFromEstimateResult,
   roomSpecsToEstimateSpec,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { useEstimatePriceBook } from "./useEstimatePriceBook";
 import { useEstimateTiers } from "./useEstimateTiers";
 import {

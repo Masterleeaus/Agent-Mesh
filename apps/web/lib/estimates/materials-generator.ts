@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { ASSESSMENT_TRADE_LABELS, type AssessmentSummary, type AssessmentTradeKey } from "@ai-fsm/domain";
+import { ASSESSMENT_TRADE_LABELS, type AssessmentSummary, type AssessmentTradeKey } from "@titan-zero/domain";
 
 /**
  * A materials-generation failure with a user-facing reason and HTTP status.

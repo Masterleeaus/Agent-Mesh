@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { TITAN_BUSINESS_OPS_AGENT_COMMANDS } from "@ai-fsm/titan-platform/business-ops";
+import { TITAN_BUSINESS_OPS_AGENT_COMMANDS } from "@titan-zero/titan-platform/business-ops";
 import { getSession } from "@/lib/auth/session";
 import {
   buildWorkforceCommandPlan,

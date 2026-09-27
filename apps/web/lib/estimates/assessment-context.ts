@@ -11,7 +11,7 @@
  * (packages/domain) — not a competing definition (TASK-018).
  */
 
-import type { AssessmentRoom, AssessmentSummary } from "@ai-fsm/domain";
+import type { AssessmentRoom, AssessmentSummary } from "@titan-zero/domain";
 
 export const ASSESSMENT_CONTEXT_KEY = "dovetails.assessmentContext";
 

@@ -1,5 +1,5 @@
 import type { DbClient } from "@/lib/db-contract";
-import type { BusinessDayStatus } from "@ai-fsm/domain";
+import type { BusinessDayStatus } from "@titan-zero/domain";
 import { businessToday, getBusinessDay } from "./business-day";
 
 /**

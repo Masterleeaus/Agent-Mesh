@@ -5,7 +5,7 @@
 import { randomUUID } from "node:crypto";
 import type { DbClient } from "@/lib/db-contract";
 import { getDatabaseDialect } from "@/lib/db";
-import { shouldFlagSuspectOdometer } from "@ai-fsm/domain";
+import { shouldFlagSuspectOdometer } from "@titan-zero/domain";
 
 export async function lastKnownOdometer(
   client: DbClient,

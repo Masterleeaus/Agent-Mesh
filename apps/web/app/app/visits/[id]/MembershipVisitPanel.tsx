@@ -9,7 +9,7 @@ import {
   type MembershipCapStatus,
   type VaultCategory,
   type VaultCollectionStep,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import {
   MEMBERSHIP_PHASE_LABELS,
   MEMBERSHIP_PHASE_DESCRIPTIONS,

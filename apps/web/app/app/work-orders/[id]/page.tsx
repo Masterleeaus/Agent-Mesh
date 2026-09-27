@@ -7,7 +7,7 @@ import {
   WORK_ORDER_UI_STATUSES,
   WORK_ORDER_STATUS_LABELS,
   type WorkOrderRoomLine,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { formatBusinessDate, formatBusinessTime } from "@/lib/time/business-tz";
 import {
   PageContainer,

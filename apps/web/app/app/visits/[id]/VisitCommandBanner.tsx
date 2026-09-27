@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Route } from "next";
-import type { VisitStatus, MembershipVisitPhase } from "@ai-fsm/domain";
+import type { VisitStatus, MembershipVisitPhase } from "@titan-zero/domain";
 
 interface VisitCommandBannerProps {
   status: VisitStatus;

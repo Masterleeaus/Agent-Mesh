@@ -1,5 +1,5 @@
-import { PREP_LEVEL_MULTIPLIERS, calculateFinancialComparison, computeRoomMeasurements } from "@ai-fsm/domain";
-import type { RoomSpec, Role } from "@ai-fsm/domain";
+import { PREP_LEVEL_MULTIPLIERS, calculateFinancialComparison, computeRoomMeasurements } from "@titan-zero/domain";
+import type { RoomSpec, Role } from "@titan-zero/domain";
 import type { AiMaterialsDeltaItem as AiMaterialsDeltaEntry } from "@/lib/estimates/materials-delta";
 import { formatDollars } from "../format";
 import type { EstimateRow } from "../detail-data";

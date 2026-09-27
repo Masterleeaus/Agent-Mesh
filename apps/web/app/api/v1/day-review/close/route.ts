@@ -5,8 +5,8 @@ import { withDbSession } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { getBusinessDayById, setBusinessDayStatus } from "@/lib/operations/business-day";
 import { assertDayCloseAllowed } from "@/lib/day-review/close-status";
-import { checkBusinessDayTransition } from "@ai-fsm/domain";
-import type { BusinessDayStatus } from "@ai-fsm/domain";
+import { checkBusinessDayTransition } from "@titan-zero/domain";
+import type { BusinessDayStatus } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

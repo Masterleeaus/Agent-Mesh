@@ -10,7 +10,7 @@ import {
   type PaymentMethod,
   type PaymentType,
   type PaymentStatus,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 interface PaymentRow {
   id: string;

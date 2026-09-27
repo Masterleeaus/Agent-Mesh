@@ -1,6 +1,6 @@
-import type { Client } from "pg";
+import type { DatabaseClient } from "./db-client.js";
 import { logger } from "./logger.js";
-import { recurringInspectionHtml } from "@ai-fsm/email-templates";
+import { recurringInspectionHtml } from "@titan-zero/email-templates";
 import type { AutomationRow, RunResult } from "./automations/types.js";
 import { enqueueNotification } from "./notification/enqueue.js";
 import { PRIORITY } from "./notification/priority.js";
@@ -16,7 +16,7 @@ interface InspectionDuePlan {
   days_since_last_inspection: number;
 }
 
-export async function findDueRecurringInspections(client: Client): Promise<AutomationRow[]> {
+export async function findDueRecurringInspections(client: DatabaseClient): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
     `SELECT id, account_id, type, config, enabled, next_run_at::text
      FROM automations
@@ -28,7 +28,7 @@ export async function findDueRecurringInspections(client: Client): Promise<Autom
 }
 
 export async function findPlansNeedingInspection(
-  client: Client,
+  client: DatabaseClient,
   automation: AutomationRow
 ): Promise<InspectionDuePlan[]> {
   const inspectionIntervalDays = (automation.config as { interval_days?: number }).interval_days ?? 365;
@@ -80,7 +80,7 @@ export async function findPlansNeedingInspection(
 }
 
 async function emitRecurringInspection(
-  client: Client,
+  client: DatabaseClient,
   plan: InspectionDuePlan,
   automationId: string,
   intervalDays: number
@@ -142,7 +142,7 @@ async function emitRecurringInspection(
 }
 
 export async function processRecurringInspections(
-  client: Client,
+  client: DatabaseClient,
   automation: AutomationRow
 ): Promise<RunResult> {
   const result: RunResult = {

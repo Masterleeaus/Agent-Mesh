@@ -1,4 +1,4 @@
-import type { MaterialsBySection, ServiceMaterial, ShoppingList } from "@ai-fsm/domain";
+import type { MaterialsBySection, ServiceMaterial, ShoppingList } from "@titan-zero/domain";
 
 export function shoppingListToMaterialsBySection(list: ShoppingList): MaterialsBySection[] {
   return list.sections.map((section) => ({

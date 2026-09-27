@@ -1,7 +1,7 @@
 /**
  * Dovetails Services LLC — estimate document helpers.
  *
- * Painting computation is canonical in @ai-fsm/domain estimate-engine.
+ * Painting computation is canonical in @titan-zero/domain estimate-engine.
  */
 
 import {
@@ -10,7 +10,7 @@ import {
   STANDARD_DISCLAIMER,
   DOCUMENT_STANDARD_VERSION,
   ESTIMATE_DOCUMENT_SECTIONS,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 export function getStandardEstimateTerms() {
   return {

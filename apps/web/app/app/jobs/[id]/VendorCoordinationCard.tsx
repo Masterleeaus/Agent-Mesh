@@ -9,8 +9,8 @@ import {
   VENDOR_COORDINATION_LABELS,
   VENDOR_COORDINATION_DESCRIPTIONS,
   CONCIERGE_DEFAULT_FEE_CENTS,
-} from "@ai-fsm/domain";
-import type { VendorCoordinationMode } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { VendorCoordinationMode } from "@titan-zero/domain";
 
 interface Props {
   jobId: string;

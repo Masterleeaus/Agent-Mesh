@@ -3,7 +3,7 @@ import type { AuthSession } from "@/lib/auth/middleware";
 import {
   buildTitanSchedulingPlan,
   type TitanSchedulingPlanInput,
-} from "@ai-fsm/titan-platform/workforce-native";
+} from "@titan-zero/titan-platform/workforce-native";
 
 export type SchedulingNativeRequest = Omit<TitanSchedulingPlanInput, "companyId" | "actorId"> & {
   dryRun?: boolean;

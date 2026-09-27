@@ -4,7 +4,7 @@ import {
   getTitanBusinessOpsAgentProfile,
   planTitanNativeAgent,
   type TitanNativeAgentPlanInput,
-} from "@ai-fsm/titan-platform/native-agents";
+} from "@titan-zero/titan-platform/native-agents";
 
 export const dynamic = "force-dynamic";
 

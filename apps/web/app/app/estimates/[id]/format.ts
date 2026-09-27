@@ -1,4 +1,4 @@
-import type { EstimateStatus } from "@ai-fsm/domain";
+import type { EstimateStatus } from "@titan-zero/domain";
 
 export const STATUS_LABELS: Record<EstimateStatus, string> = {
   draft: "Draft",

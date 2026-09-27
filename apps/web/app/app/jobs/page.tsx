@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { query } from "@/lib/db";
 import { canTransitionJob, canViewAllJobs } from "@/lib/auth/permissions";
-import type { Job, JobStatus } from "@ai-fsm/domain";
-import { JOB_ACCEPTANCE_CATEGORY_LABELS, JOB_INTAKE_DECISION_LABELS, deriveCustomerStage, CUSTOMER_STAGE_LABELS, CUSTOMER_STAGE_COLORS } from "@ai-fsm/domain";
-import { SUB_STATUS_LABELS, JOB_STATUS_LABELS } from "@ai-fsm/domain";
+import type { Job, JobStatus } from "@titan-zero/domain";
+import { JOB_ACCEPTANCE_CATEGORY_LABELS, JOB_INTAKE_DECISION_LABELS, deriveCustomerStage, CUSTOMER_STAGE_LABELS, CUSTOMER_STAGE_COLORS } from "@titan-zero/domain";
+import { SUB_STATUS_LABELS, JOB_STATUS_LABELS } from "@titan-zero/domain";
 import {
   PageContainer,
   PageHeader,

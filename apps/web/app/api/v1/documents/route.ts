@@ -3,7 +3,7 @@ import { z } from "zod";
 import { withAuth, withRole } from "@/lib/auth/middleware";
 import { withDocumentContext, listDocumentLinks, createDocumentLink } from "@/lib/paperless/db";
 import { appendAuditLog } from "@/lib/db/audit";
-import { documentLinkEntityTypeSchema } from "@ai-fsm/domain";
+import { documentLinkEntityTypeSchema } from "@titan-zero/domain";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";

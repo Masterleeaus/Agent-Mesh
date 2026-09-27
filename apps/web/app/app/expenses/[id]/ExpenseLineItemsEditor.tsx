@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button, Input } from "@/components/ui";
-import { formatCents } from "@ai-fsm/money";
+import { formatCents } from "@titan-zero/money";
 
 export interface ExpenseLineItemDraft {
   id?: string;

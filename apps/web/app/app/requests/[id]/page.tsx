@@ -8,7 +8,7 @@ import type { StatusVariant } from "@/components/ui";
 import { ReviewActions } from "./ReviewActions";
 import { IntakeSummary } from "./IntakeSummary";
 import { INTAKE_QUESTIONS, INTAKE_METADATA_LABELS } from "@/lib/intake/questions";
-import { PRICING_MODE_LABELS, scoreJobFit } from "@ai-fsm/domain";
+import { PRICING_MODE_LABELS, scoreJobFit } from "@titan-zero/domain";
 import { FUNNEL_STEPS, funnelStepIndex, getRequestGuidance } from "../request-guidance";
 import { MarkEntityAttentionRead } from "@/components/attention/MarkEntityAttentionRead";
 

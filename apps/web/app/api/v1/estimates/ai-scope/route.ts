@@ -3,7 +3,7 @@ import { z } from "zod";
 import { withAuth } from "@/lib/auth/middleware";
 import { translateScope } from "@/lib/estimates/scope";
 import { formatCents } from "@/lib/estimates/pricing";
-import { computeEstimate, sqftPaintingToSpec, CURRENT_RULES } from "@ai-fsm/domain";
+import { computeEstimate, sqftPaintingToSpec, CURRENT_RULES } from "@titan-zero/domain";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";

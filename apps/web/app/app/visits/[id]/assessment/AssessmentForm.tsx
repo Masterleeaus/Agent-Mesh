@@ -8,7 +8,7 @@ import {
   ASSESSMENT_TRADE_LABELS,
   buildAssessmentJobDescription,
   type AssessmentTradeKey,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { useToast } from "@/components/ui";
 import { formatBusinessTime } from "@/lib/time/business-tz";
 import { writeAssessmentContext } from "@/lib/estimates/assessment-context";

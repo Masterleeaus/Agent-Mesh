@@ -8,15 +8,15 @@ import type {
   ProfitabilityRule,
   ScopeComponentValues,
   ComplexityValues,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import {
   computeScopeModifier,
   checkProfitabilityRules,
   computeMaterials,
   groupMaterialsBySection,
-} from "@ai-fsm/domain";
-import type { ServiceMaterial, ComputedMaterial, ProductionRate, ProductionRateModifier, LaborEstimate } from "@ai-fsm/domain";
-import { computeLaborDays, formatLaborEstimate } from "@ai-fsm/domain";
+} from "@titan-zero/domain";
+import type { ServiceMaterial, ComputedMaterial, ProductionRate, ProductionRateModifier, LaborEstimate } from "@titan-zero/domain";
+import { computeLaborDays, formatLaborEstimate } from "@titan-zero/domain";
 import { validateMaterialsForTrade } from "@/lib/estimates/guardrails";
 
 interface ScopeBuilderProps {

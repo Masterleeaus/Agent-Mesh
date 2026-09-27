@@ -12,7 +12,7 @@
 import type { PoolClient } from "pg";
 import { getPool } from "@/lib/db";
 import type { SessionPayload } from "@/lib/auth/session";
-import type { VisitChecklistItem } from "@ai-fsm/domain";
+import type { VisitChecklistItem } from "@titan-zero/domain";
 
 // ---------------------------------------------------------------------------
 // RLS context helper (mirrors withExpenseContext / withDocumentContext)

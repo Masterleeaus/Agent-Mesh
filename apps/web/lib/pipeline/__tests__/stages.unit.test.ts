@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { derivePipelineStage } from "@ai-fsm/domain";
+import { derivePipelineStage } from "@titan-zero/domain";
 
 describe("derivePipelineStage", () => {
   it("routes unreviewed booking requests to Request", () => {

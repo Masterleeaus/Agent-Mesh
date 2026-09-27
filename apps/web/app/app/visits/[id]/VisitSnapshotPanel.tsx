@@ -1,4 +1,4 @@
-import type { VisitChecklistItem, ChecklistDisposition } from "@ai-fsm/domain";
+import type { VisitChecklistItem, ChecklistDisposition } from "@titan-zero/domain";
 import { FixNowEstimateButton } from "./FixNowEstimateButton";
 import { SnapshotDeliveryButton } from "./SnapshotDeliveryButton";
 import { VaultSuggestionButton } from "./VaultSuggestionButton";

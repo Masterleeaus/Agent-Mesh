@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import type { DbClient } from "@/lib/db-contract";
-import type { CompletionCriterion } from "@ai-fsm/domain";
+import type { CompletionCriterion } from "@titan-zero/domain";
 
 /**
  * A work-order task row (first-class, migration 155). This is the checklist

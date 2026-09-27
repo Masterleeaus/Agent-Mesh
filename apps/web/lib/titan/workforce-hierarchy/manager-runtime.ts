@@ -11,4 +11,4 @@ export {
   type TitanWorkforceManagerPolicy,
   type TitanWorkforceManagerPolicyDecision,
   type TitanWorkforceManagerRuntime,
-} from "@ai-fsm/titan-platform/workforce";
+} from "@titan-zero/titan-platform/workforce";

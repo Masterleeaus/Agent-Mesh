@@ -1,4 +1,4 @@
-import type { ActivityType } from "@ai-fsm/domain";
+import type { ActivityType } from "@titan-zero/domain";
 
 /**
  * Pure timeline-correction math over activity entries: splitting a block into

@@ -1,4 +1,4 @@
-import type { DocumentLinkEntityType } from "@ai-fsm/domain";
+import type { DocumentLinkEntityType } from "@titan-zero/domain";
 import type { SessionPayload } from "@/lib/auth/session";
 import { withDocumentContext, listDocumentLinks } from "@/lib/paperless/db";
 import { canLinkDocuments } from "@/lib/auth/permissions";

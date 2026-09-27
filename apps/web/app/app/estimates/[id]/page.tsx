@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth/session";
 import { canCreateEstimates, canDeleteRecords, canLinkDocuments } from "@/lib/auth/permissions";
 import { DocumentClientLocationCard } from "@/components/documents/DocumentClientLocationCard";
 import { resolveServiceLocation, formatAddressLine } from "@/lib/documents/service-location";
-import { billingRateCentsForState, type EstimateStatus, type RoomSpec } from "@ai-fsm/domain";
+import { billingRateCentsForState, type EstimateStatus, type RoomSpec } from "@titan-zero/domain";
 import { manualEstimateTransitions } from "@/lib/estimates/transitions";
 import { EstimateTransitionForm } from "./EstimateTransitionForm";
 import { EstimateInternalNotesForm } from "./EstimateInternalNotesForm";

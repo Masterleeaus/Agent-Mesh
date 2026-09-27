@@ -8,7 +8,7 @@ import { logger } from "@/lib/logger";
 import { calculateTravelForAccount } from "@/lib/travel/calculate";
 import { applyTravelToInvoice, getTravelSnapshot, insertTravelSnapshot } from "@/lib/travel/snapshots";
 import { loadTravelSettings } from "@/lib/travel/settings";
-import { compareTravelSnapshots } from "@ai-fsm/domain";
+import { compareTravelSnapshots } from "@titan-zero/domain";
 
 export const dynamic = "force-dynamic";
 

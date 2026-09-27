@@ -14,7 +14,7 @@ import {
   equipmentLineItemsFromJobExpenses,
   materialLineItemsFromJobExpenses,
 } from "@/lib/invoices/job-expenses";
-import { LABOR_CUSTOMER_RATE_CENTS_PER_HOUR } from "@ai-fsm/domain";
+import { LABOR_CUSTOMER_RATE_CENTS_PER_HOUR } from "@titan-zero/domain";
 
 export type PrefillLineItem = {
   description: string;

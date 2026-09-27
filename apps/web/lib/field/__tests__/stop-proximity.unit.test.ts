@@ -6,7 +6,7 @@ import {
   matchCustomerAtStop,
   relocationRadiusForStop,
 } from "../stop-proximity";
-import { DEFAULT_RELOCATION_METERS, MIN_RELOCATION_METERS } from "@ai-fsm/domain";
+import { DEFAULT_RELOCATION_METERS, MIN_RELOCATION_METERS } from "@titan-zero/domain";
 
 describe("stop-proximity", () => {
   const stop = { latitude: 42.9956, longitude: -71.4548 };

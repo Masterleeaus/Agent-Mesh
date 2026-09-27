@@ -5,7 +5,7 @@ import { getSession } from "@/lib/auth/session";
 import { query } from "@/lib/db";
 import { Card, EmptyState, LinkButton, PageContainer, PageHeader, StatusBadge, HubSubnav } from "@/components/ui";
 import type { StatusVariant } from "@/components/ui";
-import { BOOKING_REQUEST_OPEN_STATUSES, BOOKING_REQUEST_STATUS_LABELS, PRICING_MODE_LABELS } from "@ai-fsm/domain";
+import { BOOKING_REQUEST_OPEN_STATUSES, BOOKING_REQUEST_STATUS_LABELS, PRICING_MODE_LABELS } from "@titan-zero/domain";
 import { WORK_HUB_LINKS } from "@/lib/navigation/hubs";
 import { getRequestGuidance } from "./request-guidance";
 

@@ -8,7 +8,7 @@ import {
   type ActivityType,
   type DayDraft,
   type DayDraftItem,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { Button, Card, SectionHeader, useToast } from "@/components/ui";
 import { BUSINESS_TIMEZONE } from "@/lib/operations/business-day";
 

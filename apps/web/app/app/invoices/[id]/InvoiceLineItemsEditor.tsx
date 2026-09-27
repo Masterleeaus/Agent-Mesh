@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatCents, parseDollarsToCents } from "@ai-fsm/money";
+import { formatCents, parseDollarsToCents } from "@titan-zero/money";
 import { PriceBookSelector } from "@/components/PriceBookSelector";
 
 type LineItemType = "labor" | "materials" | "handling_fee" | "adjustment";

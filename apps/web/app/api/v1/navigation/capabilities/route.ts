@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { buildBusinessOpsBootstrap } from "@ai-fsm/domain";
+import { buildBusinessOpsBootstrap } from "@titan-zero/domain";
 import { getSession } from "@/lib/auth/session";
 import { portableQueryOne } from "@/lib/db/portable";
 

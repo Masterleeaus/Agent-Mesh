@@ -1,8 +1,8 @@
 import { redirect, notFound } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { withInvoiceContext } from "@/lib/invoices/db";
-import { buildClientDocumentFilename } from "@ai-fsm/domain";
-import { DOCUMENT_STANDARD_VERSION, STANDARD_INVOICE_TERMS } from "@ai-fsm/domain";
+import { buildClientDocumentFilename } from "@titan-zero/domain";
+import { DOCUMENT_STANDARD_VERSION, STANDARD_INVOICE_TERMS } from "@titan-zero/domain";
 import {
   brandingContactLines,
   resolveCompanyBranding,

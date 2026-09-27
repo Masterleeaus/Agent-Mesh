@@ -1,5 +1,5 @@
-import { MAINTENANCE_SCHEDULE_DAY_OF_WEEK, MAINTENANCE_JOB_CATEGORIES } from "@ai-fsm/domain";
-import type { JobAcceptanceCategory } from "@ai-fsm/domain";
+import { MAINTENANCE_SCHEDULE_DAY_OF_WEEK, MAINTENANCE_JOB_CATEGORIES } from "@titan-zero/domain";
+import type { JobAcceptanceCategory } from "@titan-zero/domain";
 
 export function reviewScheduleDay(
   scheduledDate: string | null,

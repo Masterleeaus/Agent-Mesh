@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import { Input, Select, Textarea, Button } from "@/components/ui";
-import type { ExpenseCategory } from "@ai-fsm/domain";
-import { formatJobPickerLabel } from "@ai-fsm/domain";
+import type { ExpenseCategory } from "@titan-zero/domain";
+import { formatJobPickerLabel } from "@titan-zero/domain";
 import { parseDollarsToCents, formatCentsToDollars } from "@/lib/expenses/math";
 import {
   isFuelExpenseCategory,

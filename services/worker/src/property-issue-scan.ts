@@ -1,4 +1,4 @@
-import type { Client } from "pg";
+import type { DatabaseClient } from "./db-client.js";
 import { logger } from "./logger.js";
 import type { AutomationRow, RunResult } from "./automations/types.js";
 
@@ -29,7 +29,7 @@ interface RecurringItem {
   within_12mo: number;
 }
 
-export async function findDuePropertyIssueScans(client: Client): Promise<AutomationRow[]> {
+export async function findDuePropertyIssueScans(client: DatabaseClient): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
     `SELECT id, account_id, type, config, enabled, next_run_at::text
        FROM automations
@@ -41,7 +41,7 @@ export async function findDuePropertyIssueScans(client: Client): Promise<Automat
 }
 
 async function findRecurringItems(
-  client: Client,
+  client: DatabaseClient,
   automation: AutomationRow
 ): Promise<RecurringItem[]> {
   const cfg = automation.config as { min_occurrences?: number; lookback_months?: number };
@@ -87,7 +87,7 @@ function deriveSeverity(item: RecurringItem): "minor" | "moderate" | "major" | "
 }
 
 async function upsertPropertyIssue(
-  client: Client,
+  client: DatabaseClient,
   item: RecurringItem,
   accountId: string
 ): Promise<boolean> {
@@ -123,7 +123,7 @@ async function upsertPropertyIssue(
 }
 
 export async function processPropertyIssueScan(
-  client: Client,
+  client: DatabaseClient,
   automation: AutomationRow
 ): Promise<RunResult> {
   const result: RunResult = {

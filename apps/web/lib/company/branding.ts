@@ -5,7 +5,7 @@ import {
   STANDARD_INVOICE_TERMS,
   resolveDepositPolicy,
   renderDepositTerms,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 
 /** Company profile fields stored in accounts.settings JSONB. */
 export interface CompanyProfileSettings {

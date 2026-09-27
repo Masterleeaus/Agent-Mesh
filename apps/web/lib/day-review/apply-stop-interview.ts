@@ -8,7 +8,7 @@ import {
   type Role,
   type StopReason,
   type VisitCloseoutKind,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { appendAuditLog } from "@/lib/db/audit";
 import { canManageExpenses } from "@/lib/auth/permissions";
 import { RECEIPT_LINKABLE_JOB_STATUS_SQL } from "@/lib/expenses/open-jobs";

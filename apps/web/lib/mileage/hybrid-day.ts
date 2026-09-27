@@ -7,7 +7,7 @@ import {
   buildHybridMileageDaySummary,
   type HybridMileageDaySummary,
   type MilesSource,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { query, queryForSession } from "@/lib/db";
 import type { SessionPayload } from "@/lib/auth/session";
 

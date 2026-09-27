@@ -1,4 +1,4 @@
-import type { ActivityCategory } from "@ai-fsm/domain";
+import type { ActivityCategory } from "@titan-zero/domain";
 
 /**
  * Pure day-summary math over activity entries: totals, category breakdown,

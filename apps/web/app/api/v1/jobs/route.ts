@@ -6,7 +6,7 @@ import type { AuthSession } from "../../../../lib/auth/middleware";
 import { portableQuery, withPortableTransaction } from "../../../../lib/db/portable";
 import { appendAuditLog } from "../../../../lib/db/audit";
 import { logger } from "../../../../lib/logger";
-import { JOB_ACCEPTANCE_CATEGORIES } from "@ai-fsm/domain";
+import { JOB_ACCEPTANCE_CATEGORIES } from "@titan-zero/domain";
 import { createDefaultWorkOrderForJob } from "../../../../lib/work-orders/create-default";
 import {
   RECEIPT_LINKABLE_JOB_STATUS_SQL,

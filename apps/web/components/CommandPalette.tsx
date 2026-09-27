@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Route } from "next";
-import type { Role } from "@ai-fsm/domain";
+import type { Role } from "@titan-zero/domain";
 import { filterCommands, type CommandItem } from "@/lib/navigation/command-index";
 
 export function CommandPalette({ role }: { role: Role }) {

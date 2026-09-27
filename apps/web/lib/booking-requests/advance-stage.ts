@@ -7,10 +7,10 @@
  * Never regresses funnel rank. Terminal requests are no-ops.
  */
 import type { PoolClient } from "pg";
-import type { BookingRequestClosedReason, BookingRequestStatus } from "@ai-fsm/domain";
+import type { BookingRequestClosedReason, BookingRequestStatus } from "@titan-zero/domain";
 import {
   BOOKING_REQUEST_TERMINAL_STATUSES,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import { recordStatusChange } from "@/lib/status-history";
 
 const FUNNEL_RANK: Record<string, number> = {

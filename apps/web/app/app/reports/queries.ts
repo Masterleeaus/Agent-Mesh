@@ -1,5 +1,5 @@
 import { query } from "@/lib/db";
-import { MINIMUM_SERVICE_FEE_CENTS } from "@ai-fsm/domain";
+import { MINIMUM_SERVICE_FEE_CENTS } from "@titan-zero/domain";
 
 // ---------------------------------------------------------------------------
 // Row types

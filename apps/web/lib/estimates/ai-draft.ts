@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { ScopeTemplate, ScopeComponentValues, ComputedMaterial, SpecifiedMaterial } from "@ai-fsm/domain";
+import type { ScopeTemplate, ScopeComponentValues, ComputedMaterial, SpecifiedMaterial } from "@titan-zero/domain";
 import type { PriceBookEntry } from "./item-suggester";
 
 // ---------------------------------------------------------------------------

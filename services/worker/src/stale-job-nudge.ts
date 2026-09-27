@@ -1,4 +1,4 @@
-import type { Client } from "pg";
+import type { DatabaseClient } from "./db-client.js";
 import { logger } from "./logger.js";
 import type { AutomationRow, RunResult } from "./automations/types.js";
 
@@ -23,7 +23,7 @@ interface StaleJob {
   days_without_visit: number;
 }
 
-export async function findDueStaleJobNudges(client: Client): Promise<AutomationRow[]> {
+export async function findDueStaleJobNudges(client: DatabaseClient): Promise<AutomationRow[]> {
   const { rows } = await client.query<AutomationRow>(
     `SELECT id, account_id, type, config, enabled, next_run_at::text
        FROM automations
@@ -35,7 +35,7 @@ export async function findDueStaleJobNudges(client: Client): Promise<AutomationR
 }
 
 export async function findStaleJobs(
-  client: Client,
+  client: DatabaseClient,
   automation: AutomationRow
 ): Promise<StaleJob[]> {
   const days = (automation.config as { days_without_visit?: number }).days_without_visit ?? 14;
@@ -81,7 +81,7 @@ export async function findStaleJobs(
 }
 
 async function emitStaleJobNudge(
-  client: Client,
+  client: DatabaseClient,
   job: StaleJob,
   automationId: string
 ): Promise<boolean> {
@@ -106,7 +106,7 @@ async function emitStaleJobNudge(
   return true;
 }
 
-export async function processStaleJobs(client: Client, automation: AutomationRow): Promise<RunResult> {
+export async function processStaleJobs(client: DatabaseClient, automation: AutomationRow): Promise<RunResult> {
   const result: RunResult = {
     automationId: automation.id,
     accountId: automation.account_id,

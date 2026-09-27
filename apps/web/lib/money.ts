@@ -3,4 +3,4 @@ export {
   formatCentsShort,
   formatCentsToDollars,
   parseDollarsToCents,
-} from "@ai-fsm/money";
+} from "@titan-zero/money";

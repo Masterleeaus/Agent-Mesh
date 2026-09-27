@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildJobLedger } from "@ai-fsm/domain";
+import { buildJobLedger } from "@titan-zero/domain";
 import { buildCoDraftFromLedger } from "../job-ledger-co-draft";
 
 describe("buildCoDraftFromLedger", () => {

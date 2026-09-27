@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { OWNER_PROMISE_ACTION_TYPE } from "@ai-fsm/domain";
+import { OWNER_PROMISE_ACTION_TYPE } from "@titan-zero/domain";
 import { withRole } from "@/lib/auth/middleware";
 import { queryForSession } from "@/lib/db";
 import { logger } from "@/lib/logger";

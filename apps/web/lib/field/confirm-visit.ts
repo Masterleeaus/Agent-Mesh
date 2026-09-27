@@ -7,7 +7,7 @@ import {
   shouldEnsureFieldDayVisit,
   shouldRelearnPropertyCoords,
   type VisitClassification,
-} from "@ai-fsm/domain";
+} from "@titan-zero/domain";
 import {
   resolveWorkOrderForVisit,
   syncWorkOrderStatus,
