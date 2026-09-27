@@ -1,6 +1,6 @@
 const assert=require('assert'),fs=require('fs'),vm=require('vm'),path=require('path');
 const root=path.resolve(__dirname,'..'),s={console};s.globalThis=s;vm.createContext(s);
-vm.runInContext(fs.readFileSync(path.join(root,'src/titan-zero/manager-github-state-projection.js'),'utf8'),s,{filename:'manager-github-state-projection'});
+for(const file of ['src/titan-zero/manager-github-state.js','src/titan-zero/manager-github-state-projection.js']) vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),s,{filename:file});
 const G=s.TitanCodeManagerGitHubStateProjection, main='a'.repeat(40), base='a'.repeat(40), head='b'.repeat(40);
 assert.strictEqual(G.branchFor('SG04'),'agent/SG04');
 let x=G.derive({subgoalId:'SG04',mainSha:main,issue:{number:722,state:'open',subgoalId:'SG04'}});
