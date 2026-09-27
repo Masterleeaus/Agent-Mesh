@@ -2,6 +2,8 @@
 'use strict';
 const PROVIDER_ID='chatgpt-subscription';
 const capabilities=Object.freeze({text:true,structured_output:false,vision:false,reasoning:true,embeddings:false,long_context:false,tools:false,files:false,caching:false,batch:false});
+function workContextText(context={}){if(!context||context.schema!=='titan-code.agent-mesh-work-context.v1')return '';const p=context.progress||{},claim=context.claim||{},pr=context.pr||{};return ['[TITAN CODE AGENT MESH WORK CONTEXT]','Issue: '+String(context.issue?.number||'')+' / '+String(context.issue?.subgoal_id||''),'Objective: '+String(context.objective||''),'Claim branch: '+String(claim.branch||''),'Git main/base/head: '+[claim.main_sha,claim.base_sha,claim.head_sha].filter(Boolean).join(' / '),'Lifecycle: '+String(context.lifecycle||''),'PR: '+String(pr.number||'none')+' '+String(pr.state||'')+(pr.draft?' draft':''),'Checks: '+JSON.stringify(context.checks||{}),'Current pass: '+String(p.current_pass??''),'Completed: '+JSON.stringify(p.completed||[]),'Current work: '+JSON.stringify(p.current_work||[]),'Next actions: '+JSON.stringify(p.next_actions||[]),'Blockers: '+JSON.stringify(p.blockers||[]),'Verification: '+JSON.stringify(p.verification||[]),'Do not repeat: '+JSON.stringify(p.do_not_repeat||[]),'Rules: '+JSON.stringify(context.instructions||[]),'Authority: '+JSON.stringify(context.authority||{}),'[END WORK CONTEXT]'].join('\n');}
+function withWorkContext(request={}){const prefix=workContextText(request.workContext);return prefix?Object.freeze({...request,task:(prefix+'\n\n'+String(request.task||'')).slice(0,120000),workContextSchema:request.workContext.schema}):request;}
 function safeError(error){return String(error?.message||error||'subscription-transport-error').replace(/(bearer\s+|token[=: ]+|cookie[=: ]+)[^\s,;]+/ig,'$1[REDACTED]').slice(0,800);}
 function create(config={}){
  const transport=config.transport||null;
@@ -20,8 +22,8 @@ function create(config={}){
   listModels:async()=>{const t=requireTransport();return (await t.listModels()||[]).map(row=>({id:String(row.id||row.model||''),displayName:String(row.displayName||row.id||row.model||'').slice(0,240)})).filter(x=>x.id);},
   getModel:async input=>{const rows=await adapter.listModels();const id=String(input?.model||input?.preferredModels?.[0]||'');return rows.find(x=>x.id===id)||rows[0]||null;},
   getCapabilities:async()=>capabilities,
-  complete:async request=>{const t=requireTransport();const result=await t.complete(Object.freeze({...request,provider:PROVIDER_ID}));if(!result||typeof result!=='object')throw new Error('chatgpt-subscription-invalid-response');return {...result,authority:false,advisoryOnly:true,cost:result.cost||{status:'SUBSCRIPTION',usd:0}};},
-  stream:async request=>{const t=requireTransport();return typeof t.stream==='function'?t.stream(request):adapter.complete(request);},
+  complete:async request=>{const t=requireTransport();const prepared=withWorkContext(request);const result=await t.complete(Object.freeze({...prepared,provider:PROVIDER_ID}));if(!result||typeof result!=='object')throw new Error('chatgpt-subscription-invalid-response');return {...result,authority:false,advisoryOnly:true,cost:result.cost||{status:'SUBSCRIPTION',usd:0}};},
+  stream:async request=>{const t=requireTransport();const prepared=withWorkContext(request);return typeof t.stream==='function'?t.stream(prepared):adapter.complete(request);},
   embed:async()=>{throw new Error('chatgpt-subscription-embeddings-unsupported');},
   countTokens:async input=>Math.ceil(String(input?.task||input||'').length/4),
   estimateCost:async()=>({status:'SUBSCRIPTION',usd:0}),getQuota:async()=>({mode:'subscription-client-managed'}),getRateLimits:async()=>({mode:'subscription-client-managed'}),
@@ -30,5 +32,5 @@ function create(config={}){
  return Object.freeze(adapter);
 }
 function isConfigured(config={}){return Boolean(config.transport&&global.CodeeSubscriptionTransportContract?.validate?.(config.transport)?.ok);}
-global.CodeeChatGPTSubscriptionAdapter=Object.freeze({PROVIDER_ID,create,isConfigured});
+global.CodeeChatGPTSubscriptionAdapter=Object.freeze({PROVIDER_ID,create,isConfigured,workContextText,withWorkContext});
 })(typeof globalThis!=='undefined'?globalThis:this);

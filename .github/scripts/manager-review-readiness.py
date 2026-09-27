@@ -211,6 +211,20 @@ def evaluate_pr(repo, pr):
 
     detail = run_json(["gh", "api", f"repos/{repo}/pulls/{number}"])
     mergeable_state = detail.get("mergeable_state")
+    if (detail.get("base") or {}).get("ref") != "main":
+        structural.append("PR base is not main")
+    branch_ref = run(["gh", "api", f"repos/{repo}/git/ref/heads/{head}"], check=False)
+    if branch_ref.returncode != 0:
+        structural.append("canonical claim branch ref is unavailable")
+    else:
+        branch_sha = str((run_json(["gh", "api", f"repos/{repo}/git/ref/heads/{head}"]).get("object") or {}).get("sha") or "").lower()
+        if branch_sha != head_sha:
+            structural.append("PR head SHA differs from canonical claim branch ref")
+        main_ref = run_json(["gh", "api", f"repos/{repo}/git/ref/heads/main"])
+        main_sha = str((main_ref.get("object") or {}).get("sha") or "").lower()
+        ancestry = run(["gh", "api", f"repos/{repo}/compare/{main_sha}...{head_sha}", "--jq", ".status"], check=False)
+        if ancestry.returncode != 0 or ancestry.stdout.strip() not in {"ahead", "identical"}:
+            structural.append("PR head is not based on current main ancestry")
     if mergeable_state == "dirty":
         structural.append("PR has merge conflicts")
 

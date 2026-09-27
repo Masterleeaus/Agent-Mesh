@@ -15,10 +15,11 @@ function create(input={}){
  if(!COST_MODES.has(mode)) throw new Error(`Invalid AI cost policy: ${mode}`);
  const task=global.CodeeAISanitizer.redactString(input.task||'',120000); if(!task.trim()) throw new Error('AI request task is required');
  const out={
-   schema:'codee.ai.request.v1',requestId:id(input.requestId)||makeRequestId(),managerId:id(input.managerId),planId:id(input.planId),runId:id(input.runId),stepId:id(input.stepId),contextHash:id(input.contextHash),
+   schema:'codee.ai.request.v2',requestId:id(input.requestId)||makeRequestId(),managerId:id(input.managerId),planId:id(input.planId),runId:id(input.runId),stepId:id(input.stepId),contextHash:id(input.contextHash),
    purpose:global.CodeeAISanitizer.redactString(input.purpose||'general',240),task,systemInstructions:global.CodeeAISanitizer.redactString(input.systemInstructions||'',30000),
    evidence:global.CodeeAISanitizer.sanitize(Array.isArray(input.evidence)?input.evidence:[],{maxArray:200,maxString:20000,maxNodes:5000}),
    conversation:global.CodeeAISanitizer.sanitize(input.conversation||null,{maxArray:100,maxString:12000,maxNodes:2000}),
+   workContext:input.workContext?.schema==='titan-code.agent-mesh-work-context.v1'?global.CodeeAISanitizer.sanitize(input.workContext,{maxArray:200,maxString:12000,maxNodes:5000}):null,
    requiredCapabilities:list(input.requiredCapabilities,40),preferredProviders:list(input.preferredProviders,30),forbiddenProviders:list(input.forbiddenProviders,30),preferredModels:list(input.preferredModels,30),
    privacy:{level:privacyLevel,allowCloud:!['SECRET','LOCAL_ONLY'].includes(privacyLevel),includeSecrets:false,includeCredentials:false},
    costPolicy:{mode,maxUsd:number(input.costPolicy?.maxUsd,0,100000,mode==='FREE_ONLY'?0:null),currency:String(input.costPolicy?.currency||'USD').toUpperCase().slice(0,8)},
@@ -29,5 +30,5 @@ function create(input={}){
  };
  return global.CodeeAISanitizer.deepFreeze(out);
 }
-global.CodeeAIRequestContract=Object.freeze({create,SCHEMA:'codee.ai.request.v1',privacyLevels:Object.freeze([...PRIVACY]),costModes:Object.freeze([...COST_MODES])});
+global.CodeeAIRequestContract=Object.freeze({create,SCHEMA:'codee.ai.request.v2',privacyLevels:Object.freeze([...PRIVACY]),costModes:Object.freeze([...COST_MODES])});
 })(typeof globalThis!=='undefined'?globalThis:this);
