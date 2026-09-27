@@ -2,6 +2,7 @@ import type { PoolClient } from "pg";
 import type { PoolConnection } from "mysql2/promise";
 import { getDatabaseDialect, getPool } from "@/lib/db";
 import { getMysqlPool } from "./mysql";
+import { getSqliteClient, withSqliteTransaction } from "./sqlite";
 import { rewriteNumberedParamsForMysql, type DbClient, type DbQueryResult } from "@/lib/db-contract";
 import type { SessionPayload } from "@/lib/auth/session";
 import { requireTenantAccountId } from "./contracts";
@@ -12,7 +13,7 @@ function mysqlClient(connection: PoolConnection): DbClient {
       const rewritten = rewriteNumberedParamsForMysql(text, params);
       const [result] = await connection.execute(rewritten.sql, rewritten.params);
       if (Array.isArray(result)) return { rows: result as T[], rowCount: result.length };
-      const packet = result as { affectedRows?: number; insertId?: number };
+      const packet = result as { affectedRows?: number };
       return { rows: [], rowCount: packet.affectedRows ?? 0 };
     },
   };
@@ -22,7 +23,11 @@ export async function portableQuery<T extends Record<string, unknown> = Record<s
   text: string,
   params: unknown[] = [],
 ): Promise<T[]> {
-  if (getDatabaseDialect() === "mysql") {
+  const dialect = getDatabaseDialect();
+  if (dialect === "sqlite") {
+    return (await getSqliteClient().query<T>(text, params)).rows;
+  }
+  if (dialect === "mysql") {
     const rewritten = rewriteNumberedParamsForMysql(text, params);
     const [rows] = await getMysqlPool().execute(rewritten.sql, rewritten.params);
     return rows as T[];
@@ -40,7 +45,9 @@ export async function portableQueryOne<T extends Record<string, unknown> = Recor
 }
 
 export async function withPortableTransaction<T>(fn: (client: DbClient) => Promise<T>): Promise<T> {
-  if (getDatabaseDialect() === "mysql") {
+  const dialect = getDatabaseDialect();
+  if (dialect === "sqlite") return withSqliteTransaction(fn);
+  if (dialect === "mysql") {
     const connection = await getMysqlPool().getConnection();
     try {
       await connection.beginTransaction();
@@ -69,11 +76,6 @@ export async function withPortableTransaction<T>(fn: (client: DbClient) => Promi
   }
 }
 
-/**
- * Portable tenant transaction. PostgreSQL keeps RLS as defense-in-depth;
- * MySQL/MariaDB receives the same explicit account id so callers must scope
- * every business query in application SQL.
- */
 export async function withTenantTransaction<T>(
   session: SessionPayload,
   fn: (client: DbClient, accountId: string) => Promise<T>,
