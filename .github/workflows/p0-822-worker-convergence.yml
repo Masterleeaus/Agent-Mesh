@@ -7,7 +7,7 @@ permissions:
   contents: write
 jobs:
   converge:
-    if: github.event.head_commit.message != 'P0 #822: converge worker typecheck and lockfile'
+    if: ${{ !startsWith(github.event.head_commit.message, 'P0 822 convergence complete') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -139,5 +139,5 @@ jobs:
           git config user.name "Titan Zero CI"
           git config user.email "actions@users.noreply.github.com"
           git add services/worker pnpm-lock.yaml .github/workflows/p0-822-worker-convergence.yml
-          git commit -m "P0 #822: converge worker typecheck and lockfile"
+          git commit -m "P0 822 convergence complete: worker typecheck and lockfile"
           git push origin HEAD:p0/822-worker-typecheck-convergence
