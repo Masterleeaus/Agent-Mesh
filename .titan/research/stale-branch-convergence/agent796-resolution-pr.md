@@ -1,0 +1,1 @@
+Safe resolution of agent/796: branch audited; stale conflicting code superseded; canonical main retained.
