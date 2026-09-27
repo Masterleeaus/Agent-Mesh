@@ -1,0 +1,1 @@
+Stale agent/796 reviewed; current main retained as conflict resolution and canonical implementation.
