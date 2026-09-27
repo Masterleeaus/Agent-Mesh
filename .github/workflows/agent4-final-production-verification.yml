@@ -8,6 +8,8 @@ on:
       - "services/workforce/**"
       - "packages/runtime/agent-runtime/**"
       - "packages/tools/execution-gateway.mjs"
+      - "packages/titan-platform/src/ported/titan-runtime/interaction-engine/**"
+      - "packages/titan-platform/tests/zero-governance-convergence.test.mjs"
       - ".github/workflows/agent4-final-production-verification.yml"
   workflow_dispatch:
 
@@ -51,3 +53,9 @@ jobs:
 
       - name: Governed execution gateway tests
         run: node --test packages/tools/execution-gateway.test.mjs
+
+      - name: Compile Zero governance seams
+        run: pnpm --filter @titan-zero/titan-platform exec tsc -p tsconfig.json --noEmit false --outDir .zero-test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false
+
+      - name: Zero governance convergence tests
+        run: node --test packages/titan-platform/tests/zero-governance-convergence.test.mjs
