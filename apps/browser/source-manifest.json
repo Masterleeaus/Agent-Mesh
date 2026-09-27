@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1056,
+  "fileCount": 1057,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -2260,8 +2260,8 @@
     },
     {
       "path": "src/lib/service-worker.js",
-      "bytes": 281820,
-      "sha256": "57ec0a6b8cd26cc8c4cd5b52b0b545407795e4ddb42a39a508c6bcd9c8ffa110"
+      "bytes": 261156,
+      "sha256": "9ccdbef4aac83c08feb9f88d0b8e2a45a4605af8ba33c3f5573de9f55638b8b3"
     },
     {
       "path": "src/lib/titan-zero-host-integration.js",
@@ -5272,6 +5272,11 @@
       "path": "tools/generate-source-manifest.mjs",
       "bytes": 1676,
       "sha256": "678948639231452dbd05e94ff40f81c511f98c92f29c8dfe7a48f641464da702"
+    },
+    {
+      "path": "tools/prune-legacy-manager-runtime.mjs",
+      "bytes": 2063,
+      "sha256": "3ac7ea8c0f39023e555e999bb7589bb45e78ecea3f6ad27b68c73ff3705be6ce"
     },
     {
       "path": "tools/test-worker-vm-preload.cjs",
