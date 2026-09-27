@@ -1,0 +1,90 @@
+name: Titan Zero Architecture Evidence Recovery
+
+on:
+  workflow_dispatch:
+    inputs:
+      include_archive:
+        description: "Include docs/archive and archive donor trees"
+        required: false
+        default: true
+        type: boolean
+      include_history:
+        description: "Capture recent path history for evidence lineage"
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  recover-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout full repository history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build evidence bundle
+        shell: bash
+        env:
+          INCLUDE_ARCHIVE: ${{ inputs.include_archive }}
+          INCLUDE_HISTORY: ${{ inputs.include_history }}
+        run: |
+          set -euo pipefail
+          OUT="architecture-evidence"
+          mkdir -p "$OUT"
+
+          printf '# Titan Zero Architecture Evidence Recovery\n\n' > "$OUT/README.md"
+          printf 'Generated from commit: `%s`\n\n' "$GITHUB_SHA" >> "$OUT/README.md"
+          printf 'This bundle is evidence only. It does not confer canonical or execution authority.\n' >> "$OUT/README.md"
+
+          git ls-files | sort > "$OUT/all-files.txt"
+
+          find_roots=(apps packages services src docs ai scripts infra)
+          : > "$OUT/typescript-files.txt"
+          for root in "${find_roots[@]}"; do
+            if [ -e "$root" ]; then
+              find "$root" -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.mts' -o -name '*.cts' \) -print >> "$OUT/typescript-files.txt"
+            fi
+          done
+          sort -u -o "$OUT/typescript-files.txt" "$OUT/typescript-files.txt"
+
+          pattern='Zero|zero|Reality|Trust|Authority|Continuance|DecisionPacket|Decision Engine|Model Council|Knowledge Authority|Assurance|Governance|Risk|Shield|Rewind|Forge|Nexus|Prime|Signal|Interaction|Interface Runtime|Visual Runtime|Builder|Workforce|Investigation|Wisdom|Onboarding|Discovery|Observation|Reconfiguration|Longitudinal|Competitor|Benchmark|Opportunity|Constraint|Intervention|Outcome|Consent|Cost Sovereignty|Local Bridge|Ollama|Omnichannel|Operation Identity|Capability Registry|Command Bus'
+          git grep -n -I -E "$pattern" -- '*.ts' '*.tsx' '*.md' '*.json' '*.sql' '*.yaml' '*.yml' > "$OUT/capability-hits.txt" || true
+
+          git grep -n -I -E 'tenant_id|tenant_company_id|business_id' -- '*.ts' '*.tsx' '*.sql' '*.json' > "$OUT/tenancy-alias-hits.txt" || true
+          git grep -n -I -E 'company_id' -- '*.ts' '*.tsx' '*.sql' '*.json' > "$OUT/company-id-hits.txt" || true
+
+          git grep -n -I -E 'observe|recommend|prepare|ask.*execute|trusted automation|autonomous|predictive|EARN|DELEGATE|ACCEPT|EXECUTE|VERIFY|REVOKE' -- '*.ts' '*.tsx' '*.md' '*.json' > "$OUT/trust-authority-hits.txt" || true
+
+          git grep -n -I -E 'AdaptiveOnboardingEngine|BusinessKnowledgeGapResolver|EvidenceAuthorityService|ContinuousBusinessObservationService|ObservationChangeDetector|ObservationFreshnessPolicy|CompetitorDiscoveryService|CompetitorIdentityResolutionService|CompetitiveBenchmarkingService|MarketPatternService|BusinessRealityGraphService|BusinessRealityFactService|WholeBusinessDiagnosticService|ConstraintDiagnosisService|OpportunityIntelligenceService|OpportunityEvidenceService|BusinessImpactScoringService|InterventionPrioritisationService|InterventionExecutionLifecycleService|OutcomeMeasurementService|LongitudinalStrategyMemoryService|ExperimentComparisonService|AntiRepeatDecisionService|BusinessReconfigurationService|BusinessConfigurationDiffer' -- ':!architecture-evidence/**' > "$OUT/onboarding-v6-symbol-hits.txt" || true
+
+          git grep -n -I -E 'fact|inference|recommendation|prediction|confidence|consensus|authority_effect|INSUFFICIENT EVIDENCE|provenance|evidence independence|blind spot|causality|divergence|convergence' -- '*.ts' '*.tsx' '*.md' '*.json' > "$OUT/epistemic-authority-hits.txt" || true
+
+          if [ "$INCLUDE_ARCHIVE" = "true" ]; then
+            git ls-files | grep -Ei '(^|/)(archive|library)(/|$)|OnboardingPro|Titan-Onboarding' > "$OUT/archive-library-files.txt" || true
+          fi
+
+          if [ "$INCLUDE_HISTORY" = "true" ]; then
+            git log --all --date=iso-strict --pretty=format:'%H|%ad|%an|%s' -n 500 > "$OUT/recent-history.txt"
+            git log --all --name-status --pretty=format:'COMMIT|%H|%ad|%s' --date=iso-strict --               ':(glob)**/*Zero*' ':(glob)**/*zero*' ':(glob)**/*Onboarding*' ':(glob)**/*Trust*'               ':(glob)**/*Authority*' ':(glob)**/*Reality*' ':(glob)**/*Decision*'               > "$OUT/relevant-path-history.txt" || true
+          fi
+
+          {
+            echo '# Evidence counts'
+            echo
+            for f in "$OUT"/*.txt; do
+              printf '%s: %s lines\n' "$(basename "$f")" "$(wc -l < "$f")"
+            done
+          } > "$OUT/counts.md"
+
+      - name: Upload evidence bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: titan-zero-architecture-evidence-${{ github.sha }}
+          path: architecture-evidence/
+          retention-days: 30
+          if-no-files-found: error
