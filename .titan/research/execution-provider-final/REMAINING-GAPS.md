@@ -1,10 +1,11 @@
 # Remaining Gaps
 
-1. **Native business execution bindings** — map schedule/job mutation, worker assignment, customer update and invoice/payment follow-up preparation to the existing canonical domain services. Do not write directly to storage and do not create replacement domain services.
-2. **Communication delivery verification** — canonical provider-neutral policy, retry/fallback, receipt persistence, SMS delivery callbacks, email SMTP adapter, push adapter, quiet hours, thread identity and company-scoped audit boundaries now exist. Remaining work is to prevent `sent`/provider acceptance from being consumed as VERIFIED by the higher ExecutionGateway path, and to add independently observed delivery/bounce receipts for email where the configured provider supports them.
-3. **ExecutionGateway durable idempotency bootstrap** — the gateway accepts an async idempotency store and communications now has a durable company-scoped audit-store claim, but the gateway-wide store still needs binding to Agent 1's canonical SQLite persistence interface without taking over persistence ownership.
-4. **Concrete Browser Node executor** — locate/converge the existing executor/runtime and bind its post-action state reads to the verifier contract. Do not create another browser architecture.
-5. **MCP cancellation transport** — request signal is forwarded where client implementations support it; concrete MCP clients must be audited for actual cancellation propagation.
-6. **Provider-independent native verification** — implement canonical reread/query functions for schedule/job, assignment, customer and invoice/payment-follow-up effects. Communications now has an explicit lifecycle verification map.
-7. **Push persistence convergence** — the current push implementation still imports `pg` and opens its own PostgreSQL pool. Agent 1 owns SQLite-first persistence; this should be converged with Agent 1 rather than rewritten here.
-8. **Full test execution** — connector access can edit/read repository content but does not execute the repository test runner. CI/local execution evidence must be captured before declaring production verification complete.
+1. Resolve actual current-main symbols/files implementing governed execution ingress.
+2. Map native business mutations to that ingress.
+3. Map MCP discovery/invocation/error/auth/evidence behavior.
+4. Map Browser Node navigation/form/click/extraction/session/auth/waiting/verification behavior.
+5. Map communication queue → provider → delivery/thread state.
+6. Identify current evidence binding for decision_id, work_id, run_id, execution_id and company_id.
+7. Identify durable idempotency boundary across retry/recovery/provider timeout.
+8. Execute authority/company/provider/injection/verification-failure security tests.
+9. Close only gaps demonstrated by current-main code/tests; do not create parallel engines.
