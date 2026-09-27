@@ -12,3 +12,9 @@ After Pass 1:
 8. Complete PostgreSQL-specific SQL portability scan across worker/business persistence paths.
 9. Add meaningful restart/idempotency/company-isolation integration tests.
 10. Execute relevant tests/typechecks/CI and record exact results.
+
+## Pass 2 follow-up
+
+- Wire and certify the existing SQLite run and workforce stores in the production composition root; coordinate with concurrent Zero/E2E agents.
+- Reconcile the lockfile using repository pnpm 9 and allow the trusted `better-sqlite3` native build in CI.
+- Run file backed workforce/memory recovery, full SQLite-only boot and cross-company business queries before claiming production certification.

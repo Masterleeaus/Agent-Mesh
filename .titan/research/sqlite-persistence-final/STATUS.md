@@ -18,3 +18,7 @@ Deep-scan started against current `main` on 2026-09-27.
 
 ### Not yet certified
 Production bootstrap wiring for durable runtime/workforce/memory, restart recovery, full tenant isolation, and the complete PostgreSQL-specific SQL audit still require further passes and executed CI/tests.
+
+## Pass 2 (agent/796)
+
+Runtime restart and failure paths tested and fixed. Full production certification remains pending because no non-test bootstrap caller of the durable runtime/workforce stores was found.

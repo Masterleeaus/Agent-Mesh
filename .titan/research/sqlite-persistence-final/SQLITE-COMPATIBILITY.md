@@ -23,3 +23,7 @@
 - whether compatibility imports impose unnecessary PostgreSQL runtime requirements on SQLite-only deployments
 
 No claim of complete SQLite-only certification is made until integration tests execute successfully.
+
+## Pass 2
+
+Fresh `pnpm install --frozen-lockfile` fails because the root `better-sqlite3` declaration is absent from the committed lockfile. Regenerating with local pnpm 11 introduced broad unrelated lockfile drift and was reverted. Native addon install also attempted to fetch Node 24 headers unavailable in this environment. Existing local bindings allowed the focused tests to run.

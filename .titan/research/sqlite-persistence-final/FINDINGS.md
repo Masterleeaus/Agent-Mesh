@@ -8,3 +8,10 @@
 4. Runtime recovery currently permits an unscoped `recoverable()` query when no company is supplied. This is a tenancy-audit target; changing it requires checking all production recovery callers first.
 5. `services/workforce/src/sqlite-store.ts` uses composite `(company_id, work_id)` and `(company_id, worker_id)` keys and company-scoped queries.
 6. PostgreSQL/MySQL compatibility still exists in the worker database runtime. Compatibility is not currently the SQLite default, but PostgreSQL-specific SQL remains in dialect branches and requires a broader behaviour-preserving audit.
+
+## Pass 2
+
+7. The existing SQLite run-store test's positional SQL adapter was invalid (`?1` with positional spread) and failed even before restart assertions. Corrected the test adapter and added a file backed reopen test.
+8. The in-memory reference RunStore passed `structuredClone` to `Array.map`, causing recovery to throw on Node 24.
+9. After a verified tool result, the runtime did not transition from `WAITING_TOOL` to `RUNNING`, ending a multi-turn run without a result. An unverified execution outcome escaped the failure transition because a nested promise was returned without awaiting it. Both paths are fixed and covered by existing runtime tests.
+10. Repository search found declarations of `SqliteRunStore` and `SqliteWorkforceStore` but no non-test callers; production wiring remains unproven.
