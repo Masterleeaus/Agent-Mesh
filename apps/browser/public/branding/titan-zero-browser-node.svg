@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">Titan Zero Browser Node</title>
+  <desc id="desc">TZ monogram for the Titan Zero Browser Node</desc>
+  <rect width="96" height="96" rx="22" fill="#0f172a"/>
+  <path d="M18 25h60v12H54v34H42V37H18z" fill="#e2e8f0"/>
+  <path d="M58 47h20v10L64 69h14v12H48V70l15-11H48V47z" fill="#60a5fa"/>
+</svg>
