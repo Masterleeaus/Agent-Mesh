@@ -4,6 +4,7 @@ export * from "./workforce.js";
 export * from "./intelligence.js";
 export * from "./business-ops.js";
 export * from "./memory-knowledge.js";
+export * from "./memory-ingestion.js";
 
 export * from "./offline/index.js";
 
