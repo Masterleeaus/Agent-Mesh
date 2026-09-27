@@ -11,7 +11,7 @@ on:
       - '.github/workflows/browser-node-ci.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify-browser-node:
@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -32,10 +34,20 @@ jobs:
       - name: Install dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
 
-      - name: Verify Browser Node source manifest is current
+      - name: Refresh Browser Node source manifest once
+        if: github.event_name == 'push' && github.ref_name == 'browser-node-ci-readonly-cleanup'
         run: |
           npm run source-manifest
-          git diff --exit-code -- source-manifest.json
+          cd ../..
+          if ! git diff --quiet -- apps/browser/source-manifest.json; then
+            git config user.name "Titan Zero CI"
+            git config user.email "actions@users.noreply.github.com"
+            git add apps/browser/source-manifest.json
+            git commit -m "chore(browser): refresh Browser Node source manifest"
+            git fetch origin ${{ github.ref_name }}
+            git rebase origin/${{ github.ref_name }}
+            git push origin HEAD:${{ github.ref_name }}
+          fi
 
       - name: Interaction Engine typecheck
         run: npm run interaction:typecheck
