@@ -27,14 +27,22 @@ export function normalizeCompanyContext(input: { company_id?: string; tenant_com
 }
 
 function sqliteSql(sql: string, params: readonly unknown[]): { sql: string; params: unknown[] } {
-  const expanded: unknown[] = [];
+  const positional: unknown[] = [];
+  let replacedDollarParams = false;
   const text = sql.replace(/\$(\d+)/g, (_match, rawIndex: string) => {
+    replacedDollarParams = true;
     const index = Number(rawIndex) - 1;
     if (index < 0 || index >= params.length) throw new Error(`sqlite parameter $${rawIndex} is not bound`);
-    expanded.push(params[index]);
+    positional.push(params[index]);
     return "?";
   });
-  return { sql: text, params: expanded };
+
+  // SQLite-native callers already use `?` placeholders. In that case the SQL
+  // needs no rewrite and the original bindings must be preserved. Previously
+  // sqliteSql returned only parameters collected while rewriting PostgreSQL
+  // `$n` placeholders, which silently discarded all `?` bindings and caused
+  // better-sqlite3 to throw "Too few parameter values were provided".
+  return { sql: text, params: replacedDollarParams ? positional : [...params] };
 }
 
 function ensureSqliteParent(filename: string): void {
