@@ -1,4 +1,4 @@
-import { describe, expect, it } from "node:test";
+import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { WorkforceService, type WorkforceWorker, type WorkforceWorkerStore } from "./index.js";
 import { MemoryWorkforceStore } from "./memory-store.js";
