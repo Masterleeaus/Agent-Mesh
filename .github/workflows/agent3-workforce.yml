@@ -1,10 +1,17 @@
-name: Agent 3 Workforce Verification
+name: Workforce Verification
 on:
   push:
-    branches: [agent/workforce-task-convergence]
+    branches:
+      - agent/workforce-task-convergence
+      - agent/runtime-work-correlation
+    paths:
+      - 'packages/workforce/**'
+      - 'services/workforce/**'
+      - '.github/workflows/agent3-workforce.yml'
   pull_request:
     paths:
       - 'packages/workforce/**'
+      - 'services/workforce/**'
       - '.github/workflows/agent3-workforce.yml'
 jobs:
   workforce:
@@ -20,4 +27,21 @@ jobs:
           cache: pnpm
       - run: pnpm install --no-frozen-lockfile
       - run: pnpm --filter @titan-zero/workforce typecheck
-      - run: pnpm --filter @titan-zero/workforce test
+      - name: Run workforce tests with durable diagnostics
+        shell: bash
+        run: |
+          set +e
+          pnpm --filter @titan-zero/workforce test 2>&1 | tee workforce-test-output.txt
+          status=${PIPESTATUS[0]}
+          echo '## Workforce test output' >> "$GITHUB_STEP_SUMMARY"
+          echo '```text' >> "$GITHUB_STEP_SUMMARY"
+          tail -n 160 workforce-test-output.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+      - name: Upload workforce test diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workforce-test-diagnostics
+          path: workforce-test-output.txt
+          if-no-files-found: error

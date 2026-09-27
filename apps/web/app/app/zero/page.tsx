@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth/session";
 import { PageContainer } from "@/components/ui";
 import { ZeroChatFirst } from "../ZeroChatFirst";
 import { bindNativeSurface } from "@/lib/navigation/native-service-bindings";
+import { loadZeroPulse } from "@/lib/zero/pulse";
 
 export const dynamic = "force-dynamic";
 
@@ -12,14 +13,13 @@ export default async function ZeroPage() {
   if (session.role === "tech") redirect("/app/my-work");
   bindNativeSurface("zero", session.accountId);
 
-  // Counts intentionally remain conservative until Agents 2/3 expose their
-  // canonical company-scoped runtime projection to the web application.
-  // Zero must never fabricate workforce or execution state.
+  const pulse = await loadZeroPulse(session.accountId);
+
   return (
     <PageContainer>
-      <ZeroChatFirst pulse={{ attention: 0, jobs: 0, onTrack: 0, exceptions: 0, activeWorkers: 0, waitingWorkers: 0, approvals: 0 }} />
+      <ZeroChatFirst pulse={pulse} />
       <p style={{ color: "var(--fg-muted)", margin: 0 }}>
-        Zero is connected to the canonical interaction path. Runtime and workforce status appear here only when supplied by their authoritative projections.
+        Live company-scoped state from Titan&apos;s business and workforce stores. Zero is a projection and control surface, not a second source of truth.
       </p>
     </PageContainer>
   );
