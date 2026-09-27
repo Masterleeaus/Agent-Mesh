@@ -26,6 +26,7 @@ export function getSqliteDatabase(): Database.Database {
 
 function sqliteClient(db: Database.Database): DbClient {
   return {
+    dialect: "sqlite",
     async query<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<DbQueryResult<T>> {
       const statement = db.prepare(text.replace(/\$\d+/g, "?"));
       if (statement.reader) {
