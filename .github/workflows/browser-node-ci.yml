@@ -11,7 +11,7 @@ on:
       - '.github/workflows/browser-node-ci.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify-browser-node:
@@ -29,10 +29,37 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Apply Browser Node development-pack prune
+        if: github.event_name == 'push' && github.ref_name == 'browser-node-devpack-prune'
+        run: |
+          node tools/prune-browser-node-devpacks.mjs
+          cd ../..
+          if ! git diff --quiet -- apps/browser/src/lib/service-worker.js; then
+            git config user.name "Titan Zero CI"
+            git config user.email "actions@users.noreply.github.com"
+            git add apps/browser/src/lib/service-worker.js
+            git commit -m "refactor(browser): remove development packs from startup"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
+
       - name: Install dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
 
+      - name: Regenerate Browser Node source manifest
+        if: github.event_name == 'push'
+        run: |
+          npm run source-manifest
+          cd ../..
+          if ! git diff --quiet -- apps/browser/source-manifest.json; then
+            git config user.name "Titan Zero CI"
+            git config user.email "actions@users.noreply.github.com"
+            git add apps/browser/source-manifest.json
+            git commit -m "chore(browser): refresh Browser Node source manifest"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
+
       - name: Verify Browser Node source manifest is current
+        if: github.event_name == 'pull_request'
         run: |
           npm run source-manifest
           git diff --exit-code -- source-manifest.json
