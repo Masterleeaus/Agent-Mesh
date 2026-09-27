@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/images/CB4FE4C8-1FF9-4228-8DAC-98FED23D43A3.png" alt="Titan Zero Field Service Workforce" width="520" />
+</p>
+
 # Titan Zero Field Service Workforce
 
 > **A governed Advanced Intelligence workforce that operates field-service businesses across office, field, customer, and system workflows.**
@@ -7,6 +11,10 @@ Titan Zero Field Service Workforce is a full-stack business operating platform b
 Instead of adding a chatbot to conventional field-service software, Titan Zero is designed around a different model: the intelligence layer participates directly in the operating system of the business. It can understand interactions, assemble context, recommend decisions, coordinate work, generate interfaces, route tasks, operate through connected systems, and progressively automate approved workflows — while authority remains explicit, bounded, auditable, and reversible.
 
 The platform combines field-service operations, multi-agent orchestration, decision intelligence, adaptive interfaces, local and edge intelligence, connectors, evidence, governance, and execution controls in a TypeScript monorepo.
+
+<p align="center">
+  <img src="docs/images/F2BED790-8EF0-473B-988E-F42E9488B1AE.png" alt="Titan Zero field service workforce operating model" width="100%" />
+</p>
 
 ---
 
@@ -43,6 +51,10 @@ Customers / Staff / Owners / Systems
 Titan Zero separates **understanding**, **decision-making**, **authority**, and **execution**. A model producing a recommendation does not automatically gain permission to act.
 
 That separation is fundamental to the architecture.
+
+<p align="center">
+  <img src="docs/images/4FE3482C-D943-4405-86CF-143AAFEF52C5.png" alt="Titan Zero Field Service Workforce system architecture" width="100%" />
+</p>
 
 ## Advanced Intelligence Workforce
 
