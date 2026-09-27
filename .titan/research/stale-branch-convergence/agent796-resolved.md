@@ -1,0 +1,1 @@
+Resolved stale agent/796 against current canonical main. Main's later converged runtime, SQLite, Zero and workforce implementation is retained.
