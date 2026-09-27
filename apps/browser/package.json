@@ -1,8 +1,8 @@
 {
-  "name": "titan-code-extension",
+  "name": "titan-zero-browser-node",
   "private": true,
-  "version": "2.11.9",
-  "description": "Canonical verification harness for the Titan Code Chrome MV3 extension.",
+  "version": "0.1.0",
+  "description": "Governed Chrome MV3 browser node for Titan Zero field-service operations and workforce execution.",
   "scripts": {
     "test": "node tools/verify-codee.mjs",
     "source-manifest": "node tools/generate-source-manifest.mjs",
