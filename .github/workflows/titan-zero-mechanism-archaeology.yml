@@ -1,0 +1,153 @@
+name: Titan Zero Mechanism-First Archaeology
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  archaeology:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan mechanisms across current and historical systems
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess,re,json,collections,itertools
+
+          out=Path("zero-mechanism-archaeology"); out.mkdir(exist_ok=True)
+          files=subprocess.check_output(["git","ls-files"],text=True).splitlines()
+          eligible=[f for f in files if f.endswith((".ts",".tsx",".mts",".cts",".js",".jsx",".sql",".md",".json",".yaml",".yml"))]
+
+          mechanisms={
+            "personal-understanding":r"user model|user profile|identity|role model|responsibilit|goal|preference|priorit|relationship|personal knowledge|working context",
+            "behavioural-understanding":r"observed action|behaviour|behavior|decision pattern|working pattern|exception|escalation pattern|communication pattern|workflow pattern",
+            "experience-memory":r"expected outcome|actual outcome|unintended effect|lesson|retrospective|experience|strategy memory|outcome memory|anti.?repeat",
+            "learning-governor":r"feedback|correction|adaptation|pattern formation|confidence|evidence weighting|learning governor|memory consolidation|stale learning",
+            "decision-support":r"recommendation|decision history|alternative|scenario|consequence|uncertainty|confidence|evidence.?backed",
+            "persistent-state":r"persistent state|state store|session persistence|profile revision|configuration revision|semantic diff|versioned|snapshot",
+            "revision-rollback":r"revision|change proposal|approval|rollback|revert|rewind|history|diff|restore",
+            "observation":r"observe|observation|telemetry|activity|event stream|monitoring|tracking",
+            "trust":r"trust|reliability|promotion|tier|trusted automation|autonom|predictive",
+            "reasoning":r"reasoning|investigation|challenge|causal|consequence|model council|council|decision packet|divergence|convergence",
+            "authority-separation":r"authority|delegat|permission|assurance|governance|command bus|consent|execution envelope",
+            "reality-understanding":r"business reality|reality graph|fact|evidence|provenance|freshness|entity relationship",
+            "continuous-evolution":r"continuous|adaptive|self.?improv|reconfigur|optimization|discovery|diagnostic|reassess|evolution",
+          }
+
+          owner={
+            "personal-understanding":"Your Zero / Understanding Memory",
+            "behavioural-understanding":"Your Zero / Behavioural Model",
+            "experience-memory":"Your Zero / Experience Memory",
+            "learning-governor":"Your Zero / Learning Governor",
+            "decision-support":"Your Zero / Decision Intelligence",
+            "persistent-state":"Your Zero / Persistent State",
+            "revision-rollback":"Your Zero / Rewind + State Revision",
+            "observation":"Reality / Observation",
+            "trust":"Titan Trust",
+            "reasoning":"Model Council / Decision Engine",
+            "authority-separation":"Authority / Assurance / Governance",
+            "reality-understanding":"Titan Reality Engine",
+            "continuous-evolution":"Titan Zero Evolution Engine",
+          }
+
+          def cls(f):
+            p=f.lower()
+            if re.search(r"(^|/)(archive|library)(/|$)|onboardingpro|titan-onboarding|docs/archive|docs/generated",p): return "HISTORICAL/DONOR"
+            if "docs/canonical/" in p: return "CANONICAL DOC"
+            if f.endswith((".ts",".tsx",".mts",".cts",".js",".jsx",".sql")): return "CURRENT IMPLEMENTATION"
+            return "SUPPORTING"
+
+          # Current source inventory.
+          current=[]
+          for f in eligible:
+            if cls(f)!="CURRENT IMPLEMENTATION": continue
+            try:t=Path(f).read_text(errors="ignore")[:1000000]
+            except:continue
+            present=[k for k,p in mechanisms.items() if re.search(p,t,re.I|re.S)]
+            if present: current.append((f,t,present))
+
+          # Historical revisions: inspect path/name candidates and exact mechanism fingerprints.
+          revs=subprocess.check_output(["git","rev-list","--all"],text=True).splitlines()
+          historical=collections.defaultdict(list)
+          for rev in revs[:2500]:
+            tree=subprocess.check_output(["git","ls-tree","-r","--name-only",rev],text=True).splitlines()
+            candidates=[f for f in tree if f.endswith((".ts",".tsx",".js",".jsx",".php",".py",".sql",".md",".json"))]
+            for f in candidates:
+              # Avoid processing every binary-ish/vendor path.
+              if re.search(r"(node_modules|vendor|dist/|build/|coverage/|\.git/)",f,re.I): continue
+              blob=subprocess.run(["git","show",f"{rev}:{f}"],text=True,capture_output=True,errors="ignore").stdout[:500000]
+              present=[k for k,p in mechanisms.items() if re.search(p,blob,re.I|re.S)]
+              if present:
+                # Only retain historical evidence that has at least one strong mechanism hit.
+                historical[(f,rev[:12])]=present
+
+          # Score by mechanism breadth, not project size or filename.
+          candidates=[]
+          for f,t,present in current:
+            score=len(present)*10 + (8 if "persistent-state" in present else 0) + (8 if "experience-memory" in present else 0) + (8 if "learning-governor" in present else 0)
+            candidates.append({"path":f,"class":"CURRENT IMPLEMENTATION","mechanisms":present,"score":score,"future_owner":[owner[x] for x in present]})
+          for (f,rev),present in historical.items():
+            score=len(present)*10 + (8 if "experience-memory" in present else 0) + (8 if "learning-governor" in present else 0)
+            candidates.append({"path":f,"revision":rev,"class":"HISTORICAL/DONOR","mechanisms":present,"score":score,"future_owner":[owner[x] for x in present]})
+          candidates.sort(key=lambda x:(-x["score"],x["class"],x["path"]))
+
+          # Explicitly detect the dangerous pattern: learning + authority in the same implementation.
+          learning_authority=[]
+          for f,t,present in current:
+            if any(x in present for x in ("experience-memory","learning-governor","behavioural-understanding")) and "authority-separation" in present:
+              learning_authority.append({"path":f,"mechanisms":present,"warning":"Review whether learning is incorrectly creating authority."})
+
+          md=[
+            "# Titan Zero Mechanism-First Archaeology","",
+            "> Primary lens: could this mechanism contribute to a person's persistent working intelligence? The word 'Zero' is not required. Historical presence is donor evidence only.","",
+            f"Commit: `{subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()}`","",
+            "## Mechanism coverage","",
+            "| Mechanism | Current files | Historical evidence | Candidate future owner |","|---|---:|---:|---|"
+          ]
+          for k in mechanisms:
+            cur=sum(k in p for _,_,p in current)
+            hist=sum(k in p for p in historical.values())
+            md.append(f"| {k} | {cur} | {hist} | {owner[k]} |")
+
+          md += ["","## Highest mechanism-coverage candidates","",
+                 "| Score | Class | Path | Revision | Mechanisms | Candidate future owner |",
+                 "|---:|---|---|---|---|---|"]
+          for x in candidates[:500]:
+            md.append(f"| {x['score']} | {x['class']} | `{x['path']}` | {x.get('revision','current')} | {', '.join(x['mechanisms'])} | {', '.join(x['future_owner'])} |")
+
+          md += ["","## Learning must not create authority — review candidates",""]
+          md += [f"- `{x['path']}` — {', '.join(x['mechanisms'])}" for x in learning_authority] or ["- None found by heuristic."]
+
+          md += ["","## Mechanism evidence paths"]
+          for k in mechanisms:
+            md += ["",f"### {k} → {owner[k]}"]
+            found=[f for f,_,p in current if k in p]
+            md += [f"- CURRENT: `{f}`" for f in found[:100]]
+            hist=[(f,r) for (f,r),p in historical.items() if k in p]
+            md += [f"- HISTORICAL: `{f}` @ `{r}`" for f,r in hist[:100]]
+            if not found and not hist: md.append("- **UNRESOLVED**")
+
+          (out/"Titan-Zero-Mechanism-Archaeology.md").write_text("\n".join(md)+"\n")
+          (out/"mechanism-archaeology.json").write_text(json.dumps({
+            "mechanisms":mechanisms,"candidate_future_owner":owner,
+            "current":[{"path":f,"mechanisms":p} for f,_,p in current],
+            "historical":[{"path":f,"revision":r,"mechanisms":p} for (f,r),p in historical.items()],
+            "top_candidates":candidates[:500],
+            "learning_authority_review":learning_authority,
+            "warning":"Heuristic evidence requires source-level verification; no donor is automatically canonical."
+          },indent=2))
+
+      - name: Upload archaeology evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: titan-zero-mechanism-archaeology-${{ github.sha }}
+          path: zero-mechanism-archaeology/
+          retention-days: 30
+          if-no-files-found: error

@@ -1,0 +1,166 @@
+# Zero Mechanism Archaeology — Cross-Agent Durable Output
+
+Owner: issue #763 / branch `agent/763`
+Status: IN PROGRESS
+Purpose: make the mechanism-first Zero archaeology directly consumable from the shared Library archaeology workspace without overwriting the Library Archaeology agent's STATUS/FINDINGS/ACTIONS/SOURCES files.
+
+## Coordination rule
+
+The authoritative detailed working files for this specialist remain:
+- `.titan/research/zero-mechanism-archaeology/STATUS.md`
+- `.titan/research/zero-mechanism-archaeology/FINDINGS.md`
+- `.titan/research/zero-mechanism-archaeology/ACTIONS.md`
+- `.titan/research/zero-mechanism-archaeology/SOURCES.md`
+
+This file mirrors stable cross-agent conclusions into the shared Library archaeology location.
+
+## Stable conclusions
+
+### ZM-001 — Canonical memory ownership
+Issue #153 owns canonical company-scoped Business Memory & Knowledge. Personal Zero must not create a second generic memory engine. Personal understanding/experience should compose over canonical evidence, storage and memory contracts.
+
+### ZM-002 — Experience Memory donor
+OnboardingPro v6 longitudinal strategy memory + anti-repeat semantics are strong Experience Memory donors: context, action/intervention fingerprint, expected/actual outcome, delta, confidence, harm, applicability, expiry and context-sensitive retest.
+
+### ZM-003 — Learning Governor ownership
+Issue #37 owns bounded predictive/outcome learning. Learning, recommendation and prediction never create or expand authority.
+
+### ZM-004 — Durable context / continuity
+Issue #21 owns durable invocation context/memory/handoff. Issue #725 owns identity/working-state/cross-surface continuity. Personal Zero should reuse these rather than create per-surface state clones.
+
+### ZM-005 — Personal Zero contract owner
+Issue #768 now owns the Personal Zero Understanding & Experience architecture gap. Personal Zero is a distinct semantic contract layer, not another AI router, conversation store, Business Memory runtime, Business Reality graph or authority engine.
+
+### ZM-006 — Epistemic promotion
+Personal understanding should follow:
+`raw observation → candidate understanding → accepted/superseded understanding`.
+Correction changes future understanding while provenance/history remains available.
+
+### ZM-007 — Critical separation
+`Personal Zero ≠ Business Memory ≠ Business Reality ≠ Conversation History ≠ Authority`.
+These systems may exchange governed evidence but must not collapse into one model.
+
+### ZM-008 — LocalBrain source-verified donor
+Direct Library inspection of `Titan Interaction Engine Master v10.12.0.zip` verified implemented:
+- CognitiveEvent chronology and typed event vocabulary
+- recommendation/correction/approval/rejection/outcome/prediction/memory/model-update separation
+- prediction→outcome linkage with Brier scoring
+- behavioural memory and behavioural drift tracking
+- preference/behaviour learning
+- recommendation recording separated from confirmed user action
+- company-scoped cognitive envelopes with subordinate user/device/team/subject context
+
+Important invariant: Zero must not learn its own recommendation as if it were confirmed human behaviour.
+
+### ZM-009 — Phase10 specification donor
+`TitanZero_Phase10_Multi_Pass_Intelligence_Upgrade_Plan.md` provides strong specification semantics but Pass18/19 device modules were not independently verified as implemented in the #763 pass.
+
+Useful semantics:
+- working / episodic / semantic / procedural memory separation
+- truth lifecycle: observed, confirmed, inferred, predicted, disputed, superseded, expired, deleted
+- device-private / user-private / team / company / collective-safe locality
+- correction + downstream outcome learning
+- minimum-evidence model updates
+- versioning + rollback
+- drift/regression detection
+- information-gain questioning
+- offline personal assistance without server-authority bypass
+
+## Source provenance
+
+### LocalBrain
+Library: `/MASTER Software/Masters/Mobile Apps/Titan Interaction Engine/Titan Interaction Engine Master v10.12.0.zip`
+Recorded SHA-256: `481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219`
+Directly inspected by #763.
+
+### Phase10
+Library file: `TitanZero_Phase10_Multi_Pass_Intelligence_Upgrade_Plan.md`
+Library file id: `file_00000000846c8211866e205be276487d`
+Classification for Pass18/19 device modules: specification until source implementation is located.
+
+## Active convergence references
+
+- #21 — durable context/memory/handoff
+- #37 — bounded predictive/outcome learning
+- #153 — canonical Business Memory & Knowledge
+- #633 — Decision / Intelligence convergence
+- #725 — identity/working-state/cross-surface continuity
+- #763 — mechanism-first Zero archaeology
+- #767 — Evolution / Business Reality convergence
+- #768 — Personal Zero Understanding & Experience contracts
+
+## Next archaeology
+
+Independently verify Decision Engine Step25 preference, observation, learning-loop and persistent-state mechanisms; then reconcile them against #633 and #768 without creating a parallel Decision Engine.
+
+
+### ZM-010 — Decision Engine Step25 source-verified donor
+Direct inspection of the Step25 Library master verified implemented TypeScript mechanisms for observation, actor/company preference resolution, revisioned decision history and verified-outcome learning. The preference and learning outputs explicitly carry `authority_effect: none`. Learning requires verified outcome evidence, preserves historical decisions/evidence and updates future calibration through revisioned state. Persistent-state candidate inventory is donor archaeology only and must not be imported wholesale.
+
+
+### ZM-011 — Model Council epistemic challenge source-verified
+Direct inspection of Model Council v1.0.0-rc.2 verified proposer→critic→verifier→arbiter deliberation, pre/final Shield validation, escalation and hash-addressed advisory-only receipts. Strong donor semantics: challenge unsupported assumptions, verify against supplied evidence, preserve material disagreement/uncertainty, do not treat consensus as proof, escalate when consequential evidence is insufficient. Important gap: historical confidence is only an average of participant self-confidence; richer evidence-independence, blind-spot and calibrated-confidence semantics remain convergence work under #633/current architecture.
+
+
+### ZM-012 — Assurance hardens Council epistemics
+Assurance design separates confidence, evidence independence and evidence sufficiency; penalises correlated failure, stale/missing evidence and unresolved disagreement; requires independent first-pass analysis and adversarial challenge for consequential cases; and permits explicit `insufficient_evidence` / `material_disagreement` outcomes. Deterministic failures cannot be overridden by model consensus. Investigation should be a bounded evidence-acquisition loop through Knowledge Authority, not a new authority or decision engine. Dedicated Investigation Workforce implementation was not verified in this pass.
+
+
+### ZM-013 — Reality, Zero and Authority must remain separate
+OnboardingPro v6 source inspection confirms a reusable business-evolution lifecycle but not a reason to merge Business Reality and Personal Zero. Canonical flow: Reality informs → Zero understands → Decision recommends → Trust/Assurance/Governance evaluate → current delegated authority permits → Command Bus executes. Business changes can trigger candidate Zero revisions; Zero observations can trigger Business Discovery verification; neither silently rewrites the other. Observation, preference, learning, confidence, recommendation and reality change never mint authority.
+
+
+### ZM-014 — Zero poisoning is a promotion-boundary problem
+Knowledge Authority source verification adds source/version hashing, contradiction, stale/superseded and isolation controls to the previously verified cognitive-event and learning pipeline. Untrusted observations/model outputs/connected data may become evidence candidates but never durable Zero state or instructions directly. Preferred composition: Shield secures untrusted instructions; Knowledge Authority validates provenance/contradictions; Operation Identity validates actors; Learning Governor controls promotion; Rewind preserves recovery lineage; Trust/Assurance/Governance gate consequential action. Do not build a duplicate monolithic Zero Poisoning Engine.
+
+
+### ZM-015 — Rewind recovers state; it does not rewrite reality
+Rewind v1.0.9 source verification supports evidence-driven recovery. Personal Zero recovery should preserve lineage and supersede/recompute bad internal state, then trace its blast radius into decisions, handoffs, configuration and actions. External effects require compensation/remediation; irreversible effects must be declared rather than pretending a snapshot restored the world. Historical approvals/trust/delegations must be revalidated and never resurrected automatically during restore.
+
+
+### ZM-016 — Zero privacy separates observation, memory, learning and egress
+Purpose-bound OnboardingPro consent plus LocalBrain/Phase10 privacy scopes imply a stronger Personal Zero rule: permission to observe a source does not automatically permit durable retention, learning, later retrieval, provider disclosure or action. Revocation must stop future observation/egress and propagate through caches/derived state subject to retention obligations. Provider routing must respect locality and never silently escalate private context to cloud inference. Decision/Workforce/Interaction consumers should receive purpose-minimised projections of Zero, not the complete personal model.
+
+
+### ZM-017 — Zero is provider-neutral and local-first
+Sovereign/Goal-13 evidence confirms the intended route order: device/local → trusted LAN/private node → Local Bridge/Ollama/customer-hosted → BYO provider → explicitly entitled Titan resource. Zero and Workforce request capabilities, never specific vendors. Routing evaluates privacy, locality, capability, entitlement, availability, cost and latency and records execution provenance. Offline/local operation never elevates authority. A current implementation gap remains: the scanned AI masters did not prove one canonical production Ollama/browser-local adapter/provider-independent routing contract, so Goal 51 convergence remains required.
+
+
+### ZM-018 — One Zero, projected across surfaces and workforce
+Command/zero, Go, Hub, model hosts and browser surfaces must not fork Personal Zero, agents or authority. Interaction Engine owns conversation/session/task context; Personal Zero owns durable personal understanding/experience; Workforce owns organisational capability coordination. Surfaces receive purpose/role-authorised projections of the same canonical identities and state, and handoffs carry references/provenance rather than cloned stores. Surface/host identity never raises authority; reconnect/resume revalidates current identity, company and authority.
+
+
+### ZM-019 — One governed execution spine, not a pile of engines
+Current convergence evidence supports: Interaction/Zero context → governed evidence/Knowledge → Decision/optional Council → Risk → Assurance/Shield → Governance → Autonomy/Trust/current authority → Command Bus → owning business domain → receipt/Signal → outcome/Wisdom/Rewind/learning. AI Core owns inference/provider execution; Decision owns DecisionPacket; Council is governed deliberation; Knowledge Authority owns evidence integrity; Command Bus is consequential execution boundary; Rewind is recovery. Signal/Prime/Nexus/Forge remain attention/mission/coordination/improvement concepts rather than Personal Zero stores. Named engines do not automatically justify separate state ownership.
+
+
+### ZM-020 — Operation identity persists; authority does not
+Consequential long-running work needs stable Operation Identity/provenance across decisions, commands, receipts, offline queues and Rewind, but authority snapshots are historical evidence only. Resume/reconnect must re-evaluate current delegation, Trust/Autonomy, policy, risk, assurance, target/reality freshness and replay/idempotency before mutation. Offline operation contracts to an explicitly safe cached envelope and never turns queued work into permanent authority. Zero remembers the mission/context; current authority machinery decides whether the next consequential step may execute.
+
+
+### ZM-021 — Physical evidence informs Zero; sensors never grant authority
+Vision, maps/location, field observations, measurements, equipment context and environmental evidence enter Titan as typed/provenanced evidence. They may update candidate Business Reality/Zero context and Decision inputs only after privacy, freshness, integrity and verification controls. Visible image evidence must remain distinct from hidden-condition/safety/compliance inference. Environmental consequences participate in shared Risk/Decision/Workforce architecture rather than forming a parallel platform. Physical action still requires current assurance/authority and the governed execution path.
+
+
+### ZM-022 — Zero orchestrates business systems; it does not become them
+Canonical domain owners retain business truth: CRM owns customer/lead/opportunity/revenue-document state; Bookings/Quotes own their lifecycle; Field owns service requests/work orders/job execution/dispatch/evidence; Connect owns communications; Assets/Locker own asset/equipment/inventory state; Maps owns location capability; Workforce coordinates agents; Knowledge Authority owns governed knowledge; Command Bus governs consequential mutation. Zero and Business Reality consume authorised projections, reason across them and invoke owner capabilities. Reporting/generative UI remain projections. Adapters, agents and donor imports must never create a second customer/job/invoice/asset/inventory truth.
+
+
+### ZM-023 — T0GM converges as Titan Oversight, not super-admin
+T0GM/Titan Oversight is a privileged Titan builder/install/system-oversight plane for Titan-controlled or explicitly client-authorized environments. It is not ordinary company administration and does not inherit authority over client business decisions merely because Titan implements the system. Security, governance, financial, operational, privacy/legal, environmental, physical-safety, anomaly and causal lenses consume governed evidence while preserving company_id isolation. Detection may create Signals/investigations; intervention still requires current scoped authority and the normal governed execution spine. Historical/superseded authority remains evidence only.
+
+
+### ZM-024 — OnboardingPro v6 source-verifies the Evolution/Experience donor loop
+Direct source inspection confirms implemented company-scoped strategy memory, context/freshness-aware anti-repeat, baseline→observed outcome deltas, unintended-effect/reversibility rollback triggers, semantic configuration diff, impact preview, exact approval fingerprinting, idempotent provisioning and verification receipts. The reusable lifecycle is: discovery revision → semantic diff → preview → approve exact proposal → execute → verify → measure → recovery decision → experience memory → future block/retest. Harden weak donor semantics (coverage-only confidence, naive summed experiment deltas, simple rollback trigger) and converge them into canonical TypeScript Reality/Evolution/Experience/Rewind owners rather than retaining an Onboarding-owned parallel runtime.
+
+
+### ZM-025 — Final synthesis: compose Zero; do not build another monolith
+Across GH-001..GH-144, the recovered mechanisms converge cleanly without a new all-owning Zero engine. Personal Zero (#768) owns personal understanding/experience contracts; Business Memory (#153) owns business memory; Business Reality/Evolution (#767) owns observed business state and reconfiguration; #37 owns bounded verified-outcome adaptation; #633 owns Decision/Council/Knowledge epistemics; #21/#725 own durable context/identity continuity; Trust/Risk/Assurance/Governance/Autonomy own current safety/authority evaluation; Command Bus/domain owners execute; Rewind recovers; AI Core/Cost Sovereignty routes inference. Highest-value remaining work is implementation parity for recovered Evolution/Experience semantics plus the still-unproven unified local/provider-neutral production routing contract. Understanding, learning, recommendation, decision and authority remain separate.
+
+
+### ZM-026 — Ownership/gap matrix is handoff-ready
+#763 now has a compact ownership/gap matrix covering Personal Zero, Experience, Business Memory, Learning, Reality/Evolution, Decision/Council/Knowledge, context/identity, authority, execution, recovery, inference routing, privacy, physical/environmental evidence, business systems, Titan Oversight, surfaces and Operation Identity. Implementation work is routed to existing canonical owners; #763 remains archaeology/evidence only. The material unresolved implementation gap still visible from this archaeology is unified production local/Ollama/browser-local/provider-neutral routing parity, plus owner-specific TypeScript convergence work already assigned to #768/#767/#153/#37/#633 and related lanes.
+
+
+### ZM-027 — #763 research is complete; integration is the remaining blocker
+Final closure audit confirms #763 and PR #764 remain open. The archaeology evidence/handoff is complete enough to stop specialist discovery work, but PR integration is blocked by repository workflow state rather than missing Zero research. At audit, readiness passed while claim-gate, CI validation and manager handoff were not green; agent/763 had also diverged 76 commits ahead / 86 behind main. Therefore #763 should not be closed or blindly merged by the archaeology specialist. Manager-controlled reconciliation/integration (or explicit supersession) is the remaining step; implementation work stays with the canonical owners already mapped in ZM-025/ZM-026.
