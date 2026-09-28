@@ -102,3 +102,5 @@ export * from "./scheduling";
 export * from "./supply";
 
 export * from "./provider";
+
+export * from "./extension";
