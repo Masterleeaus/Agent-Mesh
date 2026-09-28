@@ -38,7 +38,8 @@
     "./quote-conversion": "./src/quote-conversion.ts",
     "./customer-care-recovery": "./src/customer-care-recovery.ts",
     "./growth-attribution": "./src/growth-attribution.ts",
-    "./forecast-contract": "./src/forecast-contract.ts"
+    "./forecast-contract": "./src/forecast-contract.ts",
+    "./connector-runtime": "./src/connector-runtime.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
