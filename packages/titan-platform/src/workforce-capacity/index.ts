@@ -10,3 +10,5 @@ export * from './balancing.js';
 export * from './backpressure.js';
 
 export * from './feedback.js';
+
+export * from './diagnostics.js';
