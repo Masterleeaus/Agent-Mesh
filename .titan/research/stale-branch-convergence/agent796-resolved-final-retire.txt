@@ -1,0 +1,1 @@
+Temporary branch-retirement marker. Safe to delete after stale branch convergence is complete.
