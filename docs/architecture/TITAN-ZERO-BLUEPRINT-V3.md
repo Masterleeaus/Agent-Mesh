@@ -31,7 +31,7 @@ The evidence ledger is not merely a compliance log. It is the primary factual hi
 
 ### Ledger invariants
 
-- `company_id` remains the only canonical company boundary.
+- `company_id` is Titan's canonical logical company identity and must remain present in authorization, routing, API/event context, evidence and correlation. For canonical business-domain state, the default physical isolation boundary is a dedicated Frappe site/database per Titan company on shared versioned application/runtime code.
 - Ledger entries are append-only and immutable after acceptance.
 - Corrections, supersession, rollback and compensation create new evidence; they never rewrite factual history.
 - Provider acknowledgement is not a verified outcome.
@@ -171,7 +171,7 @@ Verification → Business Evidence Ledger
 
 Frappe/ERPNext provides mature operational models, transactional workflows, admin primitives and selected ERP capabilities. Titan consumes it through a **Titan Domain API / anti-corruption layer** rather than binding Zero/Go/Hub directly to Frappe DocTypes or Desk UI.
 
-Default tenancy for the Business Engine is **shared versioned application/runtime code with per-company Frappe site/database isolation**. Titan `company_id` remains the cross-system business identity and evidence boundary; the provider site/database is an additional physical isolation boundary, not a replacement identity.
+Default tenancy for the Business Engine is **shared versioned application/runtime code with per-company Frappe site/database isolation**. Titan `company_id` remains mandatory in cross-system identity, authorization, routing, API/event context and evidence; the provider site/database is the physical business-domain isolation boundary and never replaces logical company identity.
 
 Frappe/ERPNext is therefore an operational/materialized business-state engine beneath Titan. It does not replace:
 - the Business Evidence Ledger as factual history;
@@ -181,6 +181,39 @@ Frappe/ERPNext is therefore an operational/materialized business-state engine be
 - Zero/Go/Hub presentation contracts.
 
 DirectAdmin owns the orchestration and lifecycle of the Business Engine: provision, configure, inspect, migrate, back up, restore, reconcile, upgrade, health-check and retire it through governed capabilities.
+
+### 8.2 Two-layer company tenancy and provider-site mapping
+
+Titan uses **two complementary tenancy boundaries**:
+
+1. **Logical Titan company boundary** — `company_id` identifies the business consistently across identity, membership, authorization, Workforce, APIs, events, evidence, audit, Missions and provider mappings.
+2. **Physical Business Engine boundary** — each Titan company maps by default to its own Frappe site/database and files/storage namespace while sharing versioned Frappe/Titan application code and runtime infrastructure.
+
+Neither boundary replaces the other. A request with the wrong `company_id` must fail even if it reaches the correct provider site, and a provider-site routing error must fail closed even when the caller has a valid Titan company relationship.
+
+The canonical provider-site mapping must carry at least:
+
+- `company_id`;
+- provider kind;
+- provider site ID/name;
+- placement/runtime reference;
+- opaque database reference;
+- files/storage reference;
+- engine/app/schema versions;
+- enabled modules and vertical overlays;
+- secret reference IDs only, never raw credentials;
+- health/readiness;
+- backup policy and last verified backup;
+- reconciliation cursor/status;
+- migration state;
+- locality and shared/dedicated placement;
+- timestamps and provenance.
+
+DirectAdmin account creation **does not automatically create a Titan company or Business Engine site**. Provisioning is an explicit governed Titan action with authenticated actor, resolved company, entitlement, effective authority, idempotency, observed verification and evidence.
+
+Titan surfaces, Workforce, Microweber and external AI hosts never connect directly to provider databases and never depend on raw Frappe DocType names. They consume stable Titan Domain/Capability contracts through the existing Titan TypeScript/Node service/API stack.
+
+Verticalisation follows a layered model: metadata/configuration/custom fields/workflows where safe; shared versioned Titan/Frappe application modules for code; Mission-scoped extensions with explicit install/retire lifecycle. Per-customer source forks are not the default customization mechanism.
 
 ### Server Node governance
 
@@ -308,6 +341,7 @@ A Capsule includes the required signed/versioned subset of:
 - required durable state and encrypted secrets references/restore procedures;
 - application/runtime/deployment manifests;
 - provider/capability bindings;
+- Business Engine provider-site mapping, engine/app/schema versions and verified backup/restore metadata;
 - compatibility/provenance metadata.
 
 A Capsule is not merely a backup archive. It is a rehydratable system identity and history package.
@@ -348,7 +382,7 @@ Federation must never weaken `company_id` isolation or permit one node to mutate
 ## 15. Eight-phase roadmap architecture
 
 ### Phase 1 — Evidence & Isolation Foundation
-Make append-only Business Evidence Ledger and `company_id` isolation load-bearing. Certify all consequential state has provenance and canonical runtime persists/reconstructs from evidence-compatible storage.
+Make the append-only Business Evidence Ledger and logical `company_id` isolation load-bearing, while certifying physical per-company Business Engine site/database isolation for operational business-domain state. All consequential state must retain provenance and canonical runtime must persist/reconstruct from evidence-compatible storage.
 
 ### Phase 2 — Reality Projections & Governed Execution
 Converge Business Reality projections, canonical execution lifecycle, observed-state verification, idempotency, recovery and evidence-backed outcomes.
@@ -373,7 +407,7 @@ Implement explicit federation contracts between sovereign Titan nodes/companies/
 
 ## 16. Architectural invariants
 
-1. `company_id` is the only canonical company boundary.
+1. `company_id` is the canonical logical company identity/auth/routing/evidence key; canonical business-domain provider state is additionally isolated by per-company Business Engine site/database by default.
 2. No consequential state without provenance.
 3. Evidence history is append-only; correction creates new evidence.
 4. Provider acknowledgement is not verified outcome.
