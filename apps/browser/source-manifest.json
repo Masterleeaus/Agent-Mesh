@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1061,
+  "fileCount": 1065,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -2255,13 +2255,13 @@
     },
     {
       "path": "src/lib/repository-host-integration.js",
-      "bytes": 18753,
-      "sha256": "6356b71a5eb39896219458b70ef7cf31452be5dbb1cf90489b3020b5a93d5b42"
+      "bytes": 21593,
+      "sha256": "d7b99457a17cb85ba419494f0b7c445c195623e089256f536b092678d54f3076"
     },
     {
       "path": "src/lib/service-worker.js",
-      "bytes": 260780,
-      "sha256": "12657e2cc10ddf12932c6126910f411ddd059d5a8f0cb6e8bc23d7ef60b6c2f6"
+      "bytes": 263037,
+      "sha256": "4c13fcda0092e867ebcd7985ad5b28ab2bc5f847fa3d9caea999b9fb3b28071f"
     },
     {
       "path": "src/lib/titan-zero-host-integration.js",
@@ -2400,18 +2400,18 @@
     },
     {
       "path": "src/sidebar/sidebar.css",
-      "bytes": 38319,
-      "sha256": "e2ca9bee64cf6ece33de4f5430ad8514f780091f0287279665d75abd890ddcab"
+      "bytes": 40877,
+      "sha256": "8bc3f36c58aec75f5688921a67c7b040b4172454c1653e0afc4f94391634d29d"
     },
     {
       "path": "src/sidebar/sidebar.html",
-      "bytes": 75606,
-      "sha256": "bcb05cfaf5dcabe7cc5968c01dfe953cdc93b47bad8ac348097bf114599b75ac"
+      "bytes": 74621,
+      "sha256": "9f72680b5e584bc0ffdb3483a9c401579ecbdfa1e32dc651adce95bf34fa2d9e"
     },
     {
       "path": "src/sidebar/sidebar.js",
-      "bytes": 233535,
-      "sha256": "9d0a9c29fc8544cd2044e96ad86f3fb74ae56d245b03491b52781c038230f625"
+      "bytes": 238454,
+      "sha256": "bd38552c39a343d9b85bbad86ee4762af4ef1475fc7c3635c3ffa8f11eb4b23e"
     },
     {
       "path": "src/titan-zero/agent-mesh-continuation.js",
@@ -2989,6 +2989,11 @@
       "sha256": "8193b4fb49cb23306e27dbf7a02865b73420121011673ecf0ba047063ad72c6e"
     },
     {
+      "path": "tests/test-actionable-diagnostics-overview.js",
+      "bytes": 729,
+      "sha256": "f32291938bf11bee29344953063d58f2fd764e8c32f621c708ca48ad0076d670"
+    },
+    {
       "path": "tests/test-active-plans-stop-clear-controls.js",
       "bytes": 2002,
       "sha256": "42398dbd00da107cd3eb384affc2310ff57488402bf9adba6c4e8c8cf8843181"
@@ -3330,8 +3335,8 @@
     },
     {
       "path": "tests/test-browser-node-no-devpack-startup.js",
-      "bytes": 1726,
-      "sha256": "b4a5dbad5bf333d5d1588d7984d2687091b0ac815dab54f1d60a7c9a7179fd91"
+      "bytes": 1928,
+      "sha256": "88f1ccfe08ecc3ff5d44cffe477671a430cb0a6d1355e3571c97087d9291706c"
     },
     {
       "path": "tests/test-browser-node-no-legacy-manager-runtime.js",
@@ -3447,6 +3452,11 @@
       "path": "tests/test-chrome-prompt-provider-pass05.js",
       "bytes": 1358,
       "sha256": "8f0a9f904bb5c301adac06dcbc52a76417c7efbd8854f49048fe7dd353292b96"
+    },
+    {
+      "path": "tests/test-collapsible-navigation-groups.js",
+      "bytes": 716,
+      "sha256": "0b388fba01d15f7678bd3d7e6c59adf2b58db8346289f461a2bbf554f7e7a60b"
     },
     {
       "path": "tests/test-command-effect-backup-coverage.js",
@@ -3955,8 +3965,8 @@
     },
     {
       "path": "tests/test-next-runner-active-plans.js",
-      "bytes": 2495,
-      "sha256": "78a67788c7813093d076cacd797a6d6711355508173975c34965d95124a25d88"
+      "bytes": 2787,
+      "sha256": "13553ab2d021f54cfe6e0ad8270df1dec3e8af2625c176381c1aafeb8923e359"
     },
     {
       "path": "tests/test-next-runner-content-recovery.js",
@@ -3972,6 +3982,11 @@
       "path": "tests/test-next-runner-failure-retains-plan.js",
       "bytes": 1128,
       "sha256": "cef2b1f3499641a8c94b50d133aeedf878537ef7a65a871a07e67182594c3d1d"
+    },
+    {
+      "path": "tests/test-next-runner-lifetime-passes-and-cadence.js",
+      "bytes": 1233,
+      "sha256": "4eb5fe8ff49734e48e18339f187bfb647fde9b5458b3f2c4f6991c64bf62e6cc"
     },
     {
       "path": "tests/test-next-runner-receiver-recovery-runtime.js",
@@ -3990,8 +4005,13 @@
     },
     {
       "path": "tests/test-next-runner-verified-count.js",
-      "bytes": 1642,
-      "sha256": "a31920c3dd2f8281fded622cbd6238c3b458bd105916338df8d943d30a857e84"
+      "bytes": 1794,
+      "sha256": "84cf9dbfd3baf4589e658308d7162e315efb71ae5423fa5046b4baf5d426920f"
+    },
+    {
+      "path": "tests/test-noncompletion-error-aliases.js",
+      "bytes": 434,
+      "sha256": "216e6f4d5c532f2aa462dd2ac03327a6fcc900fe10c5ebc2ab6a6c721571f9bf"
     },
     {
       "path": "tests/test-noncompletion-report-validation.js",
