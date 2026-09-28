@@ -32,6 +32,5 @@ export type { InferenceRoute, CostSovereigntyRequest, CostSovereigntyDecision } 
 export { createConnectorCredentialReference, CONNECTOR_CREDENTIAL_POLICY } from "./ported/titan-connect/credential-contract.js";
 export type { ConnectorCredentialReference } from "./ported/titan-connect/credential-contract.js";
 
-export * from "./knowledge-governance.js";
 
 export * from "./mission-planning.js";
