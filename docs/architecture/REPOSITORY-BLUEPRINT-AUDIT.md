@@ -57,7 +57,7 @@ Findings:
 - services/worker: 57
 - services/workforce: 11
 - No `apps/directadmin/` subtree exists on baseline main.
-- DB includes SQLite plus legacy/compatibility MySQL material; production boot must remain SQLite-first.
+- DB includes SQLite plus legacy/compatibility SQL material. Current target preserves the native Titan FSM while routing company-owned operational business state to one physical database per company; SQLite remains valid for native company databases and explicit runtime/control/evidence owners where supported. Frappe is optional extension infrastructure.
 
 Mission evidence: #812, #648.
 
@@ -122,7 +122,7 @@ The audit is not complete until all tracked files have been classified/inspected
 9. packages/storage/offline/provenance/observability/settings/log.
 10. packages/titan-platform active source vs ported/generated/donor trees.
 11. services/worker all automations and business-state mutation paths.
-12. db every migration/seed/script, SQLite portability and company isolation.
+12. db every migration/seed/script, native FSM portability, physical database-per-company isolation, and explicit runtime/control/evidence ownership.
 13. infra/scripts all install/update/backup/restore/release paths.
 14. .github every workflow/script/baseline; active vs obsolete mutation workflows.
 15. tests/e2e full architecture coverage map.
@@ -158,7 +158,7 @@ Findings so far:
 - Zero interaction route correctly derives company scope from authenticated server session, but its dispatcher is process-local registration and must bind to the persistent hosted Workforce composition from #811.
 - Web workforce command gateway directly fetches app-local business-op routes after role/risk planning; consequential commands need #14 convergence.
 - Representative dispatch/job/work-order/automation routes directly mutate business tables inside the surface.
-- `apps/web/lib/db.ts` is PostgreSQL-only while canonical VPS is SQLite-first; reachable consumers are a production portability risk.
+- `apps/web/lib/db.ts` is PostgreSQL-only and assumes shared/account-scoped connectivity; reachable consumers are a production portability/isolation risk. Preserve their native FSM behavior while converging them behind supported company-database resolution/portable storage.
 - Domain/business logic is heavily concentrated in web libs (estimates/invoices/expenses/jobs/visits/work-orders etc.) and requires ownership extraction/classification under #183/#263/#353/#648.
 - Web AGENTS boundary was corrected to Blueprint v3, canonical Zero/Go/Hub IDs and hosted Workforce semantics.
 - Small hygiene fixes: removed committed `apps/web/tsconfig.tsbuildinfo` and `apps/web/marketing-source/tradepilot/app/page.tsx.bak`.
@@ -175,7 +175,7 @@ Verified findings:
 - Material ordinary domain routes still mutate business state directly in the web surface (dispatch, jobs, work orders, payments, provider webhooks, automations and others).
 - Six `workforce-native` adapters use a better transitional pattern: non-GET execution fails closed with `CANONICAL_EXECUTION_AUTHORITY_REQUIRED`. Preserve that fail-closed behavior and replace internal HTTP mutation with the canonical hosted Workforce/execution envelope.
 - `lib/estimates/db.ts` remains PostgreSQL-only while `lib/invoices/db.ts` has already moved to portable transactions; converge on the existing portable boundary.
-- `lib/automations/service.ts` is PostgreSQL-specific (`PoolClient`, `SET LOCAL`) and cannot be canonical SQLite production code as-is.
+- `lib/automations/service.ts` is PostgreSQL-specific (`PoolClient`, `SET LOCAL`) and cannot satisfy the current portable database-per-company production contract as-is.
 - Payment and Square webhook code has useful signature/idempotency/company checks but currently turns provider events directly into financial rows/status; Finance must distinguish provider event receipt from verified Titan financial outcome.
 - Estimate send route combines pricing, state transition, email/PDF delivery and audit/cascade orchestration in the surface; Sales/Quote canonical owner should absorb material behavior.
 - No further obvious backup/build-artifact files remain in apps/web after Pass 6A cleanup.
@@ -214,7 +214,7 @@ Coverage:
 Findings:
 - Zero page exists but chat UI is not wired to its interaction transport; current form is GET-only and Workforce pulse values are hard-coded zero.
 - Main owner `/app` remains a large SQL-derived operational dashboard and current practical owner home.
-- Go behavior is primarily legacy `/app/my-work`; it still uses PostgreSQL-only session queries/SQL and is not SQLite-certified.
+- Go behavior is primarily legacy `/app/my-work`; it still uses PostgreSQL-only session queries/SQL and is not certified against the current company-storage resolver/database-per-company contract.
 - Hub behavior remains separate `/portal/**` pages rather than one-PWA canonical Hub mode.
 - Existing `TitanInteractionClient` correctly normalizes aliases to canonical zero/go/hub, which is a useful convergence primitive.
 - `ZeroWorkforceDispatcher` is already designed as a thin adapter to a cross-process canonical Workforce port; preserve it and bind it to the persistent hosted Workforce from #811.
@@ -232,7 +232,7 @@ Status: COMPLETE for repository architecture/ownership scan
 Findings:
 - Zero is the closest canonical mode but still lacks live authoritative Workforce pulse/projection wiring.
 - Go is presently represented mainly by legacy field/my-work pages rather than a unified interaction mode; portions still use PostgreSQL-only DB helpers.
-- Hub is presently a separate customer portal architecture; portal session/pages use PostgreSQL-only helpers and SQL constructs, so Hub is not certified on the canonical SQLite VPS.
+- Hub is presently a separate customer portal architecture; portal session/pages use PostgreSQL-only helpers and SQL constructs, so Hub is not certified against the current portable company-database production path.
 - Owner Office-vs-Field routing is a useful presentation preference but must not become a fourth/fifth canonical surface identity.
 - Native service bindings retain transitional `existing_api_route` command-authority labels for several domains; `execution_permitted:false` is good fail-closed behavior, but consequential command ownership must converge on hosted Workforce/effective authority/ExecutionGateway.
 - Generated UI validation correctly limits actions to navigation or prepared intent rather than direct mutation.
@@ -250,7 +250,7 @@ Status: COMPLETE for architecture/ownership scan
 Findings:
 - Nested recount: 537 files under apps/web/lib/**. Largest clusters: estimates 58, invoices 51, titan 39, expenses 29, jobs 26, navigation/visits/work-orders 21 each.
 - Zero: dedicated /app/zero + canonical interaction client/HTTP transport exists. It intentionally shows zero Workforce pulse values until authoritative hosted projections arrive.
-- Go: mature field UX exists under /app/my-work, but it still uses PostgreSQL-only queryForSession and PostgreSQL SQL syntax, blocking canonical SQLite VPS parity.
+- Go: mature field UX exists under /app/my-work, but it still uses PostgreSQL-only queryForSession and PostgreSQL SQL syntax, blocking portable database-per-company production parity.
 - Hub: mature customer portal exists under /portal/**, but its main customer page still uses PostgreSQL-only query/queryOne.
 - Owner /app remains a dashboard-heavy direct projection over business tables; preserve mature UX while converging canonical owner interaction into Zero mode rather than inventing another surface.
 - /app/my-day redirects to /app/my-work, so that duplicate field root is already being collapsed.
@@ -267,7 +267,7 @@ Status: COMPLETE for architecture/ownership scan
 
 Findings:
 - Zero page is intentionally truthful/fail-safe but currently hard-codes Workforce pulse counts to zero because authoritative hosted-runtime projection is not wired.
-- Go is currently represented largely by `/app/my-work`; it directly consumes PostgreSQL-only `queryForSession` and PG-specific SQL, so it is not yet canonical SQLite-first.
+- Go is currently represented largely by `/app/my-work`; it directly consumes PostgreSQL-only `queryForSession` and PG-specific SQL, so it is not yet certified for the canonical company-storage resolver/database-per-company model.
 - Hub is currently represented by legacy `/portal/**`; its customer page directly consumes pg-only `query/queryOne` and PG-specific JSON/FILTER/cast SQL. Hub must converge onto canonical customer projection/gateway semantics.
 - Legacy Office/Field workspace routing remains in responsive/post-login logic. It can remain a UX compatibility concept but canonical surface identity must be zero/go/hub.
 - The owner dashboard at `/app` performs many portable direct reads; it is a useful current projection but should increasingly consume canonical Business Reality/Workforce projections rather than accumulate new domain ownership.
@@ -317,3 +317,11 @@ Findings:
 - Customer production Browser Node must be split from private Titan Code/Agent Mesh/repository-coding tooling; donor provenance can remain in docs/imports/tests/archive.
 
 Mission evidence: #643, #648, #7, #647.
+
+
+### Architecture correction — native FSM and physical company isolation
+Status: ACTIVE / SUPERSEDES EARLIER STORAGE ASSUMPTIONS
+
+The mature TypeScript AI-FSM in `apps/web` remains Titan's default native field-service product and must remain independently installable without Frappe. Frappe/ERPNext is an optional extension provider for missing/deeper or deliberately delegated capabilities.
+
+`company_id` remains the canonical logical identity, while company-owned native operational persistence defaults to one physical database per company behind a fail-closed Company Storage Resolver/mapping. Runtime/control/evidence storage remains owner-specific and must not silently become a shared operational business database. Optional Frappe keeps separate site/database isolation per enabled company. Future audit passes must interpret older "SQLite-first" findings as portability evidence, not as a requirement for one shared business SQLite database.
