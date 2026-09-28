@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 
 const SKIP_SECTIONS = new Set(["Closing"]);
 
@@ -16,7 +16,7 @@ function deriveCondition(items: Disposition[]): "good" | "fair" | "poor" | "crit
 }
 
 export async function seedConditionSnapshots(
-  client: PoolClient,
+  client: DbClient,
   visitId: string,
   propertyId: string,
   accountId: string
