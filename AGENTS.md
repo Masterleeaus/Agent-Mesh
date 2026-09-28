@@ -57,12 +57,14 @@ Subtree `AGENTS.md` files may add constraints for `apps/`, `services/`, and `pac
 
 Unless a canonical document explicitly changes them:
 
-- `company_id` is the canonical company/tenant boundary. Legacy tenant identifiers are compatibility ingress only.
+- `company_id` is the canonical logical company identity/auth/routing/evidence key. Legacy tenant identifiers are compatibility ingress only. Canonical business-domain provider state is additionally isolated by a dedicated Business Engine site/database per company by default.
 - Canonical product surfaces are `zero`, `go`, and `hub`; other apps/channels are adapters or specialized surfaces.
 - Consequential actions pass through Titan's governed decision/authority/execution path.
 - Provider acknowledgement is not a verified business outcome.
 - Evidence/provenance must survive consequential execution.
-- SQLite is the canonical local/runtime persistence target where defined by current architecture.
+- SQLite is the canonical local/runtime persistence target only where explicitly owned by current architecture (for example bounded runtime/control/evidence/local/offline roles). It is not the universal primary CRM/jobs/assets/inventory/finance store once those domains are materialized through the Business Engine.
+- DirectAdmin account creation is not Titan company provisioning. Business Engine provisioning must be an explicit governed Titan action and must preserve actor/company/entitlement/authority separation.
+- Titan surfaces and agents must use Titan Domain/API/provider contracts and must not access provider databases directly or infer authority from provider/host identity.
 - Reuse existing capability, workforce, identity, context, memory, authority, execution, and evidence contracts before adding new ones.
 - Titan Code/agent tooling is development infrastructure, not a production dependency of Titan Zero.
 
