@@ -2,8 +2,8 @@
 
 These are guardrails for every agent and PR.
 
-- `company_id` is the only canonical multi-tenant boundary. Legacy tenant fields may exist only as compatibility inputs and must normalize before authorization, storage or execution.
-- Canonical product surfaces are `zero`, `go`, and `hub`. Aliases are compatibility/branding only.
+- `company_id` is Titan's canonical logical company identity and authorization/routing/evidence boundary. Legacy tenant identifiers may exist only as compatibility inputs and must normalize before canonical authorization/execution. Physical provider isolation may add stronger boundaries (for example the default per-company Frappe site/database in #1051) without replacing `company_id`.
+- Canonical product modes are `zero`, `go`, and `hub`. Titan PWA is one installable application with these three governed modes; native mobile follows the same one-app/three-mode model. `apps/web` is a separate full base web application, not the PWA.
 - Commercial portfolio labels, channels and plans do not create additional canonical surfaces. External AI hosts, WordPress/Web Presence and Omni are adapters/projections over canonical capabilities.
 - Commercial entitlement, user role, capability availability and effective execution authority are separate concerns. A paid plan, add-on, host privilege or installed plugin never grants business authority by itself.
 - The canonical commercial tier progression is Solo → Team → Business → Sovereign. Prices and user-count thresholds are configurable business policy, not architecture invariants.
