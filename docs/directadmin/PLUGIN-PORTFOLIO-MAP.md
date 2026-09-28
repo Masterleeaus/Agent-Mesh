@@ -47,7 +47,7 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 
 | Current source | DirectAdmin assignment | Action |
 |---|---|---|
-| `apps/directadmin/dev-access` | Developer Portal #1048 + Business Node Business Node SDK #1049 | Preserve server-validated packaging/diagnostic lessons; refactor shared pieces into Business Node SDK |
+| `apps/directadmin/dev-access` | Developer Portal #1048 + Business Node SDK #1049 | Preserve server-validated packaging/diagnostic lessons; refactor shared pieces into Business Node SDK |
 | `apps/web` | Full Titan base web application; #809 migration, with cockpit projections where appropriate | Keep separate from the one-app/three-mode PWA under #542. Preserve reachable web/BFF routes; extract domain contracts and migrate duplicate CRM/ERP persistence behind Titan Domain APIs/#1051 before retirement. |
 | `apps/mobile` | Operations Hub (device/node visibility) + Workforce Manager | Do not port Flutter; expose Edge/device health/capability/configuration |
 | `apps/browser` | Operations Hub + Developer Portal + capability graph | Browser Node remains separate execution node; DA manages/observes it |
@@ -75,7 +75,7 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 | `runtime/authority` | Governance & Assurance |
 | `runtime/interaction-engine` | Canonical Interaction runtime; configured through System Configuration #1063 and consumed by Zero Core + Communications Manager + Workforce Manager |
 | `runtime/feed` | Zero Core / Operations Hub attention feeds |
-| `settings` | Business Node Core + System Configuration + User User Experience |
+| `settings` | Business Node Core + System Configuration + User Experience |
 | `storage` | Operations Hub + Governance & Assurance |
 | `tools` | Application Generator + Developer Portal + Business Node Core capability graph |
 | `workforce` | Workforce Manager |
@@ -85,7 +85,7 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 | `titan-platform/personal-zero` | Intelligence Core + Zero Core |
 | `titan-platform/retriever` | Intelligence Core |
 | `titan-platform/storage` | Operations Hub + Governance & Assurance |
-| `titan-platform/surface` | Surfaces #1059 + Business Node SDK + User Experience |
+| `titan-platform/surface` | Surface Manager #1059 + Business Node SDK + User Experience |
 | `titan-platform/titan-builder` | Application Generator + Brand Studio |
 | `titan-platform/verticals` | Industry Builder |
 | `titan-platform/workforce-*` | Workforce Manager; trust aspects also Governance & Assurance |
@@ -114,7 +114,7 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 | Issue | Plugin |
 |---:|---|
 | #812 | Business Node Core |
-| #1049 | Business Node Business Node SDK |
+| #1049 | Business Node SDK |
 | #1051 | Business Engine |
 | #1046 | Zero Core |
 | #1050 | Workforce Manager |
@@ -122,7 +122,7 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 | #1047 | Application Generator |
 | #1044 | Brand Studio |
 | #1048 | Developer Portal |
-| #1052 | User User Experience |
+| #1052 | User Experience |
 | #913 | Governance & Assurance; evidence services consumed by all |
 | #14 | Governance & Assurance; execution services consumed by all mutating plugins |
 | #640 | Governance & Assurance |
@@ -161,7 +161,7 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 | #572 | Operations Hub + Governance & Assurance |
 | #718 | Business Node Core + Business Node SDK + Application Generator |
 | #302 | Business Node SDK + Developer Portal + Governance & Assurance |
-| #542 | No DA replacement: one PWA + one native mobile app each expose Zero Core/Go/Hub modes; DA Surfaces/Zero Core/Workforce Manager consume the same contracts |
+| #542 | No DA replacement: one PWA + one native mobile app each expose Zero/Go/Hub modes; Surface Manager/Zero Core/Workforce Manager consume the same contracts |
 | #809 | No direct port: `apps/web` remains the separate full base web application; DA cockpits reuse canonical APIs/domain contracts after duplicate persistence convergence |
 | #1059 | Surface Manager, consuming the separate PWA/mobile and base web deployment contracts |
 | #1060 | Channels & Integrations, consuming external transport/provider contracts |
