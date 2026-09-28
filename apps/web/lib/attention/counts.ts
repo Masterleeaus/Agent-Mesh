@@ -109,7 +109,7 @@ export async function countUnreadAttentionEvents(
 }
 
 export async function loadAttentionSummary(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<AttentionSummary> {
   const [requestsCount, invoicesCount, estimatesCount, unreadEventCount] =
