@@ -1,0 +1,1 @@
+Temporary retirement marker; useful Browser Node behavior is already preserved on main.
