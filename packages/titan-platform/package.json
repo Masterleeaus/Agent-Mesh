@@ -26,7 +26,8 @@
     "./system-configuration": "./src/system-configuration.ts",
     "./vertical-pack": "./src/vertical-pack.ts",
     "./communication-announcement": "./src/communication-announcement.ts"
-    ,"./intelligence-core": "./src/intelligence-core.ts"
+    ,"./intelligence-core": "./src/intelligence-core.ts",
+    "./surface-manager": "./src/surface-manager.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
