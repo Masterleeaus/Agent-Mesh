@@ -113,26 +113,30 @@ Predictive capability is earned behaviour, not a fifth identity tier.
 
 Trust/Autonomy progression remains capability/operation specific and cannot silently increase authority.
 
-## 8. Titan Server Node
+## 8. Titan Business Node Control Plane / Server Node
 
-DirectAdmin is the first deployment beachhead for the Titan Server Node.
+DirectAdmin is the first deployment beachhead for the Titan Server Node **and the primary Business Node control plane / meta-orchestration system**.
 
-The installable DirectAdmin plugin is a thin installer/control-plane interface around a persistent server-side Titan execution node. The Titan Server Node hosts the canonical workforce runtime 24/7 and supplies governed infrastructure/application capabilities.
+The DirectAdmin layer is not merely a hosting plugin. It is the business operations cockpit and orchestration plane that supervises, composes and governs the customer's digital operating environment: workforce runtimes, applications, websites, data services, communications, integrations, deployments, devices/nodes, backups, security, health and recovery.
 
-It is not a fourth business surface and does not own canonical business truth.
+DirectAdmin therefore acts as the **physical/operational management layer of the Business Node** while Zero remains the intelligence interface and the Business Evidence Ledger remains the factual history.
 
-### Server Node responsibilities
+It is not required to own canonical business truth itself, and DirectAdmin/root/admin privilege never becomes Titan business authority. But it is intentionally the place where the business's systems are installed, discovered, coordinated, monitored, repaired, upgraded and lifecycle-managed.
 
-- install and supervise the canonical Titan Workforce Host;
+Canonical Zero/Go/Hub remain the main business interaction surfaces; DirectAdmin is the expert/operator Business Node cockpit and meta-layer that manages the systems underneath them.
+
+### Server Node / Business Node control-plane responsibilities
+
+- install and supervise the canonical Titan Workforce Host and its dependent business runtimes;
 - maintain persistent Node/TypeScript runtime(s);
 - expose bounded DirectAdmin/API/MCP capabilities;
-- manage websites and applications, including WordPress, static/TypeScript, Node, PHP, Git deployments and approved containers;
+- manage the complete business application estate, including WordPress, static/TypeScript, Node, PHP, Git deployments, approved containers, generated/temporary apps and connected systems;
 - DNS, SSL, mail, database, Redis and service capabilities;
 - security capability integration such as CSF/BFM/ModSecurity/ClamAV where available;
 - backup/restore integration and verification;
 - deployment preview, health verification, promotion and rollback;
 - governed terminal/command capabilities;
-- resource/health observation;
+- business-wide system discovery, resource/health observation, drift detection and coordinated remediation;
 - evidence collection for host/application execution.
 
 ### Server Node governance
@@ -141,7 +145,7 @@ Host/root privilege never becomes Titan business authority.
 
 Curated capability execution is preferred over arbitrary shell execution. Emergency shell/elevated execution requires explicit stronger authority and complete evidence.
 
-External DirectAdmin implementations such as MCP/API layers are capability providers behind Titan's canonical registry and ExecutionGateway, not new control planes.
+External DirectAdmin implementations such as MCP/API layers are execution/capability providers **inside the Titan Business Node control plane**. They may extend operational reach, but they do not replace Titan's canonical authority, evidence, workforce or capability ownership.
 
 Canonical deployment lifecycle:
 
