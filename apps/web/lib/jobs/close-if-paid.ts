@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import { appendAuditLog } from "@/lib/db/audit";
 
 const OPEN_STATUSES = ["draft", "sent", "partial", "overdue"] as const;
@@ -24,7 +24,7 @@ export function shouldCloseJobFromInvoices(invoices: InvoicePaidSnapshot[]): boo
  * without creating another invoice. Deposit/progress-only payments do not close.
  */
 export async function closeJobIfFullyPaid(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     jobId: string;
