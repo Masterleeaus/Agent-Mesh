@@ -47,7 +47,7 @@ export class RuntimeAuthorityGateway {
       input,
       idempotency_key,
       authority:{status:"approved"},
-      risk:{status:"approved"},
+      risk:{status:canonical.evaluated_risk?.level==="critical"?"denied":"approved",...canonical.evaluated_risk},
     });
   }
 }
