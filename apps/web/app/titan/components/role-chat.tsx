@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, CalendarDays, Camera, Check, ChevronRight, CircleDollarSign, MapPin, Mic, Paperclip, Plus, Send, ShieldAlert, ShieldCheck, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/Button";
+import { Textarea } from "@/components/ui/Textarea";
 import { ZeroMark } from "./titan-brand";
 import { getDemoSurfaceProjection } from "../runtime/surface-contract.mjs";
 import { TitanInteractionClient, requestedWorkerFromText } from "../runtime/interaction-client";
