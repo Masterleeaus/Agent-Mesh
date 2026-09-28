@@ -224,3 +224,21 @@ Findings:
 apps/web disposition: no further architecture-discovery pass is required before Codex missions execute. Future audit revisits web only for mission verification, regression or final certification.
 
 Mission evidence: #542, #811, #14, #183, #263, #343, #353, #648, #913.
+
+
+### Pass 6C — apps/web libraries + Zero/Go/Hub modes
+Status: COMPLETE for repository architecture/ownership scan
+
+Findings:
+- Zero is the closest canonical mode but still lacks live authoritative Workforce pulse/projection wiring.
+- Go is presently represented mainly by legacy field/my-work pages rather than a unified interaction mode; portions still use PostgreSQL-only DB helpers.
+- Hub is presently a separate customer portal architecture; portal session/pages use PostgreSQL-only helpers and SQL constructs, so Hub is not certified on the canonical SQLite VPS.
+- Owner Office-vs-Field routing is a useful presentation preference but must not become a fourth/fifth canonical surface identity.
+- Native service bindings retain transitional `existing_api_route` command-authority labels for several domains; `execution_permitted:false` is good fail-closed behavior, but consequential command ownership must converge on hosted Workforce/effective authority/ExecutionGateway.
+- Generated UI validation correctly limits actions to navigation or prepared intent rather than direct mutation.
+- The only demo-named active web runtime file found is `demo-presentation-intent.ts`; it produces authority-neutral presentation intents. It must remain development/test-only or be replaced by real projections before production UI certification.
+
+apps/web architecture scan disposition:
+- substantial convergence → #811, #14, #183, #263, #343, #353, #542, #648;
+- no additional standalone mission required.
+- web subtree can now move from discovery to mission execution/certification.
