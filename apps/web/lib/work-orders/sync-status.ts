@@ -1,4 +1,9 @@
 /**
+ * Compatibility persistence adapter: the status derivation itself is canonical
+ * domain logic, while direct work_orders/visits table mutation is legacy base-web
+ * materialization pending #183/#1051 provider convergence.
+ */
+/**
  * Recompute and persist work order planning status from child visits.
  */
 
