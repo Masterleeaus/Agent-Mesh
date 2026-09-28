@@ -3,7 +3,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
-const worker = fs.readFileSync(path.join(root, 'src/lib/service-worker.js'), 'utf8');
+const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8'));
+const worker = fs.readFileSync(path.join(root, manifest.background.service_worker), 'utf8');
 const gateway = fs.readFileSync(path.join(root, 'src/workforce/titan-workforce-gateway.js'), 'utf8');
 const contract = fs.readFileSync(path.join(root, 'src/integration/workforce-host-contract.js'), 'utf8');
 
