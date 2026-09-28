@@ -24,18 +24,14 @@ for (const forbidden of ['Repository Host','Prompts','Skills','AI Workforce']) {
 assert(!/label:\s*'Repository'/.test(nav), 'repository coding workspace must not be a primary Browser Node page');
 assert(!/label:\s*'Titan Zero'[^\n]*page:\s*'titan-zero'/.test(nav), 'Titan Zero developer-analysis page must not be exposed as a Browser Node surface');
 
-console.log('Titan Zero Browser Node product scope and operational navigation contract OK');
-
-
 for (const forbiddenImport of [
-  '../integration/codex-chatgpt-bridge.js'
+  '../integration/codex-chatgpt-bridge.js',
+  '../repository/repository-coding-pack.js'
 ]) {
   assert(!worker.includes(`'${forbiddenImport}'`), `Browser Node must not load developer-only runtime ${forbiddenImport}`);
 }
 
-
 assert(worker.includes("'repository-host-integration.js'"), 'repository compatibility analysis runtime must remain until adapter convergence');
-
-
-assert(worker.includes("'../repository/repository-coding-pack.js'"), 'repository compatibility registration pack must remain hidden until adapter convergence');
 assert(worker.includes("'../titan-zero/titan-zero-developer-pack.js'"), 'Titan Zero compatibility registration pack must remain hidden until adapter convergence');
+
+console.log('Titan Zero Browser Node product scope and operational navigation contract OK');
