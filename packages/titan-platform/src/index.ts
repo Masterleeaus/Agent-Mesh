@@ -55,3 +55,5 @@ export * from "./connector-runtime.js";
 export * from "./mcp-projection.js";
 
 export * from "./mission-authority-policy.js";
+
+export * from "./edge-fabric.js";
