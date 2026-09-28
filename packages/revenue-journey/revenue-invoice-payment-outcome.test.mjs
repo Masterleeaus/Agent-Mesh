@@ -42,7 +42,7 @@ test('provider acknowledgement alone cannot create a verified financial outcome'
    verified_evidence_refs: ['provider-event-1'],
    verified_at: '2026-09-29T00:01:00.000Z',
   }),
-  /authoritative-reread/,
+  /provider-ack-is-not-verification/,
  );
 });
 
