@@ -63,5 +63,6 @@
     "src/business-reality.ts",
     "src/constitution.ts"
     "src/governance/constitution.ts"
+    "src/recovery/capsule.ts"
   ]
 }
