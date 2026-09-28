@@ -139,6 +139,10 @@ Canonical Zero/Go/Hub remain the main business interaction surfaces; DirectAdmin
 - business-wide system discovery, resource/health observation, drift detection and coordinated remediation;
 - evidence collection for host/application execution.
 
+### 8.0 Physical native company isolation
+
+Titan's mature native FSM remains the default field-service implementation. `company_id` is the canonical logical identity, while company-owned operational persistence defaults to **one physical database per Titan company** behind a fail-closed company storage resolver/mapping. The resolver is a placement boundary, not authority. Shared runtime/control/evidence stores are allowed only for explicit canonical owners and must not become a shared operational business database. Initial deployments may use isolated SQLite company databases where supported; future placement may use another certified database without changing Titan domain contracts. Backup, restore, migration and upgrade operate company-by-company.
+
 ### 8.1 Extension Business Engine — Frappe/ERPNext
 
 DirectAdmin is the Business Node **meta-orchestration/control plane**; it does not need to reimplement mature CRM/ERP/domain primitives itself.
