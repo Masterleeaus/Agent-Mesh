@@ -30,7 +30,8 @@
     "./surface-manager": "./src/surface-manager.ts",
     "./business-standards": "./src/business-standards.ts",
     "./distribution-gateway": "./src/distribution-gateway.ts",
-    "./knowledge-governance": "./src/knowledge-governance.ts"
+    "./knowledge-governance": "./src/knowledge-governance.ts",
+    "./mission-planning": "./src/mission-planning.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
