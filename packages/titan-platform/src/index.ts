@@ -47,3 +47,5 @@ export * from "./quote-conversion.js";
 export * from "./customer-care-recovery.js";
 
 export * from "./growth-attribution.js";
+
+export * from "./forecast-contract.js";

@@ -53,6 +53,7 @@
     "src/security-boundary.ts",
     "src/quote-conversion.ts",
     "src/customer-care-recovery.ts",
-    "src/growth-attribution.ts"
+    "src/growth-attribution.ts",
+    "src/forecast-contract.ts"
   ]
 }
