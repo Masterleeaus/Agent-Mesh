@@ -1,12 +1,14 @@
 import type { Role } from "./statuses";
 
 /**
- * Shared Titan Business Ops authority contract.
+ * Shared Titan Business Ops role-affordance contract.
  *
- * This is an affordance/command contract shared by standalone Business Ops,
- * Titan Zero, Titan Go and other shells. Server routes must still enforce
- * authorization themselves; a client reporting an action as allowed is never
- * treated as proof of authority.
+ * Despite the historical filename, this is NOT Titan's effective-authority
+ * engine. It describes role-based UI/command affordances shared by the full
+ * base web app and other consumers. A listed role/action is only an input to
+ * authorization. Every consequential operation must still traverse canonical
+ * effective authority + ExecutionGateway immediately before execution; neither
+ * client state nor a legacy server route can treat this snapshot as authority.
  */
 export const BUSINESS_OPS_AUTHORITY_VERSION = 1 as const;
 
