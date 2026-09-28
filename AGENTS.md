@@ -57,7 +57,7 @@ Subtree `AGENTS.md` files may add constraints for `apps/`, `services/`, and `pac
 
 Unless a canonical document explicitly changes them:
 
-- `company_id` is the canonical logical company identity and authorization/routing/evidence boundary. Legacy tenant identifiers are compatibility ingress only. Provider-local physical isolation may add stricter boundaries (notably per-company Frappe sites/databases) without replacing `company_id`.
+- `company_id` is the canonical logical company identity and authorization/routing/evidence boundary. Legacy tenant identifiers are compatibility ingress only. Company-owned native operational persistence defaults to one physical database per Titan company behind a fail-closed company storage resolver/mapping. Optional providers may add stricter physical boundaries (notably per-company Frappe sites/databases) without replacing `company_id`; storage placement never grants authority.
 - Canonical PWA/mobile modes are `zero`, `go`, and `hub`: one PWA and one native mobile app each expose these three governed modes. `apps/web` is the separate full base web application. Other apps/channels are adapters or specialized surfaces.
 - Consequential actions pass through Titan's governed decision/authority/execution path.
 - Provider acknowledgement is not a verified business outcome.
