@@ -28,8 +28,6 @@ console.log('Titan Zero Browser Node product scope and operational navigation co
 
 
 for (const forbiddenImport of [
-  '../repository/repository-coding-pack.js',
-  '../titan-zero/titan-zero-developer-pack.js',
   '../integration/codex-chatgpt-bridge.js'
 ]) {
   assert(!worker.includes(`'${forbiddenImport}'`), `Browser Node must not load developer-only runtime ${forbiddenImport}`);
@@ -37,3 +35,7 @@ for (const forbiddenImport of [
 
 
 assert(worker.includes("'repository-host-integration.js'"), 'repository compatibility analysis runtime must remain until adapter convergence');
+
+
+assert(worker.includes("'../repository/repository-coding-pack.js'"), 'repository compatibility registration pack must remain hidden until adapter convergence');
+assert(worker.includes("'../titan-zero/titan-zero-developer-pack.js'"), 'Titan Zero compatibility registration pack must remain hidden until adapter convergence');
