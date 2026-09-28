@@ -47,8 +47,8 @@ function render(){
  if($_SERVER['REQUEST_METHOD']==='POST'){
   if(!check_csrf()){$msg='Request rejected: invalid CSRF token. Reload the page and retry.';}
   elseif(isset($_POST['add_key'])){$msg=add_key($_POST['public_key']??'');}
-  elseif(isset($_POST['remove_key'])){$msg=remove_key((int)$_POST['remove_key']);}
-  elseif(isset($_POST['run'])){[$output,$rc]=run_cmd($_POST['command']??'',$cwd);}
+  elseif(isset($_POST['remove_key'])){$selection=$_POST['remove_key'];$msg=is_string($selection)&&ctype_digit($selection)?remove_key((int)$selection):'Invalid key selection.';}
+  elseif(isset($_POST['run'])){if(!is_string($_POST['command']??'')){$msg='Invalid command.';}else{[$output,$rc]=run_cmd($_POST['command'],$cwd);}}
  }
  $uid=function_exists('posix_geteuid')?posix_geteuid():-1; $user=env_user();$home=home_dir();$diag=diagnostics();$keys=fingerprints();$token=csrf();$fullDiag=diagnostics_report($diag,$keys);
  echo '<style>
