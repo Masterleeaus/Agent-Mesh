@@ -1,0 +1,1 @@
+Temporary retirement marker; current main uses the production cross-process workforce dispatch port and supersedes this in-process continuation variant.
