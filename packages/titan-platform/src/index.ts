@@ -60,3 +60,6 @@ export * from "./edge-fabric.js";
 
 export { evaluateReleaseEligibility } from "./certification-matrix.js";
 export type { CertificationCell, ReleaseEligibility } from "./certification-matrix.js";
+
+export { continueTask } from "./continuity.js";
+export type { ContinuitySurface, ContinuationContext, ContinuationDecision } from "./continuity.js";
