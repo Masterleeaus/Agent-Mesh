@@ -43,7 +43,7 @@ while IFS= read -r p; do d="$(dirname "$p")"; [[ -d "$d/apps/web" && -f "$d/pnpm
 [[ -n "$REPO" ]] || die 'Titan Zero repository root not found.'
 for f in infra/compose.vps.yml infra/vps.env.example scripts/sqlite-migrate.mjs apps/web/Dockerfile services/worker/Dockerfile; do [[ -e "$REPO/$f" ]] || die "Missing $f"; done
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"; RELEASE="$INSTALL_ROOT/releases/$STAMP"; SHARED="$INSTALL_ROOT/shared"; ENV="$SHARED/env/.env"; DATA="$SHARED/data"
-mkdir -p "$RELEASE" "$SHARED/env" "$DATA/sqlite" "$DATA/uploads" "$INSTALL_ROOT/backups"
+mkdir -p "$RELEASE" "$SHARED/env" "$DATA/sqlite" "$DATA/companies" "$DATA/uploads" "$INSTALL_ROOT/backups"
 rsync -a --delete --exclude .git "$REPO/" "$RELEASE/"
 [[ -f "$ENV" ]] || cp "$RELEASE/infra/vps.env.example" "$ENV"
 chmod 600 "$ENV"
@@ -63,7 +63,7 @@ secret(){ v="$(getenv "$1")"; [[ -n "$v" && "$v" != GENERATED_BY_INSTALLER && "$
 SCHEME=http; [[ -n "$APP_DOMAIN" && $NO_TLS -eq 0 ]] && SCHEME=https
 HOST="${APP_DOMAIN:-$(hostname -I | awk '{print $1}')}"; URL="$SCHEME://$HOST"
 setenv NODE_ENV production; setenv APP_PORT "$APP_PORT"; setenv APP_BASE_URL "$URL"; setenv APP_URL "$URL"
-setenv DATABASE_DIALECT sqlite; setenv DATABASE_URL file:/app/data/titan-zero.db; setenv SQLITE_PATH /app/data/titan-zero.db; setenv REDIS_URL redis://redis:6379/0
+setenv DATABASE_DIALECT sqlite; setenv DATABASE_URL file:/app/data/titan-zero.db; setenv SQLITE_PATH /app/data/titan-zero.db; setenv TITAN_COMPANY_DATA_ROOT /app/data/companies; setenv REDIS_URL redis://redis:6379/0
 [[ -n "$APP_DOMAIN" ]] && setenv APP_DOMAIN "$APP_DOMAIN"
 secret AUTH_SECRET; secret APP_ENCRYPTION_KEY
 [[ "$(getenv BOOKING_ACCOUNT_ID)" != 00000000-0000-0000-0000-000000000000 && -n "$(getenv BOOKING_ACCOUNT_ID)" ]] || setenv BOOKING_ACCOUNT_ID "$(cat /proc/sys/kernel/random/uuid)"
@@ -93,5 +93,7 @@ EOF
 caddy validate --config /etc/caddy/Caddyfile
 systemctl enable --now caddy; systemctl reload caddy
 ufw allow OpenSSH >/dev/null; ufw allow 80/tcp >/dev/null; ufw allow 443/tcp >/dev/null; ufw --force enable >/dev/null
-log "SQLite-first installation healthy: $URL"
-log "Database: $DATA/sqlite/titan-zero.db"
+log "Transitional Titan runtime installation healthy: $URL"
+log "Compatibility/runtime database: $DATA/sqlite/titan-zero.db"
+log "Native company database root reserved: $DATA/companies"
+log "WARNING: this installer is not full production acceptance until persistent Workforce and database-per-company provisioning are certified."
