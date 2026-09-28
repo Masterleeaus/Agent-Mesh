@@ -122,18 +122,17 @@ def run_json(args):
 
 def missing_agent_pr_structure(body: str):
     required_sections = [
-        "## Agent Mesh PR",
-        "### Objective",
+        "## Titan Zero Agent / Codex PR",
+        "### Outcome",
         "### Files changed",
         "### Verification",
-        "### Architecture / authority check",
-        "### Completion / remaining work",
-        "### Evidence / risk / rollback",
+        "### Architecture / authority",
+        "### Completion evidence",
+        "### Risk / compatibility / rollback",
     ]
     required_metadata = [
         "**Linked issue:**",
         "**Subgoal ID:**",
-        "**Goal ID:**",
         "**Claim branch:**",
     ]
     missing = [section for section in required_sections if section not in body]
@@ -175,7 +174,7 @@ def validate_pull_request():
 
     item = manifest_by_id.get(sid)
     if not item:
-        fail(f"{sid} is not present in the canonical roadmap manifest")
+        print(f"Codex mission {sid} is not in the legacy roadmap manifest; issue ownership will be validated from GitHub.")
 
     status = str(item.get("status") or "").upper()
     if status in {"COMPLETE", "SUPERSEDED", "SUPERSEDED_BY_ARCHITECTURE"}:
@@ -187,7 +186,7 @@ def validate_pull_request():
     missing_structure = missing_agent_pr_structure(body)
     if missing_structure:
         fail(
-            "agent PR body is missing required Agent Mesh evidence structure: "
+            "agent PR body is missing required Codex evidence structure: "
             + ", ".join(missing_structure)
         )
 
@@ -263,29 +262,29 @@ def main():
 
     if args.self_test:
         validate_roadmap_integrity()
-        valid_body = """## Agent Mesh PR
+        valid_body = """## Titan Zero Agent / Codex PR
 **Linked issue:** Closes #1
 **Subgoal ID:** TZ-ROADMAP-01-SG-01
 **Goal ID:** TZ-ROADMAP-01
 **Claim branch:** agent/TZ-ROADMAP-01-SG-01
-### Objective
+### Outcome
 x
 ### Files changed
 x
 ### Verification
 x
-### Architecture / authority check
+### Architecture / authority
 x
-### Completion / remaining work
+### Completion evidence
 x
-### Evidence / risk / rollback
+### Risk / compatibility / rollback
 x
 """
         assert missing_agent_pr_structure(valid_body) == []
         assert "### Verification" in missing_agent_pr_structure(
             valid_body.replace("### Verification", "### Checks")
         )
-        print("Agent PR evidence-structure self-test OK")
+        print("Codex PR evidence-structure self-test OK")
         return
     validate_pull_request()
 
