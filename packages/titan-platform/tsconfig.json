@@ -54,6 +54,7 @@
     "src/quote-conversion.ts",
     "src/customer-care-recovery.ts",
     "src/growth-attribution.ts",
-    "src/forecast-contract.ts"
+    "src/forecast-contract.ts",
+    "src/connector-runtime.ts"
   ]
 }
