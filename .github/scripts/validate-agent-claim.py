@@ -10,8 +10,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "roadmap" / "SUBGOAL-ISSUE-MANIFEST.json"
 GOALS_DIR = ROOT / "roadmap" / "goals"
-SUBGOAL_RE = re.compile(r"^(TZ-(?:G00|ROADMAP-\d+)-SG-\d+)$")
-BRANCH_RE = re.compile(r"^agent/(TZ-(?:G00|ROADMAP-\d+)-SG-\d+)$")
+SUBGOAL_RE = re.compile(r"^(TZ-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
+BRANCH_RE = re.compile(r"^agent/(TZ-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
 CANONICAL_GOAL_IDS = {"TZ-G00"} | {f"TZ-ROADMAP-{i:02d}" for i in range(1, 55)}
 
 
