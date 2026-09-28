@@ -37,7 +37,8 @@
     "./security-boundary": "./src/security-boundary.ts",
     "./quote-conversion": "./src/quote-conversion.ts",
     "./customer-care-recovery": "./src/customer-care-recovery.ts",
-    "./growth-attribution": "./src/growth-attribution.ts"
+    "./growth-attribution": "./src/growth-attribution.ts",
+    "./forecast-contract": "./src/forecast-contract.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
