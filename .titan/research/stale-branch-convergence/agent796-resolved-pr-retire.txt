@@ -1,0 +1,1 @@
+Temporary retirement marker for agent796-resolved-pr. Remove after stale branch convergence is complete.
