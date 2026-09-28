@@ -108,3 +108,5 @@ export * from "./extension";
 export * from "./compliance";
 
 export * from "./value-attribution";
+
+export * from "./vertical-profile";
