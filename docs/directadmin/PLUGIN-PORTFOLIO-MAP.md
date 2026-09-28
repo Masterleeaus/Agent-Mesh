@@ -15,39 +15,31 @@ The goal is **maximum reuse without duplication**.
 
 "Assigned to a plugin" means the plugin is the DirectAdmin control/management surface for that capability. It does **not** automatically mean moving canonical implementation source into `apps/directadmin`.
 
-## 2. Portfolio
+## 2. Missioned operator plugins
 
-### Existing / already-missioned
+Display names below are the current Business Node navigation names. Canonical engines and source packages keep their technical identities; an operator plugin configures or observes them through contracts.
 
-| Plugin | Mission | Responsibility |
-|---|---:|---|
-| Titan Business Node Core | #812 | Server Node/meta-orchestration, system estate, master health/dependency graph |
-| Cockpit SDK | #1049 | Shared plugin packaging, identity/company bridge, theme, nav, security, widgets, diagnostics |
-| Titan Business Engine | #1051 | Frappe/ERPNext operational domain substrate and tenancy |
-| Titan Zero | #1046 | Zero, attention, approvals, daily brief, whole-business intelligence/control |
-| Titan Workforce | #1050 | Agents/humans, hierarchy, work, Missions, conversations, autonomy, evidence |
-| Titan Operations | #1045 | Server/apps/services/devices/nodes/sync/security/backups/domains/TLS/assurance |
-| Titan Foundry | #1047 | Software/package discovery, build, preview, deploy, update, rollback, temporary apps |
-| Titan Web | #1044 | Microweber/websites/WordPress/portals/publishing |
-| Titan Dev | #1048 | Terminal, SSH keys, Codex, Git, diagnostics, MCP/capability debugging |
-| Titan Experience | #1052 | Evolution skin/theme/navigation/personalisation/responsive cockpit UX |
-| Titan Surfaces | #1059 | Interface estate, PWA/mobile/base-web/portal/generated-surface lifecycle, topology and health |
-| Titan Channels | #1060 | External transport/provider endpoint connectivity, health, credentials and channel topology |
+| Group | Plugin | Mission | Responsibility |
+|---|---|---:|---|
+| Business | Zero Core | #1046 | Attention, approvals, brief and whole-business intelligence/control |
+| Business | Business Engine | #1051 | Frappe/ERPNext operational business substrate and tenancy |
+| Business | Workforce Manager | #1050 | Agents/humans, hierarchy, work, Missions, conversations and evidence cockpit |
+| Business | Communications Manager | #1053 | Inbox, messaging, reception and customer-care operations |
+| Business | Finance & Commerce | #1054 | Quotes, invoices, payments, inventory and commerce workflows |
+| Business | Business Standards | #1065 | Standards, SOP, quality, training and compliance lifecycle |
+| Create | Brand Studio | #1044 | Websites, WordPress, Microweber, portals and publishing |
+| Create | Surface Manager | #1059 | PWA/mobile/base-web/portal/generated-surface estate and health |
+| Create | Application Generator | #1047 | Discovery, build, preview, deployment, update and rollback |
+| Create | Industry Builder | #1057 | Vertical overlays and specialist packs |
+| Intelligence & Control | Intelligence Core | #1055 | Models, Decision intelligence, memory and intelligence health |
+| Intelligence & Control | Governance & Assurance | #1056 | Constitution, trust, authority, evidence and recovery |
+| System | Operations Hub | #1045 | Server, apps, services, nodes, sync, security and backups |
+| System | Channels & Integrations | #1060 | External transport/provider endpoint topology and credentials |
+| System | System Configuration | #1063 | Configuration, topology and diagnostics of canonical internal engines, including Interaction and Decision |
+| Platform | User Experience | #1052 | Evolution theme, navigation and responsive cockpit UX |
+| Platform | Developer Portal | #1048 | Terminal, SSH keys, Codex, Git and diagnostics |
 
-### Additional missioned cockpit plugins
-
-| Plugin | Primary current owners to consume | Why separate |
-|---|---|---|
-| Titan Communications | #1053 consuming #333, #363, Communications/Interaction, email templates | Business email/SMS/voice/inbox/reception/customer-care operations deserve one operational cockpit; server mail health remains Operations |
-| Titan Finance & Commerce | #1054 consuming #343, #263, #273, #383, #638 | Quotes/invoices/payments/reconciliation/inventory/commerce/value are cohesive operator workflows; Frappe is substrate, not the whole UX |
-| Titan Intelligence | #1055 consuming #647, #59, #393, #153, #768 | Models/providers/local AI, Decision Intelligence, Memory/Knowledge, Personal Zero and intelligence health/configuration |
-| Titan Governance & Assurance | #1056 consuming #914, #640, #423, #913, #14, #293, #916, #915, #917 | Constitution, Trust/Authority, evidence, compliance, Rewind, counterfactuals, sovereignty/capsule/federation |
-| Titan Sprout | #1057 consuming #719, #769 and vertical packs | Install/configure/version vertical overlays and specialist packs without changing core |
-| Surface Manager | #1059 | Interface endpoint estate, portals, PWA/web/mobile deployment lifecycle and health; never owns surface business state |
-| Channels & Integrations | #1060 | External endpoint/provider/channel lifecycle, including APIs and MCP exposure |
-| System Configuration | #1063 | Configuration, topology and diagnostics of canonical internal engines, including Interaction and Decision |
-| Business Standards | #1065 | Company operational standards, SOP, quality, training and compliance lifecycle consuming canonical Knowledge/Evidence |
-| Titan Analytics | #393, #638, observability/value evidence | Optional if Analytics grows beyond Zero/Finance; initially can remain a Zero/Finance tab |
+Business Node Core #812 coordinates the control plane. Business Node SDK #1049 supplies shared plugin infrastructure and may be hidden from ordinary user navigation. Standalone Interaction #1061 and Decision #1062 plugin proposals are closed/superseded; the engines remain canonical services. Analytics remains within current Zero/Finance/Intelligence assignments unless separately missioned.
 
 ## 3. Current repo top-level assignment
 
@@ -55,13 +47,13 @@ The goal is **maximum reuse without duplication**.
 
 | Current source | DirectAdmin assignment | Action |
 |---|---|---|
-| `apps/directadmin/dev-access` | Titan Dev #1048 + SDK #1049 | Preserve server-validated packaging/diagnostic lessons; refactor shared pieces into SDK |
+| `apps/directadmin/dev-access` | Developer Portal #1048 + Business Node SDK #1049 | Preserve server-validated packaging/diagnostic lessons; refactor shared pieces into SDK |
 | `apps/web` | Full Titan base web application; #809 migration, with cockpit projections where appropriate | Keep separate from the one-app/three-mode PWA under #542. Preserve reachable web/BFF routes; extract domain contracts and migrate duplicate CRM/ERP persistence behind Titan Domain APIs/#1051 before retirement. |
-| `apps/mobile` | Titan Operations (device/node visibility) + Workforce | Do not port Flutter; expose Edge/device health/capability/configuration |
-| `apps/browser` | Titan Operations + Dev + capability graph | Browser Node remains separate execution node; DA manages/observes it |
-| `apps/desktop` | Titan Operations / Intelligence | Manage desktop/edge node status; do not transplant desktop shell |
-| `apps/llm-plugin` | Titan Intelligence / capability diagnostics | Keep external-host adapter; DA manages availability/health/configuration |
-| `apps/marketing` | Titan Web / Foundry | Public marketing deployment can be managed, source remains dedicated web app |
+| `apps/mobile` | Operations Hub (device/node visibility) + Workforce Manager | Do not port Flutter; expose Edge/device health/capability/configuration |
+| `apps/browser` | Operations Hub + Developer Portal + capability graph | Browser Node remains separate execution node; DA manages/observes it |
+| `apps/desktop` | Operations Hub / Intelligence Core | Manage desktop/edge node status; do not transplant desktop shell |
+| `apps/llm-plugin` | Intelligence Core / capability diagnostics | Keep external-host adapter; DA manages availability/health/configuration |
+| `apps/marketing` | Brand Studio / Application Generator | Public marketing deployment can be managed, source remains dedicated web app |
 
 ### packages/
 
@@ -83,7 +75,7 @@ The goal is **maximum reuse without duplication**.
 | `runtime/authority` | Governance & Assurance |
 | `runtime/interaction-engine` | Canonical Interaction runtime; configured through System Configuration #1063 and consumed by Zero + Communications + Workforce |
 | `runtime/feed` | Zero / Operations attention feeds |
-| `settings` | Business Node Core + Experience |
+| `settings` | Business Node Core + System Configuration + User Experience |
 | `storage` | Operations + Governance & Assurance |
 | `tools` | Foundry + Dev + Business Node Core capability graph |
 | `workforce` | Workforce |
@@ -181,7 +173,7 @@ The goal is **maximum reuse without duplication**.
 
 ## 5. Proposed plugin boundaries in detail
 
-### Titan Communications
+### Communications Manager
 
 Owns cockpit UX for:
 - unified inbox;
@@ -200,7 +192,7 @@ Does not own:
 - Interaction Engine (canonical runtime);
 - customer truth (Business Engine).
 
-### Titan Finance & Commerce
+### Finance & Commerce
 
 Owns cockpit UX for:
 - sales pipeline/quotes;
