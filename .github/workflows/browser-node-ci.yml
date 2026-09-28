@@ -1,4 +1,5 @@
 name: Titan Zero Browser Node CI
+# Browser Node product gate
 
 on:
   push:
