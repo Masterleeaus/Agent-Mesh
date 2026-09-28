@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import type { Route } from "next";
 
 type Result = {
   type: string;
@@ -98,7 +99,7 @@ export function GlobalSearch() {
     setOpen(false);
     setQuery("");
     setResults([]);
-    router.push(href);
+    router.push(href as Route);
   };
 
   return (
