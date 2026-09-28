@@ -22,7 +22,7 @@ export function buildInterfaceCatalog(contributions:readonly InterfaceContributi
        const d=record(raw), key=String(d.key??"");
        const visible=strings(d.product_surfaces).map(normalizeSurface);
        if(visible.length&&!visible.includes(canonical))continue;
-       if(canonical==="hub"&&d.customer_safe===false)continue;
+       if(canonical==="hub"&&d.customer_safe!==true)continue;
        const id=`${section.slice(0,-1)}:${key}`;
        const item={key,extension_key:c.extension_key,kind:section.slice(0,-1) as SemanticCatalogItem["kind"],descriptor:Object.freeze({...d,product_surfaces:visible})};
        const list=candidates.get(id)??[];list.push(item);candidates.set(id,list);
