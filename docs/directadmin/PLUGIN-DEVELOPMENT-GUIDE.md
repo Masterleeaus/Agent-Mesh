@@ -763,3 +763,30 @@ A plugin is done only when:
 - update/rollback/uninstall behavior verified;
 - real DirectAdmin install certification passes.
 
+
+
+## 19. Company provisioning and privileged mechanics
+
+Company provisioning is a Titan lifecycle, not a DirectAdmin shell script.
+
+Canonical flow:
+
+```
+Titan provisioning intent/state machine
+        ↓ governed capability request
+#322 deployment/resource contract
+        ↓
+#812 bounded Server Node provider
+        ↓
+filesystem/database/service mechanic
+        ↓
+provider receipt
+        ↓
+independent observed-state verification
+        ↓
+Titan provisioning evidence / READY
+```
+
+For the default native SQLite company profile, the Titan service identity should normally create company databases inside a pre-provisioned writable `TITAN_COMPANY_DATA_ROOT` without root. Privileged setup is reserved for establishing/repairing host-level directories, ownership, service units, TLS/firewall, container/runtime resources and similar mechanics.
+
+Production provisioning must not call the Titan Dev Access arbitrary terminal. Dev Access is diagnostic/developer tooling and runs in the current Unix account boundary. Production privileged helpers/providers require typed allowlisted operations, strict schemas, approved-root path canonicalization, traversal/symlink-escape rejection, idempotency, bounded execution, redacted receipts and independent verification. DirectAdmin/Admin/root identity never grants Titan business authority.
