@@ -7,7 +7,7 @@ assert(
   'signature contract must tell the worker how to report non-completed outcomes'
 );
 assert(
-  source.includes('STATUS: partial|failed|blocked') || source.includes('STATUS to partial, failed, or blocked'),
+  /set STATUS to partial, failed[\s\S]{0,120}or blocked/.test(source),
   'signature contract must name supported non-completed STATUS values'
 );
 assert(
