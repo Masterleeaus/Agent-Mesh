@@ -54,6 +54,8 @@ interface CreateFinalInvoiceParams {
    *  estimate items exist (e.g. time-and-materials jobs with no formal estimate). */
   visitId?: string;
   traceId?: string;
+  closeoutRollup?: boolean;
+  laborDescription?: string;
 }
 
 interface CreateFinalInvoiceResult {
