@@ -7,6 +7,7 @@ const HOST_NAVIGATION: Readonly<Record<HostSurface, readonly NavItem[]>> = Objec
   zero: [["Chat", "/app/zero"], ["Control", "/app/control"], ["Workforce", "/app/workforce"], ["Decisions", "/app/decisions"], ["System", "/app/system"]],
   go: [["Chat", "/app/go"], ["Active", "/app/go/active"], ["Today", "/app/go/today"], ["Comms", "/app/go/comms"], ["Ready", "/app/go/ready"]],
   hub: [["Chat", "/app/hub"], ["My Services", "/app/hub/services"], ["Support", "/app/hub/support"], ["Account", "/app/hub/account"]],
+  onboarding: [["Start", "/onboarding"], ["Account", "/onboarding/account"], ["Team", "/onboarding/team"]],
 });
 
 export function normalizeHostSurface(value: string): HostSurface {
