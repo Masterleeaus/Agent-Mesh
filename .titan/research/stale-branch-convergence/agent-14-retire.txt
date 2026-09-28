@@ -1,0 +1,1 @@
+Temporary retirement marker; current main contains newer execution gateway/provider contracts, broader tests, and updated verification research.
