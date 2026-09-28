@@ -17,3 +17,5 @@ export * from './authority.js';
 export * from './failover.js';
 
 export * from './verified-path.js';
+
+export * from './host-projection.js';
