@@ -43,6 +43,14 @@ Required delta:
 Exit gate:
 Representative business action reconstructs end-to-end from intent and authority through execution, observed verification, ledger evidence and updated Reality projection.
 
+## Cross-phase productization owner
+
+- **#1042 — Product portfolio, tier entitlements & upgrade-path convergence** owns the commercial packaging contract across phases.
+- It packages existing canonical owners into Solo, Team, Business and Sovereign; it must not create duplicate surfaces, runtimes, capability registries, authority or business state.
+- Surface/channel owners (#542 and #644), Foundry/Missions (#413/#163), Intelligence locality (#647), Server Node (#812), communications/web-presence owners and billing/entitlement implementation must consume the same versioned entitlement contract.
+- Product entitlement is evaluated before capability exposure, while effective authority is still evaluated independently at execution time.
+- Pricing/user-count defaults remain configurable commercial policy rather than roadmap architecture.
+
 ## Phase 3 — Workforce, One/Zero & Continuous Operation
 
 Primary owners:
@@ -57,6 +65,7 @@ Primary owners:
 
 Required delta:
 - explicit One / Personal Zero / Business Reality / Business Memory / Workforce separation;
+- establish the shared product entitlement contract from #1042 so Zero/Go/Hub and external channels expose tier-appropriate capabilities without creating separate cores or authority paths;
 - portable Zero identity across company relationships;
 - continuous workforce remains active without clients open;
 - all surface state is projection of evidence-backed hosted state;
@@ -80,6 +89,7 @@ Primary owners:
 - TZ-ROADMAP-29 #413 — governed Developer Platform / AI App Foundry.
 
 Required delta:
+- consume #1042 tier/locality entitlements so Team/Business/Sovereign packaging can expose Server Node, Foundry, Mission and web-presence capabilities without letting subscription state become execution authority;
 - rename architectural target from DirectAdmin host plugin to **Titan Server Node**, with DirectAdmin as first deployment/control-plane adapter;
 - persistent TypeScript/Node workforce runtime;
 - bounded DA/API/MCP capabilities for applications/sites, WordPress, Git, Node/PHP, DNS/SSL/mail, DB/Redis, security, backup/restore, services and governed terminal;
@@ -146,6 +156,7 @@ Primary owners:
 - TZ-ROADMAP-38 #717 cross-host certification.
 
 Required delta:
+- make Business → Sovereign a portable deployment/locality transition over the same evidence-backed business identity, with entitlement and locality changes recorded independently from authority;
 - versioned/signed Titan Capsule format;
 - portable evidence, schemas/projection versions, company/workforce manifests, Constitution/governance versions, runtime/deployment manifests, capability/provider bindings and encrypted restore metadata;
 - pause, snapshot, rehydrate, controlled clone and relocation workflows;
@@ -189,3 +200,5 @@ Every phase must preserve:
 10. Titan Code remains private development-only.
 11. Missions, generated micro-apps and temporary portals reference canonical business state; they never create a parallel customer/job/asset/finance source of truth.
 12. Imported/generated packages, repositories, models and installers are software supply/providers only; discovery, installation or technical privilege never grants Titan business authority.
+13. Commercial tier/product entitlement controls capability exposure only; it never grants execution authority, rewrites business identity, or creates a parallel truth store.
+14. Upgrade/downgrade preserves factual history and business identity; unavailable paid capabilities fail safely without destructive data loss.

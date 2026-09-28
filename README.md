@@ -56,6 +56,21 @@ That separation is fundamental to the architecture.
   <img src="docs/images/4FE3482C-D943-4405-86CF-143AAFEF52C5.png" alt="Titan Zero Field Service Workforce system architecture" width="100%" />
 </p>
 
+## Product portfolio
+
+Titan is packaged as one platform rather than six independent business systems.
+
+- **Titan Zero** — owner/manager experience.
+- **Titan Go** — field/worker experience.
+- **Titan Hub** — customer self-service.
+- **Titan in external AI hosts** — authenticated access from ChatGPT, Claude and future assistants.
+- **Titan for WordPress / Web Presence** — websites become operational front doors backed by Titan capabilities.
+- **Titan Omni** — shared messaging, voice and channel interactions.
+
+Commercial packaging follows **Titan Solo → Titan Team → Titan Business → Titan Sovereign**. Higher tiers expose additional capabilities such as Foundry, Missions, stronger compliance/policy controls, Private/Sovereign Intelligence and Server Node infrastructure controls.
+
+These are entitlements over the same canonical platform. The only canonical business surfaces remain `zero`, `go` and `hub`; channels, plugins, hosts and pricing tiers never create business authority or a second source of truth. See `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md`.
+
 ## Advanced Intelligence Workforce
 
 The workforce is structured more like an organisation than a collection of disconnected bots.

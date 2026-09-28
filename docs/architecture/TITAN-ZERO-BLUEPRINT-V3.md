@@ -161,6 +161,68 @@ There is one canonical PWA with these governed modes. Native mobile, Browser Nod
 
 Interfaces do not own business truth, authority or workforce runtime.
 
+## 9.1 Commercial product portfolio and entitlement architecture
+
+Titan is one platform packaged through multiple customer-facing entry products and four commercial tiers. Commercial packaging must never redefine canonical runtime ownership.
+
+### Customer-facing portfolio
+
+The customer-facing portfolio is:
+
+- **Titan Zero** — owner/manager experience over canonical `zero`;
+- **Titan Go** — field/worker experience over canonical `go`;
+- **Titan Hub** — customer self-service experience over canonical `hub`;
+- **Titan in external AI hosts** — ChatGPT, Claude and future assistants as authenticated adapters over canonical Titan capabilities;
+- **Titan for WordPress / Web Presence** — website and CMS adapters that turn an existing site into an operational front door without creating another CRM or business core;
+- **Titan Omni** — messaging/voice/channel projections sharing Interaction, identity, conversation and governed execution contracts.
+
+Foundry, Missions, Compliance/Policy packs, Private/Sovereign Intelligence and Server Node controls are platform capabilities/deployment profiles exposed by commercial entitlement. They are not additional business truth stores or canonical surfaces.
+
+### Commercial tiers
+
+| Tier | Intended operating profile | Commercial capability envelope |
+| --- | --- | --- |
+| **Titan Solo** | Solo operators and micro-businesses, typically 1–3 people | Zero with a deliberately small operational envelope, external-AI-host access, limited Omni/channel use and core booking/quote/invoice/customer workflows. |
+| **Titan Team** | Small service teams, typically 4–10 people | Full Zero, Go, basic Hub, external AI hosts, broader Omni, WordPress/Web Presence integration, field/offline/evidence workflows and baseline compliance. |
+| **Titan Business** | Mid-market/multi-team businesses | Team plus Foundry, Missions, stronger compliance/policy controls, capability-gap detection/digital-twin style analysis and governed composite/temporary applications. |
+| **Titan Sovereign** | Enterprise, regulated or customer-controlled infrastructure | Business plus Private/Sovereign Intelligence deployment profiles, Server Node/control-plane capabilities, locality/data-residency controls, advanced workforce/audit/recovery and contractual operational guarantees. |
+
+User-count ranges and prices are commercial defaults, not architecture invariants. They must be configurable without changing identity, evidence, authority, data ownership or business-state schemas.
+
+### Entitlement separation
+
+Titan must maintain a versioned entitlement model separating:
+
+1. commercial plan/tier;
+2. customer-facing product/channel availability;
+3. capability entitlement;
+4. metered usage/quota/funding;
+5. runtime locality/provider eligibility;
+6. user membership and role;
+7. effective business execution authority.
+
+Entitlement answers **what the subscription exposes**. Authority answers **what this actor may execute now**. A paid tier, add-on, provider subscription, host privilege or product installation can never grant business authority by itself.
+
+Entitlement decisions and changes must be auditable. Upgrades and downgrades must preserve business identity and factual history. Solo → Team → Business is an entitlement expansion over the same business state, not a data migration between product cores. Business → Sovereign is a governed deployment/locality transition, not a fork.
+
+Downgrade semantics must define retention/read-only/grace behavior for no-longer-entitled capabilities, preserve historical evidence, avoid destructive data loss, and revoke capability exposure without silently changing prior facts or widening authority.
+
+### Upgrade signals
+
+Titan may recommend an upgrade when evidence shows a meaningful need, such as:
+
+- user/headcount growth requiring Go/team coordination;
+- a Mission-shaped project/campaign/crisis;
+- compliance/assurance requirements;
+- multi-location/complex integration needs;
+- data-residency, security-review or customer-controlled-infrastructure requirements.
+
+These are Signal/recommendation inputs only. They cannot self-purchase, self-upgrade or self-expand authority.
+
+### Commercial supersession rule
+
+Historical packaging such as **Titan Nano**, **Titan Pro**, or assumptions that a free tier includes unrestricted/full cloud AI is donor/history unless explicitly re-adopted by the current commercial entitlement contract. Current architecture uses **Solo → Team → Business → Sovereign** as the commercial tier model while preserving provider neutrality and Cost Sovereignty.
+
 ## 10. Capability architecture
 
 Titan follows reuse-first capability composition:
