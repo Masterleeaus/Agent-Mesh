@@ -28,6 +28,10 @@ It manages the business's digital system estate while canonical Titan services r
 - Intelligence — #1055
 - Governance & Assurance — #1056
 - Sprout / Vertical Packs — #1057
+- Surfaces — #1059
+- Channels — #1060
+- Interaction — #1061
+- Decision — #1062
 
 Current server-validated donor/reference:
 
