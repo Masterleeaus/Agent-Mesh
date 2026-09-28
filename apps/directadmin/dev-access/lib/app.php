@@ -23,8 +23,8 @@ function csrf(){
  return hash_hmac('sha256','titan_dev_access_form_v1',csrf_secret());
 }
 function check_csrf(){
- if(empty($_POST['csrf']) || !is_string($_POST['csrf'])) return false;
- return hash_equals(csrf(), trim($_POST['csrf']));
+ if(empty($_POST['tda_token']) || !is_string($_POST['tda_token'])) return false;
+ return hash_equals(csrf(), trim($_POST['tda_token']));
 }
 function key_dir(){return home_dir().'/.ssh';}
 function key_file(){return key_dir().'/authorized_keys';}
