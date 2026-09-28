@@ -260,3 +260,22 @@ Findings:
 Conclusion: apps/web is feature-rich but not yet a thin canonical Zero/Go/Hub projection layer. Its principal remaining debts are direct domain mutation ownership, PostgreSQL-only persistence seams, hosted Workforce projection/command wiring and surface convergence. Exact implementation work is now recorded in existing missions rather than new duplicate issues.
 
 Mission evidence: #811, #14, #183, #263, #343, #353, #542, #648.
+
+
+### Pass 6C — apps/web libraries + Zero/Go/Hub surface convergence
+Status: COMPLETE for architecture/ownership scan
+
+Findings:
+- Zero page is intentionally truthful/fail-safe but currently hard-codes Workforce pulse counts to zero because authoritative hosted-runtime projection is not wired.
+- Go is currently represented largely by `/app/my-work`; it directly consumes PostgreSQL-only `queryForSession` and PG-specific SQL, so it is not yet canonical SQLite-first.
+- Hub is currently represented by legacy `/portal/**`; its customer page directly consumes pg-only `query/queryOne` and PG-specific JSON/FILTER/cast SQL. Hub must converge onto canonical customer projection/gateway semantics.
+- Legacy Office/Field workspace routing remains in responsive/post-login logic. It can remain a UX compatibility concept but canonical surface identity must be zero/go/hub.
+- The owner dashboard at `/app` performs many portable direct reads; it is a useful current projection but should increasingly consume canonical Business Reality/Workforce projections rather than accumulate new domain ownership.
+- workforce-native adapters correctly fail closed for consequential operations pending canonical execution authority. Preserve this behavior and connect them to hosted Workforce/#14 instead of relaxing the guard.
+
+apps/web architecture scan disposition:
+- small hygiene/instruction defects fixed directly;
+- substantial persistence, mutation, runtime and surface convergence recorded in owning Codex missions;
+- no additional independent mission required.
+
+Mission evidence: #811, #14, #183, #263, #343, #353, #542, #648, #725.
