@@ -1,3 +1,4 @@
+import type { PoolClient } from "pg";
 import type { DbClient } from "@/lib/db-contract";
 import { ATTENTION_RETENTION_DAYS, type AttentionSummary } from "./types";
 
