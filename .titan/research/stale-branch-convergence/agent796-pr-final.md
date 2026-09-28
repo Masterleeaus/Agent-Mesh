@@ -1,0 +1,1 @@
+agent/796 convergence decision: preserve current main; stale overlapping production changes are superseded.
