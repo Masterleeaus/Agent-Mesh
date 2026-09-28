@@ -4,6 +4,10 @@ These are guardrails for every agent and PR.
 
 - `company_id` is the only canonical multi-tenant boundary. Legacy tenant fields may exist only as compatibility inputs and must normalize before authorization, storage or execution.
 - Canonical product surfaces are `zero`, `go`, and `hub`. Aliases are compatibility/branding only.
+- Commercial portfolio labels, channels and plans do not create additional canonical surfaces. External AI hosts, WordPress/Web Presence and Omni are adapters/projections over canonical capabilities.
+- Commercial entitlement, user role, capability availability and effective execution authority are separate concerns. A paid plan, add-on, host privilege or installed plugin never grants business authority by itself.
+- The canonical commercial tier progression is Solo → Team → Business → Sovereign. Prices and user-count thresholds are configurable business policy, not architecture invariants.
+- Upgrade/downgrade changes capability exposure over the same business identity/evidence history; they must not require migration between competing business cores or silently destroy historical data.
 - Shared capability and business logic belongs in Core/shared runtimes, not duplicated in surface adapters.
 - The Business Evidence Ledger is the primary factual history for consequential business state. Material current-state views are deterministic projections/folds with provenance to accepted evidence; databases/caches/UI projections are not truth merely because they are current.
 - Evidence history is append-only after acceptance. Correction, supersession, rollback, compensation and recovery create new evidence; they never rewrite factual history.
