@@ -55,6 +55,7 @@
     "src/customer-care-recovery.ts",
     "src/growth-attribution.ts",
     "src/forecast-contract.ts",
-    "src/connector-runtime.ts"
+    "src/connector-runtime.ts",
+    "src/mcp-projection.ts"
   ]
 }
