@@ -81,3 +81,5 @@ export * from "./brand-publication.js";
 export * from "./operations-health.js";
 
 export * from "./zero-cockpit.js";
+
+export * from "./governance/assurance.js";
