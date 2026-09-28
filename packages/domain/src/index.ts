@@ -100,3 +100,5 @@ export * from "./reception";
 export * from "./scheduling";
 
 export * from "./supply";
+
+export * from "./provider";
