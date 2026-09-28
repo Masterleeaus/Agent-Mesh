@@ -19,22 +19,12 @@ function csrf_secret(){
  if(strlen($secret)<32) throw new RuntimeException('Invalid CSRF secret.');
  return $secret;
 }
-function csrf_context(){
- return env_user().'|'.(getenv('ACCOUNT')?:'').'|'.(getenv('SESSION_ID')?:getenv('session')?:'directadmin');
-}
 function csrf(){
- $bucket=(int)floor(time()/1800);
- $mac=hash_hmac('sha256',csrf_context().'|'.$bucket,csrf_secret());
- return $bucket.'.'.$mac;
+ return hash_hmac('sha256','titan_dev_access_form_v1',csrf_secret());
 }
 function check_csrf(){
  if(empty($_POST['csrf']) || !is_string($_POST['csrf'])) return false;
- $parts=explode('.',$_POST['csrf'],2);
- if(count($parts)!==2 || !ctype_digit($parts[0])) return false;
- $bucket=(int)$parts[0]; $now=(int)floor(time()/1800);
- if($bucket<$now-1 || $bucket>$now+1) return false;
- $expected=hash_hmac('sha256',csrf_context().'|'.$bucket,csrf_secret());
- return hash_equals($expected,$parts[1]);
+ return hash_equals(csrf(), trim($_POST['csrf']));
 }
 function key_dir(){return home_dir().'/.ssh';}
 function key_file(){return key_dir().'/authorized_keys';}
