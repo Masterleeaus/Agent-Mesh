@@ -1,3 +1,11 @@
+/**
+ * Architecture ownership note:
+ * This file currently combines Communications policy/orchestration with legacy
+ * provider selection/invocation. Target split: #1053 produces a policy-cleared
+ * communication transport request; #1060 Channels selects and invokes the
+ * endpoint/provider. Provider fallback may never weaken consent/privacy/funding
+ * or effective-authority gates.
+ */
 import { recordDeliveryReceipt } from "@/lib/communications-log";
 import { CommunicationReplayGuard } from "./idempotency";
 import {
