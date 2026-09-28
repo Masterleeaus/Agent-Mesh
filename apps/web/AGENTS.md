@@ -12,11 +12,11 @@ North Star: **Titan Zero is an operational Advanced Intelligence system, not ano
 
 ## Blueprint v3 web boundary
 
-`apps/web` is the full Titan TypeScript base web application and retains mature native AI-FSM field-service capabilities. It must not duplicate canonical Interaction, Decision, Workforce, Authority, Execution or Evidence runtimes. It is distinct from the single three-mode PWA. Read `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md` and `docs/architecture/CANONICAL-RULES.md` before changing API routes, persistence, Workforce, authority, execution or evidence behavior.
+`apps/web` is a surface/BFF and must not own a second business runtime. Read `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md` and `docs/architecture/CANONICAL-RULES.md` before changing API routes, persistence, Workforce, authority, execution or evidence behavior.
 
 - Consequential mutations must converge on canonical domain services plus the hosted Workforce/governed execution path; a role check, app-local risk assessment, audit row or internal HTTP fetch is not a substitute for effective authority + ExecutionGateway + observed verification.
 - The canonical Workforce runs persistently on the server. Web projects/interacts with it; closing the browser must not stop delegated work.
-- Preserve mature native FSM business behavior in `apps/web`; extract reusable domain contracts/rules to canonical packages/services where appropriate rather than duplicating them in routes.
-- Persistence is **owner-specific**, not universally SQLite-first. Native FSM persistence remains Titan-owned and must be made installable and company-safe without Frappe; runtime/control/evidence/local state follows #811/#913/#646. Frappe #1051 is an optional extension provider with per-company sites when enabled. Converge routes through Titan Domain/provider contracts without deleting useful native FSM behavior.
+- New business/domain logic belongs in canonical packages/services, not `app/api/**` or `lib/**` merely for convenience.
+- `apps/web` remains the **full native Titan FSM base application**. Its mature field-service persistence and behavior are not legacy merely because Frappe exists. Converge PostgreSQL-only assumptions and duplicated Titan runtime mechanisms toward supported storage/contracts without deleting native FSM capability. Frappe/#1051 is optional extension-provider infrastructure for deliberately delegated capabilities; surfaces must not bind directly to Frappe DocTypes/databases.
 - Provider acknowledgement and HTTP success are not verified business outcomes.
 - Preserve `company_id` as the canonical architecture boundary. Legacy `account_id` storage/schema fields are compatibility/domain persistence details and must be normalized at canonical boundaries rather than becoming a second tenancy model.

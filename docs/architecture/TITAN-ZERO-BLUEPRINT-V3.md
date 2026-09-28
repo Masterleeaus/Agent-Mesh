@@ -139,28 +139,48 @@ Canonical Zero/Go/Hub remain the main business interaction surfaces; DirectAdmin
 - business-wide system discovery, resource/health observation, drift detection and coordinated remediation;
 - evidence collection for host/application execution.
 
-### 8.1 Native FSM and optional Frappe extension Business Engine
+### 8.1 Extension Business Engine — Frappe/ERPNext
 
-The TypeScript `apps/web` base application retains the mature native field-service product: customers and contacts, locations/properties, requests, jobs and work orders, visits, scheduling/dispatch, tasks/checklists, quoting, invoicing, materials, time, vehicles, field workflows, customer portal, documents, reporting, communications and automation where implemented. A clean core Titan install must be useful for a field/home-service company without provisioning Frappe. Preserve these reachable workflows and their validation, lifecycle, permissions, idempotency and operational UX while converging canonical company, authority, execution and evidence boundaries.
+DirectAdmin is the Business Node **meta-orchestration/control plane**; it does not need to reimplement mature CRM/ERP/domain primitives itself.
 
-Frappe Framework with selected ERPNext capabilities is an **optional extension Business Engine**. Enable it for a missing capability, a business-selected deeper workflow, or an explicitly delegated object/facet. Candidate extensions include accounting/ERP depth, payroll/HR, procurement, warehousing, manufacturing and custom DocTypes. A similar ERPNext DocType is not a reason to retire Titan's native FSM owner.
+**Titan's mature native TypeScript FSM is the default operational field-service product.** Frappe Framework with selected ERPNext capabilities is an optional **Extension Business Engine** managed from the DirectAdmin Business Node control plane.
 
-The intended provider relationship is:
+The intended layering is:
 
-```text
-Titan base web / Zero-Go-Hub / Workforce
-    → Titan Domain and Capability contracts
-    → governed execution and provider selection
-        ├─ Titan native FSM provider (core install)
-        └─ Frappe extension provider (when enabled)
-    → observed verification → Business Evidence Ledger
+```
+ONE / ZERO
+    ↓
+Titan Workforce + Governance
+    ↓
+Titan Domain / Capability contracts
+    ↓
+DirectAdmin Business Node Control Plane
+    ├─ Business Engine (Frappe/ERPNext)
+    ├─ Websites / WordPress / Microweber
+    ├─ Domains / DNS / TLS
+    ├─ Email / Rspamd
+    ├─ Databases / Redis
+    ├─ Applications / Node / PHP / Git
+    ├─ Devices / Nodes / Sync
+    ├─ Backups / Recovery
+    ├─ Security / Diagnostics
+    └─ Foundry / temporary Mission apps
+    ↓
+Verification → Business Evidence Ledger
 ```
 
-For each enabled extension, define canonical owner, provider, company/identity mapping, synchronization direction, conflict resolution, authority, idempotency, verification and evidence. Titan surfaces must not couple directly to Frappe DocTypes or site databases. There is no uncontrolled second source of truth.
+Frappe/ERPNext provides optional deeper ERP/HR/payroll/procurement/warehousing/manufacturing/custom-module capabilities and may provide a deliberately selected implementation for a domain facet. Titan consumes it through a **Titan Domain API / anti-corruption layer** rather than binding surfaces directly to Frappe DocTypes or Desk UI. Existing mature Titan FSM capabilities remain native unless explicitly delegated.
 
-When enabled, Frappe defaults to shared versioned application code with a separate site/database per company. `company_id` remains the cross-system identity and evidence boundary. DirectAdmin manages optional Frappe provisioning, health, backup/restore, migration, reconciliation, upgrades and retirement; native Titan installation and upgrades do not require a Frappe site.
+When Frappe is enabled, its default tenancy is **shared versioned application/runtime code with per-company Frappe site/database isolation**. Titan `company_id` remains the cross-system business identity and evidence boundary; the provider site/database is an additional physical isolation boundary, not a replacement identity.
 
-Frappe does not replace the Business Evidence Ledger, Titan Constitution/Trust/Authority, Workforce identity/runtime, capability graph, Zero/Go/Hub contracts or the native field-service product.
+Frappe/ERPNext is therefore an optional extension/provider engine beneath Titan for enabled/delegated capabilities. It does not replace:
+- the Business Evidence Ledger as factual history;
+- Titan Constitution / Trust / Authority;
+- Titan Workforce identity/runtime;
+- the canonical capability graph;
+- Zero/Go/Hub presentation contracts.
+
+DirectAdmin owns the orchestration and lifecycle of the Business Engine: provision, configure, inspect, migrate, back up, restore, reconcile, upgrade, health-check and retire it through governed capabilities.
 
 ### Server Node governance
 
@@ -186,9 +206,7 @@ Canonical product surface identities remain:
 
 Titan has **one canonical PWA application with three governed modes: Zero, Go and Hub**. Native mobile follows the same one-application / three-mode model. The modes share the canonical Titan Runtime, company identity, capability graph, Workforce, Interaction/Decision contracts and evidence-backed business state while enforcing mode-specific audience, privacy, entitlement and offline behavior.
 
-**The PWA is not `apps/web`.** The TypeScript `apps/web` application is the separate **full Titan base web application**. It retains the mature native field-service product while converging on canonical Titan Runtime, Domain/provider, authority and evidence contracts; Frappe is an optional extension provider. Do not collapse the base web app into the PWA, and do not treat the PWA as merely a route/mode inside `apps/web`.
-
-Implementation status: the inherited `apps/web` tree still contains a manifest, service worker and field/PWA-era routes. These are migration and reuse candidates, not evidence that the target separate PWA is already built. Extracting the single installable Zero/Go/Hub PWA requires its own package, deployment and offline/identity contract while keeping the full base web app operational; do not remove reachable routes or assets before parity is verified.
+**The PWA is not `apps/web`.** The TypeScript `apps/web` application is the separate **full Titan base web application**. It may contain the complete browser-based business application experience while preserving its mature native AI-FSM field-service capabilities and progressively converging duplicated Titan runtime mechanisms behind canonical contracts. Frappe is optional extension infrastructure, not the default replacement for native FSM persistence. Do not collapse the base web app into the PWA, and do not treat the PWA as merely a route/mode inside `apps/web`.
 
 Canonical deployment distinction:
 
