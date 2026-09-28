@@ -24,7 +24,8 @@ export async function portableQuery<T = Record<string, unknown>>(text: string, p
   if (dialect === "sqlite") return (await getSqliteClient().query<T>(text, params)).rows;
   if (dialect === "mysql") {
     const rewritten = rewriteNumberedParamsForMysql(text, params);
-    const [rows] = await getMysqlPool().execute(rewritten.sql, rewritten.params);
+    const execute = getMysqlPool().execute as unknown as (sql: string, values: unknown[]) => Promise<[unknown, unknown]>;
+    const [rows] = await execute(rewritten.sql, rewritten.params);
     return rows as T[];
   }
   const query = getPool().query as unknown as (queryText: string, queryParams: unknown[]) => Promise<{ rows: T[]; rowCount: number | null }>;
