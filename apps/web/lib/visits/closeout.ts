@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import {
   checkSchedulingPreconditions,
   FIELD_ACTIVE_VISIT_STATUSES,
@@ -48,7 +48,7 @@ export class CloseoutError extends Error {
 }
 
 async function completeVisitRow(
-  client: PoolClient,
+  client: DbClient,
   session: CloseoutSession,
   visitId: string,
   techNotes: string,
@@ -232,7 +232,7 @@ async function completeVisitRow(
 }
 
 async function createFirstUpTask(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     workOrderId: string;
@@ -254,7 +254,7 @@ async function createFirstUpTask(
 }
 
 async function scheduleReturnVisit(
-  client: PoolClient,
+  client: DbClient,
   session: CloseoutSession,
   current: {
     id: string;
@@ -345,7 +345,7 @@ async function scheduleReturnVisit(
 }
 
 export async function runVisitCloseout(
-  client: PoolClient,
+  client: DbClient,
   session: CloseoutSession,
   visitId: string,
   input: VisitCloseoutBody,
