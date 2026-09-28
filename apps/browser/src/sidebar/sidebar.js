@@ -520,22 +520,50 @@ function renderNavigationRegistry(payload) {
     const container = document.getElementById?.('codee-nav-links');
     if (!container) return false;
     const entries = Array.isArray(payload?.entries) ? payload.entries : [];
-    if (!payload?.ready || !entries.some(entry => entry.id === 'workspace.runner')) return renderNavigationFallback(payload?.validation?.errors?.[0]?.code || 'registry-unavailable');
+    if (!payload?.ready || !entries.some(entry => entry.id === 'zero.work' || entry.id === 'zero.overview')) {
+        return renderNavigationFallback(payload?.validation?.errors?.[0]?.code || 'registry-unavailable');
+    }
     const groups = entries.filter(entry => entry.kind === 'group').sort((a,b) => Number(a.order||0)-Number(b.order||0));
     const pages = entries.filter(entry => entry.kind === 'page');
     container.replaceChildren();
+
     for (const groupEntry of groups) {
         const children = pages.filter(entry => entry.parent === groupEntry.id).sort((a,b) => Number(a.order||0)-Number(b.order||0));
         if (!children.length) continue;
-        const group = document.createElement('div');
-        group.className = 'nav-group-label';
-        group.textContent = groupEntry.label;
-        container.appendChild(group);
+
+        const wrapper = document.createElement('section');
+        wrapper.className = 'nav-group';
+
+        const toggle = document.createElement('button');
+        toggle.className = 'nav-group-toggle';
+        toggle.type = 'button';
+        const containsActive = children.some(entry => entry.page === activePage);
+        toggle.setAttribute('aria-expanded', containsActive ? 'true' : 'false');
+        toggle.setAttribute('aria-controls', `nav-group-children-${groupEntry.id.replaceAll('.', '-')}`);
+
+        const label = document.createElement('span');
+        label.textContent = groupEntry.label;
+        const chevron = document.createElement('span');
+        chevron.className = 'nav-group-chevron';
+        chevron.textContent = '›';
+        toggle.append(label, chevron);
+
+        const childContainer = document.createElement('div');
+        childContainer.className = 'nav-group-children';
+        childContainer.id = `nav-group-children-${groupEntry.id.replaceAll('.', '-')}`;
+        childContainer.hidden = !containsActive;
+
+        toggle.addEventListener('click', () => {
+            const expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+            childContainer.hidden = expanded;
+        });
+
         for (const entry of children) {
             const state = String(entry.resolved?.state || entry.readiness || 'DEPENDENCY_MISSING');
             const interactive = entry.resolved?.interactive === true;
             const button = document.createElement('button');
-            button.className = `nav-link nav-state-${state.toLowerCase().replaceAll('_', '-')}`;
+            button.className = `nav-link nav-child-link nav-state-${state.toLowerCase().replaceAll('_', '-')}`;
             button.type = 'button';
             button.setAttribute('data-nav-page', entry.page);
             button.setAttribute('data-readiness', state);
@@ -545,21 +573,25 @@ function renderNavigationRegistry(payload) {
                 button.setAttribute('aria-disabled', 'true');
                 button.title = `${entry.label}: ${state}`;
             }
-            const icon = document.createElement('span'); icon.textContent = entry.icon || '•';
-            const label = document.createElement('span'); label.textContent = entry.label;
-            button.append(icon, label);
+            const icon = document.createElement('span');
+            icon.textContent = entry.icon || '•';
+            const childLabel = document.createElement('span');
+            childLabel.textContent = entry.label;
+            button.append(icon, childLabel);
             if (state !== 'AVAILABLE') {
                 const badge = document.createElement('span');
                 badge.className = 'nav-readiness-badge';
                 badge.textContent = state.replaceAll('_', ' ');
                 button.appendChild(badge);
             }
-            container.appendChild(button);
+            childContainer.appendChild(button);
         }
+
+        wrapper.append(toggle, childContainer);
+        container.appendChild(wrapper);
     }
     return true;
 }
-
 async function loadNavigationRegistry() {
     try {
         if (!chrome?.runtime?.sendMessage) return renderNavigationFallback('worker-unavailable');
@@ -2271,7 +2303,7 @@ function formatActiveNextRunnerLabel(status) {
     return {
         title,
         provider: String(target.provider || 'AI').toUpperCase(),
-        summary: `Next ${Number(status?.sentCount) || 0} · every ${minutes} minute${minutes === 1 ? '' : 's'}`,
+        summary: `Passes ${Number(status?.successfulPassCount ?? status?.sentCount) || 0} · every ${minutes} minute${minutes === 1 ? '' : 's'}`,
         due: status?.nextDueAt ? `Next ${formatNextRunnerDue(status.nextDueAt)}` : 'Timer active'
     };
 }
@@ -2894,7 +2926,8 @@ function formatDiagnosticRunner(report) {
         `Runner alarm: ${runner.alarmPresent ? 'PRESENT' : (runner.enabled ? 'MISSING' : 'not required')}`,
         `Runner interval: ${runner.intervalMinutes ?? '—'} minutes`,
         `Runner attempts: ${runner.attemptCount ?? 0}`,
-        `Runner verified sends: ${runner.sentCount ?? 0}`,
+        `Total successful passes: ${runner.successfulPassCount ?? runner.sentCount ?? 0}`,
+        `Session successful passes: ${runner.sessionPassCount ?? 0}`,
         `Runner failed/skipped: ${runner.failedCount ?? 0}`,
         `Runner last result: ${runner.lastResult || 'none'}`,
         `Runner next due: ${runner.nextDueAt ? new Date(runner.nextDueAt).toISOString() : '—'}`,
@@ -3166,6 +3199,63 @@ async function copyAllDiagnostics() {
     }
 }
 
+function renderDiagnosticOverview(report) {
+    const overview = document.getElementById?.('diagnostics-overview');
+    const blockers = document.getElementById?.('diagnostics-blockers');
+    if (!overview || !blockers) return false;
+
+    const connection = report?.connection || {};
+    const runner = report?.runner || {};
+    const plan = report?.plan || null;
+    const alarm = report?.recoveryAlarm || {};
+    const artifact = report?.artifact || {};
+    const items = [
+        ['Receiver', connection.contentScript ? 'Connected' : 'Unavailable'],
+        ['Composer', connection.composer ? 'Found' : 'Not found'],
+        ['Conversation binding', plan ? 'Bound' : 'No plan bound'],
+        ['Next Runner', runner.enabled ? String(runner.healthState || 'running') : 'Stopped'],
+        ['Total successful passes', String(runner.successfulPassCount ?? runner.sentCount ?? 0)],
+        ['This session', String(runner.sessionPassCount ?? 0)],
+        ['Recovery timer', alarm.ok ? 'Healthy' : 'Needs repair'],
+        ['Artifact verifier', artifact.verificationRequired ? (artifact.verifierConnected ? 'Connected' : 'Required / missing') : 'Not required']
+    ];
+    overview.replaceChildren();
+    for (const [label, value] of items) {
+        const row = document.createElement('div');
+        row.className = 'diagnostic-overview-item';
+        const key = document.createElement('span');
+        key.textContent = label;
+        const val = document.createElement('strong');
+        val.textContent = value;
+        row.append(key, val);
+        overview.appendChild(row);
+    }
+
+    const problems = [];
+    if (!connection.contentScript) problems.push('Receiver unreachable — reload the target ChatGPT/Claude page after updating the extension, then Re-scan Conversation.');
+    if (connection.contextValid === false) problems.push('Extension context invalid — reload the target conversation so the current Browser Node content script attaches.');
+    if (!connection.composer) problems.push('Composer not found — the provider UI is not currently exposing a writable composer to Browser Node.');
+    if (!plan && Number(report?.planInventory?.activeCount || 0) > 0) problems.push('Active work exists but is not bound to this tab — open the matching conversation from Active Work.');
+    if (runner.enabled && runner.healthState !== 'running') problems.push(`Next Runner is ${runner.healthState || 'degraded'} — ${runner.lastResult || 'check receiver and conversation binding'}.`);
+    if (runner.enabled && !runner.alarmPresent) problems.push('Next Runner timer is missing — stop/start the runner or repair the timer.');
+    if (artifact.verificationRequired && !artifact.verifierConnected) problems.push('Artifact verification is required but no verifier is connected.');
+
+    blockers.replaceChildren();
+    if (!problems.length) {
+        blockers.className = 'diagnostics-blockers healthy';
+        blockers.textContent = 'No blocking Browser Node problems detected.';
+    } else {
+        blockers.className = 'diagnostics-blockers';
+        for (const problem of problems) {
+            const row = document.createElement('div');
+            row.className = 'diagnostic-blocker';
+            row.textContent = problem;
+            blockers.appendChild(row);
+        }
+    }
+    return true;
+}
+
 function renderDiagnostics(report) {
     const health = document.getElementById?.('diagnostics-health');
     const summary = document.getElementById?.('diagnostics-summary');
@@ -3187,6 +3277,7 @@ function renderDiagnostics(report) {
         health.className = `health-badge ${state}`;
     }
     if (summary) summary.textContent = report.recommendation || 'Diagnostics complete.';
+    renderDiagnosticOverview(report);
     if (plan) plan.textContent = formatDiagnosticPlan(report);
     if (connection) connection.textContent = formatDiagnosticConnection(report);
     if (artifact) artifact.textContent = formatDiagnosticArtifact(report);
@@ -3221,16 +3312,12 @@ async function loadDiagnostics() {
     try {
         const report = await chrome.runtime.sendMessage({ action: 'GET_DIAGNOSTICS', tabId });
         renderDiagnostics(report);
-        const [titanZero, repository, workforce] = await Promise.all([loadTitanZeroStatus(), loadRepositoryStatus(), loadWorkforceStatus()]);
-        report.titanZero = titanZero;
-        report.repository = repository;
-        report.workforce = workforce;
-        if (status) status.textContent = report?.ok ? `Checked tab ${tabId}.` : (report?.error || 'Diagnostics failed.');
+        if (status) status.textContent = report?.ok ? `Checked tab ${tabId}. Review blockers first; advanced capability data is collapsed below.` : (report?.error || 'Diagnostics failed.');
         return report;
     } catch (error) {
         const report = { ok: false, error: error?.message || String(error) };
         renderDiagnostics(report);
-        if (status) status.textContent = 'Could not reach the Titan Code worker.';
+        if (status) status.textContent = 'Could not reach the Titan Zero Browser Node worker.';
         return report;
     }
 }
@@ -3331,14 +3418,15 @@ function renderNextRunnerStatus(response) {
     if (stop) stop.disabled = !response.enabled;
     if (status) {
         const due = response.enabled && response.nextDueAt ? ` Next: ${formatNextRunnerDue(response.nextDueAt)}.` : '';
-        const sent = Number(response.sentCount) || 0;
+        const sent = Number(response.successfulPassCount ?? response.sentCount) || 0;
+        const sessionPasses = Number(response.sessionPassCount) || 0;
         const deferred = Number(response.deferredCount) || 0;
         const failed = Number(response.failedCount) || 0;
         const attempts = Number(response.attemptCount) || 0;
         const segments = [];
         if (deferred) segments.push(`${deferred} safely deferred`);
         if (failed) segments.push(`${failed} failed`);
-        const progress = ` Next count: ${sent}${attempts ? ` verified / ${attempts} attempts` : ''}${segments.length ? ` · ${segments.join(' · ')}` : ''}.`;
+        const progress = ` Total successful passes: ${sent} · ${sessionPasses} this session${attempts ? ` · ${attempts} attempts` : ''}${segments.length ? ` · ${segments.join(' · ')}` : ''}.`;
         const lastReason = response.lastDiagnostic?.reason || response.lastResult || '';
         const lastOutcome = response.lastDiagnostic?.outcome || response.lastOutcome || '';
         const last = lastReason ? ` Last: ${lastOutcome ? `${lastOutcome} — ` : ''}${lastReason}.` : '';
@@ -3373,11 +3461,12 @@ async function startNextRunnerFromUI() {
             const first = immediate.sent
                 ? 'Sent “next” now.'
                 : `Immediate send deferred${immediate.reason ? ` (${immediate.reason})` : ''}; timer is running and retrying.`;
-            const sent = Number(response.sentCount) || 0;
+            const sent = Number(response.successfulPassCount ?? response.sentCount) || 0;
+            const sessionPasses = Number(response.sessionPassCount) || 0;
             const attempts = Number(response.attemptCount) || 0;
             const deferred = Number(response.deferredCount) || 0;
             const failed = Number(response.failedCount) || 0;
-            status.textContent = `${first} Next count: ${sent} verified / ${attempts} attempts${deferred ? ` · ${deferred} safely deferred` : ''}${failed ? ` · ${failed} failed` : ''}. Repeating every ${response.intervalMinutes} minutes. Next: ${formatNextRunnerDue(response.nextDueAt)}.`;
+            status.textContent = `${first} Total successful passes: ${sent} · ${sessionPasses} this session · ${attempts} attempts${deferred ? ` · ${deferred} safely deferred` : ''}${failed ? ` · ${failed} failed` : ''}. Repeating every ${response.intervalMinutes} minutes. Next: ${formatNextRunnerDue(response.nextDueAt)}.`;
         }
     } catch (error) { renderNextRunnerStatus({ ok:false, error:error?.message || String(error) }); }
 }
