@@ -42,7 +42,8 @@
     "./connector-runtime": "./src/connector-runtime.ts",
     "./mcp-projection": "./src/mcp-projection.ts",
     "./workforce-coverage": "./src/workforce-coverage.ts",
-    "./business-reality": "./src/business-reality.ts"
+    "./business-reality": "./src/business-reality.ts",
+    "./constitution": "./src/constitution.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
