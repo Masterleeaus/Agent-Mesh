@@ -2260,8 +2260,8 @@
     },
     {
       "path": "src/lib/service-worker.js",
-      "bytes": 260667,
-      "sha256": "68896711cfa2e0f2a81c22709d00fe2ae24c75c1ab38f57022b374aaf2b846a2"
+      "bytes": 260780,
+      "sha256": "12657e2cc10ddf12932c6126910f411ddd059d5a8f0cb6e8bc23d7ef60b6c2f6"
     },
     {
       "path": "src/lib/titan-zero-host-integration.js",
@@ -4925,8 +4925,8 @@
     },
     {
       "path": "tests/test-titan-zero-browser-node-product-scope.js",
-      "bytes": 2431,
-      "sha256": "42f02ad9c7a0ace91506a321c5eb1427ebc46051628a7f1d2b34c5690c9d6fb0"
+      "bytes": 2665,
+      "sha256": "4e71b7ec22864aa5cc4815ab10799888aefaaccd732beceea393c5e1caa7f52b"
     },
     {
       "path": "tests/test-titan-zero-capability-registration.js",
