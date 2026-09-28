@@ -1,120 +1,162 @@
-# AGENTS.md - Execution Contract\n\n<!-- Titan Zero Agent Mesh V3 -->
+# AGENTS.md — Titan Zero Execution Contract
 
-This repository uses AI-assisted development, but product direction is defined only by the canonical documentation set.
+<!-- Titan Zero Agent Mesh V4 / Codex-ready -->
 
-## Documentation Hierarchy
+Titan Zero is developed by humans and coding agents concurrently. This file is the repository-wide execution contract. A deeper `AGENTS.md` may narrow rules for its subtree, but it may not weaken this contract or canonical architecture.
 
-Use documentation in this order:
+## 1. Authority and truth
 
-1. Code and database migrations are the implemented truth.
-2. `docs/canonical/` is the authoritative product, domain, and architecture truth.
-3. `docs/contracts/` and `docs/working/` contain supporting implementation notes.
-4. `ai/` is only a compact AI-agent quick-reference layer.
-5. `docs/archive/` and `docs/generated/` are historical/evidence only, not active instruction sources.
+Use sources in this order:
 
-## Read This First
+1. Current code, migrations, tests, and live GitHub state are implemented truth.
+2. `docs/canonical/` defines authoritative product, domain, and architecture direction.
+3. `docs/contracts/` defines active cross-component contracts.
+4. `docs/working/` and `ai/` are implementation aids.
+5. `docs/archive/` and `docs/generated/` are evidence/history only.
 
-**Operational invariants (before auditing status, building infra, or deploying):**
-`ai/INVARIANTS.md` — the deploy-lag trap (check `origin/main` AND `/opt`, not the
-local checkout), worker-no-egress, superuser/RLS, migration numbering, HA-driven
-schedules, and how to run the test tiers (`scripts/dev-stack.sh`).
+Before architecture, infrastructure, persistence, runtime, or deployment work, read `ai/INVARIANTS.md`.
 
-Product direction:
+Do not create a parallel engine, authority system, task ledger, database abstraction, workforce, runtime, memory system, capability registry, or UI architecture when Titan already has a canonical owner.
 
-- `docs/canonical/PRODUCT_VISION.md`
-- `docs/canonical/DOMAIN_MODEL.md`
-- `docs/canonical/WORKFLOW.md`
-- `docs/canonical/ARCHITECTURE.md`
-- `docs/canonical/ROADMAP.md`
-- `docs/canonical/PRODUCTION_INTELLIGENCE.md`
-- `docs/canonical/OPERATIONS.md`
+## 2. Codex operating mode
 
-Archived, generated, and working documents may provide evidence, implementation notes, or historical context. They do not override canonical docs.
+Codex and other implementation agents should execute, not merely propose, when the issue is implementation-ready.
 
-Active implementation backlog: docs/backlog/README.md
+Before editing:
+- Read the issue and acceptance criteria.
+- Re-read current `main`, the claim branch, relevant `AGENTS.md` files, canonical docs, nearby tests, and current implementations.
+- Search for an existing owner/contract before adding a new abstraction.
+- Establish the smallest coherent change set that completes the issue.
+- Assume concurrent agents may have changed adjacent files; re-read immediately before mutation.
 
-## Prime Directive
+During work:
+- Stay inside the claimed mission. Fix directly caused breakage, but do not opportunistically redesign unrelated systems.
+- Prefer modifying canonical owners over adding adapters that duplicate business logic.
+- Preserve backward compatibility unless the issue explicitly authorizes a breaking migration.
+- Add or update tests with behavior changes.
+- Never weaken security, tenant isolation, authority, evidence, privacy, idempotency, or verification to make a test pass.
+- Never report a task complete from inspection alone when the task requires implementation.
 
-Complete requested tasks end-to-end while preserving reliability, traceability, and canonical product scope.
+## 3. Repository boundaries
 
-## Non-Negotiable Rules
+The top-level boundaries are ownership signals:
 
-1. Never skip relevant quality gates for code changes.
-2. Any failed gate requires fix attempts before asking for help.
-3. Never store secrets in code; use `.env`.
-4. Migrations must be additive and reversible unless a migration plan is explicit.
-5. Business logic changes must include tests or an explicit documented test gap.
-6. Production runs on garonhome.local using `infra/compose.garonhome.yml`.
-7. Do not use archived or generated planning documents as product instructions.
-8. Do not start new work unless it maps to an existing `docs/backlog/` task, or a new task is added to `docs/backlog/` first.
+- `apps/`: user-facing/runtime surfaces and channel adapters. Surface code projects canonical state; it does not become a second business source of truth.
+- `services/`: long-running worker/workforce execution. Keep transport/orchestration here; reuse domain, storage, authority, and evidence contracts.
+- `packages/`: reusable canonical domain/runtime capabilities. Shared business rules belong here rather than being copied into apps.
+- `infra/`: deployment and host configuration. Do not encode product/domain policy here.
+- `scripts/`: operational/build/migration tooling. Scripts must fail loudly and avoid hidden production mutations.
+- `docs/`: canonical direction, contracts, working notes, and evidence according to the hierarchy above.
 
-## Decision Policy
+Cross-boundary edits are allowed only when the mission requires them. In the PR, name every boundary changed and why. If a change spans more than one of `apps/`, `services/`, `packages/`, persistence, or authority/evidence contracts, run integration-level verification appropriate to the interaction.
 
-If multiple options exist, choose the one with:
+Subtree `AGENTS.md` files may add constraints for `apps/`, `services/`, and `packages/`.
 
-1. Lower operational complexity.
-2. Lower total maintenance burden.
-3. Better alignment with canonical product direction.
-4. Better compatibility with garonhome.local.
+## 4. Titan invariants
 
-## Required Deliverable Format Per Task
+Unless a canonical document explicitly changes them:
 
+- `company_id` is the canonical company/tenant boundary. Legacy tenant identifiers are compatibility ingress only.
+- Canonical product surfaces are `zero`, `go`, and `hub`; other apps/channels are adapters or specialized surfaces.
+- Consequential actions pass through Titan's governed decision/authority/execution path.
+- Provider acknowledgement is not a verified business outcome.
+- Evidence/provenance must survive consequential execution.
+- SQLite is the canonical local/runtime persistence target where defined by current architecture.
+- Reuse existing capability, workforce, identity, context, memory, authority, execution, and evidence contracts before adding new ones.
+- Titan Code/agent tooling is development infrastructure, not a production dependency of Titan Zero.
+
+## 5. GitHub claim and branch discipline
+
+All implementation work maps to an open GitHub issue/subgoal.
+
+The only implementation claim lock is the exact GitHub branch ref:
+
+`agent/<subgoal-id>`
+
+Rules:
+1. Immediately before claiming, fetch the issue, current `main` SHA, live `agent/*` refs, dependencies, and relevant PRs.
+2. Atomically create the exact claim branch from the required current `main`.
+3. If it already exists, another agent owns the claim. Do not create a suffix, timestamp, worker-name branch, or alternate prefix.
+4. Post a claim comment with workspace/agent identity, issue, subgoal, branch, and base SHA.
+5. One implementation claim per agent/workspace unless a Manager issue explicitly authorizes otherwise.
+6. Use the same branch through implementation, verification, PR, fixes, and handoff.
+7. Never open a second branch because the first branch conflicts. Rebase/merge/fix the existing claim branch.
+8. The canonical PR targets `main` and contains `Closes #<issue>`.
+9. After merge, rely on governed cleanup/delete-on-merge. Do not leave replacement branches behind.
+10. Do not claim parent/meta issues while claimable child implementation issues exist.
+
+GitHub refs, commits, checks, PRs, merges, and issue state are authoritative lifecycle evidence. Local ledgers and agent prose are projections only.
+
+## 6. Verification contract
+
+Verification is risk-based and cumulative.
+
+### Tier 0 — docs/templates only
+- Inspect rendered/parsed content.
+- Check links/paths/commands referenced actually exist where practical.
+- Confirm no contradictory instruction was introduced.
+
+### Tier 1 — localized code
+- Run targeted tests for changed behavior.
+- Run relevant lint/typecheck/build for the touched package/app.
+
+### Tier 2 — cross-boundary behavior
+- Tier 1 plus integration tests for the changed interaction.
+- Run `pnpm gate:fast` when the workspace can support it.
+- Verify compatibility at both sides of changed contracts.
+
+### Tier 3 — authority, persistence, migrations, execution, security, evidence, tenancy, production bootstrap
+- Tier 2 plus the relevant full integration/recovery/migration/security tests.
+- Run `pnpm gate` when supported.
+- Prove failure modes fail closed.
+- For persistence/recovery work, prove restart/replay/recovery as applicable.
+- For company-scoped changes, include negative cross-company isolation coverage.
+- For consequential execution, distinguish provider acknowledgement from verified outcome.
+
+A failing relevant gate is work, not a footnote. Attempt fixes before escalation. Never mark a check as passed unless it was actually executed and passed.
+
+If an environment prevents a required gate, record:
+- exact command not run,
+- exact blocker,
+- what narrower checks did run,
+- residual risk.
+
+## 7. Definition of done
+
+A mission is complete only when all are true:
+- Acceptance criteria are implemented, not merely described.
+- Changed behavior has proportionate verification.
+- No known relevant regression is left unexplained.
+- Canonical docs/contracts are updated if behavior or architecture changed.
+- PR contains concrete evidence: commands, results, changed boundaries, risks, and rollback/compatibility notes.
+- Branch is the canonical claim branch and the PR closes the issue.
+- Remaining work is explicitly out of scope or represented by a separate issue; do not hide TODOs in prose.
+
+Required task report:
 1. Objective
 2. Files changed
-3. Commands executed
-4. Gate results
-5. Risks and follow-up tasks
+3. Boundaries/contracts changed
+4. Commands executed
+5. Gate/test results
+6. Risks, rollback, and follow-ups
 
+## 8. Handoff and concurrency
 
-## Mandatory GitHub Issue Claim Protocol
+Before final push or PR update:
+- Fetch/re-read current `main` and changed files.
+- Resolve conflicts on the existing claim branch.
+- Re-run verification invalidated by conflict resolution.
+- Keep commits reviewable and avoid unrelated formatting churn.
 
-All agents MUST claim an issue before implementation work. The canonical claim lock is the GitHub branch ref `agent/<subgoal-id>`.
+If blocked, leave durable evidence on the issue/PR and keep the canonical branch. Do not create a replacement branch.
 
-### Authority
-
-- **GitHub branch creation is the claim mutex.** Atomically creating the exact canonical ref `agent/<subgoal-id>` from the required current base SHA establishes the claim.
-- If that exact ref already exists, the issue is already claimed. Do not create a suffixed, worker-named, timestamped, or alternate-prefix branch; select another eligible issue.
-- `work/claims.json`, issue comments, browser state, local JSON, Manager ledgers, AI output, and GitHub assignees are projections/evidence only. They MUST NOT override the live GitHub ref.
-- Claim comments remain required coordination evidence, but they are **not** the lock authority.
-- Multiple agents sharing one GitHub identity does not change the mutex: the exact branch ref remains unique and atomic.
-
-### Before starting any issue
-
-1. Fetch the issue, current `main` SHA, live `agent/*` refs, relevant open PRs, and dependencies immediately before claiming.
-2. Confirm the issue is open, eligible, not completed/superseded, and has no canonical `agent/<subgoal-id>` ref or active PR.
-3. Atomically create `refs/heads/agent/<subgoal-id>` from the required current `main` SHA.
-4. If GitHub reports that the ref already exists, another agent won the claim. Select another eligible issue.
-5. After successful ref creation, post a claim comment recording the agent/workspace identity, issue/subgoal, canonical branch, and base `main` SHA.
-6. Re-read the branch and issue before mutation. GitHub remains authoritative if local/projected state disagrees.
-
-### While working
-
-- One agent may hold only one implementation claim at a time unless an explicit Manager issue says otherwise.
-- Work only on the canonical claim branch. Never bypass a collision with a suffix, timestamp, worker name, or alternate prefix.
-- Commits, checks, and the canonical PR are evidence of progress; AI/Manager text cannot declare authoritative lifecycle state.
-- The canonical PR must target `main` and link its issue with `Closes #<issue-number>`.
-- Parent/meta issues must not be claimed when claimable child implementation issues exist.
-- A branch that falls behind `main` is evaluated from Git ancestry/check evidence; local generation counters are metadata only.
-
-### Handoff / completion
-
-- Push work to the same canonical claim branch and use the canonical PR rather than creating a competing handoff branch.
-- If PR creation is temporarily unavailable, record durable handoff evidence on the issue while retaining the same claim branch.
-- Merge authority is GitHub plus the repository's Manager/merge gates and required checks. A model, local ledger, or comment cannot declare a merge.
-- After a verified merge, roadmap/issue reconciliation and safe claim-ref cleanup may run. Claim refs are deleted only when repository automation proves cleanup safe.
-- If work is abandoned before merge, record the reason and use the governed safe-release path; do not silently delete or steal a live claim ref.
-
-### Lifecycle projection
-
-Titan Code and Agent Mesh may project the lifecycle as:
-
+Lifecycle may be projected as:
 `AVAILABLE → CLAIMED → ACTIVE → VERIFYING → READY → PR_OPEN → MERGED → COMPLETED`
 
-Exceptional projections are `BLOCKED`, `FAILED`, `SUPERSEDED`, and `REBASE_REQUIRED`.
+Exceptional projections: `BLOCKED`, `FAILED`, `SUPERSEDED`, `REBASE_REQUIRED`.
 
-These states MUST be derived from GitHub facts (issue, canonical claim branch, commits, checks, PR, merge and issue status). They are not an independent state machine.
+These states are derived from GitHub facts; they are not a second state machine.
 
-### Archive donor issues
+## 9. Mission prompt contract
 
-Archive donor work must use the dedicated donor issues (for example #720-#724) rather than claiming parent #66. Each donor issue is independently claimable.
-
+Reusable Codex missions should use `docs/agent/MISSION_TEMPLATE.md`. A mission must state outcome, canonical owners to preserve, allowed scope, forbidden duplication, acceptance evidence, and verification tier. The issue remains the durable work record.
