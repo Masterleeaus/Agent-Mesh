@@ -198,15 +198,19 @@ No deployment is considered commissioned merely because a process started or API
 
 ## 9. Surfaces and channels
 
-Canonical product surfaces remain:
+Canonical product surface identities remain:
 
 - `zero` — owner/manager projection;
 - `go` — worker/field projection;
 - `hub` — customer projection.
 
-There is one canonical PWA with these governed modes. Native mobile, Browser Node, ChatGPT/MCP/external assistants, voice, messaging and future channels are adapters/projections over the same hosted workforce and evidence-backed state.
+**Surface identity is not deployment identity.** Zero, Go and Hub may be delivered as separate PWA/user-facing applications while sharing the same canonical Titan Runtime, company identity, capability graph, Workforce and evidence-backed business state. They are not modes of `apps/web`, and `apps/web` is not synonymous with the PWA products.
 
-Interfaces do not own business truth, authority or workforce runtime.
+The TypeScript **base/server web application** (`apps/web`) is a distinct server-hosted web/BFF application. It may provide HTTP/auth/session adapters and intentionally retained base-web projections, but it must not become the canonical definition of Zero/Go/Hub or a second business runtime.
+
+Native mobile, Browser Node, ChatGPT/MCP/external assistants, voice, messaging and future channels are additional adapters/projections over the same hosted workforce and evidence-backed state.
+
+Interfaces and deployment surfaces do not own business truth, authority or workforce runtime. Titan Surfaces manages their lifecycle/health as projections; canonical runtime/contracts remain singular.
 
 ## 9.1 Commercial product portfolio and entitlement architecture
 
