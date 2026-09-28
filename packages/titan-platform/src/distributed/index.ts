@@ -13,3 +13,5 @@ export * from './convergence.js';
 export * from './context.js';
 
 export * from './authority.js';
+
+export * from './failover.js';
