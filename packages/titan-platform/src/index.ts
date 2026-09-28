@@ -75,3 +75,5 @@ export * from "./governance/constitution.js";
 export * from "./recovery/capsule.js";
 
 export * from "./federation/contract.js";
+
+export * from "./brand-publication.js";
