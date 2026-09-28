@@ -198,6 +198,9 @@ importers:
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
+      lucide-react:
+        specifier: ^1.48.0
+        version: 1.48.0(react@19.2.6)
       mysql2:
         specifier: ^3.14.5
         version: 3.24.4(@types/node@22.19.11)
@@ -219,6 +222,12 @@ importers:
       react-dom:
         specifier: 19.0.8
         version: 19.0.8(react@19.0.8)
+      react-hook-form:
+        specifier: ^7.89.0
+        version: 7.89.0(@types/react@19.2.14)(react@19.2.4)
+      resend:
+        specifier: ^6.30.0
+        version: 6.30.0
       square:
         specifier: ^44.2.0
         version: 44.2.0
@@ -229,6 +238,9 @@ importers:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
+      '@types/better-sqlite3':
+        specifier: ^7.6.13
+        version: 7.6.13
       '@types/leaflet':
         specifier: ^1.9.12
         version: 1.9.21
