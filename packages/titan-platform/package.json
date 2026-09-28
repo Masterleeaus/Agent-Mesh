@@ -36,7 +36,8 @@
     "./reliability-policy": "./src/reliability-policy.ts",
     "./security-boundary": "./src/security-boundary.ts",
     "./quote-conversion": "./src/quote-conversion.ts",
-    "./customer-care-recovery": "./src/customer-care-recovery.ts"
+    "./customer-care-recovery": "./src/customer-care-recovery.ts",
+    "./growth-attribution": "./src/growth-attribution.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
