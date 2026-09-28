@@ -119,8 +119,8 @@ export async function dispatchNotificationQueue(client: DatabaseClient): Promise
         await client.query(
           `INSERT INTO notification_delivery_attempts
              (notification_id, account_id, attempt_number, status, provider, provider_message_id, error)
-           VALUES ($1, $2, $3, 'delivered', 'smtp', $4, NULL)`,
-          [row.id, row.account_id, attemptNumber, sendResult.providerMessageId ?? null]
+           VALUES ($1, $2, $3, $4, 'smtp', $5, NULL)`,
+          [row.id, row.account_id, attemptNumber, "delivered", sendResult.providerMessageId ?? null]
         );
         await client.query(
           `UPDATE notification_queue
@@ -136,8 +136,8 @@ export async function dispatchNotificationQueue(client: DatabaseClient): Promise
         await client.query(
           `INSERT INTO notification_delivery_attempts
              (notification_id, account_id, attempt_number, status, provider, provider_message_id, error)
-           VALUES ($1, $2, $3, '${terminal ? "dead_letter" : "failed"}', 'smtp', NULL, $4)`,
-          [row.id, row.account_id, attemptNumber, sendResult.error ?? "unknown"]
+           VALUES ($1, $2, $3, $4, 'smtp', NULL, $5)`,
+          [row.id, row.account_id, attemptNumber, terminal ? "dead_letter" : "failed", sendResult.error ?? "unknown"]
         );
         await client.query(
           `UPDATE notification_queue
