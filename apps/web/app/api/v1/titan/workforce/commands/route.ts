@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
   try {
     const result = await executeWorkforceCommand(request, session, input);
-    if (!result.dryRun && !result.upstream.ok) {
+    if (!result.dryRun && result.upstream && !result.upstream.ok) {
       return NextResponse.json(result, { status: result.upstream.status });
     }
     return NextResponse.json(result);
