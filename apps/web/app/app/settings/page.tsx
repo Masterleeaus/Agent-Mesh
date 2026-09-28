@@ -154,8 +154,6 @@ export default async function SettingsPage() {
         users={users as TeamMember[]}
         square={square}
         locationDay={locationDay}
-        workforceLifecycle={workforceLifecycle}
-        workforceHierarchy={workforceHierarchy}
       />
     </PageContainer>
   );
