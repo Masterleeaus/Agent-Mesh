@@ -39,3 +39,5 @@ export * from "./mission-planning.js";
 export * from "./evidence-to-cash.js";
 
 export * from "./reliability-policy.js";
+
+export * from "./security-boundary.js";
