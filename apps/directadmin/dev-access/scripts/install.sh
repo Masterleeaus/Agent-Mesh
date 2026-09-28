@@ -22,4 +22,11 @@ for rel in $required_files; do
   fi
 done
 
+for rel in admin/index.html reseller/index.html user/index.html; do
+  if [ ! -x "$PLUGIN_DIR/$rel" ]; then
+    echo "Titan Dev Access install validation failed: $rel is not executable" >&2
+    exit 1
+  fi
+done
+
 echo "Titan Dev Access install validation passed"
