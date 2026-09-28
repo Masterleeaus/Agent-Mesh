@@ -169,11 +169,11 @@ export async function getTravelSnapshot(
   client: DbClient,
   snapshotId: string
 ): Promise<TravelSnapshotRow | null> {
-  const q = await client.query(`SELECT * FROM travel_calculation_snapshots WHERE id = $1`, [
+  const q = await client.query<TravelSnapshotRow>(`SELECT * FROM travel_calculation_snapshots WHERE id = $1`, [
     snapshotId,
   ]);
   if (!q.rowCount) return null;
-  return normalizeSnapshot(q.rows[0] as TravelSnapshotRow);
+  return normalizeSnapshot(q.rows[0]!);
 }
 
 function normalizeSnapshot(row: TravelSnapshotRow): TravelSnapshotRow {
