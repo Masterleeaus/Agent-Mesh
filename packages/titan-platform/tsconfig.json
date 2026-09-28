@@ -49,6 +49,7 @@
     "src/knowledge-governance.ts",
     "src/mission-planning.ts",
     "src/evidence-to-cash.ts",
-    "src/reliability-policy.ts"
+    "src/reliability-policy.ts",
+    "src/security-boundary.ts"
   ]
 }
