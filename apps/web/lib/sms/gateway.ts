@@ -63,7 +63,7 @@ export async function sendSmsViaGateway(opts: {
   const payload: Record<string, unknown> = {
     textMessage: { text: opts.message },
     phoneNumbers: [opts.phone],
-    simNumber: Number.isFinite(simNumber) && simNumber > 0 ? simNumber : 1,
+    simNumber: Number.isFinite(simNumber ?? 1) && (simNumber ?? 1) > 0 ? simNumber ?? 1 : 1,
     withDeliveryReport: true,
   };
   if (opts.id) payload.id = opts.id;
