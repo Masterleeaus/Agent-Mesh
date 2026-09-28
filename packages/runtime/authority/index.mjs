@@ -44,3 +44,6 @@ export {
 export { normalizeAuthorityLeaseControl, assertAuthorityLeaseControlContinuity, assertAuthorityLeaseControlHistory, buildAuthorityLeaseControlHistorySeal, buildAuthorityLeaseControlHistorySnapshotSeal, assertAuthorityLeaseControlHistorySnapshotChain, assertAuthorityCurrentDecisionSnapshotContinuity, assertAuthorityLeaseControlPersistenceContinuity, assertAuthorityLeaseControlAgainstCurrentDecision, applyAuthorityLeaseControl } from './lease-control.mjs';
 
 export { buildAuthorityHistoryIntegritySeal, buildAuthorityHistorySnapshotSeal, assertAuthorityHistorySnapshotLink, assertAuthorityHistorySnapshotChain, stableAuthorityHistoryCanonical } from './history-integrity.mjs';
+
+export { SqliteAuthorityStore } from './sqlite-authority-store.mjs';
+export { AuthorityContextResolver } from './authority-context-resolver.mjs';
