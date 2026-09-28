@@ -1230,8 +1230,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 1075,
-      "sha256": "cd93db5cc7c3095420fc23e5583604d268c5df602635239772008ee124e5aea2"
+      "bytes": 1185,
+      "sha256": "75fa68fc00b4fee54fc38f37fd22df2e722910653eb9817c28b167f4bf9faf24"
     },
     {
       "path": "public/branding/codee-logo.png",
