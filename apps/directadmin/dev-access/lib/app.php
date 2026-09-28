@@ -2,8 +2,40 @@
 function h($v){return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
 function env_user(){return getenv('USERNAME') ?: get_current_user();}
 function home_dir(){ $u=env_user(); $p=@posix_getpwnam($u); return ($p&&isset($p['dir']))?$p['dir']:(getenv('HOME')?:'/tmp'); }
-function csrf(){ if(session_status()!==PHP_SESSION_ACTIVE) session_start(); if(empty($_SESSION['tda_csrf'])) $_SESSION['tda_csrf']=bin2hex(random_bytes(24)); return $_SESSION['tda_csrf']; }
-function check_csrf(){ if(session_status()!==PHP_SESSION_ACTIVE) session_start(); return isset($_POST['csrf'],$_SESSION['tda_csrf']) && hash_equals($_SESSION['tda_csrf'],$_POST['csrf']); }
+function csrf_secret_file(){ return home_dir().'/.titan-dev-access/csrf.key'; }
+function csrf_secret(){
+ $path=csrf_secret_file(); $dir=dirname($path);
+ if(!is_dir($dir)){ @mkdir($dir,0700,true); }
+ @chmod($dir,0700);
+ if(!is_file($path)){
+  $secret=bin2hex(random_bytes(32));
+  $tmp=$path.'.tmp.'.getmypid();
+  if(file_put_contents($tmp,$secret,LOCK_EX)===false) throw new RuntimeException('Unable to create CSRF secret.');
+  @chmod($tmp,0600);
+  if(!@rename($tmp,$path)){ @unlink($tmp); throw new RuntimeException('Unable to install CSRF secret.'); }
+ }
+ @chmod($path,0600);
+ $secret=trim((string)@file_get_contents($path));
+ if(strlen($secret)<32) throw new RuntimeException('Invalid CSRF secret.');
+ return $secret;
+}
+function csrf_context(){
+ return env_user().'|'.(getenv('ACCOUNT')?:'').'|'.(getenv('SESSION_ID')?:getenv('session')?:'directadmin');
+}
+function csrf(){
+ $bucket=(int)floor(time()/1800);
+ $mac=hash_hmac('sha256',csrf_context().'|'.$bucket,csrf_secret());
+ return $bucket.'.'.$mac;
+}
+function check_csrf(){
+ if(empty($_POST['csrf']) || !is_string($_POST['csrf'])) return false;
+ $parts=explode('.',$_POST['csrf'],2);
+ if(count($parts)!==2 || !ctype_digit($parts[0])) return false;
+ $bucket=(int)$parts[0]; $now=(int)floor(time()/1800);
+ if($bucket<$now-1 || $bucket>$now+1) return false;
+ $expected=hash_hmac('sha256',csrf_context().'|'.$bucket,csrf_secret());
+ return hash_equals($expected,$parts[1]);
+}
 function key_dir(){return home_dir().'/.ssh';}
 function key_file(){return key_dir().'/authorized_keys';}
 function valid_pubkey($k){return preg_match('/^(ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp(256|384|521))\s+[A-Za-z0-9+\/=]+(?:\s+.*)?$/',trim($k));}
