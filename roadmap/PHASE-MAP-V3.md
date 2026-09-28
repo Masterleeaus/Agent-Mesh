@@ -9,7 +9,7 @@ Primary owners / convergence targets:
 - TZ-ROADMAP-18 — security identity/session/credentials.
 - TZ-ROADMAP-17 — reliability/resilience/DR.
 - TZ-ROADMAP-50 — Storage Fabric.
-- P0 #811 — canonical runtime/control/evidence persistence where SQLite-owned, persistent Workforce Host, restart/idempotency; operational business-domain materialization follows #1051 Frappe/ERPNext.
+- P0 #811 — persistent Titan Runtime/Workforce, native FSM + runtime/control/evidence persistence convergence, restart/idempotency; Frappe/#1051 remains optional extension-provider storage where deliberately enabled.
 - repository-wide `company_id` enforcement under TZ-ROADMAP-52.
 
 Required architectural delta:
@@ -80,7 +80,7 @@ One can disconnect/reconnect through Zero/Go/Hub while ongoing governed work sur
 
 Primary owners:
 - P0 #812 DirectAdmin Business Node control plane / Server Node.
-- P1 #1051 Frappe/ERPNext operational Business Engine.
+- P1 #1051 optional Frappe/ERPNext Extension Business Engine provider.
 - P1 #1049 shared DirectAdmin Cockpit SDK.
 - P1 #1044–#1062 Business Node cockpits/plugins, including Surfaces, Channels, Interaction and Decision.
 - P1 #1053 Communications, #1054 Finance & Commerce, #1055 Intelligence, #1056 Governance & Assurance.
@@ -98,7 +98,7 @@ Required delta:
 - establish DirectAdmin as the first **Titan Business Node control plane / meta-orchestration engine**, sitting at the server and managing the business's complete digital system estate;
 - persistent TypeScript/Node workforce runtime coordinated through the Business Node control plane;
 - install/manage bounded DA/API/MCP capabilities for applications/sites, WordPress/Microweber, Git, Node/PHP, domains/DNS/TLS, email/Rspamd, DB/Redis, security, backup/restore, services, devices/nodes, diagnostics and governed terminal;
-- install/manage **Frappe Framework + selected ERPNext capabilities as the first operational Business Engine**, behind stable Titan Domain APIs and per-company provider site/database isolation;
+- optionally install/manage **Frappe Framework + selected ERPNext extension capabilities**, behind stable Titan Domain APIs and per-company provider site/database isolation, without replacing mature native Titan FSM capabilities by default;
 - DirectAdmin orchestrates Business Engine provisioning, health, migrations, backup/restore, reconciliation and upgrades; Frappe does not become Titan authority, Workforce, Evidence Ledger or customer-facing UI;
 - DirectAdmin Business Node cockpits coordinate Zero, Workforce, Operations, Foundry, Web/Portal and Dev as one expert/operator meta-layer over canonical Titan systems;
 - capability discovery never creates authority;
@@ -113,7 +113,7 @@ Required delta:
 - software-intelligence and Foundry Recipe metadata preserve reusable understanding of capabilities, APIs, schemas, tenancy, dependencies, integrations, tests, provenance and upstream maintenance history.
 
 Exit gate:
-A clean DirectAdmin VPS can install, run, upgrade, recover and verify the canonical Titan Business Node control plane, hosted Workforce, and isolated Frappe Business Engine tenancy. The control plane can manage domains, email, sites, applications, data services, backups, security, nodes/devices and deployments from one governed operations environment. The same business identity/evidence/authority semantics remain portable without DirectAdmin or Frappe, and the Node can materialize/retire verified Titan Packages and Mission workspaces without creating parallel factual truth or authority.
+A clean DirectAdmin VPS can install, run, upgrade, recover and verify the canonical Titan Business Node control plane, hosted Workforce and native FSM; when enabled, isolated Frappe Extension Business Engine tenancy. The control plane can manage domains, email, sites, applications, data services, backups, security, nodes/devices and deployments from one governed operations environment. The same business identity/evidence/authority semantics remain portable without DirectAdmin or Frappe, and the Node can materialize/retire verified Titan Packages and Mission workspaces without creating parallel factual truth or authority.
 
 ## Phase 5 — Constitution & Earned Autonomy
 
