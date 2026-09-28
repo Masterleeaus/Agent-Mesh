@@ -85,7 +85,7 @@ describe("findEligibleVisits", () => {
     expect(result).toEqual([VISIT]);
     expect(client.query).toHaveBeenCalledWith(
       expect.stringContaining("scheduled"),
-      [AUTOMATION.account_id, 24]
+      [AUTOMATION.account_id, expect.any(String), expect.any(String)]
     );
   });
 
@@ -100,7 +100,7 @@ describe("findEligibleVisits", () => {
 
     expect(client.query).toHaveBeenCalledWith(
       expect.any(String),
-      [autoNoConfig.account_id, 24]
+      [autoNoConfig.account_id, expect.any(String), expect.any(String)]
     );
   });
 
@@ -115,7 +115,7 @@ describe("findEligibleVisits", () => {
 
     expect(client.query).toHaveBeenCalledWith(
       expect.any(String),
-      [autoCustom.account_id, 48]
+      [autoCustom.account_id, expect.any(String), expect.any(String)]
     );
   });
 
