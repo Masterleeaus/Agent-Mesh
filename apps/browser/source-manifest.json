@@ -11,7 +11,7 @@
     "node_modules/**",
     ".tmp/**"
   ],
-  "fileCount": 1065,
+  "fileCount": 1066,
   "files": [
     {
       "path": "CONVERSATION-BINDING-FIX.md",
@@ -1230,8 +1230,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 1075,
-      "sha256": "cd93db5cc7c3095420fc23e5583604d268c5df602635239772008ee124e5aea2"
+      "bytes": 1135,
+      "sha256": "9757c9fdc907b33e0b62abb6073c4d852df732cabdaa496c6496ada8d6aac10d"
     },
     {
       "path": "public/branding/codee-logo.png",
@@ -1930,8 +1930,8 @@
     },
     {
       "path": "src/integration/workforce-host-contract.js",
-      "bytes": 648,
-      "sha256": "d5e4b00a1ab150b9b29218b53ce6f789900c22d91bfe07fadd31844a2c6ac9e7"
+      "bytes": 659,
+      "sha256": "6dd35ec3e31c8b2afa6b979f1da0b58ca8aeb836158acb3754e658f63cddd0c9"
     },
     {
       "path": "src/integration/workforce-receiver-adapter.js",
@@ -2190,8 +2190,8 @@
     },
     {
       "path": "src/lib/approved-network-transport.js",
-      "bytes": 4908,
-      "sha256": "f024aea145a218be896453f44f9c2248b89e276aa853d8ecf8bdfb555a2d4ece"
+      "bytes": 4834,
+      "sha256": "bbdce0c743c01bf80ac7246b9169ff04c09cbb6331834d19913068705973a52a"
     },
     {
       "path": "src/lib/browser-host-integration.js",
@@ -2260,8 +2260,8 @@
     },
     {
       "path": "src/lib/service-worker.js",
-      "bytes": 263037,
-      "sha256": "4c13fcda0092e867ebcd7985ad5b28ab2bc5f847fa3d9caea999b9fb3b28071f"
+      "bytes": 259224,
+      "sha256": "4bd805a9f4ac72a80908aeffa05dd8e4495f5a9d7a287f21ceef76957abaa350"
     },
     {
       "path": "src/lib/titan-zero-host-integration.js",
@@ -2845,8 +2845,8 @@
     },
     {
       "path": "src/workforce/titan-workforce-gateway.js",
-      "bytes": 7347,
-      "sha256": "d26ce90dfd75b3c96f9a7139c44f6f3c1d7b74cd3f5fb620b73f0bc4b7d371d0"
+      "bytes": 7370,
+      "sha256": "5b3f6d524be3b6e9a72d7fbe7dfc59a6b5fea8821448d5f1eccf3e4322ca2e80"
     },
     {
       "path": "src/workforce/tool-request.js",
@@ -4162,6 +4162,11 @@
       "path": "tests/test-preferences-concurrent-runtime-updates.js",
       "bytes": 1949,
       "sha256": "3ae4589f781d9d3785fecdd3b11c4e3dfcf8db86c7caa2e025fd8671a8a6bce1"
+    },
+    {
+      "path": "tests/test-production-reachability.js",
+      "bytes": 1342,
+      "sha256": "b80f4cbc19e9df6f3f49c7a86000c3159ed9a72e0492a0a78e8d6ad90862188c"
     },
     {
       "path": "tests/test-project-memory-candidate-store.js",
