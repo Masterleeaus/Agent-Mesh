@@ -61,11 +61,9 @@
     "src/surface/index.ts",
     "src/workforce-coverage.ts",
     "src/business-reality.ts",
-    "src/constitution.ts"
-    "src/governance/constitution.ts"
-    "src/recovery/capsule.ts"
+    "src/constitution.ts",
+    "src/governance/constitution.ts",
+    "src/recovery/capsule.ts",
     "src/federation/contract.ts"
-    "src/governance/assurance.ts"
-    "src/ported/titan-connect/channel-binding.ts"
   ]
 }
