@@ -5,7 +5,7 @@ on:
       - 'services/workforce/**'
       - 'packages/workforce/**'
       - 'pnpm-workspace.yaml'
-      - '.github/workflows/agent3-workforce.yml'
+      - '.github/workflows/workforce-verification.yml'
   workflow_dispatch:
 jobs:
   workforce:

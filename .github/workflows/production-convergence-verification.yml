@@ -1,4 +1,4 @@
-name: Agent 4 Final Production Verification
+name: Production Convergence Verification
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
       - "services/workforce/**"
       - "packages/runtime/agent-runtime/**"
       - "packages/tools/execution-gateway.mjs"
-      - ".github/workflows/agent4-final-production-verification.yml"
+      - ".github/workflows/production-convergence-verification.yml"
   workflow_dispatch:
 
 permissions:

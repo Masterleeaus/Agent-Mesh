@@ -1,54 +1,71 @@
-## Agent Mesh PR
+## Titan Zero Agent / Codex PR
 
-> Preferred creation path: `python3 .github/scripts/open-agent-pr.py` from the canonical `agent/<subgoal-id>` branch.
+> Preferred agent branch: exactly `agent/<subgoal-id>`. One subgoal, one branch, through merge.
 
 **Linked issue:** Closes #
 **Subgoal ID:** `TZ-...`
-**Goal ID:** `TZ-...`
 **Claim branch:** `agent/TZ-...`
 **Base main SHA:** `...`
 
-> The claim branch must be exactly `agent/<subgoal-id>`. Do not add worker names, suffixes or timestamps.
+### Outcome
+State the observable outcome completed by this PR.
 
-### Objective
+### Scope and boundaries
+Changed boundaries:
+- [ ] apps
+- [ ] services
+- [ ] packages
+- [ ] persistence/migrations
+- [ ] authority/execution/evidence/security
+- [ ] infra/deployment
+- [ ] docs/tooling only
 
-Describe the remaining roadmap outcome completed by this PR.
+Why each checked boundary had to change:
+
+### Canonical owners reused
+List the existing packages/services/contracts reused. If a new abstraction was added, explain why no canonical owner already existed.
 
 ### Files changed
-
-- 
+-
 
 ### Verification
+**Required tier:** 0 / 1 / 2 / 3
 
-Commands/checks run:
-
+Exact commands executed:
 ```text
 
 ```
 
 Results:
+- [ ] Targeted tests passed
+- [ ] Relevant lint/typecheck/build passed
+- [ ] Integration checks passed when cross-boundary
+- [ ] `pnpm gate:fast` passed when required/supported
+- [ ] `pnpm gate` passed when Tier 3 and supported
+- [ ] Failure/negative paths were tested where relevant
+- [ ] Any unrun required check is documented below with exact blocker and residual risk
 
-- [ ] Agent Claim Gate passes
-- [ ] Targeted tests pass
-- [ ] Relevant type/build/lint checks pass or gaps are explicitly documented
-- [ ] No unexplained regression introduced
+Unrun/blocked checks and residual risk:
 
-### Architecture / authority check
-
+### Architecture / authority
 - [ ] `company_id` remains the canonical company boundary
 - [ ] No duplicate surface/adapter business logic introduced
-- [ ] Command Bus/governed authority boundaries preserved where applicable
-- [ ] Device/privacy/Cost Sovereignty behavior preserved
-- [ ] No Titan Code production runtime dependency introduced
-- [ ] Existing capability/workforce contracts reused before adding parallel definitions
+- [ ] Existing canonical capability/workforce/runtime contracts were reused before adding new definitions
+- [ ] Consequential actions preserve governed decision/authority/execution
+- [ ] Provider acknowledgement is not represented as verified outcome
+- [ ] Evidence/provenance, privacy, idempotency, and Cost Sovereignty are preserved where applicable
+- [ ] No Titan Code/Codex development tooling became a production runtime dependency
 
-### Completion / remaining work
+### Concurrency / branch discipline
+- [ ] Work remained on the single canonical claim branch
+- [ ] Changed files/current `main` were re-read before finalization
+- [ ] Conflicts were resolved on this branch, not by creating a replacement branch
+- [ ] Verification invalidated by conflict resolution was rerun
 
-State why this subgoal/pass is complete, or list only the verified remaining work.
+### Completion evidence
+Explain how the issue acceptance criteria are proven by code/tests/evidence. Do not use “done” or “complete” as a substitute for proof.
 
-### Evidence / risk / rollback
+### Risk / compatibility / rollback
+Describe migrations, compatibility implications, rollback path, security/privacy/cost impact, and any separately tracked follow-up.
 
-Describe evidence, migration/compatibility implications, rollback path, and any security/privacy/cost impact.
-
-
-> **Automatic handoff note:** Agent PRs are normally created/refreshed by `.github/workflows/agent-pr-handoff.yml`. Builders should enrich verification/completion/risk evidence when the automatic text is insufficient; Manager review remains mandatory.
+> GitHub refs, commits, checks, PRs, merge state, and issue state are lifecycle authority. Agent prose is not.

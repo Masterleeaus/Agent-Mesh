@@ -10,8 +10,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "roadmap" / "SUBGOAL-ISSUE-MANIFEST.json"
 GOALS_DIR = ROOT / "roadmap" / "goals"
-SUBGOAL_RE = re.compile(r"^(TZ-(?:G00|ROADMAP-\d+)-SG-\d+)$")
-BRANCH_RE = re.compile(r"^agent/(TZ-(?:G00|ROADMAP-\d+)-SG-\d+)$")
+SUBGOAL_RE = re.compile(r"^(TZ-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
+BRANCH_RE = re.compile(r"^agent/(TZ-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
 CANONICAL_GOAL_IDS = {"TZ-G00"} | {f"TZ-ROADMAP-{i:02d}" for i in range(1, 55)}
 
 
@@ -122,18 +122,17 @@ def run_json(args):
 
 def missing_agent_pr_structure(body: str):
     required_sections = [
-        "## Agent Mesh PR",
-        "### Objective",
+        "## Titan Zero Agent / Codex PR",
+        "### Outcome",
         "### Files changed",
         "### Verification",
-        "### Architecture / authority check",
-        "### Completion / remaining work",
-        "### Evidence / risk / rollback",
+        "### Architecture / authority",
+        "### Completion evidence",
+        "### Risk / compatibility / rollback",
     ]
     required_metadata = [
         "**Linked issue:**",
         "**Subgoal ID:**",
-        "**Goal ID:**",
         "**Claim branch:**",
     ]
     missing = [section for section in required_sections if section not in body]
@@ -167,7 +166,7 @@ def validate_pull_request():
                 "agent/TZ-ROADMAP-31-SG-01"
             )
         print(
-            f"Control/Manager PR branch {head!r}: roadmap integrity verified; "
+            f"Non-agent PR branch {head!r}: roadmap integrity verified; "
             "agent claim checks are not applicable."
         )
         return
@@ -175,11 +174,12 @@ def validate_pull_request():
 
     item = manifest_by_id.get(sid)
     if not item:
-        fail(f"{sid} is not present in the canonical roadmap manifest")
+        print(f"Codex mission {sid} is not in the legacy roadmap manifest; issue ownership will be validated from GitHub.")
 
-    status = str(item.get("status") or "").upper()
-    if status in {"COMPLETE", "SUPERSEDED", "SUPERSEDED_BY_ARCHITECTURE"}:
-        fail(f"{sid} is not claimable because roadmap status is {status}")
+    if item:
+        status = str(item.get("status") or "").upper()
+        if status in {"COMPLETE", "SUPERSEDED", "SUPERSEDED_BY_ARCHITECTURE"}:
+            fail(f"{sid} is not claimable because roadmap status is {status}")
 
     if sid not in title and sid not in body:
         fail(f"PR must name its claimed subgoal ID {sid}")
@@ -187,7 +187,7 @@ def validate_pull_request():
     missing_structure = missing_agent_pr_structure(body)
     if missing_structure:
         fail(
-            "agent PR body is missing required Agent Mesh evidence structure: "
+            "agent PR body is missing required Codex evidence structure: "
             + ", ".join(missing_structure)
         )
 
@@ -263,29 +263,29 @@ def main():
 
     if args.self_test:
         validate_roadmap_integrity()
-        valid_body = """## Agent Mesh PR
+        valid_body = """## Titan Zero Agent / Codex PR
 **Linked issue:** Closes #1
 **Subgoal ID:** TZ-ROADMAP-01-SG-01
 **Goal ID:** TZ-ROADMAP-01
 **Claim branch:** agent/TZ-ROADMAP-01-SG-01
-### Objective
+### Outcome
 x
 ### Files changed
 x
 ### Verification
 x
-### Architecture / authority check
+### Architecture / authority
 x
-### Completion / remaining work
+### Completion evidence
 x
-### Evidence / risk / rollback
+### Risk / compatibility / rollback
 x
 """
         assert missing_agent_pr_structure(valid_body) == []
         assert "### Verification" in missing_agent_pr_structure(
             valid_body.replace("### Verification", "### Checks")
         )
-        print("Agent PR evidence-structure self-test OK")
+        print("Codex PR evidence-structure self-test OK")
         return
     validate_pull_request()
 
