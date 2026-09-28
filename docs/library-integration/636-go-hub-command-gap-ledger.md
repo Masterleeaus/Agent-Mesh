@@ -1,5 +1,7 @@
 # #636 — Titan Go, Hub and Command application masters
 
+> Architecture reading note (Blueprint v3): The pass log below records earlier work in the full `apps/web` base application, including install manifests and chat-first routes. Its older suggestion of separate Go/Hub PWAs and a Command/base split is superseded. The target is one separate installable PWA with `zero`, `go`, and `hub` governed modes, plus one native mobile app with the same modes. `apps/web` remains the full base web application; its current PWA-era components and manifests are migration/reuse evidence, not proof the separate target PWA exists. Preserve reachable base-web flows while #542/#809 establish parity and the distinct deployment boundary.
+
 ## Pass 1 — canonical/donor topology audit
 
 ### Repository findings
