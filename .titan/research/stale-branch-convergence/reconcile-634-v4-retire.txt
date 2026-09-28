@@ -1,0 +1,1 @@
+Temporary retirement marker; seven of eight files already match main and current business-ops.ts preserves newer field exports without duplicate people.list.
