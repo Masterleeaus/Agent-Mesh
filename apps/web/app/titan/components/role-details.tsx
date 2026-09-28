@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AlertTriangle, CalendarDays, Camera, Check, ChevronRight, Clock3, MapPin, MessageSquare, Navigation, PackageCheck, Route, ShieldCheck, Sparkles, Wifi, WifiOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import type { TitanRole } from "./role-chat";
 import {
   applyGoReceipt,
@@ -108,7 +108,8 @@ export function GoNext() {
       return;
     }
     if (result.status === "queued_offline") {
-      setQueue((items) => [...items, result.queue_item]);
+      const queueItem = result.queue_item;
+      if (queueItem) setQueue((items) => [...items, queueItem]);
       setNotice("Queued offline. Job state has not changed.");
       return;
     }
@@ -137,7 +138,8 @@ export function GoNext() {
 
   function reportIssue() {
     const result = prepareGoIssue(session, { type: "access_problem", note: "Rear entrance is not accessible.", online });
-    if (result.queue_item) setQueue((items) => [...items, result.queue_item]);
+    const queueItem = result.queue_item;
+    if (queueItem) setQueue((items) => [...items, queueItem]);
     setNotice(result.status === "queued_offline" ? "Critical issue queued offline for dispatch." : "Access issue sent to dispatch with job context.");
   }
 
