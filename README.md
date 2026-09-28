@@ -299,7 +299,7 @@ Titan Zero is primarily a TypeScript system built with a modern full-stack stack
 
 ## Development
 
-The commands below start the inherited web/worker development stack. They do not install the DirectAdmin Business Node or Frappe Business Engine.
+The commands below start the inherited PostgreSQL-backed base web development stack. They do not install the DirectAdmin Business Node or Frappe Business Engine. `pnpm db:migrate` is the separate local SQLite migration command; this web stack uses `pnpm db:migrate:server`. The retired `scripts/bootstrap.sh` intentionally exits with an error.
 
 ### Prerequisites
 
@@ -312,8 +312,9 @@ The commands below start the inherited web/worker development stack. They do not
 ```bash
 cp .env.example .env
 pnpm install
-docker compose -f infra/compose.dev.yml up -d postgres redis
-pnpm db:migrate
+docker compose -f infra/compose.dev.yml up -d --wait postgres
+export DATABASE_URL=postgresql://ai_fsm:ai_fsm_dev_password@localhost:5432/ai_fsm
+MIGRATION_DATABASE_URL="$DATABASE_URL" pnpm db:migrate:server
 pnpm dev:web
 ```
 
