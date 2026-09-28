@@ -108,7 +108,8 @@ export function GoNext() {
       return;
     }
     if (result.status === "queued_offline") {
-      if (result.queue_item) setQueue((items) => [...items, result.queue_item]);
+      const queueItem = result.queue_item;
+      if (queueItem) setQueue((items) => [...items, queueItem]);
       setNotice("Queued offline. Job state has not changed.");
       return;
     }
