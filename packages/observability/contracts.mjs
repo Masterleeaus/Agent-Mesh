@@ -7,6 +7,16 @@ const SEVERITIES=new Set(['debug','info','warn','error','critical']);
 const clone=value=>value==null?value:JSON.parse(JSON.stringify(value));
 const text=(value,field)=>{const out=String(value??'').trim();if(!out)throw new TypeError(`${field}-required`);return out};
 const optional=value=>{const out=String(value??'').trim();return out||null};
+const REDACTED_KEY=/^(?:authorization|cookie|password|secret|token|api[_-]?key|private[_-]?key|prompt|email|phone|mobile|address|customer(?:[_-]?(?:data|name|email|phone|mobile|address))?)$/i;
+function redactObservationValue(value,key=null){
+  if(REDACTED_KEY.test(String(key??'')))return '[REDACTED]';
+  if(Array.isArray(value))return value.map(item=>redactObservationValue(item));
+  if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([nestedKey,nested])=>[nestedKey,redactObservationValue(nested,nestedKey)]));
+  return value;
+}
+export function redactObservationPayload(value){
+  return Object.freeze(clone(redactObservationValue(value)));
+}
 
 function rejectLegacy(value,path='observation'){
   if(!value||typeof value!=='object')return;
@@ -49,7 +59,7 @@ export function normalizeObservation(raw,{company_id:expectedCompanyId=null,cloc
     operation_id:optional(raw.operation_id),
     causation_id:optional(raw.causation_id),
     actor_id:optional(raw.actor_id),
-    payload:Object.freeze(clone(raw.payload??raw.detail??{})),
+    payload:redactObservationPayload(raw.payload??raw.detail??{}),
     tags:Object.freeze([...new Set((Array.isArray(raw.tags)?raw.tags:[]).map(x=>String(x??'').trim()).filter(Boolean))]),
     observability_not_authority:true,
     grants_authority:false,
