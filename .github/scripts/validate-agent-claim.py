@@ -36,12 +36,13 @@ def validate_roadmap_integrity():
     for item in manifest:
         sid = item.get("subgoal_id")
         gid = item.get("goal_id")
-        if not isinstance(sid, str) or not SUBGOAL_RE.match(sid):
-            errors.append(f"invalid subgoal_id in manifest: {sid!r}")
-            continue
         if gid not in CANONICAL_GOAL_IDS:
-            # Ignore stale/non-canonical manifest rows. Canonical roadmap authority is
-            # the goal-file set below; historical Agent Mesh claims must not expand it.
+            # Ignore stale/non-canonical manifest rows before validating legacy TZ IDs.
+            # Canonical roadmap authority is the goal-file set below; historical Agent
+            # Mesh / numbered Codex issue rows must not expand it.
+            continue
+        if not isinstance(sid, str) or not SUBGOAL_RE.match(sid):
+            errors.append(f"invalid subgoal_id in canonical manifest row: {sid!r}")
             continue
         if sid in seen:
             errors.append(f"duplicate manifest subgoal_id: {sid}")
