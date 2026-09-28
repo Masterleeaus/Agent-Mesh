@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AlertTriangle, CalendarDays, Camera, Check, ChevronRight, Clock3, MapPin, MessageSquare, Navigation, PackageCheck, Route, ShieldCheck, Sparkles, Wifi, WifiOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import type { TitanRole } from "./role-chat";
 import {
   applyGoReceipt,
