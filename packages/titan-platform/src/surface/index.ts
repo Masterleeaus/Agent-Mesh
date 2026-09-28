@@ -135,6 +135,13 @@ export interface SurfaceTransport {
   submitCommand(intent: SurfaceCommandIntent): Promise<SurfaceReceiptInput>;
 }
 
+export interface SurfaceProjectionContext {
+  company_id: string;
+  surface: TitanSurface;
+  revision?: string;
+  now?: string;
+}
+
 function record(value: unknown, label: string): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new TypeError(`${label}-object-required`);
   if (Object.prototype.hasOwnProperty.call(value, "tenant_company_id") || Object.prototype.hasOwnProperty.call(value, "tenant_id")) {
@@ -209,15 +216,35 @@ export function createSurfaceProjection(input: SurfaceProjectionInput): SurfaceP
   });
 }
 
+export function assertSurfaceProjectionContext(
+  projection: SurfaceProjection,
+  context: SurfaceProjectionContext,
+): SurfaceProjection {
+  record(projection, "surface-projection");
+  const company_id = text(context.company_id, "company_id");
+  const expectedSurface = surface(context.surface);
+  if (projection.company_id !== company_id) throw new TypeError("surface-projection-company-mismatch");
+  if (projection.surface !== expectedSurface) throw new TypeError("surface-projection-role-mismatch");
+  if (context.revision !== undefined && projection.revision !== text(context.revision, "surface-revision")) {
+    throw new TypeError("surface-projection-revision-mismatch");
+  }
+  if (projection.authority_neutral !== true || projection.identity_grants_authority !== false || projection.cached_state_grants_authority !== false) {
+    throw new TypeError("surface-authority-contract-invalid");
+  }
+  const now = context.now ?? new Date().toISOString();
+  if (Date.parse(projection.expires_at) <= Date.parse(iso(now, "surface-now"))) {
+    throw new TypeError("surface-projection-expired");
+  }
+  return projection;
+}
+
 export function assertSurfaceCapability(
   projection: SurfaceProjection,
   capabilityId: string,
   operation: string,
   now = new Date().toISOString(),
 ): Readonly<SurfaceCapability> {
-  if (Date.parse(projection.expires_at) <= Date.parse(iso(now, "surface-now"))) {
-    throw new TypeError("surface-projection-expired");
-  }
+  assertSurfaceProjectionContext(projection, { company_id: projection.company_id, surface: projection.surface, now });
   const capability = projection.capabilities.find((entry) => entry.capability_id === capabilityId);
   if (!capability || !capability.operations.includes(operation)) throw new TypeError("surface-capability-not-authorised");
   return capability;
@@ -287,8 +314,7 @@ export function createSurfaceClient(input: { company_id: string; surface: TitanS
     },
     async refreshProjection() {
       const projection = createSurfaceProjection(await input.transport.getProjection({ company_id, surface: clientSurface }));
-      if (projection.company_id !== company_id) throw new TypeError("surface-projection-company-mismatch");
-      if (projection.surface !== clientSurface) throw new TypeError("surface-projection-role-mismatch");
+      assertSurfaceProjectionContext(projection, { company_id, surface: clientSurface });
       currentProjection = projection;
       return projection;
     },

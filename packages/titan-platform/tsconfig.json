@@ -57,6 +57,7 @@
     "src/forecast-contract.ts",
     "src/connector-runtime.ts",
     "src/mcp-projection.ts",
-    "src/mission-authority-policy.ts"
+    "src/mission-authority-policy.ts",
+    "src/surface/index.ts"
   ]
 }
