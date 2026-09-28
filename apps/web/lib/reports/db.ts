@@ -1,3 +1,11 @@
+/**
+ * Business Reality compatibility note:
+ * This base-web module currently projects UI/report state directly from legacy
+ * operational tables. Treat results as operational/derived observations unless
+ * backed by canonical #913 verification/evidence. Target #1046/#393 consumers
+ * should use company-scoped Business Reality projection APIs with freshness,
+ * provenance and verification state; provider/Frappe status does not self-certify.
+ */
 import type { PoolClient } from "pg";
 import { getPool } from "@/lib/db";
 import type { SessionPayload } from "@/lib/auth/session";

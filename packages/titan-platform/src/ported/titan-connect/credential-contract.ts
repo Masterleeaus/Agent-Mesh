@@ -1,3 +1,9 @@
+/**
+ * @deprecated Compatibility Titan Connect donor contract.
+ * Canonical ownership is #403 Provider/Connector SDK, bound to #7 capability identities.
+ * Do not add new production semantics under ported/**; migrate consumers to
+ * the canonical provider/MCP namespace and retain only compatibility exports.
+ */
 export type ConnectorCredentialReference = Readonly<{
   company_id: string;
   credential_ref: string;
@@ -22,7 +28,7 @@ export function createConnectorCredentialReference(input: {
 
 export const CONNECTOR_CREDENTIAL_POLICY=Object.freeze({
   schema:"titan.connect.credential-reference/v1",
-  tenant_boundary:"company_id",
+  tenant_boundary:"company_id-logical",
   material_never_in_contract:true,
   secret_redaction_required:true,
   authority_neutral:true,

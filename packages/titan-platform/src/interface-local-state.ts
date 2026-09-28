@@ -1,3 +1,11 @@
+/**
+ * Company-switch invariant:
+ * A LocalWorkspaceStore is permanently bound to the company_id supplied at
+ * construction. Do not reuse/retag a store when a user switches companies.
+ * Freeze/close the old context and create/load a separately partitioned store;
+ * queued consequential intents are handled by canonical execution/offline
+ * queues, not by this presentation-only sync store.
+ */
 import { assertDeviceIntentBoundary, assertSyncBoundary } from "./interface-boundary-hardening.js";
 type R=Readonly<Record<string,unknown>>;
 export type DeviceNode=Readonly<{device_id:string;company_id:string;actor_id:string;kind:"phone"|"tablet"|"desktop"|"browser"|"edge";trusted:boolean}>;

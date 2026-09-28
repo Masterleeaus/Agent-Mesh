@@ -1,3 +1,9 @@
+/**
+ * @deprecated Compatibility Titan Connect donor contract.
+ * Canonical ownership is #403 Provider/Connector SDK, bound to #7 capability identities.
+ * Do not add new production semantics under ported/**; migrate consumers to
+ * the canonical provider/MCP namespace and retain only compatibility exports.
+ */
 export type ConnectorCapability = Readonly<{
   id: string;
   operation: "read" | "write" | "execute";
@@ -90,7 +96,7 @@ export function createTitanConnectorDescriptor(input: {
 
 export const TITAN_CONNECTOR_CONTRACT = Object.freeze({
   schema: "titan.connect.typescript-contract/v1",
-  tenant_boundary: "company_id",
+  tenant_boundary: "company_id-logical",
   capabilities_are_descriptive: true,
   permissions_are_descriptive: true,
   health_is_descriptive: true,

@@ -7,6 +7,12 @@ import { getEnv } from "../env";
 const COOKIE_NAME = "fsm_session";
 const EXPIRY = "7d";
 
+/**
+ * Legacy base-web session payload.
+ * accountId is a compatibility/provider-local business account context, NOT the
+ * canonical Titan company_id. Canonical runtime calls must resolve/bind an
+ * explicit company_id before authority/execution.
+ */
 export interface SessionPayload {
   userId: string;
   accountId: string;
@@ -51,10 +57,10 @@ export async function getSession(): Promise<SessionPayload | null> {
 
   const user = await portableQueryOne<UserSessionRow>(
     `SELECT u.id,
-            COALESCE(m.account_id, u.account_id) AS account_id,
-            COALESCE(m.role, u.role) AS role
+            m.account_id AS account_id,
+            m.role AS role
        FROM users u
-       LEFT JOIN business_memberships m
+       JOIN business_memberships m
          ON m.user_id = u.id
         AND m.account_id = $2
         AND m.status = 'active'

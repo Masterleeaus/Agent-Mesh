@@ -10,6 +10,13 @@ export interface StorageClient {
   transaction<T>(fn: (tx: StorageClient) => Promise<T>): Promise<T>;
   close(): Promise<void>;
 }
+/**
+ * Company-context storage facade.
+ * IMPORTANT: the current generic SQL adapter does not inject a company predicate
+ * into arbitrary SQL. companyId is context metadata, not an isolation guarantee.
+ * Canonical company-scoped repositories must enforce company_id structurally in
+ * their own query/provider contracts; do not treat forCompany() as authorization.
+ */
 export interface CompanyStorage {
   readonly companyId: string;
   query<T = Record<string, unknown>>(sql: string, params?: readonly unknown[]): Promise<QueryResult<T>>;
@@ -73,6 +80,7 @@ export function createSqliteStorage(filename = process.env.SQLITE_PATH ?? ".tita
   return client;
 }
 
+/** @deprecated for security-sensitive domain access until structural scoping is enforced. */
 export function forCompany(storage: StorageClient, rawCompanyId: string): CompanyStorage {
   const companyId = requireCompanyId(rawCompanyId);
   return {
