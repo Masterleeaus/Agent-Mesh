@@ -7,7 +7,7 @@ import type { AutomationRow, RunResult } from "./types.js";
 async function advanceBy(client: DatabaseClient, automationId: string, amount: number, unit: "minutes" | "hours" | "days"): Promise<void> {
   const dialect = databaseDialect(client);
   if (dialect === "postgres") {
-    await client.query(`UPDATE automations SET last_run_at=now(), next_run_at=now() + ($1 || ' ${unit}')::interval, updated_at=now() WHERE id=$2`, [String(amount), automationId]);
+    await client.query(`UPDATE automations SET last_run_at = now(), next_run_at = now() + interval '${amount} ${unit}', updated_at = now() WHERE id = $1`, [automationId]);
     return;
   }
   if (dialect === "mysql") {
@@ -35,7 +35,7 @@ export async function advanceSeasonalNextRun(client: DatabaseClient, automation:
     const nextStart = nextSeasonStartDate(season).toISOString();
     const dialect = databaseDialect(client);
     const now = dialect === "postgres" ? "now()" : dialect === "mysql" ? "CURRENT_TIMESTAMP" : "datetime('now')";
-    await client.query(`UPDATE automations SET last_run_at=${now}, next_run_at=$1, updated_at=${now} WHERE id=$2`, [nextStart, automation.id]);
+    await client.query(`UPDATE automations SET last_run_at = ${now}, next_run_at = $1, updated_at = ${now} WHERE id = $2`, [nextStart, automation.id]);
     logger.info("seasonal-reminder: out of season, advancing next_run_at", { automationId: automation.id, season, nextStart });
     return;
   }
