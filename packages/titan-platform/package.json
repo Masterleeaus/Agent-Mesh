@@ -41,7 +41,8 @@
     "./forecast-contract": "./src/forecast-contract.ts",
     "./connector-runtime": "./src/connector-runtime.ts",
     "./mcp-projection": "./src/mcp-projection.ts",
-    "./workforce-coverage": "./src/workforce-coverage.ts"
+    "./workforce-coverage": "./src/workforce-coverage.ts",
+    "./business-reality": "./src/business-reality.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
