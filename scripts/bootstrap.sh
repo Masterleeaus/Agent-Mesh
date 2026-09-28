@@ -5,6 +5,6 @@ cp -n .env.example .env || true
 pnpm install
 docker compose -f infra/compose.dev.yml up -d postgres
 export DATABASE_URL=${DATABASE_URL:-postgresql://ai_fsm:ai_fsm_dev_password@localhost:5432/ai_fsm}
-MIGRATION_DATABASE_URL="$DATABASE_URL" pnpm db:migrate || true
+MIGRATION_DATABASE_URL="$DATABASE_URL" pnpm db:migrate:server
 
 echo "bootstrap complete"
