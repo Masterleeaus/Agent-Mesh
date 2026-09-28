@@ -58,6 +58,6 @@ async function send(configInput,requestInput){
  return {request,receipt:validateReceipt(receipt,request),projection:validateProjection(response.json?.projection||null,request),data:response.json?.data||null};
 }
 async function call(configInput,operation,options={}){const config=normalizeConfig(configInput);const request=createRequest({...options,company_id:config.company_id,actor_id:config.actor_id,operation,payload:options.payload||{}});return send(config,request);}
-async function probe(config){return call(config,'deployment.gateway.status',{payload:{client:'titan-code',contract:'v1'}});}
+async function probe(config){return call(config,'deployment.gateway.status',{payload:{client:'titan-browser-node',contract:'v1'}});}
 global.CodeeTitanWorkforceGateway=Object.freeze({READ_OPERATIONS:Object.freeze([...READ_OPERATIONS]),PROPOSE_OPERATIONS:Object.freeze([...PROPOSE_OPERATIONS]),normalizeConfig,publicConfig,createRequest,validateReceipt,validateProjection,send,call,probe,sanitizePayload});
 })(typeof globalThis!=='undefined'?globalThis:this);
