@@ -67,5 +67,6 @@
     "src/federation/contract.ts"
     "src/governance/assurance.ts"
     "src/ported/titan-connect/channel-binding.ts"
+    "src/workforce-manager/manager-contract.ts"
   ]
 }
