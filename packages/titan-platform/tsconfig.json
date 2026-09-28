@@ -47,6 +47,7 @@
     "src/ported/titan-connect/credential-contract.ts",
     "src/ported/titan-connect/mcp-host-contract.ts",
     "src/knowledge-governance.ts",
-    "src/mission-planning.ts"
+    "src/mission-planning.ts",
+    "src/evidence-to-cash.ts"
   ]
 }
