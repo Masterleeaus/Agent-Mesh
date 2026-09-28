@@ -106,3 +106,5 @@ export * from "./provider";
 export * from "./extension";
 
 export * from "./compliance";
+
+export * from "./value-attribution";
