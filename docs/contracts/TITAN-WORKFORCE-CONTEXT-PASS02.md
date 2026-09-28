@@ -22,5 +22,5 @@ Pass 2 adds a deterministic assembler over the Pass 1 reference-first contract. 
 3. Actor identity is provenance only; an explicit authority source remains mandatory.
 4. Customer/location/job/workflow data is not copied into the context envelope.
 5. Optional context records may be omitted when the task does not need them.
-6. Current business records are operational projections, re-read through the owning domain when execution requires current values; accepted Business Evidence Ledger entries remain factual history.
+6. Canonical business records remain source of truth and are re-read by the owning domain when execution requires current values.
 7. The assembler is side-effect free and introduces no persistence or second business database.

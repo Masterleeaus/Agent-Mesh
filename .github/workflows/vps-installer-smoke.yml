@@ -1,4 +1,4 @@
-name: VPS SQLite production smoke
+name: Native Titan FSM VPS production smoke
 
 on:
   pull_request:
@@ -14,12 +14,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  sqlite-compose-and-build:
+  native-fsm-compose-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Validate SQLite VPS scripts and topology
+      - name: Validate native Titan FSM VPS scripts and topology
         shell: bash
         run: |
           set -euo pipefail
@@ -34,7 +34,7 @@ jobs:
           export TZ_DATA_ROOT="$RUNNER_TEMP/titan-data"
           docker compose --env-file .env.vps -f infra/compose.vps.yml config > "$RUNNER_TEMP/compose.yml"
           if grep -Eiq '(^|[[:space:]])postgres:|postgresql://' "$RUNNER_TEMP/compose.yml"; then
-            echo 'PostgreSQL leaked into canonical VPS topology' >&2
+            echo 'Unexpected PostgreSQL dependency leaked into the current native SQLite VPS topology' >&2
             exit 1
           fi
           grep -q 'DATABASE_DIALECT: sqlite' "$RUNNER_TEMP/compose.yml"

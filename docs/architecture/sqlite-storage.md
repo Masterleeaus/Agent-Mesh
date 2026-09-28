@@ -1,16 +1,16 @@
-# SQLite local and runtime persistence
+# SQLite-first persistence
 
-SQLite is the canonical local/runtime persistence target where the current owner defines it. Local/device/edge operation must not require PostgreSQL or Redis. The Business Evidence Ledger (#913) owns factual history. Mature native FSM business domains remain Titan-owned and must work without Frappe; their active persistence is not a donor merely because Frappe has similar modules. Company-owned operational persistence is physically isolated database-per-company while retaining explicit `company_id`; the concrete native database engine remains owner/deployment-defined until convergence is verified. #1051 Frappe is an optional extension provider with a separate site/database per company when enabled. See `TITAN-ZERO-BLUEPRINT-V3.md` and `ai/INVARIANTS.md` for ownership.
+SQLite is the canonical persistence layer for an ordinary Titan Zero node. Local/device/edge operation must not require PostgreSQL or Redis.
 
 ## Boundary
 
-Local/runtime storage consumers should depend on their canonical storage contract, not a database driver. Business-domain surfaces and reusable services converge on Titan Domain/provider contracts; native FSM and optional Frappe providers must not couple surfaces to Frappe DocTypes. `company_id` is the canonical company boundary. `tenant_id` and `tenant_company_id` are compatibility inputs only and must normalize before authorization, storage, projections, decisions, execution, evidence or authority evaluation.
+Domain code should depend on the Titan storage contract, not a database driver. `company_id` is the canonical company boundary. `tenant_id` and `tenant_company_id` are compatibility inputs only and must normalize before authorization, storage, projections, decisions, execution, evidence or authority evaluation.
 
 SQLite has no PostgreSQL RLS. Company isolation therefore belongs in repository/storage contracts: company-scoped operations require a validated company context and every company-owned table carries `company_id`. PostgreSQL RLS may remain in the optional server adapter as defense in depth.
 
-## Existing local profile
+## Local profile
 
-The checked-in SQLite adapter defaults to database: `.titan/data/titan-zero.db` (override with `SQLITE_PATH`). Connections enable foreign keys, WAL, a 5s busy timeout and `synchronous=NORMAL`. Write transactions use `BEGIN IMMEDIATE`, giving predictable single-node write serialization while WAL permits concurrent readers.
+Default database: `.titan/data/titan-zero.db` (override with `SQLITE_PATH`). Connections enable foreign keys, WAL, a 5s busy timeout and `synchronous=NORMAL`. Write transactions use `BEGIN IMMEDIATE`, giving predictable single-node write serialization while WAL permits concurrent readers.
 
 ## Semantics
 
@@ -20,10 +20,10 @@ Decision, authority and evidence are separate tables. Persisting intelligence, r
 
 ## Migrations and recovery
 
-For the checked-in local SQLite schema, `pnpm db:migrate` applies `db/sqlite/*.sql` transactionally and runs `PRAGMA integrity_check`. The PostgreSQL server migration command (`pnpm db:migrate:server`) remains for inherited compatibility deployments. Neither migration command commissions an optional #1051 Frappe site or certifies Evidence Ledger provenance. The PostgreSQL migration path may still support reachable native FSM deployments; classify it by reachability and deployment evidence before retirement. Existing PostgreSQL installations require an explicit mapped export/import and verification path; direct blind SQL translation is not supported.
+`pnpm db:migrate` applies `db/sqlite/*.sql` transactionally and runs `PRAGMA integrity_check`. Historical PostgreSQL migrations remain as migration evidence and for the optional server compatibility path (`pnpm db:migrate:server`). Existing PostgreSQL installations require an explicit export/import transform; direct blind SQL translation is not supported.
 
 For backup, checkpoint or stop writers before copying the database, or use SQLite's online backup API in deployment tooling. Keep the database plus any required WAL/SHM files together when copying a live database.
 
 ## Synchronisation
 
-The existing `operational_events.synced_at` column is a local synchronization seam, not by itself the canonical #913 Business Evidence Ledger or proof of encrypted Storage Fabric replication. Sync behavior must follow its owning contract and verify accepted evidence and outcomes.
+Synchronization is intentionally outside this convergence pass. `operational_events.synced_at` provides a minimal durable seam for later encrypted Storage Fabric replication without making remote storage part of normal operation.

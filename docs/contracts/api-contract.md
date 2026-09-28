@@ -1,7 +1,5 @@
 # API Contract (FROZEN)
 
-> **Historical ai-fsm v1 API contract.** The freeze and `account_id` tenancy below apply only to that compatibility surface. New Titan Domain/API contracts use canonical `company_id`, governed execution, and evidence-backed factual history under Blueprint v3. Do not expose this document as the current platform API or bypass current authority by following its old session model.
-
 > Status: **FROZEN** as of 2026-02-16 — P0-T2
 > Any changes require ADR entry in `docs/DECISION_LOG.md` and orchestrator approval.
 

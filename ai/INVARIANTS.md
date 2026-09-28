@@ -38,7 +38,7 @@ Do not collapse the PWA into `apps/web`, create three separate PWAs, or make a D
 
 Legacy `account_id`, `tenant_company_id`, team/tenant IDs and similar fields are compatibility/provider inputs only unless a current canonical contract explicitly assigns them another bounded role. Normalize to canonical company context before authorization/execution.
 
-Every tenant company has its **own physical database for company-owned operational persistence**. Native Titan FSM remains Titan-owned by default and routes a company only to that company's database. For capabilities deliberately delegated to #1051, Frappe uses shared versioned application code with a **separate Frappe site/database per company**. Shared control-plane metadata may be shared only when it contains no company business state and its owner explicitly permits it. Physical isolation does not replace explicit `company_id` in contracts, queues, authority, verification, evidence, caches, or provider mappings.
+For capabilities deliberately delegated to #1051, Frappe uses shared versioned application code with a **separate Frappe site/database per company** by default. Native Titan FSM domains remain Titan-owned unless an explicit provider contract delegates a capability. Physical Frappe isolation does not replace `company_id`.
 
 Never assume historical PostgreSQL RLS or a DB role is the current Titan isolation model.
 

@@ -13,17 +13,25 @@ It manages the business's digital system estate while canonical Titan services r
 
 ## Plugin portfolio
 
-DirectAdmin is the Business Node control plane (#812). The operator plugin display names and current mission owners are grouped for navigation below. These names do not rename internal runtime technologies.
-
-| Navigation group | Plugin display name and mission |
-|---|---|
-| Business | Zero Core #1046 · Business Engine #1051 · Workforce Manager #1050 · Communications Manager #1053 · Finance & Commerce #1054 · Business Standards #1065 |
-| Create | Brand Studio #1044 · Surface Manager #1059 · Application Generator #1047 · Industry Builder #1057 |
-| Intelligence & Control | Intelligence Core #1055 · Governance & Assurance #1056 |
-| System | Operations Hub #1045 · Channels & Integrations #1060 · System Configuration #1063 |
-| Platform | User Experience #1052 · Developer Portal #1048 |
-
-Business Node SDK #1049 is shared infrastructure, not necessarily a user navigation item. Interaction and Decision remain canonical engines configured through System Configuration; standalone plugin proposals #1061/#1062 are superseded. The checked-in plugin donor below is not proof that this portfolio is installed.
+- Business Node Core — #812
+- Cockpit SDK — #1049
+- Business Engine / Frappe — #1051
+- Zero — #1046
+- Workforce — #1050
+- Operations — #1045
+- Foundry — #1047
+- Web / Portal — #1044
+- Dev — #1048
+- Experience — #1052
+- Communications — #1053
+- Finance & Commerce — #1054
+- Intelligence — #1055
+- Governance & Assurance — #1056
+- Sprout / Vertical Packs — #1057
+- Surfaces — #1059
+- Channels — #1060
+- Interaction — #1061
+- Decision — #1062
 
 Current server-validated donor/reference:
 

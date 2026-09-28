@@ -1,43 +1,149 @@
-# Titan Zero repository guidance
+# CLAUDE.md
 
-This is an entry point for Claude Code and other agents. The execution contract is [`AGENTS.md`](AGENTS.md); subtree `AGENTS.md` files add local rules. Historical Dovetails instructions do not override the current architecture.
+This file provides guidance to Claude Code when working in this repository.
 
-## Read before work
+## Project Overview
 
-1. Current code, migrations, tests and live GitHub issue/PR state establish what is implemented.
-2. [`docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md`](docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md) and [`docs/architecture/CANONICAL-RULES.md`](docs/architecture/CANONICAL-RULES.md) define target ownership and invariants.
-3. [`roadmap/PHASE-MAP-V3.md`](roadmap/PHASE-MAP-V3.md) defines convergence order. Live GitHub mission issues are the execution queue; the exact claim branch is `agent/issue-<number>`.
-4. [`ai/INVARIANTS.md`](ai/INVARIANTS.md) is required before architecture, infrastructure, persistence, runtime or deployment changes.
-5. `docs/canonical/` supplies product/domain detail where consistent with Blueprint v3. Some Dovetails pages are explicitly historical. `docs/contracts/` supplies active cross-component contracts where not marked historical.
+Dovetails FSM is a residential handyman and home maintenance operating system. The product direction is property-centered: client relationships, property history, estimates, jobs, visits, invoices, and permanent service records.
 
-## Current platform boundaries
+## Documentation Hierarchy
 
-- `company_id` is Titan's canonical logical company and evidence boundary. Legacy `account_id` and other tenant fields are compatibility inputs; normalize before authorization and execution.
-- Accepted Business Evidence Ledger entries are factual history. Operational records are owner-served materialized/projection state with provenance. Provider acknowledgement is not a verified outcome.
-- Consequential work follows Decision → Risk/Assurance → effective authority → ExecutionGateway/Command Bus → provider → observed verification → evidence. Model, host, plugin and subscription identity do not grant authority.
-- DirectAdmin is the first Business Node control plane and meta-orchestrator. Mature native field-service behavior remains in the TypeScript base application and must operate without Frappe. Frappe/selected ERPNext is an optional extension provider behind Titan Domain APIs, with separate company sites/databases when enabled. Neither owns Titan authority or the factual ledger.
-- `apps/web` is the **full base web application**, not the PWA. Titan has one separate installable PWA and one native mobile app, each with governed Zero/Go/Hub modes. The inherited `apps/web` manifest and service worker are migration inputs, not proof that this separation is complete.
-- The persistent Workforce/runtime belongs in canonical services/packages and continues without a client open. DirectAdmin plugins manage or project it; they do not duplicate it.
-- SQLite remains valid for owner-defined local/runtime persistence. Reachable PostgreSQL native FSM code and migrations may be active product implementation. Classify by reachability and supported deployment before retirement; preserve working field-service behavior. Do not delete applied history blindly.
+Five layers — lower layers never override higher layers on **scope**. Use in this order:
 
-## Repository layout and commands
+```text
+Layer 1 — IDENTITY (what is this product?)
+  docs/canonical/PRODUCT_VISION.md
+  docs/canonical/DOMAIN_MODEL.md
 
-`apps/` contains distinct surfaces and adapters; `services/` contains persistent workers; `packages/` contains reusable canonical capabilities; `infra/` and `scripts/` contain host/build/compatibility tooling. Read local `AGENTS.md` files before editing.
+Layer 2 — ARCHITECTURE (how does it work?)
+  docs/canonical/OPERATIONS.md
+  docs/canonical/WORKFLOW.md
+  docs/canonical/ARCHITECTURE.md
+  docs/canonical/PRODUCTION_INTELLIGENCE.md
 
-Current package names and scripts come from `package.json`, not historical notes. Typical commands are:
+Layer 3 — PHASING (what order do we build?)
+  docs/canonical/ROADMAP.md
 
-```bash
-pnpm dev:web
-pnpm dev:worker
-pnpm test:unit
-pnpm gate:fast
-pnpm gate
+Layer 4 — TASKS (what's the next unit of work?)
+  docs/backlog/
+
+Layer 5 — DOCTRINE (how do we build without making debt worse?)
+  docs/working/execution-doctrine.md
 ```
 
-`pnpm --filter @titan-zero/web ...` selects the web workspace. `pnpm db:migrate` currently invokes `scripts/sqlite-migrate.mjs`; it is not a universal Frappe migration command. Use the risk-tier verification contract in `AGENTS.md` and record exact results.
+1. Code and database migrations are the implemented truth.
+2. `docs/canonical/` is authoritative for product, domain, and architecture.
+3. `docs/backlog/` is an execution queue — it must cite a ROADMAP phase; ROADMAP wins on scope disputes.
+4. `docs/contracts/` and `docs/working/` contain supporting implementation notes.
+5. `ai/` is only a compact AI-agent quick-reference layer.
+6. `docs/archive/` and `docs/generated/` are historical/evidence only, not instruction sources.
+7. `memory/` is session notes only — never an instruction source.
 
-## Historical compatibility
+Canonical docs for product direction:
 
-The historical Dovetails naming and deployment, `docs/backlog/`, PostgreSQL compose profiles, `infra/compose.garonhome.yml`, `scripts/deploy-garonhome.sh`, and Dovetails-specific schema are inherited implementation and donor evidence. They may still be reachable, so preserve working behavior during migration. They do not define the new product identity, active issue process, universal persistence model or current production target. Identify a live commissioned host before any deployment.
+- `docs/canonical/PRODUCT_VISION.md`
+- `docs/canonical/DOMAIN_MODEL.md`
+- `docs/canonical/WORKFLOW.md`
+- `docs/canonical/ARCHITECTURE.md`
+- `docs/canonical/ROADMAP.md`
+- `docs/canonical/PRODUCTION_INTELLIGENCE.md`
+- `docs/canonical/OPERATIONS.md`
 
-`docs/archive/`, `docs/generated/`, top-level `archive/`, and prior ADRs are evidence/history unless current production reachability is established. Do not treat a former scope freeze, single-business premise or old skill-routing instruction as current authority.
+Working doctrine: `docs/working/execution-doctrine.md`
+
+Working, archived, and generated documents can provide implementation evidence or historical context, but they do not define product scope.
+
+## Commands
+
+```bash
+pnpm dev          # Run web + worker in parallel
+pnpm dev:web      # Web app only (port 3000)
+pnpm dev:worker   # Worker only
+pnpm build        # Build all workspaces
+pnpm lint         # Lint all workspaces
+pnpm typecheck    # Typecheck all workspaces
+pnpm test         # Test all workspaces (unit only)
+pnpm test:unit    # Unit tests only (no infra required)
+pnpm test:integration  # Integration tests (requires TEST_DATABASE_URL + TEST_BASE_URL)
+pnpm test:e2e     # Playwright E2E (requires running server + seeded DB)
+pnpm gate         # Full gate: lint -> typecheck -> build -> unit -> integration -> e2e
+pnpm gate:fast    # Fast gate: lint -> typecheck -> build -> unit
+pnpm db:migrate   # Apply SQL migrations
+pnpm db:seed      # Seed dev data
+```
+
+Run a single workspace: `pnpm --filter @ai-fsm/web <script>` (or `@ai-fsm/worker`, `@ai-fsm/domain`).
+
+Local dev services:
+
+```bash
+docker compose -f infra/compose.dev.yml up -d postgres redis
+```
+
+## Architecture
+
+Canonical technical overview: `docs/canonical/ARCHITECTURE.md`.
+
+Core repo layout:
+
+- `apps/web/`: Next.js app router UI and API routes.
+- `services/worker/`: background queue/automation worker.
+- `packages/domain/`: shared domain schemas, labels, constants, and helpers.
+- `db/migrations/`: SQL migrations and persistence contracts.
+- `infra/`: Docker Compose profiles for local and production targets.
+
+## Documentation Rules
+
+1. Product scope changes must update canonical docs first or in the same change.
+2. Every backlog task must cite a `ROADMAP.md` phase. Tasks without a phase are invalid.
+3. Do not use archived or generated docs as build instructions.
+4. Do not reintroduce generic FSM, SaaS, subscription, dashboard-suite, or AI-first product positioning unless canonical docs change.
+5. Keep implementation/runbook details in `docs/working`.
+6. Keep reports, audits, and migration records in `docs/generated`.
+
+## Non-Negotiable Rules
+
+1. Never skip relevant quality gates for code changes.
+2. Never store secrets in code; use `.env`.
+3. Migrations must be additive and reversible unless a migration plan is explicit.
+4. Business logic changes require tests or an explicit documented test gap.
+5. Production runs on garonhome.local via `infra/compose.garonhome.yml`.
+
+## Decision Policy
+
+When multiple options exist, prefer:
+
+1. Lower operational complexity.
+2. Lower maintenance burden.
+3. Better alignment with canonical product direction.
+4. Better compatibility with garonhome.local.
+
+## Dovetails Layer
+
+**Dovetails Services LLC** is the local handyman and home maintenance business this software is being built to run. Dovetails-specific schema and helpers are first-party business logic, not a third-party integration.
+
+Dovetails-specific code currently includes:
+
+- `packages/domain/src/dovetails.ts`
+- `db/migrations/013_dovetails_domain.sql`
+
+For product decisions, read `docs/canonical/*` instead of old roadmap or phase documents.
+
+## Skill routing
+
+When the user's request matches an available skill, invoke it via the Skill tool. When in doubt, invoke the skill.
+
+Key routing rules:
+- Product ideas/brainstorming → invoke /office-hours
+- Strategy/scope → invoke /plan-ceo-review
+- Architecture → invoke /plan-eng-review
+- Design system/plan review → invoke /design-consultation or /plan-design-review
+- Full review pipeline → invoke /autoplan
+- Bugs/errors → invoke /investigate
+- QA/testing site behavior → invoke /qa or /qa-only
+- Code review/diff check → invoke /review
+- Visual polish → invoke /design-review
+- Ship/deploy/PR → invoke /ship or /land-and-deploy
+- Save progress → invoke /context-save
+- Resume context → invoke /context-restore
+- Author a backlog-ready spec/issue → invoke /spec

@@ -1,7 +1,8 @@
 /**
- * Compatibility persistence adapter: the status derivation itself is canonical
- * domain logic, while direct work_orders/visits table mutation is legacy base-web
- * materialization pending #183/#1051 provider convergence.
+ * Native Titan FSM work-order lifecycle persistence.
+ * The status derivation is shared domain logic and the persistence is part of the
+ * mature native FSM. Improve portability/authority/evidence boundaries without
+ * replacing the capability with Frappe by default.
  */
 /**
  * Recompute and persist work order planning status from child visits.

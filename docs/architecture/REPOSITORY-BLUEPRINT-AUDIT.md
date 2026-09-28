@@ -1,7 +1,5 @@
 # Titan Zero Blueprint v3 — Whole-Repository Audit Ledger
 
-Current-architecture reading note: earlier pass findings below sometimes call a SQLite-only VPS or PostgreSQL replacement the canonical business storage target. Those findings record the architecture at the time of that pass, not the final ownership split. Blueprint v3 and `ai/INVARIANTS.md` now assign factual history to #913 Evidence Ledger, retain mature native TypeScript FSM and its owner-defined persistence as the stand-alone core product, and use #1051 Frappe/ERPNext only for deliberately enabled extensions with per-company sites. Earlier pass claims that PostgreSQL/SQLite native business code must be retired solely for Frappe are superseded. Revalidate each old finding against current reachability, company isolation, authority, evidence and installability before implementing or closing it.
-
 Status: ACTIVE / INCOMPLETE  
 Baseline main tree SHA: `31f172f0a75c46020045e40c23d39b1ce5047763`  
 Started: 2026-09-28
@@ -259,7 +257,7 @@ Findings:
 - workforce-native planning adapters are fail-closed for consequential non-GET actions until canonical execution authority is supplied; preserve this safety property.
 - No additional obvious committed .bak/.old/.tsbuildinfo artifacts remained after Pass 6A cleanup.
 
-Conclusion: apps/web is the feature-rich **full native Titan FSM base application**, not a thin Zero/Go/Hub projection layer. Preserve its mature field-service domain behavior and business UI. Its principal remaining debts are duplicated canonical Titan runtime seams, PostgreSQL-only/shared-database assumptions that must converge to database-per-company isolation, hosted Workforce projection/command wiring, and clean separation from the distinct three-mode PWA/mobile surfaces. Exact implementation work is recorded in existing missions rather than new duplicate issues.
+Conclusion: apps/web is feature-rich but not yet a thin canonical Zero/Go/Hub projection layer. Its principal remaining debts are direct domain mutation ownership, PostgreSQL-only persistence seams, hosted Workforce projection/command wiring and surface convergence. Exact implementation work is now recorded in existing missions rather than new duplicate issues.
 
 Mission evidence: #811, #14, #183, #263, #343, #353, #542, #648.
 

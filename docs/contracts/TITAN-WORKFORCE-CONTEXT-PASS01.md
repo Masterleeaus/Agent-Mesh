@@ -22,7 +22,7 @@ Required context dimensions are `company`, `actor`, `customer`, `location`, `job
 1. `company_id` is the only company boundary.
 2. Cross-company context use fails closed.
 3. Identity and memory do not grant execution authority.
-4. Current business records are authoritative operational projections for context lookup; factual history and verified outcomes derive from accepted Business Evidence Ledger entries. Re-read the owning domain before execution.
+4. Canonical business records remain source of truth.
 5. Context carries references/provenance first; field projection is least-data and task-bounded.
 6. Ephemeral browser/session/site hints can accelerate the UX but never replace durable canonical records.
 7. Context does not collapse Customer, Location, Job, WorkOrder, Visit or Workflow into one synthetic record.

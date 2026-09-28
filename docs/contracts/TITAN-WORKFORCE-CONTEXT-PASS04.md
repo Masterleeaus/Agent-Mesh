@@ -7,7 +7,7 @@ Pass 04 adds task-local checkpoint state for restart and offline continuity.
 - Checkpoints are scoped to one `company_id`, task, objective and worker.
 - They contain progress metadata, pending operation identifiers and canonical source IDs/versions only.
 - They do not contain customer, job, workflow or other business payloads.
-- CRM/business records are current operational projections; accepted Business Evidence Ledger entries are factual history. Re-read the domain projection before consequential work.
+- Canonical CRM/business records remain the source of truth.
 - Checkpoints do not grant authority and cannot change the authority captured by the governed context flow.
 - Restore fails closed on company, task or worker mismatch.
 - Revisions advance monotonically so device/offline persistence can reject stale writes.

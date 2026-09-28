@@ -1,7 +1,5 @@
 # Roadmap
 
-> **Historical Dovetails delivery roadmap.** The phases and task IDs below record the former single-business FSM plan; they are not the active Titan Zero execution queue or scope freeze. Current convergence order is `roadmap/PHASE-MAP-V3.md`, current platform design is `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md`, and live GitHub mission issues are the implementation queue. Preserve this history when extracting useful behavior, but do not let its PostgreSQL, PWA-in-web, pricing, multi-company or deployment assumptions override the current architecture.
-
 ## North Star
 
 Reduce product identity drift and strengthen the core residential handyman operating workflow:

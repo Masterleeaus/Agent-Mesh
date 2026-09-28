@@ -3,12 +3,11 @@ import { withPortableTransaction } from "../db/portable";
 import type { SessionPayload } from "../auth/session";
 
 /**
- * Compatibility transaction wrapper for the legacy base-web invoice store.
- *
- * Canonical finance/domain ownership is #263/#1054 with operational
- * materialization through #1051 where mapped. This wrapper must not be treated
- * as the long-term invoice system of record or tenant-isolation authority.
- * New business-domain writes should use Titan Domain/provider contracts.
+ * Native Titan FSM invoice persistence boundary.
+ * Preserve invoice-numbering, transaction and finance behavior. Improve storage
+ * portability and canonical company/context boundaries without migrating this
+ * capability to Frappe by default. #1051 is an optional extension provider only
+ * when a finance capability/facet is deliberately delegated.
  */
 export async function withInvoiceContext<T>(
   session: SessionPayload,

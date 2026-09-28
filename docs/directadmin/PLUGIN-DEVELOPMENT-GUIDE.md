@@ -4,7 +4,7 @@ Status: canonical DirectAdmin development guide for Titan Zero
 Architecture: `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md`  
 Canonical rules: `docs/architecture/CANONICAL-RULES.md`  
 DirectAdmin control-plane owner: #812  
-Shared Business Node SDK owner: #1049
+Shared Cockpit SDK owner: #1049
 
 ## 1. Architectural position
 
@@ -85,7 +85,7 @@ Example:
 ```
 DirectAdmin PHP entrypoint
         ↓
-Titan Business Node SDK
+Titan Cockpit SDK
         ↓
 local API / Unix socket / localhost service
         ↓
@@ -178,20 +178,27 @@ Official DirectAdmin references:
 
 ## 5. Titan DirectAdmin plugin portfolio
 
-All Titan DirectAdmin plugins share the #1049 Business Node SDK.
+All Titan DirectAdmin plugins share the #1049 Cockpit SDK.
 
-Current missioned operator plugin navigation (display labels; #812 Business Node Core coordinates the estate):
+Current/published mission architecture:
 
-```text
-BUSINESS: Zero Core #1046 · Business Engine #1051 · Workforce Manager #1050
-          Communications Manager #1053 · Finance & Commerce #1054 · Business Standards #1065
-CREATE: Brand Studio #1044 · Surface Manager #1059 · Application Generator #1047 · Industry Builder #1057
-INTELLIGENCE & CONTROL: Intelligence Core #1055 · Governance & Assurance #1056
-SYSTEM: Operations Hub #1045 · Channels & Integrations #1060 · System Configuration #1063
-PLATFORM: User Experience #1052 · Developer Portal #1048
 ```
-
-Business Node SDK #1049 is shared infrastructure, not necessarily an operator navigation item. Interaction and Decision are canonical engines configured through System Configuration; standalone plugin proposals #1061/#1062 are superseded.
+Titan Business Node Control Plane (#812)
+├── Cockpit SDK (#1049)
+├── Titan Zero (#1046)
+├── Titan Workforce (#1050)
+├── Titan Operations (#1045)
+├── Titan Business Engine / Frappe (#1051)
+├── Titan Foundry (#1047)
+├── Titan Web / Portal (#1044)
+├── Titan Dev (#1048)
+├── Titan Experience (#1052)
+├── Titan Communications
+├── Titan Finance & Commerce
+├── Titan Intelligence
+├── Titan Governance & Assurance
+└── Titan Sprout / Vertical Packs
+```
 
 The portfolio map and source assignment live in:
 `docs/directadmin/PLUGIN-PORTFOLIO-MAP.md`.
@@ -200,30 +207,26 @@ The portfolio map and source assignment live in:
 
 DirectAdmin routing uses the installed plugin directory/plugin ID.
 
-For Titan, the final install archive must use the exact, upgrade-stable machine ID. Display names may change without changing these IDs. Recommended IDs for new packages are:
+For Titan, the final install archive must use the exact plugin ID:
 
-| Plugin display name | Machine ID |
-|---|---|
-| Zero Core | `titan_zero_core` |
-| Business Engine | `titan_business_engine` |
-| Workforce Manager | `titan_workforce_manager` |
-| Communications Manager | `titan_communications_manager` |
-| Finance & Commerce | `titan_finance_commerce` |
-| Business Standards | `titan_business_standards` |
-| Brand Studio | `titan_brand_studio` |
-| Surface Manager | `titan_surface_manager` |
-| Application Generator | `titan_application_generator` |
-| Industry Builder | `titan_industry_builder` |
-| Intelligence Core | `titan_intelligence_core` |
-| Governance & Assurance | `titan_governance_assurance` |
-| Operations Hub | `titan_operations_hub` |
-| Channels & Integrations | `titan_channels_integrations` |
-| System Configuration | `titan_system_configuration` |
-| User Experience | `titan_user_experience` |
-| Developer Portal | `titan_developer_portal` |
-| Business Node SDK | `titan_business_node_sdk` |
+```
+titan_dev.tar.gz
+titan_zero.tar.gz
+titan_workforce.tar.gz
+titan_operations.tar.gz
+```
 
-For example, a new Developer Portal installation uses `titan_developer_portal.tar.gz` with `plugin.conf` at archive root. The checked-in `dev-access` donor already has its own ID and packaging; inspect installed history and provide an explicit migration/alias strategy before renaming any deployed plugin ID. Do not append a version, `_rebuilt` or `_fresh` to the install archive basename unless DirectAdmin ID behavior has been verified. Put the version in `plugin.conf`.
+Do not publish install files named:
+
+```
+titan_dev-1.2.0.tar.gz
+titan_dev_rebuilt.tar.gz
+titan_dev_fresh.tar.gz
+```
+
+unless the package/install mechanism has been explicitly proven to preserve the intended plugin ID.
+
+The version belongs in `plugin.conf`.
 
 ## 7. Required package layout
 
@@ -346,7 +349,7 @@ governed execution
 
 Fail closed when mapping is unresolved.
 
-## 12. Shared Business Node SDK — #1049
+## 12. Shared Cockpit SDK — #1049
 
 Every production Titan DA plugin should consume the SDK for:
 
@@ -704,7 +707,7 @@ Minimum:
 11. reinstall;
 12. state preservation.
 
-## 28. Known server-validated lessons from the Dev Access donor
+## 28. Known server-validated lessons from Titan Dev Access
 
 These failures already happened and must not recur:
 

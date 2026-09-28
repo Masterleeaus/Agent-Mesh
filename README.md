@@ -280,8 +280,6 @@ Titan Zero Field Service Workforce
 
 ## Technology
 
-The list below describes substantial inherited implementation, not one mandated persistence or deployment stack for every Titan component. Blueprint v3 assigns factual history to the Evidence Ledger and runtime/local storage to its canonical owner. The full TypeScript base app retains mature native field-service workflows and must install without Frappe; optional Frappe extensions use explicit Titan Domain/provider contracts. Reachable PostgreSQL FSM code must be preserved and made supportable while its company, authority and evidence boundaries converge.
-
 Titan Zero is primarily a TypeScript system built with a modern full-stack stack:
 
 - **TypeScript**
@@ -299,8 +297,6 @@ Titan Zero is primarily a TypeScript system built with a modern full-stack stack
 
 ## Development
 
-The commands below start the PostgreSQL-backed native base-web FSM development stack. They do not install the DirectAdmin Business Node or optional Frappe extension Business Engine. `pnpm db:migrate` is the separate local SQLite migration command; this web stack uses `pnpm db:migrate:server`. The retired `scripts/bootstrap.sh` intentionally exits with an error.
-
 ### Prerequisites
 
 - Node.js
@@ -312,9 +308,8 @@ The commands below start the PostgreSQL-backed native base-web FSM development s
 ```bash
 cp .env.example .env
 pnpm install
-docker compose -f infra/compose.dev.yml up -d --wait postgres
-export DATABASE_URL=postgresql://ai_fsm:ai_fsm_dev_password@localhost:5432/ai_fsm
-MIGRATION_DATABASE_URL="$DATABASE_URL" pnpm db:migrate:server
+docker compose -f infra/compose.dev.yml up -d postgres redis
+pnpm db:migrate
 pnpm dev:web
 ```
 
@@ -341,10 +336,10 @@ The repository contains active implementation, architectural documentation, and 
 Current authority follows this order:
 
 1. Code and database migrations define implemented behaviour.
-2. `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md` and `docs/architecture/CANONICAL-RULES.md` define current architecture and invariants; `roadmap/PHASE-MAP-V3.md` defines convergence order.
-3. `docs/canonical/` defines product/domain detail where consistent with Blueprint v3; explicitly marked Dovetails pages are historical.
-4. `docs/contracts/` defines active cross-component contracts where not marked historical; `ai/INVARIANTS.md` and root/subtree `AGENTS.md` govern agent execution.
-5. Live GitHub mission issues are the implementation queue. `docs/working/`, `docs/archive/` and `docs/generated/` preserve working notes and historical evidence.
+2. `docs/canonical/` defines current product, domain, workflow, and architecture intent.
+3. `docs/contracts/` and `docs/working/` provide supporting implementation material.
+4. `ai/` provides compact machine/agent-facing context.
+5. `docs/archive/` and `docs/generated/` preserve historical and generated evidence.
 
 ## Status
 

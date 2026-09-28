@@ -11,7 +11,7 @@ function mysqlClient(connection: PoolConnection): DbClient {
   return {
     async query<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<DbQueryResult<T>> {
       const rewritten = rewriteNumberedParamsForMysql(text, params);
-      const [result] = await connection.execute(rewritten.sql, rewritten.params);
+      const [result] = await connection.query(rewritten.sql, rewritten.params);
       if (Array.isArray(result)) return { rows: result as T[], rowCount: result.length };
       const packet = result as { affectedRows?: number; insertId?: number };
       return { rows: [], rowCount: packet.affectedRows ?? 0 };
@@ -24,7 +24,7 @@ export async function portableQuery<T extends Record<string, unknown> = Record<s
   if (dialect === "sqlite") return (await getSqliteClient().query<T>(text, params)).rows;
   if (dialect === "mysql") {
     const rewritten = rewriteNumberedParamsForMysql(text, params);
-    const [rows] = await getMysqlPool().execute(rewritten.sql, rewritten.params);
+    const [rows] = await getMysqlPool().query(rewritten.sql, rewritten.params);
     return rows as T[];
   }
   const result = await getPool().query<T>(text, params);
