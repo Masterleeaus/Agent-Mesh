@@ -5,6 +5,7 @@ export * from "./intelligence.js";
 export * from "./business-ops.js";
 export * from "./memory-knowledge.js";
 export * from "./memory-ingestion.js";
+export * from "./user-experience.js";
 
 export * from "./offline/index.js";
 
@@ -23,3 +24,4 @@ export type { InferenceRoute, CostSovereigntyRequest, CostSovereigntyDecision } 
 
 export { createConnectorCredentialReference, CONNECTOR_CREDENTIAL_POLICY } from "./ported/titan-connect/credential-contract.js";
 export type { ConnectorCredentialReference } from "./ported/titan-connect/credential-contract.js";
+
