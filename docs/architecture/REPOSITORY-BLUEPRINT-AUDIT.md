@@ -111,7 +111,7 @@ Mission evidence: #913, #914, #915, #917, #648.
 
 The audit is not complete until all tracked files have been classified/inspected. Remaining passes include at minimum:
 
-1. apps/web — every route, lib, component and test; thin-surface ownership and Zero/Go/Hub convergence.
+1. apps/web — IN PROGRESS. Pass 6 inventory classified all 1,480 files: 235 API, 317 libs, 367 app/pages, 75 components, 280 tests, 187 marketing-source, 12 config, 4 assets, 3 other. Mutation/runtime seams are being audited file-by-file; 234 route.ts endpoints require ownership classification.
 2. apps/browser — active source vs imports/donor/generated; canonical Browser Node identity and hosted Workforce wiring.
 3. apps/mobile — every Dart/native/release file; production transport, offline authority contraction, Zero/Go/Hub modes.
 4. apps/llm-plugin + desktop + marketing — thin adapter/marketing isolation.
@@ -138,3 +138,29 @@ Do not mark this audit complete until every tracked path is covered by a recorde
 - verified implementation + tests,
 - a small fix committed directly, or
 - exact file-level evidence added to the substantial canonical Codex mission that owns the remaining work.
+
+
+### Pass 6 — apps/web exhaustive surface audit (part A)
+Status: IN PROGRESS
+
+Coverage/classification of all 1,480 paths:
+- API: 235 files / 234 route.ts endpoints
+- libs: 317
+- app/pages: 367
+- components: 75
+- tests: 280
+- marketing-source: 187
+- config: 12
+- assets: 4
+- other: 3
+
+Findings so far:
+- Zero interaction route correctly derives company scope from authenticated server session, but its dispatcher is process-local registration and must bind to the persistent hosted Workforce composition from #811.
+- Web workforce command gateway directly fetches app-local business-op routes after role/risk planning; consequential commands need #14 convergence.
+- Representative dispatch/job/work-order/automation routes directly mutate business tables inside the surface.
+- `apps/web/lib/db.ts` is PostgreSQL-only while canonical VPS is SQLite-first; reachable consumers are a production portability risk.
+- Domain/business logic is heavily concentrated in web libs (estimates/invoices/expenses/jobs/visits/work-orders etc.) and requires ownership extraction/classification under #183/#263/#353/#648.
+- Web AGENTS boundary was corrected to Blueprint v3, canonical Zero/Go/Hub IDs and hosted Workforce semantics.
+- Small hygiene fixes: removed committed `apps/web/tsconfig.tsbuildinfo` and `apps/web/marketing-source/tradepilot/app/page.tsx.bak`.
+
+Mission evidence: #811, #14, #183, #263, #353, #542, #648.
