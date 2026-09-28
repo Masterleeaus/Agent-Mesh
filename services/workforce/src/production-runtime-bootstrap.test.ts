@@ -14,17 +14,31 @@ function ports(final="handled") {
   };
 }
 
-test("production bootstrap composes canonical SQLite workforce and persistent runtime while preserving Zero origin", async()=>{
+async function registerManager(bootstrap:any) {
+  await bootstrap.workforce.registerWorker({
+    company_id,
+    worker_id:"zero-gm",
+    kind:"digital",
+    capabilities:["work.delegate"],
+    active:true,
+  });
+}
+
+test("production bootstrap composes the canonical Zero dispatcher over SQLite workforce and persistent runtime", async()=>{
   const storage=createSqliteStorage(":memory:");
   const bootstrap=await createProductionRuntimeBootstrap({storage,ports:ports()});
-  await bootstrap.workforce.registerWorker({company_id,worker_id:"zero-gm",kind:"digital",capabilities:["zero.interaction"],active:true});
-  const result=await bootstrap.dispatch({company_id,actor_id:"owner-1",conversation_id:"conv-1",interaction_id:"int-1",client_message_id:"msg-1",text:"Handle tomorrow.",correlation_id:"corr-1"});
+  assert.ok(bootstrap.zeroDispatcher);
+  await registerManager(bootstrap);
+  const input={company_id,actor_id:"owner-1",conversation_id:"conv-1",interaction_id:"int-1",client_message_id:"msg-1",text:"Handle tomorrow.",correlation_id:"corr-1"};
+  const result=await bootstrap.dispatch(input);
   assert.equal(result.accepted,true);
-  const work=await bootstrap.workforceStore.get(company_id,"zero:int-1");
+  const workId="zero:conv-1:msg-1";
+  const work=await bootstrap.workforceStore.get(company_id,workId);
   assert.equal(work?.origin?.actor_id,"owner-1");
   assert.equal(work?.origin?.conversation_id,"conv-1");
   assert.equal(work?.origin?.correlation_id,"corr-1");
-  const rows=await storage.query<{payload:string}>(`SELECT payload FROM agent_runs WHERE company_id=$1 AND work_id=$2`,[company_id,"zero:int-1"]);
+  assert.equal(work?.assignee,"zero-gm");
+  const rows=await storage.query<{payload:string}>(`SELECT payload FROM agent_runs WHERE company_id=$1 AND work_id=$2`,[company_id,workId]);
   assert.equal(rows.rowCount,1);
   const persisted=JSON.parse(rows.rows[0]!.payload);
   assert.equal(persisted.actor_id,"owner-1");
@@ -32,15 +46,18 @@ test("production bootstrap composes canonical SQLite workforce and persistent ru
   await storage.close();
 });
 
-test("production bootstrap is idempotent by company + interaction", async()=>{
+test("production bootstrap uses canonical company + conversation + client-message idempotency", async()=>{
   const storage=createSqliteStorage(":memory:");
   const bootstrap=await createProductionRuntimeBootstrap({storage,ports:ports()});
-  await bootstrap.workforce.registerWorker({company_id,worker_id:"zero-gm",kind:"digital",capabilities:["zero.interaction"],active:true});
+  await registerManager(bootstrap);
   const input={company_id,actor_id:"owner-1",conversation_id:"conv-1",interaction_id:"int-duplicate",client_message_id:"msg-dup",text:"What needs attention?",correlation_id:"corr-dup"};
-  await bootstrap.dispatch(input); await bootstrap.dispatch(input);
-  const work=await storage.query(`SELECT work_id FROM workforce_work_items WHERE company_id=$1 AND work_id=$2`,[company_id,"zero:int-duplicate"]);
-  const runs=await storage.query(`SELECT run_id FROM agent_runs WHERE company_id=$1 AND work_id=$2`,[company_id,"zero:int-duplicate"]);
-  assert.equal(work.rowCount,1); assert.equal(runs.rowCount,1);
+  await bootstrap.dispatch(input);
+  await bootstrap.dispatch(input);
+  const workId="zero:conv-1:msg-dup";
+  const work=await storage.query(`SELECT work_id FROM workforce_work_items WHERE company_id=$1 AND work_id=$2`,[company_id,workId]);
+  const runs=await storage.query(`SELECT run_id FROM agent_runs WHERE company_id=$1 AND work_id=$2`,[company_id,workId]);
+  assert.equal(work.rowCount,1);
+  assert.equal(runs.rowCount,1);
   await storage.close();
 });
 
