@@ -12,7 +12,7 @@ import { SMS_CONSENT_TEXT } from "@/lib/sms/consent";
 import { isSmsGatewayConfigured, sendSmsViaGateway } from "@/lib/sms/gateway";
 import { logOutboundSms } from "@/lib/sms/outbound";
 import { normalizeInboundProviderEvent, routeInboundCommunication } from "@/lib/communications/inbound";
-import { resolveTenantSmsSettings, tenantSmsWebhookKeyMatches } from "@/lib/sms/settings";
+import { resolveTenantSmsSettings, tenantSmsWebhookKeyMatches, type TenantSmsSettings } from "@/lib/sms/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -49,9 +49,9 @@ async function handleSmsKeyword(opts: {
   externalId?: string;
   existing: { id: string; name: string; sms_consent: boolean } | null;
   traceId: string;
-  simNumber?: number;
+  smsSettings: TenantSmsSettings;
 }): Promise<NextResponse> {
-  const { accountId, phone, message, keyword, externalId, existing, traceId, simNumber } = opts;
+  const { accountId, phone, message, keyword, externalId, existing, traceId, smsSettings } = opts;
   const reply = replyForSmsKeyword(keyword);
 
   let clientId: string | null = existing?.id ?? null;
@@ -131,7 +131,7 @@ async function handleSmsKeyword(opts: {
     url: smsSettings.gatewayUrl,
     username: smsSettings.gatewayUsername,
     password: smsSettings.gatewayPassword,
-    simNumber,
+    simNumber: smsSettings.simNumber,
     allowEnvironmentFallback: false,
   };
   if (isSmsGatewayConfigured(gatewayConfig)) {
@@ -375,7 +375,7 @@ export async function POST(req: NextRequest) {
         ? { id: existing.id, name: existing.name, sms_consent: existing.sms_consent }
         : null,
       traceId,
-      simNumber: smsSettings.simNumber,
+      smsSettings,
     });
   }
 
