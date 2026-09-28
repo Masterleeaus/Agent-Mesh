@@ -166,7 +166,7 @@ def validate_pull_request():
                 "agent/TZ-ROADMAP-31-SG-01"
             )
         print(
-            f"Control/Manager PR branch {head!r}: roadmap integrity verified; "
+            f"Non-agent PR branch {head!r}: roadmap integrity verified; "
             "agent claim checks are not applicable."
         )
         return
