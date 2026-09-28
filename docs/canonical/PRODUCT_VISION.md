@@ -1,5 +1,7 @@
 # Product Vision
 
+> **Historical Dovetails product vision.** The residential handyman workflows below are donor behavior and field-service domain detail, not the current Titan Zero product identity or market limit. Current platform identity and ownership are defined in `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md`; current execution order is `roadmap/PHASE-MAP-V3.md`. The exclusions below do not prohibit Titan's multi-company, workforce, intelligence, or business-node architecture.
+
 ## Product Identity
 
 Dovetails FSM is a residential handyman and home maintenance operating system focused on preserving property history, managing client relationships, creating accurate estimates, executing work efficiently, and maintaining a permanent service record for every property.

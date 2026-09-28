@@ -1,5 +1,7 @@
 # Dovetails FSM — Product Backlog
 
+> **Historical backlog, not the Titan Zero implementation queue.** The task IDs and working rules below document the inherited Dovetails programme. Current work is claimed through live GitHub mission issues and `agent/issue-<number>` branches under root `AGENTS.md`; current scope and sequence come from Blueprint v3 and `roadmap/PHASE-MAP-V3.md`. Do not create a historical TASK to authorize new Titan work.
+
 This is the **active product backlog** for Dovetails FSM. It exists so future
 work is tracked intentionally in the repo instead of being scattered across
 chat sessions.

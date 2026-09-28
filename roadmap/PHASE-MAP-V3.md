@@ -82,7 +82,7 @@ Primary owners:
 - P0 #812 DirectAdmin Business Node control plane / Server Node.
 - P1 #1051 Frappe/ERPNext operational Business Engine.
 - P1 #1049 shared DirectAdmin Cockpit SDK.
-- P1 #1044–#1062 Business Node cockpits/plugins, including Surfaces, Channels, Interaction and Decision.
+- P1 #1044–#1065 Business Node cockpits/plugins, including Surface Manager #1059, Channels #1060, System Configuration #1063 and Business Standards #1065. Interaction and Decision remain canonical engines, configured through #1063 rather than separate DirectAdmin plugins.
 - P1 #1053 Communications, #1054 Finance & Commerce, #1055 Intelligence, #1056 Governance & Assurance.
 - P2 #1057 Sprout / vertical-pack cockpit.
 - TZ-ROADMAP-20 #322 deployment/release.
@@ -95,6 +95,7 @@ Primary owners:
 
 Required delta:
 - consume #1042 tier/locality entitlements so Team/Business/Sovereign packaging can expose Server Node, Foundry, Mission and web-presence capabilities without letting subscription state become execution authority;
+- treat the current repository as a convergence input, not a commissioned Phase 4 stack: `apps/web/app/api` contains 233 route files, the inherited installable manifest/service worker remain under `apps/web`, and `apps/directadmin` currently contains only the dev-access plugin shell. #809, #542, #812, #1049 and #1051 must establish and verify the target boundaries before this phase can exit;
 - establish DirectAdmin as the first **Titan Business Node control plane / meta-orchestration engine**, sitting at the server and managing the business's complete digital system estate;
 - persistent TypeScript/Node workforce runtime coordinated through the Business Node control plane;
 - install/manage bounded DA/API/MCP capabilities for applications/sites, WordPress/Microweber, Git, Node/PHP, domains/DNS/TLS, email/Rspamd, DB/Redis, security, backup/restore, services, devices/nodes, diagnostics and governed terminal;

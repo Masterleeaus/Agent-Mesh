@@ -1,5 +1,7 @@
 # Execution Doctrine
 
+> **Historical Dovetails engineering doctrine.** Its field workflow lessons remain useful, but its scope freeze, single-product premise, phase numbering, and claim process do not govern current Titan Zero work. Follow root `AGENTS.md`, `ai/INVARIANTS.md`, Blueprint v3, and `roadmap/PHASE-MAP-V3.md` for current work.
+
 **Status:** Active  
 **Authority:** Layer 5 in the documentation hierarchy. Governs engineering discipline only — not product scope. Product phasing lives in `docs/canonical/ROADMAP.md`.
 

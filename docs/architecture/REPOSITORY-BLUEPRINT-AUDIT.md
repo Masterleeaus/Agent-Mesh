@@ -4,6 +4,8 @@ Status: ACTIVE / INCOMPLETE
 Baseline main tree SHA: `31f172f0a75c46020045e40c23d39b1ce5047763`  
 Started: 2026-09-28
 
+Current-architecture reading note: earlier pass findings below sometimes call a SQLite-only VPS or PostgreSQL replacement the canonical business storage target. Those findings record the architecture at the time of that pass, not the final ownership split. Blueprint v3 and `ai/INVARIANTS.md` now assign factual history to #913 Evidence Ledger, owner-defined local/runtime storage (including SQLite where specified), and mapped operational business materialization to #1051 Frappe/ERPNext with per-company sites. Revalidate each old finding against that split before implementing or closing it.
+
 This ledger tracks exhaustive repository inspection against `TITAN-ZERO-BLUEPRINT-V3.md`. It is evidence of scan coverage, not a second roadmap or issue queue. Substantial implementation work belongs in the existing Codex mission owner. Small unambiguous defects are fixed directly.
 
 ## Baseline inventory

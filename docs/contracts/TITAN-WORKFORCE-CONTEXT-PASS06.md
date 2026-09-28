@@ -7,4 +7,4 @@ Pass 06 adds freshness and conflict checks against mutable canonical business st
 - Cross-company canonical evidence fails closed.
 - When both resumed context and canonical state have diverged from the checkpoint version, the result is an explicit conflict rather than automatic overwrite.
 - Freshness checks are observational and do not grant authority.
-- Canonical CRM/business records remain the source of truth.
+- CRM/business records are current operational projections; accepted Business Evidence Ledger entries are factual history.

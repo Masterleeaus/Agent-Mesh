@@ -1,5 +1,7 @@
 # Architecture
 
+> **Historical Dovetails implementation snapshot.** This document describes reachable legacy code and its former deployment, not the target Titan Zero platform architecture. For current ownership and invariants use `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md`, `docs/architecture/CANONICAL-RULES.md`, `roadmap/PHASE-MAP-V3.md`, and `ai/INVARIANTS.md`. In particular, PostgreSQL/account scoping below is legacy compatibility work; Titan uses canonical `company_id`, an evidence ledger for factual history, per-company Frappe sites for mapped operational domains, and owner-defined runtime storage. `apps/web` is the full base application, separate from the single three-mode PWA and native mobile app. Do not use the historical garonhome deployment as a current production target without live evidence.
+
 ## System Shape
 
 Dovetails FSM is a pnpm monorepo with a Next.js web app, shared domain package, PostgreSQL database, PostgreSQL-backed worker queues, SQL migrations, and Docker Compose deployment profiles.

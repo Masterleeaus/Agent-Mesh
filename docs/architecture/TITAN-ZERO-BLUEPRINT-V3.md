@@ -208,6 +208,8 @@ Titan has **one canonical PWA application with three governed modes: Zero, Go an
 
 **The PWA is not `apps/web`.** The TypeScript `apps/web` application is the separate **full Titan base web application**. It may contain the complete browser-based business application experience while progressively consuming canonical Titan Domain APIs and the Frappe Business Engine rather than owning duplicate operational persistence. Do not collapse the base web app into the PWA, and do not treat the PWA as merely a route/mode inside `apps/web`.
 
+Implementation status: the inherited `apps/web` tree still contains a manifest, service worker and field/PWA-era routes. These are migration and reuse candidates, not evidence that the target separate PWA is already built. Extracting the single installable Zero/Go/Hub PWA requires its own package, deployment and offline/identity contract while keeping the full base web app operational; do not remove reachable routes or assets before parity is verified.
+
 Canonical deployment distinction:
 
 ```

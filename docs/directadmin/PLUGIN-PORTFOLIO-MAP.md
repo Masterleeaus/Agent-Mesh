@@ -5,6 +5,8 @@ Control-plane owner: #812
 Shared plugin SDK: #1049  
 Business Engine: #1051
 
+Portfolio status: #1053–#1057, #1059, #1060, #1063 and #1065 are now open canonical missions, not speculative plugin proposals. Former standalone Interaction #1061 and Decision #1062 plugins are closed as superseded. Their engines remain canonical services; #1063 owns their system configuration. This map assigns management surfaces, not proof that the plugins are implemented.
+
 ## 1. Purpose
 
 This document assigns current Titan source families and active roadmap missions to the DirectAdmin Business Node plugin portfolio.
@@ -34,7 +36,7 @@ The goal is **maximum reuse without duplication**.
 | Titan Interaction | #1061 | Expert Interaction Engine cockpit: intent, context, journeys, wizards, diagnostics |
 | Titan Decision | #1062 | Expert Decision Engine cockpit: evidence, alternatives, scenarios, confidence, outcomes |
 
-### Proposed new cockpit plugins
+### Additional missioned cockpit plugins
 
 | Plugin | Primary current owners to consume | Why separate |
 |---|---|---|
@@ -43,6 +45,10 @@ The goal is **maximum reuse without duplication**.
 | Titan Intelligence | #1055 consuming #647, #59, #393, #153, #768 | Models/providers/local AI, Decision Intelligence, Memory/Knowledge, Personal Zero and intelligence health/configuration |
 | Titan Governance & Assurance | #1056 consuming #914, #640, #423, #913, #14, #293, #916, #915, #917 | Constitution, Trust/Authority, evidence, compliance, Rewind, counterfactuals, sovereignty/capsule/federation |
 | Titan Sprout | #1057 consuming #719, #769 and vertical packs | Install/configure/version vertical overlays and specialist packs without changing core |
+| Surface Manager | #1059 | Interface endpoint estate, portals, PWA/web/mobile deployment lifecycle and health; never owns surface business state |
+| Channels & Integrations | #1060 | External endpoint/provider/channel lifecycle, including APIs and MCP exposure |
+| System Configuration | #1063 | Configuration, topology and diagnostics of canonical internal engines, including Interaction and Decision |
+| Business Standards | #1065 | Company operational standards, SOP, quality, training and compliance lifecycle consuming canonical Knowledge/Evidence |
 | Titan Analytics | #393, #638, observability/value evidence | Optional if Analytics grows beyond Zero/Finance; initially can remain a Zero/Finance tab |
 
 ## 3. Current repo top-level assignment
@@ -52,7 +58,7 @@ The goal is **maximum reuse without duplication**.
 | Current source | DirectAdmin assignment | Action |
 |---|---|---|
 | `apps/directadmin/dev-access` | Titan Dev #1048 + SDK #1049 | Preserve server-validated packaging/diagnostic lessons; refactor shared pieces into SDK |
-| `apps/web` | Full base web application; capabilities projected into Zero / Business Engine / Finance / Communications / other cockpits as relevant | Keep as the distinct full Titan base web application. It is **not** the PWA. Reuse canonical APIs/components; migrate duplicate CRM/ERP persistence behind Titan Domain APIs/#1051 rather than copying it into plugins. |
+| `apps/web` | Full Titan base web application; #809 migration, with cockpit projections where appropriate | Keep separate from the one-app/three-mode PWA under #542. Preserve reachable web/BFF routes; extract domain contracts and migrate duplicate CRM/ERP persistence behind Titan Domain APIs/#1051 before retirement. |
 | `apps/mobile` | Titan Operations (device/node visibility) + Workforce | Do not port Flutter; expose Edge/device health/capability/configuration |
 | `apps/browser` | Titan Operations + Dev + capability graph | Browser Node remains separate execution node; DA manages/observes it |
 | `apps/desktop` | Titan Operations / Intelligence | Manage desktop/edge node status; do not transplant desktop shell |
@@ -167,6 +173,10 @@ The goal is **maximum reuse without duplication**.
 | #302 | SDK + Dev + Governance & Assurance |
 | #542 | No DA replacement: one PWA + one native mobile app each expose Zero/Go/Hub modes; DA Surfaces/Zero/Workforce consume the same contracts |
 | #809 | No direct port: `apps/web` remains the separate full base web application; DA cockpits reuse canonical APIs/domain contracts after duplicate persistence convergence |
+| #1059 | Surface Manager, consuming the separate PWA/mobile and base web deployment contracts |
+| #1060 | Channels & Integrations, consuming external transport/provider contracts |
+| #1063 | System Configuration, consuming canonical engine configuration schemas; #1061/#1062 superseded |
+| #1065 | Business Standards, consuming Knowledge/Evidence/Industry/Workforce contracts |
 | #643 | Operations/Dev management of Browser Node, not source move |
 | #644 | Intelligence/Dev visibility of AI-host integration, not source move |
 | #648 | Repo convergence; informs all plugin boundaries |
@@ -326,7 +336,6 @@ The current top-level scan is complete. Implementation agents should now perform
 14. Sprout #1057 — deep-map verticals/environmental packs.
 15. #1059 Surfaces — interface estate/lifecycle over existing Interface Runtime/Builder/deployment contracts.
 16. #1060 Channels — endpoint/provider transport estate; keep Communications semantics separate.
-17. #1061 Interaction — expert cockpit over canonical Interaction Engine.
-18. #1062 Decision — expert cockpit over canonical Decision Engine.
+17. #1063 System Configuration — engine controls for Interaction/Decision and other canonical runtimes, without standalone engine plugins.
+18. #1065 Business Standards — operational SOP, compliance, quality and training projections over canonical owners.
 19. Experience — converge Evolution-native design system after cockpit needs are known.
-
