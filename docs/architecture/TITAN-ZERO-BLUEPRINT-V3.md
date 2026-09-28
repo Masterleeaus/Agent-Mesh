@@ -139,6 +139,49 @@ Canonical Zero/Go/Hub remain the main business interaction surfaces; DirectAdmin
 - business-wide system discovery, resource/health observation, drift detection and coordinated remediation;
 - evidence collection for host/application execution.
 
+### 8.1 Operational Business Engine — Frappe/ERPNext
+
+DirectAdmin is the Business Node **meta-orchestration/control plane**; it does not need to reimplement mature CRM/ERP/domain primitives itself.
+
+Titan's first operational Business Engine substrate is **Frappe Framework with selected ERPNext capabilities**, managed from the DirectAdmin Business Node control plane.
+
+The intended layering is:
+
+```
+ONE / ZERO
+    ↓
+Titan Workforce + Governance
+    ↓
+Titan Domain / Capability contracts
+    ↓
+DirectAdmin Business Node Control Plane
+    ├─ Business Engine (Frappe/ERPNext)
+    ├─ Websites / WordPress / Microweber
+    ├─ Domains / DNS / TLS
+    ├─ Email / Rspamd
+    ├─ Databases / Redis
+    ├─ Applications / Node / PHP / Git
+    ├─ Devices / Nodes / Sync
+    ├─ Backups / Recovery
+    ├─ Security / Diagnostics
+    └─ Foundry / temporary Mission apps
+    ↓
+Verification → Business Evidence Ledger
+```
+
+Frappe/ERPNext provides mature operational models, transactional workflows, admin primitives and selected ERP capabilities. Titan consumes it through a **Titan Domain API / anti-corruption layer** rather than binding Zero/Go/Hub directly to Frappe DocTypes or Desk UI.
+
+Default tenancy for the Business Engine is **shared versioned application/runtime code with per-company Frappe site/database isolation**. Titan `company_id` remains the cross-system business identity and evidence boundary; the provider site/database is an additional physical isolation boundary, not a replacement identity.
+
+Frappe/ERPNext is therefore an operational/materialized business-state engine beneath Titan. It does not replace:
+- the Business Evidence Ledger as factual history;
+- Titan Constitution / Trust / Authority;
+- Titan Workforce identity/runtime;
+- the canonical capability graph;
+- Zero/Go/Hub presentation contracts.
+
+DirectAdmin owns the orchestration and lifecycle of the Business Engine: provision, configure, inspect, migrate, back up, restore, reconcile, upgrade, health-check and retire it through governed capabilities.
+
 ### Server Node governance
 
 Host/root privilege never becomes Titan business authority.
