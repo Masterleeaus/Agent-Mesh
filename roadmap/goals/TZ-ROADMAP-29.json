@@ -2,7 +2,7 @@
   "goal_id": "TZ-ROADMAP-29",
   "priority": "P1",
   "title": "Developer Platform, Skills & Extensibility",
-  "objective": "Create the platform for safely adding agents, tools, workflows, verticals and UI components without forking the core.",
+  "objective": "Create the governed developer and AI App Foundry platform for safely discovering, analysing, adapting, composing, generating, packaging, testing, deploying and maintaining capabilities, apps, workflows, verticals and UI components without forking the core.",
   "status": "PLANNED",
   "subgoals": [
     {
@@ -290,7 +290,7 @@
     },
     {
       "subgoal": 2,
-      "title": "Define stable versioned manifests and schemas for agents, tools, workflows, goals, skills and extension packages through the canonical Extension Contract workforce",
+      "title": "Define stable versioned Titan Package/App Foundry manifests for source provenance, licence/SBOM, capabilities, tool/workflow bindings, runtime/deployment requirements, permissions, secrets, health, backup, upgrade and rollback metadata",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -486,7 +486,7 @@
     },
     {
       "subgoal": 3,
-      "title": "Build governed validation, scaffolding, SDK and contract-derived documentation tooling that generates extensions without core forks",
+      "title": "Build governed discovery, repository/software analysis, scaffolding, SDK and generation tooling that maps business capability gaps to reusable Titan components, vetted external sources or generated micro-apps without core forks",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -704,7 +704,7 @@
     },
     {
       "subgoal": 4,
-      "title": "Build the local isolation, failure, upgrade and regression test harness used by the canonical Extension Quality workforce",
+      "title": "Build sandboxed Foundry build/test environments with architecture, dependency, licence, security, compatibility, migration, regression and failure verification before any package can be commissioned",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -907,7 +907,7 @@
     },
     {
       "subgoal": 5,
-      "title": "Implement extension versioning, migrations, compatibility, deprecation and rollback contracts with receipt-backed upgrade execution",
+      "title": "Implement package/version/upstream tracking, migrations, compatibility, deprecation, security patching, rollback and maintenance receipts for imported, adapted, composite and generated software",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -1118,7 +1118,7 @@
     },
     {
       "subgoal": 6,
-      "title": "Implement least-privilege permission, data, side-effect, offline and authority declarations plus governed review gates for extensions",
+      "title": "Implement least-privilege package and Mission declarations for data, filesystem, network, secrets, side effects, offline behavior and authority plus governed review/escalation gates",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -1322,7 +1322,7 @@
     },
     {
       "subgoal": 7,
-      "title": "Implement the generative UI extension model with surface capability, state, accessibility, action, approval and fallback conformance",
+      "title": "Implement generative micro-app/composite-app UI through canonical Interface/Visual Runtime and Surface SDK so temporary Mission interfaces reuse Titan identity, data and actions instead of becoming standalone business cores",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -1518,7 +1518,7 @@
     },
     {
       "subgoal": 8,
-      "title": "Implement deterministic extension package assembly, registry metadata and certification handoff while reusing Goal 28 connector publication contracts where applicable",
+      "title": "Implement deterministic Titan Package assembly, capability marketplace metadata, Foundry Recipes and software-intelligence/provenance metadata while reusing canonical capability and connector registries",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -1722,7 +1722,7 @@
     },
     {
       "subgoal": 9,
-      "title": "Run third-party extension isolation, authority, compatibility, migration, UI and upgrade certification across the canonical platform workforce",
+      "title": "Certify third-party/imported/generated packages for isolation, licence obligations, SBOM/security, authority, compatibility, migrations, upgrade/rollback, UI fallback, offline behavior and source/upstream drift",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -1963,7 +1963,7 @@
     },
     {
       "subgoal": 10,
-      "title": "Run Worker→Specialist→Manager→Orchestrator developer-platform acceptance and certify documentation, trust progression, upgrade safety, non-duplication and no-core-fork extensibility",
+      "title": "Run end-to-end App Foundry acceptance: business objective → capability analysis → discover/reuse/build/compose → sandbox verify → signed package → governed deploy → observe/maintain, proving reuse across at least two service verticals",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -2250,7 +2250,13 @@
   "affinity_tags": [
     "agents",
     "business-operations",
-    "developer"
+    "developer",
+    "app-foundry",
+    "titan-package",
+    "micro-apps",
+    "composite-apps",
+    "software-intelligence",
+    "capability-marketplace"
   ],
   "preferred_predecessors": [],
   "preferred_successors": [],
