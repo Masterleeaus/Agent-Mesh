@@ -17,7 +17,7 @@ These are guardrails for every agent and PR.
 - Capability discovery, simulation/counterfactuals, recommendations, predictions, consensus and registration/activation never create execution authority.
 - Factual and counterfactual histories are strictly separated; simulated history cannot silently become factual history.
 - One, Personal Zero, Business Reality, Business Memory/Knowledge and Workforce are distinct architectural concerns and must not be collapsed into each other.
-- DirectAdmin is the first Titan Server Node deployment/control-plane adapter. It hosts and exposes governed infrastructure/application capabilities but is not a fourth business surface, second Titan core or canonical business truth store.
+- DirectAdmin is the first Titan Server Node and the primary Business Node **operations/control-plane and meta-orchestration layer**. It installs, discovers, coordinates, monitors and lifecycle-manages the business's systems, applications, infrastructure and hosted workforce. It remains separate from canonical factual truth and business authority: DirectAdmin/root/admin privilege never grants Titan execution authority, and Zero/Go/Hub remain the canonical business interaction surfaces.
 - Infrastructure materializes Titan but never defines Business Node identity or factual history. Titan must remain recoverable onto another supported substrate.
 - Device-first, privacy-first and Cost Sovereignty ordering must be preserved.
 - Reuse or extend canonical capabilities, workforce identities and contracts before creating new ones.
