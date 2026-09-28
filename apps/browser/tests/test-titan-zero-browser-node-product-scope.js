@@ -25,3 +25,17 @@ assert(!/label:\s*'Repository'/.test(nav), 'repository coding workspace must not
 assert(!/label:\s*'Titan Zero'[^\n]*page:\s*'titan-zero'/.test(nav), 'Titan Zero developer-analysis page must not be exposed as a Browser Node surface');
 
 console.log('Titan Zero Browser Node product scope and operational navigation contract OK');
+
+
+for (const forbiddenImport of [
+  '../repository/repository-policy.js',
+  '../repository/repository-inventory.js',
+  '../repository/repository-search.js',
+  '../repository/repository-coding-pack.js',
+  '../integration/repository-host-adapter.js',
+  'repository-host-integration.js',
+  '../titan-zero/titan-zero-developer-pack.js',
+  '../integration/codex-chatgpt-bridge.js'
+]) {
+  assert(!worker.includes(`'${forbiddenImport}'`), `Browser Node must not load developer-only runtime ${forbiddenImport}`);
+}
