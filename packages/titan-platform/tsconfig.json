@@ -38,10 +38,10 @@
     "src/system-configuration.ts",
     "src/vertical-pack.ts",
     "src/communication-announcement.ts",
+    "src/intelligence-core.ts",
     "src/ported/titan-ai-core/cost-sovereignty.ts",
     "src/ported/titan-connect/connector-contract.ts",
     "src/ported/titan-connect/credential-contract.ts",
     "src/ported/titan-connect/mcp-host-contract.ts"
   ]
 }
-
