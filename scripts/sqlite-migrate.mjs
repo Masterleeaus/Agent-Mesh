@@ -1,3 +1,11 @@
+// TRANSITIONAL COMPATIBILITY MIGRATOR.
+// This applies the historical mixed db/sqlite migration stream to one SQLITE_PATH.
+// It is not the canonical database-per-company provisioning path: migration 001
+// mixes native FSM business tables with registry/authority/evidence concerns and
+// later files add runtime/control state. New company provisioning must use the
+// owner-classified migration path owned by #809/#811/#322. Do not point this at
+// an isolated company database until that classification/split is implemented.
+
 import Database from 'better-sqlite3';
 import { mkdirSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
