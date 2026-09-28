@@ -1,0 +1,1 @@
+Temporary retirement marker; useful Agent 796 convergence evidence is already preserved on main via PR #1028.
