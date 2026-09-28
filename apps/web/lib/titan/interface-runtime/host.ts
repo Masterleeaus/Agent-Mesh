@@ -1,6 +1,6 @@
-import { normalizeSurface, type TitanSurface } from "@titan-zero/titan-platform/interface-registry";
+import { normalizeSurface, type CanonicalProductSurface } from "@titan-zero/titan-platform/interface-registry";
 
-export type HostSurface = TitanSurface;
+export type HostSurface = CanonicalProductSurface;
 type NavItem = readonly [label: string, href: string];
 
 const HOST_NAVIGATION: Readonly<Record<HostSurface, readonly NavItem[]>> = Object.freeze({
