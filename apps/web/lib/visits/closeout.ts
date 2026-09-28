@@ -7,7 +7,7 @@ import {
   type VisitCloseoutBody,
   type VisitStatus,
 } from "@titan-zero/domain";
-import { checkCompletionPacket, isQuickJobPacketExempt } from "@/lib/completion-guard";
+import { checkCompletionPacket, isQuickJobPacketExempt, type CompletionPacket } from "@/lib/completion-guard";
 import { appendAuditLog } from "@/lib/db/audit";
 import { createDraftFinalInvoiceForJob } from "@/lib/invoices/final-invoice";
 import { buildNextScheduleDayPrefill } from "@/lib/jobs/next-schedule-day";
@@ -128,7 +128,7 @@ async function completeVisitRow(
     );
   }
 
-  const packetResult = await client.query(
+  const packetResult = await client.query<CompletionPacket>(
     `SELECT photo_urls, signature_url, signature_waiver, photos_waived, photos_waiver_reason
      FROM completion_packets
      WHERE visit_id = $1 AND account_id = $2`,
