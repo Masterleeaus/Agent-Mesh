@@ -87,3 +87,5 @@ export * from "./governance/assurance.js";
 export * from "./foundry-artifact.js";
 
 export * from "./ported/titan-connect/channel-binding.js";
+
+export * from "./developer-portal.js";
