@@ -9,7 +9,7 @@ Primary owners / convergence targets:
 - TZ-ROADMAP-18 — security identity/session/credentials.
 - TZ-ROADMAP-17 — reliability/resilience/DR.
 - TZ-ROADMAP-50 — Storage Fabric.
-- P0 #811 — canonical runtime/control/evidence persistence where SQLite-owned, persistent Workforce Host, restart/idempotency; operational business-domain materialization follows #1051 Frappe/ERPNext.
+- P0 #811 — canonical runtime/control/evidence persistence where SQLite-owned, persistent Workforce Host, restart/idempotency; native FSM state remains Titan-owned; #1051 Frappe is optional for explicitly enabled extension capabilities.
 - repository-wide `company_id` enforcement under TZ-ROADMAP-52.
 
 Required architectural delta:
@@ -80,7 +80,7 @@ One can disconnect/reconnect through Zero/Go/Hub while ongoing governed work sur
 
 Primary owners:
 - P0 #812 DirectAdmin Business Node control plane / Server Node.
-- P1 #1051 Frappe/ERPNext operational Business Engine.
+- P1 #1051 optional Frappe/ERPNext extension Business Engine; native field-service FSM stays in the Titan TypeScript base application.
 - P1 #1049 shared DirectAdmin Business Node SDK.
 - Business Node cockpit/plugin missions #1044–#1057, #1059, #1060, #1063 and #1065 (individual priorities remain on their issues). This includes Surface Manager #1059, Channels & Integrations #1060, System Configuration #1063 and Business Standards #1065. #1061 and #1062 are closed/superseded standalone plugin proposals; Interaction and Decision remain canonical engines configured through #1063. #1058 and #1064 are pull requests, not plugin missions.
 - P1 #1053 Communications Manager, #1054 Finance & Commerce, #1055 Intelligence Core, #1056 Governance & Assurance.
@@ -99,8 +99,8 @@ Required delta:
 - establish DirectAdmin as the first **Titan Business Node control plane / meta-orchestration engine**, sitting at the server and managing the business's complete digital system estate;
 - persistent TypeScript/Node workforce runtime coordinated through the Business Node control plane;
 - install/manage bounded DA/API/MCP capabilities for applications/sites, WordPress/Microweber, Git, Node/PHP, domains/DNS/TLS, email/Rspamd, DB/Redis, security, backup/restore, services, devices/nodes, diagnostics and governed terminal;
-- install/manage **Frappe Framework + selected ERPNext capabilities as the first operational Business Engine**, behind stable Titan Domain APIs and per-company provider site/database isolation;
-- DirectAdmin orchestrates Business Engine provisioning, health, migrations, backup/restore, reconciliation and upgrades; Frappe does not become Titan authority, Workforce, Evidence Ledger or customer-facing UI;
+- retain and make installable the native Titan field-service product in `apps/web` without Frappe; optionally install/manage **Frappe Framework + selected ERPNext extensions** behind Titan Domain/provider APIs and per-company provider site/database isolation when enabled;
+- DirectAdmin orchestrates core Titan installation and, separately, optional Frappe extension provisioning, health, migrations, backup/restore, reconciliation and upgrades; Frappe does not become Titan authority, Workforce, Evidence Ledger or customer-facing UI;
 - DirectAdmin Business Node cockpits coordinate Zero, Workforce, Operations, Foundry, Web/Portal and Dev as one expert/operator meta-layer over canonical Titan systems;
 - capability discovery never creates authority;
 - `Deploy → Preview → Verify → Promote` commissioning lifecycle;
@@ -114,7 +114,7 @@ Required delta:
 - software-intelligence and Foundry Recipe metadata preserve reusable understanding of capabilities, APIs, schemas, tenancy, dependencies, integrations, tests, provenance and upstream maintenance history.
 
 Exit gate:
-A clean DirectAdmin VPS can install, run, upgrade, recover and verify the canonical Titan Business Node control plane, hosted Workforce, and isolated Frappe Business Engine tenancy. The control plane can manage domains, email, sites, applications, data services, backups, security, nodes/devices and deployments from one governed operations environment. The same business identity/evidence/authority semantics remain portable without DirectAdmin or Frappe, and the Node can materialize/retire verified Titan Packages and Mission workspaces without creating parallel factual truth or authority.
+A clean DirectAdmin VPS can install, run, upgrade, recover and verify the canonical Titan Business Node control plane, hosted Workforce and native TypeScript FSM without Frappe. Optional Frappe extension tenancy can be enabled later per company. The control plane can manage domains, email, sites, applications, data services, backups, security, nodes/devices and deployments from one governed operations environment. The same business identity/evidence/authority semantics remain portable without DirectAdmin or Frappe, and the Node can materialize/retire verified Titan Packages and Mission workspaces without creating parallel factual truth or authority.
 
 ## Phase 5 — Constitution & Earned Autonomy
 
