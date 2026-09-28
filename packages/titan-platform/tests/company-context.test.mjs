@@ -69,6 +69,26 @@ test("stale, cross-company and authority-expanding handoffs fail closed", () => 
   );
 });
 
+test("revocation invalidates the context reference used by handoffs", () => {
+  const contexts = store();
+  contexts.issue({
+    context_id: "ctx-revoked",
+    company_id: "company-a",
+    actor_id: "actor-1",
+    source: "session",
+    authority_ceiling: "observe",
+    revision: 1,
+  });
+  const handoff = contexts.createHandoff({
+    handoff_id: "handoff-revoked",
+    context_id: "ctx-revoked",
+    correlation_id: "corr-revoked",
+    causation_id: "cause-revoked",
+  });
+  contexts.revoke("ctx-revoked");
+  assert.throws(() => contexts.acceptHandoff(handoff), /revoked-or-missing/);
+});
+
 test("expired contexts cannot be resolved", () => {
   let tick = Date.parse("2026-01-01T00:00:00.000Z");
   const contexts = new CompanyContextStore({
