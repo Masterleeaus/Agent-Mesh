@@ -9,7 +9,7 @@ Primary owners / convergence targets:
 - TZ-ROADMAP-18 — security identity/session/credentials.
 - TZ-ROADMAP-17 — reliability/resilience/DR.
 - TZ-ROADMAP-50 — Storage Fabric.
-- P0 #811 — canonical SQLite persistence, restart/idempotency.
+- P0 #811 — canonical runtime/control/evidence persistence where SQLite-owned, persistent Workforce Host, restart/idempotency; operational business-domain materialization follows #1051 Frappe/ERPNext.
 - repository-wide `company_id` enforcement under TZ-ROADMAP-52.
 
 Required architectural delta:
@@ -58,7 +58,7 @@ Primary owners:
 - TZ-ROADMAP-42 #640 earned Trust/Autonomy.
 - #768 Personal Zero.
 - #153 Business Memory.
-- #542/#869 One PWA Zero/Go/Hub.
+- #542 One installable PWA + one native mobile app, each with governed Zero/Go/Hub modes; `apps/web` remains the separate full base web application.
 - #725 identity/context continuity.
 - #811 24/7 hosted runtime.
 - TZ-ROADMAP-04 #163 Mission runtime for ephemeral, campaign, standing and crisis work.
@@ -82,7 +82,7 @@ Primary owners:
 - P0 #812 DirectAdmin Business Node control plane / Server Node.
 - P1 #1051 Frappe/ERPNext operational Business Engine.
 - P1 #1049 shared DirectAdmin Cockpit SDK.
-- P1 #1044–#1050 Business Node cockpits/plugins.
+- P1 #1044–#1062 Business Node cockpits/plugins, including Surfaces, Channels, Interaction and Decision.
 - P1 #1053 Communications, #1054 Finance & Commerce, #1055 Intelligence, #1056 Governance & Assurance.
 - P2 #1057 Sprout / vertical-pack cockpit.
 - TZ-ROADMAP-20 #322 deployment/release.
