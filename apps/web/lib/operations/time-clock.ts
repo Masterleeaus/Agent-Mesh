@@ -1,3 +1,10 @@
+/**
+ * Architecture compatibility note:
+ * Provider-neutral calculations/types in this module remain useful Titan semantics.
+ * Direct account_id business-table persistence is legacy base-web materialization
+ * pending #1051 provider convergence. Human HR records may be Frappe-backed, but
+ * Frappe Employee/Skill/Time records never grant Titan Workforce authority.
+ */
 import { randomUUID } from "crypto";
 import type { DbClient } from "@/lib/db-contract";
 import type { PayType } from "@titan-zero/domain";
