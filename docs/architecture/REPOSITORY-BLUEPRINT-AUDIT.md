@@ -242,3 +242,21 @@ apps/web architecture scan disposition:
 - substantial convergence → #811, #14, #183, #263, #343, #353, #542, #648;
 - no additional standalone mission required.
 - web subtree can now move from discovery to mission execution/certification.
+
+
+### Pass 6C — apps/web libraries and canonical surfaces
+Status: COMPLETE for architecture/ownership scan
+
+Findings:
+- Nested recount: 537 files under apps/web/lib/**. Largest clusters: estimates 58, invoices 51, titan 39, expenses 29, jobs 26, navigation/visits/work-orders 21 each.
+- Zero: dedicated /app/zero + canonical interaction client/HTTP transport exists. It intentionally shows zero Workforce pulse values until authoritative hosted projections arrive.
+- Go: mature field UX exists under /app/my-work, but it still uses PostgreSQL-only queryForSession and PostgreSQL SQL syntax, blocking canonical SQLite VPS parity.
+- Hub: mature customer portal exists under /portal/**, but its main customer page still uses PostgreSQL-only query/queryOne.
+- Owner /app remains a dashboard-heavy direct projection over business tables; preserve mature UX while converging canonical owner interaction into Zero mode rather than inventing another surface.
+- /app/my-day redirects to /app/my-work, so that duplicate field root is already being collapsed.
+- workforce-native planning adapters are fail-closed for consequential non-GET actions until canonical execution authority is supplied; preserve this safety property.
+- No additional obvious committed .bak/.old/.tsbuildinfo artifacts remained after Pass 6A cleanup.
+
+Conclusion: apps/web is feature-rich but not yet a thin canonical Zero/Go/Hub projection layer. Its principal remaining debts are direct domain mutation ownership, PostgreSQL-only persistence seams, hosted Workforce projection/command wiring and surface convergence. Exact implementation work is now recorded in existing missions rather than new duplicate issues.
+
+Mission evidence: #811, #14, #183, #263, #343, #353, #542, #648.
