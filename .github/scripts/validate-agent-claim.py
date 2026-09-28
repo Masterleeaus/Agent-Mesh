@@ -176,9 +176,10 @@ def validate_pull_request():
     if not item:
         print(f"Codex mission {sid} is not in the legacy roadmap manifest; issue ownership will be validated from GitHub.")
 
-    status = str(item.get("status") or "").upper()
-    if status in {"COMPLETE", "SUPERSEDED", "SUPERSEDED_BY_ARCHITECTURE"}:
-        fail(f"{sid} is not claimable because roadmap status is {status}")
+    if item:
+        status = str(item.get("status") or "").upper()
+        if status in {"COMPLETE", "SUPERSEDED", "SUPERSEDED_BY_ARCHITECTURE"}:
+            fail(f"{sid} is not claimable because roadmap status is {status}")
 
     if sid not in title and sid not in body:
         fail(f"PR must name its claimed subgoal ID {sid}")
