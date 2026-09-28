@@ -1,0 +1,9 @@
+export type SessionBinding=Readonly<{session_id:string;company_id:string;actor_id:string;device_id:string;issued_at:string;expires_at:string;revoked:boolean;revision:number}>;
+export type SecureEnvelope=Readonly<{company_id:string;session_id:string;actor_id:string;role:"user"|"system";payload:Readonly<Record<string,unknown>>}>;
+const secret=/access[_-]?token|refresh[_-]?token|api[_-]?key|password|secret|private[_-]?key|authorization/i;
+function req(v:string,n:string){if(!v.trim())throw new Error(`${n}-required`)}
+export function createSessionBinding(input:Omit<SessionBinding,"revision">):SessionBinding{req(input.session_id,"session_id");req(input.company_id,"company_id");req(input.actor_id,"actor_id");req(input.device_id,"device_id");return Object.freeze({...input,revision:1})}
+export function validateSession(binding:SessionBinding,company_id:string,now:string):void{if(binding.company_id!==company_id)throw new Error("session-company-mismatch");if(binding.revoked)throw new Error("session-revoked");if(Date.parse(now)>=Date.parse(binding.expires_at))throw new Error("session-expired")}
+export function redactSecrets(value:unknown):unknown{if(Array.isArray(value))return value.map(redactSecrets);if(value&&typeof value==="object")return Object.fromEntries(Object.entries(value as Record<string,unknown>).map(([k,v])=>[k,secret.test(k)?"[REDACTED]":redactSecrets(v)]));return value}
+export function createSecureEnvelope(binding:SessionBinding,company_id:string,payload:Record<string,unknown>,requestedRole:string,now:string):SecureEnvelope{validateSession(binding,company_id,now);if(requestedRole!=="user")throw new Error("untrusted-role-rejected");return Object.freeze({company_id,session_id:binding.session_id,actor_id:binding.actor_id,role:"user",payload:redactSecrets(payload) as Record<string,unknown>})}
+
