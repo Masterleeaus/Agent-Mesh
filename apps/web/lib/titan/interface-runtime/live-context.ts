@@ -18,7 +18,7 @@ export async function loadLiveInterfaceContext(surface: Surface) {
   const params = surface === "go" && session.role === "tech" ? [accountId,session.userId] : [accountId];
   const [activeJobs, attention] = await Promise.all([
     queryForSession<Row>(session, jobSql, params),
-    surface === "zero" ? queryForSession<AttentionEventRow>(session, `SELECT id,account_id,type,entity_type,entity_id,title,summary,href,dedupe_key,created_at,read_at FROM attention_events WHERE account_id=$1 AND read_at IS NULL ORDER BY created_at DESC LIMIT 30`, [accountId]) : Promise.resolve([]),
+    surface === "zero" ? queryForSession<AttentionEventRow & Record<string, unknown>>(session, `SELECT id,account_id,type,entity_type,entity_id,title,summary,href,dedupe_key,created_at,read_at FROM attention_events WHERE account_id=$1 AND read_at IS NULL ORDER BY created_at DESC LIMIT 30`, [accountId]) : Promise.resolve([]),
   ]);
   return buildBusinessRuntimeContext({company_id:accountId,surface,activeJobs,attention,decisions:[]});
 }
