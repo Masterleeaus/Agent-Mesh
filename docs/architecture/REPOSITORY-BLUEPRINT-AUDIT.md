@@ -111,7 +111,7 @@ Mission evidence: #913, #914, #915, #917, #648.
 
 The audit is not complete until all tracked files have been classified/inspected. Remaining passes include at minimum:
 
-1. apps/web — IN PROGRESS. Pass 6 inventory classified all 1,480 files: 235 API, 317 libs, 367 app/pages, 75 components, 280 tests, 187 marketing-source, 12 config, 4 assets, 3 other. Mutation/runtime seams are being audited file-by-file; 234 route.ts endpoints require ownership classification.
+1. apps/web — COMPLETE at architecture/ownership level across all 1,480 tracked paths (Passes 6A–6C). Exact substantial migration work is recorded in #811/#14/#183/#263/#343/#353/#542/#639/#648. Future Codex missions still perform implementation-level edits/tests inside those paths.
 2. apps/browser — active source vs imports/donor/generated; canonical Browser Node identity and hosted Workforce wiring.
 3. apps/mobile — every Dart/native/release file; production transport, offline authority contraction, Zero/Go/Hub modes.
 4. apps/llm-plugin + desktop + marketing — thin adapter/marketing isolation.
@@ -181,3 +181,23 @@ Verified findings:
 - No further obvious backup/build-artifact files remain in apps/web after Pass 6A cleanup.
 
 Mission evidence: #811, #14, #183, #263, #343, #353, #648.
+
+
+### Pass 6C — apps/web libraries + surface topology
+Status: COMPLETE (architecture/ownership coverage for apps/web)
+
+All 317 lib paths were inventoried by functional owner and the 367 app/page paths were classified as office/field/customer/auth/public/compatibility UI.
+
+Findings:
+- Current product topology remains office dashboard + field workspace + separate customer portal, not yet one canonical Zero/Go/Hub PWA.
+- `/app/zero` correctly refuses to fabricate Workforce state but currently shows zero pulse until hosted projections are wired.
+- `/app/my-work` is the current Go-equivalent and still contains PostgreSQL-only projection queries through `queryForSession`.
+- `/portal/**` is the current Hub-equivalent but uses separate portal routes/session and PostgreSQL-specific query helpers; preserve its customer privacy semantics while converging to Hub projection.
+- Desired zero/go/hub navigation contracts already exist under `lib/titan/interface-runtime/host.ts`, ahead of actual page topology.
+- Workforce hierarchy/context modules in web are largely re-exports/adapters; ensure persistent state/runtime remains server-owned.
+- Business-workflow and revenue web modules still re-export some `packages/titan-platform/src/ported/**` owners and require #648 convergence.
+- No remaining obvious .bak/.tsbuildinfo artifacts were found after cleanup.
+
+apps/web is now considered scanned for Blueprint architecture/ownership. Implementation missions retain the exact substantial work.
+
+Mission evidence: #811, #14, #183, #263, #343, #353, #542, #639, #648.
