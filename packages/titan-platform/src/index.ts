@@ -63,3 +63,5 @@ export type { CertificationCell, ReleaseEligibility } from "./certification-matr
 
 export { continueTask } from "./continuity.js";
 export type { ContinuitySurface, ContinuationContext, ContinuationDecision } from "./continuity.js";
+
+export * from "./compatibility-pipeline.js";
