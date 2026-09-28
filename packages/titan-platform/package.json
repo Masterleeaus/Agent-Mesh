@@ -23,7 +23,8 @@
     "./personal-zero": "./src/personal-zero/index.ts",
     "./interface-registry": "./src/interface-registry.ts",
     "./user-experience": "./src/user-experience.ts",
-    "./system-configuration": "./src/system-configuration.ts"
+    "./system-configuration": "./src/system-configuration.ts",
+    "./vertical-pack": "./src/vertical-pack.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
