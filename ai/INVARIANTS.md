@@ -28,7 +28,7 @@ Keep these distinct:
 - Native mobile = **one application with Zero / Go / Hub governed modes**.
 - DirectAdmin = first Business Node control-plane host with modular expert/operator plugins.
 - Persistent TypeScript Titan Runtime/Workforce runs independently of open clients.
-- Frappe Framework + selected ERPNext capabilities = first operational Business Engine provider beneath Titan Domain APIs.
+- Native Titan TypeScript FSM in `apps/web` remains the stand-alone field-service product; Frappe Framework + selected ERPNext capabilities is an optional extension Business Engine behind Titan Domain/provider APIs.
 
 Do not collapse the PWA into `apps/web`, create three separate PWAs, or make a DirectAdmin plugin the canonical engine it observes/configures.
 
@@ -38,7 +38,7 @@ Do not collapse the PWA into `apps/web`, create three separate PWAs, or make a D
 
 Legacy `account_id`, `tenant_company_id`, team/tenant IDs and similar fields are compatibility/provider inputs only unless a current canonical contract explicitly assigns them another bounded role. Normalize to canonical company context before authorization/execution.
 
-For mapped operational business domains, #1051 defaults to shared versioned Frappe/Titan application code with a **separate Frappe site/database per company**. This is an additional physical isolation boundary; it does not replace `company_id`.
+When a company enables #1051 Frappe extensions, shared versioned Frappe/Titan code defaults to a **separate Frappe site/database per company**. Native Titan FSM operation requires no Frappe site. Provider isolation supplements `company_id`; it never replaces it.
 
 Never assume historical PostgreSQL RLS or a DB role is the current Titan isolation model.
 
@@ -48,10 +48,11 @@ There is no universal "one database" rule.
 
 - Business Evidence Ledger / factual history: #913 canonical evidence owner.
 - Runtime/control/recovery/local/offline state: use the canonical storage owner; SQLite is valid where #811/#646/#913 or another current owner defines it.
-- Operational CRM/jobs/assets/inventory/finance state mapped by #1051: Frappe/ERPNext per-company provider site/database by default.
+- Mature native FSM CRM/jobs/assets/inventory/finance behavior: Titan TypeScript base application and its canonical domain/storage owners. Preserve current reachable implementations while converging company, authority and evidence boundaries.
+- Deliberately enabled extension capabilities: #1051 Frappe/ERPNext provider site/database per company by default; document ownership, mapping, sync, conflict and verification per capability.
 - Surface/application code must consume Titan Domain/API/provider contracts rather than direct provider DB schemas or Frappe DocTypes.
 
-Existing PostgreSQL/SQLite business-table implementations are migration/compatibility donors until their useful validation/lifecycle/idempotency behavior is extracted and provider parity is certified.
+Existing PostgreSQL/SQLite business-table implementations may be active native FSM persistence or compatibility code. Establish reachability and supported deployment before classification; do not retire mature native field-service behavior because Frappe has a similar module.
 
 ## Governed execution
 
@@ -83,7 +84,7 @@ When touching them:
 1. establish current reachability and owner;
 2. preserve migration history needed for compatibility;
 3. extract useful business semantics before retirement;
-4. migrate active business-domain access toward Titan Domain APIs/#1051;
+4. keep mature native FSM behavior, converge reusable domain/provider boundaries, and use #1051 only for deliberately enabled extensions;
 5. do not create new architecture that depends on the legacy PostgreSQL model unless a current canonical owner explicitly requires it.
 
 ## Runtime networking and providers
