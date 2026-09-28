@@ -81,10 +81,10 @@ One can disconnect/reconnect through Zero/Go/Hub while ongoing governed work sur
 Primary owners:
 - P0 #812 DirectAdmin Business Node control plane / Server Node.
 - P1 #1051 Frappe/ERPNext operational Business Engine.
-- P1 #1049 shared DirectAdmin Cockpit SDK.
-- Business Node cockpit/plugin missions #1044–#1057, #1059, #1060, #1063 and #1065 (individual priorities remain on their issues). This includes Surface Manager #1059, Channels #1060, System Configuration #1063 and Business Standards #1065. #1061 and #1062 are closed/superseded standalone plugin proposals; Interaction and Decision remain canonical engines configured through #1063. #1058 and #1064 are pull requests, not plugin missions.
-- P1 #1053 Communications, #1054 Finance & Commerce, #1055 Intelligence, #1056 Governance & Assurance.
-- P2 #1057 Sprout / vertical-pack cockpit.
+- P1 #1049 shared DirectAdmin Business Node SDK.
+- Business Node cockpit/plugin missions #1044–#1057, #1059, #1060, #1063 and #1065 (individual priorities remain on their issues). This includes Surface Manager #1059, Channels & Integrations #1060, System Configuration #1063 and Business Standards #1065. #1061 and #1062 are closed/superseded standalone plugin proposals; Interaction and Decision remain canonical engines configured through #1063. #1058 and #1064 are pull requests, not plugin missions.
+- P1 #1053 Communications Manager, #1054 Finance & Commerce, #1055 Intelligence Core, #1056 Governance & Assurance.
+- P2 #1057 Industry Builder / vertical-pack cockpit.
 - TZ-ROADMAP-20 #322 deployment/release.
 - TZ-ROADMAP-28 #403 connectors.
 - TZ-ROADMAP-31 #7 capability/tool registry.
