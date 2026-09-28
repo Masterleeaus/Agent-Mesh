@@ -62,5 +62,6 @@
     "src/workforce-coverage.ts",
     "src/business-reality.ts",
     "src/constitution.ts"
+    "src/governance/constitution.ts"
   ]
 }
