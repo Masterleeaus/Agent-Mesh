@@ -3,16 +3,12 @@ export * from "./runtime.js";
 export * from "./workforce.js";
 export * from "./intelligence.js";
 export * from "./business-ops.js";
+export { evaluateReleaseEligibility } from "./certification-matrix.js";
+export type { CertificationCell, ReleaseEligibility } from "./certification-matrix.js";
+export { continueTask } from "./continuity.js";
+export type { ContinuitySurface, ContinuationContext, ContinuationDecision } from "./continuity.js";
 export * from "./memory-knowledge.js";
 export * from "./memory-ingestion.js";
-export * from "./user-experience.js";
-export * from "./system-configuration.js";
-export * from "./vertical-pack.js";
-export * from "./communication-announcement.js";
-export * from "./intelligence-core.js";
-export * from "./surface-manager.js";
-export * from "./business-standards.js";
-export * from "./distribution-gateway.js";
 
 export * from "./offline/index.js";
 
@@ -31,39 +27,5 @@ export type { InferenceRoute, CostSovereigntyRequest, CostSovereigntyDecision } 
 
 export { createConnectorCredentialReference, CONNECTOR_CREDENTIAL_POLICY } from "./ported/titan-connect/credential-contract.js";
 export type { ConnectorCredentialReference } from "./ported/titan-connect/credential-contract.js";
+export * from "./governance/constitution.js";
 
-export * from "./knowledge-governance.js";
-
-export * from "./mission-planning.js";
-
-export * from "./evidence-to-cash.js";
-
-export * from "./reliability-policy.js";
-
-export * from "./security-boundary.js";
-
-export * from "./quote-conversion.js";
-
-export * from "./customer-care-recovery.js";
-
-export * from "./growth-attribution.js";
-
-export * from "./forecast-contract.js";
-
-export * from "./connector-runtime.js";
-
-export * from "./mcp-projection.js";
-
-export * from "./mission-authority-policy.js";
-
-export * from "./edge-fabric.js";
-
-export { evaluateReleaseEligibility } from "./certification-matrix.js";
-export type { CertificationCell, ReleaseEligibility } from "./certification-matrix.js";
-
-export { continueTask } from "./continuity.js";
-export type { ContinuitySurface, ContinuationContext, ContinuationDecision } from "./continuity.js";
-
-export * from "./compatibility-pipeline.js";
-
-export * from "./vertical-profile.js";
