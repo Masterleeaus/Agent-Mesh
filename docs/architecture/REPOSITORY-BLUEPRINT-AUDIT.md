@@ -259,7 +259,7 @@ Findings:
 - workforce-native planning adapters are fail-closed for consequential non-GET actions until canonical execution authority is supplied; preserve this safety property.
 - No additional obvious committed .bak/.old/.tsbuildinfo artifacts remained after Pass 6A cleanup.
 
-Conclusion: apps/web is feature-rich but not yet a thin canonical Zero/Go/Hub projection layer. Its principal remaining debts are direct domain mutation ownership, PostgreSQL-only persistence seams, hosted Workforce projection/command wiring and surface convergence. Exact implementation work is now recorded in existing missions rather than new duplicate issues.
+Conclusion: apps/web is the feature-rich **full native Titan FSM base application**, not a thin Zero/Go/Hub projection layer. Preserve its mature field-service domain behavior and business UI. Its principal remaining debts are duplicated canonical Titan runtime seams, PostgreSQL-only/shared-database assumptions that must converge to database-per-company isolation, hosted Workforce projection/command wiring, and clean separation from the distinct three-mode PWA/mobile surfaces. Exact implementation work is recorded in existing missions rather than new duplicate issues.
 
 Mission evidence: #811, #14, #183, #263, #343, #353, #542, #648.
 
