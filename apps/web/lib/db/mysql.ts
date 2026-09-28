@@ -20,7 +20,7 @@ export function getMysqlPool(): Pool {
 function executor(connection: PoolConnection): DbExecutor {
   return {
     async query<Row extends Record<string, unknown>>(sql: string, params: readonly unknown[] = []): Promise<QueryResult<Row>> {
-      const [result] = await connection.execute(sql, [...params]);
+      const [result] = await connection.query(sql, [...params]);
       if (Array.isArray(result)) return { rows: result as Row[] };
       const packet = result as { affectedRows?: number; insertId?: number };
       return { rows: [], affectedRows: packet.affectedRows, insertId: packet.insertId };
