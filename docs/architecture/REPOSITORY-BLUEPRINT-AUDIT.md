@@ -201,3 +201,26 @@ Findings:
 apps/web is now considered scanned for Blueprint architecture/ownership. Implementation missions retain the exact substantial work.
 
 Mission evidence: #811, #14, #183, #263, #343, #353, #542, #639, #648.
+
+
+### Pass 6C — apps/web libraries + Zero/Go/Hub topology
+Status: COMPLETE for architectural/reachability scan of apps/web
+
+Coverage:
+- 537 lib files classified by owner cluster.
+- 380 non-API app/page/style files classified.
+- Surface/runtime named paths and canonical interaction/Workforce seams inspected.
+
+Findings:
+- Zero page exists but chat UI is not wired to its interaction transport; current form is GET-only and Workforce pulse values are hard-coded zero.
+- Main owner `/app` remains a large SQL-derived operational dashboard and current practical owner home.
+- Go behavior is primarily legacy `/app/my-work`; it still uses PostgreSQL-only session queries/SQL and is not SQLite-certified.
+- Hub behavior remains separate `/portal/**` pages rather than one-PWA canonical Hub mode.
+- Existing `TitanInteractionClient` correctly normalizes aliases to canonical zero/go/hub, which is a useful convergence primitive.
+- `ZeroWorkforceDispatcher` is already designed as a thin adapter to a cross-process canonical Workforce port; preserve it and bind it to the persistent hosted Workforce from #811.
+- Web workforce hierarchy runtime files largely re-export canonical titan-platform Workforce owners rather than reimplementing them; preserve thin projections while resolving broader ported/canonical ownership in #648.
+- Marketing/product presentation may use Command/Go/Hub names, but runtime identity must remain zero/go/hub.
+
+apps/web disposition: no further architecture-discovery pass is required before Codex missions execute. Future audit revisits web only for mission verification, regression or final certification.
+
+Mission evidence: #542, #811, #14, #183, #263, #343, #353, #648, #913.
