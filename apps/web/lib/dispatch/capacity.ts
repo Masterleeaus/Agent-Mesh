@@ -95,7 +95,7 @@ export function buildCapacity(
     current.visits += 1;
     byUser.set(visit.assigned_user_id, current);
   }
-  return technicians.map((tech) => {
+  return technicians.map((tech): DispatchTechnicianCapacity => {
     const load = byUser.get(tech.id) ?? { minutes: 0, visits: 0 };
     const userAvailability = availability.filter((window) => window.userId === tech.id);
     const configuredMinutes = availableMinutesInRange(userAvailability, rangeStart, rangeEnd);
@@ -107,7 +107,7 @@ export function buildCapacity(
       visitCount: load.visits,
       nominalCapacityMinutes,
       availableCapacityMinutes,
-      capacitySource: (configuredMinutes == null ? "nominal_fallback" : "availability") as const,
+      capacitySource: configuredMinutes == null ? "nominal_fallback" : "availability",
       utilizationPct: availableCapacityMinutes > 0 ? Math.round((load.minutes / availableCapacityMinutes) * 100) : (load.minutes > 0 ? 999 : 0),
       skills: skillsByUser.get(tech.id) ?? [],
       assignedVehicle: vehiclesByUser.get(tech.id) ?? null,
