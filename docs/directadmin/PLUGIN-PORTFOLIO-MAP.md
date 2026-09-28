@@ -310,7 +310,7 @@ For each source unit:
 
 The current top-level scan is complete. Implementation agents should now perform plugin-by-plugin deep scans in this order:
 
-1. #1049 Cockpit SDK — extract shared DirectAdmin mechanics from `dev-access` and donors.
+1. #1049 Business Node SDK — extract shared DirectAdmin mechanics from `dev-access` and donors.
 2. #812 Business Node Core — server/runtime/system-estate orchestration.
 3. #1051 Business Engine — map current domain/business/finance code to Frappe provider.
 4. #1048 Developer Portal — converge diagnostics/Codex/terminal.
