@@ -10,7 +10,7 @@ Primary owners / convergence targets:
 - TZ-ROADMAP-17 — reliability/resilience/DR.
 - TZ-ROADMAP-50 — Storage Fabric.
 - P0 #811 — persistent Titan Runtime/Workforce, native FSM + runtime/control/evidence persistence convergence, restart/idempotency; Frappe/#1051 remains optional extension-provider storage where deliberately enabled.
-- repository-wide `company_id` enforcement under TZ-ROADMAP-52.
+- repository-wide `company_id` enforcement under TZ-ROADMAP-52 plus database-per-company physical isolation for company-owned operational persistence.
 
 Required architectural delta:
 - define Business Evidence Ledger canonical event/evidence contract;
