@@ -2,8 +2,12 @@
 set -Eeuo pipefail
 IFS=$'\n\t'
 
-# Canonical Titan Zero VPS installation is SQLite-first. Keep this entrypoint as
-# the stable public installer while delegating to the maintained SQLite installer.
+# Transitional Titan Zero VPS entrypoint.
+# Native Titan/AI-FSM is the default field-service product and Frappe is optional.
+# The maintained installer currently boots the compatibility/runtime SQLite path;
+# it is NOT full production certification of database-per-company native FSM
+# storage or the persistent Workforce host. Keep this public entrypoint stable
+# while #811/#322 converge the underlying composition.
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 SQLITE_INSTALLER="${SCRIPT_DIR}/install-sqlite-vps.sh"
 
