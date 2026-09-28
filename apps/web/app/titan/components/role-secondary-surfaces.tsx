@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { AlertTriangle, Bell, CalendarDays, Camera, Car, Check, ChevronRight, CircleDollarSign, Clock3, Cloud, FileText, KeyRound, LockKeyhole, MapPin, MessageSquare, Phone, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, UserRound, WifiOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/Button";
+import { Textarea } from "@/components/ui/Textarea";
 import type { TitanRole } from "./role-chat";
 
 function SimpleThread({ title, detail, messages, quickReplies = [] }: { title: string; detail: string; messages: string[]; quickReplies?: string[] }) {
