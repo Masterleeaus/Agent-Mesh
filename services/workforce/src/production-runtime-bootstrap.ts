@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { RuntimeEventBus, TitanAgentRuntime } from "../../../packages/runtime/agent-runtime/index.mjs";
 import { SqliteRunStore } from "../../../packages/runtime/agent-runtime/sqlite-run-store.mjs";
+import { AuthorityContextResolver, RuntimeAuthorityGateway, SqliteAuthorityStore } from "../../../packages/runtime/authority/index.mjs";
 import { WorkforceService } from "./index.js";
 import { WorkforceRuntimeAdapter } from "./runtime-adapter.js";
 import { SqliteWorkforceStore } from "./sqlite-store.js";
@@ -8,13 +9,43 @@ import { ZeroWorkforceRuntimeDispatcher } from "./zero-runtime-dispatcher.js";
 
 const requiredMethod=(owner,name,label)=>{if(!owner||typeof owner[name]!=="function")throw new Error(`production-runtime-port-required:${label}.${name}`);};
 
+function buildAuthorityGateway(storage,ports){
+  if(ports?.authorityGateway){
+    requiredMethod(ports.authorityGateway,"authorize","authorityGateway");
+    requiredMethod(ports.authorityGateway,"execute","authorityGateway");
+    return {authorityGateway:ports.authorityGateway,authorityStore:null,authorityContextResolver:null};
+  }
+
+  requiredMethod(ports?.executionGateway,"execute","executionGateway");
+  for(const name of ["requirementResolver","accessResolver","governanceResolver","evidenceResolver","riskResolver","connectivityResolver"]){
+    requiredMethod(ports?.[name],"resolve",name);
+  }
+
+  const authorityStore=new SqliteAuthorityStore(storage);
+  const authorityContextResolver=new AuthorityContextResolver({
+    authorityStore,
+    requirementResolver:ports.requirementResolver,
+    accessResolver:ports.accessResolver,
+    governanceResolver:ports.governanceResolver,
+    evidenceResolver:ports.evidenceResolver,
+    riskResolver:ports.riskResolver,
+    connectivityResolver:ports.connectivityResolver,
+  });
+  const authorityGateway=new RuntimeAuthorityGateway({
+    contextResolver:authorityContextResolver,
+    executionGateway:ports.executionGateway,
+    authorityStore,
+  });
+  return {authorityGateway,authorityStore,authorityContextResolver};
+}
+
 export async function createProductionRuntimeBootstrap({storage,ports,eventBus}={}){
   if(!storage||typeof storage.query!=="function")throw new Error("production-runtime-storage-required");
   requiredMethod(ports?.modelRouter,"next","modelRouter");
   requiredMethod(ports?.capabilities,"resolve","capabilities");
   requiredMethod(ports?.contextProvider,"load","contextProvider");
-  requiredMethod(ports?.authorityGateway,"authorize","authorityGateway");
-  requiredMethod(ports?.authorityGateway,"execute","authorityGateway");
+
+  const authority=buildAuthorityGateway(storage,ports);
 
   const runStore=new SqliteRunStore(storage);
   const workforceStore=new SqliteWorkforceStore(storage);
@@ -26,31 +57,19 @@ export async function createProductionRuntimeBootstrap({storage,ports,eventBus}=
     store:runStore,
     modelRouter:ports.modelRouter,
     capabilities:ports.capabilities,
-    authorityGateway:ports.authorityGateway,
+    authorityGateway:authority.authorityGateway,
     contextProvider:ports.contextProvider,
     eventBus:events,
   });
   const runtimeAdapter=new WorkforceRuntimeAdapter(runtime);
   const workforce=new WorkforceService(workforceStore,runtimeAdapter,undefined,workforceStore);
-
-  // One canonical Zero -> Workforce -> persistent-runtime bridge. Keep dispatch as
-  // a compatibility alias so existing composition roots do not gain a second path.
-  const zeroDispatcher=new ZeroWorkforceRuntimeDispatcher(
-    workforce,
-    workforceStore,
-    workforceStore,
-    runtime,
-  );
+  const zeroDispatcher=new ZeroWorkforceRuntimeDispatcher(workforce,workforceStore,workforceStore,runtime);
   const dispatch=(input)=>zeroDispatcher.dispatch(input);
 
   return Object.freeze({
-    storage,
-    runStore,
-    workforceStore,
-    runtime,
-    events,
-    workforce,
-    zeroDispatcher,
-    dispatch,
+    storage,runStore,workforceStore,runtime,events,workforce,zeroDispatcher,dispatch,
+    authorityGateway:authority.authorityGateway,
+    authorityStore:authority.authorityStore,
+    authorityContextResolver:authority.authorityContextResolver,
   });
 }
