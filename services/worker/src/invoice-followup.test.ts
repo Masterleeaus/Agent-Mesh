@@ -51,7 +51,8 @@ describe("findDueFollowups", () => {
 
     expect(result).toEqual([AUTOMATION]);
     expect(client.query).toHaveBeenCalledWith(
-      expect.stringContaining("invoice_followup")
+      expect.stringContaining("invoice_followup"),
+      expect.any(Array)
     );
   });
 
