@@ -1,7 +1,7 @@
 import type { DatabaseClient } from "../db-client.js";
 import { sendEmail } from "../mailer.js";
 import { logger } from "../logger.js";
-import { getRules, checkGovernor, updateCooldown } from "./governor.js";
+import { checkGovernor, getRules, updateCooldown } from "./governor.js";
 
 interface QueueRow {
   id: string;
@@ -18,6 +18,7 @@ interface QueueRow {
   entity_type: string | null;
   entity_id: string | null;
   metadata: Record<string, unknown>;
+  lease_id?: string | null;
 }
 
 export interface DispatchResult {
@@ -28,146 +29,131 @@ export interface DispatchResult {
   cancelled: number;
 }
 
-// Exponential backoff delays in milliseconds
-const BACKOFF_MS = [0, 5 * 60_000, 30 * 60_000, 2 * 3_600_000, 6 * 3_600_000];
+const LEASE_MINUTES = 5;
 
-function nextAttemptAt(attemptCount: number): Date {
-  const delayMs = BACKOFF_MS[Math.min(attemptCount, BACKOFF_MS.length - 1)];
-  return new Date(Date.now() + delayMs);
+function leaseId(): string {
+  return globalThis.crypto?.randomUUID?.() ?? `lease-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
+function nextAttemptAt(attemptCount: number): Date {
+  const delays = [0, 5 * 60_000, 30 * 60_000, 2 * 3_600_000, 6 * 3_600_000];
+  return new Date(Date.now() + delays[Math.min(attemptCount, delays.length - 1)]);
+}
+
+/**
+ * Claims notification rows in a short transaction, then performs provider I/O
+ * only after the claim is committed. Every provider result is recorded in the
+ * durable attempt table and the queue lease is released atomically.
+ */
 export async function dispatchNotificationQueue(client: DatabaseClient): Promise<DispatchResult> {
   const result: DispatchResult = { sent: 0, failed: 0, retried: 0, delayed: 0, cancelled: 0 };
+  const lease = leaseId();
 
-  // Wrap in a transaction so FOR UPDATE SKIP LOCKED holds row locks throughout
-  // processing. Without BEGIN, autocommit releases locks immediately after the
-  // SELECT, allowing concurrent workers to claim the same rows.
   await client.query("BEGIN");
-
+  let rows: QueueRow[] = [];
   try {
-    // Pick up to 20 pending items ordered by priority then scheduled time.
-    // FOR UPDATE SKIP LOCKED: concurrent workers skip these rows rather than block.
-    const { rows } = await client.query<QueueRow>(
-      `SELECT id, account_id, client_id, automation_type, priority, to_address,
-              subject, html_body, idempotency_key, attempt_count, max_attempts,
-              entity_type, entity_id, metadata
-       FROM notification_queue
-       WHERE status = 'pending'
-         AND next_attempt_at <= now()
-       ORDER BY priority ASC, next_attempt_at ASC
-       LIMIT 20
-       FOR UPDATE SKIP LOCKED`
+    const claim = await client.query<QueueRow>(
+      `WITH candidates AS (
+         SELECT id
+         FROM notification_queue
+         WHERE status = 'pending'
+           AND next_attempt_at <= now()
+           AND (locked_until IS NULL OR locked_until < now())
+         ORDER BY priority ASC, next_attempt_at ASC
+         LIMIT 20
+         FOR UPDATE SKIP LOCKED
+       )
+       UPDATE notification_queue nq
+       SET status = 'processing',
+           lease_id = $6::uuid,
+           locked_at = now(),
+           locked_until = now() + interval '${LEASE_MINUTES} minutes'
+       FROM candidates
+       WHERE nq.id = candidates.id
+       RETURNING nq.id, nq.account_id, nq.client_id, nq.automation_type, nq.priority,
+                 nq.to_address, nq.subject, nq.html_body, nq.idempotency_key,
+                 nq.attempt_count, nq.max_attempts, nq.entity_type, nq.entity_id,
+                 nq.metadata, nq.lease_id`
     );
-
-    if (rows.length === 0) {
-      await client.query("COMMIT");
-      return result;
-    }
-
-    // Cache rules per account to avoid repeated lookups
-    const rulesCache = new Map<string, Awaited<ReturnType<typeof getRules>>>();
-
-    for (const row of rows) {
-      try {
-        // Get or cache account rules
-        if (!rulesCache.has(row.account_id)) {
-          rulesCache.set(row.account_id, await getRules(client, row.account_id));
-        }
-        const rules = rulesCache.get(row.account_id)!;
-
-        // Governor check
-        const gov = await checkGovernor(client, row, rules);
-        if (!gov.ok) {
-          const delayTo = gov.delayUntil ?? new Date(Date.now() + 3_600_000);
-          await client.query(
-            `UPDATE notification_queue SET next_attempt_at = $1 WHERE id = $2`,
-            [delayTo.toISOString(), row.id]
-          );
-          result.delayed++;
-          continue;
-        }
-
-        // Mark as in-flight (increment attempt_count)
-        await client.query(
-          `UPDATE notification_queue SET attempt_count = attempt_count + 1 WHERE id = $1`,
-          [row.id]
-        );
-
-        // Send
-        const sendResult = await sendEmail({
-          to: row.to_address,
-          subject: row.subject,
-          html: row.html_body,
-        });
-
-        if (sendResult.ok) {
-          await client.query(
-            `UPDATE notification_queue SET status = 'sent', sent_at = now() WHERE id = $1`,
-            [row.id]
-          );
-
-          // Update cooldown
-          if (row.client_id) {
-            await updateCooldown(client, row.account_id, row.client_id);
-          }
-
-          // Log to communications_log
-          if (row.client_id) {
-            await client.query(
-              `INSERT INTO communications_log
-                 (account_id, client_id, channel, direction, outcome, body_preview, external_id)
-               VALUES ($1, $2, 'email', 'outbound', 'sent', $3, $4)`,
-              [
-                row.account_id,
-                row.client_id,
-                `${row.automation_type}: ${row.subject}`.slice(0, 200),
-                row.id,
-              ]
-            );
-          }
-
-          result.sent++;
-          logger.info("notification dispatched", {
-            type: row.automation_type,
-            to: row.to_address,
-            idempotencyKey: row.idempotency_key,
-          });
-        } else {
-          const newAttemptCount = row.attempt_count + 1;
-          if (newAttemptCount >= row.max_attempts) {
-            await client.query(
-              `UPDATE notification_queue
-                  SET status = 'failed', failed_at = now(), failure_reason = $1
-                WHERE id = $2`,
-              [sendResult.error ?? "unknown", row.id]
-            );
-            result.failed++;
-            logger.error("notification permanently failed", sendResult.error, {
-              type: row.automation_type,
-              attempts: newAttemptCount,
-            });
-          } else {
-            const retryAt = nextAttemptAt(newAttemptCount);
-            await client.query(
-              `UPDATE notification_queue
-                  SET failure_reason = $1, next_attempt_at = $2
-                WHERE id = $3`,
-              [sendResult.error ?? "unknown", retryAt.toISOString(), row.id]
-            );
-            result.retried++;
-          }
-        }
-      } catch (err) {
-        logger.error("dispatch loop error", err, { notificationId: row.id });
-        result.failed++;
-      }
-    }
-
+    rows = claim.rows ?? [];
     await client.query("COMMIT");
-  } catch (err) {
+  } catch (error) {
     await client.query("ROLLBACK");
-    throw err;
+    throw error;
   }
 
+  if (rows.length === 0) return result;
+  const rulesCache = new Map<string, Awaited<ReturnType<typeof getRules>>>();
+
+  for (const row of rows) {
+    try {
+      if (!rulesCache.has(row.account_id)) rulesCache.set(row.account_id, await getRules(client, row.account_id));
+      const rules = rulesCache.get(row.account_id)!;
+      const governor = await checkGovernor(client, row, rules);
+
+      if (!governor.ok) {
+        const delayUntil = governor.delayUntil ?? new Date(Date.now() + 3_600_000);
+        await client.query(
+          `UPDATE notification_queue
+           SET status = 'pending',
+               attempt_count   = GREATEST(attempt_count - 1, 0),
+               lease_id = NULL, locked_at = NULL, locked_until = $1
+           WHERE id = $2 AND lease_id = $3::uuid`,
+          [delayUntil.toISOString(), row.id, row.lease_id ?? null]
+        );
+        result.delayed++;
+        continue;
+      }
+
+      await client.query(
+        `UPDATE notification_queue
+         SET attempt_count = attempt_count + 1
+         WHERE id = $1 AND lease_id = $2::uuid`,
+        [row.id, row.lease_id ?? lease]
+      );
+
+      const sendResult = await sendEmail({ to: row.to_address, subject: row.subject, html: row.html_body });
+      const attemptNumber = row.attempt_count + 1;
+
+      if (sendResult.ok) {
+        await client.query(
+          `INSERT INTO notification_delivery_attempts
+             (notification_id, account_id, attempt_number, status, provider, provider_message_id, error)
+           VALUES ($1, $2, $3, 'delivered', 'smtp', $4, NULL)`,
+          [row.id, row.account_id, attemptNumber, sendResult.providerMessageId ?? null]
+        );
+        await client.query(
+          `UPDATE notification_queue
+           SET status = 'sent', sent_at = now(), provider_message_id = $1,
+               lease_id = NULL, locked_at = NULL, locked_until = NULL
+           WHERE id = $2 AND lease_id = $3::uuid`,
+          [sendResult.providerMessageId ?? null, row.id, row.lease_id ?? lease]
+        );
+        if (row.client_id) await updateCooldown(client, row.account_id, row.client_id);
+        result.sent++;
+      } else {
+        const terminal = attemptNumber >= row.max_attempts;
+        await client.query(
+          `INSERT INTO notification_delivery_attempts
+             (notification_id, account_id, attempt_number, status, provider, provider_message_id, error)
+           VALUES ($1, $2, $3, '${terminal ? "dead_letter" : "failed"}', 'smtp', NULL, $4)`,
+          [row.id, row.account_id, attemptNumber, sendResult.error ?? "unknown"]
+        );
+        await client.query(
+          `UPDATE notification_queue
+           SET status = '${terminal ? "dead_letter" : "pending"}',
+               failure_reason = $1, failed_at = ${terminal ? "now()" : "NULL"},
+               next_attempt_at = $2, lease_id = NULL, locked_at = NULL, locked_until = NULL
+           WHERE id = $3 AND lease_id = $4::uuid`,
+          [sendResult.error ?? "unknown", nextAttemptAt(attemptNumber).toISOString(), row.id, row.lease_id ?? lease]
+        );
+        if (terminal) result.failed++;
+        else result.retried++;
+      }
+    } catch (error) {
+      result.failed++;
+      logger.error("notification dispatch failed", error, { notificationId: row.id });
+    }
+  }
   return result;
 }
