@@ -73,3 +73,5 @@ export * from "./titan-capsule.js";
 export * from "./governance/constitution.js";
 
 export * from "./recovery/capsule.js";
+
+export * from "./federation/contract.js";
