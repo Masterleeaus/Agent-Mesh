@@ -27,7 +27,8 @@ export async function portableQuery<T = Record<string, unknown>>(text: string, p
     const [rows] = await getMysqlPool().execute(rewritten.sql, rewritten.params);
     return rows as T[];
   }
-  const result = await getPool().query(text, params as any) as unknown as Promise<{ rows: T[]; rowCount: number | null }>;
+  const query = getPool().query as unknown as (queryText: string, queryParams: unknown[]) => Promise<{ rows: T[]; rowCount: number | null }>;
+  const result = await query(text, params);
   return result.rows;
 }
 
