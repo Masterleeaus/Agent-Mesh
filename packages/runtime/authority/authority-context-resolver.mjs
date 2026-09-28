@@ -37,7 +37,7 @@ export class AuthorityContextResolver {
       this.store.latestApproval({company_id,approval_scope:action_id}),
     ]);
 
-    return evaluateWorkerAuthorityDecision({
+    const decision=evaluateWorkerAuthorityDecision({
       authority_decision_id:input.authority_decision_id??`authority:${operation_id}:${action_id}`,
       company_id,operation_id,action_id,
       worker:{worker_id,worker_type:input.worker_type??"advanced-intelligence-worker",surface:input.surface??"zero"},
@@ -54,6 +54,10 @@ export class AuthorityContextResolver {
       connectivity:connectivity?.state??"offline",
       execution_mode:input.execution_mode??"autonomous",
       now:input.now??new Date().toISOString(),
+    });
+    return Object.freeze({
+      ...decision,
+      evaluated_risk:Object.freeze({level:risk?.level??"critical",source:risk?.source??null,ref:risk?.ref??null}),
     });
   }
 }
