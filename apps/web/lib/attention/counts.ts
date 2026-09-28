@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import { ATTENTION_RETENTION_DAYS, type AttentionSummary } from "./types";
 
 /** Open funnel — matches BOOKING_REQUEST_OPEN_STATUSES / default Requests list. */
@@ -46,7 +46,7 @@ export const ESTIMATE_ATTENTION_WHERE = `
 `;
 
 export async function countRequestQueue(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<number> {
   const r = await client.query<{ count: string }>(
@@ -60,7 +60,7 @@ export async function countRequestQueue(
 }
 
 export async function countInvoiceAttention(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<number> {
   const r = await client.query<{ count: string }>(
@@ -73,7 +73,7 @@ export async function countInvoiceAttention(
 }
 
 export async function countEstimateAttention(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<number> {
   const r = await client.query<{ count: string }>(
@@ -86,7 +86,7 @@ export async function countEstimateAttention(
 }
 
 export async function countUnreadAttentionEvents(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<number> {
   const r = await client.query<{ count: string }>(
@@ -101,7 +101,7 @@ export async function countUnreadAttentionEvents(
 }
 
 export async function loadAttentionSummary(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<AttentionSummary> {
   const [requestsCount, invoicesCount, estimatesCount, unreadEventCount] =
