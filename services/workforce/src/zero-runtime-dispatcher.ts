@@ -187,7 +187,10 @@ export class ZeroWorkforceRuntimeDispatcher {
         surface: "zero",
         correlation_id: input.correlation_id,
       },
-      assignee: worker.worker_id,
+      // Keep creation side-effect free with respect to runtime wake-up. The
+      // dispatcher owns the single subscribe-before-start transition below.
+      // Assigning here would make WorkforceService auto-wake the digital worker
+      // and then this dispatcher would start a second persisted run.
       team_id: worker.team_id,
       priority: 50,
       dependencies: [],
@@ -196,6 +199,7 @@ export class ZeroWorkforceRuntimeDispatcher {
       evidence_refs: [],
     });
 
+    await this.workforce.delegate(input.company_id, work_id, worker.worker_id, input.actor_id);
     await this.workforce.claim(input.company_id, work_id, worker.worker_id);
     await this.workforce.start(input.company_id, work_id, worker.worker_id);
 
