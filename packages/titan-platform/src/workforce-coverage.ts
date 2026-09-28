@@ -6,9 +6,9 @@ export interface WorkforceCoverageRequirement { coverage_id: string; company_id:
 export interface WorkforceCoverageClosureEntry { coverage_id: string; outcome_key: string; required_capability_ids: readonly string[]; owner_agent_id: string | null; candidate_agent_ids: readonly string[]; status: "COVERED" | "MISSING"; }
 export interface WorkforceCoverageClosure { schema_version: typeof WORKFORCE_COVERAGE_SCHEMA_VERSION; company_id: string; revision: string; entries: readonly WorkforceCoverageClosureEntry[]; authority_neutral: true; identity_grants_authority: false; canonical_business_truth: "workforce"; }
 
-function required(value: unknown, label: string): string { if (typeof value !== "string" || value.trim() === "") throw new TypeError(\`${label}-required\`); return value.trim(); }
-function unique(values: readonly string[], label: string): readonly string[] { const normalized = values.map((value) => required(value, label)); if (new Set(normalized).size !== normalized.length) throw new TypeError(\`${label}-duplicate\`); return Object.freeze([...normalized]); }
-function assertCompany(value: string, company_id: string, label: string): void { if (required(value, label) !== company_id) throw new TypeError(\`${label}-company-mismatch\`); }
+function required(value: unknown, label: string): string { if (typeof value !== "string" || value.trim() === "") throw new TypeError(`${label}-required`); return value.trim(); }
+function unique(values: readonly string[], label: string): readonly string[] { const normalized = values.map((value) => required(value, label)); if (new Set(normalized).size !== normalized.length) throw new TypeError(`${label}-duplicate`); return Object.freeze([...normalized]); }
+function assertCompany(value: string, company_id: string, label: string): void { if (required(value, label) !== company_id) throw new TypeError(`${label}-company-mismatch`); }
 
 function assertHierarchy(agents: readonly WorkforceAgentIdentity[], company_id: string): void {
   const byId = new Map<string, WorkforceAgentIdentity>();
