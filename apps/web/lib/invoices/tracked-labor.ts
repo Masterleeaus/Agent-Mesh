@@ -1,4 +1,4 @@
-import type { DbClient } from "@/lib/db-contract";
+import type { PoolClient } from "pg";
 import {
   LABOR_COST_CENTS_PER_HOUR,
   LABOR_CUSTOMER_RATE_CENTS_PER_HOUR,
@@ -209,7 +209,7 @@ export function mapTrackedLaborDayRows(
  * work orders. Assessment (site_visit) time and non-billable buckets are out.
  */
 export async function trackedLaborMinutesFromActivityEntries(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   jobId: string,
 ): Promise<number> {
@@ -224,7 +224,7 @@ export async function trackedLaborMinutesFromActivityEntries(
  * Day-by-day tracked job_work for a job (transparent hours record).
  */
 export async function trackedLaborDaysFromActivityEntries(
-  client: DbClient,
+  client: PoolClient,
   accountId: string,
   jobId: string,
 ): Promise<TrackedLaborDay[]> {
