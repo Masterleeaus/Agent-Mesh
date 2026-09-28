@@ -49,3 +49,5 @@ export * from "./customer-care-recovery.js";
 export * from "./growth-attribution.js";
 
 export * from "./forecast-contract.js";
+
+export * from "./connector-runtime.js";
