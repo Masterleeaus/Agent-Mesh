@@ -53,7 +53,7 @@ export async function portableQueryOne<T = Record<string, unknown>>(text: string
 }
 
 export async function withPortableTransaction<T>(fn: (client: DbClient) => Promise<T>): Promise<T> {
-  const dialect = getDatabaseDialect();
+  const dialect = resolveDatabaseDialect();
   if (dialect === "sqlite") return withSqliteTransaction(fn);
   if (dialect === "mysql") {
     const connection = await getMysqlPool().getConnection();
@@ -86,7 +86,7 @@ export async function withPortableTransaction<T>(fn: (client: DbClient) => Promi
 export async function withTenantTransaction<T>(session: SessionPayload, fn: (client: DbClient, accountId: string) => Promise<T>): Promise<T> {
   const accountId = requireTenantAccountId(session);
   return withPortableTransaction(async (client) => {
-    if (getDatabaseDialect() === "postgres") {
+    if (resolveDatabaseDialect() === "postgres") {
       await client.query(
         `SELECT set_config('app.current_user_id', $1, true), set_config('app.current_account_id', $2, true), set_config('app.current_role', $3, true)`,
         [session.userId, accountId, session.role],
