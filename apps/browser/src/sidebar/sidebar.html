@@ -612,6 +612,8 @@
                     </div>
 
                     <div id="diagnostics-summary" class="diagnostic-recommendation">Run diagnostics to inspect the active conversation.</div>
+                    <div id="diagnostics-overview" class="diagnostics-overview" aria-label="Browser Node health overview"></div>
+                    <div id="diagnostics-blockers" class="diagnostics-blockers">Run diagnostics to identify blockers.</div>
 
                     <div class="diagnostics-grid">
                         <article class="diagnostic-card">
@@ -638,31 +640,9 @@
                         <pre id="diagnostics-runner">Plan Runner diagnostics have not been collected yet.</pre>
                     </article>
 
-                    <article class="diagnostic-card titan-zero-diagnostic-card">
-                        <div class="diagnostic-card-heading">
-                            <h3>Titan Zero Developer Intelligence</h3>
-                            <span id="diagnostics-titan-zero-badge" class="health-badge neutral">Not checked</span>
-                        </div>
-                        <pre id="diagnostics-titan-zero">Pack status has not been checked yet.</pre>
-                    </article>
-
-
-                    <article class="diagnostic-card repository-diagnostic-card">
-                        <div class="diagnostic-card-heading">
-                            <h3>Repository & Coding Intelligence</h3>
-                            <span id="diagnostics-repository-badge" class="health-badge neutral">Not checked</span>
-                        </div>
-                        <pre id="diagnostics-repository">Repository capability status has not been checked yet.</pre>
-                    </article>
-
-                    <article class="diagnostic-card workforce-diagnostic-card">
-                        <div class="diagnostic-card-heading">
-                            <h3>Titan AI Workforce</h3>
-                            <span id="diagnostics-workforce-badge" class="health-badge neutral">Not checked</span>
-                        </div>
-                        <pre id="diagnostics-workforce">Workforce status has not been checked yet.</pre>
-                    </article>
-
+                    <details class="diagnostic-advanced">
+                        <summary>Advanced diagnostics</summary>
+                        <div class="diagnostic-advanced-body">
                     <article id="capability-registry-section" class="diagnostic-card capability-registry-card">
                         <div class="diagnostic-card-heading">
                             <div>
@@ -693,6 +673,9 @@
                             </table>
                         </div>
                     </article>
+
+                        </div>
+                    </details>
 
                     <div class="diagnostic-actions">
                         <button id="diagnostics-run-btn" class="btn btn-secondary" type="button">Run Diagnostics</button>
