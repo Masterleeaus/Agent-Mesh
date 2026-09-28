@@ -36,9 +36,9 @@ export function transitionReleaseLifecycle(current,input={}){
  const idempotency_key=text(input.idempotency_key,'release-idempotency-key');
  const existing=current.events.find(event=>event.idempotency_key===idempotency_key);
  if(existing){if(existing.state!==next)throw new TypeError('release-idempotency-conflict');return current;}
+ if(next==='ACTIVE'&&current.state!=='VERIFIED')throw new TypeError('release-build-before-switch-required');
  const priorIndex=STATES.indexOf(current.state);
  if(STATES.indexOf(next)!==priorIndex+1&&!(current.state==='ACTIVE'&&next==='ROLLED_BACK'))throw new TypeError('release-transition-invalid');
- if(next==='ACTIVE'&&current.state!=='VERIFIED')throw new TypeError('release-build-before-switch-required');
  if(next==='ROLLED_BACK'&&!current.previous_known_good)throw new TypeError('release-previous-known-good-required');
  const evidence_refs=evidence(input,next);
  const event=Object.freeze({
