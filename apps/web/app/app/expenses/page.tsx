@@ -33,6 +33,18 @@ interface PageProps {
   searchParams: Promise<{ category?: string; month?: string }>;
 }
 
+type ExpenseRow = {
+  id: string;
+  vendor_name: string;
+  category: string;
+  amount_cents: number;
+  expense_date: string | Date;
+  job_id: string | null;
+  job_title: string | null;
+  client_name: string | null;
+  notes: string | null;
+};
+
 export default async function ExpensesPage({ searchParams }: PageProps) {
   const { category: categoryParam, month: monthParam } = await searchParams;
   const session = await getSession();
@@ -79,7 +91,7 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
       params.push(categoryFilter);
     }
 
-    const rows = await client.query(
+    const rows = await client.query<ExpenseRow>(
       `SELECT e.id, e.vendor_name, e.category, e.amount_cents,
               e.expense_date, e.job_id, e.notes,
               j.title AS job_title, c.name AS client_name
@@ -254,17 +266,6 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
     </PageContainer>
   );
 }
-
-type ExpenseRow = {
-  id: string;
-  vendor_name: string;
-  category: string;
-  amount_cents: number;
-  expense_date: string;
-  job_title: string | null;
-  client_name: string | null;
-  notes: string | null;
-};
 
 function ExpenseItemCard({ expense }: { expense: ExpenseRow }) {
   const dateStr =
