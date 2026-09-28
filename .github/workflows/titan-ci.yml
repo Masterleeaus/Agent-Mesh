@@ -1,0 +1,157 @@
+name: Titan Zero CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: titan-zero-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Repository guardrails
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f AGENTS.md
+          test -f roadmap/INDEX.json
+          test -f roadmap/SUBGOAL-ISSUE-MANIFEST.json
+          test -f package.json
+          test -f pnpm-lock.yaml
+          grep -q 'Titan Zero Execution Contract' AGENTS.md
+          if git grep -nE '^(<<<<<<<|=======|>>>>>>>)' -- . ':!*.zip'; then
+            echo "Merge conflict marker detected"
+            exit 1
+          fi
+          python3 .github/scripts/validate-agent-claim.py --self-test
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Report lockfile convergence debt
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- pnpm-lock.yaml; then
+            echo "pnpm-lock.yaml is converged."
+          else
+            echo "::warning::Merge84 package manifests and pnpm-lock.yaml are not yet converged."
+            git diff --stat -- pnpm-lock.yaml
+            echo "Strict frozen-lockfile enforcement remains part of the dependency-closure roadmap work."
+          fi
+
+      - name: Strict non-web typecheck
+        run: pnpm -r --filter '!@titan-zero/web' --if-present typecheck
+
+      - name: Web typecheck regression gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          pnpm --filter @titan-zero/web typecheck > web-typecheck.log 2>&1
+          TYPECHECK_STATUS=$?
+          set -e
+          cat web-typecheck.log
+          python3 .github/scripts/check-web-typecheck-baseline.py \
+            --baseline .github/ci/web-typecheck-baseline.json \
+            --log web-typecheck.log \
+            --command-status "$TYPECHECK_STATUS"
+          if [ "$TYPECHECK_STATUS" -eq 0 ]; then
+            echo "Web TypeScript baseline is fully clean."
+          else
+            echo "::warning::Web typecheck still contains recorded Merge84 baseline debt; no regression detected."
+          fi
+
+      - name: Strict tests for clean packages
+        run: pnpm -r --filter '!@titan-zero/titan-platform' --filter '!@titan-zero/worker' --filter '!@titan-zero/web' --if-present test
+
+      - name: Worker test regression gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          pnpm --filter @titan-zero/worker test > worker-test.log 2>&1
+          WORKER_TEST_STATUS=$?
+          set -e
+          cat worker-test.log
+          python3 .github/scripts/check-worker-test-baseline.py \
+            --baseline .github/ci/worker-test-baseline.json \
+            --log worker-test.log \
+            --command-status "$WORKER_TEST_STATUS"
+          if [ "$WORKER_TEST_STATUS" -eq 0 ]; then
+            echo "Worker tests are fully clean."
+          else
+            echo "::warning::Worker tests still contain recorded Merge84 baseline debt; no regression detected."
+          fi
+
+      - name: Web test regression gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          pnpm --filter @titan-zero/web test > web-test.log 2>&1
+          WEB_TEST_STATUS=$?
+          set -e
+          cat web-test.log
+          python3 .github/scripts/check-web-test-baseline.py \
+            --baseline .github/ci/web-test-baseline.json \
+            --log web-test.log \
+            --command-status "$WEB_TEST_STATUS"
+          if [ "$WEB_TEST_STATUS" -eq 0 ]; then
+            echo "Web tests are fully clean."
+          else
+            echo "::warning::Web tests still contain recorded Merge84 baseline debt; no regression detected."
+          fi
+
+      - name: titan-platform test regression gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          pnpm --filter @titan-zero/titan-platform test > titan-platform-test.log 2>&1
+          TEST_STATUS=$?
+          set -e
+          cat titan-platform-test.log
+          python3 .github/scripts/check-titan-platform-test-baseline.py \
+            --baseline .github/ci/titan-platform-test-baseline.json \
+            --log titan-platform-test.log \
+            --command-status "$TEST_STATUS"
+          if [ "$TEST_STATUS" -eq 0 ]; then
+            echo "titan-platform test baseline is fully clean."
+          else
+            echo "::warning::titan-platform still contains recorded Merge84 test-harness debt; no regression detected."
+          fi
+
+      - name: Strict non-web build
+        run: pnpm -r --filter '!@titan-zero/web' --if-present build
+
+      - name: Web build status
+        shell: bash
+        run: |
+          echo "::notice::Full Next.js web build becomes a strict gate when the recorded web TypeScript baseline reaches zero."
