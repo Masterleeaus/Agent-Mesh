@@ -33,13 +33,19 @@ function ensure_ssh(){ $d=key_dir(); if(!is_dir($d)) mkdir($d,0700,true); chmod(
 function add_key($k){ ensure_ssh(); $k=trim($k); if(!valid_pubkey($k)) return 'Invalid public key format.'; $lines=file(key_file(),FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES)?:[]; if(in_array($k,$lines,true)) return 'Key already installed.'; file_put_contents(key_file(),$k."\n",FILE_APPEND|LOCK_EX); chmod(key_file(),0600); return 'Public key installed.'; }
 function remove_key($idx){ ensure_ssh(); $lines=file(key_file(),FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES)?:[]; if(!isset($lines[$idx])) return 'Key not found.'; unset($lines[$idx]); file_put_contents(key_file(),$lines?implode("\n",$lines)."\n":'',LOCK_EX); chmod(key_file(),0600); return 'Key revoked.'; }
 function fingerprints(){ ensure_ssh(); $out=[]; foreach((file(key_file(),FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES)?:[]) as $i=>$k){$tmp=tempnam(sys_get_temp_dir(),'tda'); file_put_contents($tmp,$k."\n"); $fp=trim((string)shell_exec('ssh-keygen -lf '.escapeshellarg($tmp).' 2>/dev/null')); @unlink($tmp); $out[]=[$i,$k,$fp?:'fingerprint unavailable'];} return $out; }
-function safe_cwd($requested){$home=realpath(home_dir())?:home_dir(); $cwd=$requested?realpath($requested):$home; if(!$cwd||strpos($cwd,$home)!==0) return $home; return $cwd;}
+function safe_cwd($requested){$home=realpath(home_dir())?:home_dir(); $cwd=$requested?realpath($requested):$home; if(!$cwd||!is_dir($cwd)||($cwd!==$home&&strpos($cwd,rtrim($home,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR)!==0)) return $home; return $cwd;}
 function run_cmd($cmd,$cwd){ if(trim($cmd)==='') return ['',0]; $cwd=safe_cwd($cwd); $full='cd '.escapeshellarg($cwd).' && timeout 30s /bin/bash -lc '.escapeshellarg($cmd).' 2>&1'; $out=[];$rc=0; exec($full,$out,$rc); $text=implode("\n",$out); if(strlen($text)>524288)$text=substr($text,0,524288)."\n[output truncated]"; return [$text,$rc]; }
 function diagnostics(){ $bins=['git','ssh','ssh-keygen','php','composer','node','npm','pnpm','curl']; $r=[]; foreach($bins as $b){$p=trim((string)shell_exec('command -v '.escapeshellarg($b).' 2>/dev/null'));$r[$b]=$p?:null;} return $r; }
+function diagnostics_report($diag,$keys){
+ $lines=['Titan Dev Access diagnostics','User: '.env_user(),'UID: '.(function_exists('posix_geteuid')?posix_geteuid():'unavailable'),'Home: '.home_dir(),'Public keys: '.count($keys),'Available commands:'];
+ foreach($diag as $name=>$path) $lines[]=$name.': '.($path?:'unavailable');
+ $lines[]='CSRF secret and form token: redacted';
+ return implode("\n",$lines);
+}
 function render(){
  $msg='';$output='';$rc=null;$cwd=safe_cwd($_POST['cwd']??'');
  if($_SERVER['REQUEST_METHOD']==='POST'){
-  if(!check_csrf()){record_post_diagnostic();$msg='Request rejected: invalid CSRF token. Open Diagnostics below and use Copy Full Diagnostics.';}
+  if(!check_csrf()){$msg='Request rejected: invalid CSRF token. Reload the page and retry.';}
   elseif(isset($_POST['add_key'])){$msg=add_key($_POST['public_key']??'');}
   elseif(isset($_POST['remove_key'])){$msg=remove_key((int)$_POST['remove_key']);}
   elseif(isset($_POST['run'])){[$output,$rc]=run_cmd($_POST['command']??'',$cwd);}
