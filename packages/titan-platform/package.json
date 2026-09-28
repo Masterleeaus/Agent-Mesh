@@ -24,7 +24,8 @@
     "./interface-registry": "./src/interface-registry.ts",
     "./user-experience": "./src/user-experience.ts",
     "./system-configuration": "./src/system-configuration.ts",
-    "./vertical-pack": "./src/vertical-pack.ts"
+    "./vertical-pack": "./src/vertical-pack.ts",
+    "./communication-announcement": "./src/communication-announcement.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",

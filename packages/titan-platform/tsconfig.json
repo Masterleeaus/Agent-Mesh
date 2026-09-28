@@ -37,6 +37,7 @@
     "src/user-experience.ts",
     "src/system-configuration.ts",
     "src/vertical-pack.ts",
+    "src/communication-announcement.ts",
     "src/ported/titan-ai-core/cost-sovereignty.ts",
     "src/ported/titan-connect/connector-contract.ts",
     "src/ported/titan-connect/credential-contract.ts",
