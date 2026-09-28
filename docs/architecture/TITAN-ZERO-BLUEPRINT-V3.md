@@ -31,7 +31,7 @@ The evidence ledger is not merely a compliance log. It is the primary factual hi
 
 ### Ledger invariants
 
-- `company_id` remains the only canonical company boundary.
+- `company_id` remains the only canonical logical company identity/boundary; every tenant company also receives its own physical database for company-owned operational persistence as defense-in-depth isolation.
 - Ledger entries are append-only and immutable after acceptance.
 - Corrections, supersession, rollback and compensation create new evidence; they never rewrite factual history.
 - Provider acknowledgement is not a verified outcome.
@@ -171,7 +171,7 @@ Verification → Business Evidence Ledger
 
 Frappe/ERPNext provides optional deeper ERP/HR/payroll/procurement/warehousing/manufacturing/custom-module capabilities and may provide a deliberately selected implementation for a domain facet. Titan consumes it through a **Titan Domain API / anti-corruption layer** rather than binding surfaces directly to Frappe DocTypes or Desk UI. Existing mature Titan FSM capabilities remain native unless explicitly delegated.
 
-When Frappe is enabled, its default tenancy is **shared versioned application/runtime code with per-company Frappe site/database isolation**. Titan `company_id` remains the cross-system business identity and evidence boundary; the provider site/database is an additional physical isolation boundary, not a replacement identity.
+Native Titan FSM uses shared versioned application/runtime code with **database-per-company isolation for company-owned operational persistence**. When Frappe is enabled, it likewise uses shared versioned application/runtime code with a **separate Frappe site/database per company**. Titan `company_id` remains the cross-system business identity and evidence boundary; physical databases are additional isolation boundaries, never replacement identities. Shared platform/control metadata may be shared only where it contains no company business state and its owner explicitly permits it.
 
 Frappe/ERPNext is therefore an optional extension/provider engine beneath Titan for enabled/delegated capabilities. It does not replace:
 - the Business Evidence Ledger as factual history;
