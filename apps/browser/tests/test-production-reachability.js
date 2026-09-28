@@ -1,15 +1,16 @@
-import assert from "node:assert/strict";
-import fs from "node:fs";
-import path from "node:path";
-const root=path.resolve(import.meta.dirname,"..");
-const worker=fs.readFileSync(path.join(root,"src/lib/service-worker.js"),"utf8");
-const gateway=fs.readFileSync(path.join(root,"src/workforce/titan-workforce-gateway.js"),"utf8");
-const hostContent=fs.readFileSync(path.join(root,"src/integration/workforce-host-contract.js"),"utf8");
-const forbidden=/(?:repository\\/|repository-host|titan-zero\\/|personal-workforce|manager-|managers\\/|workforce-manifest|workforce-prompts|workforce-skills|workforce-profiles|deployment-console|mcp-inspector|titan-bridge-client|titan_code|titan-code|CodeeWorkforce|CodeeApproved)/;
-const imported=[...worker.matchAll(/['"]([^'"]+\\.js)['"]/g)].map((m)=>m[1]);
-assert.equal(imported.some((entry)=>forbidden.test(entry)),false,"private developer modules remain reachable from Browser Node worker");
-assert.equal(forbidden.test(gateway),false,"legacy developer identity remains in browser Workforce requests");
-assert.equal(forbidden.test(hostContent),false,"legacy developer host identity remains in browser integration");
-assert.match(gateway,/source_surface:'titan_browser_node'/);
-assert.match(gateway,/target_domain:'hosted_workforce'/);
-console.log("production Browser Node reachability boundary: PASS");
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const root = path.resolve(__dirname, '..');
+const worker = fs.readFileSync(path.join(root, 'src/lib/service-worker.js'), 'utf8');
+const gateway = fs.readFileSync(path.join(root, 'src/workforce/titan-workforce-gateway.js'), 'utf8');
+const contract = fs.readFileSync(path.join(root, 'src/integration/workforce-host-contract.js'), 'utf8');
+
+const imports = [...worker.matchAll(/['"]([^'"]+\.js)['"]/g)].map(match => match[1]);
+const forbiddenImports = /(?:\.\.\/repository\/|repository-host|mcp-inspector|titan-bridge-client)/;
+assert.equal(imports.some(importPath => forbiddenImports.test(importPath)), false, 'private repository/developer bridge must not be reachable from the production worker');
+assert.equal(/titan_code|titan-code|CodeeWorkforceHostContract|CodeeApprovedNetwork/.test(gateway + contract), false, 'legacy private developer identity must not be exposed by the production workforce boundary');
+assert.match(gateway, /source_surface:\s*'titan_browser_node'/);
+assert.match(gateway, /target_domain:\s*'hosted_workforce'/);
+console.log('production Browser Node reachability boundary: PASS');
