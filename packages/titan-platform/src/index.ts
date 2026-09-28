@@ -7,6 +7,7 @@ export * from "./memory-knowledge.js";
 export * from "./memory-ingestion.js";
 export * from "./user-experience.js";
 export * from "./system-configuration.js";
+export * from "./vertical-pack.js";
 
 export * from "./offline/index.js";
 
