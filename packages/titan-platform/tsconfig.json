@@ -60,6 +60,7 @@
     "src/mission-authority-policy.ts",
     "src/surface/index.ts",
     "src/workforce-coverage.ts",
-    "src/business-reality.ts"
+    "src/business-reality.ts",
+    "src/constitution.ts"
   ]
 }
