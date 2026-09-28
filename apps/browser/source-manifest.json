@@ -4165,8 +4165,8 @@
     },
     {
       "path": "tests/test-production-reachability.js",
-      "bytes": 1279,
-      "sha256": "954be9ca2b3e6595b33a2576d3d0e9d1704917190ecdd70761538eaeda80c862"
+      "bytes": 1278,
+      "sha256": "1828d05a36f0b6a2d341d105ba18b85ccc458ecd767b95594657d240443b51c6"
     },
     {
       "path": "tests/test-project-memory-candidate-store.js",
