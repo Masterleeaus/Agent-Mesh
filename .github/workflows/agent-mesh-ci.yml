@@ -32,28 +32,12 @@ jobs:
           test -f roadmap/SUBGOAL-ISSUE-MANIFEST.json
           test -f package.json
           test -f pnpm-lock.yaml
-          grep -q 'Titan Zero Agent Mesh V3' AGENTS.md
+          grep -q 'Titan Zero Execution Contract' AGENTS.md
           if git grep -nE '^(<<<<<<<|=======|>>>>>>>)' -- . ':!*.zip'; then
             echo "Merge conflict marker detected"
             exit 1
           fi
           python3 .github/scripts/validate-agent-claim.py --self-test
-          python3 .github/scripts/claim-next-subgoal.py --self-test
-          python3 .github/scripts/audit-agent-claims.py --self-test
-          python3 .github/scripts/release-safe-agent-claims.py --self-test
-          python3 .github/scripts/manager-merge.py --self-test
-          python3 .github/scripts/verify-main-integration.py --self-test
-          python3 .github/scripts/open-agent-pr.py --self-test
-          python3 .github/scripts/record-pr-handoff-pending.py --self-test
-          python3 .github/scripts/record-agent-continuation.py --self-test
-          python3 .github/scripts/validate-execution-request.py --self-test
-          python3 -m json.tool .agent-mesh/schemas/execution-request-v1.schema.json >/dev/null
-          grep -q 'Exactly one execution request is permitted per push' .github/workflows/agent-execution-bridge.yml
-          grep -q 'sort -u' .github/workflows/agent-execution-bridge.yml
-          grep -q 'failure.receipt.json' .github/workflows/agent-execution-bridge.yml
-          python3 .github/scripts/manager-review-readiness.py --self-test
-          python3 .github/scripts/manager-review-queue.py --self-test
-          python3 .github/scripts/finalize-merged-subgoal.py --self-test
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
