@@ -34,11 +34,11 @@ The goal is **maximum reuse without duplication**.
 
 | Plugin | Primary current owners to consume | Why separate |
 |---|---|---|
-| Titan Communications | #333, #363, Communications/Interaction, email templates | Business email/SMS/voice/inbox/reception/customer-care operations deserve one operational cockpit; server mail health remains Operations |
-| Titan Finance & Commerce | #343, #263, #273, #383, #638 | Quotes/invoices/payments/reconciliation/inventory/commerce/value are cohesive operator workflows; Frappe is substrate, not the whole UX |
-| Titan Intelligence | #647, #59, #393, #153, #768 | Models/providers/local AI, Decision Intelligence, Memory/Knowledge, Personal Zero and intelligence health/configuration |
-| Titan Governance & Assurance | #914, #640, #423, #913, #14, #293, #916, #915, #917 | Constitution, Trust/Authority, evidence, compliance, Rewind, counterfactuals, sovereignty/capsule/federation |
-| Titan Sprout | #719, #769 and vertical packs | Install/configure/version vertical overlays and specialist packs without changing core |
+| Titan Communications | #1053 consuming #333, #363, Communications/Interaction, email templates | Business email/SMS/voice/inbox/reception/customer-care operations deserve one operational cockpit; server mail health remains Operations |
+| Titan Finance & Commerce | #1054 consuming #343, #263, #273, #383, #638 | Quotes/invoices/payments/reconciliation/inventory/commerce/value are cohesive operator workflows; Frappe is substrate, not the whole UX |
+| Titan Intelligence | #1055 consuming #647, #59, #393, #153, #768 | Models/providers/local AI, Decision Intelligence, Memory/Knowledge, Personal Zero and intelligence health/configuration |
+| Titan Governance & Assurance | #1056 consuming #914, #640, #423, #913, #14, #293, #916, #915, #917 | Constitution, Trust/Authority, evidence, compliance, Rewind, counterfactuals, sovereignty/capsule/federation |
+| Titan Sprout | #1057 consuming #719, #769 and vertical packs | Install/configure/version vertical overlays and specialist packs without changing core |
 | Titan Analytics | #393, #638, observability/value evidence | Optional if Analytics grows beyond Zero/Finance; initially can remain a Zero/Finance tab |
 
 ## 3. Current repo top-level assignment
@@ -319,6 +319,6 @@ The current top-level scan is complete. Implementation agents should now perform
 11. Governance & Assurance — deep-map authority/provenance/evidence/security/recovery.
 12. #1047 Foundry — deep-map tools/modules/builder/deployment.
 13. #1044 Web — deep-map web/marketing/Builder/Microweber donors.
-14. Sprout — deep-map verticals/environmental packs.
+14. Sprout #1057 — deep-map verticals/environmental packs.
 15. Experience — converge Evolution-native design system last so all cockpit needs are known.
 
