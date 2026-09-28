@@ -1,5 +1,6 @@
 import type { PoolClient } from "pg";
 import type { PoolConnection } from "mysql2/promise";
+import * as dbModule from "@/lib/db";
 import { getPool } from "@/lib/db";
 import { getDatabaseDialect as configuredDatabaseDialect } from "./dialect";
 import { getMysqlPool } from "./mysql";
@@ -37,6 +38,16 @@ export async function portableQuery<T = Record<string, unknown>>(text: string, p
     const execute = getMysqlPool().execute as unknown as (sql: string, params: unknown[]) => Promise<[unknown, unknown]>;
     const [rows] = await execute(rewritten.sql, rewritten.params);
     return rows as T[];
+  }
+  let configuredQuery: unknown;
+  try {
+    configuredQuery = (dbModule as { query?: unknown }).query;
+  } catch {
+    configuredQuery = undefined;
+  }
+  if (typeof configuredQuery === "function") {
+    const result = await (configuredQuery as (sql: string, params: unknown[]) => Promise<T[]>)(text, params);
+    return result;
   }
   const query = getPool().query as unknown as (
     sql: string,
