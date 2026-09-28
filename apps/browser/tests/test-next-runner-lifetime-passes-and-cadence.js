@@ -1,5 +1,6 @@
 const fs=require('fs');const assert=require('assert');
 const sw=fs.readFileSync('src/lib/service-worker.js','utf8');
+const cs=fs.readFileSync('src/content-script.js','utf8');
 const ui=fs.readFileSync('src/sidebar/sidebar.js','utf8');
 assert(sw.includes('successfulPassCount'), 'durable successfulPassCount missing');
 assert(sw.includes('sessionPassCount'), 'sessionPassCount missing');
@@ -9,6 +10,8 @@ assert(sw.includes('n % 5 === 0'), '5th-pass high-priority cadence missing');
 assert(sw.includes('n % 7 === 0'), '7th-pass verification cadence missing');
 assert(sw.includes("text:prompt, passNumber"), 'cadence prompt must be sent to the bound conversation');
 assert(!sw.includes('withRunnableConversationTab(resolvedTabId, () =>'), 'Next Runner must not activate the target tab to deliver');
+assert(cs.includes("sendNextNudgeToChatGPT(message.text || 'next')"), 'content script must receive the exact cadence message');
+assert(cs.includes("waitForNudgeAcceptance(input, baselineUserMessages, baselineNextCount, messageText)"), 'content script must verify the exact cadence message');
 assert(!/sentCount:0,\s*deferredCount:0,\s*failedCount:0,\s*attemptCount:0/.test(sw),'start must not erase lifetime counters');
 assert(ui.includes('Total successful passes:'),'UI must show durable successful pass total');
 assert(ui.includes('this session'),'UI must show session pass total');
