@@ -22,7 +22,8 @@
     "./ai-core/cost-sovereignty": "src/ported/titan-ai-core/cost-sovereignty.ts",
     "./personal-zero": "./src/personal-zero/index.ts",
     "./interface-registry": "./src/interface-registry.ts",
-    "./user-experience": "./src/user-experience.ts"
+    "./user-experience": "./src/user-experience.ts",
+    "./system-configuration": "./src/system-configuration.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
