@@ -51,6 +51,7 @@
     "src/evidence-to-cash.ts",
     "src/reliability-policy.ts",
     "src/security-boundary.ts",
-    "src/quote-conversion.ts"
+    "src/quote-conversion.ts",
+    "src/customer-care-recovery.ts"
   ]
 }
