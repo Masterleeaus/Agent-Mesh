@@ -4000,8 +4000,8 @@
     },
     {
       "path": "tests/test-next-runner-target-and-deferral-diagnostics.js",
-      "bytes": 1371,
-      "sha256": "38b4c5d7029344a8ec358914ca80cae55f2261e1b46579b8dfb29da767faaa59"
+      "bytes": 1819,
+      "sha256": "bbac8d06326f38c6830a481aba5820ec560a3f34fc28810e53549f4a8409ea8d"
     },
     {
       "path": "tests/test-next-runner-verified-count.js",
@@ -4655,8 +4655,8 @@
     },
     {
       "path": "tests/test-signature-noncompletion-contract.js",
-      "bytes": 690,
-      "sha256": "7b506df7f114e6c4527d80561a35c416780246dc03803773212e8b7d1bf6a192"
+      "bytes": 648,
+      "sha256": "466231669e9981b1754ff69bf2c744612629df956fa6d1571b3173b7592760c6"
     },
     {
       "path": "tests/test-signature-noncompletion-status.js",
@@ -5110,8 +5110,8 @@
     },
     {
       "path": "tests/test-titan-zero-ui-integration.js",
-      "bytes": 1308,
-      "sha256": "879324fc6284eb3c6247611e9654f0dddd07fe874e9edf2367c7c3c2a1579132"
+      "bytes": 1468,
+      "sha256": "c3709d7d6857f6e3109f1d965bd262234fc3e8b6e781311b7859aab52843d967"
     },
     {
       "path": "tests/test-titan-zero-worker-import-runtime.js",
@@ -5300,8 +5300,8 @@
     },
     {
       "path": "tests/test-workforce-ui-wiring.js",
-      "bytes": 787,
-      "sha256": "d8efa276ad67694cce0641d848b5b0ecc49cd83c11e7e263e4cfafbcc96ac151"
+      "bytes": 900,
+      "sha256": "0fe8df7a28b458b35625e3751e27264482438f94c91e5471a01c9012af561169"
     },
     {
       "path": "tests/test-workforce-worker-real-runtime.js",
