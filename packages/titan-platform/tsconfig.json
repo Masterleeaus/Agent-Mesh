@@ -56,6 +56,7 @@
     "src/growth-attribution.ts",
     "src/forecast-contract.ts",
     "src/connector-runtime.ts",
-    "src/mcp-projection.ts"
+    "src/mcp-projection.ts",
+    "src/surface/index.ts"
   ]
 }
