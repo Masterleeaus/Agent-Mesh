@@ -30,13 +30,15 @@ Primary owners:
 - TZ-ROADMAP-52 Decision Runtime issues #58/#59 and engine integration #642.
 - TZ-ROADMAP-06 and other canonical domain lifecycles.
 - #767 Business Reality/evolution.
+- TZ-ROADMAP-04 #163 — Mission/objective lifecycle consumes Reality without becoming another business-state owner.
 
 Required delta:
 - Business Reality becomes explicit projection/fold layer over factual evidence;
 - `REQUESTED → AUTHORIZED → EXECUTING → PROVIDER_ACKNOWLEDGED → VERIFYING → VERIFIED` or equivalent is canonical;
 - observed-state verification closes execution;
 - projection lineage reaches source evidence and projection version;
-- provider acknowledgements can never directly update verified reality.
+- provider acknowledgements can never directly update verified reality;
+- Business Reality exposes capability-gap evidence so Titan can distinguish KEEP/CONNECT/AUGMENT/BUILD/REPLACE/RETIRE without treating inferred need as authority.
 
 Exit gate:
 Representative business action reconstructs end-to-end from intent and authority through execution, observed verification, ledger evidence and updated Reality projection.
@@ -51,13 +53,16 @@ Primary owners:
 - #542/#869 One PWA Zero/Go/Hub.
 - #725 identity/context continuity.
 - #811 24/7 hosted runtime.
+- TZ-ROADMAP-04 #163 Mission runtime for ephemeral, campaign, standing and crisis work.
 
 Required delta:
 - explicit One / Personal Zero / Business Reality / Business Memory / Workforce separation;
 - portable Zero identity across company relationships;
 - continuous workforce remains active without clients open;
 - all surface state is projection of evidence-backed hosted state;
-- learning and memory remain authority-neutral.
+- learning and memory remain authority-neutral;
+- Missions are first-class outcome scopes over canonical business entities, with temporary workspaces/interfaces/workforce/integrations/permissions rather than duplicated customer, asset, job or financial truth;
+- Mission completion is evidence-backed and machine-verifiable; closure promotes required permanent state, archives evidence, revokes temporary authority and retires ephemeral resources.
 
 Exit gate:
 One can disconnect/reconnect through Zero/Go/Hub while ongoing governed work survives, resumes without duplication and projects truthful current state with provenance.
@@ -72,6 +77,7 @@ Primary owners:
 - TZ-ROADMAP-32 #432 MCP.
 - TZ-ROADMAP-45 #643 Browser Node.
 - TZ-ROADMAP-49/#645 Edge Fabric.
+- TZ-ROADMAP-29 #413 — governed Developer Platform / AI App Foundry.
 
 Required delta:
 - rename architectural target from DirectAdmin host plugin to **Titan Server Node**, with DirectAdmin as first deployment/control-plane adapter;
@@ -80,10 +86,16 @@ Required delta:
 - capability discovery never creates authority;
 - `Deploy → Preview → Verify → Promote` commissioning lifecycle;
 - atomic update/rollback and host-replaceability proof;
-- external DA projects are donors/providers, never canonical control planes.
+- external DA projects are donors/providers, never canonical control planes;
+- App Foundry resolves business capability requirements against existing Titan capabilities before external discovery or generation;
+- imported/adapted/generated software becomes a versioned Titan Package with source provenance, licence/SBOM, declared capabilities, permissions, runtime, health, backup, update and rollback contracts before deployment;
+- software supply may include Titan modules, verified repositories, package/container registries, customer software, APIs or generated micro-apps, but no supply source becomes a trust/authority boundary;
+- composite apps prefer canonical capability/event/API composition over source-tree mashups, while generated Mission micro-apps remain thin surfaces over canonical business state;
+- Foundry builds run in isolated sandboxes with licence, dependency, security, compatibility, migration and test gates before governed deploy/preview/verify/promote;
+- software-intelligence and Foundry Recipe metadata preserve reusable understanding of capabilities, APIs, schemas, tenancy, dependencies, integrations, tests, provenance and upstream maintenance history.
 
 Exit gate:
-A clean DirectAdmin VPS can install, run, upgrade, recover and verify the canonical Titan Server Node, while the same business/runtime semantics remain deployable without DirectAdmin.
+A clean DirectAdmin VPS can install, run, upgrade, recover and verify the canonical Titan Server Node, while the same business/runtime semantics remain deployable without DirectAdmin. The Node can also materialize and retire a verified Titan Package/Mission workspace through the same governed deployment path without creating a second app-store or business runtime.
 
 ## Phase 5 — Constitution & Earned Autonomy
 
@@ -98,7 +110,8 @@ Required delta:
 - company isolation, evidence requirements, identity separation, authority construction, privacy/egress, Cost Sovereignty, irreversible action, factual/simulated separation and recovery rules become constitutional invariants;
 - policy changes are versioned/evidenced;
 - recursive handshake remains system eligibility + human delegation + downstream acceptance;
-- constitutional downgrade/revocation always fails closed.
+- constitutional downgrade/revocation always fails closed;
+- plain-language business policy may compile into versioned machine-enforced approval/limit rules, but compiled policy cannot exceed Constitution or effective-authority ceilings and must retain source, version, approval and evidence lineage.
 
 Exit gate:
 Every consequential execution substrate is demonstrably unable to bypass constitutional invariants, including host/root/admin and provider-specific paths.
@@ -117,7 +130,8 @@ Required delta:
 - scenario/counterfactual histories cannot enter factual ledger by projection or merge;
 - deterministic reconstruction by evidence/projection/Constitution versions;
 - corrections, compensation and rollback are new governed factual events;
-- outcome learning can modify recommendations/policies only through bounded governed paths and never self-grant authority.
+- outcome learning can modify recommendations/policies only through bounded governed paths and never self-grant authority;
+- completed Missions feed reusable outcome/exception/cost evidence so Titan can improve future Mission templates, Foundry Recipes and capability recommendations without silently changing business truth or authority.
 
 Exit gate:
 Titan can compare factual history against multiple counterfactual branches, execute an approved intervention, verify its real outcome, preserve the original history and learn without conflating simulation with fact.
@@ -173,3 +187,5 @@ Every phase must preserve:
 8. One/Zero/Business Reality/Memory/Workforce remain separate concerns.
 9. No duplicate engines, registries or host-private business cores.
 10. Titan Code remains private development-only.
+11. Missions, generated micro-apps and temporary portals reference canonical business state; they never create a parallel customer/job/asset/finance source of truth.
+12. Imported/generated packages, repositories, models and installers are software supply/providers only; discovery, installation or technical privilege never grants Titan business authority.
