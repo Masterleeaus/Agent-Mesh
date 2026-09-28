@@ -1,5 +1,5 @@
 name: Titan Zero Browser Node CI
-# Browser Node product gate
+# Browser Node product gate (verified runner/sidebar/diagnostics)
 
 on:
   push:
