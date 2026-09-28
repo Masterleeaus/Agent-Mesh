@@ -110,3 +110,5 @@ export * from "./compliance";
 export * from "./value-attribution";
 
 export * from "./vertical-profile";
+
+export * from "./environmental";
