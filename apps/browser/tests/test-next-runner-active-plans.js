@@ -17,10 +17,12 @@ ok(ui.includes('Number(plan.activeCount || 0) + activeNextRunners.size'), 'dashb
 console.log('PASS next runner appears in Active Plans');
 
 // Timed Next progression must be persisted like plan-runner passes.
-ok(sw.includes('sentCount: Number(item.sentCount) || 0'), 'Next Runner sentCount missing from status');
-ok(sw.includes('sentCount: (Number(previous.sentCount) || 0) + (response?.ok ? 1 : 0)'), 'verified Next send does not increment sentCount');
+ok(sw.includes('successfulPassCount: Number(item.successfulPassCount ?? item.sentCount) || 0'), 'durable successful pass total missing from status');
+ok(sw.includes('sessionPassCount: Number(item.sessionPassCount) || 0'), 'session successful pass total missing from status');
+ok(sw.includes('successfulPassCount: nextSuccessfulPassCount'), 'verified Next send does not increment durable total');
 ok(sw.includes('deferredCount: (Number(previous.deferredCount) || 0) + (deferred ? 1 : 0)'), 'safe deferred Next attempts are not counted separately');
 ok(sw.includes('failedCount: (Number(previous.failedCount) || 0) + ((!response?.ok && !deferred) ? 1 : 0)'), 'hard failed Next attempts must exclude safe deferrals');
-ok(sw.includes('sentCount:0, deferredCount:0, failedCount:0, attemptCount:0'), 'new Next Runner session does not reset progression counters');
-ok(ui.includes('Next ${Number(status?.sentCount) || 0} · every'), 'Active Plans does not display Next progression count');
-ok(ui.includes('Next count: ${sent}'), 'Next Runner status does not display verified progression count');
+ok(sw.includes('sessionPassCount:0'), 'new Next Runner session must reset only session pass count');
+ok(!sw.includes('sentCount:0, deferredCount:0, failedCount:0, attemptCount:0'), 'start still wipes lifetime progression counters');
+ok(ui.includes('Passes ${Number(status?.successfulPassCount ?? status?.sentCount) || 0} · every'), 'Active Plans does not display durable pass progression');
+ok(ui.includes('Total successful passes: ${sent}'), 'Next Runner status does not display durable successful pass total');
