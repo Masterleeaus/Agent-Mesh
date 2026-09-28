@@ -21,6 +21,8 @@ The load-bearing architectural changes are:
 - counterfactual branches remain separate from factual history;
 - Titan Capsule + Zero Recovery establish sovereign rehydration in Phase 7;
 - Federation is Phase 8 and must preserve independent company truth/authority domains.
+- customer-facing **Missions** are outcome scopes over canonical state: temporary workspaces, interfaces, workforce, permissions and integrations retire cleanly after evidence-backed completion;
+- the governed **AI App Foundry** resolves capability gaps reuse-first, converts imported/adapted/generated software into verified Titan Packages, and deploys them through the canonical Server Node rather than a parallel app runtime.
 
 ## Current migration status
 
