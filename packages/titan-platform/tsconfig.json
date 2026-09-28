@@ -50,6 +50,7 @@
     "src/mission-planning.ts",
     "src/evidence-to-cash.ts",
     "src/reliability-policy.ts",
-    "src/security-boundary.ts"
+    "src/security-boundary.ts",
+    "src/quote-conversion.ts"
   ]
 }
