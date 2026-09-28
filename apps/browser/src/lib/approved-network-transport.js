@@ -63,6 +63,6 @@ async function postJson(url,body,options={}){
  }
  return {ok:response.ok,status:response.status,headers:{protocolVersion:response.headers?.get?.('MCP-Protocol-Version')||null,contentType:contentType||null},json};
 }
-global.CodeeApprovedNetworkTransport=Object.freeze({request,getJson,postJson,parseEventStream,MAX_REQUEST_BYTES,MAX_RESPONSE_BYTES});
-global.TitanZeroApprovedNetworkTransport=global.CodeeApprovedNetworkTransport;
+global.TitanZeroApprovedNetworkTransport=Object.freeze({request,getJson,postJson,parseEventStream,MAX_REQUEST_BYTES,MAX_RESPONSE_BYTES});
+
 })(typeof globalThis!=='undefined'?globalThis:this);
