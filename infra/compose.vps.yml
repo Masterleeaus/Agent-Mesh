@@ -6,6 +6,10 @@
 # business-data topology. Optional #1051 Frappe extensions use separate
 # per-company sites/databases when enabled. #811/#322/#812 own convergence.
 #
+# SECURITY DEBT: current web/worker runtime images do not yet set a non-root USER
+# and share broad writable mounts. #322/#648/#811 must establish stable service
+# UID/GID + role-specific mount/permission contracts before production certification.
+#
 # IMPORTANT: this compose still omits the persistent services/workforce host.
 # Do not certify it as production-complete until that service, company storage
 # resolution, migrations, backup/restore and restart acceptance are wired.
