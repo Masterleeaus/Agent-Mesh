@@ -9,10 +9,11 @@ Titan Zero is developed by humans and coding agents concurrently. This file is t
 Use sources in this order:
 
 1. Current code, migrations, tests, and live GitHub state are implemented truth.
-2. `docs/canonical/` defines authoritative product, domain, and architecture direction.
-3. `docs/contracts/` defines active cross-component contracts.
-4. `docs/working/` and `ai/` are implementation aids.
-5. `docs/archive/` and `docs/generated/` are evidence/history only.
+2. `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md` and `docs/architecture/CANONICAL-RULES.md` define the current cross-repository architecture and invariants; `roadmap/PHASE-MAP-V3.md` defines convergence order.
+3. `docs/canonical/` defines authoritative product/domain detail where it does not conflict with Blueprint v3.
+4. `docs/contracts/` defines active cross-component contracts.
+5. `docs/working/` and `ai/` are implementation aids.
+6. `docs/archive/`, `docs/generated/`, and top-level `archive/` are evidence/history/donor material only unless current production reachability is proven.
 
 Before architecture, infrastructure, persistence, runtime, or deployment work, read `ai/INVARIANTS.md`.
 
@@ -67,15 +68,15 @@ Unless a canonical document explicitly changes them:
 
 ## 5. GitHub claim and branch discipline
 
-All implementation work maps to an open GitHub issue/subgoal.
+All implementation work maps to an open GitHub **mission issue**. Roadmap subgoals remain planning/traceability and should not be mirrored as separate implementation issues.
 
 The only implementation claim lock is the exact GitHub branch ref:
 
-`agent/<subgoal-id>`
+`agent/issue-<issue-number>`
 
 Rules:
 1. Immediately before claiming, fetch the issue, current `main` SHA, live `agent/*` refs, dependencies, and relevant PRs.
-2. Atomically create the exact claim branch from the required current `main`.
+2. Atomically create the exact mission claim branch `agent/issue-<issue-number>` from the required current `main`.
 3. If it already exists, another agent owns the claim. Do not create a suffix, timestamp, worker-name branch, or alternate prefix.
 4. Post a claim comment with workspace/agent identity, issue, subgoal, branch, and base SHA.
 5. One implementation claim per agent/workspace unless a Manager issue explicitly authorizes otherwise.
@@ -83,7 +84,7 @@ Rules:
 7. Never open a second branch because the first branch conflicts. Rebase/merge/fix the existing claim branch.
 8. The canonical PR targets `main` and contains `Closes #<issue>`.
 9. After merge, rely on governed cleanup/delete-on-merge. Do not leave replacement branches behind.
-10. Do not claim parent/meta issues while claimable child implementation issues exist.
+10. Do not create child issues for implementation steps that fit inside the claimed mission. Create a new issue only for a genuinely independent substantial outcome with no existing canonical owner.
 
 GitHub refs, commits, checks, PRs, merges, and issue state are the coordination and lifecycle record. Do not maintain a second Agent Mesh ledger.
 
