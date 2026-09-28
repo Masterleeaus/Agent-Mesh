@@ -200,17 +200,36 @@ No deployment is considered commissioned merely because a process started or API
 
 Canonical product surface identities remain:
 
-- `zero` — owner/manager projection;
-- `go` — worker/field projection;
-- `hub` — customer projection.
+- `zero` — owner/manager mode;
+- `go` — worker/field mode;
+- `hub` — customer mode.
 
-**Surface identity is not deployment identity.** Zero, Go and Hub may be delivered as separate PWA/user-facing applications while sharing the same canonical Titan Runtime, company identity, capability graph, Workforce and evidence-backed business state. They are not modes of `apps/web`, and `apps/web` is not synonymous with the PWA products.
+Titan has **one canonical PWA application with three governed modes: Zero, Go and Hub**. Native mobile follows the same one-application / three-mode model. The modes share the canonical Titan Runtime, company identity, capability graph, Workforce, Interaction/Decision contracts and evidence-backed business state while enforcing mode-specific audience, privacy, entitlement and offline behavior.
 
-The TypeScript **base/server web application** (`apps/web`) is a distinct server-hosted web/BFF application. It may provide HTTP/auth/session adapters and intentionally retained base-web projections, but it must not become the canonical definition of Zero/Go/Hub or a second business runtime.
+**The PWA is not `apps/web`.** The TypeScript `apps/web` application is the separate **full Titan base web application**. It may contain the complete browser-based business application experience while progressively consuming canonical Titan Domain APIs and the Frappe Business Engine rather than owning duplicate operational persistence. Do not collapse the base web app into the PWA, and do not treat the PWA as merely a route/mode inside `apps/web`.
 
-Native mobile, Browser Node, ChatGPT/MCP/external assistants, voice, messaging and future channels are additional adapters/projections over the same hosted workforce and evidence-backed state.
+Canonical deployment distinction:
 
-Interfaces and deployment surfaces do not own business truth, authority or workforce runtime. Titan Surfaces manages their lifecycle/health as projections; canonical runtime/contracts remain singular.
+```
+Titan Base Web App (apps/web)
+  = full server-hosted browser application
+
+Titan PWA
+  = one installable PWA
+      ├─ Zero mode
+      ├─ Go mode
+      └─ Hub mode
+
+Titan Native Mobile
+  = one native application
+      ├─ Zero mode
+      ├─ Go mode
+      └─ Hub mode
+```
+
+Browser Node, ChatGPT/MCP/external assistants, voice, messaging and future channels are additional adapters/projections over the same hosted Workforce and evidence-backed state.
+
+Interfaces and modes do not own business truth, authority or Workforce runtime. Titan Surfaces manages deployment/lifecycle/health of interface endpoints; canonical runtime/contracts remain singular.
 
 ## 9.1 Commercial product portfolio and entitlement architecture
 
