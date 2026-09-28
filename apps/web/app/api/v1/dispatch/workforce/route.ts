@@ -7,6 +7,11 @@ import { portableQuery, withPortableTransaction } from "@/lib/db/portable";
 
 export const dynamic = "force-dynamic";
 
+type WorkforceMemberRow = Record<string, unknown> & { user_id: string; role: string; status: string; full_name: string | null; email: string | null };
+type WorkforceSkillRow = Record<string, unknown> & { user_id: string; skill_id: string; name: string; category: string | null; proficiency: number | null };
+type WorkforceAvailabilityRow = Record<string, unknown> & { id: string; user_id: string; weekday: number | null; specific_date: string | null; start_time: string; end_time: string; availability_kind: string; note: string | null };
+
+
 const availabilitySchema = z.object({
   action: z.literal("add_availability"),
   user_id: z.string().uuid(),
@@ -34,9 +39,9 @@ function requireManager(session: AuthSession) {
 export const GET = withAuth(async (_request: NextRequest, session: AuthSession) => {
   if (!requireManager(session)) return NextResponse.json({ error: { code: "FORBIDDEN", message: "Owner or admin role required" } }, { status: 403 });
   const [members, skills, availability] = await Promise.all([
-    portableQuery(`SELECT bm.user_id, bm.role, bm.status, u.full_name, u.email FROM business_memberships bm JOIN users u ON u.id = bm.user_id AND u.account_id = bm.account_id WHERE bm.account_id = $1 AND bm.status = 'active' ORDER BY u.full_name, u.email`, [session.accountId]),
-    portableQuery(`SELECT ts.user_id, ws.id AS skill_id, ws.name, ws.category, ts.proficiency FROM technician_skills ts JOIN workforce_skills ws ON ws.id = ts.skill_id AND ws.account_id = ts.account_id WHERE ts.account_id = $1 AND ws.active = TRUE ORDER BY ts.user_id, ws.name`, [session.accountId]),
-    portableQuery(`SELECT id, user_id, weekday, specific_date, start_time, end_time, availability_kind, note FROM technician_availability WHERE account_id = $1 ORDER BY user_id, specific_date, weekday, start_time`, [session.accountId]),
+    portableQuery<WorkforceMemberRow>(`SELECT bm.user_id, bm.role, bm.status, u.full_name, u.email FROM business_memberships bm JOIN users u ON u.id = bm.user_id AND u.account_id = bm.account_id WHERE bm.account_id = $1 AND bm.status = 'active' ORDER BY u.full_name, u.email`, [session.accountId]),
+    portableQuery<WorkforceSkillRow>(`SELECT ts.user_id, ws.id AS skill_id, ws.name, ws.category, ts.proficiency FROM technician_skills ts JOIN workforce_skills ws ON ws.id = ts.skill_id AND ws.account_id = ts.account_id WHERE ts.account_id = $1 AND ws.active = TRUE ORDER BY ts.user_id, ws.name`, [session.accountId]),
+    portableQuery<WorkforceAvailabilityRow>(`SELECT id, user_id, weekday, specific_date, start_time, end_time, availability_kind, note FROM technician_availability WHERE account_id = $1 ORDER BY user_id, specific_date, weekday, start_time`, [session.accountId]),
   ]);
   return NextResponse.json({ data: { members, skills, availability } });
 });

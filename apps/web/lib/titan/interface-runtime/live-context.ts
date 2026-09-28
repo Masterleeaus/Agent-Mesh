@@ -4,7 +4,7 @@ import { queryForSession, query, queryOne } from "@/lib/db";
 import { buildBusinessRuntimeContext, type Surface } from "./business-context";
 
 type Row = Record<string, unknown>;
-type AttentionRow = {id:string;account_id:string;type:string;entity_type:string;entity_id:string;title:string;summary:string|null;href:string|null;dedupe_key:string|null;created_at:string;read_at:string|null};
+type AttentionRow = Record<string, unknown> & {id:string;account_id:string;type:string;entity_type:string;entity_id:string;title:string;summary:string|null;href:string|null;dedupe_key:string|null;created_at:string;read_at:string|null};
 
 export async function loadLiveInterfaceContext(surface: Surface) {
   if (surface === "hub") return loadHubContext();
