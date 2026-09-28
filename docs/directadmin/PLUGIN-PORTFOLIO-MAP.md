@@ -21,7 +21,7 @@ The goal is **maximum reuse without duplication**.
 |---|---:|---|
 | Titan Business Node Core | #812 | Server Node/meta-orchestration, system estate, master health/dependency graph |
 | Cockpit SDK | #1049 | Shared plugin packaging, identity/company bridge, theme, nav, security, widgets, diagnostics |
-| Titan Business Engine | #1051 | Frappe/ERPNext operational domain substrate and tenancy |
+| Titan Business Engine | #1051 | Optional Frappe/ERPNext extension provider, provisioning, mappings and tenancy |
 | Titan Zero | #1046 | Zero, attention, approvals, daily brief, whole-business intelligence/control |
 | Titan Workforce | #1050 | Agents/humans, hierarchy, work, Missions, conversations, autonomy, evidence |
 | Titan Operations | #1045 | Server/apps/services/devices/nodes/sync/security/backups/domains/TLS/assurance |
@@ -39,7 +39,7 @@ The goal is **maximum reuse without duplication**.
 | Plugin | Primary current owners to consume | Why separate |
 |---|---|---|
 | Titan Communications | #1053 consuming #333, #363, Communications/Interaction, email templates | Business email/SMS/voice/inbox/reception/customer-care operations deserve one operational cockpit; server mail health remains Operations |
-| Titan Finance & Commerce | #1054 consuming #343, #263, #273, #383, #638 | Quotes/invoices/payments/reconciliation/inventory/commerce/value are cohesive operator workflows; Frappe is substrate, not the whole UX |
+| Titan Finance & Commerce | #1054 consuming #343, #263, #273, #383, #638 | Quotes/invoices/payments/reconciliation/inventory/commerce/value are cohesive operator workflows; Frappe is an optional extension provider, not the default finance/FSM owner |
 | Titan Intelligence | #1055 consuming #647, #59, #393, #153, #768 | Models/providers/local AI, Decision Intelligence, Memory/Knowledge, Personal Zero and intelligence health/configuration |
 | Titan Governance & Assurance | #1056 consuming #914, #640, #423, #913, #14, #293, #916, #915, #917 | Constitution, Trust/Authority, evidence, compliance, Rewind, counterfactuals, sovereignty/capsule/federation |
 | Titan Sprout | #1057 consuming #719, #769 and vertical packs | Install/configure/version vertical overlays and specialist packs without changing core |
@@ -52,7 +52,7 @@ The goal is **maximum reuse without duplication**.
 | Current source | DirectAdmin assignment | Action |
 |---|---|---|
 | `apps/directadmin/dev-access` | Titan Dev #1048 + SDK #1049 | Preserve server-validated packaging/diagnostic lessons; refactor shared pieces into SDK |
-| `apps/web` | Full base web application; capabilities projected into Zero / Business Engine / Finance / Communications / other cockpits as relevant | Keep as the distinct full Titan base web application. It is **not** the PWA. Reuse canonical APIs/components; migrate duplicate CRM/ERP persistence behind Titan Domain APIs/#1051 rather than copying it into plugins. |
+| `apps/web` | Full base web application; capabilities projected into Zero / Business Engine / Finance / Communications / other cockpits as relevant | Keep as the distinct full Titan base web application. It is **not** the PWA. Reuse canonical APIs/components; preserve mature native FSM persistence; converge duplicated runtime/contract seams and use #1051 only for deliberately delegated extensions rather than copying it into plugins. |
 | `apps/mobile` | Titan Operations (device/node visibility) + Workforce | Do not port Flutter; expose Edge/device health/capability/configuration |
 | `apps/browser` | Titan Operations + Dev + capability graph | Browser Node remains separate execution node; DA manages/observes it |
 | `apps/desktop` | Titan Operations / Intelligence | Manage desktop/edge node status; do not transplant desktop shell |
@@ -205,7 +205,7 @@ Owns cockpit UX for:
 - commerce/orders/returns;
 - cashflow/value/ROI views.
 
-Operational transactional substrate may use Frappe/ERPNext, but canonical Titan contracts and Evidence remain authoritative.
+Native Titan FSM remains the default operational substrate. Selected extension capabilities may use Frappe/ERPNext through canonical Titan contracts; Evidence remains authoritative.
 
 ### Titan Intelligence
 
@@ -312,7 +312,7 @@ The current top-level scan is complete. Implementation agents should now perform
 
 1. #1049 Cockpit SDK — extract shared DirectAdmin mechanics from `dev-access` and donors.
 2. #812 Business Node Core — server/runtime/system-estate orchestration.
-3. #1051 Business Engine — map current domain/business/finance code to Frappe provider.
+3. #1051 Business Engine — implement optional Frappe extension-provider contracts/mappings without replacing mature native Titan FSM domains by default.
 4. #1048 Dev — converge diagnostics/Codex/terminal.
 5. #1050 Workforce — deep-map `packages/workforce`, `services/workforce`, workforce sections of titan-platform.
 6. #1046 Zero — deep-map Interaction/feeds/Business Reality/briefing.
