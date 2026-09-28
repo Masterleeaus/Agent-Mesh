@@ -1,9 +1,8 @@
 /**
- * Architecture compatibility note:
- * Provider-neutral calculations/types in this module remain useful Titan semantics.
- * Direct account_id business-table persistence is legacy base-web materialization
- * pending #1051 provider convergence. Human HR records may be Frappe-backed, but
- * Frappe Employee/Skill/Time records never grant Titan Workforce authority.
+ * Native Titan FSM time-clock implementation.
+ * Preserve clock/retry/correction/pay-type behavior while improving portability.
+ * Optional Frappe HR/payroll integration may consume/supply deliberately delegated
+ * facets; it is not the default replacement for Titan time tracking.
  */
 import { randomUUID } from "crypto";
 import type { DbClient } from "@/lib/db-contract";
