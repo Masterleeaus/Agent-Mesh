@@ -10,6 +10,7 @@ export * from "./system-configuration.js";
 export * from "./vertical-pack.js";
 export * from "./communication-announcement.js";
 export * from "./intelligence-core.js";
+export * from "./surface-manager.js";
 
 export * from "./offline/index.js";
 
