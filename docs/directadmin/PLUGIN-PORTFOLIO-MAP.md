@@ -33,8 +33,6 @@ The goal is **maximum reuse without duplication**.
 | Titan Experience | #1052 | Evolution skin/theme/navigation/personalisation/responsive cockpit UX |
 | Titan Surfaces | #1059 | Interface estate, PWA/mobile/base-web/portal/generated-surface lifecycle, topology and health |
 | Titan Channels | #1060 | External transport/provider endpoint connectivity, health, credentials and channel topology |
-| Titan Interaction | #1061 | Expert Interaction Engine cockpit: intent, context, journeys, wizards, diagnostics |
-| Titan Decision | #1062 | Expert Decision Engine cockpit: evidence, alternatives, scenarios, confidence, outcomes |
 
 ### Additional missioned cockpit plugins
 
@@ -83,7 +81,7 @@ The goal is **maximum reuse without duplication**.
 | `revenue-journey` | Finance & Commerce + Zero |
 | `runtime/agent-runtime` | Workforce |
 | `runtime/authority` | Governance & Assurance |
-| `runtime/interaction-engine` | Interaction #1061; consumed by Zero + Communications + Workforce |
+| `runtime/interaction-engine` | Canonical Interaction runtime; configured through System Configuration #1063 and consumed by Zero + Communications + Workforce |
 | `runtime/feed` | Zero / Operations attention feeds |
 | `settings` | Business Node Core + Experience |
 | `storage` | Operations + Governance & Assurance |
