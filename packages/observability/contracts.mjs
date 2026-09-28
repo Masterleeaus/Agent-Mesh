@@ -7,7 +7,7 @@ const SEVERITIES=new Set(['debug','info','warn','error','critical']);
 const clone=value=>value==null?value:JSON.parse(JSON.stringify(value));
 const text=(value,field)=>{const out=String(value??'').trim();if(!out)throw new TypeError(`${field}-required`);return out};
 const optional=value=>{const out=String(value??'').trim();return out||null};
-const REDACTED_KEY=/^(?:authorization|cookie|password|secret|token|api[_-]?key|private[_-]?key|prompt|email|phone|mobile|address|customer|customer[_-]?data)$/i;
+const REDACTED_KEY=/^(?:authorization|cookie|password|secret|token|api[_-]?key|private[_-]?key|prompt|email|phone|mobile|address|customer(?:[_-]?(?:data|name|email|phone|mobile|address))?)$/i;
 function redactObservationValue(value,key=null){
   if(REDACTED_KEY.test(String(key??'')))return '[REDACTED]';
   if(Array.isArray(value))return value.map(item=>redactObservationValue(item));
