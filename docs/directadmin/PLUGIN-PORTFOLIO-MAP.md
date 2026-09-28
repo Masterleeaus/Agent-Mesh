@@ -29,6 +29,10 @@ The goal is **maximum reuse without duplication**.
 | Titan Web | #1044 | Microweber/websites/WordPress/portals/publishing |
 | Titan Dev | #1048 | Terminal, SSH keys, Codex, Git, diagnostics, MCP/capability debugging |
 | Titan Experience | #1052 | Evolution skin/theme/navigation/personalisation/responsive cockpit UX |
+| Titan Surfaces | #1059 | Interface estate, PWA/mobile/base-web/portal/generated-surface lifecycle, topology and health |
+| Titan Channels | #1060 | External transport/provider endpoint connectivity, health, credentials and channel topology |
+| Titan Interaction | #1061 | Expert Interaction Engine cockpit: intent, context, journeys, wizards, diagnostics |
+| Titan Decision | #1062 | Expert Decision Engine cockpit: evidence, alternatives, scenarios, confidence, outcomes |
 
 ### Proposed new cockpit plugins
 
@@ -48,7 +52,7 @@ The goal is **maximum reuse without duplication**.
 | Current source | DirectAdmin assignment | Action |
 |---|---|---|
 | `apps/directadmin/dev-access` | Titan Dev #1048 + SDK #1049 | Preserve server-validated packaging/diagnostic lessons; refactor shared pieces into SDK |
-| `apps/web` | Titan Zero / Web / Business Engine depending route | Keep canonical PWA/BFF separate; reuse APIs/components, do not copy business runtime |
+| `apps/web` | Full base web application; capabilities projected into Zero / Business Engine / Finance / Communications / other cockpits as relevant | Keep as the distinct full Titan base web application. It is **not** the PWA. Reuse canonical APIs/components; migrate duplicate CRM/ERP persistence behind Titan Domain APIs/#1051 rather than copying it into plugins. |
 | `apps/mobile` | Titan Operations (device/node visibility) + Workforce | Do not port Flutter; expose Edge/device health/capability/configuration |
 | `apps/browser` | Titan Operations + Dev + capability graph | Browser Node remains separate execution node; DA manages/observes it |
 | `apps/desktop` | Titan Operations / Intelligence | Manage desktop/edge node status; do not transplant desktop shell |
@@ -73,7 +77,7 @@ The goal is **maximum reuse without duplication**.
 | `revenue-journey` | Finance & Commerce + Zero |
 | `runtime/agent-runtime` | Workforce |
 | `runtime/authority` | Governance & Assurance |
-| `runtime/interaction-engine` | Zero + Communications + Workforce |
+| `runtime/interaction-engine` | Interaction #1061; consumed by Zero + Communications + Workforce |
 | `runtime/feed` | Zero / Operations attention feeds |
 | `settings` | Business Node Core + Experience |
 | `storage` | Operations + Governance & Assurance |
@@ -85,7 +89,7 @@ The goal is **maximum reuse without duplication**.
 | `titan-platform/personal-zero` | Intelligence + Zero |
 | `titan-platform/retriever` | Intelligence |
 | `titan-platform/storage` | Operations + Governance & Assurance |
-| `titan-platform/surface` | SDK + Experience |
+| `titan-platform/surface` | Surfaces #1059 + SDK + Experience |
 | `titan-platform/titan-builder` | Foundry + Web |
 | `titan-platform/verticals` | Sprout |
 | `titan-platform/workforce-*` | Workforce; trust aspects also Governance & Assurance |
@@ -161,8 +165,8 @@ The goal is **maximum reuse without duplication**.
 | #572 | Operations + Governance & Assurance |
 | #718 | Business Node Core + SDK + Foundry |
 | #302 | SDK + Dev + Governance & Assurance |
-| #542 | No DA replacement: Zero/Go/Hub remain user surfaces; DA Zero/Workforce consume same contracts |
-| #809 | No direct port; DA reuses canonical APIs after web convergence |
+| #542 | No DA replacement: one PWA + one native mobile app each expose Zero/Go/Hub modes; DA Surfaces/Zero/Workforce consume the same contracts |
+| #809 | No direct port: `apps/web` remains the separate full base web application; DA cockpits reuse canonical APIs/domain contracts after duplicate persistence convergence |
 | #643 | Operations/Dev management of Browser Node, not source move |
 | #644 | Intelligence/Dev visibility of AI-host integration, not source move |
 | #648 | Repo convergence; informs all plugin boundaries |
@@ -320,5 +324,9 @@ The current top-level scan is complete. Implementation agents should now perform
 12. #1047 Foundry — deep-map tools/modules/builder/deployment.
 13. #1044 Web — deep-map web/marketing/Builder/Microweber donors.
 14. Sprout #1057 — deep-map verticals/environmental packs.
-15. Experience — converge Evolution-native design system last so all cockpit needs are known.
+15. #1059 Surfaces — interface estate/lifecycle over existing Interface Runtime/Builder/deployment contracts.
+16. #1060 Channels — endpoint/provider transport estate; keep Communications semantics separate.
+17. #1061 Interaction — expert cockpit over canonical Interaction Engine.
+18. #1062 Decision — expert cockpit over canonical Decision Engine.
+19. Experience — converge Evolution-native design system after cockpit needs are known.
 
