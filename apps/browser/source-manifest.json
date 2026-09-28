@@ -1870,8 +1870,8 @@
     },
     {
       "path": "src/content-script.js",
-      "bytes": 32785,
-      "sha256": "2e418396406f57e19cadce775822481862d2eecb0fce2f9dcda005c639473b11"
+      "bytes": 33253,
+      "sha256": "93e7e74566e18f2ce8259f2f6f5e3e956638bc8463c5f564801a4011c1d2d0ed"
     },
     {
       "path": "src/integration/artifact-verification-adapter.js",
@@ -3985,8 +3985,8 @@
     },
     {
       "path": "tests/test-next-runner-lifetime-passes-and-cadence.js",
-      "bytes": 1233,
-      "sha256": "4eb5fe8ff49734e48e18339f187bfb647fde9b5458b3f2c4f6991c64bf62e6cc"
+      "bytes": 1583,
+      "sha256": "492117a2292f30224b0887abcd69f6ad546d03990d337a432a7b9ba251fcab76"
     },
     {
       "path": "tests/test-next-runner-receiver-recovery-runtime.js",
