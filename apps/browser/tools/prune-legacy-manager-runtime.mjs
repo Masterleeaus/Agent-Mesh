@@ -8,8 +8,12 @@ const workerPath = path.join(root, 'src/lib/service-worker.js');
 let source = fs.readFileSync(workerPath, 'utf8');
 const before = source;
 
-// Repair the one malformed seam produced by the first prune attempt.
+// Repair malformed seams produced by the first prune attempt.
 source = source.replace('\n(options = {}) {\n', '\nasync function getMcpInspectorPayload(options = {}) {\n');
+source = source.replace(
+  /\n\n\s{4}const ready = await ensureTitanZeroRegistered\(\);\n\s{4}await titanAnalysisMutationQueue;/,
+  '\n\nasync function getTitanZeroStatus() {\n    const ready = await ensureTitanZeroRegistered();\n    await titanAnalysisMutationQueue;'
+);
 
 const stillHasManagerRuntime = [
   "'../titan-zero/agent-mesh-role-topology.js'",
@@ -57,6 +61,9 @@ for (const forbidden of [
 }
 if (!source.includes('async function getMcpInspectorPayload(options = {}) {')) {
   throw new Error('MCP inspector function signature is missing after prune');
+}
+if (!source.includes('async function getTitanZeroStatus() {')) {
+  throw new Error('Titan Zero status function signature is missing after prune');
 }
 
 if (source === before) {
