@@ -1,6 +1,7 @@
 import type { PoolClient } from "pg";
 import type { PoolConnection } from "mysql2/promise";
-import { getDatabaseDialect, getPool, query as dbQuery } from "@/lib/db";
+import { getPool, query as dbQuery } from "@/lib/db";
+import { getDatabaseDialect as configuredDatabaseDialect } from "./dialect";
 import { getMysqlPool } from "./mysql";
 import { getSqliteClient, withSqliteTransaction } from "./sqlite";
 import { rewriteNumberedParamsForMysql, type DbClient, type DbQueryResult } from "@/lib/db-contract";
@@ -8,7 +9,11 @@ import type { SessionPayload } from "@/lib/auth/session";
 import { requireTenantAccountId } from "./contracts";
 
 function resolveDatabaseDialect(): "sqlite" | "mysql" | "postgres" {
-  return typeof getDatabaseDialect === "function" ? getDatabaseDialect() : "postgres";
+  try {
+    return configuredDatabaseDialect();
+  } catch {
+    return "postgres";
+  }
 }
 
 function mysqlClient(connection: PoolConnection): DbClient {
@@ -33,7 +38,7 @@ export async function portableQuery<T = Record<string, unknown>>(text: string, p
     const [rows] = await execute(rewritten.sql, rewritten.params);
     return rows as T[];
   }
-  if (typeof getDatabaseDialect !== "function") {
+  if (typeof dbQuery === "function") {
     const fallbackQuery = dbQuery as unknown as (sql: string, params: unknown[]) => Promise<T[]>;
     return await fallbackQuery(text, params);
   }
