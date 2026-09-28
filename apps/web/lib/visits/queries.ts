@@ -1,3 +1,8 @@
+/**
+ * Compatibility query adapter for the legacy base-web visit store.
+ * Canonical production reads should converge on company-scoped Titan Domain
+ * projections backed by #1051 where mapped. Keep the triage ordering semantics.
+ */
 import { query } from "@/lib/db";
 import type { TriageVisitRow } from "./triage";
 
