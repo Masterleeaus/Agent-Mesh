@@ -1,0 +1,1 @@
+Temporary retirement marker; old Dovetails convergence is superseded by current transition logic and package identity.
