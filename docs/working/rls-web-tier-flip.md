@@ -1,5 +1,7 @@
 # RLS web-tier flip runbook (TASK-146)
 
+> Historical PostgreSQL/garonhome cutover runbook. This preserves the account-scoped AI-FSM RLS implementation history, not the Blueprint v3 deployment or business authority contract. Current `company_id`, Evidence Ledger and #1051 Frappe ownership are defined in `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md` and `ai/INVARIANTS.md`. `scripts/bootstrap.sh` is now retired and fail-closed; do not follow the old bootstrap instruction below. The root `pnpm db:migrate` command now targets SQLite, while legacy PostgreSQL migrations use `pnpm db:migrate:server`.
+
 Turns the already-written RLS from documentation into enforcement, by switching
 the **web** container from the Postgres **superuser** to the restricted
 **`ai_fsm_web`** role. This is the step that actually activates every RLS policy
