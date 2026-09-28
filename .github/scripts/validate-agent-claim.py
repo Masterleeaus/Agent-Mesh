@@ -214,7 +214,7 @@ def validate_pull_request():
     main_sha = str(((main_ref.get("object") or {}).get("sha")) or "").lower()
     if not re.fullmatch(r"[0-9a-f]{40}", main_sha):
         fail("main does not resolve to a valid Git commit")
-    ancestry = run(["gh", "api", f"repos/{repo}/compare/{main_sha}...{claim_sha}", "--jq", ".status"], check=False)
+    ancestry = subprocess.run(["gh", "api", f"repos/{repo}/compare/{main_sha}...{claim_sha}", "--jq", ".status"], text=True, capture_output=True, check=False)
     if ancestry.returncode != 0 or ancestry.stdout.strip() not in {"ahead", "identical"}:
         fail(f"canonical claim branch {head} is not based on current main ancestry: {ancestry.stdout.strip() or ancestry.stderr.strip()}")
 
