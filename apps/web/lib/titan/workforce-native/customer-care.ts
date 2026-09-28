@@ -9,7 +9,7 @@ function materializePath(path: string, plan: ReturnType<typeof buildTitanCustome
 function buildSearch(query: Readonly<Record<string, unknown>>) { const s = new URLSearchParams(); for (const [k, v] of Object.entries(query)) if (v != null && String(v).trim()) s.set(k, String(v)); const q = s.toString(); return q ? `?${q}` : ""; }
 export function buildNativeCustomerCarePlan(session: AuthSession, input: CustomerCareNativeRequest) { assertRole(session); return buildTitanCustomerCarePlan({ ...input, companyId: session.accountId, actorId: session.userId, traceId: input.traceId ?? session.traceId }); }
 export async function executeNativeCustomerCareAction(request: Request, session: AuthSession, input: CustomerCareNativeRequest) {
-  const plan = buildNativeCustomerCarePlan(session, input); const governance = buildNativeGovernance(session, plan, request);
+  const plan = buildNativeCustomerCarePlan(session, input); const governance = buildNativeGovernance(session, { ...plan, agentKey: "customer_care" as const }, request);
   if (input.dryRun || plan.operation === null) return { dryRun: Boolean(input.dryRun), executed: false, plan, governance } as const;
   assertNativeExecutionAuthority(plan);
   const source = new URL(request.url); const target = new URL(`${materializePath(plan.operation.path, plan)}${buildSearch(plan.query)}`, source.origin);
