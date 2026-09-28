@@ -23,11 +23,11 @@ It manages the business's digital system estate while canonical Titan services r
 - Web / Portal — #1044
 - Dev — #1048
 - Experience — #1052
-- Communications — dedicated cockpit mission
-- Finance & Commerce — dedicated cockpit mission
-- Intelligence — dedicated cockpit mission
-- Governance & Assurance — dedicated cockpit mission
-- Sprout / Vertical Packs — dedicated cockpit mission
+- Communications — #1053
+- Finance & Commerce — #1054
+- Intelligence — #1055
+- Governance & Assurance — #1056
+- Sprout / Vertical Packs — #1057
 
 Current server-validated donor/reference:
 
