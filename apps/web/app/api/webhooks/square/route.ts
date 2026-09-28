@@ -1,3 +1,11 @@
+/**
+ * Canonical architecture compatibility note:
+ * HMAC verification authenticates the Square event/provider only. The direct
+ * legacy invoice/payment DB mutations below are compatibility materialization,
+ * not canonical Titan authority or VERIFIED business truth. Target path is
+ * #1060 endpoint auth -> #263/#1054 finance semantics -> #14 governed execution
+ * where required -> #1051 provider materialization -> #913 verification/evidence.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { portableQuery, withPortableTransaction } from "@/lib/db/portable";
 import { randomUUID } from "node:crypto";
