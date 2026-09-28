@@ -1,6 +1,6 @@
 # AGENTS.md — Titan Zero Execution Contract
 
-<!-- Titan Zero Agent Mesh V4 / Codex-ready -->
+<!-- Titan Zero Codex Execution Contract -->
 
 Titan Zero is developed by humans and coding agents concurrently. This file is the repository-wide execution contract. A deeper `AGENTS.md` may narrow rules for its subtree, but it may not weaken this contract or canonical architecture.
 
@@ -85,7 +85,7 @@ Rules:
 9. After merge, rely on governed cleanup/delete-on-merge. Do not leave replacement branches behind.
 10. Do not claim parent/meta issues while claimable child implementation issues exist.
 
-GitHub refs, commits, checks, PRs, merges, and issue state are authoritative lifecycle evidence. Local ledgers and agent prose are projections only.
+GitHub refs, commits, checks, PRs, merges, and issue state are the coordination and lifecycle record. Do not maintain a second Agent Mesh ledger.
 
 ## 6. Verification contract
 
