@@ -91,3 +91,5 @@ export * from "./ported/titan-connect/channel-binding.js";
 export * from "./developer-portal.js";
 
 export * from "./directadmin-plugin.js";
+
+export * from "./workforce-manager/manager-contract.js";
