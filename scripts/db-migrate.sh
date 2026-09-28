@@ -1,3 +1,10 @@
+# LEGACY SHARED-POSTGRES COMPATIBILITY MIGRATOR.
+# The mature db/migrations lineage remains critical native FSM schema/behavior
+# evidence, but this script applies it to one PostgreSQL database and is not the
+# target database-per-company provisioning path. Preserve it for existing
+# installations and migration extraction until #809/#648 certify the portable
+# COMPANY_NATIVE_FSM manifest and explicit cutover.
+
 #!/usr/bin/env bash
 set -euo pipefail
 
