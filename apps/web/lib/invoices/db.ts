@@ -3,13 +3,12 @@ import { withPortableTransaction } from "../db/portable";
 import type { SessionPayload } from "../auth/session";
 
 /**
- * Run fn within a PostgreSQL transaction with RLS session context set.
- * Mirrors withEstimateContext from lib/estimates/db.ts.
+ * Compatibility transaction wrapper for the legacy base-web invoice store.
  *
- * Source evidence:
- *   Myprogram: supabase/migrations/003_rls_policies.sql (set_config pattern)
- *   AI-FSM: db/migrations/003_rls_policies.sql (app.* session vars)
- *   AI-FSM: apps/web/lib/estimates/db.ts (established pattern for this project)
+ * Canonical finance/domain ownership is #263/#1054 with operational
+ * materialization through #1051 where mapped. This wrapper must not be treated
+ * as the long-term invoice system of record or tenant-isolation authority.
+ * New business-domain writes should use Titan Domain/provider contracts.
  */
 export async function withInvoiceContext<T>(
   session: SessionPayload,
