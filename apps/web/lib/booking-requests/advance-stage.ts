@@ -171,7 +171,7 @@ export async function advanceBookingRequestStage(
  * Resolve booking_request_id from an estimate (direct or via job) and advance.
  */
 export async function advanceBookingRequestForEstimate(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     estimateId: string;
