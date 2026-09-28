@@ -8,4 +8,15 @@ This app has committed design context. Read it before changing UI:
 - **[DESIGN.md](DESIGN.md)** — visual: the Titan Zero system (black/slate foundations with Command orange and reserved operational status colors; legacy token names stay `forest-*` temporarily for compatibility), typography, elevation, components, and Do's/Don'ts. Tokens are authoritative; the live source is `app/styles/tokens.css` and the P7 components in `components/ui/`.
 - **`.impeccable/design.json`** — machine-readable sidecar (tonal ramps, shadow/motion tokens, drop-in component snippets).
 
-North Star: **Titan Zero is an operational Advanced Intelligence system, not another dashboard.** Command orange is earned (≤10% of a screen); status hues never decorate; one typeface; flat-by-default surfaces. Command is the owner surface, Go is the field surface, and Hub is the customer surface.
+North Star: **Titan Zero is an operational Advanced Intelligence system, not another dashboard.** Command orange is earned (≤10% of a screen); status hues never decorate; one typeface; flat-by-default surfaces. Canonical surface IDs are **Zero, Go, and Hub**. “Command” may remain an owner/manager presentation label for Zero, but it is not a fourth canonical surface or authority identity.
+
+## Blueprint v3 web boundary
+
+`apps/web` is a surface/BFF and must not own a second business runtime. Read `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md` and `docs/architecture/CANONICAL-RULES.md` before changing API routes, persistence, Workforce, authority, execution or evidence behavior.
+
+- Consequential mutations must converge on canonical domain services plus the hosted Workforce/governed execution path; a role check, app-local risk assessment, audit row or internal HTTP fetch is not a substitute for effective authority + ExecutionGateway + observed verification.
+- The canonical Workforce runs persistently on the server. Web projects/interacts with it; closing the browser must not stop delegated work.
+- New business/domain logic belongs in canonical packages/services, not `app/api/**` or `lib/**` merely for convenience.
+- Canonical VPS persistence is SQLite-first. Do not introduce new production route dependencies on PostgreSQL-only `pg.Pool` helpers; use the portable canonical DB/storage boundary.
+- Provider acknowledgement and HTTP success are not verified business outcomes.
+- Preserve `company_id` as the canonical architecture boundary. Legacy `account_id` storage/schema fields are compatibility/domain persistence details and must be normalized at canonical boundaries rather than becoming a second tenancy model.
