@@ -1,18 +1,34 @@
 # Titan Zero Codex Mission Template
 
-Use this as the body or starting prompt for an implementation mission. Keep the GitHub issue as the durable source of work state.
+Use this as the body or starting prompt for an implementation mission. Keep the GitHub issue as the durable source of work state. Repository-wide branch, verification and completion rules come from the root `AGENTS.md`; do not copy divergent versions into issues.
+
+## Mission metadata
+**Priority:** <P0 | P1 | P2>  
+**Type:** <Mission | Integration certification | Certification gate | Release certification | Convergence mission | Convergence audit | Contract convergence | Reliability certification | Observability & performance certification>  
+**Parallel safe:** <No — shared owner/contract reason | Yes — exact isolated scope and stabilization condition>  
+**Canonical owner:** #<issue number>  
+**Verification tier:** <0 | 1 | 2 | 3>
 
 ## Mission
 **Issue:** #<number>  
-**Subgoal:** <TZ-...>  
 **Outcome:** <one verifiable end state>
 
 ## Current truth to inspect first
 - Current `main`
 - Root and applicable subtree `AGENTS.md`
-- Issue, dependencies, active claim refs, related PRs
+- Issue, current prerequisites/coordination owners, active exact claim ref, and related PRs
 - Relevant canonical docs/contracts
 - Existing implementation and tests for the canonical owner
+
+## Prerequisites
+List only contracts/capabilities that genuinely must be usable before this mission can complete. Do not use mutual issue-level dependencies.
+
+- <owner/contract and what must be stable>
+
+## Coordinates with
+List adjacent owners that integrate with this mission but must not block it.
+
+- <issue/owner and boundary>
 
 ## Canonical owners to preserve
 - <existing package/service/runtime/contract>
@@ -25,27 +41,31 @@ Cross-boundary edits are allowed only when required to achieve the outcome; stat
 
 ## Do not
 - Create a parallel engine/runtime/store/authority system/task ledger/capability registry.
-- Create a second branch for the same subgoal.
-- Bypass governed execution, tenant isolation, evidence, privacy, idempotency, or verification.
+- Create a second branch for the same mission.
+- Turn a coordination owner into a blocking dependency.
+- Bypass governed execution, company isolation, evidence, privacy, idempotency, or verification.
 - Declare completion from prose, mocks, provider acknowledgements, or unexecuted tests.
+- Create child issues for implementation steps that belong inside this mission. Create another issue only for a genuinely independent outcome with no valid existing canonical owner.
 
 ## Required implementation
 1. <behavior/change>
 2. <behavior/change>
 3. <tests/migration/docs as required>
 
-## Acceptance evidence
-- <observable behavior>
-- <negative/failure behavior>
-- <compatibility/recovery/isolation behavior where relevant>
+## Behavioral acceptance
+- <observable successful behavior>
+- <negative/fail-closed behavior>
+- <retry/replay/recovery behavior where relevant>
+- <company isolation / authority / provenance behavior where relevant>
 
-## Verification tier
-**Tier:** <0 | 1 | 2 | 3>
+## Done condition
+<one objective stopping condition; no open-ended “improve/continue/audit more” wording>
 
-Run the root `AGENTS.md` requirements for that tier plus targeted tests for the changed owner. Record exact commands and results.
+## Verification
+Run the root `AGENTS.md` requirements for the declared tier plus targeted tests for the changed owner. Record exact commands and results.
 
 ## Branch discipline
-Use exactly `agent/<subgoal-id>` from the required current `main` SHA. If it exists, do not create an alternate branch. Keep the same branch through fixes and PR.
+Inherit the root `AGENTS.md` claim protocol. Use exactly `agent/<subgoal-id>` from the required current `main` SHA. If it exists, do not create an alternate/suffix branch. Keep the same branch through implementation, conflicts, verification, PR and fixes. After merge, do not open a successor branch for the completed mission.
 
 ## Completion report
 Return:
