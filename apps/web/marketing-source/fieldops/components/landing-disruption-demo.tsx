@@ -89,7 +89,7 @@ export function LandingDisruptionDemo() {
             <b>{state === "resolved" ? protectedOrder ? assignment?.to : "ADVISOR CALLBACK" : ""}</b>
           </span>;
         })}</div>
-        {state === "resolved" ? <a href="/control-room/service-command className={styles.demoDeepLink}>Open the full recovery workspace <ArrowRight/></a> : null}
+        {state === "resolved" ? <a href="/control-room/service-command" className={styles.demoDeepLink}>Open the full recovery workspace <ArrowRight/></a> : null}
       </section>
     </div>
 
