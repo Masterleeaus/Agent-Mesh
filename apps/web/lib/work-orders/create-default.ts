@@ -1,4 +1,9 @@
 /**
+ * Compatibility persistence helper for the legacy base-web work-order store.
+ * Preserve the default-work-order semantics, but new production materialization
+ * should use the canonical Job/Work Order domain provider (#183/#1051).
+ */
+/**
  * Create a default schedulable work order for a project (e.g. quick-book).
  */
 
