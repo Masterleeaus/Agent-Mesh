@@ -57,3 +57,6 @@ export * from "./mcp-projection.js";
 export * from "./mission-authority-policy.js";
 
 export * from "./edge-fabric.js";
+
+export { evaluateReleaseEligibility } from "./certification-matrix.js";
+export type { CertificationCell, ReleaseEligibility } from "./certification-matrix.js";
