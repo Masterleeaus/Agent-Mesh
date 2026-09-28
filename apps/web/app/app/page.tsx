@@ -321,22 +321,11 @@ export default async function AppPage() {
         />
       ) : null}
       <OwnerDashboard
-        actionQueue={actionQueue}
-        todayJobs={todayJobs}
-        materialCount={materialCount}
-        materialJobs={materialJobs}
+        leakItems={[]}
+        openPromiseRows={openPromiseRows}
         tomorrowJobs={tomorrowJobs}
         outstandingInvoicesCents={outstandingInvoicesCents}
-        pendingDepositsCents={pendingDepositsCents}
         paidThisMonthCents={paidThisMonthCents}
-        openSession={fieldDay.openSession}
-        vehicles={fieldDay.vehicles}
-        dayMileage={fieldDay.dayMileage}
-        yesterdayMiles={fieldDay.yesterdayMiles}
-        pendingSegments={pendingSegments}
-        todayExpensesCents={todayExpensesCents}
-        monthExpensesCents={monthExpensesCents}
-        receiptsMissing={receiptsMissing}
       />
     </PageContainer>
   );
