@@ -1,6 +1,6 @@
 # SQLite local and runtime persistence
 
-SQLite is the canonical local/runtime persistence target where the current owner defines it. Local/device/edge operation must not require PostgreSQL or Redis. The Business Evidence Ledger (#913) owns factual history. Mature native FSM business domains remain Titan-owned and must work without Frappe; their active persistence is not a donor merely because Frappe has similar modules. #1051 Frappe is an optional extension provider with per-company sites/databases when enabled. See `TITAN-ZERO-BLUEPRINT-V3.md` and `ai/INVARIANTS.md` for ownership.
+SQLite is the canonical local/runtime persistence target where the current owner defines it. Local/device/edge operation must not require PostgreSQL or Redis. The Business Evidence Ledger (#913) owns factual history. Mature native FSM business domains remain Titan-owned and must work without Frappe; their active persistence is not a donor merely because Frappe has similar modules. Company-owned operational persistence is physically isolated database-per-company while retaining explicit `company_id`; the concrete native database engine remains owner/deployment-defined until convergence is verified. #1051 Frappe is an optional extension provider with a separate site/database per company when enabled. See `TITAN-ZERO-BLUEPRINT-V3.md` and `ai/INVARIANTS.md` for ownership.
 
 ## Boundary
 
