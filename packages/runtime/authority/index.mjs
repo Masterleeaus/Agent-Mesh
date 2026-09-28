@@ -47,3 +47,5 @@ export { buildAuthorityHistoryIntegritySeal, buildAuthorityHistorySnapshotSeal, 
 
 export { SqliteAuthorityStore } from './sqlite-authority-store.mjs';
 export { AuthorityContextResolver } from './authority-context-resolver.mjs';
+
+export { RuntimeAuthorityGateway } from './runtime-authority-gateway.mjs';
