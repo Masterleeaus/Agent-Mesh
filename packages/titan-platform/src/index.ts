@@ -35,3 +35,5 @@ export type { ConnectorCredentialReference } from "./ported/titan-connect/creden
 export * from "./knowledge-governance.js";
 
 export * from "./mission-planning.js";
+
+export * from "./evidence-to-cash.js";
