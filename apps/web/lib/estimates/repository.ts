@@ -111,7 +111,7 @@ export async function getEstimateById(rawClient: DbClient, id: string, accountId
 
   if (estimateResult.rowCount === 0) return null;
 
-  const lineItemsResult = await client.query(
+  const lineItemsResult = await client.query<Record<string, unknown> & { option_id: string | null }>(
     `SELECT id, estimate_id, option_id, description, quantity, unit_price_cents,
             total_cents, line_item_type, visible_to_customer, adjustment_type, sort_order, created_at
      FROM estimate_line_items
@@ -120,7 +120,7 @@ export async function getEstimateById(rawClient: DbClient, id: string, accountId
     [id]
   );
 
-  const optionsResult = await client.query(
+  const optionsResult = await client.query<Record<string, unknown> & { id: string }>(
     `SELECT id, estimate_id, label, description, sort_order, subtotal_cents, tax_cents, total_cents, is_recommended, created_at
      FROM estimate_options
      WHERE estimate_id = $1
@@ -130,13 +130,13 @@ export async function getEstimateById(rawClient: DbClient, id: string, accountId
 
   const estimate: Record<string, unknown> = {
     ...estimateResult.rows[0],
-    line_items: lineItemsResult.rows.filter((r: { option_id: string | null }) => !r.option_id),
+    line_items: lineItemsResult.rows.filter((r) => !r.option_id),
   };
 
   if (optionsResult.rows.length > 0) {
-    estimate.options = optionsResult.rows.map((opt: { id: string }) => ({
+    estimate.options = optionsResult.rows.map((opt) => ({
       ...opt,
-      line_items: lineItemsResult.rows.filter((r: { option_id: string | null }) => r.option_id === opt.id),
+      line_items: lineItemsResult.rows.filter((r) => r.option_id === opt.id),
     }));
   }
 
