@@ -12,6 +12,20 @@ function extractId(url: string) {
   return url.match(/\/booking-requests\/([^/]+)\/convert/)?.[1] ?? null;
 }
 
+
+type BookingConvertRow = {
+  id: string;
+  status: string;
+  visit_id: string | null;
+  job_id: string | null;
+  preferred_date: string | null;
+  preferred_time_slot: "morning" | "afternoon" | "evening" | "flexible" | null;
+  access_notes: string | null;
+};
+
+type BookingStatusRow = { status: string };
+type JobStatusRow = { status: string };
+
 const convertSchema = z.object({
   preferred_date: z.string().optional(),
   preferred_time_slot: z.enum(["morning", "afternoon", "evening", "flexible"]).optional().nullable(),
@@ -36,7 +50,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
   try {
     return await withTenantTransaction(session, async (client, accountId) => {
     // Lock the row to serialize concurrent convert requests
-    const { rows: brRows } = await client.query(
+    const { rows: brRows } = await client.query<BookingConvertRow>(
       `SELECT * FROM booking_requests WHERE id = $1 AND account_id = $2 FOR UPDATE`,
       [id, accountId]
     );
@@ -66,7 +80,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
       return NextResponse.json({ error: { code: "CONFLICT", message: "No job linked to this booking request", traceId: session.traceId } }, { status: 409 });
     }
 
-    const { rows: jobRows } = await client.query(
+    const { rows: jobRows } = await client.query<JobStatusRow>(
       `SELECT status FROM jobs WHERE id = $1 AND account_id = $2 FOR UPDATE`,
       [br.job_id, accountId]
     );
@@ -91,7 +105,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
 
     // Build visit window from preferred date/time
     const dateStr = parsed.data.preferred_date ?? br.preferred_date;
-    const slot    = parsed.data.preferred_time_slot ?? br.preferred_time_slot ?? "morning";
+    const slot = parsed.data.preferred_time_slot ?? br.preferred_time_slot ?? "morning";
     const startHourMap: Record<string, number> = { morning: 9, afternoon: 13, evening: 16 };
     const startHour = startHourMap[slot] ?? 9;
 
@@ -142,7 +156,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
        WHERE id = $1 AND account_id = $2`,
       [id, accountId, visitId, session.userId, parsed.data.review_notes ?? null]
     );
-    const { rows: updatedRows } = await client.query(
+    const { rows: updatedRows } = await client.query<BookingStatusRow>(
       `SELECT * FROM booking_requests WHERE id = $1 AND account_id = $2`,
       [id, accountId]
     );
