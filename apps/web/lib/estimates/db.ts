@@ -7,15 +7,12 @@ export { calcTotals, lineItemTotal } from "./math";
 export type { LineItemInput, Totals } from "./math";
 
 /**
- * Run fn within a PostgreSQL transaction with RLS session context set.
+ * Compatibility transaction wrapper for the legacy base-web estimate store.
  *
- * Sets app.current_user_id, app.current_account_id, app.current_role as
- * LOCAL (transaction-scoped) config vars so RLS policies can enforce
- * tenant isolation and role-based access.
- *
- * Source evidence:
- *   Myprogram: supabase/migrations/003_rls_policies.sql (set_config pattern)
- *   AI-FSM: db/migrations/003_rls_policies.sql (app.* session vars)
+ * The PostgreSQL/RLS/account_id path is migration compatibility, not current
+ * canonical Titan tenancy or quote authority. Canonical logical identity is
+ * company_id; mapped operational quote state converges through #1051 behind
+ * Titan Domain/provider contracts. Preserve this path until parity is proven.
  */
 export async function withEstimateContext<T>(
   session: SessionPayload,
