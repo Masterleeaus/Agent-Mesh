@@ -17,9 +17,10 @@ for (const modulePath of forbiddenStartupImports) {
   assert(!worker.includes(`'${modulePath}'`), `Browser Node must not eagerly load development-only catalogue: ${modulePath}`);
 }
 
-// These two compatibility runtimes still provide bounded analysis/registration contracts.
-// They may be removed only after their host adapters stop depending on them.
-assert(worker.includes("'../repository/repository-coding-pack.js'"), 'Repository compatibility analysis runtime must remain until adapter convergence');
+// Repository host integration is now self-sufficient and the old coding mega-pack must stay out of startup.
+assert(!worker.includes("'../repository/repository-coding-pack.js'"), 'Repository coding compatibility pack must not load at Browser Node startup');
+assert(!worker.includes("'../integration/receiver-adapter.js'"), 'Repository receiver adapter must not load after host integration convergence');
+// Titan Zero developer pack is still a temporary compatibility shim until its host adapter converges in the next pass.
 assert(worker.includes("'../titan-zero/titan-zero-developer-pack.js'"), 'Titan Zero compatibility analysis runtime must remain until adapter convergence');
 
 assert(worker.includes("'browser-host-integration.js'"), 'Browser host integration must remain active');
