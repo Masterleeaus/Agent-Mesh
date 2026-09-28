@@ -1,8 +1,14 @@
-# TRANSITIONAL TITAN RUNTIME COMPOSE — NOT THE COMPLETE BUSINESS NODE
-# This composition currently hosts the base web/worker runtime with shared
-# SQLite runtime/compatibility storage. It does NOT yet provision #1051 Frappe
-# Business Engine sites and must not be interpreted as the final business-data
-# topology. #322/#812 own convergence to the complete Server Node composition.
+# TRANSITIONAL TITAN RUNTIME COMPOSE — NOT YET THE COMPLETE BUSINESS NODE
+# Native Titan/AI-FSM is the default field-service application and must run
+# without Frappe. Company-owned operational state targets one physical database
+# per company behind the canonical company-storage resolver. The single SQLite
+# path below is COMPATIBILITY/RUNTIME composition debt, not the target company
+# business-data topology. Optional #1051 Frappe extensions use separate
+# per-company sites/databases when enabled. #811/#322/#812 own convergence.
+#
+# IMPORTANT: this compose still omits the persistent services/workforce host.
+# Do not certify it as production-complete until that service, company storage
+# resolution, migrations, backup/restore and restart acceptance are wired.
 
 name: titan-zero
 services:
