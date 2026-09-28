@@ -6,7 +6,7 @@ They are not, as a directory, the canonical Titan Runtime storage model.
 
 ## Current classification
 
-### LEGACY_BUSINESS_COMPATIBILITY — migrate behind #1051 where mapped
+### NATIVE_TITAN_FSM — preserve and converge
 
 The majority of the historical schema belongs here, including families for:
 
@@ -22,7 +22,7 @@ The majority of the historical schema belongs here, including families for:
 - maintenance plans/assets/property-condition business records;
 - business communications logs/notifications where superseded by canonical Communications/Channels providers.
 
-These migrations remain required while `apps/web` compatibility routes still read/write the old store. New business-domain architecture must use Titan Domain/provider contracts and #1051 Frappe/ERPNext rather than adding new canonical business tables here.
+These migrations remain part of the native Titan FSM lineage. Do not migrate them to Frappe merely because ERPNext has similar entities. Converge PostgreSQL-specific assumptions, duplicate runtime mechanisms and legacy naming while preserving useful native behavior. Frappe/#1051 is used only for capabilities deliberately delegated or added as extensions.
 
 ### TITAN_RUNTIME_CONTROL_EVIDENCE — canonical owner must be proven individually
 
@@ -52,13 +52,13 @@ Dovetails/Home Assistant/property-vault and other historical product-specific sc
 For each business family:
 
 ```
-legacy DB implementation
-  -> extract Titan contracts/lifecycle/idempotency/validation
-  -> implement provider adapter (#1051 where mapped)
-  -> parity + cross-company + restart tests
-  -> move base-web consumer to Domain API
-  -> mark legacy path compatibility-only
-  -> retire reachable legacy persistence
+native FSM implementation
+  -> preserve behavior
+  -> classify ownership
+  -> extract shared contracts where useful
+  -> improve portability/runtime boundaries
+  -> verify parity + cross-company + restart behavior
+  -> retire only duplicate/dead/obsolete implementation
 ```
 
 Never point Frappe directly at this schema or attempt a table-for-DocType 1:1 rewrite without semantic mapping.
@@ -70,6 +70,6 @@ New files under `db/migrations/` require an explicit current storage owner in th
 - `owner: legacy-base-web-compatibility`
 - `owner: titan-runtime:<canonical-owner>`
 
-New operational CRM/ERP business tables are rejected unless #1051 explicitly documents why Frappe/provider materialization cannot own that domain.
+New native FSM schema changes are allowed when they extend a Titan-owned mature capability and declare their storage/domain owner. Frappe is not the default owner simply because a similar ERPNext DocType exists.
 
 `company_id` is Titan's canonical logical company identity. Existing `account_id` columns remain compatibility schema until migrated and do not redefine canonical tenancy.
