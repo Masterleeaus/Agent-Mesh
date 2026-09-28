@@ -328,7 +328,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.action === 'SEND_NEXT_NUDGE') {
-        sendNextNudgeToChatGPT()
+        sendNextNudgeToChatGPT(message.text || 'next')
             .then(result => sendResponse(result))
             .catch(error => sendResponse({ ok: false, error: error?.message || String(error) }));
         return true;
@@ -459,28 +459,33 @@ function isProviderGenerating() {
 function normalizeNudgeMessageText(value) {
     return String(value ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
 }
-function countRenderedNextMessages() {
+function countRenderedNudgeMessages(expectedText = 'next') {
+    const expected = normalizeNudgeMessageText(expectedText) || 'next';
     return getUserMessageNodes().reduce((count, node) => {
         const text = normalizeNudgeMessageText(node?.innerText ?? node?.textContent ?? '');
-        return count + (text === 'next' ? 1 : 0);
+        return count + (text === expected ? 1 : 0);
     }, 0);
 }
-async function waitForNudgeAcceptance(originalInput, baselineMessages, baselineNextCount) {
+function countRenderedNextMessages() {
+    return countRenderedNudgeMessages('next');
+}
+async function waitForNudgeAcceptance(originalInput, baselineMessages, baselineNextCount, expectedText = 'next') {
     const baseline = new Set(Array.isArray(baselineMessages) ? baselineMessages : []);
     const initialNextCount = Number(baselineNextCount) || 0;
+    const expected = normalizeNudgeMessageText(expectedText) || 'next';
     for (let attempt = 0; attempt < 30; attempt++) {
         await new Promise(resolve => setTimeout(resolve, 100));
         const liveInput = findComposer();
         const composerCleared = (!liveInput && typeof document.contains === 'function' && !document.contains(originalInput)) || Boolean(liveInput && readComposerText(liveInput) === '');
         const messages = getUserMessageNodes();
-        const newRenderedNext = messages.some(node => !baseline.has(node) && normalizeNudgeMessageText(node?.innerText ?? node?.textContent ?? '') === 'next');
-        const nextCountAdvanced = messages.reduce((count, node) => count + (normalizeNudgeMessageText(node?.innerText ?? node?.textContent ?? '') === 'next' ? 1 : 0), 0) > initialNextCount;
+        const newRenderedNext = messages.some(node => !baseline.has(node) && normalizeNudgeMessageText(node?.innerText ?? node?.textContent ?? '') === expected);
+        const nextCountAdvanced = messages.reduce((count, node) => count + (normalizeNudgeMessageText(node?.innerText ?? node?.textContent ?? '') === expected ? 1 : 0), 0) > initialNextCount;
         if (composerCleared && (newRenderedNext || nextCountAdvanced)) return true;
     }
     return false;
 }
 
-async function sendNextNudgeToChatGPT() {
+async function sendNextNudgeToChatGPT(text = 'next') {
     contentHealth.lastNudgeAttemptAt = Date.now();
     contentHealth.lastNudgeError = '';
     if (isProviderGenerating()) {
@@ -488,8 +493,9 @@ async function sendNextNudgeToChatGPT() {
         return { ok:false, skipped:true, reason:'provider-busy', error:contentHealth.lastNudgeError };
     }
     const input = await waitForComposer({ timeoutMs: 2500, intervalMs: 100 });
+    const messageText = String(text || 'next').trim() || 'next';
     const baselineUserMessages = getUserMessageNodes();
-    const baselineNextCount = countRenderedNextMessages();
+    const baselineNextCount = countRenderedNudgeMessages(messageText);
     if (!input) {
         contentHealth.lastNudgeError = 'Could not find the AI chat composer';
         return { ok:false, skipped:true, reason:'composer-not-found', error:contentHealth.lastNudgeError };
@@ -499,7 +505,7 @@ async function sendNextNudgeToChatGPT() {
         return { ok:false, skipped:true, reason:'composer-not-empty', error:contentHealth.lastNudgeError };
     }
     try {
-        if (input.contentEditable === 'true') input.textContent = 'next'; else input.value = 'next';
+        if (input.contentEditable === 'true') input.textContent = messageText; else input.value = messageText;
         input.dispatchEvent(new Event('input', { bubbles:true }));
         input.dispatchEvent(new Event('change', { bubbles:true }));
         await new Promise(resolve => setTimeout(resolve, 120));
@@ -509,9 +515,9 @@ async function sendNextNudgeToChatGPT() {
         } else {
             input.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', code:'Enter', bubbles:true }));
         }
-        const accepted = await waitForNudgeAcceptance(input, baselineUserMessages, baselineNextCount);
+        const accepted = await waitForNudgeAcceptance(input, baselineUserMessages, baselineNextCount, messageText);
         if (!accepted) {
-            if (readComposerText(input).toLowerCase() === 'next') {
+            if (normalizeNudgeMessageText(readComposerText(input)) === normalizeNudgeMessageText(messageText)) {
                 if (input.contentEditable === 'true') input.textContent = ''; else input.value = '';
                 input.dispatchEvent(new Event('input', { bubbles:true }));
                 input.dispatchEvent(new Event('change', { bubbles:true }));
@@ -520,7 +526,7 @@ async function sendNextNudgeToChatGPT() {
             return { ok:false, retryable:true, reason:'not-accepted', error:contentHealth.lastNudgeError };
         }
         contentHealth.lastNudgeAcceptedAt = Date.now();
-        return { ok:true, sent:true, text:'next' };
+        return { ok:true, sent:true, text:messageText };
     } catch (error) {
         contentHealth.lastNudgeError = error?.message || String(error);
         return { ok:false, retryable:true, reason:'send-error', error:contentHealth.lastNudgeError };
