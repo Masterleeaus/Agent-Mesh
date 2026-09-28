@@ -197,7 +197,11 @@ Titan Business Node Control Plane (#812)
 ├── Titan Finance & Commerce
 ├── Titan Intelligence
 ├── Titan Governance & Assurance
-└── Titan Sprout / Vertical Packs
+├── Titan Sprout / Vertical Packs (#1057)
+├── Titan Surfaces / Surface Manager (#1059)
+├── Titan Channels & Integrations (#1060)
+├── System Configuration (#1063; Interaction/Decision engine controls)
+└── Business Standards (#1065)
 ```
 
 The portfolio map and source assignment live in:
