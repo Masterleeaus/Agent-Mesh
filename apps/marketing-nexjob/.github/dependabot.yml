@@ -1,0 +1,32 @@
+version: 2
+updates:
+  # React + Tailwind + Vite marketing site
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    groups:
+      npm-dev-and-test:
+        dependency-type: development
+        update-types: ["minor", "patch"]
+      npm-prod-minor-patch:
+        dependency-type: production
+        update-types: ["minor", "patch"]
+        exclude-patterns:
+          - "react"
+          - "react-dom"
+          - "vite"
+          - "tailwindcss"
+      # React core bumps together (version parity); majors reviewed alone.
+      react-with-companions:
+        applies-to: version-updates
+        patterns:
+          - "react"
+          - "react-dom"
+        update-types: ["major", "minor", "patch"]
+      # vite / tailwindcss majors stay individual so breaking changes are
+      # reviewed on their own.
