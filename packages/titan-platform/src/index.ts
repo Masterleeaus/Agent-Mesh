@@ -53,5 +53,3 @@ export * from "./forecast-contract.js";
 export * from "./connector-runtime.js";
 
 export * from "./mcp-projection.js";
-
-export * from "./surface/index.js";
