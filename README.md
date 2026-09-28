@@ -280,7 +280,7 @@ Titan Zero Field Service Workforce
 
 ## Technology
 
-The list below describes substantial inherited implementation, not one mandated persistence or deployment stack for every Titan component. Blueprint v3 assigns factual history to the Evidence Ledger, runtime/local storage to its canonical owner, and mapped operational business domains to the Frappe Business Engine. PostgreSQL code remains reachable compatibility work while those boundaries converge.
+The list below describes substantial inherited implementation, not one mandated persistence or deployment stack for every Titan component. Blueprint v3 assigns factual history to the Evidence Ledger and runtime/local storage to its canonical owner. The full TypeScript base app retains mature native field-service workflows and must install without Frappe; optional Frappe extensions use explicit Titan Domain/provider contracts. Reachable PostgreSQL FSM code must be preserved and made supportable while its company, authority and evidence boundaries converge.
 
 Titan Zero is primarily a TypeScript system built with a modern full-stack stack:
 
@@ -299,7 +299,7 @@ Titan Zero is primarily a TypeScript system built with a modern full-stack stack
 
 ## Development
 
-The commands below start the inherited PostgreSQL-backed base web development stack. They do not install the DirectAdmin Business Node or Frappe Business Engine. `pnpm db:migrate` is the separate local SQLite migration command; this web stack uses `pnpm db:migrate:server`. The retired `scripts/bootstrap.sh` intentionally exits with an error.
+The commands below start the PostgreSQL-backed native base-web FSM development stack. They do not install the DirectAdmin Business Node or optional Frappe extension Business Engine. `pnpm db:migrate` is the separate local SQLite migration command; this web stack uses `pnpm db:migrate:server`. The retired `scripts/bootstrap.sh` intentionally exits with an error.
 
 ### Prerequisites
 
