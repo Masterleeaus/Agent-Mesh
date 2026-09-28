@@ -32,7 +32,7 @@ It still does **not** replace:
 - Titan Constitution / Trust / Authority;
 - the canonical Workforce runtime/identity;
 - canonical capability ownership;
-- Zero/Go/Hub as the primary business interaction surfaces.
+- the one Titan PWA and one native mobile app, each with Zero/Go/Hub governed modes, plus the separate full `apps/web` base application as user-facing products/surfaces.
 
 The rule is:
 
