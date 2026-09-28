@@ -66,5 +66,6 @@
     "src/recovery/capsule.ts"
     "src/federation/contract.ts"
     "src/governance/assurance.ts"
+    "src/ported/titan-connect/channel-binding.ts"
   ]
 }
