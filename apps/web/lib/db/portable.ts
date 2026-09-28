@@ -58,6 +58,15 @@ export async function portableQuery<T = Record<string, unknown>>(text: string, p
 }
 
 export async function portableQueryOne<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<T | null> {
+  let configuredQueryOne: unknown;
+  try {
+    configuredQueryOne = (dbModule as { queryOne?: unknown }).queryOne;
+  } catch {
+    configuredQueryOne = undefined;
+  }
+  if (typeof configuredQueryOne === "function") {
+    return await (configuredQueryOne as (sql: string, params: unknown[]) => Promise<T | null>)(text, params);
+  }
   const rows = await portableQuery<T>(text, params);
   return rows[0] ?? null;
 }
