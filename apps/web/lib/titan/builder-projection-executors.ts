@@ -1,3 +1,12 @@
+/**
+ * Architecture compatibility note:
+ * Builder preview is read-only and authority-neutral. The direct legacy SQL
+ * projection executors below are temporary base-web compatibility providers.
+ * Target providers are bounded Titan Domain / Business Reality projections
+ * backed by #1051 where mapped; Builder must never depend on provider schemas.
+ * Historical "workcore" naming here is an internal donor label, not a canonical
+ * product/runtime owner.
+ */
 import { portableQuery } from "@/lib/db/portable";
 import type { InterfaceContext } from "@titan-zero/titan-platform/interface-runtime";
 import {
