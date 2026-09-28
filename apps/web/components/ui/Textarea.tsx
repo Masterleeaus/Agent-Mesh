@@ -9,7 +9,7 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   error?: string;
   hint?: string;
   required?: boolean;
-  id: string;
+  id?: string;
   containerClassName?: string;
 }
 
