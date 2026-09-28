@@ -1,7 +1,7 @@
 /**
- * Compatibility persistence helper for the legacy base-web work-order store.
- * Preserve the default-work-order semantics, but new production materialization
- * should use the canonical Job/Work Order domain provider (#183/#1051).
+ * Native Titan FSM work-order persistence helper.
+ * Preserve the default schedulable work-order behavior and converge it with
+ * canonical domain/runtime boundaries; do not migrate it to Frappe by default.
  */
 /**
  * Create a default schedulable work order for a project (e.g. quick-book).
