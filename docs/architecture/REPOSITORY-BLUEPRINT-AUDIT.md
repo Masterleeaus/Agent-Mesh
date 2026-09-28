@@ -164,3 +164,20 @@ Findings so far:
 - Small hygiene fixes: removed committed `apps/web/tsconfig.tsbuildinfo` and `apps/web/marketing-source/tradepilot/app/page.tsx.bak`.
 
 Mission evidence: #811, #14, #183, #263, #353, #542, #648.
+
+
+### Pass 6B — apps/web API/domain ownership
+Status: IN PROGRESS
+
+API family inventory (233 route.ts endpoints): estimates 19, visits 17, invoices 16, jobs 13, activities 9, expenses 9, titan 9, work-orders 9, sessions 8, booking-requests/properties/time-clock 6 each, attention/dispatch/materials/vehicles 5 each, plus smaller families.
+
+Verified findings:
+- Material ordinary domain routes still mutate business state directly in the web surface (dispatch, jobs, work orders, payments, provider webhooks, automations and others).
+- Six `workforce-native` adapters use a better transitional pattern: non-GET execution fails closed with `CANONICAL_EXECUTION_AUTHORITY_REQUIRED`. Preserve that fail-closed behavior and replace internal HTTP mutation with the canonical hosted Workforce/execution envelope.
+- `lib/estimates/db.ts` remains PostgreSQL-only while `lib/invoices/db.ts` has already moved to portable transactions; converge on the existing portable boundary.
+- `lib/automations/service.ts` is PostgreSQL-specific (`PoolClient`, `SET LOCAL`) and cannot be canonical SQLite production code as-is.
+- Payment and Square webhook code has useful signature/idempotency/company checks but currently turns provider events directly into financial rows/status; Finance must distinguish provider event receipt from verified Titan financial outcome.
+- Estimate send route combines pricing, state transition, email/PDF delivery and audit/cascade orchestration in the surface; Sales/Quote canonical owner should absorb material behavior.
+- No further obvious backup/build-artifact files remain in apps/web after Pass 6A cleanup.
+
+Mission evidence: #811, #14, #183, #263, #343, #353, #648.
