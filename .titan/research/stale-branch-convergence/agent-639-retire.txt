@@ -1,0 +1,1 @@
+Temporary retirement marker; agent/639 is superseded by current workforce implementation.
