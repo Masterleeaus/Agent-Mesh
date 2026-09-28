@@ -1,7 +1,8 @@
 /**
- * Compatibility query adapter for the legacy base-web visit store.
- * Canonical production reads should converge on company-scoped Titan Domain
- * projections backed by #1051 where mapped. Keep the triage ordering semantics.
+ * Native Titan FSM visit query implementation.
+ * Preserve triage and operational behavior while converging storage portability,
+ * canonical company context and shared contracts. Frappe is optional extension
+ * infrastructure, not the default visit provider.
  */
 import { query } from "@/lib/db";
 import type { TriageVisitRow } from "./triage";
