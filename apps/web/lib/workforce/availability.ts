@@ -1,9 +1,8 @@
 /**
- * Architecture compatibility note:
- * Provider-neutral calculations/types in this module remain useful Titan semantics.
- * Direct account_id business-table persistence is legacy base-web materialization
- * pending #1051 provider convergence. Human HR records may be Frappe-backed, but
- * Frappe Employee/Skill/Time records never grant Titan Workforce authority.
+ * Native Titan FSM human-workforce availability implementation.
+ * Preserve availability behavior and improve storage/company-context portability.
+ * Frappe HR may optionally extend/deepen HR capabilities, but does not replace
+ * Titan availability or grant Titan Workforce authority by default.
  */
 import type { DbClient } from "@/lib/db-contract";
 import { portableQuery } from "@/lib/db/portable";
