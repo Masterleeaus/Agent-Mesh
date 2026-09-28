@@ -39,7 +39,8 @@
     "./customer-care-recovery": "./src/customer-care-recovery.ts",
     "./growth-attribution": "./src/growth-attribution.ts",
     "./forecast-contract": "./src/forecast-contract.ts",
-    "./connector-runtime": "./src/connector-runtime.ts"
+    "./connector-runtime": "./src/connector-runtime.ts",
+    "./mcp-projection": "./src/mcp-projection.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
