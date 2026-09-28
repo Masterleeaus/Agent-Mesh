@@ -1231,7 +1231,7 @@
     {
       "path": "package.json",
       "bytes": 1185,
-      "sha256": "75FA68FC00B4FEE54FC38F37FD22DF2E722910653EB9817C28B167F4BF9FAF24"
+      "sha256": "75fa68fc00b4fee54fc38f37fd22df2e722910653eb9817c28b167f4bf9faf24"
     },
     {
       "path": "public/branding/codee-logo.png",
