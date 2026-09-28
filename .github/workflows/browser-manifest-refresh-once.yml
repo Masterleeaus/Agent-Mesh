@@ -1,0 +1,31 @@
+name: Browser Manifest Refresh Once
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/browser-manifest-refresh-once.yml'
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/browser
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Refresh deterministic Browser Node source manifest
+        run: npm run source-manifest
+      - name: Commit manifest if changed
+        run: |
+          cd ../..
+          if ! git diff --quiet -- apps/browser/source-manifest.json; then
+            git config user.name "Titan Zero CI"
+            git config user.email "actions@users.noreply.github.com"
+            git add apps/browser/source-manifest.json
+            git commit -m "chore(browser): refresh Browser Node source manifest"
+            git push origin HEAD:main
+          fi
