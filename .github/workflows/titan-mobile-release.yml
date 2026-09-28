@@ -1,0 +1,42 @@
+name: Titan Mobile Release Certification
+on:
+  workflow_dispatch:
+  push:
+    tags: ["mobile-v*"]
+permissions:
+  contents: read
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: { platform: [android, ios] }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { flutter-version: "3.24.0", channel: stable }
+      - name: Validate certification contract
+        run: |
+          test -s apps/mobile/release/device-compatibility.json
+          test -s apps/mobile/lib/titan/release/mobile_release_certification.dart
+          grep -q "no_debug_signing" apps/mobile/release/device-compatibility.json
+          grep -q "remote_wipe" apps/mobile/release/device-compatibility.json
+      - name: Install dependencies
+        working-directory: apps/mobile
+        run: flutter pub get
+      - name: Run release certification tests
+        working-directory: apps/mobile
+        run: flutter test test/mobile_release_certification_test.dart
+      - name: Build Android release artifact
+        if: matrix.platform == 'android'
+        working-directory: apps/mobile
+        env: { ANDROID_KEYSTORE_BASE64: "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" }
+        run: |
+          test -n "$ANDROID_KEYSTORE_BASE64"
+          flutter build appbundle --release
+      - name: Build iOS release artifact
+        if: matrix.platform == 'ios'
+        working-directory: apps/mobile
+        env: { IOS_EXPORT_OPTIONS_BASE64: "${{ secrets.IOS_EXPORT_OPTIONS_BASE64 }}" }
+        run: |
+          test -n "$IOS_EXPORT_OPTIONS_BASE64"
+          flutter build ipa --release --no-codesign
