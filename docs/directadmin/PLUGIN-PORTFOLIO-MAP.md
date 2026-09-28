@@ -47,7 +47,7 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 
 | Current source | DirectAdmin assignment | Action |
 |---|---|---|
-| `apps/directadmin/dev-access` | Developer Portal #1048 + Business Node SDK #1049 | Preserve server-validated packaging/diagnostic lessons; refactor shared pieces into SDK |
+| `apps/directadmin/dev-access` | Developer Portal #1048 + Business Node Business Node SDK #1049 | Preserve server-validated packaging/diagnostic lessons; refactor shared pieces into Business Node SDK |
 | `apps/web` | Full Titan base web application; #809 migration, with cockpit projections where appropriate | Keep separate from the one-app/three-mode PWA under #542. Preserve reachable web/BFF routes; extract domain contracts and migrate duplicate CRM/ERP persistence behind Titan Domain APIs/#1051 before retirement. |
 | `apps/mobile` | Operations Hub (device/node visibility) + Workforce Manager | Do not port Flutter; expose Edge/device health/capability/configuration |
 | `apps/browser` | Operations Hub + Developer Portal + capability graph | Browser Node remains separate execution node; DA manages/observes it |
@@ -59,62 +59,62 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 
 | Current package | Plugin assignment |
 |---|---|
-| `business-services` | Business Engine + Zero + Workforce |
-| `domain` | Business Engine; domain views surfaced in Zero/Finance/Operations |
-| `email-templates` | Communications |
+| `business-services` | Business Engine + Zero Core + Workforce Manager |
+| `domain` | Business Engine; domain views surfaced in Zero Core/Finance/Operations Hub |
+| `email-templates` | Communications Manager |
 | `inventory` | Finance & Commerce + Business Engine |
-| `log` | Operations + Dev |
-| `modules` | Foundry + Sprout |
+| `log` | Operations Hub + Developer Portal |
+| `modules` | Application Generator + Industry Builder |
 | `money` | Finance & Commerce + Business Engine |
-| `observability` | Operations + Governance & Assurance |
-| `offline` | Operations + Workforce |
-| `onboarding` | Zero + Business Engine + Foundry commissioning |
+| `observability` | Operations Hub + Governance & Assurance |
+| `offline` | Operations Hub + Workforce Manager |
+| `onboarding` | Zero Core + Business Engine + Application Generator commissioning |
 | `provenance` | Governance & Assurance + every cockpit evidence drawer |
-| `revenue-journey` | Finance & Commerce + Zero |
-| `runtime/agent-runtime` | Workforce |
+| `revenue-journey` | Finance & Commerce + Zero Core |
+| `runtime/agent-runtime` | Workforce Manager |
 | `runtime/authority` | Governance & Assurance |
-| `runtime/interaction-engine` | Canonical Interaction runtime; configured through System Configuration #1063 and consumed by Zero + Communications + Workforce |
-| `runtime/feed` | Zero / Operations attention feeds |
-| `settings` | Business Node Core + System Configuration + User Experience |
-| `storage` | Operations + Governance & Assurance |
-| `tools` | Foundry + Dev + Business Node Core capability graph |
-| `workforce` | Workforce |
-| `titan-platform/distributed` | Operations |
-| `titan-platform/intelligence-runtime` | Intelligence |
-| `titan-platform/offline` | Operations + Workforce |
-| `titan-platform/personal-zero` | Intelligence + Zero |
-| `titan-platform/retriever` | Intelligence |
-| `titan-platform/storage` | Operations + Governance & Assurance |
-| `titan-platform/surface` | Surfaces #1059 + SDK + Experience |
-| `titan-platform/titan-builder` | Foundry + Web |
-| `titan-platform/verticals` | Sprout |
-| `titan-platform/workforce-*` | Workforce; trust aspects also Governance & Assurance |
+| `runtime/interaction-engine` | Canonical Interaction runtime; configured through System Configuration #1063 and consumed by Zero Core + Communications Manager + Workforce Manager |
+| `runtime/feed` | Zero Core / Operations Hub attention feeds |
+| `settings` | Business Node Core + System Configuration + User User Experience |
+| `storage` | Operations Hub + Governance & Assurance |
+| `tools` | Application Generator + Developer Portal + Business Node Core capability graph |
+| `workforce` | Workforce Manager |
+| `titan-platform/distributed` | Operations Hub |
+| `titan-platform/intelligence-runtime` | Intelligence Core |
+| `titan-platform/offline` | Operations Hub + Workforce Manager |
+| `titan-platform/personal-zero` | Intelligence Core + Zero Core |
+| `titan-platform/retriever` | Intelligence Core |
+| `titan-platform/storage` | Operations Hub + Governance & Assurance |
+| `titan-platform/surface` | Surfaces #1059 + Business Node SDK + User Experience |
+| `titan-platform/titan-builder` | Application Generator + Brand Studio |
+| `titan-platform/verticals` | Industry Builder |
+| `titan-platform/workforce-*` | Workforce Manager; trust aspects also Governance & Assurance |
 
 ### services/
 
 | Service | Plugin assignment |
 |---|---|
-| `services/workforce` | Workforce; lifecycle controlled by Business Node Core |
-| `services/worker` | Workforce / Operations depending worker type |
+| `services/workforce` | Workforce Manager; lifecycle controlled by Business Node Core |
+| `services/worker` | Workforce Manager / Operations Hub depending worker type |
 
 ### infra/ + scripts/
 
 | Current source | Plugin assignment |
 |---|---|
-| VPS compose/install/release | Business Node Core + Operations; generic implementation remains #322/#811 |
-| backup/restore scripts | Operations + Governance & Assurance |
-| health/SLO scripts | Operations |
-| DB provision/migrate/seed | Business Engine + Operations |
-| developer stack/scripts | Dev |
+| VPS compose/install/release | Business Node Core + Operations Hub; generic implementation remains #322/#811 |
+| backup/restore scripts | Operations Hub + Governance & Assurance |
+| health/SLO scripts | Operations Hub |
+| DB provision/migrate/seed | Business Engine + Operations Hub |
+| developer stack/scripts | Developer Portal |
 | portability reports | Governance & Assurance / Capsule |
-| Windows runtime prep | Operations (node management), not DirectAdmin source |
+| Windows runtime prep | Operations Hub (node management), not DirectAdmin source |
 
 ## 4. Active mission assignment
 
 | Issue | Plugin |
 |---:|---|
 | #812 | Business Node Core |
-| #1049 | Business Node SDK |
+| #1049 | Business Node Business Node SDK |
 | #1051 | Business Engine |
 | #1046 | Zero Core |
 | #1050 | Workforce Manager |
@@ -122,53 +122,53 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 | #1047 | Application Generator |
 | #1044 | Brand Studio |
 | #1048 | Developer Portal |
-| #1052 | User Experience |
+| #1052 | User User Experience |
 | #913 | Governance & Assurance; evidence services consumed by all |
 | #14 | Governance & Assurance; execution services consumed by all mutating plugins |
 | #640 | Governance & Assurance |
 | #914 | Governance & Assurance |
 | #423 | Governance & Assurance |
-| #293 | Operations + Governance & Assurance |
+| #293 | Operations Hub + Governance & Assurance |
 | #915 | Governance & Assurance / Sovereignty |
-| #916 | Governance & Assurance + Intelligence |
+| #916 | Governance & Assurance + Intelligence Core |
 | #917 | Governance & Assurance |
-| #647 | Intelligence |
-| #59 | Intelligence |
-| #393 | Intelligence + Zero; analytics views may later split |
-| #153 | Intelligence |
-| #768 | Intelligence + Zero |
-| #767 | Zero + Business Engine + Foundry commissioning |
-| #639 | Workforce |
-| #21 | Workforce + Zero |
-| #353 | Workforce + Business Engine + Zero |
-| #333 | Communications + Business Engine |
-| #363 | Communications + Zero |
-| #343 | Finance & Commerce + Zero |
+| #647 | Intelligence Core |
+| #59 | Intelligence Core |
+| #393 | Intelligence Core + Zero Core; analytics views may later split |
+| #153 | Intelligence Core |
+| #768 | Intelligence Core + Zero Core |
+| #767 | Zero Core + Business Engine + Application Generator commissioning |
+| #639 | Workforce Manager |
+| #21 | Workforce Manager + Zero Core |
+| #353 | Workforce Manager + Business Engine + Zero Core |
+| #333 | Communications Manager + Business Engine |
+| #363 | Communications Manager + Zero Core |
+| #343 | Finance & Commerce + Zero Core |
 | #263 | Finance & Commerce + Business Engine |
 | #383 | Finance & Commerce + Business Engine |
 | #273 | Finance & Commerce |
-| #638 | Finance & Commerce + Zero |
-| #373 | Zero + Communications + Web |
+| #638 | Finance & Commerce + Zero Core |
+| #373 | Zero Core + Communications Manager + Brand Studio |
 | #719 | Industry Builder |
-| #769 | Sprout (Environmental pack) + Governance where compliance applies |
+| #769 | Industry Builder (Environmental pack) + Governance where compliance applies |
 | #403 | Business Node Core + all provider-consuming plugins |
-| #432 | Dev + Intelligence + Business Node Core |
-| #7 | Business Node Core + Foundry + every capability-consuming plugin |
-| #322 | Business Node Core + Operations + Foundry |
-| #811 | Business Node Core + Workforce |
-| #646 | Operations + Governance & Assurance |
-| #645 | Operations |
-| #572 | Operations + Governance & Assurance |
-| #718 | Business Node Core + SDK + Foundry |
-| #302 | SDK + Dev + Governance & Assurance |
-| #542 | No DA replacement: one PWA + one native mobile app each expose Zero/Go/Hub modes; DA Surfaces/Zero/Workforce consume the same contracts |
+| #432 | Developer Portal + Intelligence Core + Business Node Core |
+| #7 | Business Node Core + Application Generator + every capability-consuming plugin |
+| #322 | Business Node Core + Operations Hub + Application Generator |
+| #811 | Business Node Core + Workforce Manager |
+| #646 | Operations Hub + Governance & Assurance |
+| #645 | Operations Hub |
+| #572 | Operations Hub + Governance & Assurance |
+| #718 | Business Node Core + Business Node SDK + Application Generator |
+| #302 | Business Node SDK + Developer Portal + Governance & Assurance |
+| #542 | No DA replacement: one PWA + one native mobile app each expose Zero Core/Go/Hub modes; DA Surfaces/Zero Core/Workforce Manager consume the same contracts |
 | #809 | No direct port: `apps/web` remains the separate full base web application; DA cockpits reuse canonical APIs/domain contracts after duplicate persistence convergence |
 | #1059 | Surface Manager, consuming the separate PWA/mobile and base web deployment contracts |
 | #1060 | Channels & Integrations, consuming external transport/provider contracts |
 | #1063 | System Configuration, consuming canonical engine configuration schemas; #1061/#1062 superseded |
-| #1065 | Business Standards, consuming Knowledge/Evidence/Industry/Workforce contracts |
-| #643 | Operations/Dev management of Browser Node, not source move |
-| #644 | Intelligence/Dev visibility of AI-host integration, not source move |
+| #1065 | Business Standards, consuming Knowledge/Evidence/Industry/Workforce Manager contracts |
+| #643 | Operations Hub/Developer Portal management of Browser Node, not source move |
+| #644 | Intelligence Core/Developer Portal visibility of AI-host integration, not source move |
 | #648 | Repo convergence; informs all plugin boundaries |
 
 ## 5. Operator plugin boundaries in detail
@@ -313,19 +313,19 @@ The current top-level scan is complete. Implementation agents should now perform
 1. #1049 Cockpit SDK — extract shared DirectAdmin mechanics from `dev-access` and donors.
 2. #812 Business Node Core — server/runtime/system-estate orchestration.
 3. #1051 Business Engine — map current domain/business/finance code to Frappe provider.
-4. #1048 Dev — converge diagnostics/Codex/terminal.
-5. #1050 Workforce — deep-map `packages/workforce`, `services/workforce`, workforce sections of titan-platform.
-6. #1046 Zero — deep-map Interaction/feeds/Business Reality/briefing.
-7. #1045 Operations — deep-map observability/offline/distributed/storage/infra/scripts.
+4. #1048 Developer Portal — converge diagnostics/Codex/terminal.
+5. #1050 Workforce Manager — deep-map `packages/workforce`, `services/workforce`, workforce sections of titan-platform.
+6. #1046 Zero Core — deep-map Interaction/feeds/Business Reality/briefing.
+7. #1045 Operations Hub — deep-map observability/offline/distributed/storage/infra/scripts.
 8. Communications — deep-map email templates/Interaction/Reception/Customer Care/Omni.
 9. Finance & Commerce — deep-map money/inventory/revenue/commerce/sales.
 10. Intelligence — deep-map intelligence-runtime/Decision/Memory/Personal Zero.
 11. Governance & Assurance — deep-map authority/provenance/evidence/security/recovery.
-12. #1047 Foundry — deep-map tools/modules/builder/deployment.
-13. #1044 Web — deep-map web/marketing/Builder/Microweber donors.
-14. Sprout #1057 — deep-map verticals/environmental packs.
-15. #1059 Surfaces — interface estate/lifecycle over existing Interface Runtime/Builder/deployment contracts.
+12. #1047 Application Generator — deep-map tools/modules/builder/deployment.
+13. #1044 Brand Studio — deep-map web/marketing/Builder/Microweber donors.
+14. Industry Builder #1057 — deep-map verticals/environmental packs.
+15. #1059 Surface Manager — interface estate/lifecycle over existing Interface Runtime/Builder/deployment contracts.
 16. #1060 Channels — endpoint/provider transport estate; keep Communications semantics separate.
 17. #1063 System Configuration — engine controls for Interaction/Decision and other canonical runtimes, without standalone engine plugins.
 18. #1065 Business Standards — operational SOP, compliance, quality and training projections over canonical owners.
-19. Experience — converge Evolution-native design system after cockpit needs are known.
+19. User Experience — converge Evolution-native design system after cockpit needs are known.
