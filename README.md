@@ -280,6 +280,8 @@ Titan Zero Field Service Workforce
 
 ## Technology
 
+The list below describes substantial inherited implementation, not one mandated persistence or deployment stack for every Titan component. Blueprint v3 assigns factual history to the Evidence Ledger, runtime/local storage to its canonical owner, and mapped operational business domains to the Frappe Business Engine. PostgreSQL code remains reachable compatibility work while those boundaries converge.
+
 Titan Zero is primarily a TypeScript system built with a modern full-stack stack:
 
 - **TypeScript**
@@ -296,6 +298,8 @@ Titan Zero is primarily a TypeScript system built with a modern full-stack stack
 - **GitHub Actions**
 
 ## Development
+
+The commands below start the inherited web/worker development stack. They do not install the DirectAdmin Business Node or Frappe Business Engine.
 
 ### Prerequisites
 
@@ -336,10 +340,10 @@ The repository contains active implementation, architectural documentation, and 
 Current authority follows this order:
 
 1. Code and database migrations define implemented behaviour.
-2. `docs/canonical/` defines current product, domain, workflow, and architecture intent.
-3. `docs/contracts/` and `docs/working/` provide supporting implementation material.
-4. `ai/` provides compact machine/agent-facing context.
-5. `docs/archive/` and `docs/generated/` preserve historical and generated evidence.
+2. `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md` and `docs/architecture/CANONICAL-RULES.md` define current architecture and invariants; `roadmap/PHASE-MAP-V3.md` defines convergence order.
+3. `docs/canonical/` defines product/domain detail where consistent with Blueprint v3; explicitly marked Dovetails pages are historical.
+4. `docs/contracts/` defines active cross-component contracts where not marked historical; `ai/INVARIANTS.md` and root/subtree `AGENTS.md` govern agent execution.
+5. Live GitHub mission issues are the implementation queue. `docs/working/`, `docs/archive/` and `docs/generated/` preserve working notes and historical evidence.
 
 ## Status
 
