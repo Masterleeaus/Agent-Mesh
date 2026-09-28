@@ -7,12 +7,10 @@ export { calcTotals, lineItemTotal } from "./math";
 export type { LineItemInput, Totals } from "./math";
 
 /**
- * Compatibility transaction wrapper for the legacy base-web estimate store.
- *
- * The PostgreSQL/RLS/account_id path is migration compatibility, not current
- * canonical Titan tenancy or quote authority. Canonical logical identity is
- * company_id; mapped operational quote state converges through #1051 behind
- * Titan Domain/provider contracts. Preserve this path until parity is proven.
+ * Native Titan FSM estimate persistence boundary.
+ * The PostgreSQL/RLS implementation needs portability/company-context convergence,
+ * but the mature quoting capability remains Titan-owned. Do not replace it with
+ * Frappe merely because ERPNext provides quotations.
  */
 export async function withEstimateContext<T>(
   session: SessionPayload,
