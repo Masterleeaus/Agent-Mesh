@@ -4945,8 +4945,8 @@
     },
     {
       "path": "tests/test-titan-zero-browser-node-product-scope.js",
-      "bytes": 2665,
-      "sha256": "4e71b7ec22864aa5cc4815ab10799888aefaaccd732beceea393c5e1caa7f52b"
+      "bytes": 2545,
+      "sha256": "3e0bbd0647721b95217e87942cd02802caed03f11730beffd0f3f6f244ab734b"
     },
     {
       "path": "tests/test-titan-zero-capability-registration.js",
