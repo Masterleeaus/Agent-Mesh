@@ -4325,8 +4325,8 @@
     },
     {
       "path": "tests/test-repository-capability-registration.js",
-      "bytes": 2295,
-      "sha256": "04c5a20d1367c588fa87e519f95b60a3317cde17a0b398d2a3d800c0e811472a"
+      "bytes": 2176,
+      "sha256": "5d9b8f75f827e3716e85bcc93d1bc84d7965918f8567d06fd6c0a9b022f4b5bc"
     },
     {
       "path": "tests/test-repository-capability-settings-gates.js",
@@ -4505,8 +4505,8 @@
     },
     {
       "path": "tests/test-repository-service-worker-api.js",
-      "bytes": 1136,
-      "sha256": "fc933a546c595e3ee24826179a3b4235fb4c3668f59677972a34bb344ae8ca9f"
+      "bytes": 1165,
+      "sha256": "2eba74b84eba5df968141d54e7b2b7585bce077fd6e00a0c19850607279c8d58"
     },
     {
       "path": "tests/test-repository-settings-invalidate-context.js",
@@ -4530,8 +4530,8 @@
     },
     {
       "path": "tests/test-repository-ui-integration.js",
-      "bytes": 780,
-      "sha256": "0b68be47bba3c4971861a63bff9814959378bc042135c4a77b154734e6014378"
+      "bytes": 1076,
+      "sha256": "deed6851410597151146a5f26909dcd6190d0bf42e339f9962f2535b7d1c5d69"
     },
     {
       "path": "tests/test-repository-worker-real-runtime.js",
