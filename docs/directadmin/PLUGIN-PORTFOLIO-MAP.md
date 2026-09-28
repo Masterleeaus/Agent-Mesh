@@ -22,7 +22,7 @@ Display names below are the current Business Node navigation names. Canonical en
 | Group | Plugin | Mission | Responsibility |
 |---|---|---:|---|
 | Business | Zero Core | #1046 | Attention, approvals, brief and whole-business intelligence/control |
-| Business | Business Engine | #1051 | Frappe/ERPNext operational business substrate and tenancy |
+| Business | Business Engine | #1051 | Optional Frappe/ERPNext extension provider, provisioning and tenancy |
 | Business | Workforce Manager | #1050 | Agents/humans, hierarchy, work, Missions, conversations and evidence cockpit |
 | Business | Communications Manager | #1053 | Inbox, messaging, reception and customer-care operations |
 | Business | Finance & Commerce | #1054 | Quotes, invoices, payments, inventory and commerce workflows |
@@ -48,7 +48,7 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 | Current source | DirectAdmin assignment | Action |
 |---|---|---|
 | `apps/directadmin/dev-access` | Developer Portal #1048 + Business Node SDK #1049 | Preserve server-validated packaging/diagnostic lessons; refactor shared pieces into Business Node SDK |
-| `apps/web` | Full Titan base web application; #809 migration, with cockpit projections where appropriate | Keep separate from the one-app/three-mode PWA under #542. Preserve reachable web/BFF routes; extract domain contracts and migrate duplicate CRM/ERP persistence behind Titan Domain APIs/#1051 before retirement. |
+| `apps/web` | Full Titan base web application and native FSM; #809 convergence, with cockpit projections where appropriate | Keep separate from the one-app/three-mode PWA under #542. Preserve mature native field-service routes, behavior and persistence; converge canonical runtime/domain boundaries and use #1051 only for deliberately enabled extension capabilities. |
 | `apps/mobile` | Operations Hub (device/node visibility) + Workforce Manager | Do not port Flutter; expose Edge/device health/capability/configuration |
 | `apps/browser` | Operations Hub + Developer Portal + capability graph | Browser Node remains separate execution node; DA manages/observes it |
 | `apps/desktop` | Operations Hub / Intelligence Core | Manage desktop/edge node status; do not transplant desktop shell |
@@ -190,7 +190,7 @@ Owns cockpit UX for:
 Does not own:
 - Postfix/Dovecot/Rspamd server lifecycle (Operations);
 - Interaction Engine (canonical runtime);
-- customer truth (Business Engine).
+- native customer truth (Titan FSM/domain owner) or explicitly delegated extension facets.
 
 ### Finance & Commerce
 
@@ -205,7 +205,7 @@ Owns cockpit UX for:
 - commerce/orders/returns;
 - cashflow/value/ROI views.
 
-Operational transactional substrate may use Frappe/ERPNext, but canonical Titan contracts and Evidence remain authoritative.
+Native Titan FSM remains the core operational product. Optional Frappe/ERPNext transactional extensions use explicit ownership mapping; canonical Titan contracts and Evidence remain authoritative.
 
 ### Intelligence Core
 
@@ -312,7 +312,7 @@ The current top-level scan is complete. Implementation agents should now perform
 
 1. #1049 Business Node SDK — extract shared DirectAdmin mechanics from `dev-access` and donors.
 2. #812 Business Node Core — server/runtime/system-estate orchestration.
-3. #1051 Business Engine — map current domain/business/finance code to Frappe provider.
+3. #1051 Business Engine — map optional extension capabilities to Frappe; preserve mature native Titan FSM domain/business/finance behavior.
 4. #1048 Developer Portal — converge diagnostics/Codex/terminal.
 5. #1050 Workforce Manager — deep-map `packages/workforce`, `services/workforce`, workforce sections of titan-platform.
 6. #1046 Zero Core — deep-map Interaction/feeds/Business Reality/briefing.
