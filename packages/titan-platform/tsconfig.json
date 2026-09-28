@@ -39,6 +39,7 @@
     "src/vertical-pack.ts",
     "src/communication-announcement.ts",
     "src/intelligence-core.ts",
+    "src/surface-manager.ts",
     "src/ported/titan-ai-core/cost-sovereignty.ts",
     "src/ported/titan-connect/connector-contract.ts",
     "src/ported/titan-connect/credential-contract.ts",
