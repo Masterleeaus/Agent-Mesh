@@ -1,4 +1,5 @@
 name: Browser Manifest Refresh Once
+# final runner refresh
 on:
   push:
     branches: [main]
