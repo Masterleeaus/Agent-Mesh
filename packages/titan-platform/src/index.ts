@@ -77,3 +77,5 @@ export * from "./recovery/capsule.js";
 export * from "./federation/contract.js";
 
 export * from "./brand-publication.js";
+
+export * from "./operations-health.js";
