@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { RuntimeEventBus, TitanAgentRuntime } from "../../../packages/runtime/agent-runtime/index.mjs";
 import { SqliteRunStore } from "../../../packages/runtime/agent-runtime/sqlite-run-store.mjs";
-import { AuthorityContextResolver, RuntimeAuthorityGateway, SqliteAuthorityStore, SqliteWorkerAccessStore, WorkerAccessResolver } from "../../../packages/runtime/authority/index.mjs";
+import { AuthorityContextResolver, CapabilityRequirementResolver, RuntimeAuthorityGateway, SqliteAuthorityStore, SqliteWorkerAccessStore, WorkerAccessResolver } from "../../../packages/runtime/authority/index.mjs";
 import { WorkforceService } from "./index.js";
 import { WorkforceRuntimeAdapter } from "./runtime-adapter.js";
 import { SqliteWorkforceStore } from "./sqlite-store.js";
@@ -17,9 +17,11 @@ function buildAuthorityGateway(storage,ports){
   }
 
   requiredMethod(ports?.executionGateway,"execute","executionGateway");
-  for(const name of ["requirementResolver","governanceResolver","evidenceResolver","riskResolver","connectivityResolver"]){
+  for(const name of ["governanceResolver","evidenceResolver","riskResolver","connectivityResolver"]){
     requiredMethod(ports?.[name],"resolve",name);
   }
+  const requirementResolver=ports?.requirementResolver??new CapabilityRequirementResolver({registryProvider:ports?.capabilityRegistryProvider});
+  requiredMethod(requirementResolver,"resolve","requirementResolver");
 
   const authorityStore=new SqliteAuthorityStore(storage);
   const workerAccessStore=new SqliteWorkerAccessStore(storage);
@@ -27,7 +29,7 @@ function buildAuthorityGateway(storage,ports){
   requiredMethod(accessResolver,"resolve","accessResolver");
   const authorityContextResolver=new AuthorityContextResolver({
     authorityStore,
-    requirementResolver:ports.requirementResolver,
+    requirementResolver,
     accessResolver,
     governanceResolver:ports.governanceResolver,
     evidenceResolver:ports.evidenceResolver,
@@ -39,7 +41,7 @@ function buildAuthorityGateway(storage,ports){
     executionGateway:ports.executionGateway,
     authorityStore,
   });
-  return {authorityGateway,authorityStore,authorityContextResolver,workerAccessStore,accessResolver};
+  return {authorityGateway,authorityStore,authorityContextResolver,workerAccessStore,accessResolver,requirementResolver};
 }
 
 export async function createProductionRuntimeBootstrap({storage,ports,eventBus}={}){
@@ -76,5 +78,6 @@ export async function createProductionRuntimeBootstrap({storage,ports,eventBus}=
     authorityContextResolver:authority.authorityContextResolver,
     workerAccessStore:authority.workerAccessStore??null,
     accessResolver:authority.accessResolver??null,
+    requirementResolver:authority.requirementResolver??null,
   });
 }
