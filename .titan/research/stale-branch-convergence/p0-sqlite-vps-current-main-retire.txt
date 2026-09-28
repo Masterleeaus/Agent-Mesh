@@ -1,0 +1,1 @@
+Temporary retirement marker; p0/sqlite-vps-current-main has no semantic improvement over current main.
