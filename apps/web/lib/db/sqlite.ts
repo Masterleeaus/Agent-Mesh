@@ -3,6 +3,7 @@ import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import type { DbClient, DbQueryResult } from "@/lib/db-contract";
 import { getEnv } from "../env";
+import { rewriteSqliteParams } from "./sqlite-params";
 
 let database: Database.Database | null = null;
 
@@ -28,12 +29,13 @@ function sqliteClient(db: Database.Database): DbClient {
   return {
     dialect: "sqlite",
     async query<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<DbQueryResult<T>> {
-      const statement = db.prepare(text.replace(/\$\d+/g, "?"));
+      const rewritten = rewriteSqliteParams(text, params);
+      const statement = db.prepare(rewritten.sql);
       if (statement.reader) {
-        const rows = statement.all(...params) as T[];
+        const rows = statement.all(...rewritten.params) as T[];
         return { rows, rowCount: rows.length };
       }
-      const result = statement.run(...params);
+      const result = statement.run(...rewritten.params);
       return { rows: [], rowCount: result.changes };
     },
   };
