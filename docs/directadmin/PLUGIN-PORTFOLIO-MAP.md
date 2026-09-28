@@ -5,7 +5,7 @@ Control-plane owner: #812
 Shared plugin SDK: #1049  
 Business Engine: #1051
 
-Portfolio status: #1053–#1057, #1059, #1060, #1063 and #1065 are now open canonical missions, not speculative plugin proposals. Former standalone Interaction #1061 and Decision #1062 plugins are closed as superseded. Their engines remain canonical services; #1063 owns their system configuration. This map assigns management surfaces, not proof that the plugins are implemented.
+Portfolio status: the entries below map current missions to operator plugins; they do not assert implementation or installation. Former standalone Interaction #1061 and Decision #1062 plugins are closed as superseded. Their engines remain canonical services; #1063 owns their system configuration. This map assigns management surfaces, not proof that the plugins are implemented.
 
 ## 1. Purpose
 
@@ -114,15 +114,15 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 | Issue | Plugin |
 |---:|---|
 | #812 | Business Node Core |
-| #1049 | Cockpit SDK |
+| #1049 | Business Node SDK |
 | #1051 | Business Engine |
-| #1046 | Zero |
-| #1050 | Workforce |
-| #1045 | Operations |
-| #1047 | Foundry |
-| #1044 | Web |
-| #1048 | Dev |
-| #1052 | Experience |
+| #1046 | Zero Core |
+| #1050 | Workforce Manager |
+| #1045 | Operations Hub |
+| #1047 | Application Generator |
+| #1044 | Brand Studio |
+| #1048 | Developer Portal |
+| #1052 | User Experience |
 | #913 | Governance & Assurance; evidence services consumed by all |
 | #14 | Governance & Assurance; execution services consumed by all mutating plugins |
 | #640 | Governance & Assurance |
@@ -149,7 +149,7 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 | #273 | Finance & Commerce |
 | #638 | Finance & Commerce + Zero |
 | #373 | Zero + Communications + Web |
-| #719 | Sprout |
+| #719 | Industry Builder |
 | #769 | Sprout (Environmental pack) + Governance where compliance applies |
 | #403 | Business Node Core + all provider-consuming plugins |
 | #432 | Dev + Intelligence + Business Node Core |
@@ -171,7 +171,7 @@ Business Node Core #812 coordinates the control plane. Business Node SDK #1049 s
 | #644 | Intelligence/Dev visibility of AI-host integration, not source move |
 | #648 | Repo convergence; informs all plugin boundaries |
 
-## 5. Proposed plugin boundaries in detail
+## 5. Operator plugin boundaries in detail
 
 ### Communications Manager
 
@@ -207,7 +207,7 @@ Owns cockpit UX for:
 
 Operational transactional substrate may use Frappe/ERPNext, but canonical Titan contracts and Evidence remain authoritative.
 
-### Titan Intelligence
+### Intelligence Core
 
 Owns cockpit UX/control for:
 - models/providers;
@@ -238,7 +238,7 @@ Owns cockpit UX/control for:
 - sovereignty/federation;
 - security/assurance findings.
 
-### Titan Sprout
+### Industry Builder
 
 Owns:
 - vertical packs;
