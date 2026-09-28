@@ -7,7 +7,7 @@ import { rewriteNumberedParamsForMysql, type DbClient, type DbQueryResult } from
 import type { SessionPayload } from "@/lib/auth/session";
 import { requireTenantAccountId } from "./contracts";
 
-function mysqlClient(connection: PoolConnection): DbClient {
+// Provider-specific clients are normalized here so application services stay portable.\nfunction mysqlClient(connection: PoolConnection): DbClient {
   return {
     async query<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<DbQueryResult<T>> {
       const rewritten = rewriteNumberedParamsForMysql(text, params);
