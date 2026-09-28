@@ -188,7 +188,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
           estimate.travel_snapshot_id ? "estimated" : null,
         ]
       );
-      const invoiceId = invoiceResult.rows[0].id;
+      const invoiceId = invoiceResult.rows[0]!.id;
 
       // Carry travel snapshot forward (do not recalculate — rate/charge frozen at estimate time)
       if (estimate.travel_snapshot_id) {
