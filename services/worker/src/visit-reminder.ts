@@ -63,7 +63,7 @@ export async function emitVisitReminder(client: DatabaseClient, visit: EligibleV
      WHERE entity_type = 'visit_reminder' AND entity_id = $1 AND account_id = $2 LIMIT 1`,
     [visit.id, visit.account_id]
   );
-  if (existing.rows.length > 0) return false;
+  if ((existing.rows?.length ?? existing.rowCount ?? 0) > 0) return false;
 
   if (visit.client_email && visit.client_name && visit.job_title) {
     const when = new Date(visit.scheduled_start).toLocaleString("en-US", {
