@@ -71,3 +71,5 @@ export * from "./vertical-profile.js";
 export * from "./titan-capsule.js";
 
 export * from "./governance/constitution.js";
+
+export * from "./counterfactual-branch.js";
