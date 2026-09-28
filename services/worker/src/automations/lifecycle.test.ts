@@ -18,6 +18,7 @@ import * as seasonal from "../seasonal-reminder.js";
 
 function mockClient(): Client {
   return {
+    dialect: "postgres",
     query: vi.fn().mockResolvedValue({ rows: [], rowCount: 1 }),
   } as unknown as Client;
 }
