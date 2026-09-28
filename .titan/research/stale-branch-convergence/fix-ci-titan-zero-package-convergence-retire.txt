@@ -1,0 +1,1 @@
+Temporary retirement marker; historical Agent Mesh CI/package convergence is superseded by current Codex contract, DB portability and worker implementations.
