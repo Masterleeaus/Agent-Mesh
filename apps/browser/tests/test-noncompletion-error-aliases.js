@@ -1,0 +1,2 @@
+const fs=require('fs');const assert=require('assert');const sw=fs.readFileSync('src/lib/service-worker.js','utf8');
+assert(sw.includes("fail: 'failed'"),'fail alias missing');assert(sw.includes("failure: 'failed'"),'failure alias missing');assert(sw.includes("error: 'failed'"),'error alias missing');assert(sw.includes('status: normalizedStatus'),'normalized status return missing');console.log('PASS non-completion error aliases');
