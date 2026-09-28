@@ -214,7 +214,7 @@ def validate_pull_request():
     main_sha = str(((main_ref.get("object") or {}).get("sha")) or "").lower()
     if not re.fullmatch(r"[0-9a-f]{40}", main_sha):
         fail("main does not resolve to a valid Git commit")
-    ancestry = run(["gh", "api", f"repos/{repo}/compare/{main_sha}...{claim_sha}", "--jq", ".status"], check=False)
+    ancestry = subprocess.run(["gh", "api", f"repos/{repo}/compare/{main_sha}...{claim_sha}", "--jq", ".status"], check=False, text=True, capture_output=True)
     if ancestry.returncode != 0 or ancestry.stdout.strip() not in {"ahead", "identical"}:
         fail(f"canonical claim branch {head} is not based on current main ancestry: {ancestry.stdout.strip() or ancestry.stderr.strip()}")
 
@@ -256,6 +256,40 @@ def validate_pull_request():
     )
 
 
+
+def self_test_pr_path(body):
+    """Exercise the real PR path with only GitHub/process I/O replaced."""
+    import tempfile
+    from unittest.mock import patch
+    sid = "TZ-SELF-TEST"
+    sha = "a" * 40
+    pr = {"number": 1, "title": f"[{sid}] Test", "body": body,
+          "head": {"ref": f"agent/{sid}", "sha": sha}, "base": {"ref": "main"}}
+    def response(args):
+        if args[:3] == ["gh", "pr", "list"]:
+            return []
+        if "/git/ref/" in args[-1]:
+            return {"object": {"sha": sha}}
+        return {"state": "open", "title": f"[{sid}] Test"}
+    with tempfile.TemporaryDirectory() as folder:
+        event = Path(folder) / "event.json"
+        event.write_text(json.dumps({"pull_request": pr}), encoding="utf-8")
+        with patch.dict(os.environ, {"GITHUB_EVENT_PATH": str(event), "GITHUB_REPOSITORY": "fixture/repo", "GH_TOKEN": "fixture"}), \
+             patch(__name__ + ".validate_roadmap_integrity", return_value={}), \
+             patch(__name__ + ".run_json", side_effect=response), \
+             patch("subprocess.run", return_value=subprocess.CompletedProcess([], 0, "ahead\n", "")) as ancestry:
+            validate_pull_request()
+            assert "/compare/" in ancestry.call_args.args[0][2]
+            ancestry.return_value = subprocess.CompletedProcess([], 0, "diverged\n", "")
+            try:
+                validate_pull_request()
+            except SystemExit as error:
+                assert error.code == 1
+            else:
+                raise AssertionError("diverged claim unexpectedly passed")
+    print("Claim PR ancestry-path self-test OK")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--self-test", action="store_true")
@@ -286,6 +320,7 @@ x
             valid_body.replace("### Verification", "### Checks")
         )
         print("Codex PR evidence-structure self-test OK")
+        self_test_pr_path(valid_body)
         return
     validate_pull_request()
 

@@ -41,9 +41,14 @@ export function clearZeroRuntimeDispatcher(): void {
 
 export async function dispatchZeroRuntime(input: ZeroRuntimeDispatchInput): Promise<ZeroRuntimeDispatchResult> {
   if (!dispatcher) {
-    const error = new Error("zero-runtime-dispatcher-unavailable") as Error & { code?: string };
-    error.code = "ZERO_RUNTIME_UNAVAILABLE";
-    throw error;
+    try {
+      const { getProductionZeroRuntime } = await import("./production-runtime");
+      return (await getProductionZeroRuntime()).dispatch(input);
+    } catch (cause) {
+      const error = new Error("zero-production-runtime-unavailable", { cause }) as Error & { code?: string };
+      error.code = "ZERO_RUNTIME_UNAVAILABLE";
+      throw error;
+    }
   }
   return dispatcher.dispatch(input);
 }

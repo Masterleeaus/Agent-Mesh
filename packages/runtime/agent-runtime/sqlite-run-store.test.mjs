@@ -9,7 +9,7 @@ const Database = require('better-sqlite3');
 function storage() {
   const db = new Database(':memory:');
   return {
-    async query(sql, params=[]) { const s=db.prepare(sql.replace(/\$(\d+)/g,'?$1')); if(s.reader){const rows=s.all(...params);return {rows,rowCount:rows.length}} const r=s.run(...params);return {rows:[],rowCount:r.changes}; },
+    async query(sql, params=[]) { const bound=[]; const s=db.prepare(sql.replace(/\$(\d+)/g,(_,index)=>{bound.push(params[Number(index)-1]);return '?';})); if(s.reader){const rows=s.all(...bound);return {rows,rowCount:rows.length}} const r=s.run(...bound);return {rows:[],rowCount:r.changes}; },
     async close(){db.close();}
   };
 }

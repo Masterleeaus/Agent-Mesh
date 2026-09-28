@@ -10,13 +10,6 @@ export interface StorageClient {
   transaction<T>(fn: (tx: StorageClient) => Promise<T>): Promise<T>;
   close(): Promise<void>;
 }
-/**
- * Company-context storage facade.
- * IMPORTANT: the current generic SQL adapter does not inject a company predicate
- * into arbitrary SQL. companyId is context metadata, not an isolation guarantee.
- * Canonical company-scoped repositories must enforce company_id structurally in
- * their own query/provider contracts; do not treat forCompany() as authorization.
- */
 export interface CompanyStorage {
   readonly companyId: string;
   query<T = Record<string, unknown>>(sql: string, params?: readonly unknown[]): Promise<QueryResult<T>>;
@@ -58,34 +51,51 @@ export function createSqliteStorage(filename = process.env.SQLITE_PATH ?? ".tita
   db.pragma("busy_timeout = 5000");
   db.pragma("synchronous = NORMAL");
 
+  // One connection must not enlist another request in an async transaction.
+  let pending: Promise<unknown> = Promise.resolve();
+  function serialize<T>(operation: () => Promise<T>): Promise<T> {
+    const result = pending.then(operation);
+    pending = result.then(() => undefined, () => undefined);
+    return result;
+  }
+  const directQuery = async <T>(sql: string, params: readonly unknown[] = []): Promise<QueryResult<T>> => {
+    const rewritten = sqliteSql(sql, params);
+    const statement = db.prepare(rewritten.sql);
+    if (statement.reader) {
+      const rows = statement.all(...rewritten.params) as T[];
+      return { rows, rowCount: rows.length };
+    }
+    return { rows: [], rowCount: statement.run(...rewritten.params).changes };
+  };
   const client: StorageClient = {
     dialect: "sqlite",
-    async query<T>(sql: string, params: readonly unknown[] = []) {
-      const rewritten = sqliteSql(sql, params);
-      const statement = db.prepare(rewritten.sql);
-      if (statement.reader) {
-        const rows = statement.all(...rewritten.params) as T[];
-        return { rows, rowCount: rows.length };
-      }
-      const result = statement.run(...rewritten.params);
-      return { rows: [], rowCount: result.changes };
-    },
-    async transaction<T>(fn: (tx: StorageClient) => Promise<T>) {
+    query: <T>(sql: string, params: readonly unknown[] = []) => serialize(() => directQuery<T>(sql, params)),
+    transaction: <T>(fn: (tx: StorageClient) => Promise<T>) => serialize(async () => {
       db.exec("BEGIN IMMEDIATE");
-      try { const result = await fn(client); db.exec("COMMIT"); return result; }
+      let active = true;
+      const tx: StorageClient = {
+        dialect: "sqlite",
+        query: <R>(sql: string, params: readonly unknown[] = []) => {
+          if (!active) return Promise.reject(new Error("sqlite-transaction-closed"));
+          return directQuery<R>(sql, params);
+        },
+        transaction: async () => { throw new Error("sqlite-nested-transaction-unsupported"); },
+        close: async () => { throw new Error("sqlite-transaction-does-not-own-connection"); },
+      };
+      try { const result = await fn(tx); db.exec("COMMIT"); return result; }
       catch (error) { db.exec("ROLLBACK"); throw error; }
-    },
-    async close() { db.close(); },
+      finally { active = false; }
+    }),
+    close: () => serialize(async () => { db.close(); }),
   };
   return client;
 }
 
-/** @deprecated for security-sensitive domain access until structural scoping is enforced. */
 export function forCompany(storage: StorageClient, rawCompanyId: string): CompanyStorage {
   const companyId = requireCompanyId(rawCompanyId);
   return {
     companyId,
     query(sql, params = []) { return storage.query(sql, params); },
-    transaction(fn) { return storage.transaction(() => fn(forCompany(storage, companyId))); },
+    transaction(fn) { return storage.transaction(tx => fn(forCompany(tx, companyId))); },
   };
 }

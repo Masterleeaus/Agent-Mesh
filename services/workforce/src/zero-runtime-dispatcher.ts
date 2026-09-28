@@ -24,6 +24,7 @@ export type ZeroRuntimeEvent = {
 
 export interface ZeroPersistentRuntimePort {
   events: { subscribe(listener: (event: ZeroRuntimeEvent) => void): () => void };
+  findByWork?(input: { company_id: CompanyId; work_id: WorkId }): Promise<ZeroRuntimeRun | null>;
   findRecoverableByWork(input: { company_id: CompanyId; work_id: WorkId }): Promise<{
     run_id: string;
     company_id?: CompanyId;
@@ -33,18 +34,21 @@ export interface ZeroPersistentRuntimePort {
     state: string;
   } | null>;
   start(input: {
+    run_id?: string;
     company_id: CompanyId;
     actor_id: string;
     agent_id: WorkerId;
     conversation_id: string;
     work_id: WorkId;
+    interaction_id?: string;
+    correlation_id?: string;
     role: string;
     messages: Array<{ role: string; content: string }>;
   }): Promise<ZeroRuntimeRun>;
   resume(input: {
     company_id: CompanyId;
     run_id: string;
-    input: { role: string; content: string };
+    input?: { role: string; content: string };
   }): Promise<ZeroRuntimeRun>;
 }
 
@@ -56,6 +60,7 @@ export type ZeroRuntimeRun = {
   agent_id: WorkerId;
   state: string;
   result?: unknown;
+  messages?: Array<{ evidence_ref?: string | null }>;
   error?: unknown;
 };
 
@@ -130,6 +135,7 @@ export class ZeroWorkforceRuntimeDispatcher {
     private readonly store: WorkforceStore,
     private readonly workers: WorkforceWorkerStore,
     private readonly runtime: ZeroPersistentRuntimePort,
+    private readonly atomicWork?: <T>(fn: (workforce: WorkforceService, store: WorkforceStore) => Promise<T>) => Promise<T>,
   ) {}
 
   async dispatch(input: ZeroWorkforceDispatchInput): Promise<ZeroWorkforceDispatchResult> {
@@ -150,6 +156,19 @@ export class ZeroWorkforceRuntimeDispatcher {
     }
   }
 
+  /** Restore the WorkItem projection from its durable run without executing work. */
+  async reconcilePersistedWork(input: { company_id: CompanyId; actor_id: string; work_id: WorkId }): Promise<WorkItem | null> {
+    const work = await this.store.get(input.company_id, input.work_id);
+    if (!work || work.origin?.actor_id !== input.actor_id || work.origin?.surface !== 'zero') return null;
+    const lookup = this.runtime.findByWork ?? this.runtime.findRecoverableByWork;
+    const run = await lookup.call(this.runtime, input) as ZeroRuntimeRun | null;
+    if (run) {
+      this.assertRun(run, input.company_id, work.work_id, work.origin.conversation_id, work.assignee!);
+      await this.syncWorkFromRun(run, []);
+    }
+    return (await this.store.get(input.company_id, input.work_id)) ?? null;
+  }
+
   private normalize(input: ZeroWorkforceDispatchInput): ZeroWorkforceDispatchInput {
     return {
       ...input,
@@ -165,57 +184,67 @@ export class ZeroWorkforceRuntimeDispatcher {
     };
   }
 
+  private workTransaction<T>(fn: (workforce: WorkforceService, store: WorkforceStore) => Promise<T>): Promise<T> {
+    return this.atomicWork ? this.atomicWork(fn) : fn(this.workforce, this.store);
+  }
+
   private async start(input: ZeroWorkforceDispatchInput, runtimeEvents: ZeroRuntimeEvent[]): Promise<ZeroWorkforceDispatchResult> {
     const work_id = `zero:${input.conversation_id}:${input.client_message_id}`;
-    const existing = await this.store.get(input.company_id, work_id);
-    if (existing) {
-      this.assertOrigin(existing, input);
-      const run = await this.runtime.findRecoverableByWork({ company_id: input.company_id, work_id });
-      return this.result(input, existing, runtimeEvents, run ?? undefined);
+    // Bootstrap changes commit together. Existing partially bootstrapped work uses
+    // the same lifecycle, with automatic runtime wake disabled in the transaction.
+    const work = await this.workTransaction(async (workforce, store) => {
+      let work = await store.get(input.company_id, work_id);
+      if (work) this.assertOrigin(work, input);
+      if (work && !['CREATED', 'READY', 'CLAIMED', 'IN_PROGRESS'].includes(work.state)) return work;
+      const worker = await this.resolveWorker(input.company_id, work?.assignee ?? input.requested_agent_id, "getWorker" in store ? store as WorkforceStore & WorkforceWorkerStore : this.workers);
+      if (!work) {
+        try {
+          work = await workforce.create({
+            company_id: input.company_id, work_id, objective: input.text,
+            description: 'Intent delegated by One through Zero.', creator: input.actor_id,
+            origin: { actor_id: input.actor_id, conversation_id: input.conversation_id, surface: 'zero', correlation_id: input.correlation_id },
+            team_id: worker.team_id, priority: 50, dependencies: [], required_capabilities: [], context_refs: [], evidence_refs: [],
+          });
+        } catch (error) {
+          if (!(error instanceof Error) || error.message !== 'workforce-work-exists') throw error;
+          work = await store.get(input.company_id, work_id);
+          if (!work) throw error;
+          this.assertOrigin(work, input);
+        }
+      }
+      if (work.state === 'CREATED') work = await workforce.refreshReadiness(input.company_id, work_id);
+      if (!work.assignee) work = await workforce.delegate(input.company_id, work_id, worker.worker_id, input.actor_id);
+      if (work.state === 'READY') work = await workforce.claim(input.company_id, work_id, worker.worker_id);
+      if (work.state === 'CLAIMED') work = await workforce.start(input.company_id, work_id, worker.worker_id);
+      return work;
+    });
+    const lookup = this.runtime.findByWork ?? this.runtime.findRecoverableByWork;
+    let run = await lookup.call(this.runtime, { company_id: input.company_id, work_id }) as ZeroRuntimeRun | null;
+    if (!run && work.state === 'IN_PROGRESS' && work.assignee) {
+      try {
+        run = await this.runtime.start({
+          run_id: `zero-work:${work_id}`, company_id: input.company_id, actor_id: input.actor_id,
+          agent_id: work.assignee, conversation_id: input.conversation_id, work_id,
+          interaction_id: input.interaction_id, correlation_id: work.origin?.correlation_id ?? input.correlation_id,
+          role: 'workforce-manager', messages: [{ role: 'user', content: work.objective }],
+        });
+      } catch (error) {
+        if (!(error instanceof Error) || !['runtime-run-exists', 'runtime-resume-conflict', 'runtime-run-busy-or-recovery-required'].includes(error.message)) throw error;
+        run = await lookup.call(this.runtime, { company_id: input.company_id, work_id }) as ZeroRuntimeRun | null;
+      }
     }
-
-    const worker = await this.resolveWorker(input.company_id, input.requested_agent_id);
-    await this.workforce.create({
-      company_id: input.company_id,
-      work_id,
-      objective: input.text,
-      description: "Intent delegated by One through Zero.",
-      creator: input.actor_id,
-      origin: {
-        actor_id: input.actor_id,
-        conversation_id: input.conversation_id,
-        surface: "zero",
-        correlation_id: input.correlation_id,
-      },
-      // Keep creation side-effect free with respect to runtime wake-up. The
-      // dispatcher owns the single subscribe-before-start transition below.
-      // Assigning here would make WorkforceService auto-wake the digital worker
-      // and then this dispatcher would start a second persisted run.
-      team_id: worker.team_id,
-      priority: 50,
-      dependencies: [],
-      required_capabilities: [],
-      context_refs: [],
-      evidence_refs: [],
-    });
-
-    await this.workforce.delegate(input.company_id, work_id, worker.worker_id, input.actor_id);
-    await this.workforce.claim(input.company_id, work_id, worker.worker_id);
-    await this.workforce.start(input.company_id, work_id, worker.worker_id);
-
-    const run = await this.runtime.start({
-      company_id: input.company_id,
-      actor_id: input.actor_id,
-      agent_id: worker.worker_id,
-      conversation_id: input.conversation_id,
-      work_id,
-      role: "workforce-manager",
-      messages: [{ role: "user", content: input.text }],
-    });
-    this.assertRun(run, input.company_id, work_id, input.conversation_id, worker.worker_id);
-    await this.syncWorkFromRun(run, runtimeEvents);
-    const work = (await this.store.get(input.company_id, work_id))!;
-    return this.result(input, work, runtimeEvents, run);
+    if (run?.state === 'QUEUED') {
+      try { run = await this.runtime.resume({ company_id: input.company_id, run_id: run.run_id }); }
+      catch (error) {
+        if (!(error instanceof Error) || !['runtime-resume-conflict', 'runtime-run-busy-or-recovery-required', 'runtime-run-terminal'].includes(error.message)) throw error;
+        run = await lookup.call(this.runtime, { company_id: input.company_id, work_id }) as ZeroRuntimeRun | null;
+      }
+    }
+    if (run) {
+      this.assertRun(run, input.company_id, work_id, input.conversation_id, work.assignee!);
+      await this.syncWorkFromRun(run, runtimeEvents);
+    }
+    return this.result(input, (await this.store.get(input.company_id, work_id))!, runtimeEvents, run ?? undefined);
   }
 
   private async resume(input: ZeroWorkforceDispatchInput, runtimeEvents: ZeroRuntimeEvent[]): Promise<ZeroWorkforceDispatchResult> {
@@ -229,13 +258,6 @@ export class ZeroWorkforceRuntimeDispatcher {
     if (!recoverable || recoverable.run_id !== continuation.run_id) throw new Error("zero-continuation-run-not-found");
     if (recoverable.agent_id !== work.assignee) throw new Error("zero-continuation-agent-conflict");
 
-    if (waitingWorkStates.has(work.state)) await this.workforce.resume(input.company_id, work.work_id, input.actor_id);
-    const refreshed = await this.store.get(input.company_id, work.work_id);
-    if (!refreshed) throw new Error("zero-continuation-work-not-found");
-    if (refreshed.state === "READY") await this.workforce.claim(input.company_id, work.work_id, work.assignee);
-    const claimed = await this.store.get(input.company_id, work.work_id);
-    if (claimed?.state === "CLAIMED") await this.workforce.start(input.company_id, work.work_id, work.assignee);
-
     const run = await this.runtime.resume({
       company_id: input.company_id,
       run_id: continuation.run_id,
@@ -247,14 +269,14 @@ export class ZeroWorkforceRuntimeDispatcher {
     return this.result(input, updated, runtimeEvents, run);
   }
 
-  private async resolveWorker(company_id: CompanyId, requested?: WorkerId): Promise<WorkforceWorker> {
+  private async resolveWorker(company_id: CompanyId, requested?: WorkerId, workers: WorkforceWorkerStore = this.workers): Promise<WorkforceWorker> {
     if (requested) {
-      const worker = await this.workers.getWorker(company_id, requested);
+      const worker = await workers.getWorker(company_id, requested);
       if (!worker || !worker.active || worker.kind !== "digital") throw new Error("zero-requested-agent-unavailable");
       return worker;
     }
 
-    const managers = (await this.workers.listWorkers(company_id))
+    const managers = (await workers.listWorkers(company_id))
       .filter((worker) => worker.active && worker.kind === "digital" && worker.capabilities.includes("work.delegate"))
       .sort((a, b) => a.worker_id.localeCompare(b.worker_id));
     if (!managers.length) throw new Error("zero-workforce-manager-unavailable");
@@ -276,34 +298,27 @@ export class ZeroWorkforceRuntimeDispatcher {
   }
 
   private async syncWorkFromRun(run: ZeroRuntimeRun, runtimeEvents: ZeroRuntimeEvent[]): Promise<void> {
-    const actor = run.agent_id;
-    const evidence = runtimeEvents
-      .filter((event) => event.run_id === run.run_id && typeof event.evidence_ref === "string" && event.evidence_ref)
-      .map((event) => String(event.evidence_ref));
-
-    if (run.state === "COMPLETED") {
-      await this.workforce.complete(run.company_id, run.work_id, actor, run.result, evidence);
-      return;
-    }
-    if (run.state === "FAILED") {
-      await this.workforce.fail(run.company_id, run.work_id, actor, run.error ?? run.result);
-      return;
-    }
-    if (run.state === "CANCELLED") {
-      await this.workforce.cancel(run.company_id, run.work_id, actor);
-      return;
-    }
-    if (run.state === "WAITING_APPROVAL") {
-      await this.workforce.wait(run.company_id, run.work_id, actor, "WAITING_APPROVAL");
-      return;
-    }
-    if (run.state === "WAITING_EXTERNAL") {
-      await this.workforce.wait(run.company_id, run.work_id, actor, "WAITING_EXTERNAL");
-      return;
-    }
-    if (run.state.startsWith("WAITING_") || run.state === "SUSPENDED") {
-      await this.workforce.wait(run.company_id, run.work_id, actor, "WAITING");
-    }
+    if (!terminalRuntimeStates.has(run.state) && !run.state.startsWith('WAITING_') && run.state !== 'SUSPENDED') return;
+    // WAITING_TOOL/AGENT are in-flight states, not safe user continuation points.
+    if (['WAITING_TOOL', 'WAITING_AGENT'].includes(run.state)) return;
+    await this.workTransaction(async (workforce, store) => {
+      let work = await store.get(run.company_id, run.work_id);
+      if (!work || terminalRuntimeStates.has(work.state)) return;
+      const target = run.state === 'WAITING_APPROVAL' ? 'WAITING_APPROVAL' : run.state === 'WAITING_EXTERNAL' ? 'WAITING_EXTERNAL' : run.state.startsWith('WAITING_') || run.state === 'SUSPENDED' ? 'WAITING' : run.state;
+      if (work.state === target) return;
+      const actor = run.agent_id;
+      if (waitingWorkStates.has(work.state)) work = await workforce.resume(run.company_id, run.work_id, actor, { wake: false });
+      if (work.state === 'READY') work = await workforce.claim(run.company_id, run.work_id, actor);
+      if (work.state === 'CLAIMED') work = await workforce.start(run.company_id, run.work_id, actor);
+      const evidence = [...new Set([
+        ...(run.messages ?? []).map(message => message.evidence_ref).filter((ref): ref is string => typeof ref === 'string' && !!ref),
+        ...runtimeEvents.filter(event => event.run_id === run.run_id && typeof event.evidence_ref === 'string' && event.evidence_ref).map(event => String(event.evidence_ref)),
+      ])];
+      if (run.state === 'COMPLETED') await workforce.complete(run.company_id, run.work_id, actor, run.result, evidence);
+      else if (run.state === 'FAILED') await workforce.fail(run.company_id, run.work_id, actor, run.error ?? run.result);
+      else if (run.state === 'CANCELLED') await workforce.cancel(run.company_id, run.work_id, actor);
+      else await workforce.wait(run.company_id, run.work_id, actor, target as 'WAITING' | 'WAITING_APPROVAL' | 'WAITING_EXTERNAL');
+    });
   }
 
   private result(
@@ -312,7 +327,7 @@ export class ZeroWorkforceRuntimeDispatcher {
     runtimeEvents: ZeroRuntimeEvent[],
     run?: { run_id: string; state: string; agent_id: WorkerId },
   ): ZeroWorkforceDispatchResult {
-    const events: ZeroWorkforceDispatchEvent[] = runtimeEvents.map((event, index) => ({
+    const events: ZeroWorkforceDispatchEvent[] = runtimeEvents.filter(event => event.work_id === work.work_id && (!run || event.run_id === run.run_id)).map((event, index) => ({
       ...event,
       id: event.event_id ?? `${event.run_id ?? work.work_id}:${index}`,
       kind: event.type,

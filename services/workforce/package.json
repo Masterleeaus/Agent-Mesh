@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "test": "tsx --test src/*.test.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "start": "tsx src/server.ts"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

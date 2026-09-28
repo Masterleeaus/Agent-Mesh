@@ -5,7 +5,7 @@ RUN corepack enable
 
 FROM base AS deps
 COPY . .
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 FROM deps AS build
 RUN mkdir -p node_modules/@ai-fsm services/worker/node_modules/@ai-fsm \

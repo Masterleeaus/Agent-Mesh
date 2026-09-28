@@ -23,9 +23,8 @@ export class SqliteRunStore {
 
   async create(run) {
     await this.migrate();
-    const existing = await this.get(run.company_id, run.run_id);
-    if (existing) throw new Error('runtime-run-exists');
-    await this.storage.query(`INSERT INTO agent_runs(company_id,run_id,state,conversation_id,agent_id,work_id,payload,updated_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`, [run.company_id, run.run_id, run.state, run.conversation_id, run.agent_id, run.work_id ?? null, JSON.stringify(run), run.updated_at]);
+    const inserted = await this.storage.query(`INSERT INTO agent_runs(company_id,run_id,state,conversation_id,agent_id,work_id,payload,updated_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(company_id,run_id) DO NOTHING`, [run.company_id, run.run_id, run.state, run.conversation_id, run.agent_id, run.work_id ?? null, JSON.stringify(run), run.updated_at]);
+    if (!inserted.rowCount) throw new Error('runtime-run-exists');
     return this.get(run.company_id, run.run_id);
   }
 
@@ -40,6 +39,24 @@ export class SqliteRunStore {
     const result = await this.storage.query(`UPDATE agent_runs SET state=$3,conversation_id=$4,agent_id=$5,work_id=$6,payload=$7,updated_at=$8 WHERE company_id=$1 AND run_id=$2`, [run.company_id, run.run_id, run.state, run.conversation_id, run.agent_id, run.work_id ?? null, JSON.stringify(run), run.updated_at]);
     if (!result.rowCount) throw new Error('runtime-run-not-found');
     return structuredClone(run);
+  }
+
+  // Exact persisted payload comparison prevents stale or concurrent continuations.
+  async claimResume(previous, next) {
+    const result = await this.storage.query(
+      'UPDATE agent_runs SET state=$3,payload=$4,updated_at=$5 WHERE company_id=$1 AND run_id=$2 AND payload=$6',
+      [previous.company_id, previous.run_id, next.state, JSON.stringify(next), next.updated_at, JSON.stringify(previous)],
+    );
+    return result.rowCount === 1;
+  }
+
+  async findByWork(company_id, work_id) {
+    await this.migrate();
+    const result = await this.storage.query(
+      'SELECT payload FROM agent_runs WHERE company_id=$1 AND work_id=$2 ORDER BY updated_at DESC LIMIT 1',
+      [company_id, work_id],
+    );
+    return result.rows[0] ? JSON.parse(result.rows[0].payload) : null;
   }
 
   async findRecoverableByWork(company_id, work_id) {

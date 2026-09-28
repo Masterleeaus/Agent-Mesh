@@ -124,7 +124,7 @@ export async function loadActiveMileageRate(
     [accountId]
   );
   if ((r.rowCount ?? 0) > 0) {
-    const row = r.rows[0]!;
+    const row = r.rows[0];
     return {
       id: row.id,
       rate_cents: row.rate_cents,

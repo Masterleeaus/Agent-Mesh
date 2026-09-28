@@ -59,7 +59,7 @@ export async function seedWorkOrderTasksFromCriteria(
   client: DbClient,
   opts: { accountId: string; workOrderId: string; criteria: unknown; source?: "estimate" | "manual" | "ai" },
 ): Promise<number> {
-  const seeds = criteriaItemsToTaskSeeds(opts.criteria);
+  const seeds = criteriaItemsToTaskSeeds(typeof opts.criteria === "string" ? JSON.parse(opts.criteria) : opts.criteria);
   if (seeds.length === 0) return 0;
 
   const existing = await client.query<{ n: number | string }>(
@@ -74,9 +74,9 @@ export async function seedWorkOrderTasksFromCriteria(
     const taskId = randomUUID();
     await client.query(
       `INSERT INTO work_order_tasks
-         (id, account_id, work_order_id, label, required, completed, completed_at, status, sort_order, source)
+         (id, ${client.dialect === "sqlite" ? "company_id" : "account_id"}, work_order_id, label, required, completed, completed_at, status, sort_order, source)
        VALUES ($1, $2, $3, $4, $5, $6, CASE WHEN $7 THEN CURRENT_TIMESTAMP END, CASE WHEN $8 THEN 'done' ELSE 'open' END, $9, $10)`,
-      [taskId, opts.accountId, opts.workOrderId, s.label, s.required, s.completed, s.completed, s.completed, s.sort_order, source],
+      [taskId, opts.accountId, opts.workOrderId, s.label, client.dialect === "sqlite" ? Number(s.required) : s.required, client.dialect === "sqlite" ? Number(s.completed) : s.completed, client.dialect === "sqlite" ? Number(s.completed) : s.completed, client.dialect === "sqlite" ? Number(s.completed) : s.completed, s.sort_order, source],
     );
     inserted++;
   }
@@ -99,8 +99,8 @@ export function tasksToCriteria(tasks: WorkOrderTask[]): CompletionCriterion[] {
   return tasks.map((t) => ({
     id: t.id,
     label: t.label,
-    required: t.required,
-    completed: t.completed,
+    required: Boolean(t.required),
+    completed: Boolean(t.completed),
   }));
 }
 
