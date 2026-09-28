@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import {
   DEFAULT_PRICING_SETTINGS,
   buildPricingRules,
@@ -41,7 +41,7 @@ export function rowToPricingSettings(
 
 /** Load settings; auto-seed row if missing (new accounts). */
 export async function loadPricingSettings(
-  client: PoolClient,
+  client: DbClient,
   accountId: string
 ): Promise<BusinessPricingSettings> {
   const existing = await client.query(
@@ -66,7 +66,7 @@ export async function loadPricingSettings(
 
 /** Convenience: settings → engine rules for estimate compute / guardrails. */
 export async function loadPricingRules(
-  client: PoolClient,
+  client: DbClient,
   accountId: string
 ): Promise<{ settings: BusinessPricingSettings; rules: PricingRules }> {
   const settings = await loadPricingSettings(client, accountId);
