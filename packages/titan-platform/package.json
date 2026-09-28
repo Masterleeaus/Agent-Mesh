@@ -33,7 +33,8 @@
     "./knowledge-governance": "./src/knowledge-governance.ts",
     "./mission-planning": "./src/mission-planning.ts",
     "./evidence-to-cash": "./src/evidence-to-cash.ts",
-    "./reliability-policy": "./src/reliability-policy.ts"
+    "./reliability-policy": "./src/reliability-policy.ts",
+    "./security-boundary": "./src/security-boundary.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
