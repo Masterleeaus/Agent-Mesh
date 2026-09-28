@@ -34,7 +34,8 @@
     "./mission-planning": "./src/mission-planning.ts",
     "./evidence-to-cash": "./src/evidence-to-cash.ts",
     "./reliability-policy": "./src/reliability-policy.ts",
-    "./security-boundary": "./src/security-boundary.ts"
+    "./security-boundary": "./src/security-boundary.ts",
+    "./quote-conversion": "./src/quote-conversion.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
