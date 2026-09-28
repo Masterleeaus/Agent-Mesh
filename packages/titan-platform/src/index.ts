@@ -9,6 +9,7 @@ export * from "./user-experience.js";
 export * from "./system-configuration.js";
 export * from "./vertical-pack.js";
 export * from "./communication-announcement.js";
+export * from "./intelligence-core.js";
 
 export * from "./offline/index.js";
 
@@ -27,4 +28,3 @@ export type { InferenceRoute, CostSovereigntyRequest, CostSovereigntyDecision } 
 
 export { createConnectorCredentialReference, CONNECTOR_CREDENTIAL_POLICY } from "./ported/titan-connect/credential-contract.js";
 export type { ConnectorCredentialReference } from "./ported/titan-connect/credential-contract.js";
-
