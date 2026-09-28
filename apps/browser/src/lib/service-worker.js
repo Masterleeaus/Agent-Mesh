@@ -1491,7 +1491,7 @@ async function getNavigationStatus(availableViews) {
         dependencies: { 'browser.execution': browserImplemented },
         featureFlags: {}
     });
-    const safeEntries = validation.ok ? entries : entries.filter(item => item.id === 'group.workspace' || item.id === 'workspace.runner');
+    const safeEntries = validation.ok ? entries : entries.filter(item => item.id === 'group.zero' || item.id === 'zero.overview' || item.id === 'zero.work');
     return {
         ready: validation.ok,
         fallback: !validation.ok,
@@ -2543,11 +2543,17 @@ async function verifyArtifactReceiptForCurrentStep(tabId, planState, artifact) {
 }
 
 function validateNonCompletedArtifactReport(status, action) {
+    const statusAliases = Object.freeze({ fail: 'failed', failure: 'failed', error: 'failed' });
+    const actionAliases = Object.freeze({ continue: 'retry', workaround: 'retry' });
+    const rawStatus = String(status || '').trim().toLowerCase();
+    const rawAction = String(action || '').trim().toLowerCase();
+    const normalizedStatus = statusAliases[rawStatus] || rawStatus;
+    const normalizedAction = actionAliases[rawAction] || rawAction;
     const allowedStatuses = new Set(['partial', 'failed', 'blocked']);
     const allowedActions = new Set(['retry', 'hold', 'needs_user']);
-    if (!allowedStatuses.has(String(status || '').toLowerCase())) return { ok: false, reason: 'status' };
-    if (!allowedActions.has(String(action || '').toLowerCase())) return { ok: false, reason: 'next-action' };
-    return { ok: true };
+    if (!allowedStatuses.has(normalizedStatus)) return { ok: false, reason: 'status' };
+    if (!allowedActions.has(normalizedAction)) return { ok: false, reason: 'next-action' };
+    return { ok: true, status: normalizedStatus, action: normalizedAction };
 }
 
 function validatePlanStateForSave(planState) {
@@ -2600,7 +2606,7 @@ CODEE COMPLETION CONTRACT — REQUIRED FOR THIS CODE ZIP
         `When this step is complete and the final code ZIP has been freshly verified, append the full machine-readable footer below to your reply. ` +
         `Codee will independently verify the actual ZIP bytes (existence, completed download, SHA-256, size, and ZIP integrity) before advancing; the footer alone is not completion evidence. ` +
         `Echo PLAN_ID, RUN_ID, STEP_ID and STEP_TOKEN exactly. Do not mark completed before the ZIP exists and verification has run. ` +
-        `If this step cannot complete, keep those identifiers unchanged, set STATUS to partial, failed, or blocked, and set NEXT_ACTION to retry, hold, or needs_user as appropriate; do not fabricate PASS verification.
+        `If this step cannot complete, keep those identifiers unchanged, set STATUS to partial, failed (fail/failure/error are accepted aliases), or blocked, and set NEXT_ACTION to retry, hold, or needs_user as appropriate; do not fabricate PASS verification.
 
 ` +
         `CODEE_ARTIFACT
@@ -3377,12 +3383,14 @@ async function handleArtifactDetected(tabId, artifact) {
                 return { ok: false, ignored: true, terminal: true, reason: `noncompletion-${reportValidation.reason}` };
             }
 
+            const acceptedStatus = reportValidation.status || reportedStatus;
+            const acceptedAction = reportValidation.action || reportedAction;
             mergeKnownArtifactHashes(planState, [artifact]);
-            planState.lastArtifactStatus = reportedStatus;
-            planState.lastArtifactAction = reportedAction;
+            planState.lastArtifactStatus = acceptedStatus;
+            planState.lastArtifactAction = acceptedAction;
             planState.lastArtifactMessage = String(artifact?.verification || '').trim();
 
-            if (reportedAction === 'retry') {
+            if (acceptedAction === 'retry') {
                 planState.logicalRetryCount = Math.max(0, Number(planState.logicalRetryCount) || 0) + 1;
                 if (planState.logicalRetryCount > MAX_AUTOMATIC_LOGICAL_RETRIES) {
                     planState.dispatchStatus = 'blocked';
@@ -3399,15 +3407,15 @@ async function handleArtifactDetected(tabId, artifact) {
                 planState.nextRetryAt = Date.now() + RETRY_BACKOFF_BASE_MS * planState.logicalRetryCount;
                 delete planState.submissionReceipt;
                 await updatePlanState(tabId, planState);
-                await notifyUI(tabId, planState, `Step ${planState.stepIndex + 1} reported ${reportedStatus}; retry ${planState.logicalRetryCount}/${MAX_AUTOMATIC_LOGICAL_RETRIES} queued with backoff.`);
-                return { ok: true, handled: true, retry: true, status: reportedStatus, retryCount: planState.logicalRetryCount };
+                await notifyUI(tabId, planState, `Step ${planState.stepIndex + 1} reported ${acceptedStatus}; retry ${planState.logicalRetryCount}/${MAX_AUTOMATIC_LOGICAL_RETRIES} queued with backoff.`);
+                return { ok: true, handled: true, retry: true, status: acceptedStatus, retryCount: planState.logicalRetryCount };
             }
 
             planState.dispatchStatus = 'blocked';
             await updatePlanState(tabId, planState);
-            const actionText = reportedAction === 'needs_user' ? 'user action required' : (reportedAction || 'held');
-            await notifyUI(tabId, planState, `Step ${planState.stepIndex + 1} blocked: ${reportedStatus} (${actionText}).`);
-            return { ok: true, handled: true, blocked: true, status: reportedStatus, nextAction: reportedAction };
+            const actionText = acceptedAction === 'needs_user' ? 'user action required' : (acceptedAction || 'held');
+            await notifyUI(tabId, planState, `Step ${planState.stepIndex + 1} blocked: ${acceptedStatus} (${actionText}).`);
+            return { ok: true, handled: true, blocked: true, status: acceptedStatus, nextAction: acceptedAction };
         }
 
         const validation = validateArtifactForCurrentStep(planState, artifact);
@@ -3656,7 +3664,9 @@ async function getNextRunnerStatus(tabId) {
         lastAttemptAt: Number(item.lastAttemptAt) || null,
         lastSentAt: Number(item.lastSentAt) || null,
         lastResult,
-        sentCount: Number(item.sentCount) || 0,
+        successfulPassCount: Number(item.successfulPassCount ?? item.sentCount) || 0,
+        sessionPassCount: Number(item.sessionPassCount) || 0,
+        sentCount: Number(item.successfulPassCount ?? item.sentCount) || 0,
         failedCount: Number(item.failedCount) || 0,
         deferredCount: Number(item.deferredCount) || 0,
         attemptCount: Number(item.attemptCount) || 0,
@@ -3804,9 +3814,20 @@ async function resolveNextRunnerTarget(requestedTabId, savedTarget) {
     };
 }
 
+function buildNextRunnerInstruction(passNumber) {
+    const n = Math.max(1, Number(passNumber) || 1);
+    const parts = ['next'];
+    if (n % 3 === 0) parts.push('check that you are still on track with the required task; if you are caught in an error, work around it and keep progressing');
+    if (n % 5 === 0) parts.push('if the assigned task is finished, pick a high-priority issue and begin working on it; otherwise continue the current task');
+    if (n % 7 === 0) parts.push('verify the recent work with actual tests or output and fix any regression before continuing');
+    return parts.join(' and ');
+}
+
 async function sendStandaloneNext(tabId) {
     const stateBefore = await readNextRunnerState();
     const bound = stateBefore[String(tabId)] || {};
+    const passNumber = (Number(bound.successfulPassCount ?? bound.sentCount) || 0) + 1;
+    const prompt = buildNextRunnerInstruction(passNumber);
     const targetCheck = await resolveNextRunnerTarget(tabId, bound.target);
     let response;
     const resolvedTabId = Number.isInteger(targetCheck?.tabId) ? targetCheck.tabId : tabId;
@@ -3820,9 +3841,7 @@ async function sendStandaloneNext(tabId) {
         if (!receiver?.ok) {
             response = { ok:false, skipped:true, retryable:true, reason:receiver?.reason || 'content-unreachable', error:receiver?.error || 'Conversation receiver is unavailable.', source:targetCheck.source || '' };
         } else try {
-            response = await withRunnableConversationTab(resolvedTabId, () =>
-                sendContentMessageWithWatchdog(resolvedTabId, { action:'SEND_NEXT_NUDGE', text:'next' }, { allowReload:false, recoverMissingReceiver:true })
-            );
+            response = await sendContentMessageWithWatchdog(resolvedTabId, { action:'SEND_NEXT_NUDGE', text:prompt, passNumber }, { allowReload:false, recoverMissingReceiver:true });
             if (response && typeof response === 'object' && !response.source) response.source = targetCheck.source || '';
         } catch (error) {
             response = { ok:false, skipped:true, retryable:true, reason:'content-unreachable', error:error?.message || String(error), source:targetCheck.source || '' };
@@ -3832,6 +3851,8 @@ async function sendStandaloneNext(tabId) {
     const state = await readNextRunnerState();
     const key = String(tabId);
     const previous = state[key] || {};
+    const priorSuccessfulPassCount = Number(previous.successfulPassCount ?? previous.sentCount) || 0;
+    const nextSuccessfulPassCount = priorSuccessfulPassCount + (response?.ok ? 1 : 0);
     const deferred = !response?.ok && isNextRunnerSafeDeferral(response);
     const diagnostic = buildNextRunnerDiagnostic(response, {
         requestedTabId: tabId,
@@ -3849,10 +3870,14 @@ async function sendStandaloneNext(tabId) {
         lastAttemptAt: now,
         lastSentAt: response?.ok ? now : (Number(previous.lastSentAt) || null),
         attemptCount: (Number(previous.attemptCount) || 0) + 1,
-        sentCount: (Number(previous.sentCount) || 0) + (response?.ok ? 1 : 0),
+        successfulPassCount: nextSuccessfulPassCount,
+        sessionPassCount: (Number(previous.sessionPassCount) || 0) + (response?.ok ? 1 : 0),
+        sentCount: nextSuccessfulPassCount,
         deferredCount: (Number(previous.deferredCount) || 0) + (deferred ? 1 : 0),
         failedCount: (Number(previous.failedCount) || 0) + ((!response?.ok && !deferred) ? 1 : 0),
         lastResult: response?.ok ? 'sent' : String(response?.reason || response?.error || 'skipped').slice(0,300),
+        lastPassNumber: response?.ok ? nextSuccessfulPassCount : priorSuccessfulPassCount,
+        lastPrompt: prompt,
         lastOutcome: diagnostic.outcome,
         lastDiagnostic: diagnostic
     };
@@ -3860,7 +3885,7 @@ async function sendStandaloneNext(tabId) {
     const eventType = response?.ok ? 'next-runner-sent' : (deferred ? 'next-runner-deferred' : 'next-runner-failed');
     const severity = response?.ok ? 'success' : (deferred ? 'info' : 'warning');
     await recordDiagnosticEvent(eventType, severity, tabId, diagnostic).catch(() => {});
-    return { ok:Boolean(response?.ok), sent:Boolean(response?.ok), deferred, skipped:Boolean(response?.skipped), reason:response?.reason || '', error:response?.error || '', diagnostic };
+    return { ok:Boolean(response?.ok), sent:Boolean(response?.ok), deferred, skipped:Boolean(response?.skipped), reason:response?.reason || '', error:response?.error || '', passNumber:response?.ok ? nextSuccessfulPassCount : priorSuccessfulPassCount, prompt, diagnostic };
 }
 
 async function scheduleNextRunnerAlarm(tabId, intervalMinutes) {
@@ -3887,7 +3912,9 @@ async function startNextRunner(tabId, intervalMinutes) {
     }
     const state = await readNextRunnerState();
     const key = String(tabId);
-    state[key] = { ...(state[key] || {}), enabled:true, intervalMinutes:minutes, startedAt:Date.now(), stoppedAt:null, lastResult:'', lastOutcome:'', lastDiagnostic:null, sentCount:0, deferredCount:0, failedCount:0, attemptCount:0, lastAttemptAt:null, lastSentAt:null, nextDueAt:null, target:captured.target };
+    const previous = state[key] || {};
+    const successfulPassCount = Number(previous.successfulPassCount ?? previous.sentCount) || 0;
+    state[key] = { ...previous, enabled:true, intervalMinutes:minutes, startedAt:Date.now(), stoppedAt:null, lastResult:'', lastOutcome:'', lastDiagnostic:null, successfulPassCount, sentCount:successfulPassCount, sessionPassCount:0, deferredCount:Number(previous.deferredCount)||0, failedCount:Number(previous.failedCount)||0, attemptCount:Number(previous.attemptCount)||0, lastAttemptAt:null, lastSentAt:Number(previous.lastSentAt)||null, nextDueAt:null, target:captured.target };
     await writeNextRunnerState(state);
 
     // Starting arms the timed runner. The immediate send is best-effort: temporary
