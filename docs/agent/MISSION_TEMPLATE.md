@@ -65,7 +65,7 @@ Cross-boundary edits are allowed only when required to achieve the outcome; stat
 Run the root `AGENTS.md` requirements for the declared tier plus targeted tests for the changed owner. Record exact commands and results.
 
 ## Branch discipline
-Inherit the root `AGENTS.md` claim protocol. Use exactly `agent/<subgoal-id>` from the required current `main` SHA. If it exists, do not create an alternate/suffix branch. Keep the same branch through implementation, conflicts, verification, PR and fixes. After merge, do not open a successor branch for the completed mission.
+Inherit the root `AGENTS.md` claim protocol. Use exactly `agent/issue-<issue-number>` from the required current `main` SHA. If it exists, do not create an alternate/suffix branch. Keep the same branch through implementation, conflicts, verification, PR and fixes. After merge, do not open a successor branch for the completed mission.
 
 ## Completion report
 Return:
