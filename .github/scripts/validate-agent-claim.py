@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "roadmap" / "SUBGOAL-ISSUE-MANIFEST.json"
 GOALS_DIR = ROOT / "roadmap" / "goals"
 SUBGOAL_RE = re.compile(r"^(TZ-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
-BRANCH_RE = re.compile(r"^agent/(TZ-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
+BRANCH_RE = re.compile(r"^agent/(TZ-[A-Z0-9]+(?:-[A-Z0-9]+)*|[0-9]+)$")
 CANONICAL_GOAL_IDS = {"TZ-G00"} | {f"TZ-ROADMAP-{i:02d}" for i in range(1, 55)}
 
 
@@ -226,7 +226,10 @@ def validate_pull_request():
     if issue.get("state") != "open":
         fail(f"linked roadmap issue #{issue_number} is not open")
     issue_title = issue.get("title") or ""
-    if not issue_title.startswith(f"[{sid}]"):
+    if sid.isdigit():
+        if issue_number != int(sid):
+            fail(f"numbered Codex claim {sid} must link issue #{sid}, got #{issue_number}")
+    elif not issue_title.startswith(f"[{sid}]"):
         fail(
             f"linked issue #{issue_number} does not own {sid}; "
             f"title is {issue_title!r}"
