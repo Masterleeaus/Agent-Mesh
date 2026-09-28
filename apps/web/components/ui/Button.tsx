@@ -8,8 +8,8 @@ import type { Route } from "next";
 // Button — primary/secondary/danger/ghost variants, sm/default/lg sizes
 // ---------------------------------------------------------------------------
 
-export type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
-export type ButtonSize = "sm" | "default" | "lg";
+export type ButtonVariant = "primary" | "secondary" | "danger" | "ghost" | "outline";
+export type ButtonSize = "sm" | "default" | "lg" | "icon";
 
 /** Returns the CSS class string for a button given variant and size */
 export function getButtonClass(
