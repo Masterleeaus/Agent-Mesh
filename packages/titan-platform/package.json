@@ -29,6 +29,7 @@
     ,"./intelligence-core": "./src/intelligence-core.ts",
     "./surface-manager": "./src/surface-manager.ts"
     ,"./business-standards": "./src/business-standards.ts"
+    ,"./distribution-gateway": "./src/distribution-gateway.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",

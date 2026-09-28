@@ -12,6 +12,7 @@ export * from "./communication-announcement.js";
 export * from "./intelligence-core.js";
 export * from "./surface-manager.js";
 export * from "./business-standards.js";
+export * from "./distribution-gateway.js";
 
 export * from "./offline/index.js";
 
