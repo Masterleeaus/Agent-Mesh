@@ -5,6 +5,7 @@
   "description": "Customer-facing governed Titan Zero Browser Node. Private repository/Codex development orchestration must ship from a separate development build.",
   "scripts": {
     "test": "node tools/verify-browser-node.mjs",
+    "test:legacy": "node tools/verify-codee.mjs",
     "source-manifest": "node tools/generate-source-manifest.mjs",
     "interaction:typecheck": "tsc -p tsconfig.interaction.json --noEmit",
     "interaction:build": "tsc -p tsconfig.interaction.json",
