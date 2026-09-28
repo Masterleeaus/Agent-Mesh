@@ -85,3 +85,5 @@ export * from "./zero-cockpit.js";
 export * from "./governance/assurance.js";
 
 export * from "./foundry-artifact.js";
+
+export * from "./ported/titan-connect/channel-binding.js";
