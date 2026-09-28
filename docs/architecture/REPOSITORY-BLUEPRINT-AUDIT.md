@@ -303,3 +303,17 @@ Convergence decision:
 **Split rather than delete.** Preserve private coding/Codex/Agent-Mesh supervisor capability outside Titan Zero production reachability. Customer Browser Node keeps browser/CDP mechanics, bounded local intelligence, canonical Titan server/MCP/Workforce adapter, local safety floors, verification and evidence capture.
 
 Mission evidence: #643, #648, #812, #432, #7, #639, #640.
+
+
+### Pass 7A — apps/browser active production boundary
+Status: IN PROGRESS
+
+Findings:
+- MV3 manifest is correctly branded Titan Zero Browser Node and has bounded core permissions plus optional broader host permissions.
+- Active service worker still loads a large Codee/Titan Code private-development platform: repository intelligence/mutation, Agent Mesh/Codex bridge, plan runner, manager orchestration, deployment workforce console, developer pack, local canonical-like capability registry and browser-owned MCP state.
+- Strong reusable mechanics exist: browser/CDP interaction, perception/observability, local intelligence, privacy/cost routing, redaction, MCP protocol transport, mutation classification, preapproval backup verification, evidence/artifact verification and fail-closed delegation.
+- Browser local capability registry must become a projection/cache/provider descriptor layer beneath canonical #7, not a second registry authority.
+- Browser AI routing should become an adapter/projection of #647 while preserving local-first/privacy/cost behavior.
+- Customer production Browser Node must be split from private Titan Code/Agent Mesh/repository-coding tooling; donor provenance can remain in docs/imports/tests/archive.
+
+Mission evidence: #643, #648, #7, #647.
