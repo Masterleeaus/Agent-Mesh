@@ -58,6 +58,7 @@
     "src/connector-runtime.ts",
     "src/mcp-projection.ts",
     "src/mission-authority-policy.ts",
-    "src/surface/index.ts"
+    "src/surface/index.ts",
+    "src/workforce-coverage.ts"
   ]
 }

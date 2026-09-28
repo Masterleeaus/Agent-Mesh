@@ -40,7 +40,8 @@
     "./growth-attribution": "./src/growth-attribution.ts",
     "./forecast-contract": "./src/forecast-contract.ts",
     "./connector-runtime": "./src/connector-runtime.ts",
-    "./mcp-projection": "./src/mcp-projection.ts"
+    "./mcp-projection": "./src/mcp-projection.ts",
+    "./workforce-coverage": "./src/workforce-coverage.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
