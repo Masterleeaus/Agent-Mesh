@@ -25,11 +25,12 @@
     "./user-experience": "./src/user-experience.ts",
     "./system-configuration": "./src/system-configuration.ts",
     "./vertical-pack": "./src/vertical-pack.ts",
-    "./communication-announcement": "./src/communication-announcement.ts"
-    ,"./intelligence-core": "./src/intelligence-core.ts",
-    "./surface-manager": "./src/surface-manager.ts"
-    ,"./business-standards": "./src/business-standards.ts"
-    ,"./distribution-gateway": "./src/distribution-gateway.ts"
+    "./communication-announcement": "./src/communication-announcement.ts",
+    "./intelligence-core": "./src/intelligence-core.ts",
+    "./surface-manager": "./src/surface-manager.ts",
+    "./business-standards": "./src/business-standards.ts",
+    "./distribution-gateway": "./src/distribution-gateway.ts",
+    "./knowledge-governance": "./src/knowledge-governance.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",

@@ -45,6 +45,7 @@
     "src/ported/titan-ai-core/cost-sovereignty.ts",
     "src/ported/titan-connect/connector-contract.ts",
     "src/ported/titan-connect/credential-contract.ts",
-    "src/ported/titan-connect/mcp-host-contract.ts"
+    "src/ported/titan-connect/mcp-host-contract.ts",
+    "src/knowledge-governance.ts"
   ]
 }
