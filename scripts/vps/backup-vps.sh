@@ -3,6 +3,7 @@ set -Eeuo pipefail
 
 INSTALL_ROOT="${TITAN_ZERO_INSTALL_ROOT:-/opt/titan-zero}"
 DB="${INSTALL_ROOT}/shared/data/sqlite/titan-zero.db"
+COMPANY_ROOT="${INSTALL_ROOT}/shared/data/companies"
 BACKUP_DIR="${INSTALL_ROOT}/backups"
 
 [[ -f "$DB" ]] || { echo "SQLite database not found: $DB" >&2; exit 1; }
@@ -32,4 +33,8 @@ PY
 
 [[ -s "$TARGET" ]] || { echo "Backup is empty; refusing to publish it." >&2; exit 1; }
 chmod 600 "$TARGET"
-echo "Created $TARGET"
+echo "Created transitional runtime/compatibility backup $TARGET"
+if [[ -d "$COMPANY_ROOT" ]] && find "$COMPANY_ROOT" -type f -name '*.db' -print -quit | grep -q .; then
+  echo "WARNING: native per-company databases exist under $COMPANY_ROOT but are NOT backed up by this legacy helper." >&2
+  echo "Use the forthcoming canonical company-aware backup path before treating this as a complete Titan backup." >&2
+fi
