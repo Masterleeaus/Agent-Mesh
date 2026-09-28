@@ -112,7 +112,7 @@ Mission evidence: #913, #914, #915, #917, #648.
 The audit is not complete until all tracked files have been classified/inspected. Remaining passes include at minimum:
 
 1. apps/web — COMPLETE at architecture/ownership level across all 1,480 tracked paths (Passes 6A–6C). Exact substantial migration work is recorded in #811/#14/#183/#263/#343/#353/#542/#639/#648. Future Codex missions still perform implementation-level edits/tests inside those paths.
-2. apps/browser — active source vs imports/donor/generated; canonical Browser Node identity and hosted Workforce wiring.
+2. apps/browser — IN PROGRESS. Pass 7A–7B classified all 1,066 files and active entry/runtime architecture; production service-worker reachability and private Codex-supervisor split mapped. Remaining: browser mechanics/security/local-intelligence modules + tests/import provenance closure.
 3. apps/mobile — every Dart/native/release file; production transport, offline authority contraction, Zero/Go/Hub modes.
 4. apps/llm-plugin + desktop + marketing — thin adapter/marketing isolation.
 5. packages/runtime + titan-runtime — canonical runtime ownership and duplicate convergence.
@@ -279,3 +279,27 @@ apps/web architecture scan disposition:
 - no additional independent mission required.
 
 Mission evidence: #811, #14, #183, #263, #343, #353, #542, #648, #725.
+
+
+### Pass 7A–7B — apps/browser topology and production reachability
+Status: IN PROGRESS
+
+Complete subtree census:
+- 1,066 files total
+- tests 488
+- active src 319
+- imports/donor snapshots 159
+- docs 81
+- active src: browser 96, titan-zero 68, intelligence 34, workforce 23, repository 20, ai 17, lib 17, interaction-engine 16, integration 13, remainder catalog/managers/sidebar/content/provider.
+
+Critical findings:
+- Browser Node documentation correctly defines the extension as a bounded execution node, but the production service worker actively imports a large Codee/Titan Code mini-platform: local capability/AI/model/provider registries, repository mutation/developer stack, Titan repository analyzers, personal Workforce, managers/orchestrator, local risk/delegation, plans, MCP, deployment console and coding workflows.
+- `titan-bridge-client.js` is a localhost development bridge exposing repository/file/shell/Codex/Agent-Mesh operations; it is not an appropriate customer Titan Server Node transport.
+- ChatGPT/Claude `content-script.js` is primarily Codee coding-plan/ZIP artifact/step-token/nudging machinery. This is valuable private Codex Supervisor functionality but not Titan Zero customer Browser Node runtime.
+- MCP governance code contains reusable safety mechanics: bounded args, classification, prepare/approval/commit, backup verification, post-write verification and audit.
+- Titan MCP runtime provides a useful configurable server connection seam but currently owns Codee-local storage/approval/receipt identities that must become canonical projections.
+
+Convergence decision:
+**Split rather than delete.** Preserve private coding/Codex/Agent-Mesh supervisor capability outside Titan Zero production reachability. Customer Browser Node keeps browser/CDP mechanics, bounded local intelligence, canonical Titan server/MCP/Workforce adapter, local safety floors, verification and evidence capture.
+
+Mission evidence: #643, #648, #812, #432, #7, #639, #640.
