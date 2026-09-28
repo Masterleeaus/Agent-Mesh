@@ -4,7 +4,7 @@ Status: canonical DirectAdmin development guide for Titan Zero
 Architecture: `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md`  
 Canonical rules: `docs/architecture/CANONICAL-RULES.md`  
 DirectAdmin control-plane owner: #812  
-Shared Cockpit SDK owner: #1049
+Shared Business Node SDK owner: #1049
 
 ## 1. Architectural position
 
@@ -85,7 +85,7 @@ Example:
 ```
 DirectAdmin PHP entrypoint
         ↓
-Titan Cockpit SDK
+Titan Business Node SDK
         ↓
 local API / Unix socket / localhost service
         ↓
@@ -178,7 +178,7 @@ Official DirectAdmin references:
 
 ## 5. Titan DirectAdmin plugin portfolio
 
-All Titan DirectAdmin plugins share the #1049 Cockpit SDK.
+All Titan DirectAdmin plugins share the #1049 Business Node SDK.
 
 Current missioned operator plugin navigation (display labels; #812 Business Node Core coordinates the estate):
 
@@ -346,7 +346,7 @@ governed execution
 
 Fail closed when mapping is unresolved.
 
-## 12. Shared Cockpit SDK — #1049
+## 12. Shared Business Node SDK — #1049
 
 Every production Titan DA plugin should consume the SDK for:
 
@@ -704,7 +704,7 @@ Minimum:
 11. reinstall;
 12. state preservation.
 
-## 28. Known server-validated lessons from Titan Dev Access
+## 28. Known server-validated lessons from the Dev Access donor
 
 These failures already happened and must not recur:
 
