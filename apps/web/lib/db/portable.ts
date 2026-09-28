@@ -1,11 +1,15 @@
 import type { PoolClient } from "pg";
 import type { PoolConnection } from "mysql2/promise";
-import { getDatabaseDialect, getPool } from "@/lib/db";
+import { getDatabaseDialect, getPool, query as dbQuery } from "@/lib/db";
 import { getMysqlPool } from "./mysql";
 import { getSqliteClient, withSqliteTransaction } from "./sqlite";
 import { rewriteNumberedParamsForMysql, type DbClient, type DbQueryResult } from "@/lib/db-contract";
 import type { SessionPayload } from "@/lib/auth/session";
 import { requireTenantAccountId } from "./contracts";
+
+function resolveDatabaseDialect(): "sqlite" | "mysql" | "postgres" {
+  return typeof getDatabaseDialect === "function" ? getDatabaseDialect() : "postgres";
+}
 
 function mysqlClient(connection: PoolConnection): DbClient {
   return {
@@ -21,13 +25,17 @@ function mysqlClient(connection: PoolConnection): DbClient {
 }
 
 export async function portableQuery<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<T[]> {
-  const dialect = getDatabaseDialect();
+  const dialect = resolveDatabaseDialect();
   if (dialect === "sqlite") return (await getSqliteClient().query<T>(text, params)).rows;
   if (dialect === "mysql") {
     const rewritten = rewriteNumberedParamsForMysql(text, params);
     const execute = getMysqlPool().execute as unknown as (sql: string, params: unknown[]) => Promise<[unknown, unknown]>;
     const [rows] = await execute(rewritten.sql, rewritten.params);
     return rows as T[];
+  }
+  if (typeof getDatabaseDialect !== "function") {
+    const fallbackQuery = dbQuery as unknown as (sql: string, params: unknown[]) => Promise<T[]>;
+    return await fallbackQuery(text, params);
   }
   const query = getPool().query as unknown as (sql: string, params: unknown[]) => Promise<{ rows: T[] }>;
   const result = await query(text, params);
