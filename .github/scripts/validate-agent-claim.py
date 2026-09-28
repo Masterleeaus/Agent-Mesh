@@ -215,8 +215,20 @@ def validate_pull_request():
     if not re.fullmatch(r"[0-9a-f]{40}", main_sha):
         fail("main does not resolve to a valid Git commit")
     ancestry = run(["gh", "api", f"repos/{repo}/compare/{main_sha}...{claim_sha}", "--jq", ".status"], check=False)
-    if ancestry.returncode != 0 or ancestry.stdout.strip() not in {"ahead", "identical"}:
-        fail(f"canonical claim branch {head} is not based on current main ancestry: {ancestry.stdout.strip() or ancestry.stderr.strip()}")
+    ancestry_status = ancestry.stdout.strip()
+    if ancestry.returncode != 0:
+        fail(f"unable to verify canonical claim branch ancestry: {ancestry.stderr.strip()}")
+    if ancestry_status not in {"ahead", "identical"}:
+        if sid.isdigit() and ancestry_status == "diverged":
+            print(
+                f"Numbered Codex claim {sid} diverged from moving main after claim; "
+                "PR mergeability/conflict gates remain authoritative."
+            )
+        else:
+            fail(
+                f"canonical claim branch {head} is not based on current main ancestry: "
+                f"{ancestry_status or ancestry.stderr.strip()}"
+            )
 
     issue = run_json([
         "gh", "api", f"repos/{repo}/issues/{issue_number}"
