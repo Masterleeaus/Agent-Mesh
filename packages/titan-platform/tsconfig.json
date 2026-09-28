@@ -65,5 +65,6 @@
     "src/governance/constitution.ts"
     "src/recovery/capsule.ts"
     "src/federation/contract.ts"
+    "src/governance/assurance.ts"
   ]
 }
