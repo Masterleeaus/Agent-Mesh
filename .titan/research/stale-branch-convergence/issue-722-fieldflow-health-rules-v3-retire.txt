@@ -1,0 +1,1 @@
+Temporary retirement marker; equipment-health implementation and tests are byte-identical to current main.
