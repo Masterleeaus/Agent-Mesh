@@ -1,0 +1,1 @@
+Temporary retirement marker; seven files already match main and remaining worker variants are older than current implementation.
