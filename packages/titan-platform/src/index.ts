@@ -51,3 +51,5 @@ export * from "./growth-attribution.js";
 export * from "./forecast-contract.js";
 
 export * from "./connector-runtime.js";
+
+export * from "./mcp-projection.js";
