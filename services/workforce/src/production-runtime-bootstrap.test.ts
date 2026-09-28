@@ -66,3 +66,14 @@ test("production bootstrap refuses incomplete provider ports", async()=>{
   await assert.rejects(()=>createProductionRuntimeBootstrap({storage,ports:{modelRouter:ports().modelRouter} as any}),/production-runtime-port-required/);
   await storage.close();
 });
+
+
+test("production bootstrap composes canonical authority gateway and refuses incomplete resolver ports", async()=>{
+  const storage=createSqliteStorage(":memory:");
+  const base=ports();
+  await assert.rejects(
+    ()=>createProductionRuntimeBootstrap({storage,ports:{modelRouter:base.modelRouter,capabilities:base.capabilities,contextProvider:base.contextProvider,executionGateway:{async execute(){return {state:"VERIFIED",verified:true};}}} as any}),
+    /production-runtime-port-required:requirementResolver.resolve/,
+  );
+  await storage.close();
+});
