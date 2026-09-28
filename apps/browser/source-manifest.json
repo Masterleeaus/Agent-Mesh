@@ -2845,8 +2845,8 @@
     },
     {
       "path": "src/workforce/titan-workforce-gateway.js",
-      "bytes": 7370,
-      "sha256": "5b3f6d524be3b6e9a72d7fbe7dfc59a6b5fea8821448d5f1eccf3e4322ca2e80"
+      "bytes": 7378,
+      "sha256": "93d248553c3fdce5cd5b26912762d2c50c6b80ce8c02a94f2a7475797ccff8c1"
     },
     {
       "path": "src/workforce/tool-request.js",
@@ -4165,8 +4165,8 @@
     },
     {
       "path": "tests/test-production-reachability.js",
-      "bytes": 1218,
-      "sha256": "52400079a67cbfa7a39616d823a77169b3fa5fb30a5758b215e41e906d05a0e9"
+      "bytes": 1279,
+      "sha256": "954be9ca2b3e6595b33a2576d3d0e9d1704917190ecdd70761538eaeda80c862"
     },
     {
       "path": "tests/test-project-memory-candidate-store.js",
