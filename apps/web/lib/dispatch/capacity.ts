@@ -107,7 +107,7 @@ export function buildCapacity(
       visitCount: load.visits,
       nominalCapacityMinutes,
       availableCapacityMinutes,
-      capacitySource: configuredMinutes == null ? "nominal_fallback" : "availability",
+      capacitySource: (configuredMinutes == null ? "nominal_fallback" : "availability") as const,
       utilizationPct: availableCapacityMinutes > 0 ? Math.round((load.minutes / availableCapacityMinutes) * 100) : (load.minutes > 0 ? 999 : 0),
       skills: skillsByUser.get(tech.id) ?? [],
       assignedVehicle: vehiclesByUser.get(tech.id) ?? null,
