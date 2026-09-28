@@ -1,6 +1,6 @@
 import type { PoolClient } from "pg";
 import type { PoolConnection } from "mysql2/promise";
-import { getPool, query as dbQuery } from "@/lib/db";
+import { getPool } from "@/lib/db";
 import { getDatabaseDialect as configuredDatabaseDialect } from "./dialect";
 import { getMysqlPool } from "./mysql";
 import { getSqliteClient, withSqliteTransaction } from "./sqlite";
@@ -38,13 +38,12 @@ export async function portableQuery<T = Record<string, unknown>>(text: string, p
     const [rows] = await execute(rewritten.sql, rewritten.params);
     return rows as T[];
   }
-  if (typeof dbQuery === "function") {
-    const fallbackQuery = dbQuery as unknown as (sql: string, params: unknown[]) => Promise<T[]>;
-    return await fallbackQuery(text, params);
-  }
-  const query = getPool().query as unknown as (sql: string, params: unknown[]) => Promise<{ rows: T[] }>;
+  const query = getPool().query as unknown as (
+    sql: string,
+    params: unknown[],
+  ) => Promise<{ rows?: T[] } | T[]>;
   const result = await query(text, params);
-  return result.rows;
+  return Array.isArray(result) ? result : (result.rows ?? []);
 }
 
 export async function portableQueryOne<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<T | null> {
