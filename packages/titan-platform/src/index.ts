@@ -89,3 +89,5 @@ export * from "./foundry-artifact.js";
 export * from "./ported/titan-connect/channel-binding.js";
 
 export * from "./developer-portal.js";
+
+export * from "./directadmin-plugin.js";
