@@ -62,7 +62,8 @@ describe("findDueReminders", () => {
 
     expect(result).toEqual([AUTOMATION]);
     expect(client.query).toHaveBeenCalledWith(
-      expect.stringContaining("visit_reminder")
+      expect.stringContaining("visit_reminder"),
+      expect.any(Array)
     );
   });
 
