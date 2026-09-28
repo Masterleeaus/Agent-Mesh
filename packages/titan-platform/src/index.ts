@@ -83,3 +83,5 @@ export * from "./operations-health.js";
 export * from "./zero-cockpit.js";
 
 export * from "./governance/assurance.js";
+
+export * from "./ported/titan-connect/channel-binding.js";
