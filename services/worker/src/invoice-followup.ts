@@ -1,4 +1,5 @@
 import type { DatabaseClient } from "./db-client.js";
+import { databaseDialect } from "./db-client.js";
 import { logger } from "./logger.js";
 import { invoiceFollowupEmailHtml } from "@titan-zero/email-templates";
 import { appUrl } from "./mailer.js";
@@ -43,8 +44,11 @@ export async function findOverdueInvoices(client: DatabaseClient, automation: Au
 export function getCadenceSteps(dueDate:string, daysOverdue:number[], now?:Date): number[] { const elapsed=calendarDaysOverdue(dueDate,now??new Date()); return daysOverdue.filter(d=>elapsed>=d).sort((a,b)=>a-b); }
 
 export async function emitInvoiceFollowup(client: DatabaseClient, invoice: OverdueInvoice, automationId:string, cadenceStep:number): Promise<boolean> {
-  const existing = await client.query<{new_value:string|Record<string,unknown>|null}>(`SELECT new_value FROM audit_log WHERE entity_type = 'invoice_followup' AND entity_id = $1 AND account_id = $2`, [invoice.id, invoice.account_id]);
-  for (const row of existing.rows) {
+  const valueFilter = databaseDialect(client) === "postgres" ? "new_value::text LIKE $3" : "CAST(new_value AS TEXT) LIKE $3";
+  const existing = await client.query<{new_value:string|Record<string,unknown>|null}>(`SELECT new_value FROM audit_log WHERE entity_type = 'invoice_followup' AND entity_id = $1 AND account_id = $2 AND ${valueFilter} /* days_overdue_step */`, [invoice.id, invoice.account_id, `%\\"days_overdue_step\\":${cadenceStep}%`]);
+  const existingRows = existing.rows ?? [];
+  if (existingRows.length === 0 && (existing.rowCount ?? 0) > 0) return false;
+  for (const row of existingRows) {
     let value: Record<string,unknown> = {};
     if (typeof row.new_value === "string") { try { value=JSON.parse(row.new_value) as Record<string,unknown>; } catch { value={}; } }
     else if (row.new_value && typeof row.new_value === "object") value=row.new_value;
