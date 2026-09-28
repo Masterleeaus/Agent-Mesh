@@ -83,6 +83,8 @@ Primary owners:
 - P1 #1051 Frappe/ERPNext operational Business Engine.
 - P1 #1049 shared DirectAdmin Cockpit SDK.
 - P1 #1044–#1050 Business Node cockpits/plugins.
+- P1 #1053 Communications, #1054 Finance & Commerce, #1055 Intelligence, #1056 Governance & Assurance.
+- P2 #1057 Sprout / vertical-pack cockpit.
 - TZ-ROADMAP-20 #322 deployment/release.
 - TZ-ROADMAP-28 #403 connectors.
 - TZ-ROADMAP-31 #7 capability/tool registry.
