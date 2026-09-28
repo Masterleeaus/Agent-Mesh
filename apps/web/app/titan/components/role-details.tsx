@@ -138,7 +138,8 @@ export function GoNext() {
 
   function reportIssue() {
     const result = prepareGoIssue(session, { type: "access_problem", note: "Rear entrance is not accessible.", online });
-    if (result.queue_item) setQueue((items) => [...items, result.queue_item]);
+    const queueItem = result.queue_item;
+    if (queueItem) setQueue((items) => [...items, queueItem]);
     setNotice(result.status === "queued_offline" ? "Critical issue queued offline for dispatch." : "Access issue sent to dispatch with job context.");
   }
 
