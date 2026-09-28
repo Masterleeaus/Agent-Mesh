@@ -82,7 +82,7 @@ Primary owners:
 - P0 #812 DirectAdmin Business Node control plane / Server Node.
 - P1 #1051 Frappe/ERPNext operational Business Engine.
 - P1 #1049 shared DirectAdmin Cockpit SDK.
-- P1 #1044–#1065 Business Node cockpits/plugins, including Surface Manager #1059, Channels #1060, System Configuration #1063 and Business Standards #1065. Interaction and Decision remain canonical engines, configured through #1063 rather than separate DirectAdmin plugins.
+- Business Node cockpit/plugin missions #1044–#1057, #1059, #1060, #1063 and #1065 (individual priorities remain on their issues). This includes Surface Manager #1059, Channels #1060, System Configuration #1063 and Business Standards #1065. #1061 and #1062 are closed/superseded standalone plugin proposals; Interaction and Decision remain canonical engines configured through #1063. #1058 and #1064 are pull requests, not plugin missions.
 - P1 #1053 Communications, #1054 Finance & Commerce, #1055 Intelligence, #1056 Governance & Assurance.
 - P2 #1057 Sprout / vertical-pack cockpit.
 - TZ-ROADMAP-20 #322 deployment/release.
