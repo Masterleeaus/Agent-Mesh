@@ -2,14 +2,14 @@
   "name": "titan-zero-browser-node",
   "private": true,
   "version": "0.1.0",
-  "description": "Governed Chrome MV3 browser node for Titan Zero field-service operations and workforce execution.",
+  "description": "Customer-facing governed Titan Zero Browser Node. Private repository/Codex development orchestration must ship from a separate development build.",
   "scripts": {
     "test": "node tools/verify-browser-node.mjs",
-    "test:legacy": "node tools/verify-codee.mjs",
     "source-manifest": "node tools/generate-source-manifest.mjs",
     "interaction:typecheck": "tsc -p tsconfig.interaction.json --noEmit",
     "interaction:build": "tsc -p tsconfig.interaction.json",
-    "interaction:test": "npm run interaction:build && node tests/test-interaction-engine-runtime-boundary.js && node tests/test-interaction-engine-contracts.js && node tests/test-interaction-engine-intent-classifier.js && node tests/test-interaction-engine-localbrain.js && node tests/test-interaction-engine-wizard-runtime.js && node tests/test-interaction-engine-journey-runtime.js && node tests/test-interaction-engine-indexeddb-store.js && node tests/test-interaction-engine-capability-router.js"
+    "interaction:test": "npm run interaction:build && node tests/test-interaction-engine-runtime-boundary.js && node tests/test-interaction-engine-contracts.js && node tests/test-interaction-engine-intent-classifier.js && node tests/test-interaction-engine-localbrain.js && node tests/test-interaction-engine-wizard-runtime.js && node tests/test-interaction-engine-journey-runtime.js && node tests/test-interaction-engine-indexeddb-store.js && node tests/test-interaction-engine-capability-router.js",
+    "test:private-dev-legacy": "node tools/verify-codee.mjs"
   },
   "devDependencies": {
     "typescript": "5.8.3"
