@@ -63,7 +63,20 @@ export async function createProductionRuntimeBootstrap({storage,ports,eventBus}=
   });
   const runtimeAdapter=new WorkforceRuntimeAdapter(runtime);
   const workforce=new WorkforceService(workforceStore,runtimeAdapter,undefined,workforceStore);
-  const zeroDispatcher=new ZeroWorkforceRuntimeDispatcher(workforce,workforceStore,workforceStore,runtime);
+
+  // One canonical Zero -> Workforce -> persistent-runtime bridge. Keep dispatch as
+  // a compatibility alias so existing composition roots do not gain a second path.
+  const zeroDispatcher=new ZeroWorkforceRuntimeDispatcher(
+    workforce,
+    workforceStore,
+    workforceStore,
+    runtime,
+    (fn) => storage.transaction(async (tx) => {
+      const store = new SqliteWorkforceStore(tx);
+      // Lifecycle preparation must not auto-wake a second runtime.
+      return fn(new WorkforceService(store, undefined, undefined, store), store);
+    }),
+  );
   const dispatch=(input)=>zeroDispatcher.dispatch(input);
 
   return Object.freeze({

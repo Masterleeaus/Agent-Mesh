@@ -2,17 +2,12 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { roleSchema, type Role } from "@titan-zero/domain";
 import { portableQueryOne } from "../db/portable";
+import { getDatabaseDialect } from "../db/dialect";
 import { getEnv } from "../env";
 
 const COOKIE_NAME = "fsm_session";
 const EXPIRY = "7d";
 
-/**
- * Legacy base-web session payload.
- * accountId is a compatibility/provider-local business account context, NOT the
- * canonical Titan company_id. Canonical runtime calls must resolve/bind an
- * explicit company_id before authority/execution.
- */
 export interface SessionPayload {
   userId: string;
   accountId: string;
@@ -56,11 +51,13 @@ export async function getSession(): Promise<SessionPayload | null> {
   if (!verified) return null;
 
   const user = await portableQueryOne<UserSessionRow>(
-    `SELECT u.id,
-            m.account_id AS account_id,
-            m.role AS role
+    getDatabaseDialect() === "sqlite"
+      ? `SELECT id, company_id AS account_id, role FROM users WHERE id=$1 AND company_id=$2`
+      : `SELECT u.id,
+            COALESCE(m.account_id, u.account_id) AS account_id,
+            COALESCE(m.role, u.role) AS role
        FROM users u
-       JOIN business_memberships m
+       LEFT JOIN business_memberships m
          ON m.user_id = u.id
         AND m.account_id = $2
         AND m.status = 'active'

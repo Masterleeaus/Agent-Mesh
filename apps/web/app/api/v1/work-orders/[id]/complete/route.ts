@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "../../../../../../lib/auth/middleware";
 import type { AuthSession } from "../../../../../../lib/auth/middleware";
-import { assertAssignedLead, withLeadWorkOrderContext } from "../../../../../../lib/work-orders/lead-access";
-import { validateWorkOrderCompletion } from "../../../../../../lib/work-orders/validate";
-import { loadWorkOrderCompletionCriteria } from "../../../../../../lib/work-orders/task-time";
+import { completeAssignedWorkOrder, withLeadWorkOrderContext } from "../../../../../../lib/work-orders/lead-access";
 import { logger } from "../../../../../../lib/logger";
 
 export const dynamic = "force-dynamic";
 
-const ACTIVE_VISIT_SQL = "'dispatched', 'traveling', 'arrived', 'in_progress', 'waiting'";
 
 export const POST = withAuth(
   async (request: NextRequest, session: AuthSession) => {
@@ -21,43 +18,9 @@ export const POST = withAuth(
     }
 
     try {
-      const result = await withLeadWorkOrderContext(session, async (client) => {
-        const wo = await assertAssignedLead(client, id, session.accountId, session.userId);
-        if (!wo) {
-          return { kind: "forbidden" as const };
-        }
-        if (wo.status === "completed") {
-          return { kind: "ok" as const, status: "completed" as const };
-        }
-
-        const active = await client.query(
-          `SELECT 1 FROM visits
-           WHERE work_order_id = $1 AND account_id = $2
-             AND status IN (${ACTIVE_VISIT_SQL}) LIMIT 1`,
-          [id, session.accountId],
-        );
-        if (active.rowCount) {
-          return { kind: "active_visit" as const };
-        }
-
-        const criteria = await loadWorkOrderCompletionCriteria(
-          client,
-          id,
-          session.accountId,
-          wo.completion_criteria,
-        );
-        const gateErr = await validateWorkOrderCompletion(client, id, session.accountId, criteria);
-        if (gateErr) {
-          return { kind: "gate" as const, message: gateErr };
-        }
-
-        await client.query(
-          `UPDATE work_orders SET status = 'completed', completed_at = COALESCE(completed_at, CURRENT_TIMESTAMP), updated_at = CURRENT_TIMESTAMP
-           WHERE id = $1 AND account_id = $2`,
-          [id, session.accountId],
-        );
-        return { kind: "ok" as const, status: "completed" as const };
-      });
+      const result = await withLeadWorkOrderContext(session, (client) =>
+        completeAssignedWorkOrder(client, id, session.accountId, session.userId),
+      );
 
       if (result.kind === "forbidden") {
         return NextResponse.json(

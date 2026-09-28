@@ -93,13 +93,13 @@ export const POST = withAuth(async (request: NextRequest, session: AuthSession) 
            FROM visits WHERE id = $1 AND account_id = $2`,
         [visit.id, session.accountId],
       );
-      const next = updated.rows[0]!;
+      const next = updated.rows[0];
 
       await appendAuditLog(client, {
         account_id: session.accountId,
         entity_type: "visit",
         entity_id: visit.id,
-        action: "dispatch_assignment",
+        action: "update",
         actor_id: session.userId,
         trace_id: session.traceId,
         old_value: { assigned_user_id: visit.assigned_user_id },

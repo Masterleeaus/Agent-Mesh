@@ -3,7 +3,11 @@ name: Production Convergence Verification
 on:
   pull_request:
     paths:
-      - "packages/storage/test/final-cleaning-convergence.test.ts"
+      - "tests/zero-*.test.*"
+      - "db/sqlite/**"
+      - "apps/web/lib/zero/**"
+      - "apps/web/lib/work-orders/**"
+      - "apps/web/app/api/v1/zero/**"
       - "packages/storage/**"
       - "services/workforce/**"
       - "packages/runtime/agent-runtime/**"
@@ -40,8 +44,10 @@ jobs:
       - name: Install dependencies for focused verification
         run: pnpm install --no-frozen-lockfile
 
-      - name: Final cleaning convergence acceptance
-        run: pnpm --filter @titan-zero/storage exec vitest run test/final-cleaning-convergence.test.ts
+      - name: SQLite Zero job acceptance
+        run: |
+          node --test tests/zero-verified-job-schema.test.mjs
+          pnpm --filter @titan-zero/workforce exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../tests/zero-verified-job.test.ts ../../tests/zero-work-order-owner.test.ts ../../tests/zero-storage-concurrency.test.ts
 
       - name: Workforce behavioural tests
         run: pnpm --filter @titan-zero/workforce test

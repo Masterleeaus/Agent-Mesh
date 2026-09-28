@@ -1,4 +1,4 @@
-name: Native Titan FSM VPS production smoke
+name: VPS SQLite production smoke
 
 on:
   pull_request:
@@ -10,16 +10,18 @@ on:
       - 'apps/web/Dockerfile'
       - 'apps/web/next.config.mjs'
       - 'services/worker/Dockerfile'
+      - 'services/workforce/Dockerfile'
+      - 'services/workforce/**'
       - '.github/workflows/vps-installer-smoke.yml'
   workflow_dispatch:
 
 jobs:
-  native-fsm-compose-and-build:
+  sqlite-compose-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Validate native Titan FSM VPS scripts and topology
+      - name: Validate SQLite VPS scripts and topology
         shell: bash
         run: |
           set -euo pipefail
@@ -34,7 +36,7 @@ jobs:
           export TZ_DATA_ROOT="$RUNNER_TEMP/titan-data"
           docker compose --env-file .env.vps -f infra/compose.vps.yml config > "$RUNNER_TEMP/compose.yml"
           if grep -Eiq '(^|[[:space:]])postgres:|postgresql://' "$RUNNER_TEMP/compose.yml"; then
-            echo 'Unexpected PostgreSQL dependency leaked into the current native SQLite VPS topology' >&2
+            echo 'PostgreSQL leaked into canonical VPS topology' >&2
             exit 1
           fi
           grep -q 'DATABASE_DIALECT: sqlite' "$RUNNER_TEMP/compose.yml"
@@ -43,28 +45,40 @@ jobs:
         shell: bash
         run: |
           TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
-            docker compose --env-file .env.vps -f infra/compose.vps.yml build web worker
+            docker compose --env-file .env.vps -f infra/compose.vps.yml build web worker workforce
       - name: Create and verify fresh SQLite database
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/titan-data/sqlite"
-          docker run --rm \
-            --env-file "$PWD/.env.vps" \
-            -e DATABASE_DIALECT=sqlite \
-            -e DATABASE_URL=file:/app/data/titan-zero.db \
-            -e SQLITE_PATH=/app/data/titan-zero.db \
-            -v "$PWD:/app" \
-            -v "$RUNNER_TEMP/titan-data/sqlite:/app/data" \
-            -w /app \
-            titan-zero-web:latest node scripts/sqlite-migrate.mjs
+          TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
+            docker compose --env-file .env.vps -f infra/compose.vps.yml \
+            run --rm --no-deps web node sqlite-migrate.mjs
+          TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
+            docker compose --env-file .env.vps -f infra/compose.vps.yml up -d redis workforce
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:3010/ready >/dev/null; then
+              break
+            fi
+            if [[ "$attempt" == 30 ]]; then
+              docker compose --env-file .env.vps -f infra/compose.vps.yml logs --tail=150 workforce
+              exit 1
+            fi
+            sleep 2
+          done
           python3 - "$RUNNER_TEMP/titan-data/sqlite/titan-zero.db" <<'PY'
           import sqlite3, sys
           db = sqlite3.connect(sys.argv[1])
           try:
+              db.execute('PRAGMA foreign_keys=ON')
+              assert not db.execute('PRAGMA foreign_key_check').fetchall()
               assert db.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
               assert db.execute('PRAGMA foreign_keys').fetchone()[0] == 1
           finally:
               db.close()
           print('sqlite-production-database: PASS')
           PY
+      - name: Stop smoke services
+        if: always()
+        shell: bash
+        run: docker compose --env-file .env.vps -f infra/compose.vps.yml down -v --remove-orphans
