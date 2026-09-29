@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const schema = z.object({
-  DATABASE_URL: z.string().min(1, "DATABASE_URL is required").default("file:./data/titan-zero.db"),
+  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   DATABASE_DIALECT: z.enum(["sqlite", "postgres", "mysql", "mariadb"]).optional(),
   REDIS_URL: z.string().optional(),
   AUTH_SECRET: z.string().min(32, "AUTH_SECRET must be at least 32 characters — generate with: openssl rand -hex 32"),
@@ -25,7 +25,7 @@ export function getEnv() {
   if (cachedEnv) return cachedEnv;
   if (process.env.NEXT_PHASE === "phase-production-build") {
     cachedEnv = schema.parse({
-      DATABASE_URL: "file:./data/titan-zero.db",
+      DATABASE_URL: "postgres://placeholder",
       DATABASE_DIALECT: "sqlite",
       AUTH_SECRET: "placeholder-secret-must-be-at-least-32-characters!!",
       NODE_ENV: "production",
