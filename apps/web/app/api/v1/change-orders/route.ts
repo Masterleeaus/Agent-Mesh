@@ -4,6 +4,7 @@ import { withAuth, withRole } from "@/lib/auth/middleware";
 import { appendAuditLog } from "@/lib/db/audit";
 import { getPool, queryOne } from "@/lib/db";
 import { logger } from "@/lib/logger";
+import { randomUUID } from "node:crypto";
 
 export const dynamic = "force-dynamic";
 
@@ -80,16 +81,14 @@ export const POST = withRole(["owner", "admin", "tech"], async (request, session
     const totalCents = subtotalCents + taxCents;
 
     // Create change order
-    const { rows } = await client.query<{ id: string }>(
-      `INSERT INTO change_orders (estimate_id, account_id, title, description, notes,
+    const changeOrderId = randomUUID();
+    await client.query(
+      `INSERT INTO change_orders (id, estimate_id, account_id, title, description, notes,
                                    subtotal_cents, tax_cents, total_cents, status, created_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'draft', $9)
-       RETURNING id`,
-      [data.estimate_id, session.accountId, data.title, data.description ?? null, data.notes ?? null,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'draft', $10)`,
+      [changeOrderId, data.estimate_id, session.accountId, data.title, data.description ?? null, data.notes ?? null,
        subtotalCents, taxCents, totalCents, session.userId]
     );
-
-    const changeOrderId = rows[0].id;
 
     // Insert line items
     for (let i = 0; i < data.line_items.length; i++) {
