@@ -55,7 +55,7 @@ export async function createApprovalArtifacts(
       depositInvoiceId = randomUUID();
       await client.query(
         `INSERT INTO invoices
-           (id, account_id, client_id, job_id, estimate_id, property_id,
+           (id, account_id, job_id, client_id, estimate_id, property_id,
             status, invoice_kind, invoice_number,
             subtotal_cents, tax_cents, total_cents, paid_cents, deposit_cents,
             notes, created_by)
@@ -66,8 +66,8 @@ export async function createApprovalArtifacts(
         [
           depositInvoiceId,
           accountId,
-          est.client_id,
           est.job_id,
+          est.client_id,
           estimateId,
           est.property_id,
           invoiceNumber,
