@@ -12,6 +12,7 @@ import { CAPTURE_HREF, CaptureLink } from "./CaptureLink";
 import { WorkspaceAutoRoute } from "./WorkspaceAutoRoute";
 import { LiveRefresh } from "./LiveRefresh";
 import { ConnectionStatus } from "./ConnectionStatus";
+import { UI } from "../lib/vocabulary";
 import { GlobalSearch } from "./GlobalSearch";
 import {
   IconDashboard,
@@ -77,21 +78,21 @@ interface NavSection {
 
 // The office overview/dashboard. Labelled "Overview" (not "Today") so it reads
 // as the numbers screen and doesn't compete with the My Day field surface.
-const NAV_TODAY:      NavItem = { href: "/app",              label: "Overview",   Icon: IconDashboard };
+const NAV_TODAY:      NavItem = { href: "/app",              label: UI.desk,   Icon: IconDashboard };
 // EPIC-006 Phase 5: the field surface. Owners can switch into it; pure admins
 // (who don't do field work) and the all-techs list never see it here.
-const NAV_MY_DAY:     NavItem = { href: "/app/my-work",      label: "My Day",     Icon: IconMyDay };
+const NAV_MY_DAY:     NavItem = { href: "/app/my-work",      label: UI.today,     Icon: IconMyDay };
 const NAV_CAPTURE:    NavItem = { href: "/app/capture",      label: "Capture",    Icon: IconCapture };
 const NAV_DAY_REVIEW: NavItem = { href: "/app/day-review",   label: "Day Review", Icon: IconDayReview };
 const NAV_TRACKING:   NavItem = { href: "/app/timeline",     label: "Tracking",   Icon: IconField };
 const NAV_REQUESTS:   NavItem = { href: "/app/requests",     label: "Requests",   Icon: IconInbox };
 const NAV_CLIENTS:    NavItem = { href: "/app/clients",      label: "Clients",    Icon: IconClients,   adminOnly: true };
-const NAV_PROPS:      NavItem = { href: "/app/properties",   label: "Properties", Icon: IconProperties, adminOnly: true };
-const NAV_ESTIMATES:  NavItem = { href: "/app/estimates",    label: "Estimates",  Icon: IconEstimates, adminOnly: true };
+const NAV_PROPS:      NavItem = { href: "/app/properties",   label: UI.houses, Icon: IconProperties, adminOnly: true };
+const NAV_ESTIMATES:  NavItem = { href: "/app/estimates",    label: UI.quotes,  Icon: IconEstimates, adminOnly: true };
 const NAV_JOBS:       NavItem = { href: "/app/jobs",         label: "Jobs",       Icon: IconJobs,       adminOnly: true };
 const NAV_WORK_ORDERS: NavItem = { href: "/app/work-orders", label: "Work Orders", Icon: IconQueue,     adminOnly: true };
 const NAV_SCHEDULE:   NavItem = { href: "/app/schedule",     label: "Schedule",   Icon: IconSchedule,  adminOnly: true };
-const NAV_INVOICES:   NavItem = { href: "/app/invoices",     label: "Invoices",   Icon: IconInvoices,  adminOnly: true };
+const NAV_INVOICES:   NavItem = { href: "/app/invoices",     label: UI.bills,   Icon: IconInvoices,  adminOnly: true };
 const NAV_REPORTS:    NavItem = { href: "/app/reports",      label: "Reports",    Icon: IconReports,   adminOnly: true };
 const NAV_SETTINGS:   NavItem = { href: "/app/settings",     label: "Settings",   Icon: IconSettings,  adminOnly: true };
 
