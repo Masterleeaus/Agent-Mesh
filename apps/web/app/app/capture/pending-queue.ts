@@ -10,6 +10,16 @@ export type PendingCapture = {
 const DB_NAME = "dovetails-promise-capture";
 const STORE = "pending";
 const memory = new Map<string, PendingCapture>();
+export function normalizePendingCompanyId(companyId: string): string {
+  const normalized = companyId.trim();
+  if (!normalized) throw new Error("company_id is required");
+  return normalized;
+}
+
+export function buildPendingStorageKey(companyId: string, captureId: string): string {
+  return `${encodeURIComponent(normalizePendingCompanyId(companyId))}|${encodeURIComponent(captureId)}`;
+}
+
 
 function openDb(): Promise<IDBDatabase | null> {
   if (typeof indexedDB === "undefined") return Promise.resolve(null);
