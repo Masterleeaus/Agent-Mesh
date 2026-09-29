@@ -242,7 +242,7 @@ describe("getNavSections (nested hubs)", () => {
 
     const adminFirst = flattenSections(getNavSections("admin"))[0];
     expect(adminFirst.href).toBe("/app");
-    expect(adminFirst.label).toBe("Overview");
+    expect(adminFirst.label).toBe("Desk");
   });
 
   it("owner sidebar shows the active workspace's home, not both", () => {
@@ -266,7 +266,7 @@ describe("getNavSections (nested hubs)", () => {
   it("Home hub lists Tracking next to Day Review for owner/admin", () => {
     const adminHome = getNavSections("admin").find((s) => s.label === "Home");
     expect(adminHome?.items.map((i) => i.label)).toEqual([
-      "Overview",
+      "Desk",
       "Capture",
       "Day Review",
       "Tracking",
