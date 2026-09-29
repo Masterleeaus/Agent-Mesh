@@ -99,7 +99,7 @@ export function resolvePostLoginHref(
   role: PostLoginRole,
   opts: { cookieHeader?: string | null; isPhone?: boolean; next?: string | null } = {},
 ): string {
-  const allowedNext = safeBusinessOpsNext(opts.next);
+  const allowedNext = role === "owner" ? safeBusinessOpsNext(opts.next) : allowlistedPostLoginNext(opts.next);
   if (allowedNext) return allowedNext;
 
   if (role === "tech") return FIELD_ROOT;
