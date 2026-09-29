@@ -117,7 +117,7 @@ function buildHubSections(home: NavItem): NavSection[] {
 /** Returns filtered nav sections for a given role and active workspace view. */
 export function getNavSections(role: Role, view: "office" | "field" = "field"): NavSection[] {
   if (role === "tech") {
-    const myDay: NavItem = { href: "/app/my-work", label: "My Day", Icon: IconMyDay };
+    const myDay: NavItem = { href: "/app/my-work", label: UI.today, Icon: IconMyDay };
     const visits: NavItem = { href: "/app/visits", label: "Visits", Icon: IconVisits };
     return [{ label: "", items: [myDay, visits, NAV_DAY_REVIEW] }];
   }
@@ -139,7 +139,7 @@ export function getNavSections(role: Role, view: "office" | "field" = "field"): 
  */
 export function getBottomNavItems(role: Role): NavItem[] {
   if (role === "tech") {
-    const myDay: NavItem = { href: "/app/my-work", label: "My Day", Icon: IconMyDay };
+    const myDay: NavItem = { href: "/app/my-work", label: UI.today, Icon: IconMyDay };
     const visits: NavItem = { href: "/app/visits", label: "Visits", Icon: IconVisits };
     return [myDay, visits];
   }
