@@ -16,6 +16,10 @@ export const CAPTURE_PATH = "/app/capture";
 export function allowlistedPostLoginNext(
   next: string | null | undefined,
 ): string | null {
+  return next === CAPTURE_PATH ? CAPTURE_PATH : null;
+}
+
+function safeBusinessOpsNext(next: string | null | undefined): string | null {
   if (!next || !next.startsWith("/") || next.startsWith("//") || next.includes("\\")) return null;
   const [path, query = ""] = next.split("?", 2);
   if (path === "/app/my-day") return `/app/my-work${query ? `?${query}` : ""}`;
@@ -95,7 +99,7 @@ export function resolvePostLoginHref(
   role: PostLoginRole,
   opts: { cookieHeader?: string | null; isPhone?: boolean; next?: string | null } = {},
 ): string {
-  const allowedNext = allowlistedPostLoginNext(opts.next);
+  const allowedNext = safeBusinessOpsNext(opts.next);
   if (allowedNext) return allowedNext;
 
   if (role === "tech") return FIELD_ROOT;
