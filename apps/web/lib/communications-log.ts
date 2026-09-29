@@ -1,6 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { getDatabaseDialect } from "@/lib/db";
-import { portableQuery, portableQueryOne } from "@/lib/db/portable";
 import type { DeliveryReceipt } from "@/lib/communications/contracts";
 
 export interface CanonicalLogCommunicationOpts {
@@ -62,6 +60,10 @@ export async function logCommunication(opts: LogCommunicationOpts): Promise<stri
 }
 
 async function logCommunicationStorage(opts: LogCommunicationOpts): Promise<string | null> {
+  const [{ getDatabaseDialect }, { portableQuery }] = await Promise.all([
+    import("@/lib/db"),
+    import("@/lib/db/portable"),
+  ]);
   if (opts.externalId) {
     const duplicate = await portableQuery<{ id: string }>(
       `SELECT id FROM communications_log WHERE account_id = $1 AND external_id = $2 LIMIT 1`,
@@ -119,6 +121,7 @@ export async function claimCommunicationIdempotency(input: {
 }
 
 export async function findCommunicationByExternalId(accountId: string, externalId: string) {
+  const { portableQueryOne } = await import("@/lib/db/portable");
   return portableQueryOne<{ id: string; outcome: string }>(
     `SELECT id, outcome FROM communications_log WHERE account_id = $1 AND external_id = $2 LIMIT 1`,
     [accountId, externalId],
@@ -133,6 +136,7 @@ export async function findCommunicationByExternalId(accountId: string, externalI
  */
 export async function recordDeliveryReceipt(receipt: DeliveryReceipt): Promise<boolean> {
   if (!receipt.company_id.trim()) throw new Error("company_id is required");
+  const { portableQuery } = await import("@/lib/db/portable");
   const rows = await portableQuery<{ id: string }>(
     `UPDATE communications_log
        SET outcome = $3
