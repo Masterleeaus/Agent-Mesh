@@ -6,7 +6,6 @@
  * endpoint/provider. Provider fallback may never weaken consent/privacy/funding
  * or effective-authority gates.
  */
-import { recordDeliveryReceipt } from "@/lib/communications-log";
 import { CommunicationReplayGuard } from "./idempotency";
 import {
   assertCommunicationEnvelope,
@@ -38,6 +37,11 @@ export type GovernedOutboundResult =
 export interface ProviderAttemptEvidence { provider_id: string; receipt: DeliveryReceipt; persisted: boolean; }
 
 const outboundReplayGuard = new CommunicationReplayGuard();
+
+async function persistDeliveryReceipt(receipt: DeliveryReceipt): Promise<boolean> {
+  const { recordDeliveryReceipt } = await import("@/lib/communications-log");
+  return recordDeliveryReceipt(receipt);
+}
 
 /**
  * Canonical pre-provider orchestration seam. Authority is supplied by the
@@ -75,7 +79,7 @@ export async function executeGovernedOutbound(input: {
       result: { ok: false, error_code: "no-provider" },
       attempt: input.attempt,
     });
-    return { ok: false, denied: false, reason: "no-provider", receipt, persisted: await recordDeliveryReceipt(receipt) };
+    return { ok: false, denied: false, reason: "no-provider", receipt, persisted: await persistDeliveryReceipt(receipt) };
   }
 
   const adapter = input.adapters.find((item) => item.provider_id === candidate.provider_id);
@@ -85,7 +89,7 @@ export async function executeGovernedOutbound(input: {
       result: { ok: false, error_code: "provider-adapter-missing" },
       attempt: input.attempt,
     });
-    return { ok: false, denied: false, reason: "no-provider", receipt, persisted: await recordDeliveryReceipt(receipt) };
+    return { ok: false, denied: false, reason: "no-provider", receipt, persisted: await persistDeliveryReceipt(receipt) };
   }
 
   const providerResult = await adapter.send(message);
@@ -94,7 +98,7 @@ export async function executeGovernedOutbound(input: {
     result: providerResult,
     attempt: input.attempt,
   });
-  const persisted = await recordDeliveryReceipt(receipt);
+  const persisted = await persistDeliveryReceipt(receipt);
   if (providerResult.ok) {
     return { ok: true, provider_id: candidate.provider_id, receipt, persisted };
   }
@@ -167,7 +171,7 @@ export async function executeGovernedOutboundWithFallback(input: {
       result: providerResult,
       attempt: input.attempt,
     });
-    const persisted = await recordDeliveryReceipt(receipt);
+    const persisted = await persistDeliveryReceipt(receipt);
     attempts.push({ provider_id: candidate.provider_id, receipt, persisted });
     if (providerResult.ok) {
       return {
@@ -204,7 +208,7 @@ export async function executeGovernedOutboundWithFallback(input: {
         denied: false as const,
         reason: "no-provider" as const,
         receipt,
-        persisted: await recordDeliveryReceipt(receipt),
+        persisted: await persistDeliveryReceipt(receipt),
       };
     })(),
     attempts,
