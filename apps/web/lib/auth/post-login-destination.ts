@@ -12,11 +12,37 @@ const OFFICE_ROOT = "/app";
 const FIELD_ROOT = "/app/my-work";
 export const CAPTURE_PATH = "/app/capture";
 
-/** Open-redirect allowlist: honor `next` only when it is exactly /app/capture. */
+/** Allow only known Business Ops destinations and canonicalise retained aliases. */
 export function allowlistedPostLoginNext(
   next: string | null | undefined,
 ): string | null {
-  return next === CAPTURE_PATH ? CAPTURE_PATH : null;
+  if (!next || !next.startsWith("/") || next.startsWith("//") || next.includes("\\")) return null;
+  const [path, query = ""] = next.split("?", 2);
+  if (path === "/app/my-day") return `/app/my-work${query ? `?${query}` : ""}`;
+  const allowedRoots = [
+    "/app/capture",
+    "/app/day-review",
+    "/app/expenses",
+    "/app/estimates",
+    "/app/invoices",
+    "/app/jobs",
+    "/app/materials",
+    "/app/mileage",
+    "/app/my-work",
+    "/app/price-book",
+    "/app/properties",
+    "/app/reports",
+    "/app/requests",
+    "/app/schedule",
+    "/app/settings",
+    "/app/timeline",
+    "/app/visits",
+    "/app/work-orders",
+  ];
+  if (path !== "/app" && !allowedRoots.some((root) => path === root || path.startsWith(`${root}/`))) {
+    return null;
+  }
+  return next;
 }
 
 export function loginRedirectForPath(pathname: string | null | undefined): string {
