@@ -124,6 +124,14 @@ export async function POST(
   try {
     await dbClient.query("BEGIN");
 
+    const lockedEstimate = await dbClient.query<{ status: string }>(
+      `SELECT status FROM estimates WHERE id = $1 FOR UPDATE`,
+      [estimate.id],
+    );
+    if (lockedEstimate.rows[0]?.status !== "sent") {
+      throw new Error("Estimate is no longer available for response");
+    }
+
     await dbClient.query(
       `UPDATE estimates
        SET status = $1,
