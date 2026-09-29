@@ -98,7 +98,7 @@ export async function POST(
 
   if (!estimate) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  if (!["sent", "approved", "declined"].includes(estimate.status)) {
+  if (estimate.status !== "sent") {
     return NextResponse.json(
       { error: "This estimate cannot be responded to in its current state" },
       { status: 422 }
