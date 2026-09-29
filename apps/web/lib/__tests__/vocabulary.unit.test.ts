@@ -50,9 +50,9 @@ describe("nav speaks those nouns", () => {
 
   it("gives the owner phone tabs Today / Jobs / People / Money", () => {
     expect(getBottomNavItems("owner").map((i) => i.label)).toEqual([
-      UI.today,
-      UI.jobs,
-      UI.people,
+      "Home",
+      "Work",
+      "People",
       "Money",
     ]);
     expect(getBottomNavItems("owner").map((i) => i.href)).toEqual([
@@ -65,9 +65,9 @@ describe("nav speaks those nouns", () => {
 
   it("gives the admin phone tabs Desk / Jobs / People / Money", () => {
     expect(getBottomNavItems("admin").map((i) => i.label)).toEqual([
-      UI.desk,
-      UI.jobs,
-      UI.people,
+      "Home",
+      "Work",
+      "People",
       "Money",
     ]);
   });
