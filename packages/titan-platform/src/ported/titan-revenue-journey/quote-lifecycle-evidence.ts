@@ -112,10 +112,6 @@ export function buildQuoteLifecycleEvidence(input: Readonly<Record<string, any>>
   });
   if (lifecycleEvent.company_id !== companyId) throw new TypeError('revenue-quote-evidence-cross-company-lifecycle');
 
-  const canonicalFromState = lifecycleEvent.transition.from_state;
-  const canonicalToState = lifecycleEvent.transition.to_state;
-  if (!canonicalFromState || !canonicalToState) throw new TypeError('revenue-quote-evidence-canonical-state-required');
-
   const producer = clean(lifecycleEvent.provenance?.producer);
   const sourceEventId = clean(lifecycleEvent.provenance?.source_event_id);
   const observedAt = clean(lifecycleEvent.provenance?.observed_at);
@@ -138,8 +134,8 @@ export function buildQuoteLifecycleEvidence(input: Readonly<Record<string, any>>
     }),
     canonical_transition: Object.freeze({
       lifecycle_schema: REVENUE_QUOTE_LIFECYCLE_SCHEMA,
-      from_state: canonicalFromState,
-      to_state: canonicalToState,
+      from_state: lifecycleEvent.transition.from_state,
+      to_state: lifecycleEvent.transition.to_state,
       disposition: lifecycleEvent.transition.disposition,
       canonical_reason: canonicalReason,
     }),
