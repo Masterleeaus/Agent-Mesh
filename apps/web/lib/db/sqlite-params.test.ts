@@ -1,16 +1,26 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import { describe, expect, it } from "vitest";
 import { DatabaseSync } from "node:sqlite";
 import { rewriteSqliteParams } from "./sqlite-params";
 
-test("SQLite binds repeated and out-of-order parameters to their numbered values", () => {
-  const db = new DatabaseSync(":memory:");
-  try {
-    const rewritten = rewriteSqliteParams("SELECT $2 AS later, $1 AS first, $2 AS repeated", ["one", "two"]);
-    assert.deepEqual({ ...db.prepare(rewritten.sql).get(...rewritten.params) }, { later: "two", first: "one", repeated: "two" });
-  } finally { db.close(); }
-});
+describe("SQLite parameter rewriting", () => {
+  it("binds repeated and out-of-order parameters to their numbered values", () => {
+    const db = new DatabaseSync(":memory:");
+    try {
+      const rewritten = rewriteSqliteParams(
+        "SELECT $2 AS later, $1 AS first, $2 AS repeated",
+        ["one", "two"],
+      );
+      expect({ ...db.prepare(rewritten.sql).get(...rewritten.params) }).toEqual({
+        later: "two",
+        first: "one",
+        repeated: "two",
+      });
+    } finally {
+      db.close();
+    }
+  });
 
-test("SQLite refuses an unbound numbered parameter", () => {
-  assert.throws(() => rewriteSqliteParams("SELECT $2", ["one"]), /not bound/);
+  it("refuses an unbound numbered parameter", () => {
+    expect(() => rewriteSqliteParams("SELECT $2", ["one"])).toThrow(/not bound/);
+  });
 });
