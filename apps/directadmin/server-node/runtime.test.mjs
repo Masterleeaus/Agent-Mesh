@@ -57,3 +57,11 @@ test("duplicate dependency ids and invalid timeout fail closed", () => {
   assert.throws(() => validateDependencies([{ id: "web", url: "http://127.0.0.1/a" }, { id: "web", url: "http://127.0.0.1/b" }]), /dependency_id_duplicate/);
   assert.throws(() => validateDependencies([{ id: "web", url: "http://127.0.0.1/a", timeout_ms: 10 }]), /dependency_timeout_invalid/);
 });
+test("dependency count is capped to bound concurrent health probes", () => {
+  const entries = Array.from({ length: 17 }, (_, index) => ({
+    id: `dep_${index}`,
+    url: `http://127.0.0.1:${3000 + index}/health`,
+  }));
+  assert.equal(validateDependencies(entries.slice(0, 16)).length, 16);
+  assert.throws(() => validateDependencies(entries), /dependency_count_exceeded/);
+});

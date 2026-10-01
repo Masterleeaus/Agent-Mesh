@@ -3,9 +3,11 @@ import { pathToFileURL } from "node:url";
 
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "[::1]"]);
 const SERVICE = "titan-server-node-health";
+const MAX_DEPENDENCIES = 16;
 
 export function validateDependencies(dependencies) {
   if (!Array.isArray(dependencies)) throw new TypeError("dependencies_must_be_array");
+  if (dependencies.length > MAX_DEPENDENCIES) throw new RangeError("dependency_count_exceeded");
   const seen = new Set();
   return dependencies.map((dependency) => {
     if (!dependency || typeof dependency !== "object") throw new TypeError("dependency_must_be_object");
