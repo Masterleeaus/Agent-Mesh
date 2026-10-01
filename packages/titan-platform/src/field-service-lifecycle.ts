@@ -18,6 +18,7 @@ export type FieldServiceLifecycleEvent = Readonly<{
   from_revision: number;
   to_revision: number;
   authority_decision_ref: string;
+  execution_receipt_ref: string;
   evidence_refs: readonly string[];
   observed_verification_ref: string | null;
 }>;
@@ -42,6 +43,7 @@ export type FieldServiceLifecycleMutation = Readonly<{
   next_stage: FieldServiceStage;
   expected_revision: number;
   authority_decision_ref: string;
+  execution_receipt_ref: string;
   evidence_refs?: readonly string[];
   observed_verification_ref?: string;
   provider_ack_ref?: string;
@@ -81,6 +83,7 @@ const sameMutation = (event: FieldServiceLifecycleEvent, mutation: FieldServiceL
   event.to_stage === mutation.next_stage &&
   event.from_revision === mutation.expected_revision &&
   event.authority_decision_ref === mutation.authority_decision_ref &&
+  event.execution_receipt_ref === mutation.execution_receipt_ref &&
   event.observed_verification_ref === (mutation.observed_verification_ref ?? null) &&
   event.evidence_refs.join("\u0000") === unique(mutation.evidence_refs).join("\u0000");
 
@@ -89,6 +92,7 @@ function validateMutation(mutation: FieldServiceLifecycleMutation): void {
   requireText(mutation.transition_id, "transition_id");
   requireText(mutation.idempotency_key, "idempotency_key");
   requireText(mutation.authority_decision_ref, "authority_decision_ref");
+  requireText(mutation.execution_receipt_ref, "execution_receipt_ref");
   if (!Number.isInteger(mutation.expected_revision) || mutation.expected_revision < 1) {
     throw new Error("expected_revision-invalid");
   }
@@ -161,6 +165,7 @@ export function advanceFieldServiceLifecycle(
     from_revision: item.revision,
     to_revision: next_revision,
     authority_decision_ref: requireText(mutation.authority_decision_ref, "authority_decision_ref"),
+    execution_receipt_ref: requireText(mutation.execution_receipt_ref, "execution_receipt_ref"),
     evidence_refs,
     observed_verification_ref,
   });
