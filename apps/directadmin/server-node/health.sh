@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 PORT="${TITAN_SERVER_NODE_PORT:-3099}"
-if ! [[ "$PORT" =~ ^[0-9]{1,5}$ ]] || (( PORT < 1 || PORT > 65535 )); then
+if ! [[ "$PORT" =~ ^[1-9][0-9]{0,4}$ ]] || (( PORT < 1 || PORT > 65535 )); then
   printf "%s\n" '{"plugin":"titan-server-node","status":"unavailable","reason":"invalid_port"}'
   exit 2
 fi
