@@ -116,6 +116,7 @@ export function normalizeConversationRequest(input: unknown): ConversationReques
 }
 
 function assertContext(request: ConversationRequest, context: AuthenticatedConversationContext): void {
+  if (!['zero', 'go', 'hub'].includes(String(request.surface))) throw new Error("conversation-surface-invalid");
   if (request.company_id !== context.company_id) throw new Error("conversation-company-mismatch");
   if (request.actor_id !== context.actor_id) throw new Error("conversation-actor-mismatch");
   if (request.device_id !== context.device_id) throw new Error("conversation-device-mismatch");
@@ -178,7 +179,8 @@ export async function readConversationBody(request: AsyncIterable<Buffer | strin
 }
 
 export function writeConversationResponse(response: ServerResponse, value: ConversationResponse, stream: boolean, lastEventId?: string): void {
-  const events = lastEventId ? value.events.filter(event => event.id > lastEventId) : value.events;
+  const resumeIndex = lastEventId ? value.events.findIndex(event => event.id === lastEventId) : -1;
+  const events = lastEventId && resumeIndex >= 0 ? value.events.slice(resumeIndex + 1) : value.events;
   if (!stream) {
     const body = JSON.stringify({ ...value, events });
     if (Buffer.byteLength(body, "utf8") > MAX_RESPONSE_BYTES) { response.writeHead(500, { "content-type": "application/json" }); response.end(JSON.stringify({ error: "conversation-response-too-large" })); return; }
