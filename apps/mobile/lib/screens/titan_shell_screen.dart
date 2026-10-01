@@ -21,15 +21,28 @@ class TitanShellScreen extends StatefulWidget {
 class _TitanShellScreenState extends State<TitanShellScreen> {
   final _composer = TextEditingController();
   final List<_Turn> _turns = [];
+  String? _sendError;
+  bool _sending = false;
   TitanGateway get _gateway => widget.gateway;
   @override void dispose() { _composer.dispose(); super.dispose(); }
 
   Future<void> _send() async {
     final text = _composer.text.trim(); if (text.isEmpty) return;
-    _composer.clear();
-    final items = await _gateway.converse(text);
-    if (!mounted) return;
-    setState(() => _turns.add(_Turn(text, items)));
+    if (_sending) return;
+    setState(() { _sending = true; _sendError = null; });
+    try {
+      final items = await _gateway.converse(text);
+      if (!mounted) return;
+      setState(() {
+        _turns.add(_Turn(text, items));
+        if (_composer.text.trim() == text) _composer.clear();
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _sendError = 'Could not reach Titan. Your message is still here; check your connection or sign in again, then retry.');
+    } finally {
+      if (mounted) setState(() => _sending = false);
+    }
   }
 
   void _quickAsk(String text) {
@@ -105,7 +118,12 @@ class _TitanShellScreenState extends State<TitanShellScreen> {
           ..._turns[i].items.map((item) => TitanGenerativeCard(item: item, onAction: (action) => _handleGeneratedAction(action, item))),
         ]),
       )),
-      _Composer(controller: _composer, onSend: _send),
+      if (_sendError != null) Padding(
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+        child: Text(_sendError!, key: const Key('conversation-send-error'),
+            style: TextStyle(color: Theme.of(context).colorScheme.error)),
+      ),
+      _Composer(controller: _composer, onSend: _send, sending: _sending),
     ])),
   );
 }
@@ -126,4 +144,4 @@ class _ContextCards extends StatelessWidget {
 class _ContextCard extends StatelessWidget { final IconData icon; final String title,value; final VoidCallback onTap; const _ContextCard({required this.icon,required this.title,required this.value,required this.onTap});
   @override Widget build(BuildContext context) => SizedBox(width: 160, child: Card(child: InkWell(borderRadius: BorderRadius.circular(12), onTap: onTap, child: Padding(padding: const EdgeInsets.all(10), child: Row(children:[Icon(icon),const SizedBox(width:8),Expanded(child:Column(mainAxisAlignment:MainAxisAlignment.center,crossAxisAlignment:CrossAxisAlignment.start,children:[Text(title,style:const TextStyle(fontWeight:FontWeight.w600)),const SizedBox(height:3),Text(value,maxLines:2,overflow:TextOverflow.ellipsis)]))])))))); }
 class _EmptySurface extends StatelessWidget { const _EmptySurface(); @override Widget build(BuildContext context) => Center(child: Padding(padding: const EdgeInsets.all(28), child: Column(mainAxisSize: MainAxisSize.min, children:[Icon(Icons.auto_awesome,size:42,color:Theme.of(context).colorScheme.primary),const SizedBox(height:14),Text('What do you need?',style:Theme.of(context).textTheme.headlineSmall),const SizedBox(height:8),const Text('Ask naturally. Titan returns the job, customer, schedule, invoice or action you need — not another screen.',textAlign:TextAlign.center)]))); }
-class _Composer extends StatelessWidget { final TextEditingController controller; final VoidCallback onSend; const _Composer({required this.controller,required this.onSend}); @override Widget build(BuildContext context)=>Padding(padding:const EdgeInsets.fromLTRB(12,8,12,12),child:Row(children:[IconButton(onPressed:(){},icon:const Icon(Icons.add_circle_outline)),Expanded(child:TextField(controller:controller,minLines:1,maxLines:5,textInputAction:TextInputAction.send,onSubmitted:(_)=>onSend(),decoration:const InputDecoration(hintText:'Ask Titan…',border:OutlineInputBorder()))),IconButton(onPressed:(){},icon:const Icon(Icons.mic_none)),IconButton(onPressed:onSend,icon:const Icon(Icons.arrow_upward))])); }
+class _Composer extends StatelessWidget { final TextEditingController controller; final VoidCallback onSend; final bool sending; const _Composer({required this.controller,required this.onSend,this.sending=false}); @override Widget build(BuildContext context)=>Padding(padding:const EdgeInsets.fromLTRB(12,8,12,12),child:Row(children:[IconButton(onPressed:(){},icon:const Icon(Icons.add_circle_outline)),Expanded(child:TextField(controller:controller,minLines:1,maxLines:5,textInputAction:TextInputAction.send,onSubmitted:(_)=>onSend(),decoration:const InputDecoration(hintText:'Ask Titan…',border:OutlineInputBorder()))),IconButton(onPressed:(){},icon:const Icon(Icons.mic_none)),IconButton(onPressed:sending?null:onSend,icon:sending?const SizedBox(width:20,height:20,child:CircularProgressIndicator(strokeWidth:2)):const Icon(Icons.arrow_upward))])); }
