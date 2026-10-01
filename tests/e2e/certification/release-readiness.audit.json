@@ -1,0 +1,896 @@
+{
+  "schema": "titan.readiness-audit-input/v1",
+  "observed_at": "2026-10-01T22:49:22Z",
+  "source_commit": "6a88cdf92cf0f69fc2a51162f5b471f9438d1c12",
+  "scope": "28 user-requested audit headings; evidence presentation only, not a capability/host catalogue",
+  "audit_completeness": "PARTIAL",
+  "production_eligibility": "DENIED_MISSING_EVIDENCE",
+  "published_state": "UNKNOWN",
+  "related_evidence": [
+    "tests/e2e/certification/critical-path-matrix.generated.json"
+  ],
+  "external_sources": [
+    {
+      "url": "https://titan-zero.titan-zero.chatgpt.site",
+      "kind": "METADATA_REPORTED",
+      "version": 39,
+      "source_commit": "1d27bd6c4309881244fe412bcf5b5ca63bd4f344",
+      "source_bytes_inspected": false,
+      "limitations": "Separate Sites source; metadata observed by coordinating audit. #1171 holds current source-scan report; not independently executed here."
+    }
+  ],
+  "subsystems": [
+    {
+      "subsystem_id": "base-fsm",
+      "label": "Base TypeScript FSM",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/809",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/183",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/353"
+      ],
+      "implementation_paths": [
+        "packages/domain/src/work-order-lifecycle.ts",
+        "packages/domain/src/completion-criteria.ts"
+      ],
+      "source_assessment": "Native work-order and completion criteria implementations exist; preserve their business behavior.",
+      "missing_requirements": [
+        "End-to-end company-isolated operational journeys and deployment remain unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "web-ui",
+      "label": "Web UI",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/809"
+      ],
+      "implementation_paths": [
+        "apps/web/app/layout.tsx",
+        "apps/web/package.json"
+      ],
+      "source_assessment": "Full Next.js base web application exists separately from canonical PWA.",
+      "missing_requirements": [
+        "Strict workspace reproducibility/typecheck repair is active under #1084/#648; production build/runtime and complete UX are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "pwa",
+      "label": "PWA",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1171",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542"
+      ],
+      "implementation_paths": [
+        "apps/web/app/manifest.ts",
+        "apps/web/public/sw.js"
+      ],
+      "source_assessment": "Web install assets exist but do not prove the separate canonical Zero/Go/Hub PWA. Separate Site metadata and #1171 source-scan report require reconciliation.",
+      "missing_requirements": [
+        "Site v39/source commit 1d27bd6c4309881244fe412bcf5b5ca63bd4f344 is not this GitHub source baseline; source bytes, independent install lifecycle and physical-browser production tests were not executed by this audit."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "native-mobile",
+      "label": "Native mobile",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1158",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1164",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1170"
+      ],
+      "implementation_paths": [
+        "apps/mobile/lib/titan/services/titan_gateway.dart"
+      ],
+      "source_assessment": "Native gateway validates capability projections; converse still throws production-conversation-transport-required.",
+      "missing_requirements": [
+        "Production hosted conversation, signed builds and physical Zero/Go/Hub device certification remain outstanding."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "directadmin",
+      "label": "DirectAdmin Business Node",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/812",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049"
+      ],
+      "implementation_paths": [
+        "apps/directadmin/server-node/install.sh",
+        "apps/directadmin/server-node/update.sh"
+      ],
+      "source_assessment": "Server Node lifecycle scripts exist; install reports bounded-projection.",
+      "missing_requirements": [
+        "Full operator suite and disposable/live-host install, update, recovery outcomes require execution evidence."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "workforce",
+      "label": "Workforce",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/639",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/640",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1050"
+      ],
+      "implementation_paths": [
+        "services/workforce/src/server.ts",
+        "infra/compose.vps.yml"
+      ],
+      "source_assessment": "Compose includes Workforce; current service entrypoint serves health/readiness. Separate production bootstrap/dispatcher code exists.",
+      "missing_requirements": [
+        "Hosted service composition of persistent governed business execution and restart/replay proof remain unverified; health alone is insufficient."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "interaction",
+      "label": "Interaction Engine",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/21",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/725",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/interface-interaction-handoff.ts",
+        "packages/titan-platform/src/workforce-context/assembler.ts"
+      ],
+      "source_assessment": "Interface handoff and workforce-context components exist.",
+      "missing_requirements": [
+        "Cross-process production conversation/context binding and company-switch isolation require executed evidence."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "decision",
+      "label": "Decision Engine",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/59",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/58",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/642"
+      ],
+      "implementation_paths": [
+        "packages/tools/decision-lifecycle.mjs",
+        "docs/contracts/decision-lifecycle.md"
+      ],
+      "source_assessment": "DecisionRuntime stores bounded in-memory packets; current contract file contains captured PowerShell error text.",
+      "missing_requirements": [
+        "Persistent real-provider governed path and usable contract documentation need owner follow-through."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "nexus",
+      "label": "Nexus",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/647",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1055"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts"
+      ],
+      "source_assessment": "Deterministic authority-neutral orchestration recommendation helper exists.",
+      "missing_requirements": [
+        "Durable production orchestration, provider integration and failure certification are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "signal",
+      "label": "Signal",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/647",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1055"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/ported/titan-intelligence/signal/index.ts"
+      ],
+      "source_assessment": "Signal normalization and company-bound prioritization helper exists.",
+      "missing_requirements": [
+        "Production signal ingestion, persistence, correlation and failure behavior are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "model-council",
+      "label": "Model Council",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/647",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1055"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts"
+      ],
+      "source_assessment": "Authority-neutral deterministic vote aggregation helper exists.",
+      "missing_requirements": [
+        "Real provider/model continuity and production consensus/outcome tests remain unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "evidence-ledger",
+      "label": "Evidence Ledger",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/913",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/642"
+      ],
+      "implementation_paths": [
+        "packages/tools/accepted-evidence-ledger.mjs",
+        "packages/tools/accepted-evidence-ledger.schema.json"
+      ],
+      "source_assessment": "Accepted evidence ledger contract/implementation exists for bounded business evidence.",
+      "missing_requirements": [
+        "All-domain factual history, recovery and integrated consequential outcomes are not established by this audit."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "governance",
+      "label": "Governance/authority",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/640",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/914",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/423"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/constitution.ts",
+        "packages/titan-platform/src/governance/constitution.ts"
+      ],
+      "source_assessment": "Constitution and governed authority contracts exist.",
+      "missing_requirements": [
+        "Cross-substrate bypass, revocation and effective-authority enforcement require integrated negative tests."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "communications",
+      "label": "Communications",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/333",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/403"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/communication-announcement.ts"
+      ],
+      "source_assessment": "Announcement contracts distinguish audience and authority.",
+      "missing_requirements": [
+        "Real delivery, callback correlation, consent and independently verified outcomes are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "channels-integrations",
+      "label": "Channels & Integrations",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1060",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/644"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/ported/titan-connect/channel-binding.ts",
+        "packages/titan-platform/src/connector-runtime.ts"
+      ],
+      "source_assessment": "Channel/provider binding and connector runtime source exists.",
+      "missing_requirements": [
+        "Current external-provider conformance, retries and company-safe production transport require execution evidence."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "finance-commerce",
+      "label": "Finance/Commerce",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/263",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/343",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/383"
+      ],
+      "implementation_paths": [
+        "packages/domain/src/commerce.ts",
+        "packages/domain/src/finance-readiness.ts"
+      ],
+      "source_assessment": "Native provider-neutral finance/commerce domain contracts exist.",
+      "missing_requirements": [
+        "Verified service-to-invoice-to-payment/reconciliation journeys remain unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "offline-edge",
+      "label": "Offline/edge",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/645",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/646",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1161"
+      ],
+      "implementation_paths": [
+        "packages/offline/index.mjs",
+        "packages/offline/authority-continuity.mjs"
+      ],
+      "source_assessment": "Offline recovery/checkpoint/authority-continuity components exist.",
+      "missing_requirements": [
+        "Real reconnect/process-death, fresh authority and physical company-storage replay need integrated/device verification."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "sprout-builder",
+      "label": "Titan Sprout/Industry Builder",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1057"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/titan-builder/intent-planner.ts",
+        "packages/titan-platform/src/titan-builder/security-gate.ts"
+      ],
+      "source_assessment": "Builder planning and security-gate source exists.",
+      "missing_requirements": [
+        "Full governed generation, runtime binding and production user journeys are not certified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "vertical-packs",
+      "label": "Vertical packs",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/719",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1057"
+      ],
+      "implementation_paths": [
+        "packages/domain/src/vertical-profile.ts",
+        "packages/titan-platform/src/vertical-profile.ts"
+      ],
+      "source_assessment": "Two compileVerticalProfile implementations expose incompatible version/input shapes.",
+      "missing_requirements": [
+        "Owner reconciliation and registry-derived exposure/parity need verification; do not silently create a third compiler."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "distribution",
+      "label": "Distribution Gateway",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1068",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/718"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/distribution-gateway.ts"
+      ],
+      "source_assessment": "Distribution manifests and lifecycle transitions exist.",
+      "missing_requirements": [
+        "Production generation-provider outputs, platform conformance receipts, exact artifacts and publication/recovery are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "platform-adapters",
+      "label": "Platform adapters",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/644",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/compatibility-pipeline.ts",
+        "packages/titan-platform/src/interface-registry.ts"
+      ],
+      "source_assessment": "Compatibility projection tuples and interface contribution registry exist.",
+      "missing_requirements": [
+        "Complete supported-host adapter inventory, compatibility and startup/runtime negotiation evidence remain unavailable."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "authentication-security",
+      "label": "Authentication/security",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/security-boundary.ts",
+        "packages/titan-platform/src/runtime.ts"
+      ],
+      "source_assessment": "Session/company-context security primitives exist.",
+      "missing_requirements": [
+        "Global identity/membership bootstrap, revocation and physical storage routing need integrated production evidence."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "apis-mcp",
+      "label": "APIs/MCP",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/432",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/644"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/mcp-projection.ts",
+        "packages/titan-platform/src/ported/titan-connect/mcp-host-contract.ts"
+      ],
+      "source_assessment": "MCP projection and host contracts exist.",
+      "missing_requirements": [
+        "Production standalone-client transport and canonical authority traversal across actual endpoints are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "deployment",
+      "label": "Deployment/install/update/rollback",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/322",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/812",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/718"
+      ],
+      "implementation_paths": [
+        "packages/deployment/release-lifecycle.mjs",
+        "docs/contracts/deployment-release-lifecycle.md",
+        "infra/compose.vps.yml"
+      ],
+      "source_assessment": "Release lifecycle implementation and compose exist; verification evidence gates lifecycle transitions.",
+      "missing_requirements": [
+        "Exact-artifact clean install, update, rollback, restart and live-host proof remain missing; certification handoff consumer is not integrated."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "observability",
+      "label": "Observability",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/313"
+      ],
+      "implementation_paths": [
+        "packages/observability/contracts.mjs",
+        "docs/contracts/observability-redaction.md"
+      ],
+      "source_assessment": "Canonical vendor-neutral company-scoped redaction/diagnostic contract exists.",
+      "missing_requirements": [
+        "End-to-end trace correlation, failure-injected SLO/alerts and reproducible load/scaling proof are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "testing-certification",
+      "label": "Testing/certification",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1172",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/648",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/642"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/certification-matrix.ts",
+        "tests/e2e/certification/critical-path-matrix.generated.json"
+      ],
+      "source_assessment": "Baseline evaluator allows empty and mandatory SKIPPED coverage; historical 12-stage fixture reports path presence, not product execution.",
+      "missing_requirements": [
+        "This PR hardens evaluator/consumer separately; full inherited cross-host suite, trusted producer and canonical upstream conformance receipts remain incomplete."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "documentation",
+      "label": "Documentation",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1066"
+      ],
+      "implementation_paths": [
+        "docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md",
+        "docs/architecture/CANONICAL-RULES.md"
+      ],
+      "source_assessment": "Canonical architecture/current rules establish hierarchy and full native FSM/PWA boundaries.",
+      "missing_requirements": [
+        "Documentation-to-current-runtime reconciliation and current command/contract correctness remain incomplete."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "release-readiness",
+      "label": "Release readiness",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1172",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/322",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/718",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1068"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/certification-matrix.ts",
+        "packages/titan-platform/src/compatibility-pipeline.ts",
+        "packages/deployment/release-lifecycle.mjs"
+      ],
+      "source_assessment": "Canonical eligibility, compatibility and deployment owners exist but baseline has no evaluator consumer.",
+      "missing_requirements": [
+        "No production candidate/artifact certification, upstream conformance receipts, deployment integration or publication proof is supplied."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    }
+  ]
+}
