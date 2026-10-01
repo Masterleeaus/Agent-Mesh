@@ -1,7 +1,7 @@
 import { createServer as createHttpServer } from "node:http";
 import { pathToFileURL } from "node:url";
 
-const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "::1"]);
+const LOOPBACK_HOSTS = new Set(["127.0.0.1", "[::1]"]);
 const SERVICE = "titan-server-node-health";
 
 export function validateDependencies(dependencies) {
