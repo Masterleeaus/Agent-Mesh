@@ -67,6 +67,18 @@ Run the root `AGENTS.md` requirements for the declared tier plus targeted tests 
 ## Branch discipline
 Inherit the root `AGENTS.md` claim protocol. Use exactly `agent/issue-<issue-number>` from the required current `main` SHA. If it exists, do not create an alternate/suffix branch. Keep the same branch through implementation, conflicts, verification, PR and fixes. After merge, do not open a successor branch for the completed mission.
 
+## Mission closure evidence
+
+If this PR completes the entire mission, use `Closes #<issue>` only after every issue acceptance criterion is satisfied. If it is a partial slice, use `Refs #<issue>` and leave the mission open.
+
+For a closing PR, map each criterion individually:
+
+| Issue acceptance criterion | Implementation path(s) | Verification command/evidence | Result |
+|---|---|---|---|
+| <copy criterion> | <files/PR section> | <exact command or observable evidence> | <pass / blocked> |
+
+List every unrun required check, live-host check still needed, residual risk, and follow-up issue. A checklist or CI can verify that this table is present, but a reviewer must decide whether its evidence proves the full mission Done condition. See the root `AGENTS.md` mission closure gate.
+
 ## Completion report
 Return:
 1. Objective achieved
