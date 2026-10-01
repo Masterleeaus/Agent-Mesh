@@ -74,3 +74,25 @@ Before a repository is called portfolio-ready, review:
 ## Deletion handling
 
 This file records candidates only. No repository was deleted, archived, renamed, made private/public, or had repository settings changed in this review.
+
+
+## Additional findings — 2026-10-02 pass
+
+### Environment-file cleanup
+
+- `modules/.env.development` and `Delivery-Management-Platform/.env.development` were tracked on the default branch. Both are removed from the current tree. Sanitized `.env.development.template` files were added and ignore rules now cover `.env.*` while allowing `.env.example` and `.env.*.template`.
+- `modules/.env.development` contained a public project URL and populated app/realtime credentials. Treat those values as exposed and rotate the application signing key and realtime credentials. The Delivery Management file contained populated app/realtime credentials; rotate them as a precaution. Both remain in Git history; inspect history and decide on history containment after rotation.
+- `Worksuite-Saas---Project-Management-System_Laravel/.env.dev` also contained populated application/JWT/payment values. It has been removed from the current branch; ignore rules now exclude local env variants while retaining the upstream `.env.example`.
+- `cleanly/.env.dev` contained populated application/JWT/payment values. It has been removed from the current tree and local env ignore rules now cover variants.
+- Removing these files from the current tree does not revoke credentials or erase Git history. Rotation/revocation and history review remain outstanding. Do not expose secrets when coordinating that work.
+
+### README duplication and portfolio disposition
+
+- `cleanly` and `modules` had identical README content/blob before this pass, but their complete recursive trees differ substantially (11,260 vs 6,305 entries at the reviewed commits). This is a **README duplication**, not a proven repository duplicate. `modules` is documented as the Titan BOS application source. `cleanly` is private and still needs an accurate description of its actual code before any visibility or disposition decision. Neither is a deletion candidate based solely on this comparison.
+- `Worksuite-Saas---Project-Management-System_Laravel` is a public, large imported third-party codebase. Its README now records vendor provenance and marks it for archive/deletion review. This is a **deletion-review candidate**, not an instruction to delete it. Preserve its vendor attribution and license until the owner decides.
+- `Delivery-Management-Platform` is a distinct, small Laravel application with upstream authorship evident in its README. Keep as a source/provenance archive or assess license and relevance before portfolio promotion. It is not a duplicate of the Titan BOS application.
+- `cleanly` is currently private, so it is not visible in the public portfolio. Decide its intended audience only after its repository-specific README is written.
+
+### Pass status
+
+Current tree scans confirm the two cleaned Titan BOS source repositories retain an example env file and sanitized template; populated tracked local env files were removed in this pass. A full historical secret scan, credential rotation, complete test/build verification across all repositories, banner creation for every project, repository metadata normalization, and complete 33-repository tree/history comparison are still outstanding.
