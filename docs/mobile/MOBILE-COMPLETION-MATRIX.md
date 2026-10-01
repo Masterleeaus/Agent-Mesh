@@ -4,7 +4,7 @@ This is the live acceptance index for #1158. It is intentionally non-closing: th
 
 | Surface / requirement | Canonical owner | Current evidence | Remaining closure evidence |
 | --- | --- | --- | --- |
-| Shared Flutter shell and `zero` / `go` / `hub` identity | #542, #1160 | `apps/mobile/README.md`, `TitanSession.canonicalSurfaces` | Fresh Flutter analyze, tests, mode-switch and stale-context tests |
+| Shared Flutter shell and `zero` / `go` / `hub` identity | #542, #1160 | `apps/mobile/README.md`, `TitanSession.canonicalSurfaces`; bootstrap now shows a recoverable fail-closed error when required release configuration is missing | Fresh Flutter analyze, tests, mode-switch and stale-context tests; local widget test added but Flutter is unavailable in this environment |
 | Hosted conversation, streaming, continuity, reconnect | #1159 / #1182 | `SurfaceSdkTitanGateway` requires an injected conversation transport; production composition must remain fail-closed when absent | Hosted endpoint contract, release-composition/widget test, reconnect/resume evidence, deployed run |
 | DirectAdmin-hosted Workforce and Business Node boundary | #1169 | Boundary and ownership are documented by the claimed #1169 work | Authenticated cross-surface identity, company isolation, revision/idempotency and live endpoint evidence |
 | Zero owner/manager workflows | #1170, #1046, #1056 | Active shell and generated-card/action surfaces exist | Hosted approval/outcome/evidence scenario; unauthorized, stale, error and accessibility states |
