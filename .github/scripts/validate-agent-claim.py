@@ -12,6 +12,7 @@ MANIFEST = ROOT / "roadmap" / "SUBGOAL-ISSUE-MANIFEST.json"
 GOALS_DIR = ROOT / "roadmap" / "goals"
 SUBGOAL_RE = re.compile(r"^(TZ-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
 BRANCH_RE = re.compile(r"^agent/(TZ-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
+ISSUE_BRANCH_RE = re.compile(r"^agent/issue-(\\d+)$")
 CANONICAL_GOAL_IDS = {"TZ-G00"} | {f"TZ-ROADMAP-{i:02d}" for i in range(1, 55)}
 
 
@@ -158,45 +159,40 @@ def validate_pull_request():
     if base != "main":
         fail(f"agent implementation PR must target main, got {base!r}")
 
+    issue_branch = ISSUE_BRANCH_RE.match(head)
     match = BRANCH_RE.match(head)
-    if not match:
+    if not match and not issue_branch:
         if head.startswith("agent/"):
-            fail(
-                "claim branch must be exactly agent/<subgoal-id>, for example "
-                "agent/TZ-ROADMAP-31-SG-01"
-            )
-        print(
-            f"Non-agent PR branch {head!r}: roadmap integrity verified; "
-            "agent claim checks are not applicable."
-        )
+            fail("claim branch must be exactly agent/issue-<issue-number> per AGENTS.md")
+        print(f"Non-agent PR branch {head!r}: roadmap integrity verified; agent claim checks are not applicable.")
         return
-    sid = match.group(1)
 
-    item = manifest_by_id.get(sid)
-    if not item:
-        print(f"Codex mission {sid} is not in the legacy roadmap manifest; issue ownership will be validated from GitHub.")
+    sid = match.group(1) if match else None
+    issue_number = int(issue_branch.group(1)) if issue_branch else None
+    item = manifest_by_id.get(sid) if sid else None
 
-    if item:
-        status = str(item.get("status") or "").upper()
-        if status in {"COMPLETE", "SUPERSEDED", "SUPERSEDED_BY_ARCHITECTURE"}:
-            fail(f"{sid} is not claimable because roadmap status is {status}")
-
-    if sid not in title and sid not in body:
-        fail(f"PR must name its claimed subgoal ID {sid}")
-
-    missing_structure = missing_agent_pr_structure(body)
-    if missing_structure:
-        fail(
-            "agent PR body is missing required Codex evidence structure: "
-            + ", ".join(missing_structure)
-        )
-
-    issue_match = re.search(
-        r"(?im)\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)\b", body
-    )
-    if not issue_match:
-        fail("PR body must link its roadmap issue with 'Closes #<issue-number>'")
-    issue_number = int(issue_match.group(1))
+    if sid:
+        if item:
+            status = str(item.get("status") or "").upper()
+            if status in {"COMPLETE", "SUPERSEDED", "SUPERSEDED_BY_ARCHITECTURE"}:
+                fail(f"{sid} is not claimable because roadmap status is {status}")
+        if sid not in title and sid not in body:
+            fail(f"PR must name its claimed subgoal ID {sid}")
+        missing_structure = missing_agent_pr_structure(body)
+        if missing_structure:
+            fail("agent PR body is missing required Codex evidence structure: " + ", ".join(missing_structure))
+        issue_match = re.search(r"(?im)\\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\\s+#(\\d+)\\b", body)
+        if not issue_match:
+            fail("Subgoal PR body must link its roadmap issue with 'Closes #<issue-number>'")
+        issue_number = int(issue_match.group(1))
+    else:
+        if f"agent/issue-{issue_number}" not in body:
+            fail(f"PR body must record canonical claim branch agent/issue-{issue_number}")
+        if not all(section in body for section in ("## Outcome", "## Verification performed", "## Remaining")):
+            fail("issue-claim PR must include Outcome, Verification performed, and Remaining sections")
+        issue_match = re.search(r"(?im)\\b(?:refs|close[sd]?|fix(?:e[sd])?|resolve[sd]?)\\s+#(\\d+)\\b", body)
+        if not issue_match or int(issue_match.group(1)) != issue_number:
+            fail(f"PR body must link claimed mission #{issue_number} with Refs or Closes")
 
     repo = os.environ.get("GITHUB_REPOSITORY")
     token = os.environ.get("GH_TOKEN")
@@ -226,7 +222,7 @@ def validate_pull_request():
     if issue.get("state") != "open":
         fail(f"linked roadmap issue #{issue_number} is not open")
     issue_title = issue.get("title") or ""
-    if not issue_title.startswith(f"[{sid}]"):
+    if sid and not issue_title.startswith(f"[{sid}]"):
         fail(
             f"linked issue #{issue_number} does not own {sid}; "
             f"title is {issue_title!r}"
@@ -245,7 +241,7 @@ def validate_pull_request():
             continue
         other_head = other.get("headRefName") or ""
         other_text = (other.get("title") or "") + "\n" + (other.get("body") or "")
-        if other_head == head or sid in other_text:
+        if other_head == head or (sid and sid in other_text) or f"#{issue_number}" in other_text:
             collisions.append(other.get("number"))
     if collisions:
         fail(f"{sid} is already represented by open PR(s): {collisions}")
