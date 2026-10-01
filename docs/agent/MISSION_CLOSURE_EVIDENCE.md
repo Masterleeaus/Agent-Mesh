@@ -20,8 +20,10 @@ mission tracker, runtime ledger or definition of authority.
 These are different issue outcomes, not automatic promotion states. A related
 commit, green CI, provider acknowledgement or checked box alone proves none of
 the parent mission's semantic completion. Ordinary implementation steps stay in
-the existing mission; create a separate issue only for an independently substantial
-outcome with no existing canonical owner.
+the existing mission. If a small, independently executable remainder is blocked by
+an external dependency, the bounded handoff process in root `AGENTS.md` may create
+a successor issue that preserves every unmet requirement. This does not certify or
+represent the original mission as fully delivered.
 
 ## PR relationship
 
@@ -30,7 +32,10 @@ Use the exact claim `agent/issue-N`, target `main`, and set the single metadata 
 The matching `**Claim branch:** agent/issue-N` is required. `Subgoal ID` is optional
 planning traceability, never an implementation claim or a second issue owner.
 
-Only a full mission candidate uses `**Linked issue:** Closes #N`. The gate rejects
+Only a full mission candidate uses `**Linked issue:** Closes #N`. A blocked-work
+handoff PR remains non-closing with `Refs #N` and `mode: partial`; it links the
+successor issue and may not claim full delivery. After that slice merges, record
+the linked handoff on the original issue and close it administratively. The gate rejects
 extra closing targets, cross-repository closure, hidden closing directives in a
 partial PR, obsolete/suffixed agent branches, forks impersonating the claim, a
 closed/non-issue target, claim/head SHA drift, non-current-main ancestry and
@@ -71,10 +76,11 @@ Fields:
 - `remaining_work`: concrete strings; empty only for a full mission candidate
 - `human_review_required`: literal `true`; never a claim that review occurred
 
-For closing records, every declared check must have run and passed. Any failed,
-blocked, unknown or unrun check, outstanding live-host verification, or remaining
-mission work keeps the PR non-closing. Placeholder paths/evidence do not pass.
-A follow-up issue does not excuse omitting an original acceptance requirement.
+For full-completion closing records, every declared check must have run and passed.
+Any failed, blocked, unknown or unrun check, outstanding live-host verification,
+or remaining mission work keeps the PR non-closing. Placeholder paths/evidence do
+not pass. A follow-up issue does not convert a partial PR into full-completion
+evidence; it only enables the separate administrative handoff after merge.
 
 ### Enumerating current acceptance
 
@@ -144,15 +150,18 @@ suite and trusted-workflow activation. Never bypass branch protection, execute
 candidate code in the trusted job, or claim live enforcement from local tests.
 The workflow itself never writes to or closes an issue.
 
-## Premature closure and supersession
+## Blocked-work handoff and premature closure
 
-Reopen a partially completed mission when authorized and possible. Add a durable
-comment naming the premature closure/PR, what was actually delivered, the original
-unmet criteria and the existing canonical implementation owner. If reopening is
-not possible, create a linked implementation follow-up preserving every unmet
-requirement and explaining the premature closure. Do not silently narrow history.
-Use `SUPERSEDED` with a successor link only when another outcome genuinely replaces
-this work; a contract milestone is not implementation completion.
+For a bounded blocked-work handoff, follow the ordered procedure in root `AGENTS.md`:
+create the successor first with all unmet requirements, merge the non-closing verified
+slice on the existing claim branch, then record the handoff on and close the original
+issue. The old issue remains historical scope; the successor owns the outstanding
+implementation and verification. Never label the original fully delivered.
+
+If an issue was closed without a successor or durable handoff record, reopen it when
+authorized and possible, or create a linked follow-up preserving every unmet
+requirement and explain the premature closure. Do not silently narrow history. Use
+`SUPERSEDED` only when another outcome genuinely replaces the work.
 
 ## Regression evidence
 
