@@ -65,7 +65,10 @@ Unrun/blocked checks and residual risk:
 ### Completion evidence
 Start non-closing. Keep `Refs` while any mission requirement or required check is
 unproven. For a complete mission candidate, change the linked relationship to
-`Closes`, set `mode` to `complete`, and map every current issue requirement.
+`Closes`, set `mode` to `complete`, and map every current issue requirement. If a
+small separate blocker remains, keep this PR at `Refs`/`partial`, link the successor
+issue preserving every unmet criterion, and follow the post-merge handoff sequence
+in root `AGENTS.md`; do not represent it as full mission completion.
 See [the evidence format and review contract](../docs/agent/MISSION_CLOSURE_EVIDENCE.md).
 
 ```mission-evidence
@@ -89,8 +92,9 @@ For each criterion, use an object with `criterion`, `implementation` (path array
 and `checks` (check ID array). Each check has `id`, `command`, `result`, `evidence`,
 `required` (boolean), and `kind`. Copy exact current issue text; record actual
 commands and outcomes, never assumed passes. Required/unrun/live-host checks keep
-the mission open. Link independently substantial follow-ups without dropping any
-original acceptance requirement.
+the mission open. Link any handoff successor before merge without dropping any original acceptance
+requirement. After merge, record delivery and remaining scope on the original issue
+before closing it administratively.
 
 Human reviewer: compare evidence with the full current issue and Done condition.
 A green format check or checkbox alone cannot prove semantic completion and does
