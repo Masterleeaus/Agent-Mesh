@@ -63,7 +63,15 @@ Unrun/blocked checks and residual risk:
 - [ ] Verification invalidated by conflict resolution was rerun
 
 ### Completion evidence
-Explain how the issue acceptance criteria are proven by code/tests/evidence. Do not use “done” or “complete” as a substitute for proof.
+**Issue relationship:** [ ] Closes the full mission (all criteria proven)  [ ] Refs a partial slice (mission remains open)
+
+For a closing PR, map every issue acceptance criterion to implementation and executed evidence:
+
+| Issue acceptance criterion | Implementation path(s) | Exact verification/evidence | Result |
+|---|---|---|---|
+| <criterion> | <paths> | <command or observable result> | <pass / blocked> |
+
+List any unrun required/live-host checks, residual risk, and follow-up issue. Reviewers must compare this evidence against the full issue's current acceptance criteria and Done condition; checklist presence alone is not proof.
 
 ### Risk / compatibility / rollback
 Describe migrations, compatibility implications, rollback path, security/privacy/cost impact, and any separately tracked follow-up.
