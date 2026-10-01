@@ -144,6 +144,26 @@ suite and trusted-workflow activation. Never bypass branch protection, execute
 candidate code in the trusted job, or claim live enforcement from local tests.
 The workflow itself never writes to or closes an issue.
 
+## Bounded blocked-work handoff
+
+A small, separately executable remainder blocked outside the current branch may use
+the handoff process in root `AGENTS.md`. The PR remains non-closing:
+`**Linked issue:** Refs #N` with `mode: partial`. It links the successor issue and
+records all unmet criteria, checks, live-host work and risks. This PR does not claim
+the original mission is fully delivered.
+
+Create the successor before closing the original. Copy every unmet requirement,
+Done condition and verification item into that issue, name the blocker and canonical
+owner, and link the predecessor and delivered PR. After the non-closing slice merges,
+add a durable handoff record to the original issue identifying the merged change and
+remaining scope, then close that issue administratively. Keep the successor open and
+authoritative for the remainder. This handoff is not full-completion evidence and
+does not relax the normal evidence gate for a PR that claims `complete`.
+
+If a gate prevents the sequence, keep the original issue open and resolve the gate;
+do not bypass branch protection. Do not use this procedure to move ordinary
+implementation steps, avoid required tests/review, or narrow the original issue.
+
 ## Premature closure and supersession
 
 Reopen a partially completed mission when authorized and possible. Add a durable
