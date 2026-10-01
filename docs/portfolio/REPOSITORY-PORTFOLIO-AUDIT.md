@@ -96,3 +96,46 @@ This file records candidates only. No repository was deleted, archived, renamed,
 ### Pass status
 
 Current tree scans confirm the two cleaned Titan BOS source repositories retain an example env file and sanitized template; populated tracked local env files were removed in this pass. A full historical secret scan, credential rotation, complete test/build verification across all repositories, banner creation for every project, repository metadata normalization, and complete 33-repository tree/history comparison are still outstanding.
+
+
+## Additional findings — portfolio visibility pass
+
+### README and banner inventory
+
+- Rechecked all 33 repositories: each default branch has a README, and no byte-for-byte duplicate README remains. This does not certify content accuracy or runtime completeness.
+- Wide project-specific banners remain inconsistent. Several READMEs use text-only headers; the Worksuite import had a placeholder-host image URL added during triage and it is not a finished banner. Replace it with a real, appropriately licensed, project-specific asset or remove it before presenting that repo.
+
+### Explicit repository disposition shortlist
+
+| Repository | Current evidence | Portfolio action |
+|---|---|---|
+| `cleanhub` | Public, default branch contains only README; repository metadata reports size 0. | **Deletion candidate** after checking branches, tags, settings, and external references. |
+| `Titan-Zero` | Public, default branch contains only README; integration archive has no build, tests, or release artifact. | **Deletion or archive candidate** unless a documented integration workflow uses it. |
+| `cleanhub2` | Private, default branch contains README and Git attributes/ignore files only. | **Deletion candidate** if no unique branches/settings/references need preservation. |
+| `Worksuite-Saas---Project-Management-System_Laravel` | Public, large imported third-party application; exposed env file removed from current branch, but source provenance/license and history remain to review. | **Archive/deletion review candidate; weak as original portfolio evidence.** Preserve attribution and license during review. |
+| `Delivery-Management-Platform` | Public, distinct Laravel application with upstream authorship noted in README; small compared with main platform. | Keep only as a clearly attributed source/provenance archive if useful; otherwise mark for archival review. |
+| `cleanly` | Private and substantial; different recursive tree from `modules`; still carries the duplicated Titan BOS README rather than a repository-specific description. | Not a duplicate finding. Keep private pending an accurate content-specific README and purpose decision. |
+| `Titancore`, `Titanzero` | Substantial legacy code trees with unclear relationship to the current workforce product. | Lineage/license/build review before presenting; archive only if unique code/docs are retained elsewhere or clearly labeled. |
+
+No repositories were deleted or archived. The table marks candidates for the owner's later disposition decision.
+
+### Banner quality correction
+
+The Worksuite README currently uses a placeholder external graphic, not a genuine project banner. It should not be counted as a completed banner. The portfolio requirement remains project-specific, accurate imagery with valid repository-relative or otherwise controlled asset hosting.
+
+
+### Branch and release checks for placeholder candidates
+
+- `cleanhub` and `cleanhub2` each have only their `main` branch, no tags, and no releases. These remain the strongest deletion candidates, subject to an external-reference/settings check.
+- `Titan-Zero` has no tags, releases, issues, or pull requests, but it has four non-main branches with unique integration work. The branches include MobileKit components and notices, a five-tier offline device-runtime package with a test, an interaction-kernel upgrade plan, and a merge-verification record. It is **not a deletion candidate until that branch work is reviewed and dispositioned**.
+- Other multi-branch repos across the account include very large branch sets. No branches were merged or deleted in this portfolio pass; they need their own per-repository branch consolidation review, with mergeability, unique commits, tests, and external references checked before cleanup.
+
+
+### Active branch review — 2026-10-02
+
+A targeted review of ten substantive repositories found active pull requests across the account. Examples include: `clean` #130–#135; `cleanly` #121, #122, #124, #126; `modules` #84, #88–#91; `TitanPro` #550, #554, #567 and other open work; current workforce PRs #1037–#1183; and `AI-Coding-Studio` #4–#25. This is a partial sample, not a complete PR inventory.
+
+- Treat branches attached to open PRs as active review items. Do not delete them as “stale” until each PR is reviewed for mergeability, CI, unique commits, provenance, and whether its work is already on the base branch.
+- Some PRs are marked WIP, depend on non-main bases, or overlap with other PRs. Maintain a per-repository queue with dependency order and canonical target rather than merging solely by branch name.
+- The portfolio cleanup process therefore has two distinct tracks: (1) repository disposition candidates with no unique branch history; (2) active implementation branches that need code review, tests, and merge decisions.
+- No branch or PR was merged, closed, or deleted in this pass.
