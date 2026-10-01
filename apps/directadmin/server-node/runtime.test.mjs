@@ -15,7 +15,7 @@ test("dependency definitions accept loopback health endpoints", () => {
 });
 
 test("dependency definitions reject remote targets, credentials and redirects by URL", () => {
-  for (const url of ["https://127.0.0.1/health", "http://example.com/health", "http://127.0.0.1.attacker.test/health", "http://user:pass@127.0.0.1/health"]) {
+  for (const url of ["https://127.0.0.1/health", "http://example.com/health", "http://127.0.0.1.attacker.test/health", "http://localhost/health", "http://user:pass@127.0.0.1/health"]) {
     assert.throws(() => validateDependencies([{ id: "unsafe", url }]), /dependency_target_must_be_loopback_http/);
   }
 });
