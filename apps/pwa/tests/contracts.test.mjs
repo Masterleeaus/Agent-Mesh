@@ -4,7 +4,7 @@ import test from "node:test";
 import { createPwaProjectionClient } from "../src/api-client.mjs";
 import { normalizePwaContext, PwaProjectionWorkingSet } from "../src/scope.mjs";
 const read = path => readFile(new URL(`../${path}`, import.meta.url), "utf8");
-const context = (company_id = "c-a", surface = "go", actor_id = "worker-1", device_id = "device-1") => ({ company_id, surface, actor_id, device_id, context_revision: "r1" });
+const context = (company_id = "c-a", surface = "go", actor_id = "worker-1", device_id = "device-1") => ({ company_id, surface, actor_id, device_id, context_revision: "r1", session_revision: "s1" });
 
 test("requires explicit canonical company, actor, device and one of three modes", () => {
   assert.equal(normalizePwaContext(context()).company_id, "c-a");
@@ -20,12 +20,16 @@ test("working set rejects company, actor, device and mode rotation; explicit rot
   assert.throws(() => store.get(context("c-b"), "today"), /scope-changed/);
   assert.throws(() => store.get(context("c-a", "zero"), "today"), /scope-changed/);
   assert.throws(() => store.get({ ...context(), context_revision: "r2" }, "today"), /scope-changed/);
+  assert.throws(() => store.get({ ...context(), session_revision: "s2" }, "today"), /scope-changed/);
   assert.throws(() => store.put(context(), "bad", { company_id: "c-b" }), /company-mismatch/);
   store.rotate(context("c-b"));
   assert.equal(store.size, 0);
   assert.equal(store.get(context("c-b"), "today"), null);
   store.put(context("c-b"), "fresh", { company_id: "c-b", id: "fresh" });
   store.rotate({ ...context("c-b"), context_revision: "r2" });
+  assert.equal(store.size, 0);
+  store.put({ ...context("c-b"), context_revision: "r2" }, "latest", { company_id: "c-b" });
+  store.rotate({ ...context("c-b"), context_revision: "r2", session_revision: "s2" });
   assert.equal(store.size, 0);
 });
 
