@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowDown, ArrowRight, ArrowUpRight, Check, Database, GitBranch, Route, ShieldCheck, Sparkles } from "lucide-react";
-import { LandingDisruptionDemo } from "@/components/landing-disruption-demo";
+import { LandingDisruptionDemo } from "../components/landing-disruption-demo";
 import styles from "./landing.module.css";
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ export default function LandingPage() {
   return <main className={styles.page}>
     <header className={styles.header}>
       <Link href="/" className={styles.brand} aria-label="FieldOps AI home"><span><Route/></span><strong>FIELD<span>/OPS</span><small>Service operations intelligence</small></strong></Link>
-      <nav aria-label="Landing navigation"><a href="#recovery">Recovery</a><a href="#system">System</a><Link href="/control-room" className={styles.headerCta}>Launch workspace <ArrowUpRight/></Link></nav>
+      <nav aria-label="Landing navigation"><a href="#recovery">Recovery</a><a href="#system">System</a><a href="/control-room" className={styles.headerCta}>Launch workspace <ArrowUpRight/></a></nav>
     </header>
 
     <section className={styles.hero}>
@@ -22,7 +22,7 @@ export default function LandingPage() {
         <span className={styles.kicker}><i/> AI-ORCHESTRATED SERVICE OPERATIONS</span>
         <h1>Protect every customer promise when the shop plan breaks.</h1>
         <p>FieldOps AI converts technician callouts and capacity gaps into feasible repair-order recovery plans that managers can inspect, approve, and audit.</p>
-        <div className={styles.heroActions}><Link href="#recovery" className={styles.primaryAction}><Sparkles/> See the recovery</Link><Link href="/control-room" className={styles.secondaryAction}>Open live system <ArrowRight/></Link></div>
+        <div className={styles.heroActions}><Link href="#recovery" className={styles.primaryAction}><Sparkles/> See the recovery</Link><a href="/control-room" className={styles.secondaryAction}>Open live system <ArrowRight/></a></div>
         <div className={styles.proofRail}><span><Check/> Constraint checked</span><span><Check/> Manager controlled</span><span><Check/> Fully auditable</span></div>
       </div>
 
@@ -59,9 +59,9 @@ export default function LandingPage() {
     <section className={styles.finalCta}>
       <span>PRODUCTION-GRADE PORTFOLIO SYSTEM</span>
       <h2>Enter the live service command center.</h2>
-      <Link href="/control-room">Launch workspace <ArrowUpRight/></Link>
+      <a href="/control-room">Launch workspace <ArrowUpRight/></a>
     </section>
 
-    <footer className={styles.footer}><span>FIELD/OPS AI</span><p>Dealership service operations intelligence</p><Link href="/control-room">Live system</Link></footer>
+    <footer className={styles.footer}><span>FIELD/OPS AI</span><p>Dealership service operations intelligence</p><a href="/control-room">Live system</a></footer>
   </main>;
 }
