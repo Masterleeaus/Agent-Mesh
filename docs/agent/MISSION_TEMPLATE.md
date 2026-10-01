@@ -69,7 +69,7 @@ Inherit the root `AGENTS.md` claim protocol. Use exactly `agent/issue-<issue-num
 
 ## Mission closure evidence
 
-If this PR completes the entire mission, use `Closes #<issue>` only after every issue acceptance criterion is satisfied. A partial slice normally uses `Refs #<issue>` and leaves it open. For a small, independently executable remainder blocked outside this branch, use the bounded handoff procedure in root `AGENTS.md`: create a successor issue first that preserves all unmet criteria, keep this PR non-closing, merge the verified slice on the existing claim branch, then record the handoff and close the original issue after merge. This is an administrative handoff, never a claim of full completion.
+If this PR completes the entire mission, use `Closes #<issue>` only after every issue acceptance criterion is satisfied. A partial slice uses `Refs #<issue>` and leaves it open. For a small, independently executable remainder blocked outside this branch, use the bounded handoff procedure in root `AGENTS.md`: identify or create the appropriate successor issue first while preserving all unmet criteria, keep this PR non-closing, merge the verified slice on the existing claim branch, then record the handoff after merge. Keep the original mission open until every original acceptance criterion and Done condition is verified. A handoff does not authorize administrative closure or claim full completion.
 
 Use the standard `mission-evidence` JSON record from either PR template and follow
 [Mission closure evidence](MISSION_CLOSURE_EVIDENCE.md). Enumerate the current issue's

@@ -92,9 +92,10 @@ For each criterion, use an object with `criterion`, `implementation` (path array
 and `checks` (check ID array). Each check has `id`, `command`, `result`, `evidence`,
 `required` (boolean), and `kind`. Copy exact current issue text; record actual
 commands and outcomes, never assumed passes. Required/unrun/live-host checks keep
-the mission open. Link any handoff successor before merge without dropping any original acceptance
-requirement. After merge, record delivery and remaining scope on the original issue
-before closing it administratively.
+the mission open. Link any handoff successor before merge without dropping any
+original acceptance requirement. After merge, record delivery and remaining scope
+on the original issue and keep it open until every original acceptance criterion
+and Done condition is verified. A handoff does not authorize administrative closure.
 
 Human reviewer: compare evidence with the full current issue and Done condition.
 A green format check or checkbox alone cannot prove semantic completion and does
