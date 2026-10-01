@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:titan_zero_mobile/screens/splash_screen.dart';
+import 'package:titan_zero_mobile/screens/titan_shell_screen.dart';
 
 void main() {
   testWidgets('missing production configuration fails closed with a recoverable message', (tester) async {
