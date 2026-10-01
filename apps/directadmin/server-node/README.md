@@ -8,4 +8,10 @@ Run the local bridge with `node apps/directadmin/server-node/runtime.mjs`. Defau
 - `GET /v1/status` probes configured dependencies and reports readiness.
 - Other paths return 404; non-GET methods return 405. This bridge has no mutation or privileged host-action API.
 
-Run tests with `node --test apps/directadmin/server-node/runtime.test.mjs`. Host lifecycle, governed actions, evidence integration, service supervision, packaging/release and live DirectAdmin certification remain owned by #812 and its linked missions.
+## Build the current package
+
+Run `node scripts/package-directadmin-plugin.mjs apps/directadmin/server-node dist/directadmin`. It writes `dist/directadmin/titan-server-node.tar.gz` and prints a SHA-256 checksum. The archive has `plugin.conf` at its root, a fixed allowlist of runtime/lifecycle files, normalized timestamps and ownership, and executable modes for lifecycle scripts. Source symlinks, invalid plugin IDs/versions and missing package files fail closed.
+
+Run packaging tests with `node --test scripts/package-directadmin-plugin.test.mjs` and health tests with `node --test apps/directadmin/server-node/runtime.test.mjs`.
+
+The packager validates the existing Server Node package only; portfolio-wide role routes, lifecycle implementation, signed release provenance, service supervision and live DirectAdmin certification remain owned by #1154, #1155, #1049 and #812.
