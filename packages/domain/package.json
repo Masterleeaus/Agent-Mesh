@@ -6,7 +6,11 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./promise-capture": "./src/promise-capture.ts"
+    "./promise-capture": "./src/promise-capture.ts",
+    "./field-service-lifecycle": {
+      "types": "./src/field-service-lifecycle.d.mts",
+      "import": "./src/field-service-lifecycle.mjs"
+    }
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -26,3 +30,4 @@
     "vitest": "^3.0.5"
   }
 }
+
