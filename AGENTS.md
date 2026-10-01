@@ -82,7 +82,7 @@ Rules:
 5. One implementation claim per agent/workspace unless a Manager issue explicitly authorizes otherwise.
 6. Use the same branch through implementation, verification, PR, fixes, and handoff.
 7. Never open a second branch because the first branch conflicts. Rebase/merge/fix the existing claim branch.
-8. The canonical PR targets `main` and contains `Closes #<issue>`.
+8. The canonical PR targets `main`. Use `Closes #<issue>` only when the full mission closure gate below is satisfied; partial or unverified work must use `Refs #<issue>`.
 9. After merge, rely on governed cleanup/delete-on-merge. Do not leave replacement branches behind.
 10. Do not create child issues for implementation steps that fit inside the claimed mission. Create a new issue only for a genuinely independent substantial outcome with no existing canonical owner.
 
@@ -130,7 +130,7 @@ A mission is complete only when all are true:
 - No known relevant regression is left unexplained.
 - Canonical docs/contracts are updated if behavior or architecture changed.
 - PR contains concrete evidence: commands, results, changed boundaries, risks, and rollback/compatibility notes.
-- Branch is the canonical claim branch and the PR closes the issue.
+- Branch is the canonical claim branch and the PR closes the issue only after the mission closure gate is satisfied. A non-closing slice is not a completed mission.
 - Remaining work is explicitly out of scope or represented by a separate issue; do not hide TODOs in prose.
 
 Required task report:
@@ -147,6 +147,8 @@ A mission issue may be closed only after the full issue's acceptance criteria an
 
 - PRs that deliver only a slice must say `Refs #<mission>`, not `Closes #<mission>`, and must leave the mission open. Track an independently deliverable substantial outcome in its own issue when it has no existing canonical owner; do not split ordinary implementation steps into child issues.
 - Before using `Closes #N`, the PR must map every acceptance criterion in issue #N to implementation paths and executed verification evidence. Record failed or unrun required checks, live-host verification still required, residual risks, and follow-up issue links. If required evidence is missing or the semantic outcome is incomplete, do not close.
+- Use the standard versioned PR evidence record defined in `docs/agent/MISSION_CLOSURE_EVIDENCE.md` and both PR templates. The existing claim gate verifies live issue linkage, the issue-body digest, per-criterion mappings and explicit verification/live-host status. Unknown, failed, blocked or unrun required evidence remains non-closing.
+- Distinguish planning/specification, implementation, integration and certification outcomes. Finishing one kind does not automatically finish a broader mission of another kind.
 - A mechanical checklist or CI check can validate evidence presence and structure; it cannot determine whether the evidence actually proves the criterion. The human reviewer must compare the PR evidence with the full issue and its current Done condition.
 - If a mission was closed after only a partial slice, reopen it when possible or create a linked implementation follow-up that preserves the original scope and explains the premature closure. Mark genuinely replaced work `SUPERSEDED` with its successor link; do not treat a contract milestone as implementation completion.
 
