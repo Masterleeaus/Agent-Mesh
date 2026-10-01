@@ -36,6 +36,7 @@ class GovernanceContractTests(unittest.TestCase):
 
     def test_trusted_workflow_does_not_execute_candidate_code(self):
         workflow = (ROOT / '.github/workflows/agent-claim-gate.yml').read_text()
+        self.assertIn('name: Mission Closure Evidence Gate', workflow)
         self.assertIn('pull_request_target:', workflow)
         self.assertNotRegex(workflow, r'(?m)^  pull_request:')
         self.assertIn('ref: ${{ github.event.pull_request.base.sha || github.sha }}', workflow)

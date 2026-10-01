@@ -111,8 +111,13 @@ with actual implementation and executed evidence, and confirm:
 4. Follow-ups preserve the original scope and do not disguise missing acceptance
 5. The current PR body/head and issue still match the reviewed evidence
 
+The trusted job has the unique stable check name **Mission Closure Evidence Gate**
+so maintainers can configure it as a required status check without confusing it
+with another workflow's `validate` job. Until an applicable repository rule makes
+it required, a failing check is advisory and does not mechanically prevent merge.
 Reviewer approval and required checks must be governed by repository settings;
-this workflow does not modify branch protection or grant merge authority.
+this workflow does not modify branch protection, configure required checks or
+grant merge authority. Configuring those settings requires separate authorization.
 After issue edits or main advances, rerun the current PR gate (for example by
 updating its evidence/body or synchronizing the branch) before merge. A stale green
 check is not evidence for changed scope. `workflow_dispatch` runs policy self-tests,

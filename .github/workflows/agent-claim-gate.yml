@@ -25,6 +25,7 @@ concurrency:
 
 jobs:
   validate:
+    name: Mission Closure Evidence Gate
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
