@@ -19,6 +19,7 @@ const mutation = (id, next, expected_revision, extra = {}) => ({
   next_stage: next,
   expected_revision,
   authority_decision_ref: `authority:${id}`,
+  execution_receipt_ref: `receipt:${id}`,
   ...extra,
 });
 
@@ -88,6 +89,12 @@ test("rejects cross-company scope and provider acknowledgements as verification"
     () => advanceFieldServiceLifecycle(item, mutation("t1", "QUOTED", item.revision, { provider_ack_ref: "ack:1" })),
     /observed-verification-required/,
   );
+});
+
+test("requires a governed execution receipt for every consequential transition", () => {
+  const item = createFieldServiceLifecycle(base);
+  const { execution_receipt_ref: _ignored, ...withoutReceipt } = mutation("t1", "QUOTED", item.revision);
+  assert.throws(() => advanceFieldServiceLifecycle(item, withoutReceipt), /execution[_-]receipt[_-]ref-required/);
 });
 
 test("records a verified outcome only with evidence and preserves immutable event history", () => {
