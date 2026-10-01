@@ -275,7 +275,8 @@ export class ZeroWorkforceRuntimeDispatcher {
     const work = await this.store.get(normalized.company_id, continuation.work_id);
     if (!work) throw new Error("zero-continuation-work-not-found");
     this.assertOrigin(work, normalized as ZeroWorkforceDispatchInput);
-    const recoverable = await this.runtime.findByWork?.({ company_id: normalized.company_id, work_id: work.work_id });
+    const lookup = this.runtime.findByWork ?? this.runtime.findRecoverableByWork;
+    const recoverable = await lookup.call(this.runtime, { company_id: normalized.company_id, work_id: work.work_id }) as ZeroRuntimeRun | null;
     if (!recoverable || recoverable.run_id !== continuation.run_id) throw new Error("zero-continuation-run-not-found");
     if (!this.runtime.cancel) throw new Error("zero-cancellation-unavailable");
     const events: ZeroRuntimeEvent[] = [];
