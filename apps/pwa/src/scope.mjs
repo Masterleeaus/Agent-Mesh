@@ -28,6 +28,7 @@ export function normalizePwaContext(input) {
     device_id: required(input?.device_id, "device_id"),
     surface,
     context_revision: required(input?.context_revision, "context_revision"),
+    session_revision: required(input?.session_revision, "session_revision"),
     audience_id: input?.audience_id == null ? null : required(input.audience_id, "audience_id"),
   });
 }
@@ -36,7 +37,7 @@ function scopeKey(context) {
   const c = normalizePwaContext(context);
   // Revisions are part of the privacy partition: a refreshed or revoked server
   // context must never read projections captured under its predecessor.
-  return [c.company_id, c.actor_id, c.device_id, c.surface, c.audience_id ?? "company", c.context_revision]
+  return [c.company_id, c.actor_id, c.device_id, c.surface, c.audience_id ?? "company", c.context_revision, c.session_revision]
     .map(encodeURIComponent).join(":");
 }
 
