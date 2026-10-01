@@ -1,10 +1,10 @@
 ## Titan Zero Agent / Codex PR
 
-> Preferred agent branch: exactly `agent/<subgoal-id>`. One subgoal, one branch, through merge.
+> Required mission claim: exactly `agent/issue-<issue-number>`. One mission, one branch through review and merge.
 
-**Linked issue:** Closes #
-**Subgoal ID:** `TZ-...`
-**Claim branch:** `agent/TZ-...`
+**Linked issue:** Refs #
+**Subgoal ID:** <optional roadmap traceability; not a claim>
+**Claim branch:** `agent/issue-<issue-number>`
 **Base main SHA:** `...`
 
 ### Outcome
@@ -63,7 +63,39 @@ Unrun/blocked checks and residual risk:
 - [ ] Verification invalidated by conflict resolution was rerun
 
 ### Completion evidence
-Explain how the issue acceptance criteria are proven by code/tests/evidence. Do not use “done” or “complete” as a substitute for proof.
+Start non-closing. Keep `Refs` while any mission requirement or required check is
+unproven. For a complete mission candidate, change the linked relationship to
+`Closes`, set `mode` to `complete`, and map every current issue requirement.
+See [the evidence format and review contract](../docs/agent/MISSION_CLOSURE_EVIDENCE.md).
+
+```mission-evidence
+{
+  "version": 1,
+  "issue": 0,
+  "mode": "partial",
+  "issue_body_sha256": "<digest of the entire current issue body>",
+  "criteria": [],
+  "checks": [],
+  "live_host": {
+    "status": "unknown",
+    "reason": "<which live checks are needed, or why they are not required>"
+  },
+  "remaining_work": ["<unmet mission criteria and blocked checks>"],
+  "human_review_required": true
+}
+```
+
+For each criterion, use an object with `criterion`, `implementation` (path array),
+and `checks` (check ID array). Each check has `id`, `command`, `result`, `evidence`,
+`required` (boolean), and `kind`. Copy exact current issue text; record actual
+commands and outcomes, never assumed passes. Required/unrun/live-host checks keep
+the mission open. Link independently substantial follow-ups without dropping any
+original acceptance requirement.
+
+Human reviewer: compare evidence with the full current issue and Done condition.
+A green format check or checkbox alone cannot prove semantic completion and does
+not authorize closure. Confirm actual implementation, executed verification,
+justified live-host applicability, residual risks and current scope before approval.
 
 ### Risk / compatibility / rollback
 Describe migrations, compatibility implications, rollback path, security/privacy/cost impact, and any separately tracked follow-up.
