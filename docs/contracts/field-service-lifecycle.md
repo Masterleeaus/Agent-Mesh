@@ -1,35 +1,33 @@
-# Canonical Field-Service Lifecycle
+# Canonical field-service lifecycle contract
 
-Issue #183 owns the provider-neutral lifecycle contract. Native Titan FSM/domain services remain the system of record; Frappe/ERPNext is an optional delegated provider for explicitly mapped facets. This package is a deterministic projection boundary, not a second CRM or persistence engine.
+Issue #183 owns the provider-neutral lifecycle contract. Native Titan FSM/domain services remain the system of record; provider adapters and surfaces do not define a second state machine.
 
 ## Stable contract
 
-The published subpath is `@titan-zero/domain/field-service-lifecycle` and schema `titan.field-service.lifecycle.v2`. It reconciles these references without exposing provider DocType/table names:
+The published package schema is `titan.field-service-lifecycle.v2`. The lifecycle carries only canonical references:
 
-`company → customer → contact → location → service request → job/work order → quote → appointment/visit → task/checklist → dispatch → worker/vehicle → invoice → payment`.
+`company → customer → service request/job/work order → appointment/visit → invoice/payment`.
 
-The lifecycle state sequence is:
+It deliberately does not expose provider DocTypes, tables, database handles, credentials, or authority grants. `authority_granted` is always false. Provider adapters must resolve current authority and execute through the governed command path before applying a consequential mutation.
 
-```text
+## Lifecycle and event rules
+
+The valid progression is:
+
+```
 REQUESTED → QUOTED → APPROVED → SCHEDULED → IN_PROGRESS
           → COMPLETED → INVOICING_READY → PAID
 ```
 
-Every event carries `company_id`, `lifecycle_id`, contiguous `revision`, stable `idempotency_key`, an authority decision reference, provider-neutral references, and evidence references. Cross-company events, legacy tenant boundary keys, invalid skips, and stale revisions fail closed. Replaying an existing idempotency key is a no-op only when it names the same transition; a conflicting reuse is rejected.
+Any non-terminal stage may transition to `CANCELLED`; terminal stages cannot be reopened by this contract. Every event contains the company scope, contiguous revisions, idempotency key, authority decision reference, governed execution receipt reference, evidence references and observed verification reference.
 
-## Governed execution and evidence
+- Cross-company mutations, invalid skips and stale expected revisions fail closed.
+- Replaying the same idempotency key and payload returns the existing lifecycle unchanged.
+- Reusing an idempotency key with a different payload fails closed.
+- Every consequential transition (`COMPLETED`, `INVOICING_READY`, `PAID`) requires transition-specific evidence and observed verification.
+- A provider acknowledgement is never observed verification or completion.
+- Verified outcomes require company scope, evidence and independent observed verification.
 
-Adapters must send consequential transitions through #14's `ExecutionGateway`/governed execution path. `executeFieldServiceTransition` requires an approved authority decision, risk approval, an independent `VERIFIED` gateway result, and durable gateway evidence before folding the lifecycle event. A provider acknowledgement or HTTP success is never completion.
+## Compatibility boundary
 
-`COMPLETED` requires observed evidence and explicit verification. `INVOICING_READY` additionally requires verified completion, positive invoiceable lines, and evidence. `PAID` requires a payment reference and evidence. The accepted-evidence ledger (#913) remains the factual history; this fold only projects it.
-
-## Native/provider parity
-
-`projectNativeFieldServiceLifecycle` maps native provider states into the stable Titan sequence and rejects unknown/lossy mappings. It preserves provider-neutral references for multi-day/return visits, overlap and active-visit outcomes, completion criteria, worker skills/availability, capacity, vehicle assignment, invoice lines, and payment identifiers. Existing `work-order-lifecycle.ts`, `scheduling-guard.ts`, visit-conflict, capacity, quick-book, closeout, and validation rules remain canonical owners; adapters provide their already-validated observations rather than reimplementing them.
-
-Surfaces and Workforce consume this contract through authenticated adapters. They must not write provider storage directly, choose a company from unverified event fields, or treat Frappe state as a replacement for Titan lifecycle semantics. Physical company database/site resolution remains the provider/storage owner’s responsibility and must be bound to the same `company_id`.
-
-## Recovery and compatibility
-
-Events are immutable and replayable through `replayFieldServiceLifecycle`. Corrections, supersession, provider reconciliation, retry, and restart produce new evidence/events; they do not rewrite factual history. Legacy `account_id`/tenant fields may be normalized at compatibility ingress but are not accepted as canonical lifecycle identity.
-
+Existing native lifecycle, scheduling, dispatch, capacity, closeout and validation rules remain semantic owners. Legacy persistence and route implementations may remain compatibility donors while consumers migrate behind this contract. Provider materialization is an adapter concern and must preserve Titan stages and company identity; lossy or unknown provider states must be rejected rather than silently changing Titan semantics. Accepted evidence remains factual history; lifecycle events are immutable projections and do not rewrite it.
