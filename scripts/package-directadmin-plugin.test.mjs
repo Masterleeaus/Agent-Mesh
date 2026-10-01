@@ -7,12 +7,12 @@ import { spawnSync } from "node:child_process";
 import { packagePlugin } from "./package-directadmin-plugin.mjs";
 
 const files = {
-  "plugin.conf": "name=titan-server-node\\nversion=0.1.0\\ndescription=Server Node\\n",
-  "install.sh": "#!/usr/bin/env bash\\nexit 0\\n",
-  "update.sh": "#!/usr/bin/env bash\\nexit 0\\n",
-  "uninstall.sh": "#!/usr/bin/env bash\\nexit 0\\n",
-  "health.sh": "#!/usr/bin/env bash\\nexit 0\\n",
-  "runtime.mjs": "export const ready = true;\\n",
+  "plugin.conf": "name=titan-server-node\nversion=0.1.0\ndescription=Server Node\n",
+  "install.sh": "#!/usr/bin/env bash\nexit 0\n",
+  "update.sh": "#!/usr/bin/env bash\nexit 0\n",
+  "uninstall.sh": "#!/usr/bin/env bash\nexit 0\n",
+  "health.sh": "#!/usr/bin/env bash\nexit 0\n",
+  "runtime.mjs": "export const ready = true;\n",
 };
 
 function fixture(run) {
@@ -34,12 +34,12 @@ test("package has a deterministic archive-root layout and executable scripts", (
 
   const listing = spawnSync("tar", ["-tzf", first.archive], { encoding: "utf8" });
   assert.equal(listing.status, 0, listing.stderr);
-  assert.deepEqual(listing.stdout.trim().split("\\n").sort(), Object.keys(files).sort());
+  assert.deepEqual(listing.stdout.trim().split("\n").sort(), Object.keys(files).sort());
 
   const details = spawnSync("tar", ["-tvzf", first.archive], { encoding: "utf8" });
   assert.equal(details.status, 0, details.stderr);
   for (const name of ["install.sh", "update.sh", "uninstall.sh", "health.sh"]) {
-    assert.match(details.stdout, new RegExp(`^-rwxr-xr-x.*\\\\s${name}$`));
+    assert.match(details.stdout, new RegExp("^-rwxr-xr-x.*\\s" + name + "$"));
   }
 }));
 
@@ -50,7 +50,7 @@ test("package rejects unsafe symlink inputs", () => fixture(({ sourceDir, output
 }));
 
 test("package rejects invalid plugin identity before writing an artifact", () => fixture(({ sourceDir, outputDir }) => {
-  fs.writeFileSync(path.join(sourceDir, "plugin.conf"), "name=../escape\\nversion=0.1.0\\ndescription=invalid\\n");
+  fs.writeFileSync(path.join(sourceDir, "plugin.conf"), "name=../escape\nversion=0.1.0\ndescription=invalid\n");
   assert.throws(() => packagePlugin({ sourceDir, outputDir }), /invalid plugin id/);
   assert.equal(fs.existsSync(outputDir), false);
 }));
