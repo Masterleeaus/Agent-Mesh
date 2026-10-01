@@ -1,0 +1,39 @@
+name: PWA Package
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/pwa/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/pwa-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/pwa/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/pwa-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  pwa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Typecheck
+        working-directory: apps/pwa
+        run: npm run typecheck
+      - name: Test
+        working-directory: apps/pwa
+        run: npm test
+      - name: Build
+        working-directory: apps/pwa
+        run: npm run build
