@@ -12,7 +12,7 @@ MANIFEST = ROOT / "roadmap" / "SUBGOAL-ISSUE-MANIFEST.json"
 GOALS_DIR = ROOT / "roadmap" / "goals"
 SUBGOAL_RE = re.compile(r"^(TZ-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
 BRANCH_RE = re.compile(r"^agent/(TZ-[A-Z0-9]+(?:-[A-Z0-9]+)*)$")
-ISSUE_BRANCH_RE = re.compile(r"^agent/issue-(\\d+)$")
+ISSUE_BRANCH_RE = re.compile(r"^agent/issue-(\d+)$")
 CANONICAL_GOAL_IDS = {"TZ-G00"} | {f"TZ-ROADMAP-{i:02d}" for i in range(1, 55)}
 
 
@@ -181,7 +181,7 @@ def validate_pull_request():
         missing_structure = missing_agent_pr_structure(body)
         if missing_structure:
             fail("agent PR body is missing required Codex evidence structure: " + ", ".join(missing_structure))
-        issue_match = re.search(r"(?im)\\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\\s+#(\\d+)\\b", body)
+        issue_match = re.search(r"(?im)\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)\b", body)
         if not issue_match:
             fail("Subgoal PR body must link its roadmap issue with 'Closes #<issue-number>'")
         issue_number = int(issue_match.group(1))
@@ -190,7 +190,7 @@ def validate_pull_request():
             fail(f"PR body must record canonical claim branch agent/issue-{issue_number}")
         if not all(section in body for section in ("## Outcome", "## Verification performed", "## Remaining")):
             fail("issue-claim PR must include Outcome, Verification performed, and Remaining sections")
-        issue_match = re.search(r"(?im)\\b(?:refs|close[sd]?|fix(?:e[sd])?|resolve[sd]?)\\s+#(\\d+)\\b", body)
+        issue_match = re.search(r"(?im)\b(?:refs|close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)\b", body)
         if not issue_match or int(issue_match.group(1)) != issue_number:
             fail(f"PR body must link claimed mission #{issue_number} with Refs or Closes")
 
