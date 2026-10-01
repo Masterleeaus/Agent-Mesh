@@ -39,7 +39,7 @@ test("package has a deterministic archive-root layout and executable scripts", (
   const details = spawnSync("tar", ["-tvzf", first.archive], { encoding: "utf8" });
   assert.equal(details.status, 0, details.stderr);
   for (const name of ["install.sh", "update.sh", "uninstall.sh", "health.sh"]) {
-    assert.match(details.stdout, new RegExp("^-rwxr-xr-x.*\\s" + name + "$"));
+    assert.match(details.stdout, new RegExp("^-rwxr-xr-x.*\\s" + name + "$", "m"));
   }
 }));
 
