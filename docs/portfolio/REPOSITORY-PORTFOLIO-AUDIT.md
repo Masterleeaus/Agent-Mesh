@@ -122,3 +122,10 @@ No repositories were deleted or archived. The table marks candidates for the own
 ### Banner quality correction
 
 The Worksuite README currently uses a placeholder external graphic, not a genuine project banner. It should not be counted as a completed banner. The portfolio requirement remains project-specific, accurate imagery with valid repository-relative or otherwise controlled asset hosting.
+
+
+### Branch and release checks for placeholder candidates
+
+- `cleanhub` and `cleanhub2` each have only their `main` branch, no tags, and no releases. These remain the strongest deletion candidates, subject to an external-reference/settings check.
+- `Titan-Zero` has no tags, releases, issues, or pull requests, but it has four non-main branches with unique integration work. The branches include MobileKit components and notices, a five-tier offline device-runtime package with a test, an interaction-kernel upgrade plan, and a merge-verification record. It is **not a deletion candidate until that branch work is reviewed and dispositioned**.
+- Other multi-branch repos across the account include very large branch sets. No branches were merged or deleted in this portfolio pass; they need their own per-repository branch consolidation review, with mergeability, unique commits, tests, and external references checked before cleanup.
