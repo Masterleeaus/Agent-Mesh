@@ -141,6 +141,15 @@ Required task report:
 5. Gate/test results
 6. Risks, rollback, and follow-ups
 
+### Mission closure gate
+
+A mission issue may be closed only after the full issue's acceptance criteria and Done condition are satisfied. A related commit, green CI, contract, schema, projection, documentation slice, or partial implementation does not close the parent mission by itself.
+
+- PRs that deliver only a slice must say `Refs #<mission>`, not `Closes #<mission>`, and must leave the mission open. Track an independently deliverable substantial outcome in its own issue when it has no existing canonical owner; do not split ordinary implementation steps into child issues.
+- Before using `Closes #N`, the PR must map every acceptance criterion in issue #N to implementation paths and executed verification evidence. Record failed or unrun required checks, live-host verification still required, residual risks, and follow-up issue links. If required evidence is missing or the semantic outcome is incomplete, do not close.
+- A mechanical checklist or CI check can validate evidence presence and structure; it cannot determine whether the evidence actually proves the criterion. The human reviewer must compare the PR evidence with the full issue and its current Done condition.
+- If a mission was closed after only a partial slice, reopen it when possible or create a linked implementation follow-up that preserves the original scope and explains the premature closure. Mark genuinely replaced work `SUPERSEDED` with its successor link; do not treat a contract milestone as implementation completion.
+
 ## 8. Handoff and concurrency
 
 Before final push or PR update:
