@@ -129,3 +129,13 @@ The Worksuite README currently uses a placeholder external graphic, not a genuin
 - `cleanhub` and `cleanhub2` each have only their `main` branch, no tags, and no releases. These remain the strongest deletion candidates, subject to an external-reference/settings check.
 - `Titan-Zero` has no tags, releases, issues, or pull requests, but it has four non-main branches with unique integration work. The branches include MobileKit components and notices, a five-tier offline device-runtime package with a test, an interaction-kernel upgrade plan, and a merge-verification record. It is **not a deletion candidate until that branch work is reviewed and dispositioned**.
 - Other multi-branch repos across the account include very large branch sets. No branches were merged or deleted in this portfolio pass; they need their own per-repository branch consolidation review, with mergeability, unique commits, tests, and external references checked before cleanup.
+
+
+### Active branch review — 2026-10-02
+
+A targeted review of ten substantive repositories found active pull requests across the account. Examples include: `clean` #130–#135; `cleanly` #121, #122, #124, #126; `modules` #84, #88–#91; `TitanPro` #550, #554, #567 and other open work; current workforce PRs #1037–#1183; and `AI-Coding-Studio` #4–#25. This is a partial sample, not a complete PR inventory.
+
+- Treat branches attached to open PRs as active review items. Do not delete them as “stale” until each PR is reviewed for mergeability, CI, unique commits, provenance, and whether its work is already on the base branch.
+- Some PRs are marked WIP, depend on non-main bases, or overlap with other PRs. Maintain a per-repository queue with dependency order and canonical target rather than merging solely by branch name.
+- The portfolio cleanup process therefore has two distinct tracks: (1) repository disposition candidates with no unique branch history; (2) active implementation branches that need code review, tests, and merge decisions.
+- No branch or PR was merged, closed, or deleted in this pass.
