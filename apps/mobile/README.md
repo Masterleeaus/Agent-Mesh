@@ -35,3 +35,6 @@ Optional:
 - `TITAN_AUTH_TOKEN`
 
 Missing production configuration fails closed. `LocalMvpTitanGateway` is development/offline compatibility only and is not wired into the production shell. Core projections remain authority-neutral and consequential commands require server acceptance/receipts.
+## DirectAdmin-hosted Workforce boundary
+
+The current integration inventory and versioned mobile-to-Workforce boundary are recorded in [docs/integration/MOBILE-DIRECTADMIN-WORKFORCE-BOUNDARY.md](../../docs/integration/MOBILE-DIRECTADMIN-WORKFORCE-BOUNDARY.md). The repository currently has the authority-neutral Surface projection/command client, but no authenticated hosted Workforce route or deployed DirectAdmin identity bridge. Production remains fail-closed until the canonical hosted owners (#1159/#1182, #1049/#302/#812, #1050/#811) provide and verify those endpoints; do not substitute LocalMvp or a web UI/database path.
