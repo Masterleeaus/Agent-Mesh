@@ -10,7 +10,7 @@ The installable shell and its safe client boundaries are implemented. The PWA in
 
 - A verified server session resolves `company_id`; client-supplied company identifiers never grant membership or authority.
 - The client projection helper is GET-only, same-origin, `no-store`, and checks returned `company_id` against the context resolved by the host application.
-- Local projections are currently held in a bounded in-memory working set only. Company, actor, device, mode or customer-audience rotation clears it. It is not durable and creates no authority.
+- Local projections are currently held in a bounded in-memory working set only. Company, actor, device, mode, customer-audience, context-revision, or session-revision rotation clears it. It is not durable and creates no authority.
 - No mutation, offline outbox, sensitive cache, browser encryption scheme, API endpoint or DirectAdmin URL is invented here. These require the canonical owners/contracts and real deployed host.
 - Frappe remains an optional provider below Titan domain contracts; native Titan FSM remains the default.
 
