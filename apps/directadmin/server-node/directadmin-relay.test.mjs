@@ -300,26 +300,46 @@ test("DA-like URL-encoded HEADERS variants and fragmented pipe_post stdin reach 
   assert.deepEqual(f.requests[2].body, Buffer.from(body));
 });
 
-test("Apache 443 cookie boundary strips the whole Cookie header only on matching requests", () => {
+test("Apache cookie-boundary source fixture models vhost scope and cookie edge cases", () => {
   const boundaryPath = path.join(sourceRoot, "operator-config/apache-443-cookie-boundary.conf");
-  const directive = fs.readFileSync(boundaryPath, "utf8").split(/\r?\n/).find((line) => line.startsWith("RequestHeader "));
+  const template = fs.readFileSync(boundaryPath, "utf8");
+  const directive = template.split(/\r?\n/).find((line) => line.startsWith("RequestHeader "));
   assert.equal(
     directive,
     'RequestHeader unset Cookie "expr=%{req:Cookie} =~ m#(^|;[[:blank:]]*)__Host-titan-da-session=#"',
   );
+  assert.equal(template.split(/\r?\n/).some((line) => /^Header\s/.test(line)), false,
+    "the template only edits request headers; it declares no response-header mutation");
   const titanCookie = new RegExp("(^|;[ \\t]*)__Host-titan-da-session=");
-  const before443Application = (cookie) => titanCookie.test(cookie) ? undefined : cookie;
+  const beforeApplication = (vhost, cookie) =>
+    vhost === "titan-443" && titanCookie.test(cookie) ? undefined : cookie;
   for (const header of [
-    DIRECTADMIN_SESSION_COOKIE + "=fixture; marketing=ok",
-    "marketing=ok; " + DIRECTADMIN_SESSION_COOKIE + "=fixture; preference=dark",
-    "marketing=ok; " + DIRECTADMIN_SESSION_COOKIE + "=one; " + DIRECTADMIN_SESSION_COOKIE + "=two",
-    DIRECTADMIN_SESSION_COOKIE + "=fixture",
+    DIRECTADMIN_SESSION_COOKIE + "=fixture; marketing=ok", // first
+    "marketing=ok; " + DIRECTADMIN_SESSION_COOKIE + "=fixture; preference=dark", // middle
+    "marketing=ok; " + DIRECTADMIN_SESSION_COOKIE + "=fixture", // last
+    "marketing=ok; " + DIRECTADMIN_SESSION_COOKIE + "=one; " + DIRECTADMIN_SESSION_COOKIE + "=two", // duplicate names
+    DIRECTADMIN_SESSION_COOKIE + "=encoded%3Bvalue; marketing=ok", // encoded delimiter in value
   ]) {
-    assert.equal(before443Application(header), undefined);
+    assert.equal(beforeApplication("titan-443", header), undefined);
   }
-  assert.equal(before443Application("marketing=ok; __Host-titan-da-session-extra=lookalike"),
-    "marketing=ok; __Host-titan-da-session-extra=lookalike");
-  assert.equal(before443Application("marketing=ok; preference=dark"), "marketing=ok; preference=dark");
+  for (const header of [
+    "marketing=ok; preference=dark",
+    "marketing=__Host-titan-da-session%3Dfixture",
+    "marketing=ok; __Host-titan-da-session-extra=lookalike",
+    "marketing=ok; %5F%5FHost-titan-da-session=encoded-name",
+    "marketing=ok; __HOST-titan-da-session=case-variant",
+  ]) {
+    assert.equal(beforeApplication("titan-443", header), header);
+  }
+  const mixedCookies = "marketing=login-state; " + DIRECTADMIN_SESSION_COOKIE + "=fixture";
+  assert.equal(beforeApplication("other-443", mixedCookies), mixedCookies,
+    "the candidate directive must be scoped to the selected HTTPS vhost");
+  assert.equal(beforeApplication("directadmin-2222", mixedCookies), mixedCookies,
+    "the Apache :443 vhost filter must not alter DirectAdmin port 2222");
+  assert.equal(beforeApplication("titan-443", "marketing=login-state; preference=dark"),
+    "marketing=login-state; preference=dark");
+  assert.deepEqual(template.split(/\r?\n/).filter((line) => /^(?:RequestHeader|Header)\s/.test(line)), [directive],
+    "the candidate source contains only a request-header directive; runtime response behavior is not exercised here");
 });
 
 test("shared browser fetch helper maps fixed SDK routes and refuses arbitrary URLs, methods, and identity headers", async () => {
