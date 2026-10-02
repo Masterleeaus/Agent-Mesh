@@ -9,7 +9,8 @@ import { packageFiles as WORKFORCE_PACKAGE_FILES } from "../apps/directadmin/wor
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const WORKFORCE_SDK_SOURCE = "packages/titan-platform/src/directadmin-plugin.ts";
-const WORKFORCE_SDK_COMPILER_VERSION = "0.27.3";
+const ROOT_PACKAGE = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+const WORKFORCE_SDK_COMPILER_VERSION = ROOT_PACKAGE.devDependencies?.esbuild;
 const DEVELOPER_PORTAL_EXECUTABLE_FILES = [
   "admin/index.html", "reseller/index.html", "user/index.html",
   "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh",
