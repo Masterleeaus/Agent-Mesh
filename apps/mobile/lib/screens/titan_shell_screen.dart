@@ -111,6 +111,7 @@ class _ContextCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
