@@ -57,6 +57,28 @@ test("compiles only a verified single-route Builder snapshot into inert Microweb
  await assert.rejects(compileMicroweberPageDraft(unsupportedRequest,{verifyCurrentSnapshot:async()=>true}),/builder-component-unsupported/);
 });
 
+test("renders Builder image blocks only from safe same-site paths with escaped alt text",async()=>{
+ const responsive={mobile:"stack",tablet:"grid",desktop:"grid"};
+ const snapshot={id:"builder-image-page",company_id:"co-1",surface:"go",title:"Company",revision:1,status:"draft",updated_at:"2026-10-03T00:00:00Z",root:{id:"root",type:"stack",children:[{id:"brand-image",type:"image",props:{src:"/media/brand.png",alt:"A & B <logo>",responsive},children:[]}]}};
+ const source_snapshot_hash=await computeBrandBuilderSnapshotHash(snapshot);
+ const request=(await createBrandRendererHandoff({company_id:"co-1",publication_id:"pub-image",site_id:"site-image",version:1,source_snapshot_hash,renderer:"microweber",environment:"preview",route_manifest:["/"],snapshot,verifyCurrentSnapshot:async()=>true})).provider_request;
+ const page=await compileMicroweberPageDraft(request,{verifyCurrentSnapshot:async()=>true});
+ assert.equal(page.content_html,'<div><img src="/media/brand.png" alt="A &amp; B &lt;logo&gt;" loading="lazy"></div>');
+ for(const src of ["//outside.test/image.png","/../private.png"]){
+  const unsafe={...snapshot,root:{id:"root",type:"stack",children:[{id:"image",type:"image",props:{src,alt:"image",responsive},children:[]}]}};
+  const hash=await computeBrandBuilderSnapshotHash(unsafe);
+  const unsafeRequest=(await createBrandRendererHandoff({company_id:"co-1",publication_id:`pub-${encodeURIComponent(src)}`,site_id:"site-image",version:1,source_snapshot_hash:hash,renderer:"microweber",environment:"preview",route_manifest:["/"],snapshot:unsafe,verifyCurrentSnapshot:async()=>true})).provider_request;
+  await assert.rejects(compileMicroweberPageDraft(unsafeRequest,{verifyCurrentSnapshot:async()=>true}),/microweber-image-source-invalid/);
+ }
+ const active={...snapshot,root:{id:"root",type:"stack",children:[{id:"image",type:"image",props:{src:"javascript:alert(1)",alt:"image",responsive},children:[]}]}};
+ const activeHash=await computeBrandBuilderSnapshotHash(active);
+ await assert.rejects(createBrandRendererHandoff({company_id:"co-1",publication_id:"pub-active-image",site_id:"site-image",version:1,source_snapshot_hash:activeHash,renderer:"microweber",environment:"preview",route_manifest:["/"],snapshot:active,verifyCurrentSnapshot:async()=>true}),/builder_security_active_content_denied/);
+ const dataImage={...snapshot,root:{id:"root",type:"stack",children:[{id:"image",type:"image",props:{src:"data:image/svg+xml,<svg/>",alt:"image",responsive},children:[]}]}};
+ const dataHash=await computeBrandBuilderSnapshotHash(dataImage);
+ const dataRequest=(await createBrandRendererHandoff({company_id:"co-1",publication_id:"pub-data-image",site_id:"site-image",version:1,source_snapshot_hash:dataHash,renderer:"microweber",environment:"preview",route_manifest:["/"],snapshot:dataImage,verifyCurrentSnapshot:async()=>true})).provider_request;
+ await assert.rejects(compileMicroweberPageDraft(dataRequest,{verifyCurrentSnapshot:async()=>true}),/microweber-image-source-invalid/);
+});
+
 test("refuses renderer handoff when authored URLs carry credentials or secret query parameters",async()=>{
  for(const href of ["https://preview-user:secret@example.test/path","https://example.test/path?access_token=private"]){
   const snapshot={id:"builder-credential-url",company_id:"co-1",surface:"go",title:"Unsafe link",revision:1,status:"draft",updated_at:"2026-10-03T00:00:00Z",root:{id:"root",type:"stack",children:[{id:"link",type:"text",props:{href,responsive:{mobile:"stack",tablet:"grid",desktop:"grid"}},children:[]}]}};
