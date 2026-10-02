@@ -51,7 +51,7 @@ The inspected inventory contains distinct projects including `ZeroPay`, `Interac
 
 - `Developer-Workforce-Extension-` retains an opaque upstream ID/version directory containing the seed extension; it now has a package-level README. Normalize the path only through a provenance-preserving migration.
 - `Documents` has a landing README; the ZIP archive still needs contents and provenance review.
-- Portfolio banner pass added checked-in, project-specific SVG headers to 29 additional substantive repositories; together with existing artwork, 30 of 33 default-branch READMEs now reference a checked-in banner. The two near-empty deletion candidates remain intentionally unbranded. Verify image rendering in GitHub after any repository rename.
+- Portfolio banner pass added checked-in, project-specific SVG headers to 29 additional substantive repositories; there are now 30 checked-in SVG banner assets; Climate Crew retains its existing wide PNG header, so 31 of 33 default-branch READMEs have a checked-in banner. The two near-empty deletion candidates remain intentionally unbranded. Verify image rendering in GitHub after any repository rename.
 - Several repositories still need stronger status, setup, CI/test, license/provenance, and screenshot coverage.
 - Repository descriptions/topics, release tags, branch protection, and repo-level settings have not been normalized because no repository metadata update operation was exposed in this session.
 - Some repositories contain imported ZIPs, generated artifacts, environment variants, or OS files. Review each item and its history before removing it.
@@ -148,7 +148,7 @@ A repository-by-repository naming map with proposed GitHub slugs, README titles,
 
 ### Portfolio branding pass — 2026-10-02
 
-- Added project-specific wide SVG banner files and README references across 29 additional repositories, including prototypes and source archives. The private `cleanly` workspace also has its own banner. A follow-up fetch verified that all 30 README banner references point to checked-in SVG files.
+- Added project-specific wide SVG banner files and README references across 29 additional repositories, including prototypes and source archives. The private `cleanly` workspace also has its own banner. A follow-up fetch verified that all 30 SVG banner references point to checked-in files; Climate Crew's existing PNG header is also checked in.
 - Kept the banner system consistent in layout and varied each project's title, status label, and accent color. Existing project artwork remains alongside the banner where already present.
 - Left `cleanhub` and `cleanhub2` unbranded because both are near-empty deletion candidates pending disposition.
 - Banner images are documentation assets; no application builds or tests were run for this visual pass.
