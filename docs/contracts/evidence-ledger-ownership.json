@@ -1,0 +1,78 @@
+{
+  "schema": "titan.evidence-ledger-ownership.v1",
+  "accepted_factual_owner": "packages/tools/accepted-evidence-ledger.mjs",
+  "inventory": [
+    {
+      "path": "packages/tools/accepted-evidence-ledger.mjs",
+      "role": "accepted-factual-history",
+      "scope": "Verified consequential job-completion outcomes only; append-only normalization and deterministic job projection.",
+      "durability": "The Workforce adapter persists accepted entries in its company-scoped evidence table; the ledger class itself is an in-memory validator/reducer.",
+      "consumers": ["services/workforce/src/field-service-runtime.mjs"],
+      "limitations": ["Not yet the accepted factual history for every business domain.", "Broader projection and placement convergence remains open under #1235 and #1233."]
+    },
+    {
+      "path": "packages/offline/restart-evidence-ledger.mjs",
+      "role": "restart-recovery-evidence",
+      "scope": "Operational checkpoint/restart receipts; never accepted business facts and never permission to replay effects.",
+      "durability": "Writes through the injected company business database.",
+      "consumers": ["packages/offline/restart-checkpoint.mjs", "packages/offline/verify-pass07.mjs"]
+    },
+    {
+      "path": "packages/settings/control-plane/settings-change-ledger.mjs",
+      "role": "configuration-audit",
+      "scope": "Settings-change audit records; validates company scope and redacts sensitive values; does not establish business outcomes or grant authority.",
+      "durability": "Pure record builder; persistence belongs to the settings adapter.",
+      "consumers": []
+    },
+    {
+      "path": "packages/titan-platform/src/workforce-evidence/value-ledger.ts",
+      "role": "derived-value-analytics",
+      "scope": "Value receipt derived from an already verified outcome and receipt references; no accepted factual authority.",
+      "durability": "Pure projection/receipt builder.",
+      "consumers": ["packages/titan-platform/src/workforce-evidence/index.ts"]
+    },
+    {
+      "path": "packages/domain/src/job-ledger.ts",
+      "role": "derived-commercial-projection",
+      "scope": "Estimate-versus-actual commercial projection from supplied estimate, labor, expense, change-order, and payment inputs.",
+      "durability": "Pure calculation; it does not persist accepted facts.",
+      "consumers": ["packages/domain/src/index.ts"]
+    },
+    {
+      "path": "apps/web/lib/jobs/job-ledger.ts",
+      "role": "legacy-domain-projection-loader",
+      "scope": "Composes estimate, mutable SQL rows, time, expenses, change orders, and invoices for the legacy web Job Ledger UI; it is not accepted evidence.",
+      "durability": "Reads application tables through the authenticated session query adapter.",
+      "consumers": ["apps/web/app/app/jobs/[id]/page.tsx", "apps/web/app/app/jobs/[id]/materials/page.tsx"]
+    },
+    {
+      "path": "apps/web/lib/jobs/job-ledger-co-draft.ts",
+      "role": "commercial-proposal-builder",
+      "scope": "Builds an editable change-order proposal from a commercial projection; it neither accepts nor persists facts.",
+      "durability": "Pure proposal builder.",
+      "consumers": ["apps/web/app/app/jobs/[id]/DraftCoFromVarianceButton.tsx", "apps/web/app/app/jobs/[id]/JobLedgerCard.tsx"]
+    },
+    {
+      "path": "apps/web/app/app/jobs/[id]/JobLedgerCard.tsx",
+      "role": "commercial-projection-ui",
+      "scope": "Displays the commercial projection and proposal affordances; UI state is not factual history.",
+      "durability": "Presentation only.",
+      "consumers": ["apps/web/app/app/jobs/[id]/page.tsx"]
+    },
+    {
+      "path": "apps/browser/src/ai/ai-audit-ledger.js",
+      "role": "bounded-provider-request-diagnostics",
+      "scope": "In-memory, bounded provider/model request diagnostics; explicitly nonpersistent and not a business fact source.",
+      "durability": "In-memory ring buffer capped at 250 records.",
+      "consumers": ["apps/browser/src/ai/provider-gateway.js", "apps/browser/src/lib/onboard-ai-host-integration.js"]
+    },
+    {
+      "path": "apps/browser/src/titan-zero/manager-workspace-ledger.js",
+      "role": "development-workspace-coordination",
+      "scope": "Titan Code Manager workspace/claim/projection metadata; development tooling only, not production business state.",
+      "durability": "No persistence in this module; immutable projections are built from supplied workspace state.",
+      "consumers": [],
+      "limitations": ["No active source import was found in the production application entrypoints during this inventory."]
+    }
+  ]
+}

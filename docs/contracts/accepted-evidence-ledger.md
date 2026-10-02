@@ -1,6 +1,6 @@
 # Accepted Evidence and Business Reality Contract
 
-Status: active for the certified job-completion slice (`titan.business.accepted-evidence/v1`).
+Status: active for the certified job-completion slice (`titan.business.accepted-evidence/v1`). The broader convergence mission remains open; see the [current ownership inventory](./evidence-ledger-ownership.json) and issue #1235.
 
 ## Ownership matrix
 
@@ -12,6 +12,8 @@ Status: active for the certified job-completion slice (`titan.business.accepted-
 | Restart/recovery evidence | `packages/offline/restart-evidence-ledger.mjs` | Operational recovery evidence only; it is not business fact. |
 | Workforce/value analytics | `packages/titan-platform/src/workforce-evidence/*` | Derived performance/value evidence; it cannot manufacture authority or business fact. |
 | Provider receipts | `ExecutionGateway` evidence sink input | Intermediate execution history; provider acknowledgement is never a verified outcome. |
+
+This matrix is intentionally scoped to the job-completion slice. The linked inventory classifies other active ledger-named sources and their reachability so that recovery, configuration audit, commercial projections, development tooling, and value analytics are not mistaken for accepted factual history.
 
 ## Certified flow
 

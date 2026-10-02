@@ -2,6 +2,8 @@
 import json
 from pathlib import Path
 import re
+import subprocess
+import sys
 import unittest
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -55,6 +57,15 @@ class GovernanceContractTests(unittest.TestCase):
         self.assertIn('persist-credentials: false', workflow)
         self.assertIn('contents: read', workflow)
         self.assertIn('validate-agent-claim.py --self-test', workflow)
+
+    def test_evidence_ledger_ownership_inventory_is_complete_and_gated(self):
+        script = ROOT / '.github/scripts/check-evidence-ledger-ownership.py'
+        result = subprocess.run([sys.executable, str(script)], cwd=ROOT, text=True, capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        workflow = (ROOT / '.github/workflows/titan-ci.yml').read_text()
+        self.assertIn('check-evidence-ledger-ownership.py', workflow)
+        contract = (ROOT / 'docs/contracts/accepted-evidence-ledger.md').read_text()
+        self.assertIn('evidence-ledger-ownership.json', contract)
 
 
 if __name__ == '__main__':
