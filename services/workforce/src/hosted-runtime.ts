@@ -71,7 +71,8 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
       || stored.audience !== "workforce" || stored.surface !== "zero"
       || !Number.isSafeInteger(stored.session_revision) || typeof stored.provider !== "string"
       || typeof stored.subject !== "string" || typeof stored.session_id !== "string"
-      || typeof stored.device_id !== "string" || typeof stored.context_revision !== "string") {
+      || typeof stored.device_id !== "string" || typeof stored.context_revision !== "string"
+      || (stored.source_session_required === true && stored.source_session === undefined)) {
       throw new Error("runtime-authentication-required");
     }
     if (typeof stored.credential_expires_at !== "string") {
@@ -129,7 +130,8 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
         return { company_id: current.company_id, actor_id: current.actor_id, device_id: current.device_id,
           session_id: current.session_id, context_revision: current.context_revision, surface: verified.surface,
           authenticated_identity: { ...proof, audience: "workforce", company_id: current.company_id,
-            actor_id: current.actor_id, context_revision: current.context_revision, surface: verified.surface } };
+            actor_id: current.actor_id, context_revision: current.context_revision, surface: verified.surface,
+            ...(proof.source_session ? { source_session_required: true } : {}) } };
       } catch { throw new Error("conversation-authentication-failed"); }
     },
   };
