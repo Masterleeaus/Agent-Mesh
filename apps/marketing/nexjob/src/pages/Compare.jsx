@@ -8,7 +8,7 @@ const rows=[
 ['Data locality','Typically vendor/cloud architecture','Device, customer-hosted, BYO cloud or Titan-managed options where supported'],
 ['Models & keys','Usually vendor-selected/bundled','Private/local models and BYO provider/API keys where supported'],
 ['Lock-in','Value concentrated inside one vendor application','Designed for portability, provider choice and use of existing systems'],
-['Environmental capability','Usually separate from field-service software','Environmental assessment, audit and improvement workflows can be integrated'],
+['Environmental capability','Usually separate from cleaning business software','Environmental assessment, audit and improvement workflows can be integrated'],
 ['Learning','Product configuration and assistant history','Each Zero can learn from that person’s corrections, changing role and experience while shared business outcomes remain separately governed'],
 ['Decision support','Often a feature-specific assistant or report','Evidence, uncertainty, investigation and multiple reasoning perspectives can inform consequential decisions'],
 ['Automation trust','Automation permissions are commonly configured as product settings','Capability-specific progression from observation to bounded automation; intelligence and permission remain separate'],
