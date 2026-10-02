@@ -121,7 +121,8 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
   assert.equal(controller.state.context.company_id, 'company-b');
   assert.equal(sessionInvalidations, 0, 'the current company session recovers after the owner returns');
 
-  await auth.registry.revokeSession(proof.session_id, 2);
+  const currentSession = await auth.bridgeSessions.authenticate(credential);
+  await auth.registry.revokeSession(currentSession.context.session_id, currentSession.context.session_revision);
   await controller.submit({ action: 'pause', work_id: 'company-b-work', reason: 'Revoked fixture request' });
   assert.equal(intents.length, 2);
   assert.ok(sessionInvalidations > 0, 'a canonical revoked-session 401 invalidates the shared SDK session');
