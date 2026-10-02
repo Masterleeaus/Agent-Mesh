@@ -1,7 +1,7 @@
 {
   "schema": "titan.release-readiness-audit/v1",
-  "observed_at": "2026-10-02T10:17:20Z",
-  "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+  "observed_at": "2026-10-02T10:28:22Z",
+  "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
   "scope": "28 user-requested audit headings; evidence presentation only, not a capability/host catalogue",
   "audit_completeness": "PARTIAL",
   "production_eligibility": "DENIED_MISSING_EVIDENCE",
@@ -53,17 +53,17 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/mcp-projection.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:3f3091727dc46581e77cf8eeeb11d2ca878a49562faa2323c57b8aacae3eafe7",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/mcp-projection.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/mcp-projection.ts"
         },
         {
           "path": "packages/titan-platform/src/ported/titan-connect/mcp-host-contract.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:311dbae9f0ea8f875c402863afdf969b0774e9084a461b5811a9e1905cc6b5ed",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/ported/titan-connect/mcp-host-contract.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/ported/titan-connect/mcp-host-contract.ts"
         }
       ]
     },
@@ -99,17 +99,17 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/runtime.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:29d01ceffdf94a606c5efb710fa8d9c797860fbaf6f8cf0c4d4bb0199479bc58",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/runtime.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/runtime.ts"
         },
         {
           "path": "packages/titan-platform/src/security-boundary.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:e7a05ecf47788dd3eab6b9eb958c730c734a487e43edabf5165fa61eb99747d4",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/security-boundary.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/security-boundary.ts"
         }
       ]
     },
@@ -147,17 +147,17 @@
       "sources": [
         {
           "path": "packages/domain/src/completion-criteria.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:2f63b648e40e58b4ed6ed6906113d4f850bd1976d9bd2d1845d46db0a5e9ff3a",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/domain/src/completion-criteria.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/domain/src/completion-criteria.ts"
         },
         {
           "path": "packages/domain/src/work-order-lifecycle.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:93ea4d9480fdd449745fa91179027e3c9d12339b91cd30665391f7abba197ca2",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/domain/src/work-order-lifecycle.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/domain/src/work-order-lifecycle.ts"
         }
       ]
     },
@@ -194,17 +194,17 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/connector-runtime.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:9cba730fdad80145ec46174fb0e4d6ad9f81b5da76976af6e53de4e19652f20b",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/connector-runtime.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/connector-runtime.ts"
         },
         {
           "path": "packages/titan-platform/src/ported/titan-connect/channel-binding.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:eecdf637398308d80242936217bf6e5c267a5fa4755234367c0905c101d39b87",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/ported/titan-connect/channel-binding.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/ported/titan-connect/channel-binding.ts"
         }
       ]
     },
@@ -240,10 +240,10 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/communication-announcement.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:feb7818a07f1ba9e2b8d3f451122c86801b485cd015e491cd609fe2b1302b808",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/communication-announcement.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/communication-announcement.ts"
         }
       ]
     },
@@ -281,17 +281,17 @@
       "sources": [
         {
           "path": "docs/contracts/decision-lifecycle.md",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:dc148626b5aa8a38f8fab8258844f03bd9d8ac9f0a16227987be65bbeba0c49e",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/docs/contracts/decision-lifecycle.md"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/docs/contracts/decision-lifecycle.md"
         },
         {
           "path": "packages/tools/decision-lifecycle.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:1ef02d01d462e54ec2817bd0d721caea8ff20f600bd3b97b684d22661c9f74fd",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/tools/decision-lifecycle.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/tools/decision-lifecycle.mjs"
         }
       ]
     },
@@ -330,24 +330,24 @@
       "sources": [
         {
           "path": "docs/contracts/deployment-release-lifecycle.md",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:e42a9b066586501f394bfd900e6f58af4221d38eaab675bcb3324e921c71b878",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/docs/contracts/deployment-release-lifecycle.md"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/docs/contracts/deployment-release-lifecycle.md"
         },
         {
           "path": "infra/compose.vps.yml",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:0be5e7d52c1d122f3f7fb3af5b1638fed748f98856c95cfdba924608de2f1ea6",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/infra/compose.vps.yml"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/infra/compose.vps.yml"
         },
         {
           "path": "packages/deployment/release-lifecycle.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:e9a4c4ecc0686e9dbce8142e7ad1d88961c2b5d14fe0f0fbd5a4a04dc199414b",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/deployment/release-lifecycle.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/deployment/release-lifecycle.mjs"
         }
       ]
     },
@@ -361,8 +361,10 @@
         "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302"
       ],
       "implementation_paths": [
+        ".github/workflows/directadmin-plugin-portfolio.yml",
         "apps/directadmin/dev-access/README.md",
         "apps/directadmin/dev-access/lib/app.php",
+        "apps/directadmin/dev-access/scripts/update.sh",
         "apps/directadmin/server-node/README.md",
         "apps/directadmin/server-node/directadmin-relay.mjs",
         "apps/directadmin/server-node/directadmin-relay.test.mjs",
@@ -374,14 +376,21 @@
         "apps/directadmin/server-node/runtime.test.mjs",
         "apps/directadmin/server-node/update.sh",
         "apps/directadmin/server-node/user/directadmin-gateway.raw",
+        "docs/directadmin/PLUGIN-RELEASE-RUNBOOK.md",
+        "scripts/directadmin-dev-access-archive-integration.php",
+        "scripts/package-directadmin-plugin.mjs",
+        "scripts/package-directadmin-portfolio.mjs",
+        "scripts/package-directadmin-portfolio.test.mjs",
+        "scripts/test-directadmin-dev-access-archive.mjs",
+        "scripts/test-directadmin-dev-access-candidate.mjs",
         "services/workforce/src/directadmin-workforce-owners.ts",
         "services/workforce/src/hosted-runtime.ts",
         "services/workforce/src/server.ts"
       ],
-      "source_assessment": "Current main includes the loopback Server Node health bridge and the #1211 partial control API/DirectAdmin relay. The control API uses a node transport bearer and its /v1/bootstrap response is control_metadata_only; a canonical adapter is not commissioned, so lifecycle/recovery submissions remain unavailable/refused. The browser relay maps a fixed DirectAdmin RAW route set to the optional Workforce gateway, including GET /v1/directadmin/titan_workforce/projection. That projection is a DirectAdmin-panel adapter bound to its host/session context, not a PWA bootstrap or general PWA projection endpoint. The Workforce server only mounts /v1/directadmin/* when its operator-configured gateway is present. The Server Node README explicitly describes partial/fail-closed implementation and no live root installation. Current source includes the optional Titan Dev Access plugin (#1048): its PHP form offers diagnostics, bounded account-local commands, and SSH public-key add/fingerprint/revoke. USER-REPORTED only: the portal is installed with diagnostics and its public-key POST rejects malformed/ambiguous form data. No live portal interaction occurred; live command execution and key lifecycle remain UNVERIFIED.",
+      "source_assessment": "Current main includes the #1211 partial Server Node control API/DirectAdmin relay and the merged #1197 deterministic portfolio packager for Server Node plus Titan Dev Access. The packaging code validates manifests, rejects symlinks/unsafe archive paths, fixes archive timestamps/ownership/modes, computes SHA-256 provenance, and has archive/candidate fixtures plus a new CI workflow for build, isolated lifecycle checks, package contract and shell syntax. GitHub package CI passed on main at 2ef430e, but this proves runner packaging/fixture behavior only. Server Node /v1/bootstrap is still node-token control metadata; its canonical adapter is not commissioned. The DirectAdmin /v1/directadmin/titan_workforce/projection remains panel-specific, not a PWA bootstrap or general projection API. The Workforce optional /v1/directadmin mount requires operator configuration. No live DirectAdmin install, update, rollback, root action or production business outcome is evidenced. Current Titan Dev Access source offers diagnostics, bounded account-local commands and SSH public-key add/fingerprint/revoke. USER-REPORTED only: the portal is installed with diagnostics and its public-key POST rejects malformed/ambiguous form data. The new isolated candidate/archive test workflow does not establish that the report was reproduced on a live portal; command/key lifecycle remains unverified.",
       "missing_requirements": [
-        "Complete #812-owned Server Node host commissioning through the merged #302 identity verifier/session registry, #1049 SDK and #811 Workforce composition: exact artifact install/update/rollback/reboot/recovery, canonical adapter commissioning, company-scoped authority and observed outcomes. Current tests are fixture/loopback evidence; no live DirectAdmin install, root action, provider operation, or business outcome was verified.",
-        "Complete #1048-owned Developer Portal/Dev Access acceptance through the shared #1049 SDK and #302 session/credential boundaries: verify form parsing/rejection, CSRF, valid public-key add/fingerprint/revoke, account-scoped command output and permissions on the actual installation. Preserve the malformed/ambiguous POST behavior as user-reported until independently reproduced; command/key lifecycle remains UNVERIFIED."
+        "Complete #812-owned Server Node host commissioning through merged #302 current-session, #1049 SDK and #811 Workforce composition, including exact artifact install/update/rollback/reboot/recovery and company-scoped business outcomes. #1197 adds deterministic signed-hash packaging and disposable archive fixtures; it is not live DirectAdmin commissioning. No production install, root action, provider operation or business outcome was verified.",
+        "Complete #1048-owned Dev Access acceptance on the actual DirectAdmin installation through #1049/#302 boundaries: independently reproduce malformed/ambiguous POST rejection and verify CSRF, valid public-key add/fingerprint/revoke, account-scoped command output/permissions, and exact-artifact install/update/rollback. Keep the existing user report USER_REPORTED_UNVERIFIED; runner fixture/archive checks do not establish live behavior."
       ],
       "assessment_status": "INCOMPLETE",
       "source_evidence": "SOURCE_INSPECTED",
@@ -400,116 +409,179 @@
       },
       "sources": [
         {
+          "path": ".github/workflows/directadmin-plugin-portfolio.yml",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "content_hash": "sha256:79f629dd64ca7ac2593bcf59cd64f7130592a2d34826962869d0ac71010e4a59",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/.github/workflows/directadmin-plugin-portfolio.yml"
+        },
+        {
           "path": "apps/directadmin/dev-access/README.md",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:eab0927f11e04ae4a0c20f54e5058e1d9515fffb6383b36a5d5f39b048b1be39",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/dev-access/README.md"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/dev-access/README.md"
         },
         {
           "path": "apps/directadmin/dev-access/lib/app.php",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:9d119d01d6327c9b2636dd3eda9c229ebe0c737343d11beb38e2aa0aa25d1a88",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/dev-access/lib/app.php"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/dev-access/lib/app.php"
+        },
+        {
+          "path": "apps/directadmin/dev-access/scripts/update.sh",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "content_hash": "sha256:1345f4f558033a51392a4fdca2c826ad939b1d42cac9ae3bcbb1af4482390439",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/dev-access/scripts/update.sh"
         },
         {
           "path": "apps/directadmin/server-node/README.md",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:334c13b8725408f227fc5c0dd3a984814de96c2bb5924402eecd27dc523e4274",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/README.md"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/README.md"
         },
         {
           "path": "apps/directadmin/server-node/directadmin-relay.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:7cf496aa5382784c79726838cffc759d9ecdca065a05b2f6962645adfc48e284",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/directadmin-relay.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/directadmin-relay.mjs"
         },
         {
           "path": "apps/directadmin/server-node/directadmin-relay.test.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:c9d1c91cfe06f4a0abb148cf8d947140ddfc5e95a53c3d9baed6426449e38c1a",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/directadmin-relay.test.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/directadmin-relay.test.mjs"
         },
         {
           "path": "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:b5c759627f31be55f1aea705ce8345459ad00f89085c15dbab3799caffd7f1c0",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/images/directadmin-relay-client.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/images/directadmin-relay-client.mjs"
         },
         {
           "path": "apps/directadmin/server-node/install.sh",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:6387f625d4925f47ed2c093d6f1a8ae3f2a3d43b67e32f46a2b2b6a823c5b421",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/install.sh"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/install.sh"
         },
         {
           "path": "apps/directadmin/server-node/lifecycle.test.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:a9abb799a8cbb211bc03ddcdf300fd308d5ad87639852d9d05dc70040b33db13",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/lifecycle.test.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/lifecycle.test.mjs"
         },
         {
           "path": "apps/directadmin/server-node/runtime.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:af60bd99fc545292f118ebfecf57ec2a8874d1add37b92f0a169203e8ea6dc65",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/runtime.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/runtime.mjs"
         },
         {
           "path": "apps/directadmin/server-node/runtime.security.test.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:3bb8d60c3a4f5906672a2dc5f86551e325a970f820a370f4aa9678b9ec92eb27",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/runtime.security.test.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/runtime.security.test.mjs"
         },
         {
           "path": "apps/directadmin/server-node/runtime.test.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:88f3b9a92679017e81ccdd243edbb09ef6eabcfd1820bacdb8464be9af0145b9",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/runtime.test.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/runtime.test.mjs"
         },
         {
           "path": "apps/directadmin/server-node/update.sh",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:ab26e4b8afa087b5271973d5b621dd6861d2fb47869406eb4e0dca5664c696ca",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/update.sh"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/update.sh"
         },
         {
           "path": "apps/directadmin/server-node/user/directadmin-gateway.raw",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:7d2d6cab76b3e3a1dd19226962745eb0b4232332978aa6c26757394267e0e755",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/user/directadmin-gateway.raw"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/user/directadmin-gateway.raw"
+        },
+        {
+          "path": "docs/directadmin/PLUGIN-RELEASE-RUNBOOK.md",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "content_hash": "sha256:723361b07e67a2eaf94015ed8ffed2c8cf1a5f243ead4aeeea469f8eb9c2f48d",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/docs/directadmin/PLUGIN-RELEASE-RUNBOOK.md"
+        },
+        {
+          "path": "scripts/directadmin-dev-access-archive-integration.php",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "content_hash": "sha256:f1ab7a559c0384c0e8b7fa6462e6e8d1d2be777a9e8a60f3eb10c3863729a629",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/scripts/directadmin-dev-access-archive-integration.php"
+        },
+        {
+          "path": "scripts/package-directadmin-plugin.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "content_hash": "sha256:d18300abe715d6c3f481a9208cc91c7d753098041d0f6cd06326581e90f7994e",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/scripts/package-directadmin-plugin.mjs"
+        },
+        {
+          "path": "scripts/package-directadmin-portfolio.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "content_hash": "sha256:05bfec82e18606cf41c30208d1db51dcf6f2d02d46a3667abe8f94a7643159a7",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/scripts/package-directadmin-portfolio.mjs"
+        },
+        {
+          "path": "scripts/package-directadmin-portfolio.test.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "content_hash": "sha256:c0edf32ce4b46be0a758316d83f24bdfb20cb4e8ae0b67e20179818895c5cfa3",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/scripts/package-directadmin-portfolio.test.mjs"
+        },
+        {
+          "path": "scripts/test-directadmin-dev-access-archive.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "content_hash": "sha256:3bdfec50b4b4e18ea400f84854cee5f5a9d5b68cb76d4e4fa029e173c69abad3",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/scripts/test-directadmin-dev-access-archive.mjs"
+        },
+        {
+          "path": "scripts/test-directadmin-dev-access-candidate.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "content_hash": "sha256:59ef130791a53c4522deecb84a5c74650f1896574b0abc4b9a7e0709523a1eb6",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/scripts/test-directadmin-dev-access-candidate.mjs"
         },
         {
           "path": "services/workforce/src/directadmin-workforce-owners.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:bf9088ee332900104769de4b0481f598d5fdda256847a1927ae826b0efd863ce",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/directadmin-workforce-owners.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/directadmin-workforce-owners.ts"
         },
         {
           "path": "services/workforce/src/hosted-runtime.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:ae4f1a0b216d824776d14808b39eec3f77443a6a38dee96e0930a1e67d395817",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/hosted-runtime.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/hosted-runtime.ts"
         },
         {
           "path": "services/workforce/src/server.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/server.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/server.ts"
         }
       ]
     },
@@ -545,10 +617,10 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/distribution-gateway.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:baa2246501ad4c6511c8b6e836d96a8b7b2923bcf229ad0daa327480eea11567",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/distribution-gateway.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/distribution-gateway.ts"
         }
       ]
     },
@@ -584,17 +656,17 @@
       "sources": [
         {
           "path": "docs/architecture/CANONICAL-RULES.md",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:0167d2d9c3bdae3b9b251f9cd9c2c2024d7246160a74a442dcd5dc5a829cb69c",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/docs/architecture/CANONICAL-RULES.md"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/docs/architecture/CANONICAL-RULES.md"
         },
         {
           "path": "docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:6478bba0d769ef67999fa5d861ef26544b4528fa1786f33b28751611c36874b5",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md"
         }
       ]
     },
@@ -631,17 +703,17 @@
       "sources": [
         {
           "path": "packages/tools/accepted-evidence-ledger.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:d8ea41cc78df54c29f2fe46d08a72b08f190a90cbe337a0c8f1cbfb9809d8677",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/tools/accepted-evidence-ledger.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/tools/accepted-evidence-ledger.mjs"
         },
         {
           "path": "packages/tools/accepted-evidence-ledger.schema.json",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:7a44217060103ab6ca4dd43096e757f01bf0eea360c229873483dd869d2f7ba2",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/tools/accepted-evidence-ledger.schema.json"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/tools/accepted-evidence-ledger.schema.json"
         }
       ]
     },
@@ -679,17 +751,17 @@
       "sources": [
         {
           "path": "packages/domain/src/commerce.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:29d04d23a002bc3c292c5013a1326770866a62353559cdb256bae7d8aee632c9",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/domain/src/commerce.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/domain/src/commerce.ts"
         },
         {
           "path": "packages/domain/src/finance-readiness.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:e4d21a99a11bbd24470b50455e1b69bef81da4c5b359bf3b95241b1753440192",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/domain/src/finance-readiness.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/domain/src/finance-readiness.ts"
         }
       ]
     },
@@ -727,17 +799,17 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/constitution.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:4616560bfc0a644f708c910790872b758495bd9c5aa9c5996f42d615de9e1d28",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/constitution.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/constitution.ts"
         },
         {
           "path": "packages/titan-platform/src/governance/constitution.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:1774027fe748c37ed4768ae286018b0cb9188a80fab5114ad71295428da732f0",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/governance/constitution.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/governance/constitution.ts"
         }
       ]
     },
@@ -775,17 +847,17 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/interface-interaction-handoff.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:1cfa293570655c5f06bacab88ff01f3b7ddf0d4289c51072339d2ef60ff88ab2",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/interface-interaction-handoff.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/interface-interaction-handoff.ts"
         },
         {
           "path": "packages/titan-platform/src/workforce-context/assembler.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:a5a01eb2190a3324f7ee1a613ab2786bae361bdfb101ce3d61eb015adea9ee28",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/workforce-context/assembler.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/workforce-context/assembler.ts"
         }
       ]
     },
@@ -821,10 +893,10 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:29514a5c42930c9ac1df2f2857813d5085706d5a06fc6dcdf8305cdd2a5d0e61",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts"
         }
       ]
     },
@@ -882,115 +954,115 @@
       "sources": [
         {
           "path": ".github/workflows/titan-ci.yml",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:9ebaa0b2f7a7e7c8e312f3e151e648c2867d20d940c9724db1a40e912e894578",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/.github/workflows/titan-ci.yml"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/.github/workflows/titan-ci.yml"
         },
         {
           "path": "apps/mobile/lib/screens/splash_screen.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:aec988b6131cfbcb1f0a16df5d013b40f811e80c1b67fce7291378f29f13573a",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/lib/screens/splash_screen.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/lib/screens/splash_screen.dart"
         },
         {
           "path": "apps/mobile/lib/screens/titan_shell_screen.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:c31fa8c05a814f8af1ee7d21cd8aea15d5ff46bbf0551639b491b642df54ca7f",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/lib/screens/titan_shell_screen.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/lib/screens/titan_shell_screen.dart"
         },
         {
           "path": "apps/mobile/lib/titan/core/titan_session.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:0c9163648bc8ce74b4d18ae16d5f3ba7ff1043f2f51f7fb57ca996b11146e0d8",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/lib/titan/core/titan_session.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/lib/titan/core/titan_session.dart"
         },
         {
           "path": "apps/mobile/lib/titan/release/mobile_release_certification.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:e62b5bf82fc4a5aac045df80559245648af00d34ab4489d81122d8c045cb174c",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/lib/titan/release/mobile_release_certification.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/lib/titan/release/mobile_release_certification.dart"
         },
         {
           "path": "apps/mobile/lib/titan/services/hosted_conversation_transport.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:5570fb2cbbb789eaf0dbaa0ffefce03823f1ca01fca5e829107f8772df5229f6",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/lib/titan/services/hosted_conversation_transport.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/lib/titan/services/hosted_conversation_transport.dart"
         },
         {
           "path": "apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:ac149c8d8f5437da60a86c0c0af149dc19c70c1e715ceb05980d67e9cca61e49",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart"
         },
         {
           "path": "apps/mobile/lib/titan/services/offline_replay_service.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:c0d22db94f6657cb9141d58e74af5b94e3a1b6818678966ca27d89c3640e6444",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/lib/titan/services/offline_replay_service.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/lib/titan/services/offline_replay_service.dart"
         },
         {
           "path": "apps/mobile/lib/titan/services/titan_gateway.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:3bbd8ead02ba835a3f8a6dfde67725717e2bf80f59c7a657477cccae40dc8bad",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/lib/titan/services/titan_gateway.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/lib/titan/services/titan_gateway.dart"
         },
         {
           "path": "apps/mobile/test/hosted_conversation_transport_test.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:70b08ad477b8241c853787483174994296c40c4b9bec298a790de853d61a622e",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/test/hosted_conversation_transport_test.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/test/hosted_conversation_transport_test.dart"
         },
         {
           "path": "apps/mobile/test/mobile_release_certification_test.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:004244f67dcaa0488a8e10565db47f5d90f2435be8740445afa53518be9a32f1",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/test/mobile_release_certification_test.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/test/mobile_release_certification_test.dart"
         },
         {
           "path": "apps/mobile/test/titan_conversation_gateway_test.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:47a17aa2b809b61b90626644b0bea2110c1afd039dd3c0d9484644ea12013453",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/test/titan_conversation_gateway_test.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/test/titan_conversation_gateway_test.dart"
         },
         {
           "path": "apps/mobile/test/titan_shell_conversation_test.dart",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:3893289c4537cae33ca2e028f981e78d670bc3ac8b1c92af2148ba3ea2ee74fc",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/mobile/test/titan_shell_conversation_test.dart"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/mobile/test/titan_shell_conversation_test.dart"
         },
         {
           "path": "docs/contracts/hosted-workforce-runtime.md",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:9fb51ce9a2275e4ba93a23552d492b46f3576494c059bd216829801f227c2910",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/docs/contracts/hosted-workforce-runtime.md"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/docs/contracts/hosted-workforce-runtime.md"
         },
         {
           "path": "services/workforce/src/conversation-api.test.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:45d6d53ed30d91712676f7a1f8a44b31cb38cf9fdcc8f52e591a9471a3c3c5d4",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/conversation-api.test.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/conversation-api.test.ts"
         },
         {
           "path": "services/workforce/src/conversation-api.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/conversation-api.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/conversation-api.ts"
         }
       ]
     },
@@ -1026,10 +1098,10 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:7f6633d9fb443cc01683c64f6423d0c37541927240d0990337cc5dbf87b9bdcb",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts"
         }
       ]
     },
@@ -1065,17 +1137,17 @@
       "sources": [
         {
           "path": "docs/contracts/observability-redaction.md",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:e2b17cc8d8faa60a0eae1b7eb8c1af7603dc1fe63b859e194a92785b226e913e",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/docs/contracts/observability-redaction.md"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/docs/contracts/observability-redaction.md"
         },
         {
           "path": "packages/observability/contracts.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:6ac6ca6f9d64f08f540769bb38d24c6a2b794c2f75574e4a99d64e05af338b74",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/observability/contracts.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/observability/contracts.mjs"
         }
       ]
     },
@@ -1113,17 +1185,17 @@
       "sources": [
         {
           "path": "packages/offline/authority-continuity.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:e8f5680a074e95067e82a847440891d62e40f11f079a6637370502a7a26bd88b",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/offline/authority-continuity.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/offline/authority-continuity.mjs"
         },
         {
           "path": "packages/offline/index.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:0d5fa6d29d9782422305a4791ac6c26f73600fa8815505c0fdd56ad42a66041a",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/offline/index.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/offline/index.mjs"
         }
       ]
     },
@@ -1160,17 +1232,17 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/compatibility-pipeline.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:3124c69e21f4c9a6d429cf59a3feb27358c13b2c9a00f4f5d41adb35495e3716",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/compatibility-pipeline.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/compatibility-pipeline.ts"
         },
         {
           "path": "packages/titan-platform/src/interface-registry.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:4f54ca6597f87af9ec70df6afbdd06fa4a678ccbf72490ca5660e07c46d80bda",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/interface-registry.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/interface-registry.ts"
         }
       ]
     },
@@ -1237,185 +1309,185 @@
       "sources": [
         {
           "path": "apps/directadmin/server-node/directadmin-relay.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:7cf496aa5382784c79726838cffc759d9ecdca065a05b2f6962645adfc48e284",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/directadmin-relay.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/directadmin-relay.mjs"
         },
         {
           "path": "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:b5c759627f31be55f1aea705ce8345459ad00f89085c15dbab3799caffd7f1c0",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/images/directadmin-relay-client.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/images/directadmin-relay-client.mjs"
         },
         {
           "path": "apps/directadmin/server-node/runtime.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:af60bd99fc545292f118ebfecf57ec2a8874d1add37b92f0a169203e8ea6dc65",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/directadmin/server-node/runtime.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/directadmin/server-node/runtime.mjs"
         },
         {
           "path": "apps/pwa/README.md",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:f442880e78b50b1d795a4df38a6f34695c208f63e004d2e5560cac929ec4efda",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/pwa/README.md"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/pwa/README.md"
         },
         {
           "path": "apps/pwa/public/app.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:c15fd8f298fbd75a905d2ffeeda9175321a09b8b30e03bb8b76fb219724bcf9b",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/pwa/public/app.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/pwa/public/app.mjs"
         },
         {
           "path": "apps/pwa/public/sw.js",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:98351d60c2b61845db249783a7023dfc227fdd85ea62194fd806c79cad7725cc",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/pwa/public/sw.js"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/pwa/public/sw.js"
         },
         {
           "path": "apps/pwa/scripts/build.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:b30d47dab93716ddbf89d4dd0d56bc80aca4d7536aa35f501ec61c5f55437682",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/pwa/scripts/build.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/pwa/scripts/build.mjs"
         },
         {
           "path": "apps/pwa/src/api-client.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:b8f11b4859e17ff06e120760326e90e4fa8117c7d7646a165cfeebd754328529",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/pwa/src/api-client.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/pwa/src/api-client.mjs"
         },
         {
           "path": "apps/pwa/src/scope.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:6b3bfadf4616b4e466a25f49b679e914cfbc040d0f59b3c78e6fed1d60a6b368",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/pwa/src/scope.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/pwa/src/scope.mjs"
         },
         {
           "path": "apps/pwa/tests/browser-regression.test.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:25b6ee654a1b13b2e0ee5ccb610bedd1d3d4d3b296f36a1fb784d2e759dd1d39",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/pwa/tests/browser-regression.test.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/pwa/tests/browser-regression.test.mjs"
         },
         {
           "path": "apps/pwa/tests/contracts.test.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:711dc0f4b93b223f6f50c77f4f03d8f9e8e0f686650ef83f6a833060c0428caa",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/pwa/tests/contracts.test.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/pwa/tests/contracts.test.mjs"
         },
         {
           "path": "apps/web/app/api/v1/bootstrap/route.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:39e17f9feb39dc1413dfb9ffcf3974715a009f380e1cf33ecfa86b34b0e2ceb2",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/web/app/api/v1/bootstrap/route.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/web/app/api/v1/bootstrap/route.ts"
         },
         {
           "path": "apps/web/app/api/v1/zero/interactions/route.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:9d6130af1d229917ca89a08a53d1110e40180d00b1074b2b18a60a3ccde7e81e",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/web/app/api/v1/zero/interactions/route.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/web/app/api/v1/zero/interactions/route.ts"
         },
         {
           "path": "apps/web/lib/auth/__tests__/current-session.test.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:94a48d7345208fde5fbeb705becf7ddf256623363430a7745b4ccf7d555c2e87",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/web/lib/auth/__tests__/current-session.test.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/web/lib/auth/__tests__/current-session.test.ts"
         },
         {
           "path": "apps/web/lib/auth/current-session.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:289f1df5dfc32720235df0fa14455a89adcf5c9deeb0f6b4d95232a368646423",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/web/lib/auth/current-session.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/web/lib/auth/current-session.ts"
         },
         {
           "path": "packages/storage/src/company-placement-persistence.test.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:7251005d784aaf9cfb12cd63dcc4b19b7b72c49ba86b3a67fd0187fa0cc94581",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/storage/src/company-placement-persistence.test.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/storage/src/company-placement-persistence.test.ts"
         },
         {
           "path": "packages/storage/src/company-placement-registry.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:2eccfa18a269636df36b75dbdef525c07d9f62ea5d19312e8c042c21919716c7",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/storage/src/company-placement-registry.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/storage/src/company-placement-registry.ts"
         },
         {
           "path": "packages/storage/src/company-storage-resolver.test.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:658e30554c974838d0ae770bdb427047b2cae43d580d385e6a0d00fca2f501c8",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/storage/src/company-storage-resolver.test.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/storage/src/company-storage-resolver.test.ts"
         },
         {
           "path": "packages/storage/src/company-storage-resolver.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:2ba22082619e0d684f2df58a4aa6655ad9a650a6947c215da4e1653adff37a3f",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/storage/src/company-storage-resolver.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/storage/src/company-storage-resolver.ts"
         },
         {
           "path": "packages/storage/src/company-store-opener.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:350cf39b125b49c8cbb50b88a482e0a4294fd2f19bbfd1b9c93663436335b87a",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/storage/src/company-store-opener.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/storage/src/company-store-opener.ts"
         },
         {
           "path": "packages/titan-platform/src/security-session-credentials.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:f34a046d304b432e1f3eeb57226d4f8673ee52fff15057b1e875fe5f32f33140",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/security-session-credentials.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/security-session-credentials.ts"
         },
         {
           "path": "packages/titan-platform/src/security-session-registry.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:d32043f8b967d7769a2c78144d13342b7908149afc7aa486811cf68244dcf714",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/security-session-registry.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/security-session-registry.ts"
         },
         {
           "path": "packages/titan-platform/tests/security-session-credentials.test.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:1b0c72dc30db4406236cd0fe6b778f1f8d2b8777ed15c8a1e39542a4db4bd235",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/tests/security-session-credentials.test.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/tests/security-session-credentials.test.mjs"
         },
         {
           "path": "packages/titan-platform/tests/security-session-workforce-exchange.test.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:b24c8bbf1b8709fb416643c7acb511831c15f4892e5994582bb02c8d23838fd2",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/tests/security-session-workforce-exchange.test.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/tests/security-session-workforce-exchange.test.mjs"
         },
         {
           "path": "services/workforce/src/conversation-api.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/conversation-api.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/conversation-api.ts"
         },
         {
           "path": "services/workforce/src/server.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/server.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/server.ts"
         }
       ]
     },
@@ -1455,24 +1527,24 @@
       "sources": [
         {
           "path": "packages/deployment/release-lifecycle.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:e9a4c4ecc0686e9dbce8142e7ad1d88961c2b5d14fe0f0fbd5a4a04dc199414b",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/deployment/release-lifecycle.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/deployment/release-lifecycle.mjs"
         },
         {
           "path": "packages/titan-platform/src/certification-matrix.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:6aeb372e8c33ddf097d6f88666c40c1289b7a63c9447e7f8511759bd3f07fc78",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/certification-matrix.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/certification-matrix.ts"
         },
         {
           "path": "packages/titan-platform/src/compatibility-pipeline.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:3124c69e21f4c9a6d429cf59a3feb27358c13b2c9a00f4f5d41adb35495e3716",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/compatibility-pipeline.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/compatibility-pipeline.ts"
         }
       ]
     },
@@ -1508,10 +1580,10 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/ported/titan-intelligence/signal/index.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:022408b2ac2d36e33755c4251057c526fb2f90b5cb17fa87d11dc3f94348645b",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/ported/titan-intelligence/signal/index.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/ported/titan-intelligence/signal/index.ts"
         }
       ]
     },
@@ -1547,17 +1619,17 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/titan-builder/intent-planner.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:e0643a3052d0ff49b87026725950ae7ff898dda781306a6cb3bd3baa350cbd8d",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/titan-builder/intent-planner.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/titan-builder/intent-planner.ts"
         },
         {
           "path": "packages/titan-platform/src/titan-builder/security-gate.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:b19788640a51d69ff6ee4b38945e2451406387d73179115d243bba454a71ebb8",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/titan-builder/security-gate.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/titan-builder/security-gate.ts"
         }
       ]
     },
@@ -1595,17 +1667,17 @@
       "sources": [
         {
           "path": "packages/titan-platform/src/certification-matrix.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:6aeb372e8c33ddf097d6f88666c40c1289b7a63c9447e7f8511759bd3f07fc78",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/certification-matrix.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/certification-matrix.ts"
         },
         {
           "path": "tests/e2e/certification/critical-path-matrix.generated.json",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:43686e97dafe4e2d899bb343767af4fc0376a1d6e291d3ded3e98fdf6d95ff08",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/tests/e2e/certification/critical-path-matrix.generated.json"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/tests/e2e/certification/critical-path-matrix.generated.json"
         }
       ]
     },
@@ -1642,17 +1714,17 @@
       "sources": [
         {
           "path": "packages/domain/src/vertical-profile.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:f7eaf30ac499aae070ff427a4a3654ee8d86224a1d3cd9dc61962d8cef31e34e",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/domain/src/vertical-profile.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/domain/src/vertical-profile.ts"
         },
         {
           "path": "packages/titan-platform/src/vertical-profile.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:023ad173e70c2db69050d7e8e6c466f26d36092260ce0e44b0f5e51c78ec9da6",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/packages/titan-platform/src/vertical-profile.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/packages/titan-platform/src/vertical-profile.ts"
         }
       ]
     },
@@ -1688,17 +1760,17 @@
       "sources": [
         {
           "path": "apps/web/app/layout.tsx",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:b5ee6527166b608bb1ddb87cc8cd12e106586801da800bde8ada8ec5c5053ffb",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/web/app/layout.tsx"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/web/app/layout.tsx"
         },
         {
           "path": "apps/web/package.json",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:25d1d3f54912e57e5d80892e71c0cc5c4e7c3e5047e54622468801e5fe6fdf26",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/apps/web/package.json"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/apps/web/package.json"
         }
       ]
     },
@@ -1753,115 +1825,115 @@
       "sources": [
         {
           "path": "docs/contracts/hosted-workforce-runtime.md",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:9fb51ce9a2275e4ba93a23552d492b46f3576494c059bd216829801f227c2910",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/docs/contracts/hosted-workforce-runtime.md"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/docs/contracts/hosted-workforce-runtime.md"
         },
         {
           "path": "docs/operations/workforce-clean-host-acceptance.md",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:b339ef935e2d0821876d990c0f323afd8593c9cb09b399abfd60898c421c7a3c",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/docs/operations/workforce-clean-host-acceptance.md"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/docs/operations/workforce-clean-host-acceptance.md"
         },
         {
           "path": "infra/compose.vps.yml",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:0be5e7d52c1d122f3f7fb3af5b1638fed748f98856c95cfdba924608de2f1ea6",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/infra/compose.vps.yml"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/infra/compose.vps.yml"
         },
         {
           "path": "services/workforce/src/conversation-api.test.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:45d6d53ed30d91712676f7a1f8a44b31cb38cf9fdcc8f52e591a9471a3c3c5d4",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/conversation-api.test.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/conversation-api.test.ts"
         },
         {
           "path": "services/workforce/src/conversation-api.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/conversation-api.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/conversation-api.ts"
         },
         {
           "path": "services/workforce/src/field-service-runtime.mjs",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:c009aeb765d3a3b40f214ebfc0d1c103957b1658ef787550873715042562ffb4",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/field-service-runtime.mjs"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/field-service-runtime.mjs"
         },
         {
           "path": "services/workforce/src/hosted-runtime.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:ae4f1a0b216d824776d14808b39eec3f77443a6a38dee96e0930a1e67d395817",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/hosted-runtime.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/hosted-runtime.ts"
         },
         {
           "path": "services/workforce/src/production-runtime-bootstrap.test.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:be8737e06b779ee08680e4a89b99533a7f5853a1bec98b5ce6fb54bf2c7e8ff4",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/production-runtime-bootstrap.test.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/production-runtime-bootstrap.test.ts"
         },
         {
           "path": "services/workforce/src/production-runtime-bootstrap.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:2b884bffa0c8efed15fdd2b0277823458908301ddfd8fc7f824b078a0ceeb3af",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/production-runtime-bootstrap.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/production-runtime-bootstrap.ts"
         },
         {
           "path": "services/workforce/src/server.test.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:cde5309e0e9db2e50f976192527669ad300ffbaa0f5cfeaca7b81ab8f72943cd",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/server.test.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/server.test.ts"
         },
         {
           "path": "services/workforce/src/server.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/server.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/server.ts"
         },
         {
           "path": "services/workforce/src/session-credential-verifier.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:a26a501fc1e85fc2f492d7d1047e365331fc6f2417d2656c84fbd088175e2956",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/session-credential-verifier.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/session-credential-verifier.ts"
         },
         {
           "path": "services/workforce/src/zero-runtime-correlation.test.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:f56038cdfc1084f7e59300d396b29d81b7e4386a3af8329fb86ed81a5108f3d0",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/zero-runtime-correlation.test.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/zero-runtime-correlation.test.ts"
         },
         {
           "path": "services/workforce/src/zero-runtime-dispatcher.test.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:5ff1abaaba57b85ee8fdafce23e3e7b5f1478149d259bac3058f4bda4f3a14dd",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/zero-runtime-dispatcher.test.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/zero-runtime-dispatcher.test.ts"
         },
         {
           "path": "services/workforce/src/zero-runtime-dispatcher.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:c699319c8af083bb7b3a125e4d12a4038d5d9dffbde730488390c20ac7539758",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/services/workforce/src/zero-runtime-dispatcher.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/services/workforce/src/zero-runtime-dispatcher.ts"
         },
         {
           "path": "tests/hosted-workforce-runtime.test.ts",
-          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
           "content_hash": "sha256:5b49a2a5900983d3bd8d8f8109b991cbb1399ef59846bb4ed91a1e0e352d9dfa",
           "kind": "SOURCE_INSPECTED",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/ae6db36d6c14a5984f4be0d203a070beeec245ce/tests/hosted-workforce-runtime.test.ts"
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/2ef430e96d1f9ad9547e636ed9800886ab0ea595/tests/hosted-workforce-runtime.test.ts"
         }
       ]
     }

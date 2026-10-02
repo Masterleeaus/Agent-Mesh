@@ -1,7 +1,7 @@
 {
   "schema": "titan.readiness-audit-input/v1",
-  "observed_at": "2026-10-02T10:17:20Z",
-  "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+  "observed_at": "2026-10-02T10:28:22Z",
+  "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
   "scope": "28 user-requested audit headings; evidence presentation only, not a capability/host catalogue",
   "audit_completeness": "PARTIAL",
   "production_eligibility": "DENIED_MISSING_EVIDENCE",
@@ -220,12 +220,21 @@
         "apps/directadmin/server-node/directadmin-relay.test.mjs",
         "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
         "apps/directadmin/server-node/lifecycle.test.mjs",
-        "apps/directadmin/server-node/user/directadmin-gateway.raw"
+        "apps/directadmin/server-node/user/directadmin-gateway.raw",
+        ".github/workflows/directadmin-plugin-portfolio.yml",
+        "apps/directadmin/dev-access/scripts/update.sh",
+        "docs/directadmin/PLUGIN-RELEASE-RUNBOOK.md",
+        "scripts/package-directadmin-portfolio.mjs",
+        "scripts/package-directadmin-portfolio.test.mjs",
+        "scripts/directadmin-dev-access-archive-integration.php",
+        "scripts/test-directadmin-dev-access-archive.mjs",
+        "scripts/test-directadmin-dev-access-candidate.mjs",
+        "scripts/package-directadmin-plugin.mjs"
       ],
-      "source_assessment": "Current main includes the loopback Server Node health bridge and the #1211 partial control API/DirectAdmin relay. The control API uses a node transport bearer and its /v1/bootstrap response is control_metadata_only; a canonical adapter is not commissioned, so lifecycle/recovery submissions remain unavailable/refused. The browser relay maps a fixed DirectAdmin RAW route set to the optional Workforce gateway, including GET /v1/directadmin/titan_workforce/projection. That projection is a DirectAdmin-panel adapter bound to its host/session context, not a PWA bootstrap or general PWA projection endpoint. The Workforce server only mounts /v1/directadmin/* when its operator-configured gateway is present. The Server Node README explicitly describes partial/fail-closed implementation and no live root installation. Current source includes the optional Titan Dev Access plugin (#1048): its PHP form offers diagnostics, bounded account-local commands, and SSH public-key add/fingerprint/revoke. USER-REPORTED only: the portal is installed with diagnostics and its public-key POST rejects malformed/ambiguous form data. No live portal interaction occurred; live command execution and key lifecycle remain UNVERIFIED.",
+      "source_assessment": "Current main includes the #1211 partial Server Node control API/DirectAdmin relay and the merged #1197 deterministic portfolio packager for Server Node plus Titan Dev Access. The packaging code validates manifests, rejects symlinks/unsafe archive paths, fixes archive timestamps/ownership/modes, computes SHA-256 provenance, and has archive/candidate fixtures plus a new CI workflow for build, isolated lifecycle checks, package contract and shell syntax. GitHub package CI passed on main at 2ef430e, but this proves runner packaging/fixture behavior only. Server Node /v1/bootstrap is still node-token control metadata; its canonical adapter is not commissioned. The DirectAdmin /v1/directadmin/titan_workforce/projection remains panel-specific, not a PWA bootstrap or general projection API. The Workforce optional /v1/directadmin mount requires operator configuration. No live DirectAdmin install, update, rollback, root action or production business outcome is evidenced. Current Titan Dev Access source offers diagnostics, bounded account-local commands and SSH public-key add/fingerprint/revoke. USER-REPORTED only: the portal is installed with diagnostics and its public-key POST rejects malformed/ambiguous form data. The new isolated candidate/archive test workflow does not establish that the report was reproduced on a live portal; command/key lifecycle remains unverified.",
       "missing_requirements": [
-        "Complete #812-owned Server Node host commissioning through the merged #302 identity verifier/session registry, #1049 SDK and #811 Workforce composition: exact artifact install/update/rollback/reboot/recovery, canonical adapter commissioning, company-scoped authority and observed outcomes. Current tests are fixture/loopback evidence; no live DirectAdmin install, root action, provider operation, or business outcome was verified.",
-        "Complete #1048-owned Developer Portal/Dev Access acceptance through the shared #1049 SDK and #302 session/credential boundaries: verify form parsing/rejection, CSRF, valid public-key add/fingerprint/revoke, account-scoped command output and permissions on the actual installation. Preserve the malformed/ambiguous POST behavior as user-reported until independently reproduced; command/key lifecycle remains UNVERIFIED."
+        "Complete #812-owned Server Node host commissioning through merged #302 current-session, #1049 SDK and #811 Workforce composition, including exact artifact install/update/rollback/reboot/recovery and company-scoped business outcomes. #1197 adds deterministic signed-hash packaging and disposable archive fixtures; it is not live DirectAdmin commissioning. No production install, root action, provider operation or business outcome was verified.",
+        "Complete #1048-owned Dev Access acceptance on the actual DirectAdmin installation through #1049/#302 boundaries: independently reproduce malformed/ambiguous POST rejection and verify CSRF, valid public-key add/fingerprint/revoke, account-scoped command output/permissions, and exact-artifact install/update/rollback. Keep the existing user report USER_REPORTED_UNVERIFIED; runner fixture/archive checks do not establish live behavior."
       ],
       "assessment_status": "INCOMPLETE",
       "source_evidence": "SOURCE_INSPECTED",

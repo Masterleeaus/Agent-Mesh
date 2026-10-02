@@ -1897,6 +1897,229 @@
       "physical_devices": "NOT_AVAILABLE",
       "production_eligible": false,
       "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T10:29:19Z",
+      "workspace_head": "4427eab8ea0899193c1730b91ea83c325f019fd0",
+      "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only current-main refresh after #1197 DirectAdmin plugin packaging merged. Local authored changes remain in #1172 evidence files only; no owner implementation or live host changed.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+        "workspace_claim_sha_before_evidence_commit": "4427eab8ea0899193c1730b91ea83c325f019fd0",
+        "remote_claim_sha_before_latest_main_merge": "1db4b86fc0c5a1264e8b91de6b110d3b6dc7d9ca",
+        "current_main_is_ancestor_after_merge": true,
+        "pr_1178_before_latest_main_merge": {
+          "state": "OPEN",
+          "draft": true,
+          "head_sha": "1db4b86fc0c5a1264e8b91de6b110d3b6dc7d9ca",
+          "base_sha": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "latest_named_checks": {
+            "Mission Closure Evidence Gate": "success",
+            "evidence-contract": "success",
+            "mobile": "success",
+            "source-index": "success",
+            "validate": "success"
+          },
+          "note": "These checks passed on d1e10b2 before main 2ef430e was merged locally; the final push must validate its own head."
+        },
+        "owner_lanes": [
+          {
+            "issue": 811,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 812,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": "NOT_OBSERVED"
+          },
+          {
+            "issue": 1171,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 1182,
+            "priority": "P0",
+            "state": "CLOSED",
+            "pull_request": 1188,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T10:15:24Z",
+            "head_sha": "26b2de56fbf915887aeea95fbebcb6b6e90ec433"
+          },
+          {
+            "issue": 302,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:56:16Z",
+            "head_sha": "14cb413fcb082f4426e298e46590de6e0fe577cc"
+          },
+          {
+            "issue": 1049,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "OPEN_DRAFT",
+            "head_sha": "5d98573427db32f22d901b00ff959aad7eea51fa",
+            "base_sha": "c883304a662738fe480ec1e5d044fdeb0c4c879e",
+            "needs_rebase_against_main": true
+          },
+          {
+            "issue": 1048,
+            "priority": "P2",
+            "state": "OPEN",
+            "canonical_owner_for": "Developer Portal / Dev Access"
+          },
+          {
+            "issue": 1172,
+            "priority": "P1",
+            "state": "OPEN"
+          },
+          {
+            "pull_request": 1240,
+            "state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:07:02Z"
+          },
+          {
+            "pull_request": 1197,
+            "state": "MERGED",
+            "merged_at": "2026-10-02T10:23:55Z",
+            "head_sha": "43605017efe6504d0cee397592cbcb1fdfe7b18c",
+            "package_check": "success"
+          }
+        ],
+        "current_main_check_status": {
+          "DirectAdmin package": "success",
+          "mobile": "success",
+          "verify": "success",
+          "validate": "in_progress"
+        },
+        "directadmin_package_check_detail": "Main commit 2ef430e package job ran deterministic package tests, built the archive/provenance, exercised disposable archive/candidate fixtures, validated Server Node package contract and shell syntax. This is CI artifact/fixture evidence only."
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "directadmin",
+          "path": ".github/workflows/directadmin-plugin-portfolio.yml",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "79f629dd64ca7ac2593bcf59cd64f7130592a2d34826962869d0ac71010e4a59"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/scripts/update.sh",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "1345f4f558033a51392a4fdca2c826ad939b1d42cac9ae3bcbb1af4482390439"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/directadmin/PLUGIN-RELEASE-RUNBOOK.md",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "723361b07e67a2eaf94015ed8ffed2c8cf1a5f243ead4aeeea469f8eb9c2f48d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/package-directadmin-portfolio.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "05bfec82e18606cf41c30208d1db51dcf6f2d02d46a3667abe8f94a7643159a7"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/package-directadmin-portfolio.test.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "c0edf32ce4b46be0a758316d83f24bdfb20cb4e8ae0b67e20179818895c5cfa3"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/directadmin-dev-access-archive-integration.php",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "f1ab7a559c0384c0e8b7fa6462e6e8d1d2be777a9e8a60f3eb10c3863729a629"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/test-directadmin-dev-access-archive.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "3bdfec50b4b4e18ea400f84854cee5f5a9d5b68cb76d4e4fa029e173c69abad3"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/test-directadmin-dev-access-candidate.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "59ef130791a53c4522deecb84a5c74650f1896574b0abc4b9a7e0709523a1eb6"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/package-directadmin-plugin.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "d18300abe715d6c3f481a9208cc91c7d753098041d0f6cd06326581e90f7994e"
+        }
+      ],
+      "client_host_findings": [
+        "PWA: new DirectAdmin packaging does not change the client contract. #302/#1183 and #1240 are server-side foundations but neither is composed into a PWA route; #811 still owns the authenticated projection/stream host contract and #1171 the packaged consumer. Do not treat a DirectAdmin archive or panel projection as the PWA API.",
+        "Mobile: #1182/#1188 is closed/merged. Its optional hosted transport retry test is covered by mobile CI, but production SplashScreen does not inject it; it reads whole JSON responses, not incremental SSE, and no durable host log/revision reset is present.",
+        "DirectAdmin: #1197 now adds deterministic archives/provenance and isolated archive/candidate CI checks. Those improve exact-artifact reproducibility but do not prove installation, host update/rollback, root behavior or #1048 live command/key flows. Keep malformed POST behavior USER_REPORTED_UNVERIFIED.",
+        "Workforce stream and deployment remain as previously inspected: SSE follows awaited dispatch and Last-Event-ID filters completed events; no live workforce/DirectAdmin host was contacted."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Merged current main 2ef430e96d1f9ad9547e636ed9800886ab0ea595 into existing claim branch; local main ancestry confirmed."
+        },
+        {
+          "command": "Read-only inspection of #1197 package scripts/workflow and current PWA/mobile/host source",
+          "status": "PASS",
+          "detail": "Confirmed packaging checks are deterministic and fixture-based; no current PWA API or live host evidence was added."
+        },
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 canonical evaluator tests passed."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification contract, CLI integration, and snapshot source tests passed."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Commit-bound source audit snapshot matches; production eligibility remains denied."
+        },
+        {
+          "command": "Read-only GitHub REST for current owner lanes, merge and CI states",
+          "status": "PASS",
+          "detail": "Confirmed #1197 merged with package job success; #1188/#1182 and #1240/#302 merges; #1049/#1204 draft; #1178 previous head green. No issue/PR/host mutation."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in refreshed evidence files."
+        }
+      ],
+      "live_host": {
+        "status": "NOT_CONTACTED",
+        "command_lifecycle": "UNVERIFIED",
+        "public_key_add_fingerprint_revoke_lifecycle": "UNVERIFIED"
+      },
+      "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false
     }
   ]
 }
