@@ -6,11 +6,23 @@ export class WorkforceApi {
   async #load(context) {
     this.#snapshot ??= this.session.projection('titan_workforce');
     const projection = await this.#snapshot;
-    if (projection?.company_id !== context.company_id || projection.data?.discovery?.company_id !== context.company_id || projection.data?.status?.company_id !== context.company_id || projection.data?.schema !== 'titan.workforce-cockpit.v1') throw new Error('workforce-projection-invalid');
-    return projection.data;
+    const refs = projection?.evidence_refs;
+    const freshness = projection?.freshness;
+    if (projection?.company_id !== context.company_id || typeof projection.source !== 'string' || !projection.source.trim() ||
+        !(freshness === null || (typeof freshness === 'string' && Number.isFinite(Date.parse(freshness)))) ||
+        !Array.isArray(refs) || refs.some(ref => typeof ref !== 'string' || !ref.trim()) ||
+        projection.data?.company_id !== context.company_id || projection.data?.discovery?.company_id !== context.company_id ||
+        projection.data?.status?.company_id !== context.company_id || projection.data?.schema !== 'titan.workforce-cockpit.v1') {
+      throw new Error('workforce-projection-invalid');
+    }
+    return projection;
   }
-  async discover(context) { return (await this.#load(context)).discovery; }
-  async status(context) { return (await this.#load(context)).status; }
+  async discover(context) { return (await this.#load(context)).data.discovery; }
+  async status(context) { return (await this.#load(context)).data.status; }
+  async metadata(context) {
+    const projection = await this.#load(context);
+    return { source: projection.source, freshness: projection.freshness, evidence_refs: [...projection.evidence_refs] };
+  }
   async control(context, action) {
     const discovery = await this.discover(context);
     const supported = new Set(['pause', 'resume', 'cancel', 'reassign', 'escalate', 'revoke']);

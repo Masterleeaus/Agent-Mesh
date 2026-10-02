@@ -7,27 +7,27 @@ export class WorkforceController {
   constructor(api, onChange = () => {}) {
     this.api = api;
     this.onChange = onChange;
-    this.state = { phase: 'loading', context: null, discovery: null, status: null, receipt: null, error: null };
+    this.state = { phase: 'loading', context: null, discovery: null, status: null, metadata: null, receipt: null, error: null };
   }
   #set(next) { this.state = { ...this.state, ...next }; this.onChange(this.state); }
   invalidate() {
     this.#epoch++;
     this.#pending = null;
-    this.#set({ phase: 'denied', context: null, discovery: null, status: null, receipt: null, error: 'Context changed. Reconnect to load permitted Workforce.' });
+    this.#set({ phase: 'denied', context: null, discovery: null, status: null, metadata: null, receipt: null, error: 'Context changed. Reconnect to load permitted Workforce.' });
   }
   async connect() {
     const epoch = ++this.#epoch;
     this.#pending = null;
-    this.#set({ phase: 'loading', context: null, discovery: null, status: null, receipt: null, error: null });
+    this.#set({ phase: 'loading', context: null, discovery: null, status: null, metadata: null, receipt: null, error: null });
     try {
       const context = await this.api.context();
       if (epoch !== this.#epoch) return;
       if (!context?.company_id || !context.actor_id || !context.session_revision) throw new Error('workforce-context-denied');
-      const [discovery, status] = await Promise.all([this.api.discover(context), this.api.status(context)]);
+      const [discovery, status, metadata] = await Promise.all([this.api.discover(context), this.api.status(context), this.api.metadata(context)]);
       if (epoch !== this.#epoch) return;
       for (const value of [discovery, status]) { scoped(value, context.company_id); assertNestedCompany(value, context.company_id); }
       this.#validateProjection(discovery, status, context.company_id);
-      this.#set({ phase: 'ready', context, discovery, status, receipt: null });
+      this.#set({ phase: 'ready', context, discovery, status, metadata, receipt: null });
     } catch (error) { if (epoch === this.#epoch) this.#fail(error); }
   }
   #validateProjection(discovery, status, companyId) {
@@ -56,7 +56,7 @@ export class WorkforceController {
     const message = String(error?.message ?? '');
     const denied = /401|403|409|denied|expired|revok|context|company-mismatch/.test(message);
     // Never render exception payloads (upstream errors may contain secrets or another company's IDs).
-    this.#set({ phase: denied ? 'denied' : 'unavailable', context: null, discovery: null, status: null, receipt: null,
+    this.#set({ phase: denied ? 'denied' : 'unavailable', context: null, discovery: null, status: null, metadata: null, receipt: null,
       error: denied ? 'Access or company context changed. Reconnect to revalidate.' : submitted ? 'Request outcome is unknown. Reconnect and inspect canonical work/history before submitting again.' : 'Hosted Workforce is unavailable. Reconnect to retrieve current state.' });
   }
   async submit(action) {
@@ -75,12 +75,12 @@ export class WorkforceController {
       scoped(receipt, context.company_id); assertNestedCompany(receipt, context.company_id);
       this.#set({ receipt });
       // Do not optimistically edit canonical status; reload it after a receipt.
-      const status = await this.api.status(current);
+      const [status, metadata] = await Promise.all([this.api.status(current), this.api.metadata(current)]);
       if (epoch !== this.#epoch) return;
       scoped(status, context.company_id); assertNestedCompany(status, context.company_id);
       this.#validateProjection(this.state.discovery, status, context.company_id);
       this.#pending = null;
-      this.#set({ phase: 'ready', status });
+      this.#set({ phase: 'ready', status, metadata });
     } catch (error) {
       if (epoch === this.#epoch) {
         this.#pending = null;

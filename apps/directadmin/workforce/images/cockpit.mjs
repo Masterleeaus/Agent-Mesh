@@ -92,7 +92,8 @@ function render(state) {
     } else view.append(node('p', 'Submit a permitted governed request to inspect its receipt.'));
     for (const item of work.filter(item => item.evidence_refs?.length)) { const row = node('details'); row.append(node('summary', item.work_id)); evidence(row, item.evidence_refs); view.append(row); }
   } else if (tab === 'Health') {
-    fields(view, { 'Projection source': 'Canonical hosted Workforce', 'Last successful refresh': state.status?.observed_at, 'Runtime status': state.status?.runtime_status ?? 'Not supplied' });
+    fields(view, { 'Projection source': state.metadata?.source, 'Last successful refresh': state.metadata?.freshness, 'Runtime status': state.status?.runtime_status ?? 'Not supplied' });
+    evidence(view, state.metadata?.evidence_refs);
     const route = role === 'admin' ? 'CMD_PLUGINS_ADMIN' : role === 'reseller' ? 'CMD_PLUGINS_RESELLER' : 'CMD_PLUGINS';
     view.append(node('a', 'Open Operations for node / provider diagnostics', { href: `/${route}/titan_operations` }));
     unavailable(view, 'Capacity, provider health and evidence freshness metrics');
@@ -106,7 +107,12 @@ function renderControls(view, state, workers, work) {
   // Only the exact host-published allowlist can expose a control. Never raw shell or generic JSON.
   const supported = new Set(['pause', 'resume', 'cancel', 'reassign', 'escalate', 'revoke']);
   const actions = (state.discovery?.controls ?? []).filter(item => supported.has(item.action) && typeof item.capability_id === 'string').map(item => item.action);
-  if (!actions.length) { unavailable(view, 'Governed lifecycle controls'); return; }
+  if (!actions.length) {
+    if (Array.isArray(state.discovery?.controls) && state.discovery.controls.length === 0) {
+      view.append(node('p', 'This is a read-only Workforce projection. The canonical owner has not exposed an authorized lifecycle control; no request was sent.', { class: 'notice', role: 'status' }));
+    } else unavailable(view, 'Governed lifecycle controls');
+    return;
+  }
   const form = node('form');
   const select = (label, options) => { const wrapper = node('label', label); const input = node('select'); for (const [value, text] of options) input.append(node('option', text, { value })); wrapper.append(input); form.append(wrapper); return input; };
   const action = select('Operation', actions.map(value => [value, value]));

@@ -9,8 +9,11 @@ Native Titan FSM remains the default; Frappe is optional.
 
 The executable role routes render the same company-scoped cockpit. The browser
 uses the actual shared #1049 `DirectAdminCockpitSession` and its context/projection/intent routes.
-The #811/#812 host must still supply canonical projection and governed-intent owners. Missing
-commissioned session/CSRF bootstrap, denied identity, invalid company data or unavailable host fail closed.
+Open draft PR #1201 now contains the #811 canonical company-filtered read-only projection
+owner and an optional `/v1/directadmin/*` Fetch-handler mount. Its published controls list
+is empty and lifecycle proposals are explicitly denied pending canonical caller-management
+authority. This code is not merged to main or live-certified. Missing commissioned
+session/CSRF bootstrap, denied identity, invalid company data or unavailable host fail closed.
 The current implementation is **not certified complete or ready for production**.
 Authenticated host HTML must supply `<meta name="titan-directadmin-csrf" content="…">`
 with the separately bound nonce; the plugin never creates this nonce or an identity
@@ -30,18 +33,23 @@ a real CLI child process with that transport and hostile identity/CSRF fields; i
 confirms the renderer ignores them. This checks the executable boundary, not a live
 DirectAdmin server or a functioning API route.
 
-The shared #1049 browser client requests same-origin `/v1/directadmin/...` routes and
-its server bridge validates a normal HTTP Request (origin, fetch-site, session cookie,
-CSRF, and canonical identity). This plugin's role route is only the HTML renderer;
-it does not translate DirectAdmin's CGI environment/stdin into that Request or mount
-those API paths. #1048's Developer Portal form parser is plugin-specific and cannot
-commission Workforce. #812 owns the Server Node HTTP/request route composition, using
-#1049's shared identity/CSRF bridge; #811 owns only Workforce projection and governed
-intent semantics. See the install-readiness checklist in
+The shared #1049 browser client requests same-origin `/v1/directadmin/...` routes.
+The #811 host's optional Fetch mount accepts a configured HTTPS public origin, checks
+the forwarded Host/origin and forwards an allowlist of cookie, origin, fetch-site and
+CSRF headers. The plugin's role route remains only an HTML renderer; it does not
+translate DirectAdmin CGI input into caller identity or a CSRF nonce. #1048's Developer
+Portal parser is plugin-specific and cannot commission Workforce. #812 now owns the
+official DirectAdmin RAW plugin ingress relay and strict `headers_to_env` / `pipe_post`
+parsing under existing PR #1211, with #1049 reviewing transport security. Keep this
+consumer's route mapping unchanged until #812 publishes the exact path/header contract.
+Do not put a private token in a URL or infer a nonce/caller from CGI values. No Apache
+443 shortcut is assumed. See the install-readiness checklist in
 `docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md`.
 
 The UI displays canonical roster/worker identity, hierarchy relationships, work
-states, permitted lifecycle intent submission and receipt/evidence references.
+states, owner-provided source/freshness/evidence and receipt references. It only
+renders lifecycle submission when the current host publishes a supported control;
+the current #811 projection explicitly publishes none and is read-only.
 It preserves human versus digital identity and never promotes model/provider
 identity or DirectAdmin role to execution authority. A provider acknowledgement
 or completed agent run is not a verified business outcome.
@@ -67,7 +75,7 @@ The builder requires the current canonical browser session and package-validator
 and runs the shared validator on the extracted final package. It produces a flat `titan_workforce.tar.gz` and SHA256 sidecar, applies
 executable modes, extracts the final tarball, compares contents/modes and runs
 staging-location preflight. The manifest controls the artifact version (currently
-0.1.2). Tests and development fixtures are excluded.
+0.1.3). Tests and development fixtures are excluded.
 
 Install/update only checks package/runtime prerequisites. It does not provision
 users, secrets, server processes, reverse proxies, permissions or databases.
@@ -108,8 +116,9 @@ out-of-order responses, duplicate clicks, false verification and hostile text.
 
 - #1049: shared SDK, authenticated DA session bridge, current company, CSRF,
   handoff/revocation, navigation and contribution infrastructure.
-- #811: independently hosted Workforce, canonical registry/work/runs, governed
-  control API and recovery; #1182: conversation transport.
+- #811: independently hosted Workforce, canonical registry/work/runs, read-only
+  DirectAdmin projection and explicit denial of lifecycle proposals until caller
+  management authority exists; #1182: conversation transport.
 - #302: global actor/company relationship resolver. Protected provisioning and
   credential verification remain upstream requirements.
 - #14/#640: execution/authority; #913: evidence and verified outcome provenance.

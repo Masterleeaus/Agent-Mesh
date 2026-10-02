@@ -58,11 +58,11 @@ The hosted test exercises the real #302 fixture credential issuer/registry and #
 
 ## Current artifact record
 
-For this continuation, the package builder produced 19 files for plugin version **0.1.2** at:
+For this continuation, the package builder produced 19 files for plugin version **0.1.3** at:
 
 `/tmp/1050-package-final/titan_workforce.tar.gz`
 
-SHA256: `b702ce34e083e458c9d2cf231ebc47d5389d8ed63cace919a56d71469ca44ecd`
+SHA256: `7306d5db900d752da1ddbdbb9efce39916e15c35fb8cfbce9b6da567c5bd54f8`
 
 The `.sha256` sidecar records the same value; rebuild and refresh this record after any source change.
 
@@ -82,4 +82,6 @@ The role executable does not read DirectAdmin CGI stdin/environment values. The 
 
 **Can execute now:** package build, deterministic archive/checksum validation, staged install/update/uninstall preflight, and each role script as a CLI renderer. DirectAdmin's documented `pipe_post=yes` mode supplies `POST=stdin=true` and POST bytes on stdin; the packaged role process has been exercised with these values and ignores request data safely. Install/update scripts only preflight and do not mutate a host.
 
-**Unavailable until owners commission and verify it:** same-origin `/v1/directadmin/...` routing to the shared gateway; trusted DirectAdmin session-to-HTTP-Request adaptation; the #302-backed #1049 actor/company/CSRF bridge and nonce bootstrap; #811's live projection and governed intent owners; and real DirectAdmin admin/reseller/user installation, POST, Evolution theme, update, rollback and session tests. The CGI CLI parser in #1048 Developer Portal is specific to that plugin and does not supply Workforce identity or routes.
+**Published on open draft PRs but not commissioned:** #811/#1201 now contains the company-filtered read-only projection owner and optional `/v1/directadmin/*` Fetch mount. The current projection has `controls: []`; proposed lifecycle intents are denied without state, event or receipt writes. It is not merged to main or live-certified. #812 has assigned the official DirectAdmin RAW plugin ingress relay and strict `headers_to_env` / `pipe_post` parsing to existing PR #1211, with #1049 reviewing transport security. Await its exact path/header contract before changing this consumer's URL mapping. No Apache `443` shortcut is assumed, and no private token belongs in a URL.
+
+**Unavailable until owners commission and verify it:** trusted DirectAdmin session-to-HTTP-Request adaptation, the #302-backed #1049 actor/company/CSRF bridge and nonce bootstrap, the approved audience-bound Workforce handoff, same-origin `/v1/directadmin/...` panel routing, and real DirectAdmin admin/reseller/user installation, POST, Evolution theme, update, rollback and session tests. The package never injects caller identity or CSRF data. The CGI CLI parser in #1048 Developer Portal is specific to that plugin and does not supply Workforce identity or routes.

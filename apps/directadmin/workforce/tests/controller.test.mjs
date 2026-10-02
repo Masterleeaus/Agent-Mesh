@@ -7,7 +7,7 @@ const { WorkforceController } = await import(`data:text/javascript;base64,${Buff
 const context = () => ({ company_id: 'company-a', actor_id: 'actor-a', session_revision: '1' });
 function fixture() {
   const calls = [];
-  return { calls, context: async () => context(), discover: async () => ({ company_id: 'company-a', workers: [] }), status: async () => ({ company_id: 'company-a', work: [] }), control: async (ctx, action) => { calls.push(action); return { company_id: ctx.company_id, state: 'PROVIDER_ACKNOWLEDGED' }; } };
+  return { calls, context: async () => context(), discover: async () => ({ company_id: 'company-a', workers: [] }), status: async () => ({ company_id: 'company-a', work: [] }), metadata: async () => ({ source: 'fixture-owner', freshness: null, evidence_refs: [] }), control: async (ctx, action) => { calls.push(action); return { company_id: ctx.company_id, state: 'PROVIDER_ACKNOWLEDGED' }; } };
 }
 test('loads actual transport projections and submits once without optimistic success', async () => {
   const api = fixture(); const model = new WorkforceController(api); await model.connect();

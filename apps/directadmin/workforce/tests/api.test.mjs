@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { WorkforceApi } from '../images/api.mjs';
 const context = { company_id: 'company-a', actor_id: 'actor-a', session_revision: 1, context_revision: 'ctx1' };
-function fixture() {
+function fixture(controls = [{ action: 'pause', capability_id: 'canonical.pause' }]) {
   const calls = []; return { calls,
     connect: async () => context,
-    projection: async plugin => { calls.push(['projection', plugin]); return { company_id: context.company_id, data: { schema: 'titan.workforce-cockpit.v1',
-      discovery: { company_id: context.company_id, workers: [], controls: [{ action: 'pause', capability_id: 'canonical.pause' }] },
+    projection: async plugin => { calls.push(['projection', plugin]); return { company_id: context.company_id, source: 'controlled-test-owner', freshness: '2026-10-02T00:00:00.000Z', evidence_refs: [], data: { schema: 'titan.workforce-cockpit.v1', company_id: context.company_id,
+      discovery: { company_id: context.company_id, workers: [], controls },
       status: { company_id: context.company_id, work: [] } } }; },
     intent: async (plugin, intent) => { calls.push(['intent', plugin, intent]); return { status: 'REQUESTED', receipt_id: 'receipt1', correlation_id: intent.correlation_id }; },
   };
@@ -24,6 +24,15 @@ test('unsupported control and undiscovered capability never reach intent transpo
     const session = fixture(); const api = new WorkforceApi(session); await assert.rejects(api.control(context, { action, work_id: 'work1', reason: 'test' }), /denied/);
     assert.equal(session.calls.filter(([kind]) => kind === 'intent').length, 0);
   }
+});
+test('published read-only projection is displayed but cannot submit a lifecycle intent', async () => {
+  const session = fixture([]); const api = new WorkforceApi(session, () => 'fixture-id');
+  const [discovery, status, metadata] = await Promise.all([api.discover(context), api.status(context), api.metadata(context)]);
+  assert.deepEqual(discovery.controls, []);
+  assert.deepEqual(status, { company_id: 'company-a', work: [] });
+  assert.deepEqual(metadata, { source: 'controlled-test-owner', freshness: '2026-10-02T00:00:00.000Z', evidence_refs: [] });
+  await assert.rejects(api.control(context, { action: 'cancel', work_id: 'work1', reason: 'must remain read-only' }), /denied/);
+  assert.equal(session.calls.filter(([kind]) => kind === 'intent').length, 0);
 });
 test('gateway response cannot promote request acknowledgement to verified or mismatch correlation', async () => {
   for (const response of [{ status: 'VERIFIED', receipt_id: 'r', correlation_id: 'fixture-id' }, { status: 'REQUESTED', receipt_id: 'r', correlation_id: 'other' }]) {

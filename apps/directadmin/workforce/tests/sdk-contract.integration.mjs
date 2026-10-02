@@ -82,7 +82,10 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
   let ownerAvailable = false;
   let expireNextIntent = false;
   let loggedOut = false;
+  let unauthorizedResponses = 0;
   let holdNextContext = false;
+  let controlCapabilitiesAvailable = true;
+  let shortContextExpiresAt = null;
   let heldContext;
   let pendingIntent;
   let browser;
@@ -93,6 +96,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     return { promise, resolve };
   };
   const json = (response, status, value) => {
+    if (response.destroyed || response.writableEnded) return;
     response.writeHead(status, { 'content-type': 'application/json', 'cache-control': 'no-store' });
     response.end(JSON.stringify(value));
   };
@@ -101,15 +105,19 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     for await (const chunk of request) chunks.push(chunk);
     return chunks.length ? JSON.parse(Buffer.concat(chunks).toString('utf8')) : undefined;
   };
-  const contextFor = company_id => ({ schema: 'titan.directadmin.session/v1', actor_id: 'browser-fixture-actor', company_id,
-    company_ids: [company_id], context_revision: `revision-${company_id}`, session_revision: 7, da_role: 'user',
-    expires_at: Date.now() + contextLifetimeMs, authority: 'not-carried' });
+  const contextFor = company_id => {
+    const expires_at = Date.now() + contextLifetimeMs;
+    if (contextLifetimeMs < 15 * 60_000) shortContextExpiresAt = expires_at;
+    return { schema: 'titan.directadmin.session/v1', actor_id: 'browser-fixture-actor', company_id,
+      company_ids: [company_id], context_revision: `revision-${company_id}`, session_revision: 7, da_role: 'user',
+      expires_at, authority: 'not-carried' };
+  };
   const projectionFor = company_id => ({ company_id, source: 'controlled-test-http-owner', freshness: new Date().toISOString(), evidence_refs: [],
     data: { company_id, schema: 'titan.workforce-cockpit.v1',
-      discovery: { company_id, workers: [{ company_id, worker_id: `${company_id}-worker`, kind: 'digital', role: 'worker', active: true, capabilities: ['work.cancel'] }],
-        controls: [{ action: 'cancel', capability_id: 'test.cancel' }] },
-      status: { company_id, observed_at: new Date().toISOString(), runtime_status: 'available',
-        work: [{ company_id, work_id: `${company_id}-work`, objective: 'Browser fixture work item', assignee: `${company_id}-worker`, state: 'IN_PROGRESS', evidence_refs: [] }] } } });
+      discovery: { company_id, workers: [{ company_id, worker_id: `${company_id}-worker`, kind: 'digital', active: true, capabilities: ['work.cancel'] }],
+        controls: controlCapabilitiesAvailable ? [{ action: 'cancel', capability_id: 'test.cancel' }] : [] },
+      status: { company_id,
+        work: [{ company_id, work_id: `${company_id}-work`, assignee: `${company_id}-worker`, state: 'IN_PROGRESS', context_refs: [], evidence_refs: [] }] } } });
 
   server = createServer(async (request, response) => {
     try {
@@ -123,7 +131,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
         json(response, 403, { error: 'fixture-request-rejected' }); return;
       }
       if (url.pathname === '/v1/directadmin/context' && request.method === 'GET') {
-        if (loggedOut) { json(response, 401, { error: 'session-expired' }); return; }
+        if (loggedOut) { unauthorizedResponses++; json(response, 401, { error: 'session-expired' }); return; }
         if (holdNextContext) {
           holdNextContext = false;
           heldContext.entered.resolve();
@@ -132,13 +140,13 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
         json(response, 200, contextFor(activeCompany)); return;
       }
       if (url.pathname === '/v1/directadmin/titan_workforce/projection' && request.method === 'GET') {
-        if (loggedOut) { json(response, 401, { error: 'session-expired' }); return; }
+        if (loggedOut) { unauthorizedResponses++; json(response, 401, { error: 'session-expired' }); return; }
         if (!ownerAvailable) { json(response, 503, { error: 'owner-not-mounted' }); return; }
         const company_id = activeCompany;
         json(response, 200, { context: contextFor(company_id), projection: projectionFor(company_id) }); return;
       }
       if (url.pathname === '/v1/directadmin/titan_workforce/intents' && request.method === 'POST') {
-        if (loggedOut || expireNextIntent) { expireNextIntent = false; json(response, 401, { error: 'session-expired' }); return; }
+        if (loggedOut || expireNextIntent) { unauthorizedResponses++; expireNextIntent = false; json(response, 401, { error: 'session-expired' }); return; }
         if (body?.company_id !== activeCompany || body?.input?.action !== 'cancel' || body?.input?.work_id !== `${activeCompany}-work` ||
             body?.actor_id !== 'browser-fixture-actor' || body?.capability_id !== 'test.cancel' || body?.context_revision !== `revision-${activeCompany}`) {
           json(response, 409, { error: 'fixture-intent-scope-mismatch' }); return;
@@ -161,6 +169,10 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
       if (url.pathname === '/logout-helper' && request.method === 'GET') {
         response.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
         response.end(logoutHelperHtml); return;
+      }
+      if (url.pathname === '/away' && request.method === 'GET') {
+        response.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
+        response.end('<!doctype html><title>Navigation fixture</title><main>Left the Workforce cockpit.</main>'); return;
       }
       json(response, 404, { error: 'not-found' });
     } catch {
@@ -213,6 +225,8 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
     await page.getByText('company-a', { exact: true }).waitFor();
     assert.equal(await page.getByText('Current hosted projection', { exact: true }).count(), 1);
+    await page.getByRole('button', { name: 'Health', exact: true }).click();
+    await page.getByText('controlled-test-http-owner', { exact: true }).waitFor();
     await page.getByRole('button', { name: 'Controls', exact: true }).click();
     await page.getByLabel('Operation').selectOption('cancel');
     await page.getByLabel('Work item').selectOption('company-a-work');
@@ -268,6 +282,25 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     await page.getByRole('button', { name: 'Evidence', exact: true }).click();
     await page.getByText('Submit a permitted governed request to inspect its receipt.').waitFor();
 
+    const navigationReceipt = `browser-fixture-receipt-${acceptedIntents.length + 1}`;
+    await page.getByRole('button', { name: 'Controls', exact: true }).click();
+    await page.getByLabel('Operation').selectOption('cancel');
+    await page.getByLabel('Work item').selectOption('company-b-work');
+    await page.getByLabel('Reason', { exact: true }).fill('Canceled navigation receipt fixture');
+    pendingIntent = { entered: deferred(), release: deferred() };
+    await page.getByRole('button', { name: 'Submit governed request' }).click();
+    await Promise.race([pendingIntent.entered.promise, new Promise((_, reject) => setTimeout(() => reject(new Error('navigation intent route was not reached')), 3000))]);
+    assert.equal(acceptedIntents.length, 4);
+    await page.goto(`${origin}/away`);
+    await page.getByText('Left the Workforce cockpit.').waitFor();
+    pendingIntent.release.resolve();
+    pendingIntent = null;
+    await page.goBack();
+    await page.getByText('company-b', { exact: true }).waitFor();
+    await page.getByRole('button', { name: 'Evidence', exact: true }).click();
+    await page.getByText('Submit a permitted governed request to inspect its receipt.').waitFor();
+    assert.equal(await page.getByText(navigationReceipt, { exact: true }).count(), 0, 'a late acknowledgement cannot restore a receipt after real navigation');
+
     const expiryContext = await browser.newContext();
     await expiryContext.addCookies([{ name: 'titan_test_session', value: 'browser-fixture-only', url: origin, sameSite: 'Strict' }]);
     const expiryPage = await expiryContext.newPage();
@@ -297,7 +330,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     assert.equal(requests.some(item => item.method === 'POST' && item.path === '/v1/directadmin/logout'), true, 'logout uses the shared SDK route');
 
     loggedOut = false;
-    contextLifetimeMs = 1200;
+    contextLifetimeMs = 6000;
     const timerContext = await browser.newContext();
     await timerContext.addCookies([{ name: 'titan_test_session', value: 'browser-fixture-only', url: origin, sameSite: 'Strict' }]);
     const timerPage = await timerContext.newPage();
@@ -305,10 +338,32 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     await timerPage.goto(origin);
     await timerPage.getByText('company-b', { exact: true }).waitFor();
     await timerPage.getByText('Current hosted projection', { exact: true }).waitFor();
-    await timerPage.getByText('Context changed. Reconnect to load permitted Workforce.', { timeout: 5000 }).waitFor();
+    const timerReceipt = await submitCancel(timerPage, 'company-b', 'Local expiry receipt fixture');
+    const localExpiresAt = shortContextExpiresAt;
+    const unauthorizedBeforeTimer = unauthorizedResponses;
+    assert.ok(Number.isFinite(localExpiresAt));
+    await timerPage.getByText('Context changed. Reconnect to load permitted Workforce.', { timeout: 10_000 }).waitFor();
+    assert.ok(Date.now() >= localExpiresAt, 'the SDK local expiry timer fires at/after expires_at');
+    assert.equal(unauthorizedResponses, unauthorizedBeforeTimer, 'local expiry does not depend on an HTTP 401 response');
     assert.equal(await timerPage.getByText('company-b', { exact: true }).count(), 0, 'the SDK local expires_at timer invalidates the real cockpit session');
+    assert.equal(await timerPage.getByText(timerReceipt, { exact: true }).count(), 0, 'local expiry clears a previously visible receipt');
     assert.equal(await timerPage.getByRole('button', { name: 'Submit governed request' }).count(), 0);
     await timerContext.close();
+
+    contextLifetimeMs = 15 * 60_000;
+    controlCapabilitiesAvailable = false;
+    const readOnlyContext = await browser.newContext();
+    await readOnlyContext.addCookies([{ name: 'titan_test_session', value: 'browser-fixture-only', url: origin, sameSite: 'Strict' }]);
+    const readOnlyPage = await readOnlyContext.newPage();
+    readOnlyPage.on('pageerror', error => errors.push(error.message));
+    await readOnlyPage.goto(origin);
+    await readOnlyPage.getByText('company-b', { exact: true }).waitFor();
+    const intentCountBeforeReadOnlyView = requests.filter(item => item.method === 'POST' && item.path === '/v1/directadmin/titan_workforce/intents').length;
+    await readOnlyPage.getByRole('button', { name: 'Controls', exact: true }).click();
+    await readOnlyPage.getByText('This is a read-only Workforce projection. The canonical owner has not exposed an authorized lifecycle control; no request was sent.', { exact: true }).waitFor();
+    assert.equal(await readOnlyPage.getByRole('button', { name: 'Submit governed request' }).count(), 0);
+    assert.equal(requests.filter(item => item.method === 'POST' && item.path === '/v1/directadmin/titan_workforce/intents').length, intentCountBeforeReadOnlyView);
+    await readOnlyContext.close();
     for (const item of requests.filter(item => item.path.startsWith('/v1/directadmin/'))) {
       assert.equal(item.headers['x-titan-csrf'], csrf, 'shared SDK supplies its bootstrapped nonce');
       assert.equal(item.headers.cookie?.includes(cookie), true, 'same-origin requests retain the host cookie');
