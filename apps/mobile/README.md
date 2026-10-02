@@ -37,4 +37,4 @@ Missing production configuration fails closed. `LocalMvpTitanGateway` is develop
 
 ## DirectAdmin-hosted Workforce boundary
 
-The current integration inventory and versioned mobile-to-Workforce boundary are recorded in [docs/integration/MOBILE-DIRECTADMIN-WORKFORCE-BOUNDARY.md](../../docs/integration/MOBILE-DIRECTADMIN-WORKFORCE-BOUNDARY.md). This is a code inventory and contract record, not deployment evidence. The repository still lacks a verified authenticated hosted Workforce route and deployed DirectAdmin identity bridge; production remains fail-closed until those owners provide and verify them. See #1169 for the remaining product integration.
+See [the current integration contract and source inventory](../../docs/integration/MOBILE-DIRECTADMIN-WORKFORCE-BOUNDARY.md). The production bootstrap and hosted routes remain separate implementation work; the local/demo gateway is not a release fallback.
