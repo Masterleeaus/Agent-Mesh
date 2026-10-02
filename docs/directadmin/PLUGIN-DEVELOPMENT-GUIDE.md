@@ -209,9 +209,13 @@ The current TypeScript contract package is exported as
 `@titan-zero/titan-platform/directadmin-plugin`. It provides package validation,
 server-resolved DirectAdmin-to-Titan context projection, company/revision checks,
 a same-origin versioned API client, authority-neutral widget/navigation types,
-and a contribution registry that degrades invalid plugins independently. Its
-diagnostic redactor removes credential-like fields and common bearer/private-key
-values before a support bundle is rendered or exported.
+and a contribution registry that degrades invalid plugins independently. The
+registry treats `sdk_compatibility` as the contribution API's SemVer and
+isolates a plugin whose required major differs from the runtime's supported
+major; matching majors permit minor and patch updates. The API compatibility
+version is separate from the npm package release version. Its diagnostic
+redactor removes credential-like fields and common bearer/private-key values
+before a support bundle is rendered or exported.
 
 Hosted routes use `DirectAdminSessionBridge` and `createDirectAdminGateway`, which
 verify a commissioned issuer's signed credential before calling #302's durable

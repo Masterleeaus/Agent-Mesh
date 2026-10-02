@@ -1,13 +1,17 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import type { StorageClient } from "../../../packages/storage/src/index.js";
-import { IdentitySessionRegistry, type CurrentSessionContext, type SessionSourceReference, type VerifiedSessionIdentity } from "../../../packages/titan-platform/src/security-boundary.js";
+import type { CompanyPlacementRegistry, CompanyStoreOpener } from "../../../packages/storage/src/company-storage-resolver.js";
+import { IdentitySessionRegistry, type CurrentSessionContext, type ExpectedSessionContext, type SessionSourceReference, type VerifiedSessionIdentity } from "../../../packages/titan-platform/src/security-boundary.js";
 // Existing native composition owns authority, provider verification and evidence.
 // @ts-expect-error Native runtime owner is JavaScript.
 import { createFieldServiceRuntime } from "./field-service-runtime.mjs";
 // @ts-expect-error Canonical execution boundary is JavaScript.
 import { boundedAdapterCall } from "../../../packages/tools/execution-gateway.mjs";
-import type { ConversationAuth, ConversationSurface } from "./conversation-api.js";
+import type { ConversationAuth, ConversationRequest, ConversationSurface } from "./conversation-api.js";
+import type { WorkforceZeroBridgeContext } from "../../../packages/titan-platform/src/directadmin-session-bridge.js";
 import type { DirectAdminGatewayFactory } from "./directadmin-workforce-owners.js";
 import { AUTHENTICATED_SESSION_PROOF_TYPE, type AuthenticatedWorkIdentity } from "./index.js";
+import { createCompanyScopedWorkOrders, type HostedCompanyWorkOrderOperations } from "./company-scoped-work-orders.js";
 
 const derivedWorkforceSessionPrefix = "workforce-zero-";
 
@@ -19,11 +23,11 @@ export type HostedWorkforceDependencies = {
   credentialVerifier: {
     verify(authorization: string, options?: { signal: AbortSignal }): Promise<VerifiedSessionIdentity & { audience: string; surface: ConversationSurface }>;
   };
-  /** Resolve current physical company storage within the canonical native provider. */
-  workOrders: {
-    complete(input: { company_id: string; actor_id: string; work_order_id: string; signal?: AbortSignal; authorityFence?: { assertCurrent(): void } }): Promise<unknown>;
-    read(input: { company_id: string; actor_id: string; work_order_id: string; signal?: AbortSignal }): Promise<unknown>;
-  };
+  /** Canonical #1233 registry and physical opener; no request-provided paths or placements. */
+  companyPlacementRegistry: CompanyPlacementRegistry;
+  companyStoreOpener: CompanyStoreOpener<StorageClient>;
+  /** Existing native work-order owner, called only with the current leased company store. */
+  workOrders: HostedCompanyWorkOrderOperations;
   /** Actual observations of credential, authority, provider and evidence dependencies. */
   readiness(options?: { signal: AbortSignal }): Promise<{ authentication: boolean; authority: boolean; provider: boolean; evidence: boolean }>;
   /** Optional, separately commissioned #1049/#302 audience-bound session bridge.
@@ -56,6 +60,27 @@ function deepFreeze<T>(value: T): T {
     Object.freeze(value);
   }
   return value;
+}
+
+function authBoundaryFailure(error: unknown): Error {
+  if (error instanceof Error && error.message === "identity-registry-unavailable") {
+    return new Error("identity-registry-unavailable");
+  }
+  return new Error("conversation-authentication-failed");
+}
+
+function sessionBoundaryFailure(error: unknown): Error {
+  if (error instanceof Error && error.message === "identity-registry-unavailable") {
+    return new Error("identity-registry-unavailable");
+  }
+  if (error instanceof Error && error.message === "session-fence-timeout") {
+    return new Error("identity-registry-unavailable");
+  }
+  if (error instanceof Error && /^(identity-|session-|derived-session-|runtime-authentication-|runtime-credential-)/.test(error.message)
+    && !/aborted|cancelled/.test(error.message)) {
+    return new Error("conversation-authentication-failed");
+  }
+  return error instanceof Error ? error : new Error("conversation-authentication-failed");
 }
 
 function isSessionSourceReference(value: unknown): value is SessionSourceReference {
@@ -104,7 +129,26 @@ function requireConsistentSessionProof(identity: AuthenticatedWorkIdentity): boo
 export async function createHostedRuntime(storage: StorageClient, identityStorage: StorageClient, dependencies: HostedWorkforceDependencies, signal?: AbortSignal) {
   const timeoutMs = dependencies.adapterTimeoutMs ?? 30_000;
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120_000) throw new Error("workforce-adapter-timeout-invalid");
+  if (typeof dependencies.companyPlacementRegistry?.findByCompanyId !== "function"
+    || typeof dependencies.companyStoreOpener?.open !== "function") {
+    throw new Error("production-runtime-port-required:companyPlacementPorts");
+  }
   const registry = new IdentitySessionRegistry(identityStorage);
+  const requestIdentityFailure = new AsyncLocalStorage<{ failure?: string; effectAdmitted?: boolean }>();
+  const captureIdentityFailure = (error: unknown): Error => {
+    const mapped = sessionBoundaryFailure(error);
+    if (mapped.message === "identity-registry-unavailable" || mapped.message === "conversation-authentication-failed") {
+      const scope = requestIdentityFailure.getStore();
+      if (scope && !scope.effectAdmitted) scope.failure = mapped.message;
+    }
+    return mapped;
+  };
+  const captureAdmissionUnavailable = (): Error => {
+    const failure = new Error("zero-execution-admission-unavailable");
+    const scope = requestIdentityFailure.getStore();
+    if (scope && !scope.effectAdmitted) scope.failure = failure.message;
+    return failure;
+  };
   async function loadRunIdentity(input: RunIdentityInput, callSignal?: AbortSignal) {
     callSignal?.throwIfAborted();
     const row = (await storage.query<{ payload: string }>("SELECT payload FROM agent_runs WHERE company_id=$1 AND run_id=$2", [input.company_id, input.run_id])).rows[0];
@@ -142,18 +186,77 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
     audience: "workforce", company_id: input.company_id, actor_id: input.actor_id,
     context_revision: identity.context_revision,
   });
+  const companyWorkOrders = createCompanyScopedWorkOrders({
+    placementRegistry: dependencies.companyPlacementRegistry,
+    storeOpener: dependencies.companyStoreOpener,
+    async resolveCurrentSession(input) {
+      const loaded = await loadRunIdentity(input, input.signal);
+      input.signal?.throwIfAborted();
+      let current: CurrentSessionContext;
+      try {
+        current = await registry.resolveCurrentSession(loaded.proof, expected(input, loaded.authenticated_identity), new Date().toISOString());
+      } catch (error) { throw captureIdentityFailure(error); }
+      input.signal?.throwIfAborted();
+      return { current, proof: loaded.proof };
+    },
+    async revalidateCurrentSession(proof, current, callSignal, input) {
+      callSignal?.throwIfAborted();
+      let fresh: CurrentSessionContext;
+      try {
+        fresh = await registry.resolveCurrentSession(proof, {
+          audience: "workforce", company_id: current.company_id, actor_id: current.actor_id,
+          context_revision: current.context_revision,
+        }, new Date().toISOString());
+      } catch (error) { throw captureIdentityFailure(error); }
+      callSignal?.throwIfAborted();
+      return fresh;
+    },
+    operations: dependencies.workOrders,
+  });
   const sessionAdmission: SessionAdmission = async (input, effect) => {
-    const loaded = await loadRunIdentity(input, input.signal);
+    let loaded: Awaited<ReturnType<typeof loadRunIdentity>>;
+    try { loaded = await loadRunIdentity(input, input.signal); }
+    catch (error) { throw captureIdentityFailure(error); }
     const context = expected(input, loaded.authenticated_identity);
     if (loaded.proof.source_session !== undefined) {
-      return registry.withCurrentSessionFence(loaded.proof, context, { signal: input.signal },
-        (current, signal, acquireDeadlineMs) => effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: true, signal, acquire_deadline_ms: acquireDeadlineMs }));
+      let admissionCompleted = false;
+      try {
+        return await registry.withCurrentSessionFence(loaded.proof, context, { signal: input.signal },
+          async (current, signal, acquireDeadlineMs) => {
+            const result = await effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: true, signal, acquire_deadline_ms: acquireDeadlineMs });
+            // `effect` is the control-store admission transaction. Its promise
+            // resolves only after the durable EXECUTING transition commits, so
+            // callback entry alone must not suppress timeout classification.
+            admissionCompleted = true;
+            const scope = requestIdentityFailure.getStore();
+            if (scope) scope.effectAdmitted = true;
+            return result;
+          });
+      } catch (error) {
+        if (!admissionCompleted && error instanceof Error && error.message === "storage-transaction-acquire-timeout") {
+          throw captureAdmissionUnavailable();
+        }
+        if (!admissionCompleted) throw captureIdentityFailure(error);
+        throw error;
+      }
     }
     // Ordinary Workforce sessions retain their existing current-identity check;
     // lineage is never synthesized for credentials that have no signed source.
-    const current = await registry.resolveCurrentSession(loaded.proof, context, loaded.now);
+    let current: CurrentSessionContext;
+    try { current = await registry.resolveCurrentSession(loaded.proof, context, loaded.now); }
+    catch (error) { throw captureIdentityFailure(error); }
     input.signal?.throwIfAborted();
-    return effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: false, signal: input.signal });
+    try {
+      const result = await effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: false, signal: input.signal });
+      const scope = requestIdentityFailure.getStore();
+      if (scope) scope.effectAdmitted = true;
+      return result;
+    } catch (error) {
+      if (error instanceof Error && error.message === "storage-transaction-acquire-timeout") {
+        throw captureAdmissionUnavailable();
+      }
+      throw error;
+    }
   };
   const auth: ConversationAuth = {
     async resolve({ request, authorization }) {
@@ -184,21 +287,92 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
             actor_id: current.actor_id, context_revision: current.context_revision, surface: verified.surface,
             session_proof_type: hasSource ? AUTHENTICATED_SESSION_PROOF_TYPE.sourceDerived : AUTHENTICATED_SESSION_PROOF_TYPE.direct,
             ...(hasSource ? { source_session_required: true } : {}) } };
-      } catch { throw new Error("conversation-authentication-failed"); }
+      } catch (error) { throw authBoundaryFailure(error); }
     },
   };
+  async function resolveWorkforceZeroIdentity(credential: string, child: WorkforceZeroBridgeContext) {
+    if (typeof credential !== "string" || credential.length < 1 || credential.length > 16_384 ||
+        child?.schema !== "titan.workforce-zero.session/v1" || child.audience !== "workforce" || child.surface !== "zero" ||
+        !child.company_id || !child.actor_id || !child.device_id || !child.session_id || !child.context_revision ||
+        !Array.isArray(child.company_ids) || child.company_ids.length !== 1 || child.company_ids[0] !== child.company_id ||
+        !Number.isSafeInteger(child.session_revision) || !Number.isFinite(child.expires_at)) {
+      throw new Error("runtime-authentication-required");
+    }
+    const request = {
+      company_id: child.company_id, actor_id: child.actor_id, device_id: child.device_id,
+      surface: child.surface, session_id: child.session_id, context_revision: child.context_revision,
+    } as ConversationRequest;
+    const authenticated = await auth.resolve({ request, authorization: `Bearer ${credential}` });
+    const identity = authenticated.authenticated_identity as AuthenticatedWorkIdentity | undefined;
+    const credentialExpiresAt = Date.parse(String(identity?.credential_expires_at ?? ""));
+    if (authenticated.company_id !== child.company_id || authenticated.actor_id !== child.actor_id ||
+        authenticated.device_id !== child.device_id || authenticated.surface !== "zero" ||
+        authenticated.session_id !== child.session_id || authenticated.context_revision !== child.context_revision ||
+        identity?.session_revision !== child.session_revision || identity?.source_session_required !== true ||
+        !identity.source_session || !Number.isFinite(credentialExpiresAt) || credentialExpiresAt > child.expires_at) {
+      throw new Error("runtime-authentication-required");
+    }
+    const proof: VerifiedSessionIdentity = {
+      provider: identity.provider, subject: identity.subject, session_id: identity.session_id,
+      device_id: identity.device_id, session_revision: identity.session_revision,
+      credential_expires_at: identity.credential_expires_at, source_session: identity.source_session,
+    };
+    return proof;
+  }
   // Only these public provider ports cross the hosted boundary. In particular,
   // never forward the legacy same-store transaction port from an adapter object.
-  const workOrders = {
-    complete: (input: Parameters<HostedWorkforceDependencies["workOrders"]["complete"]>[0]) => dependencies.workOrders.complete(input),
-    read: (input: Parameters<HostedWorkforceDependencies["workOrders"]["read"]>[0]) => dependencies.workOrders.read(input),
-  };
-  const runtime = await createFieldServiceRuntime({ storage, workOrders, timeoutMs, signal, sessionAdmission,
+  const runtime = await createFieldServiceRuntime({ storage, workOrders: companyWorkOrders, timeoutMs, signal, sessionAdmission,
     async revalidateIdentity(input: { company_id: string; actor_id: string; run_id: string }) {
       signal?.throwIfAborted();
-      const loaded = await loadRunIdentity(input, signal);
-      await registry.resolveCurrentSession(loaded.proof, expected(input, loaded.authenticated_identity), loaded.now);
+      let loaded: Awaited<ReturnType<typeof loadRunIdentity>>;
+      try { loaded = await loadRunIdentity(input, signal); }
+      catch (error) { throw captureIdentityFailure(error); }
+      try {
+        await registry.resolveCurrentSession(loaded.proof, expected(input, loaded.authenticated_identity), loaded.now);
+      } catch (error) { throw captureIdentityFailure(error); }
     },
   });
-  return { auth, runtime, registry, sessionAdmission };
+  const dispatch = runtime.dispatch;
+  const recover = runtime.recover;
+  const surfacedRuntime = Object.freeze({
+    ...runtime,
+    async verifyWorkforceZeroSession(credential: string, child: WorkforceZeroBridgeContext): Promise<void> {
+      await resolveWorkforceZeroIdentity(credential, child);
+    },
+    async withWorkforceZeroSessionFence<T>(
+      credential: string,
+      child: WorkforceZeroBridgeContext,
+      options: { signal?: AbortSignal } | undefined,
+      effect: (signal: AbortSignal) => Promise<T> | T,
+    ): Promise<T> {
+      const proof = await resolveWorkforceZeroIdentity(credential, child);
+      const expected: ExpectedSessionContext = {
+        audience: "workforce", company_id: child.company_id, actor_id: child.actor_id,
+        context_revision: child.context_revision,
+      };
+      return registry.withCurrentSessionFence(proof, expected, { signal: options?.signal }, async (current, signal) => {
+        if (current.session_id !== child.session_id || current.session_revision !== child.session_revision ||
+            current.context_revision !== child.context_revision || current.company_id !== child.company_id ||
+            current.actor_id !== child.actor_id || current.device_id !== child.device_id ||
+            Date.parse(current.expires_at) !== child.expires_at || current.allowed_company_ids.length !== 1 ||
+            current.allowed_company_ids[0] !== child.company_id) {
+          throw new Error("runtime-authentication-required");
+        }
+        return effect(signal);
+      });
+    },
+    async dispatch(input: Parameters<typeof dispatch>[0]) {
+      const scope: { failure?: string; effectAdmitted?: boolean } = {};
+      const result = await requestIdentityFailure.run(scope, () => dispatch(input));
+      if (scope.failure) throw new Error(scope.failure);
+      return result;
+    },
+    async recover(input: Parameters<typeof recover>[0]) {
+      const scope: { failure?: string; effectAdmitted?: boolean } = {};
+      const result = await requestIdentityFailure.run(scope, () => recover(input));
+      if (scope.failure) throw new Error(scope.failure);
+      return result;
+    },
+  });
+  return { auth, runtime: surfacedRuntime, registry, sessionAdmission };
 }

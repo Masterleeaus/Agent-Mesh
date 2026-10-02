@@ -1,0 +1,290 @@
+name: DirectAdmin Developer Portal PHP verification
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/directadmin/dev-access/**"
+      - ".github/workflows/directadmin-dev-access-php.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/directadmin/dev-access/**"
+      - ".github/workflows/directadmin-dev-access-php.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: directadmin-dev-access-php-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php-package-and-transport:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      # Full-SHA pin for actions/checkout v7.0.1.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Verify documented preinstalled PHP CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Ubuntu 24.04 runner image manifest lists PHP 8.3.6:
+          # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md#php-tools
+          if ! command -v php >/dev/null 2>&1; then
+            echo "::error::Ubuntu 24.04 runner is missing its documented preinstalled PHP CLI. No runtime installation will be attempted."
+            exit 1
+          fi
+          php --version
+          php -r '
+            if (PHP_MAJOR_VERSION !== 8 || PHP_MINOR_VERSION !== 3) {
+              fwrite(STDERR, "::error::Expected documented PHP 8.3.x CLI; found ".PHP_VERSION.PHP_EOL);
+              exit(1);
+            }
+            fwrite(STDOUT, "Verified preinstalled PHP CLI ".PHP_VERSION.PHP_EOL);
+          '
+
+      - name: Run the complete Developer Portal package gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="apps/directadmin/dev-access"
+          for directory in "$root" admin reseller user hooks lib scripts; do
+            if [[ "$directory" == "$root" ]]; then
+              chmod 0700 "$root"
+            else
+              chmod 0700 "$root/$directory"
+            fi
+          done
+          umask 077
+          TDA_PACKAGE_DIST="$RUNNER_TEMP/developer-portal-package" \
+            bash "$root/tools/package.sh"
+
+      - name: Lint every PHP source and executable role page
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="apps/directadmin/dev-access"
+          for file in \
+            "$root/lib/app.php" \
+            "$root/tools/request-integration-test.php" \
+            "$root/tools/security-test.php" \
+            "$root/admin/index.html" \
+            "$root/reseller/index.html" \
+            "$root/user/index.html"; do
+            php -l "$file"
+          done
+
+      - name: Verify browser-only SSH setup and diagnostic behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="apps/directadmin/dev-access"
+          node --version
+          node "$root/tools/ssh-access.test.mjs"
+
+      - name: Verify retained v1.3.2 historical artifact integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="apps/directadmin/dev-access"
+          (
+            cd "$root/dist/v1.3.2"
+            sha256sum --check titan_dev_access.tar.gz.sha256
+          )
+          python3 - "$root/dist/v1.3.2" <<'PY'
+          import hashlib
+          import json
+          import pathlib
+          import re
+          import sys
+          import tarfile
+
+          release = pathlib.Path(sys.argv[1])
+          archive = release / "titan_dev_access.tar.gz"
+          provenance = json.loads((release / "provenance.json").read_text())
+          expected_archive = provenance["archive"]["sha256"]
+          digest = hashlib.sha256()
+          with archive.open("rb") as stream:
+              for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                  digest.update(chunk)
+          if digest.hexdigest() != expected_archive:
+              raise SystemExit("historical archive checksum differs from its own provenance")
+
+          source_prefix = "apps/directadmin/dev-access/"
+          expected_files = {}
+          for source_path, file_hash in provenance["source"]["packaged_file_sha256"].items():
+              if not source_path.startswith(source_prefix):
+                  raise SystemExit(f"unexpected provenance path: {source_path}")
+              relative = source_path[len(source_prefix):]
+              if not relative or relative.startswith("/") or ".." in pathlib.PurePosixPath(relative).parts:
+                  raise SystemExit(f"unsafe provenance path: {source_path}")
+              expected_files[relative] = file_hash
+
+          expected_dirs = {"."}
+          for name in expected_files:
+              parent = pathlib.PurePosixPath(name).parent
+              while str(parent) != ".":
+                  expected_dirs.add(str(parent))
+                  parent = parent.parent
+
+          members = {}
+          with tarfile.open(archive, "r:gz") as bundle:
+              for member in bundle.getmembers():
+                  raw = member.name
+                  while raw.startswith("./"):
+                      raw = raw[2:]
+                  name = "." if raw in ("", ".") else raw.rstrip("/")
+                  parts = pathlib.PurePosixPath(name).parts
+                  if name.startswith("/") or "\\" in name or any(part in ("", ".", "..") for part in parts):
+                      raise SystemExit(f"unsafe archive member: {member.name}")
+                  if name in members:
+                      raise SystemExit(f"duplicate archive member: {name}")
+                  if not (member.isfile() or member.isdir()) or member.issym() or member.islnk():
+                      raise SystemExit(f"unsupported archive member type: {name}")
+                  if member.mode & 0o7000:
+                      raise SystemExit(f"special permission bits are forbidden: {name}")
+                  members[name] = member
+
+              actual_files = {name for name, member in members.items() if member.isfile()}
+              actual_dirs = {name for name, member in members.items() if member.isdir()}
+              if actual_files != set(expected_files):
+                  raise SystemExit("historical archive file set differs from its own provenance")
+              if actual_dirs != expected_dirs:
+                  raise SystemExit("historical archive directory layout differs from its own provenance")
+
+              for name, expected_hash in expected_files.items():
+                  with bundle.extractfile(members[name]) as stream:
+                      actual_hash = hashlib.sha256(stream.read()).hexdigest()
+                  if actual_hash != expected_hash:
+                      raise SystemExit(f"historical packaged file differs from its own provenance: {name}")
+
+              required = {
+                  "plugin.conf", "README.md", "AGENTS.md", "admin/index.html",
+                  "reseller/index.html", "user/index.html", "hooks", "lib", "scripts"
+              }
+              if not required.issubset(set(members)):
+                  raise SystemExit("historical archive is missing a required DirectAdmin root entry")
+              executable = {
+                  "admin/index.html", "reseller/index.html", "user/index.html",
+                  "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh"
+              }
+              if any(members[name].mode & 0o111 == 0 for name in executable):
+                  raise SystemExit("historical archive is missing an executable DirectAdmin entrypoint")
+              config = bundle.extractfile(members["plugin.conf"]).read().decode("utf-8")
+              if not re.search(r"^name=Developer Portal$", config, re.MULTILINE):
+                  raise SystemExit("historical plugin name mismatch")
+              if not re.search(r"^version=1\.3\.2$", config, re.MULTILINE):
+                  raise SystemExit("historical plugin version mismatch")
+
+          print("Historical v1.3.2 archive matches its own checksum, file provenance, root layout, and modes")
+          PY
+
+      - name: Exercise exact current-source candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="apps/directadmin/dev-access"
+          candidate="$RUNNER_TEMP/developer-portal-package/titan_dev_access.tar.gz"
+          test -f "$candidate"
+          bash "$root/tools/plugin-lab.sh" "$candidate"
+          extracted="$RUNNER_TEMP/developer-portal-current"
+          mkdir -p "$extracted"
+          tar -xzf "$candidate" -C "$extracted"
+          grep -qx 'version=1.3.8' "$extracted/plugin.conf"
+          php "$root/tools/request-integration-test.php" "$extracted"
+
+      - name: Prepare exact v1.3.8 review artifact and provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidate="$RUNNER_TEMP/developer-portal-package/titan_dev_access.tar.gz"
+          release="$RUNNER_TEMP/developer-portal-v1.3.8"
+          mkdir -p "$release"
+          cp "$candidate" "$release/titan_dev_access.tar.gz"
+          (
+            cd "$release"
+            sha256sum titan_dev_access.tar.gz > titan_dev_access.tar.gz.sha256
+          )
+          source_commit="${{ github.event.pull_request.head.sha || github.sha }}"
+          python3 - "$release" "$GITHUB_SHA" "$source_commit" "$GITHUB_RUN_ID" <<'PY'
+          import hashlib
+          import json
+          import pathlib
+          import sys
+          import tarfile
+          import subprocess
+
+          release = pathlib.Path(sys.argv[1])
+          archive = release / "titan_dev_access.tar.gz"
+          digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+          php = subprocess.run(
+              ["php", "-r", "echo PHP_VERSION;"], check=True, capture_output=True, text=True
+          ).stdout.strip()
+          manifest = None
+          packaged_files = {}
+          with tarfile.open(archive, "r:gz") as bundle:
+              for member in bundle.getmembers():
+                  name = member.name
+                  while name.startswith("./"):
+                      name = name[2:]
+                  name = name.rstrip("/")
+                  if not member.isfile():
+                      continue
+                  if name in packaged_files:
+                      raise SystemExit(f"duplicate packaged file: {name}")
+                  with bundle.extractfile(member) as stream:
+                      payload = stream.read()
+                  packaged_files[name] = hashlib.sha256(payload).hexdigest()
+                  if name == "plugin.conf":
+                      manifest = payload.decode("utf-8")
+          if manifest is None or "name=Developer Portal\n" not in manifest or "version=1.3.8\n" not in manifest:
+              raise SystemExit("candidate archive manifest does not identify Developer Portal v1.3.8")
+          provenance = {
+              "schema": "titan.directadmin-plugin.provenance.v1",
+              "plugin_id": "titan_dev_access",
+              "display_name": "Developer Portal",
+              "version": "1.3.8",
+              "source_commit": sys.argv[3],
+              "workflow_commit": sys.argv[2],
+              "workflow_run_id": int(sys.argv[4]),
+              "php_cli": php,
+              "archive": {
+                  "file": "titan_dev_access.tar.gz",
+                  "sha256": digest,
+                  "packaged_file_sha256": packaged_files,
+              },
+              "verification": {
+                  "status": "hosted_php_and_final_archive_gates_passed",
+                  "live_directadmin": "not_tested",
+                  "independent_security_review": "pending",
+                  "library_publication": "not_performed",
+              },
+              "compatibility": {
+                  "stable_plugin_id": "titan_dev_access",
+                  "persistent_migration": False,
+                  "observed_live_version": "1.3.6",
+                  "live_smoke": "admin_pwd_and_id_passed_ssh_login_unverified",
+                  "live_1_3_6_update_and_rollback_verified": False,
+                  "installed_1_1_3_rollback_verified": False,
+                  "v1_3_2_is_historical": True,
+                  "v1_3_3_is_not_safe_to_install": True,
+              },
+          }
+          (release / "provenance.json").write_text(
+              json.dumps(provenance, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          print(f"Prepared v1.3.8 candidate SHA-256 {digest} from source {sys.argv[3]} in workflow commit {sys.argv[2]}")
+          PY
+
+      - name: Upload review-only v1.3.8 candidate artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: developer-portal-v1.3.8-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/developer-portal-v1.3.8
+          if-no-files-found: error
+          retention-days: 14

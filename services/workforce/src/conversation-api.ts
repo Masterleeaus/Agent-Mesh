@@ -227,6 +227,7 @@ export function writeConversationResponse(response: ServerResponse, value: Conve
 }
 
 export function conversationHttpStatus(code: string): number {
+  if (code === "identity-registry-unavailable" || code === "zero-execution-admission-unavailable") return 503;
   if (code.includes("authentication") || code.includes("authorization")) return 401;
   if (code.includes("mismatch") || code.includes("stale") || code.includes("conflict")) return 409;
   if (code.includes("too-large")) return 413;

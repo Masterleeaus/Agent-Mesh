@@ -1,0 +1,32 @@
+name: Certification evidence contract
+on:
+  pull_request:
+    paths:
+      - 'packages/titan-platform/src/certification-matrix.ts'
+      - 'packages/titan-platform/src/compatibility-pipeline.ts'
+      - 'packages/titan-platform/tests/certification-matrix.test.mjs'
+      - 'packages/titan-platform/tests/fixtures/certification-inputs.mjs'
+      - 'scripts/certify-release.mjs'
+      - 'scripts/generate-readiness-snapshot.mjs'
+      - 'scripts/certification/**'
+      - 'tests/e2e/certification/release-readiness*'
+      - '.github/workflows/certification-evidence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evidence-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Canonical evaluator negative and scale tests
+        run: CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs
+      - name: Executable consumer integration and source audit tests
+        run: node --test scripts/certification/*.test.mjs
+      - name: Verify deterministic source audit (not production certification)
+        run: node scripts/generate-readiness-snapshot.mjs --check

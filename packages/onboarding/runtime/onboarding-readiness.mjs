@@ -1,4 +1,4 @@
-import { normalizeCompanyContext } from '../../packages/titan-platform/src/ported/titan-local/kernel/company-context.js';
+import { normalizeCompanyContext } from '@titan-zero/storage/company-context';
 
 const LEGACY_KEYS = new Set(['tenant_id','tenant_company_id','workspace_tenant_id','business_id']);
 const clone = value => value == null ? value : globalThis.structuredClone ? structuredClone(value) : JSON.parse(JSON.stringify(value));

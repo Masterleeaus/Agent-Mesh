@@ -5,8 +5,17 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const PACKAGE_FILES = ["plugin.conf", "install.sh", "update.sh", "uninstall.sh", "health.sh", "runtime.mjs"];
-const EXECUTABLE_FILES = ["install.sh", "update.sh", "uninstall.sh", "health.sh"];
+export const PACKAGE_FILES = [
+  "plugin.conf", "install.sh", "update.sh", "uninstall.sh", "health.sh",
+  "runtime.mjs", "directadmin-relay.mjs", "package.json", "titan-server-node.service",
+  "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh",
+  "user/index.html", "user/directadmin-gateway.raw", "images/directadmin-relay-client.mjs",
+];
+export const EXECUTABLE_FILES = [
+  "install.sh", "update.sh", "uninstall.sh", "health.sh",
+  "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh",
+  "user/index.html", "user/directadmin-gateway.raw",
+];
 const ID_PATTERN = /^[a-z][a-z0-9-]{1,62}$/;
 
 function run(command, args) {
@@ -49,8 +58,10 @@ export function packagePlugin({ sourceDir, outputDir }) {
   const staging = fs.mkdtempSync(path.join(os.tmpdir(), "titan-da-plugin-"));
   try {
     for (const name of PACKAGE_FILES) {
-      fs.copyFileSync(path.join(root, name), path.join(staging, name), fs.constants.COPYFILE_EXCL);
-      fs.chmodSync(path.join(staging, name), EXECUTABLE_FILES.includes(name) ? 0o755 : 0o644);
+      const stagedFile = path.join(staging, name);
+      fs.mkdirSync(path.dirname(stagedFile), { recursive: true });
+      fs.copyFileSync(path.join(root, name), stagedFile, fs.constants.COPYFILE_EXCL);
+      fs.chmodSync(stagedFile, EXECUTABLE_FILES.includes(name) ? 0o755 : 0o644);
     }
     run("tar", ["--sort=name", "--mtime=@0", "--owner=0", "--group=0", "--numeric-owner", "-czf", archive, "-C", staging, ...PACKAGE_FILES]);
     const bytes = fs.readFileSync(archive);

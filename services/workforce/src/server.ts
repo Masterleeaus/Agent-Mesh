@@ -53,6 +53,7 @@ function json(response: ServerResponse, status: number, body: unknown) {
 }
 
 const directAdminForwardHeaders = ["cookie", "sec-fetch-site", "origin", "referer", "x-titan-csrf", "content-type", "content-encoding", "accept"] as const;
+const directAdminBootstrapForwardHeaders = ["x-titan-da-bootstrap-csrf"] as const;
 function assertDirectAdminOrigin(value: string): void {
   try {
     const origin = new URL(value);
@@ -72,13 +73,14 @@ function directAdminRequest(request: import("node:http").IncomingMessage, public
   if (!target.startsWith("/") || target.startsWith("//")) throw new Error("directadmin-request-target-invalid");
   const url = new URL(target, origin);
   if (url.origin !== publicOrigin) throw new Error("directadmin-origin-mismatch");
+  const method = request.method ?? "GET";
+  const bootstrapRequest = method === "POST" && target === "/v1/directadmin/bootstrap";
   const headers = new Headers();
-  for (const name of directAdminForwardHeaders) {
+  for (const name of [...directAdminForwardHeaders, ...(bootstrapRequest ? directAdminBootstrapForwardHeaders : [])]) {
     const value = request.headers[name];
     if (typeof value === "string") headers.set(name, value);
     else if (Array.isArray(value)) headers.set(name, name === "cookie" ? value.join("; ") : value.join(", "));
   }
-  const method = request.method ?? "GET";
   const init: RequestInit & { duplex?: "half" } = { method, headers, redirect: "error", signal };
   if (method !== "GET" && method !== "HEAD") {
     init.body = Readable.toWeb(request) as ReadableStream<Uint8Array>;
@@ -138,8 +140,10 @@ export async function createWorkforceServer(options: WorkforceServerOptions = {}
       }
     }
   } catch (error) {
-    await identityStorage?.close();
-    await storage.close();
+    try { await identityStorage?.close(); } catch { /* preserve the original startup error */ }
+    try { await storage.close(); } catch { /* preserve the original startup error */ }
+    try { await dependencies?.close?.({ signal: AbortSignal.timeout(1000) }); }
+    catch { /* preserve the original startup error */ }
     throw error;
   }
   let running = true;
@@ -219,7 +223,8 @@ export async function createWorkforceServer(options: WorkforceServerOptions = {}
       json(response, ready ? 200 : 503, { status: ready ? "ok" : "degraded", service: "workforce", checks: status });
     })().catch(error => {
       // Internal provider/database errors may contain credentials. Only bounded protocol codes leave the host.
-      const code = error instanceof Error && /^(conversation|zero)-[a-z-]+$/.test(error.message) ? error.message : "conversation-failed";
+      const code = error instanceof Error && (/^(conversation|zero)-[a-z-]+$/.test(error.message)
+        || error.message === "identity-registry-unavailable") ? error.message : "conversation-failed";
       json(response, conversationHttpStatus(code), { error: code });
     }).finally(() => { active.delete(task); });
     active.add(task);
@@ -258,7 +263,10 @@ export async function loadWorkforceDependencies(modulePath = process.env.WORKFOR
   const module = await import(pathToFileURL(modulePath).href);
   if (typeof module.createWorkforceDependencies !== "function") throw new Error("workforce-dependencies-factory-required");
   const dependencies = await module.createWorkforceDependencies();
-  if (!dependencies || typeof dependencies.credentialVerifier?.verify !== "function" || typeof dependencies.workOrders?.read !== "function" ||
+  if (!dependencies || typeof dependencies.credentialVerifier?.verify !== "function"
+    || typeof dependencies.companyPlacementRegistry?.findByCompanyId !== "function"
+    || typeof dependencies.companyStoreOpener?.open !== "function"
+    || typeof dependencies.workOrders?.read !== "function" ||
     typeof dependencies.workOrders?.complete !== "function" || typeof dependencies.readiness !== "function" ||
     (dependencies.directAdmin !== undefined && (typeof dependencies.directAdmin.publicOrigin !== "string" ||
       typeof dependencies.directAdmin.createGateway !== "function"))) throw new Error("workforce-dependencies-invalid");

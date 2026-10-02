@@ -1,15 +1,21 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash, generateKeyPairSync, sign, verify } from "node:crypto";
-import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { request as httpRequest } from "node:http";
 import { SignJWT } from "jose";
 import Database from "better-sqlite3";
-import { createSqliteStorage } from "../packages/storage/src/index.js";
+import {
+  createSqliteCompanyPlacementRegistry,
+  createSqliteCompanyStoreOpener,
+  createSqliteStorage,
+  initializeSqliteCompanyPlacementRegistry,
+} from "../packages/storage/src/index.js";
 import { createIdentitySessionRegistry } from "../packages/titan-platform/src/security-boundary.js";
 import { completeAssignedWorkOrder } from "../apps/web/lib/work-orders/lead-access.ts";
+import { conversationHttpStatus } from "../services/workforce/src/conversation-api.js";
 // @ts-expect-error Canonical authority store owner is JavaScript.
 import { SqliteAuthorityStore, SqliteWorkerAccessStore } from "../packages/runtime/authority/index.mjs";
 import type { WorkforceServer } from "../services/workforce/src/server.js";
@@ -22,7 +28,9 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   const dir = mkdtempSync(join(tmpdir(), "titan-hosted-"));
   const storagePath = join(dir, "control.db");
   const identityStoragePath = join(dir, "identity.db");
-  const files = { a: join(dir, "company-a.db"), b: join(dir, "company-b.db") };
+  const companyStoreRoot = join(dir, "company-stores");
+  mkdirSync(companyStoreRoot, { mode: 0o700 });
+  const files = { a: join(companyStoreRoot, "company-a.sqlite"), b: join(companyStoreRoot, "company-b.sqlite") };
   for (const [company, file] of [["a", storagePath], ...Object.entries(files)]) {
     const db = new Database(file);
     for (const name of readdirSync(new URL("../db/sqlite/", import.meta.url)).filter(name => name.endsWith(".sql")).sort()) {
@@ -54,6 +62,31 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   const now = new Date().toISOString();
   const context = await registry.issueSession({ provider: "test-ed25519", subject: "subject", session_id: "session", device_id: "device", company_id: "a", audience: "workforce", issued_at: now, expires_at: new Date(Date.now() + 3600000).toISOString() }, now);
   const claims = { provider: "test-ed25519", subject: "subject", session_id: "session", device_id: "device", session_revision: 1, audience: "workforce", surface: "zero" as const, credential_expires_at: new Date(Date.now() + 3600000).toISOString() };
+  await initializeSqliteCompanyPlacementRegistry({ storage: identity, storage_role: "GLOBAL_REGISTRY" });
+  for (const company_id of ["a", "b"]) {
+    await identity.query(`INSERT INTO titan_company_storage_placements
+      (company_id, placement_id, placement_revision, provider, schema_version, status)
+      VALUES ($1, $2, 1, 'sqlite', 'native-v1', 'READY')`, [company_id, `company-${company_id}`]);
+  }
+  const persistedPlacementRegistry = await createSqliteCompanyPlacementRegistry({ storage: identity, storage_role: "GLOBAL_REGISTRY" });
+  const physicalCompanyOpener = createSqliteCompanyStoreOpener({ companyStoreRoot });
+  let reportWrongPlacementCompany = false;
+  let companyOpens = 0;
+  let companyCloses = 0;
+  const companyPlacementRegistry = {
+    async findByCompanyId(company_id: string, options?: { signal?: AbortSignal }) {
+      const placement = await persistedPlacementRegistry.findByCompanyId(company_id, options);
+      return placement && reportWrongPlacementCompany && company_id === "a" ? { ...placement, company_id: "b" } : placement;
+    },
+  };
+  const companyStoreOpener = {
+    async open(placement: Parameters<typeof physicalCompanyOpener.open>[0], options?: { signal?: AbortSignal }) {
+      const opened = await physicalCompanyOpener.open(placement, options);
+      companyOpens += 1;
+      const companyStorage = { ...opened.client, async close() { companyCloses += 1; await opened.client.close(); } };
+      return { ...opened, client: companyStorage };
+    },
+  };
   const keys = generateKeyPairSync("ed25519");
   function credential(overrides: Record<string, unknown> = {}) {
     const payload = Buffer.from(JSON.stringify({ ...claims, ...overrides })).toString("base64url");
@@ -68,7 +101,6 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   const workforce = new SqliteWorkforceStore(control);
   await workforce.migrate();
   await workforce.putWorker({ company_id: "a", worker_id: "manager", kind: "digital", active: true, capabilities: ["work.delegate", capability] });
-  const mapped = (company: string) => { if (company !== "a" && company !== "b") throw new Error("company-storage-unmapped"); return stores[company]; };
   let beforeRead: ((signal?: AbortSignal) => Promise<void>) | undefined;
   let beforeComplete: ((signal?: AbortSignal) => Promise<void>) | undefined;
   let afterComplete: ((signal?: AbortSignal) => Promise<void>) | undefined;
@@ -85,20 +117,24 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
       if (!match || !verify(null, Buffer.from(match[1]), keys.publicKey, Buffer.from(match[2], "base64url"))) throw new Error("signature-invalid");
       return JSON.parse(Buffer.from(match[1], "base64url").toString("utf8"));
     } },
+    companyPlacementRegistry,
+    companyStoreOpener,
     workOrders: {
-      async complete({ company_id, actor_id, work_order_id, signal, authorityFence }) {
+      async complete({ company_id, actor_id, work_order_id, signal, authorityFence, companyStorage, currentSession }) {
         if (beforeComplete) await beforeComplete(signal);
         signal?.throwIfAborted();
+        assert.equal(currentSession.company_id, company_id);
         nativeInvocations += 1;
-        const result = await mapped(company_id).transaction(tx => completeAssignedWorkOrder(tx, work_order_id, company_id, actor_id, authorityFence));
+        const result = await companyStorage.transaction(tx => completeAssignedWorkOrder(tx, work_order_id, company_id, actor_id, authorityFence));
         if (afterComplete) await afterComplete(signal);
         signal?.throwIfAborted();
         return result;
       },
-      async read({ company_id, actor_id, work_order_id, signal }) {
+      async read({ company_id, actor_id, work_order_id, signal, companyStorage, currentSession }) {
         if (beforeRead) { const hook = beforeRead; beforeRead = undefined; await hook(signal); }
         signal?.throwIfAborted();
-        return (await mapped(company_id).query("SELECT id,status,completed_at FROM work_orders WHERE company_id=$1 AND id=$2 AND assigned_user_id=$3", [company_id, work_order_id, actor_id])).rows[0] ?? null;
+        assert.equal(currentSession.company_id, company_id);
+        return (await companyStorage.query("SELECT id,status,completed_at FROM work_orders WHERE company_id=$1 AND id=$2 AND assigned_user_id=$3", [company_id, work_order_id, actor_id])).rows[0] ?? null;
       },
     },
     async close() { dependencyCloseCount += 1; },
@@ -116,11 +152,24 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   }
   await start();
   const input = { action: "start", company_id: "a", actor_id: "lead", device_id: "device", surface: "zero", session_id: "session", context_revision: context.context_revision, conversation_id: "conversation", interaction_id: "interaction", client_message_id: "message", request_id: "request", operation_id: "operation", correlation_id: "correlation", trace_id: "trace", idempotency_key: "idempotency", text: "complete work order wo" };
-  return { control, identity, dependencies, registry, stores, claims, context, authority, envelope, credential, input,
+  return { control, controlPath: storagePath, identity, dependencies, registry, stores, companyPlacementRegistry, companyStoreOpener, companyOpens: () => companyOpens, companyCloses: () => companyCloses, claims, context, authority, envelope, credential, input,
     async post(overrides: Record<string, unknown> = {}, token: string | null = credential()) { const response = await fetch(`${base}/v1/workforce/conversations`, { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: token } : {}) }, body: JSON.stringify({ ...input, ...overrides }) }); return { status: response.status, body: await response.json() as any }; },
     async status(company: "a" | "b" = "a") { return (await stores[company].query<{ status: string }>("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status; },
     async run() { const rows = await control.query<{ payload: string }>("SELECT payload FROM agent_runs WHERE company_id='a'"); return rows.rows.map(row => JSON.parse(row.payload)); },
     async executionStateCount(state: string) { return (await control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')=$1", [state])).rowCount; },
+    async rotatePlacement(company_id: "a" | "b") {
+      const result = await identity.query("UPDATE titan_company_storage_placements SET placement_revision=placement_revision+1 WHERE company_id=$1", [company_id]);
+      assert.equal(result.rowCount, 1);
+    },
+    async pointCompanyAtForeignPhysicalStore() {
+      const filename = join(companyStoreRoot, "misbound-a.sqlite");
+      const wrong = new Database(filename);
+      wrong.exec("CREATE TABLE companies(id TEXT PRIMARY KEY); INSERT INTO companies(id) VALUES('b');");
+      wrong.close();
+      const result = await identity.query("UPDATE titan_company_storage_placements SET placement_id='misbound-a', placement_revision=placement_revision+1 WHERE company_id='a'");
+      assert.equal(result.rowCount, 1);
+    },
+    reportWrongPlacementCompany() { reportWrongPlacementCompany = true; },
     credentialVerifier(verifier: HostedWorkforceDependencies["credentialVerifier"]) { dependencies.credentialVerifier = verifier; },
     async workforceZero() {
       const { createSessionCredentialService, directAdminIssuer } = await import("../packages/titan-platform/src/security-boundary.js");
@@ -200,7 +249,7 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
 test("hosted signed identity reaches real native completion and durable accepted evidence; restart replay has one mutation", async () => {
   const f = await fixture(); try {
     const first = await f.post(); assert.equal(first.status, 200, JSON.stringify(first.body));
-    assert.equal(await f.status(), "completed"); assert.equal(await f.status("b"), "in_progress");
+    assert.equal(await f.status(), "completed", JSON.stringify(first.body)); assert.equal(await f.status("b"), "in_progress");
     const runs = await f.run(); assert.equal(runs.length, 1);
     const evidence = (await f.control.query<{ payload: string }>("SELECT payload FROM evidence WHERE evidence_type='gateway_execution' ORDER BY rowid")).rows.map(row => JSON.parse(row.payload));
     assert.ok(evidence.some(item => item.state === "VERIFIED"));
@@ -214,6 +263,288 @@ test("hosted signed identity reaches real native completion and durable accepted
     assert.equal((await f.run())[0].run_id, runs[0].run_id); assert.equal((await f.run()).length, 1);
     assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 1);
     assert.equal((await f.control.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status, "in_progress");
+    assert.ok(f.companyOpens() > 0);
+    assert.equal(f.companyOpens(), f.companyCloses(), "every resolver-issued company lease closes after native reads and replay");
+  } finally { await f.close(); }
+});
+
+test("placement rotation during a company read is denied before the native effect", async () => {
+  const f = await fixture();
+  try {
+    f.beforeRead(() => f.rotatePlacement("a"));
+    await f.post();
+    assert.equal(await f.status(), "in_progress");
+    assert.ok(f.companyOpens() > 0);
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 0);
+    assert.equal(await f.executionStateCount("VERIFIED"), 0);
+    assert.equal(f.companyOpens(), f.companyCloses());
+  } finally { await f.close(); }
+});
+
+test("placement rotation after effect admission leaves the native outcome uncertain and unaccepted", async () => {
+  const f = await fixture();
+  try {
+    f.beforeComplete(() => f.rotatePlacement("a"));
+    const response = await f.post();
+    assert.equal(response.status, 200, JSON.stringify(response.body));
+    assert.equal(f.nativeInvocations, 1, "an already admitted native effect may finish while its store is rotated");
+    assert.equal(await f.status(), "completed", "the native mutation may have committed before the stale lease is observed");
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 1);
+    assert.equal(await f.executionStateCount("UNCERTAIN"), 1);
+    assert.equal(await f.executionStateCount("VERIFIED"), 0, "a stale placement lease cannot produce accepted evidence");
+    assert.equal(f.companyOpens(), f.companyCloses());
+  } finally { await f.close(); }
+});
+
+test("a registered company mismatch is rejected before a physical database is opened", async () => {
+  const f = await fixture();
+  try {
+    f.reportWrongPlacementCompany();
+    await f.post();
+    assert.equal(f.companyOpens(), 0);
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress");
+    assert.equal(await f.status("b"), "in_progress");
+  } finally { await f.close(); }
+});
+
+test("a persisted placement that opens another company's physical database is rejected", async () => {
+  const f = await fixture();
+  try {
+    await f.pointCompanyAtForeignPhysicalStore();
+    await f.post();
+    assert.equal(f.companyOpens(), 1, "the persisted opaque placement points to an existing trusted-root file");
+    assert.equal(f.companyCloses(), 1, "physical company identity failure closes the opened lease");
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress");
+    assert.equal(await f.status("b"), "in_progress");
+    assert.equal(await f.executionStateCount("VERIFIED"), 0);
+  } finally { await f.close(); }
+});
+
+test("identity registry outage during authentication is sanitized as 503", async () => {
+  const f = await fixture();
+  try {
+    await f.identity.query("DROP TABLE titan_security_sessions");
+    const response = await f.post();
+    assert.equal(response.status, 503, JSON.stringify(response.body));
+    assert.deepEqual(response.body, { error: "identity-registry-unavailable" });
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.executionStateCount("EXECUTING"), 0);
+  } finally { await f.close(); }
+});
+
+test("identity registry outage at the initial company provider lookup is sanitized as 503", async () => {
+  const f = await fixture();
+  try {
+    let failOnSecondCurrentLookup = false;
+    let currentLookups = 0;
+    const wrapStorage = (storage: any): any => ({
+      dialect: storage.dialect,
+      async query(sql: string, params?: readonly unknown[]) {
+        if (failOnSecondCurrentLookup && /SELECT \* FROM titan_security_sessions/.test(sql)) {
+          currentLookups += 1;
+          if (currentLookups === 2) throw new Error("test-only registry outage");
+        }
+        return storage.query(sql, params);
+      },
+      transaction<T>(operation: (tx: any) => Promise<T>, options?: unknown) {
+        return storage.transaction((tx: any) => operation(wrapStorage(tx)), options);
+      },
+      close() { return storage.close(); },
+    });
+    const { createHostedRuntime } = await import("../services/workforce/src/hosted-runtime.ts");
+    const { handleConversationRequest, normalizeConversationRequest } = await import("../services/workforce/src/conversation-api.ts");
+    const hosted = await createHostedRuntime(f.control, wrapStorage(f.identity), f.dependencies);
+    const normalized = normalizeConversationRequest(f.input);
+    const auth = {
+      async resolve(input: Parameters<typeof hosted.auth.resolve>[0]) {
+        const context = await hosted.auth.resolve(input);
+        failOnSecondCurrentLookup = true;
+        return context;
+      },
+    };
+    await assert.rejects(
+      handleConversationRequest(normalized, auth, hosted.runtime, f.credential()),
+      { message: "identity-registry-unavailable" },
+    );
+    assert.equal(currentLookups, 2, "the first current identity check passed; the initial company-provider lookup failed");
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress");
+    assert.equal(await f.executionStateCount("EXECUTING"), 0);
+  } finally { await f.close(); }
+});
+
+test("identity registry outage during post-read revalidation is sanitized as 503 before effect admission", async () => {
+  const f = await fixture();
+  try {
+    f.beforeRead(async () => { await f.identity.query("DROP TABLE titan_security_sessions"); });
+    const response = await f.post();
+    assert.equal(response.status, 503, JSON.stringify(response.body));
+    assert.deepEqual(response.body, { error: "identity-registry-unavailable" });
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress");
+    assert.equal(await f.executionStateCount("EXECUTING"), 0);
+    assert.equal(await f.executionStateCount("VERIFIED"), 0);
+  } finally { await f.close(); }
+});
+
+test("identity registry outage at source-session fence is sanitized as 503 without native effect", async () => {
+  const f = await fixture();
+  try {
+    const identity = await f.workforceZero();
+    const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
+      session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+    f.beforeRead(async () => { await f.identity.query("DROP TABLE titan_security_sessions"); });
+    const response = await f.post(input, identity.authorization);
+    assert.equal(response.status, 503, JSON.stringify(response.body));
+    assert.deepEqual(response.body, { error: "identity-registry-unavailable" });
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress");
+    assert.equal(await f.executionStateCount("VERIFIED"), 0);
+  } finally { await f.close(); }
+});
+
+test("source-session callback entry does not hide a blocked control-store admission timeout", { timeout: 5000 }, async () => {
+  const f = await fixture();
+  let admissionStorage: ReturnType<typeof createSqliteStorage> | undefined;
+  let releaseControlWriter!: () => void;
+  let controlWriterEntered!: () => void;
+  const controlWriterReady = new Promise<void>(resolve => { controlWriterEntered = resolve; });
+  const releaseControl = new Promise<void>(resolve => { releaseControlWriter = resolve; });
+  let signalAdmissionSettled!: () => void;
+  const admissionSettled = new Promise<void>(resolve => { signalAdmissionSettled = resolve; });
+  try {
+    const identity = await f.workforceZero();
+    const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
+      session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+    await f.closeHost();
+    admissionStorage = createSqliteStorage(f.controlPath);
+    const { createHostedRuntime } = await import("../services/workforce/src/hosted-runtime.ts");
+    const { normalizeConversationRequest } = await import("../services/workforce/src/conversation-api.js");
+    const hosted = await createHostedRuntime(admissionStorage, f.identity, f.dependencies);
+    const authenticated = await hosted.auth.resolve({ request: normalizeConversationRequest(input), authorization: identity.authorization });
+    const runId = "control-admission-timeout-run";
+    const workId = "control-admission-timeout-work";
+    const updatedAt = new Date().toISOString();
+    const run = {
+      run_id: runId, company_id: "a", actor_id: "lead", agent_id: "manager", role: "agent",
+      conversation_id: input.conversation_id, work_id: workId, authenticated_identity: authenticated.authenticated_identity,
+      session_id: authenticated.session_id, context_revision: authenticated.context_revision,
+      state: "RUNNING", updated_at: updatedAt,
+    };
+    await admissionStorage.query(
+      "INSERT INTO agent_runs(company_id,run_id,state,conversation_id,agent_id,work_id,payload,updated_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
+      ["a", runId, run.state, run.conversation_id, run.agent_id, workId, JSON.stringify(run), updatedAt],
+    );
+
+    // A second real SQLite connection holds the control-store writer lock. The
+    // current-session fence can enter its callback, but the nested admission
+    // transaction cannot acquire that store before the shared deadline.
+    const held = f.control.transaction(async () => {
+      controlWriterEntered();
+      await releaseControl;
+    });
+    await controlWriterReady;
+    let callbackEntered = false;
+    let admissionTransactionEntered = false;
+    let nativeInvocations = 0;
+    const admissionInput = { company_id: "a", actor_id: "lead", run_id: runId, work_id: workId };
+    const failure = await hosted.sessionAdmission(
+      admissionInput,
+      async ({ acquire_deadline_ms }) => {
+        callbackEntered = true;
+        try {
+          await admissionStorage!.transaction(async () => { admissionTransactionEntered = true; }, { acquireDeadlineMs: acquire_deadline_ms });
+          nativeInvocations += 1; // the provider boundary follows successful admission
+        } finally { signalAdmissionSettled(); }
+      },
+    ).then(() => null, error => error);
+
+    assert.equal(callbackEntered, true, "the source-session fence callback entered before control-store admission");
+    assert.ok(failure instanceof Error, "the blocked control-store admission is rejected");
+    assert.equal(conversationHttpStatus(failure.message), 503, failure.message);
+    assert.ok(["identity-registry-unavailable", "zero-execution-admission-unavailable"].includes(failure.message), failure.message);
+
+    releaseControlWriter();
+    await held;
+    await admissionSettled;
+    assert.equal(admissionTransactionEntered, false, "the bounded transaction callback never acquired the SQLite writer lock");
+    assert.equal(nativeInvocations, 0, "provider entry remains blocked until durable admission succeeds");
+    assert.equal(await f.executionStateCount("EXECUTING"), 0, "no EXECUTING transition committed");
+    assert.equal(await f.executionStateCount("VERIFIED"), 0, "no accepted operation was recorded");
+    assert.equal(await f.status(), "in_progress", "the company business store was not mutated");
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 0);
+
+    const classifiedControlTimeout = await hosted.sessionAdmission(admissionInput, async () => {
+      throw new Error("storage-transaction-acquire-timeout");
+    }).then(() => null, error => error);
+    assert.ok(classifiedControlTimeout instanceof Error);
+    assert.equal(classifiedControlTimeout.message, "zero-execution-admission-unavailable");
+    assert.equal(conversationHttpStatus(classifiedControlTimeout.message), 503);
+  } finally {
+    releaseControlWriter();
+    await admissionStorage?.close();
+    await f.close();
+  }
+});
+
+test("pre-admission fence timeout still surfaces as 503 after gateway recovery", { timeout: 5000 }, async () => {
+  const f = await fixture();
+  let admissionReached!: () => void;
+  let admissionDelayCompleted!: () => void;
+  const admissionStarted = new Promise<void>(resolve => { admissionReached = resolve; });
+  const admissionFinished = new Promise<void>(resolve => { admissionDelayCompleted = resolve; });
+  let blockedExecutingEvidence = false;
+  try {
+    const identity = await f.workforceZero();
+    const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
+      session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+    await f.closeHost();
+    const { createHostedRuntime } = await import("../services/workforce/src/hosted-runtime.ts");
+    const { handleConversationRequest, normalizeConversationRequest } = await import("../services/workforce/src/conversation-api.js");
+    const delayedControl: any = {
+      dialect: f.control.dialect,
+      query: (sql: string, params?: readonly unknown[]) => f.control.query(sql, params),
+      transaction(operation: (tx: any) => Promise<unknown>, options?: unknown) {
+        return f.control.transaction((tx: any) => operation(Object.assign(Object.create(tx), {
+          async query(sql: string, params: readonly unknown[] = []) {
+            if (!blockedExecutingEvidence && sql.startsWith("INSERT INTO evidence") && params[4] === "gateway_execution") {
+              const evidence = JSON.parse(String(params[6] ?? "{}"));
+              if (evidence.state === "EXECUTING") {
+                blockedExecutingEvidence = true;
+                admissionReached();
+                // Stay inside the real SQLite control transaction beyond the
+                // 500 ms source-session fence while the durable admission row
+                // is pending. The fence signal must make the transaction roll
+                // back before the native provider can be called.
+                await new Promise(resolve => setTimeout(resolve, 650));
+                admissionDelayCompleted();
+              }
+            }
+            return tx.query(sql, params);
+          },
+        })), options as any);
+      },
+      close: async () => {},
+    };
+    const hosted = await createHostedRuntime(delayedControl, f.identity, f.dependencies);
+    const failure = await handleConversationRequest(
+      normalizeConversationRequest(input), hosted.auth, hosted.runtime as any, identity.authorization,
+    ).then(() => null, error => error);
+
+    assert.equal(blockedExecutingEvidence, true, "the actual governed admission transaction reached its durable transition");
+    assert.ok(failure instanceof Error, "gateway recovery does not convert the pre-admission timeout into success");
+    assert.equal(conversationHttpStatus(failure.message), 503, failure.message);
+    assert.ok(["identity-registry-unavailable", "zero-execution-admission-unavailable"].includes(failure.message), failure.message);
+    await admissionStarted;
+    await admissionFinished;
+    assert.equal(f.nativeInvocations, 0, "the native provider remained behind the unsuccessful admission fence");
+    assert.equal(await f.executionStateCount("EXECUTING"), 0, "the pending EXECUTING transaction rolled back");
+    assert.equal(await f.executionStateCount("VERIFIED"), 0, "the timeout cannot create accepted evidence");
+    assert.equal(await f.status(), "in_progress", "the company work order is unchanged");
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 0);
   } finally { await f.close(); }
 });
 
@@ -242,6 +573,80 @@ test("canonical DA-derived Zero identity is persisted, fenced and replayed throu
     assert.equal(replay.status, 200, JSON.stringify(replay.body));
     assert.equal((await f.run())[0].run_id, runs[0].run_id);
     assert.equal(f.nativeInvocations, 1, "restart replay observes the stored source proof and never repeats native work");
+  } finally { await f.close(); }
+});
+
+test("signed Workforce child revocation and company changes fail before a fenced effect", { timeout: 5000 }, async () => {
+  for (const change of ["source-revoke", "child-revoke", "company-switch"] as const) {
+    const f = await fixture();
+    try {
+      const identity = await f.workforceZero();
+      const { createHostedRuntime } = await import("../services/workforce/src/hosted-runtime.ts");
+      const hosted = await createHostedRuntime(f.control, f.identity, f.dependencies);
+      const credential = identity.authorization.slice("Bearer ".length);
+      const child = {
+        schema: "titan.workforce-zero.session/v1" as const, audience: "workforce" as const, surface: "zero" as const,
+        actor_id: identity.workforce.context.actor_id, company_id: identity.workforce.context.company_id,
+        company_ids: [identity.workforce.context.company_id], device_id: identity.workforce.context.device_id,
+        session_id: identity.workforce.context.session_id, context_revision: identity.workforce.context.context_revision,
+        session_revision: identity.workforce.context.session_revision,
+        expires_at: Date.parse(identity.workforce.context.expires_at),
+      };
+      if (change === "source-revoke") {
+        await f.registry.revokeSession(identity.da.context.session_id, identity.da.context.session_revision);
+      } else if (change === "child-revoke") {
+        await f.registry.revokeSession(identity.workforce.context.session_id, identity.workforce.context.session_revision);
+      } else {
+        await identity.sourceService.switchCompany(identity.da.credential, { company_id: "a", device_id: "device" }, "b");
+      }
+      let effects = 0;
+      await assert.rejects(() => hosted.runtime.withWorkforceZeroSessionFence(credential, child, undefined, () => { effects += 1; }),
+        /conversation-authentication-failed|runtime-authentication-required/);
+      assert.equal(effects, 0, `${change} must reject before the effect callback`);
+    } finally { await f.close(); }
+  }
+});
+
+test("signed Workforce child fence serializes the native admission callback before source revocation", { timeout: 5000 }, async () => {
+  const f = await fixture();
+  try {
+    const identity = await f.workforceZero();
+    const { createHostedRuntime } = await import("../services/workforce/src/hosted-runtime.ts");
+    const hosted = await createHostedRuntime(f.control, f.identity, f.dependencies);
+    const credential = identity.authorization.slice("Bearer ".length);
+    const child = {
+      schema: "titan.workforce-zero.session/v1" as const, audience: "workforce" as const, surface: "zero" as const,
+      actor_id: identity.workforce.context.actor_id, company_id: identity.workforce.context.company_id,
+      company_ids: [identity.workforce.context.company_id], device_id: identity.workforce.context.device_id,
+      session_id: identity.workforce.context.session_id, context_revision: identity.workforce.context.context_revision,
+      session_revision: identity.workforce.context.session_revision,
+      expires_at: Date.parse(identity.workforce.context.expires_at),
+    };
+    let entered!: () => void;
+    let release!: () => void;
+    const effectEntered = new Promise<void>(resolve => { entered = resolve; });
+    const releaseEffect = new Promise<void>(resolve => { release = resolve; });
+    let effects = 0;
+    const fenced = hosted.runtime.withWorkforceZeroSessionFence(credential, child, undefined, async signal => {
+      entered();
+      await releaseEffect;
+      signal.throwIfAborted();
+      effects += 1;
+      return "admitted";
+    });
+    await effectEntered;
+    let revoked = false;
+    const revocation = f.registry.revokeSession(identity.da.context.session_id, identity.da.context.session_revision)
+      .then(() => { revoked = true; });
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(revoked, false, "the registry revoke waits behind the bounded child-session fence");
+    release();
+    assert.equal(await fenced, "admitted");
+    await revocation;
+    assert.equal(effects, 1);
+    await assert.rejects(() => hosted.runtime.withWorkforceZeroSessionFence(credential, child, undefined, () => { effects += 1; }),
+      /conversation-authentication-failed|runtime-authentication-required/);
+    assert.equal(effects, 1, "after serialized revocation the same signed child cannot enter a second effect");
   } finally { await f.close(); }
 });
 
@@ -457,6 +862,14 @@ test("host launcher rejects absent, relative or malformed dependency factories b
     const file = join(dir, "invalid.mjs");
     writeFileSync(file, "export const createWorkforceDependencies = async () => ({});\n");
     await assert.rejects(() => loadWorkforceDependencies(file), /workforce-dependencies-invalid/);
+    const unplaced = join(dir, "unplaced.mjs");
+    writeFileSync(unplaced, `export const createWorkforceDependencies = async () => ({
+      identityStoragePath: "/tmp/identity.db",
+      credentialVerifier: { async verify() { return {}; } },
+      workOrders: { async read() { return null; }, async complete() { return null; } },
+      readiness: async () => ({ authentication: true, authority: true, provider: true, evidence: true }),
+    });\n`);
+    await assert.rejects(() => loadWorkforceDependencies(unplaced), /workforce-dependencies-invalid/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
@@ -469,13 +882,14 @@ test("host mounts only an injected Fetch gateway and keeps absent DirectAdmin br
   } finally { await unavailable.close(); }
 
   let suppliedOwners: unknown;
-  let forwarded: { url: string; cookie: string | null; authorization: string | null; body: string } | undefined;
+  let forwarded: { url: string; cookie: string | null; authorization: string | null; bootstrapCsrf: string | null; body: string } | undefined;
   const configured = await fixture({ directAdmin: {
     publicOrigin: "https://127.0.0.1",
     createGateway(owners) {
       suppliedOwners = owners;
       return async request => {
-        forwarded = { url: request.url, cookie: request.headers.get("cookie"), authorization: request.headers.get("authorization"), body: await request.text() };
+        forwarded = { url: request.url, cookie: request.headers.get("cookie"), authorization: request.headers.get("authorization"),
+          bootstrapCsrf: request.headers.get("x-titan-da-bootstrap-csrf"), body: await request.text() };
         return new Response("test-only SDK adapter", { status: 418, headers: { "x-test-sdk-handler": "mounted" } });
       };
     },
@@ -489,7 +903,19 @@ test("host mounts only an injected Fetch gateway and keeps absent DirectAdmin br
     assert.equal(typeof (suppliedOwners as any)?.projection, "function");
     assert.equal(typeof (suppliedOwners as any)?.requestIntent, "function");
     assert.deepEqual(forwarded, { url: "https://127.0.0.1/v1/directadmin/titan_workforce/intents",
-      cookie: "__Host-titan-da-session=test-only", authorization: null, body: "{\"test\":true}" });
+      cookie: "__Host-titan-da-session=test-only", authorization: null, bootstrapCsrf: null, body: "{\"test\":true}" });
+    const bootstrap = await configured.directAdmin("/v1/directadmin/bootstrap", { method: "POST", headers: {
+      authorization: "Basic directadmin-proof", "x-titan-da-bootstrap-csrf": "b".repeat(43),
+    } });
+    assert.equal(bootstrap.status, 418);
+    assert.deepEqual(forwarded, { url: "https://127.0.0.1/v1/directadmin/bootstrap",
+      cookie: "__Host-titan-da-session=test-only", authorization: null,
+      bootstrapCsrf: "b".repeat(43), body: "" });
+    const bootstrapWithQuery = await configured.directAdmin("/v1/directadmin/bootstrap?unexpected=1", { method: "POST", headers: {
+      "x-titan-da-bootstrap-csrf": "c".repeat(43),
+    } });
+    assert.equal(bootstrapWithQuery.status, 418);
+    assert.equal(forwarded?.bootstrapCsrf, null, "the nonce is not forwarded for query-bearing near-miss paths");
   } finally { await configured.close(); }
 });
 
@@ -665,7 +1091,10 @@ for (const alias of ["symlink", "hardlink", "directory-symlink"] as const) test(
   try {
     const unavailable = async (): Promise<never> => { throw new Error("must-not-call-adapter"); };
     await assert.rejects(() => createWorkforceServer({ storagePath, dependencies: {
-      identityStoragePath, credentialVerifier: { verify: unavailable }, workOrders: { read: unavailable, complete: unavailable }, readiness: unavailable,
+      identityStoragePath, credentialVerifier: { verify: unavailable },
+      companyPlacementRegistry: { findByCompanyId: unavailable },
+      companyStoreOpener: { open: unavailable },
+      workOrders: { read: unavailable, complete: unavailable }, readiness: unavailable,
     } }), /workforce-separate-identity-storage-required/);
     const observed = new Database(storagePath);
     try { assert.deepEqual(observed.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all(), [{ name: "operator_marker" }]); }
@@ -824,7 +1253,9 @@ for (const change of ["source-revoke", "source-company-switch"] as const) test(`
       else await identity.sourceService.switchCompany(identity.da.credential, { company_id: "a", device_id: "device" }, "b");
     };
     f.beforeRead(hook);
-    await f.post(input, identity.authorization);
+    const response = await f.post(input, identity.authorization);
+    assert.equal(response.status, 401, JSON.stringify(response.body));
+    assert.deepEqual(response.body, { error: "conversation-authentication-failed" });
     assert.equal(reads, 2);
     assert.equal(f.nativeInvocations, 0);
     assert.equal(await f.status(), "in_progress");

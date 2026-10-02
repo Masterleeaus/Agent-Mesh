@@ -26,5 +26,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Exercise candidate policy and regression fixtures
-        run: python3 .github/scripts/validate-agent-claim.py --self-test
+      - name: Exercise candidate claim-policy tests
+        run: |
+          python3 -m unittest discover -s .github/scripts/tests -p 'test_validate_agent_claim.py' -v
+          python3 .github/scripts/tests/test_slice_ci_contract.py

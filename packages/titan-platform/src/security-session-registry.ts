@@ -1,5 +1,5 @@
-import type { StorageClient } from '@titan-zero/storage';
-import { createHash } from 'node:crypto';
+import type { StorageClient, StorageTransactionOptions } from '@titan-zero/storage';
+import { createHash, randomBytes } from 'node:crypto';
 import {
   createSessionBinding, requireSecurityId, requireSecurityRevision, securityTimestamp,
   validateSession, type SessionBinding,
@@ -44,6 +44,19 @@ export type IssueSessionInput = ExternalIdentity & Readonly<{
   session_id: string; device_id: string; company_id: string; audience: string;
   issued_at: string; expires_at: string;
 }>;
+export type DirectAdminBootstrapNonceIssue = Readonly<{
+  origin: string; subject: string; real_subject: string; da_role: 'admin' | 'reseller' | 'user';
+  impersonating: boolean; company_id: string; device_id: string;
+  lifetime_seconds?: number;
+}>;
+export type DirectAdminBootstrapNonceIdentityIssue = Omit<DirectAdminBootstrapNonceIssue, 'company_id' | 'device_id'>;
+export type DirectAdminBootstrapNonceIssued = Readonly<{ csrf_nonce: string; expires_at: string }>;
+export type DirectAdminBootstrapNonceConsume = Readonly<{
+  origin: string; issuer: string; subject: string; real_subject: string;
+  da_role: 'admin' | 'reseller' | 'user'; impersonating: boolean; csrf_nonce: string;
+}>;
+export type DirectAdminBootstrapNonceSelection = Readonly<{ company_id: string; device_id: string }>;
+export type DirectAdminBootstrapNonceIssuedSelection = DirectAdminBootstrapNonceIssued & DirectAdminBootstrapNonceSelection;
 type SessionRow = Omit<SessionBinding, 'revoked'> & {
   revoked: number; binding_id: string; audience: string; context_generation: string;
 };
@@ -54,6 +67,92 @@ type CurrentIdentity = {
 };
 
 const workforceZeroFenceTimeoutMs = 500;
+const bootstrapNonceAcquireTimeoutMs = 500;
+const registryAvailabilityMarker = Symbol.for('titan.identity-session-registry.availability.v1');
+const registryAvailabilityKindMarker = Symbol.for('titan.identity-session-registry.availability-kind.v1');
+
+type RegistryAvailabilityKind = 'unavailable' | 'acquisition-timeout';
+
+function messageOf(error: unknown): string | undefined {
+  if (!(error instanceof Error)) return undefined;
+  const descriptor = Object.getOwnPropertyDescriptor(error, 'message');
+  return descriptor && 'value' in descriptor && typeof descriptor.value === 'string' ? descriptor.value : undefined;
+}
+
+function registryUnavailable(error: unknown): Error {
+  const unavailable = new Error('identity-registry-unavailable');
+  const kind: RegistryAvailabilityKind = messageOf(error) === 'storage-transaction-acquire-timeout'
+    ? 'acquisition-timeout' : 'unavailable';
+  Object.defineProperty(unavailable, registryAvailabilityMarker, { value: true });
+  Object.defineProperty(unavailable, registryAvailabilityKindMarker, { value: kind });
+  return unavailable;
+}
+
+function metadataValue(error: unknown, key: PropertyKey): unknown {
+  if (error === null || (typeof error !== 'object' && typeof error !== 'function')) return undefined;
+  const descriptor = Object.getOwnPropertyDescriptor(error, key);
+  return descriptor && 'value' in descriptor ? descriptor.value : undefined;
+}
+
+function registryQueryFailure(error: unknown): Error {
+  const code = metadataValue(error, 'code');
+  if (typeof code === 'string' && code.startsWith('SQLITE_CONSTRAINT')) {
+    return new Error('identity-registry-conflict');
+  }
+  return registryUnavailable(error);
+}
+
+/** Stable, non-sensitive classification for infrastructure failures at the
+ * canonical registry boundary. It never conveys identity or authentication. */
+export function isIdentityRegistryUnavailableError(error: unknown): boolean {
+  try {
+    return metadataValue(error, registryAvailabilityMarker) === true;
+  } catch { return false; }
+}
+
+export function isIdentityRegistryAcquisitionTimeout(error: unknown): boolean {
+  try {
+    return isIdentityRegistryUnavailableError(error)
+      && metadataValue(error, registryAvailabilityKindMarker) === 'acquisition-timeout';
+  } catch { return false; }
+}
+
+async function registryQuery<T>(storage: StorageClient, sql: string, params: readonly unknown[] = []) {
+  try { return await storage.query<T>(sql, params); }
+  catch (error) { throw registryQueryFailure(error); }
+}
+
+async function registryTransaction<T>(
+  storage: StorageClient,
+  operation: (tx: StorageClient) => Promise<T>,
+  options?: StorageTransactionOptions,
+): Promise<T> {
+  let callbackFailed = false;
+  let callbackError: unknown;
+  try {
+    return await storage.transaction(async raw => {
+      const tx: StorageClient = {
+        dialect: raw.dialect,
+        query: async <R>(sql: string, params: readonly unknown[] = []) => {
+          try { return await raw.query<R>(sql, params); }
+          catch (error) { throw registryQueryFailure(error); }
+        },
+        transaction: async () => { throw new Error('identity-registry-nested-transaction-unsupported'); },
+        close: async () => { throw new Error('identity-registry-connection-owned'); },
+      };
+      try { return await operation(tx); }
+      catch (error) { callbackFailed = true; callbackError = error; throw error; }
+    }, options);
+  } catch (error) {
+    if (isIdentityRegistryUnavailableError(error)) throw error;
+    if (callbackFailed && Object.is(error, callbackError)) throw error;
+    if (typeof metadataValue(error, 'code') === 'string'
+      && (metadataValue(error, 'code') as string).startsWith('SQLITE_CONSTRAINT')) {
+      throw new Error('identity-registry-conflict');
+    }
+    throw registryUnavailable(error);
+  }
+}
 
 function validateSourceReference(source: SessionSourceReference): void {
   const keys = ['schema','provider','subject','issuer','audience','session_id','session_revision','context_revision',
@@ -123,16 +222,123 @@ const schemaV1 = [
     audience TEXT NOT NULL, context_generation TEXT NOT NULL)`,
 ];
 
+const bootstrapNonceMigrationTable = 'titan_security_directadmin_nonce_migrations';
+const bootstrapNonceTable = 'titan_security_directadmin_bootstrap_nonces';
+const bootstrapNonceSchemaVersion = 2;
+const bootstrapNonceDefaultLifetimeSeconds = 120;
+const bootstrapNonceMaxLifetimeSeconds = 300;
+const bootstrapNonceSchemaV2 = [
+  `CREATE TABLE ${bootstrapNonceTable} (
+    nonce_hash TEXT PRIMARY KEY NOT NULL CHECK (length(nonce_hash) = 64),
+    issuer TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    real_subject TEXT NOT NULL,
+    da_role TEXT NOT NULL CHECK (da_role IN ('admin','reseller','user')),
+    impersonating INTEGER NOT NULL CHECK (impersonating IN (0,1)),
+    origin TEXT NOT NULL,
+    actor_id TEXT NOT NULL REFERENCES titan_security_actors(actor_id),
+    company_id TEXT NOT NULL REFERENCES titan_security_companies(company_id),
+    device_id TEXT NOT NULL REFERENCES titan_security_devices(device_id),
+    context_generation TEXT NOT NULL,
+    issued_at TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    consumed_at TEXT,
+    CHECK (impersonating = CASE WHEN real_subject <> subject THEN 1 ELSE 0 END),
+    CHECK (expires_at > issued_at)
+  )`,
+  `CREATE INDEX titan_security_directadmin_bootstrap_nonces_expiry
+    ON ${bootstrapNonceTable}(expires_at)`,
+];
+
+function canonicalDirectAdminOrigin(value: string): string {
+  if (typeof value !== 'string' || !value || value !== value.trim()) throw new Error('directadmin-origin-invalid');
+  let url: URL;
+  try { url = new URL(value); } catch { throw new Error('directadmin-origin-invalid'); }
+  if (url.protocol !== 'https:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash) {
+    throw new Error('directadmin-origin-invalid');
+  }
+  return url.origin;
+}
+
+function directAdminProviderForOrigin(origin: string): string {
+  return `directadmin:${canonicalDirectAdminOrigin(origin)}`;
+}
+
+function validateDirectAdminNonceIdentity(input: Pick<DirectAdminBootstrapNonceIssue,
+  'subject' | 'real_subject' | 'da_role' | 'impersonating'>): void {
+  requireSecurityId(input.subject, 'subject');
+  requireSecurityId(input.real_subject, 'real_subject');
+  if (!['admin', 'reseller', 'user'].includes(input.da_role) || typeof input.impersonating !== 'boolean'
+    || input.impersonating !== (input.real_subject !== input.subject)) {
+    throw new Error('directadmin-bootstrap-identity-invalid');
+  }
+}
+
+function directAdminNonceHash(nonce: string): string {
+  if (typeof nonce !== 'string' || !/^[A-Za-z0-9_-]{43,128}$/.test(nonce)) {
+    throw new Error('directadmin-bootstrap-nonce-invalid');
+  }
+  return createHash('sha256').update(nonce, 'utf8').digest('hex');
+}
+
+function trustedClock(clock: () => Date): Date {
+  const value = clock();
+  if (!(value instanceof Date) || !Number.isFinite(value.getTime())) {
+    throw registryUnavailable(new Error('identity-clock-invalid'));
+  }
+  return new Date(value.getTime());
+}
+
 /** Explicit, additive identity/control-plane migration. Never examines or backfills
  * company business tables. Unsupported schema versions fail closed for rollback. */
 async function migrate(storage: StorageClient): Promise<void> {
-  await storage.transaction(async tx => {
+  await registryTransaction(storage, async tx => {
     await tx.query('CREATE TABLE IF NOT EXISTS titan_security_migrations (version INTEGER PRIMARY KEY)');
     const versions = (await tx.query<{ version: number }>('SELECT version FROM titan_security_migrations')).rows;
     if (versions.length !== 0 && (versions.length !== 1 || versions[0].version !== 1)) throw new Error('identity-schema-version-unsupported');
     if (versions.length === 1) return;
     for (const sql of schemaV1) await tx.query(sql);
     await tx.query('INSERT INTO titan_security_migrations (version) VALUES (1)');
+  });
+}
+
+/** Explicit, versioned add-on for short-lived DirectAdmin bootstrap nonces.
+ * It is intentionally not called by createIdentitySessionRegistry or host
+ * startup; commissioning must explicitly initialize this additive store. */
+export async function initializeDirectAdminBootstrapNonceStore(input: {
+  storage: StorageClient; storage_role: 'GLOBAL_REGISTRY';
+}): Promise<void> {
+  if (!input || input.storage_role !== 'GLOBAL_REGISTRY') throw new Error('identity-storage-role-required');
+  if (input.storage?.dialect !== 'sqlite') throw new Error('identity-storage-dialect-unsupported');
+  await registryTransaction(input.storage, async tx => {
+    const identityVersions = (await tx.query<{ version: number }>(
+      'SELECT version FROM titan_security_migrations ORDER BY version',
+    )).rows;
+    if (identityVersions.length !== 1 || identityVersions[0].version !== 1) {
+      throw new Error('identity-schema-version-unsupported');
+    }
+    await tx.query('SELECT actor_id,status,revision FROM titan_security_actors LIMIT 0');
+    await tx.query('SELECT company_id,status,revision FROM titan_security_companies LIMIT 0');
+    await tx.query('SELECT actor_id,company_id,role,status,revision FROM titan_security_memberships LIMIT 0');
+    await tx.query('SELECT device_id,actor_id,status,revision FROM titan_security_devices LIMIT 0');
+    await tx.query('SELECT binding_id,provider,subject,actor_id,company_id,status,revision FROM titan_security_external_bindings LIMIT 0');
+    await tx.query(`CREATE TABLE IF NOT EXISTS ${bootstrapNonceMigrationTable} (version INTEGER PRIMARY KEY)`);
+    const versions = (await tx.query<{ version: number }>(
+      `SELECT version FROM ${bootstrapNonceMigrationTable} ORDER BY version`,
+    )).rows;
+    if (versions.length === 1 && versions[0].version === bootstrapNonceSchemaVersion) {
+      await tx.query(`SELECT nonce_hash,issuer,subject,real_subject,da_role,impersonating,origin,actor_id,company_id,device_id,
+        context_generation,issued_at,expires_at,consumed_at FROM ${bootstrapNonceTable} LIMIT 0`);
+      return;
+    }
+    if (versions.length !== 0) throw new Error('identity-bootstrap-nonce-schema-unsupported');
+    const existing = await tx.query<{ name: string }>(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name=$1",
+      [bootstrapNonceTable],
+    );
+    if (existing.rows.length !== 0) throw new Error('identity-bootstrap-nonce-schema-version-missing');
+    for (const sql of bootstrapNonceSchemaV2) await tx.query(sql);
+    await tx.query(`INSERT INTO ${bootstrapNonceMigrationTable} (version) VALUES ($1)`, [bootstrapNonceSchemaVersion]);
   });
 }
 
@@ -176,11 +382,61 @@ function selectedCompanyOnly(current: CurrentSessionContext): CurrentSessionCont
 export class IdentitySessionRegistry {
   constructor(private readonly storage: StorageClient, private readonly clock: () => Date = () => new Date()) {}
 
+  private transaction<T>(operation: (tx: StorageClient) => Promise<T>, options?: StorageTransactionOptions): Promise<T> {
+    return registryTransaction(this.storage, operation, options);
+  }
+
+  private bootstrapNonceTransaction<T>(operation: (tx: StorageClient) => Promise<T>): Promise<T> {
+    return this.transaction(operation, { acquireDeadlineMs: performance.now() + bootstrapNonceAcquireTimeoutMs });
+  }
+
+  private async requireDirectAdminBootstrapNonceStore(tx: StorageClient): Promise<void> {
+    const versions = (await tx.query<{ version: number }>(
+      `SELECT version FROM ${bootstrapNonceMigrationTable} ORDER BY version`,
+    )).rows;
+    if (versions.length !== 1 || versions[0].version !== bootstrapNonceSchemaVersion) {
+      throw registryUnavailable(new Error('identity-bootstrap-nonce-store-unavailable'));
+    }
+    await tx.query(`SELECT nonce_hash,issuer,subject,real_subject,da_role,impersonating,origin,actor_id,company_id,device_id,
+      context_generation,issued_at,expires_at,consumed_at FROM ${bootstrapNonceTable} LIMIT 0`);
+  }
+
+  private async uniqueDirectAdminBootstrapContext(tx: StorageClient, issuer: string, subject: string): Promise<{
+    selection: DirectAdminBootstrapNonceSelection; identity: CurrentIdentity;
+  }> {
+    validateIdentity({ provider: issuer, subject });
+    const bindings = (await tx.query<ExternalBinding & RecordRow>(
+      "SELECT * FROM titan_security_external_bindings WHERE provider=$1 AND subject=$2 AND status='active'",
+      [issuer, subject],
+    )).rows;
+    if (bindings.length === 0) throw new Error('identity-binding-unavailable');
+    const actors = new Set(bindings.map(binding => binding.actor_id));
+    if (actors.size !== 1) throw new Error('identity-binding-ambiguous');
+    const actorId = bindings[0].actor_id;
+    const contexts = (await tx.query<DirectAdminBootstrapNonceSelection>(
+      `SELECT DISTINCT b.company_id,d.device_id
+       FROM titan_security_external_bindings b
+       JOIN titan_security_actors a ON a.actor_id=b.actor_id AND a.status='active'
+       JOIN titan_security_companies c ON c.company_id=b.company_id AND c.status='active'
+       JOIN titan_security_memberships m ON m.actor_id=b.actor_id AND m.company_id=b.company_id AND m.status='active'
+       JOIN titan_security_devices d ON d.actor_id=b.actor_id AND d.status='active'
+       WHERE b.provider=$1 AND b.subject=$2 AND b.actor_id=$3 AND b.status='active'
+       ORDER BY b.company_id,d.device_id`,
+      [issuer, subject, actorId],
+    )).rows;
+    if (contexts.length === 0) throw new Error('identity-bootstrap-selection-unavailable');
+    if (contexts.length !== 1) throw new Error('identity-bootstrap-selection-ambiguous');
+    const selection = Object.freeze({ company_id: contexts[0].company_id, device_id: contexts[0].device_id });
+    const identity = await this.identity(tx, { provider: issuer, subject }, selection.company_id, selection.device_id);
+    if (identity.binding.actor_id !== actorId) throw new Error('identity-binding-ambiguous');
+    return { selection, identity };
+  }
+
   private async put(table: string, values: Record<string, string>, keys: readonly string[], immutable: readonly string[], expected: number | null): Promise<number> {
     for (const [key, value] of Object.entries(values)) requireSecurityId(value, key);
     if (!['active', 'suspended', 'revoked', 'deleted'].includes(values.status)) throw new Error('identity-status-invalid');
     if (expected !== null) requireSecurityRevision(expected);
-    return this.storage.transaction(async tx => {
+    return this.transaction(async tx => {
       // Table and column names are internal constants, never request-supplied SQL.
       const where = keys.map((key, index) => `${key}=$${index + 1}`).join(' AND ');
       const parameters = keys.map(key => values[key]);
@@ -217,6 +473,139 @@ export class IdentitySessionRegistry {
     return this.put('titan_security_external_bindings', { binding_id: value.binding_id, provider: value.provider, subject: value.subject, actor_id: value.actor_id, company_id: value.company_id, status: value.status }, ['binding_id'], ['provider', 'subject', 'actor_id', 'company_id'], expected);
   }
 
+  /**
+   * Issue an opaque, short-lived pre-auth challenge for a server-rendered or
+   * server-routed DirectAdmin bootstrap flow. Call only after the host has
+   * authenticated the current DirectAdmin session and selected one company and
+   * device. Supply the identity tuple returned by the authenticated DirectAdmin
+   * `/api/session` projection; the registry independently verifies the
+   * effective subject mapping before storing a SHA-256 nonce digest and the
+   * real/effective-user, role and impersonation provenance. It never stores
+   * the nonce or exposes company choices.
+   */
+  async issueDirectAdminBootstrapNonce(input: DirectAdminBootstrapNonceIssue): Promise<DirectAdminBootstrapNonceIssued> {
+    const origin = canonicalDirectAdminOrigin(input.origin);
+    const issuer = directAdminProviderForOrigin(origin);
+    validateDirectAdminNonceIdentity(input);
+    requireSecurityId(input.company_id, 'company_id');
+    requireSecurityId(input.device_id, 'device_id');
+    const lifetime = input.lifetime_seconds ?? bootstrapNonceDefaultLifetimeSeconds;
+    if (!Number.isSafeInteger(lifetime) || lifetime < 1 || lifetime > bootstrapNonceMaxLifetimeSeconds) {
+      throw new Error('directadmin-bootstrap-nonce-lifetime-invalid');
+    }
+    const nonce = randomBytes(32).toString('base64url');
+    const nonceHash = directAdminNonceHash(nonce);
+    const expiresAt = await this.bootstrapNonceTransaction(async tx => {
+      await this.requireDirectAdminBootstrapNonceStore(tx);
+      const now = trustedClock(this.clock);
+      const issuedAt = now.toISOString();
+      const expiry = new Date(now.getTime() + lifetime * 1000).toISOString();
+      const current = await this.identity(tx, { provider: issuer, subject: input.subject }, input.company_id, input.device_id);
+      await tx.query(`DELETE FROM ${bootstrapNonceTable} WHERE expires_at <= $1`, [issuedAt]);
+      await tx.query(`INSERT INTO ${bootstrapNonceTable}
+        (nonce_hash,issuer,subject,real_subject,da_role,impersonating,origin,actor_id,company_id,device_id,
+          context_generation,issued_at,expires_at,consumed_at)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,NULL)`,
+        [nonceHash,issuer,input.subject,input.real_subject,input.da_role,input.impersonating ? 1 : 0,origin,
+          current.binding.actor_id,input.company_id,input.device_id,current.generation,issuedAt,expiry]);
+      return expiry;
+    });
+    return Object.freeze({ csrf_nonce: nonce, expires_at: expiresAt });
+  }
+
+  /**
+   * Resolve and bind a first-session company/device only when the authenticated
+   * DirectAdmin identity has exactly one active canonical binding, membership,
+   * company, and device pair. Selection and nonce persistence share one
+   * GLOBAL_REGISTRY transaction; no first-row/default-company fallback or list
+   * of choices is exposed. Call only with identity projected from the
+   * configured host's authenticated `/api/session` response.
+   */
+  async issueDirectAdminBootstrapNonceForUniqueContext(
+    input: DirectAdminBootstrapNonceIdentityIssue,
+  ): Promise<DirectAdminBootstrapNonceIssuedSelection> {
+    const origin = canonicalDirectAdminOrigin(input.origin);
+    const issuer = directAdminProviderForOrigin(origin);
+    validateDirectAdminNonceIdentity(input);
+    const lifetime = input.lifetime_seconds ?? bootstrapNonceDefaultLifetimeSeconds;
+    if (!Number.isSafeInteger(lifetime) || lifetime < 1 || lifetime > bootstrapNonceMaxLifetimeSeconds) {
+      throw new Error('directadmin-bootstrap-nonce-lifetime-invalid');
+    }
+    const nonce = randomBytes(32).toString('base64url');
+    const nonceHash = directAdminNonceHash(nonce);
+    const issued = await this.bootstrapNonceTransaction(async tx => {
+      await this.requireDirectAdminBootstrapNonceStore(tx);
+      const { selection, identity } = await this.uniqueDirectAdminBootstrapContext(tx, issuer, input.subject);
+      const now = trustedClock(this.clock);
+      const issuedAt = now.toISOString();
+      const expiresAt = new Date(now.getTime() + lifetime * 1000).toISOString();
+      await tx.query(`DELETE FROM ${bootstrapNonceTable} WHERE expires_at <= $1`, [issuedAt]);
+      await tx.query(`INSERT INTO ${bootstrapNonceTable}
+        (nonce_hash,issuer,subject,real_subject,da_role,impersonating,origin,actor_id,company_id,device_id,
+          context_generation,issued_at,expires_at,consumed_at)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,NULL)`,
+        [nonceHash,issuer,input.subject,input.real_subject,input.da_role,input.impersonating ? 1 : 0,origin,
+          identity.binding.actor_id,selection.company_id,selection.device_id,identity.generation,issuedAt,expiresAt]);
+      return Object.freeze({ expires_at: expiresAt, ...selection });
+    });
+    return Object.freeze({ csrf_nonce: nonce, ...issued });
+  }
+
+  /**
+   * Atomically consume a pre-auth nonce after the DirectAdmin `/api/session`
+   * proof has established issuer, effective subject, real operator, role and
+   * impersonation state. The full DirectAdmin identity tuple must match the
+   * issue-time values. Company/device and actor/context generation are loaded
+   * from the stored server-side binding, revalidated against current registry
+   * state, and returned as one selection.
+   * Wrong bindings do not burn a legitimate challenge; expiry or a stale
+   * current identity does burn it. The nonce digest is the only token material
+   * persisted.
+   */
+  async consumeDirectAdminBootstrapNonce(input: DirectAdminBootstrapNonceConsume): Promise<DirectAdminBootstrapNonceSelection | null> {
+    const origin = canonicalDirectAdminOrigin(input.origin);
+    const issuer = directAdminProviderForOrigin(origin);
+    validateDirectAdminNonceIdentity(input);
+    const nonceHash = directAdminNonceHash(input.csrf_nonce);
+    if (input.issuer !== issuer) return null;
+    return this.bootstrapNonceTransaction(async tx => {
+      await this.requireDirectAdminBootstrapNonceStore(tx);
+      const now = trustedClock(this.clock).toISOString();
+      const row = (await tx.query<{
+        nonce_hash: string; issuer: string; subject: string; real_subject: string;
+        da_role: 'admin' | 'reseller' | 'user'; impersonating: number; origin: string; actor_id: string;
+        company_id: string; device_id: string; context_generation: string; issued_at: string;
+        expires_at: string; consumed_at: string | null;
+      }>(`SELECT nonce_hash,issuer,subject,real_subject,da_role,impersonating,origin,actor_id,company_id,device_id,context_generation,
+        issued_at,expires_at,consumed_at FROM ${bootstrapNonceTable} WHERE nonce_hash=$1`, [nonceHash])).rows[0];
+      if (!row || row.nonce_hash !== nonceHash || row.issuer !== issuer || row.subject !== input.subject
+        || row.real_subject !== input.real_subject || row.da_role !== input.da_role
+        || row.impersonating !== (input.impersonating ? 1 : 0)
+        || row.origin !== origin || row.consumed_at !== null) return null;
+      requireSecurityId(row.actor_id, 'actor_id');
+      requireSecurityId(row.company_id, 'company_id');
+      requireSecurityId(row.device_id, 'device_id');
+      securityTimestamp(row.issued_at);
+      if (securityTimestamp(row.expires_at) <= securityTimestamp(now)) return null;
+
+      const burned = await tx.query(`UPDATE ${bootstrapNonceTable} SET consumed_at=$1
+        WHERE nonce_hash=$2 AND issuer=$3 AND subject=$4 AND real_subject=$5 AND da_role=$6 AND impersonating=$7
+          AND origin=$8 AND consumed_at IS NULL AND expires_at>$1`,
+        [now,nonceHash,issuer,input.subject,input.real_subject,input.da_role,input.impersonating ? 1 : 0,origin]);
+      if (burned.rowCount !== 1) return null;
+
+      let current: CurrentIdentity;
+      try {
+        current = await this.identity(tx, { provider: issuer, subject: input.subject }, row.company_id, row.device_id);
+      } catch (error) {
+        if (isIdentityRegistryUnavailableError(error)) throw error;
+        return null;
+      }
+      if (current.binding.actor_id !== row.actor_id || current.generation !== row.context_generation) return null;
+      return Object.freeze({ company_id: row.company_id, device_id: row.device_id });
+    });
+  }
+
   private async identity(tx: StorageClient, external: ExternalIdentity, companyId: string, deviceId: string): Promise<CurrentIdentity> {
     validateIdentity(external);
     requireSecurityId(companyId, 'company_id');
@@ -249,7 +638,7 @@ export class IdentitySessionRegistry {
 
   async issueSession(input: IssueSessionInput, now: string): Promise<CurrentSessionContext> {
     requireSecurityId(input.audience, 'audience');
-    return this.storage.transaction(async tx => {
+    return this.transaction(async tx => {
       const identity = await this.identity(tx, input, input.company_id, input.device_id);
       const binding = createSessionBinding({ session_id: input.session_id, actor_id: identity.binding.actor_id,
         company_id: input.company_id, device_id: input.device_id, issued_at: input.issued_at, expires_at: input.expires_at, revoked: false });
@@ -283,7 +672,7 @@ export class IdentitySessionRegistry {
       || sourceExpected.company_id !== source.company_id || sourceExpected.actor_id !== source.actor_id
       || sourceExpected.context_revision !== source.context_revision) throw new Error('session-source-mismatch');
 
-    return this.storage.transaction(async tx => {
+    return this.transaction(async tx => {
       const sourceResolved = await this.resolve(tx, sourceProof, sourceExpected, now);
       if (!sameSourceContext(source, sourceResolved.current)) throw new Error('session-source-stale');
       const at = securityTimestamp(now);
@@ -377,12 +766,12 @@ export class IdentitySessionRegistry {
 
   /** Rereads current identity on every call; no cached JWT role/company authority. */
   async resolveCurrentSession(proof: VerifiedSessionIdentity, expected: ExpectedSessionContext, now: string): Promise<CurrentSessionContext> {
-    return this.storage.transaction(async tx => (await this.resolve(tx, proof, expected, now)).current);
+    return this.transaction(async tx => (await this.resolve(tx, proof, expected, now)).current);
   }
 
   async switchCompany(proof: VerifiedSessionIdentity, expected: ExpectedSessionContext, companyId: string, now: string): Promise<CurrentSessionContext> {
     if (proof.source_session !== undefined) throw new Error('derived-session-company-switch-denied');
-    return this.storage.transaction(async tx => {
+    return this.transaction(async tx => {
       const { row } = await this.resolve(tx, proof, expected, now);
       const identity = await this.identity(tx, proof, companyId, row.device_id);
       if (identity.binding.actor_id !== row.actor_id) throw new Error('session-actor-mismatch');
@@ -397,8 +786,10 @@ export class IdentitySessionRegistry {
 
   /** Revalidates a Workforce/Zero derivation under the GLOBAL_REGISTRY SQLite
    * writer lock immediately before the effect boundary. The bounded callback
-   * receives an abort signal. On timeout it may still be running; consumers must
-   * mark the execution UNCERTAIN and must not claim cancellation or retry it. */
+   * receives the absolute acquisition deadline and an abort signal. Keep it to
+   * short local admission work: no provider/network wait and no registry
+   * re-entry. On timeout it may still be running; consumers must mark the
+   * execution UNCERTAIN and must not claim cancellation or retry it. */
   async withCurrentSessionFence<T>(
     proof: VerifiedSessionIdentity,
     expected: ExpectedSessionContext,
@@ -411,7 +802,7 @@ export class IdentitySessionRegistry {
     let timer: ReturnType<typeof setTimeout> | undefined;
     let removeAbortListener = () => {};
     try {
-      return await this.storage.transaction(async tx => {
+      return await this.transaction(async tx => {
         // Sample the registry-owned clock after BEGIN IMMEDIATE succeeds, so
         // queue or cross-process writer contention cannot use a stale timestamp.
         const { current } = await this.resolve(tx, proof, expected, this.clock().toISOString());
@@ -448,9 +839,8 @@ export class IdentitySessionRegistry {
         return await Promise.race([running, aborted, timedOut]);
       }, { acquireDeadlineMs });
     } catch (error) {
-      if (error instanceof Error && error.message === 'storage-transaction-acquire-timeout') {
-        throw new Error('session-fence-timeout', { cause: error });
-      }
+      if (isIdentityRegistryAcquisitionTimeout(error)) throw new Error('session-fence-timeout');
+      if (isIdentityRegistryUnavailableError(error)) throw new Error('identity-registry-unavailable');
       throw error;
     } finally {
       if (timer !== undefined) clearTimeout(timer);
@@ -461,7 +851,9 @@ export class IdentitySessionRegistry {
   async revokeSession(sessionId: string, expectedRevision: number): Promise<void> {
     requireSecurityId(sessionId, 'session_id');
     const revision = nextRevision(expectedRevision);
-    const result = await this.storage.query('UPDATE titan_security_sessions SET revoked=1,revision=$1 WHERE session_id=$2 AND revision=$3 AND revoked=0', [revision,sessionId,expectedRevision]);
+    const result = await registryQuery(this.storage,
+      'UPDATE titan_security_sessions SET revoked=1,revision=$1 WHERE session_id=$2 AND revision=$3 AND revoked=0',
+      [revision,sessionId,expectedRevision]);
     if (result.rowCount !== 1) throw new Error('session-revision-conflict');
   }
 }

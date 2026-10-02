@@ -74,7 +74,7 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
     const row = await one(control, 'SELECT envelope FROM authority_state WHERE company_id=$1 AND subject_type=$2 AND subject_id=$3', [company_id, 'worker_capability', `${agent_id}/${CAPABILITY}`]);
     const grant = row ? JSON.parse(row.envelope) : {};
     const worker = await roster.getWorker(company_id, agent_id);
-    const business = Object.hasOwn(options, 'business') ? options.business : await readBusiness({ company_id, actor_id, work_order_id });
+    const business = Object.hasOwn(options, 'business') ? options.business : await readBusiness({ company_id, actor_id, run_id, work_id, work_order_id });
     const refs = [];
     for (const id of Array.isArray(grant.evidence_refs) ? grant.evidence_refs : []) {
       const proof = await one(control, `SELECT id FROM evidence WHERE company_id=$1 AND id=$2 AND subject_type=$3 AND subject_id=$4 AND evidence_type='field_completion'`, [company_id, id, 'work_order', work_order_id]);
@@ -114,7 +114,7 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
     const current = await authorize({ company_id, actor_id: decision.actor_id, agent_id, run_id, work_id, input: input.input });
     if (current.status !== 'allowed') return { state: current.status === 'approval_required' ? 'WAITING_APPROVAL' : 'DENIED', failure: { code: current.decision }, decision: current };
     assertAuthorityDecisionAllowsExecution(current, { company_id, capability: CAPABILITY, operation_id: work_id, action_id: current.work_order_id, worker_id: agent_id, now: new Date().toISOString() });
-    const businessInput = { company_id, actor_id: current.actor_id, work_order_id: current.work_order_id };
+    const businessInput = { company_id, actor_id: current.actor_id, run_id, work_id, work_order_id: current.work_order_id };
     const idempotency_key = JSON.stringify([CAPABILITY, current.work_order_id]);
     const toResult = evidence => ({ request_fingerprint: executionRequestFingerprint({ company_id: evidence.company_id, capability: evidence.capability, input: evidence.request_summary?.input, idempotency_key: evidence.idempotency_key }), execution_id: evidence.execution_id, company_id, state: evidence.state, capability: CAPABILITY, evidence });
     let effectDecision;
@@ -294,7 +294,7 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
     if (!work || work.origin?.actor_id !== actor_id) return null;
     const run = await bootstrap.runStore.findByWork(company_id, work_id);
     const id = run?.messages.filter(m => m.role === 'user').map(m => command(m.content)).find(Boolean);
-    const business = id ? await readBusiness({ company_id, actor_id, work_order_id: id }) : null;
+    const business = id && run?.run_id ? await readBusiness({ company_id, actor_id, run_id: run.run_id, work_id, work_order_id: id }) : null;
     const rows = await storage.query("SELECT payload FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND (subject_id=$2 OR id IN (SELECT value FROM json_each($3))) ORDER BY rowid", [company_id, work_id, JSON.stringify(work.evidence_refs)]);
     const evidence = rows.rows.map(row => JSON.parse(row.payload));
     // Legacy gateway rows are normalized on read, preserving existing history.

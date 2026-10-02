@@ -5,15 +5,19 @@ This package is the operator cockpit for the canonical hosted Workforce. It has
 no database, queue, agent executor, identity mapping, credentials or authority engine.
 Native Titan FSM remains the default; Frappe is optional.
 
+**Packaging candidate only — not live-install-ready.** This archive has only been
+validated in disposable test/staging environments; its upstream host contracts and
+real DirectAdmin/Apache behavior remain uncommissioned.
+
 ## Integration status
 
 The executable role routes render the same company-scoped cockpit. The browser
 uses the actual shared #1049 `DirectAdminCockpitSession`, with its fetcher supplied
 by the published #812 Server Node adapter.
-Open draft PR #1201 now contains the #811 canonical company-filtered read-only projection
-owner and an optional `/v1/directadmin/*` Fetch-handler mount. Its published controls list
-is empty and lifecycle proposals are explicitly denied pending canonical caller-management
-authority. This code is not merged to main or live-certified. Missing commissioned
+PR #1201 is merged to main and contains the #811 canonical company-filtered read-only
+projection owner and optional `/v1/directadmin/*` Fetch-handler mount. Its published
+controls list is empty and lifecycle proposals are explicitly denied pending canonical
+caller-management authority. The API is not live-certified. Missing commissioned
 session/CSRF bootstrap, denied identity, invalid company data or unavailable host fail closed.
 The current implementation is **not certified complete or ready for production**.
 Authenticated host HTML must supply `<meta name="titan-directadmin-csrf" content="…">`
@@ -49,6 +53,29 @@ private token in a URL, or assume Apache 443 can install a handler on DirectAdmi
 port 2222. See the install-readiness checklist in
 `docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md`.
 
+The current extracted relay-to-host run used Server Node 0.3.0 and the hosted
+owner from main `64561e4d077ec07a3cb40dfb43284b0e7dff4dbf`, including #811's
+merged production dependency composition and #1245's disabled RAW default. The
+disposable host fixture supplies the required company-placement registry/opener
+through canonical SQLite storage adapters; those temporary placements are
+test-only, and no company business store is opened because the published
+controls remain empty. The production default returns sanitized 503
+`cookie_boundary_unverified` without an upstream request; the test then injects
+a fake config loader directly into the extracted module in-process for fixture
+forwarding. It uses no relay config file or CGI environment variable and does
+not spawn the production RAW executable. It does not exercise Apache, DirectAdmin
+CGI, or a live cookie boundary.
+
+**Commissioning blocker:** merged #812 follow-up PR #1245 removed the experimental
+Apache `:443` cookie filter and makes the production RAW entrypoint return
+sanitized 503 `cookie_boundary_unverified` before forwarding. There is no
+production relay contract to commission yet. DirectAdmin `:2222` RAW parsing,
+private transport and cookie behavior remain unverified. Do not install or enable
+forwarding until the replacement boundary is independently verified on an
+authorized disposable Apache/DirectAdmin host using cookie-name-only evidence.
+See the exact run limits and remaining host inputs in
+`docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md`.
+
 The UI displays canonical roster/worker identity, hierarchy relationships, work
 states, owner-provided source/freshness/evidence and receipt references. It only
 renders lifecycle submission when the current host publishes a supported control;
@@ -56,6 +83,12 @@ the current #811 projection explicitly publishes none and is read-only.
 It preserves human versus digital identity and never promotes model/provider
 identity or DirectAdmin role to execution authority. A provider acknowledgement
 or completed agent run is not a verified business outcome.
+
+The Teams view groups only workers returned for the current `company_id`, using
+their canonical `team_id` fields; unassigned workers remain visible. The hosted
+projection does not provide a named team registry or skill catalog, so those
+facets are labelled unavailable instead of being synthesized. Projected active
+status and capabilities are descriptive inputs, not execution authority.
 
 Unsupported host facets are labelled unavailable, including detailed trust,
 autonomy, knowledge, capacity/value, Mission and staffing projections. No sample
@@ -78,7 +111,7 @@ The builder requires the current canonical browser session and package-validator
 and runs the shared validator on the extracted final package. It produces a flat `titan_workforce.tar.gz` and SHA256 sidecar, applies
 executable modes, extracts the final tarball, compares contents/modes and runs
 staging-location preflight. The manifest controls the artifact version (currently
-0.1.4). Tests and development fixtures are excluded. The package requires the
+0.1.5). Tests and development fixtures are excluded. The package requires the
 separately installed Titan Server Node plugin for its published relay module; it
 does not vendor or shadow that owner.
 
@@ -124,21 +157,24 @@ out-of-order responses, duplicate clicks, false verification and hostile text.
 - #811: independently hosted Workforce, canonical registry/work/runs, read-only
   DirectAdmin projection and explicit denial of lifecycle proposals until caller
   management authority exists; #1182: conversation transport.
-- #302: global actor/company relationship resolver. Protected provisioning and
-  credential verification remain upstream requirements.
+- #302 / #1183: the shared resolver, signed-credential verification and durable
+  current-company session path are published in current main; #1240 adds the company
+  placement/storage contract. Regression coverage is code evidence only. Verified
+  upstream credentials and protected provisioning remain uncommissioned requirements.
 - #14/#640: execution/authority; #913: evidence and verified outcome provenance.
 - #1045: infrastructure health (linked by role route); #1046: Zero summary.
-- #1084/#1179: shared build/index/lock repair. This branch merges that prerequisite
-  with provenance instead of implementing competing repairs.
+- #1084/#1179: shared build/index/lock repair is owned centrally and #1179 is merged.
+  This package consumes the shared source without implementing a competing repair.
 
 Useful donor semantics are retained at canonical owners: WorkforceService and
 SqliteWorkforceStore provide identity/work, runtime dispatcher preserves run and
 conversation continuity, native workforce command routes preserve native FSM.
 The existing `apps/web/app/workforce/page.tsx` is a marketing page, not a cockpit
 runtime donor. Browser Codee Workforce tooling is development infrastructure,
-not a production registry. Neither is copied into this package. The old #1143
-agent/team contract was already accepted through #1145; existing history is
-preserved by a non-rewriting merge on `agent/issue-1050`.
+not a production registry. Neither is copied into this package. The earlier
+agent/team projection contract was accepted through #1145, and the #1143
+consumer/package slice is merged to main. The company-scoped roster/team consumer
+slice continues in #1279 under #1050; #1050 remains open for its wider acceptance.
 
 ## Remaining mission acceptance
 
@@ -150,5 +186,7 @@ staffing evidence, external competency/credential revocation, Zero SDK summary,
 and real DirectAdmin install/update/uninstall/reinstall/theme/session certification.
 The issue's later Time Attendance delta (clock entry lifecycle, review, policies,
 QR/IP/geofence/device evidence, offline replay, overlap, corrections/void and
-accepted-entry payroll export) remains preserved in #1050; this bounded cockpit
-continuation does not declare those outcomes delivered or close the issue.
+accepted-entry payroll export), reusable department packs including Supply & Asset
+Continuity, and evidence-backed earned tier/autonomy progression with all required
+company authorization gates also remain in #1050. This bounded cockpit continuation
+does not declare those outcomes delivered or close the issue.

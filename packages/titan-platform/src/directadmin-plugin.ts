@@ -3,6 +3,7 @@
 export * from './directadmin-session-bridge.js';
 export * from './directadmin-gateway.js';
 export * from './directadmin-cockpit.js';
+export * from './directadmin-workforce-skills.js';
 export type DirectAdminRole = "admin" | "reseller" | "user";
 export type DirectAdminPluginPackage = Readonly<{
   plugin_id: string;
@@ -18,6 +19,8 @@ export type PluginValidation = Readonly<{ valid: boolean; errors: readonly strin
 
 const ID = /^[a-z][a-z0-9_-]{1,62}$/;
 const VERSION = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
+/** Contribution API version; independent of the package release version. */
+export const DIRECTADMIN_SDK_COMPATIBILITY_VERSION = "1.0.0";
 const ROLE_PATH: Readonly<Record<DirectAdminRole, string>> = {
   admin: "admin/index.html", reseller: "reseller/index.html", user: "user/index.html",
 };
@@ -208,7 +211,7 @@ export type PluginAvailability = Readonly<{
 }>;
 
 const SENSITIVE_KEY = /(?:authorization|token|cookie|csrf|session.?id|secret|password|credential|private.?key|api.?key)/i;
-const SENSITIVE_VALUE = /(?:\bBearer\s+)[A-Za-z0-9._~+/=-]+|-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g;
+const SENSITIVE_VALUE = /\bBearer\s+[A-Za-z0-9._~+/=-]+|\b(?:proxy-)?authorization\s*[:=]\s*Basic\s+[A-Za-z0-9._~+/=-]+|\b(?:x-titan-csrf|csrf(?:[-_]?token)?)\s*[:=]\s*(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s,;]+)|-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/gi;
 export function redactDirectAdminDiagnostics(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(redactDirectAdminDiagnostics);
   if (value !== null && typeof value === "object") {
@@ -248,12 +251,23 @@ function validRoute(route: string): boolean {
 export class DirectAdminContributionRegistry {
   #items = new Map<string, CockpitContribution>();
   #degraded = new Map<string, string>();
+  #supportedSdkMajor: string;
+
+  constructor(sdkCompatibilityVersion = DIRECTADMIN_SDK_COMPATIBILITY_VERSION) {
+    const version = VERSION.exec(sdkCompatibilityVersion);
+    if (!version) throw new Error("invalid-sdk-compatibility-version");
+    this.#supportedSdkMajor = version[1];
+  }
 
   register(contribution: CockpitContribution): void {
     const pluginId = String(contribution?.plugin_id ?? "");
     try {
-      if (!ID.test(pluginId) || !VERSION.test(contribution.plugin_version) || !VERSION.test(contribution.sdk_compatibility)) {
+      const compatibility = VERSION.exec(contribution.sdk_compatibility);
+      if (!ID.test(pluginId) || !VERSION.test(contribution.plugin_version) || !compatibility) {
         throw new Error("invalid-plugin-version-or-id");
+      }
+      if (compatibility[1] !== this.#supportedSdkMajor) {
+        throw new Error(`sdk-compatibility-mismatch:required-major-${compatibility[1]}:supported-major-${this.#supportedSdkMajor}`);
       }
       if (this.#items.has(pluginId)) throw new Error("duplicate-plugin-contribution");
       const navIds = new Set<string>();

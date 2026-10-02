@@ -2,10 +2,12 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { getEnv, _resetEnvCache } from "../env";
 
 const VALID_ENV = {
-  DATABASE_URL: "postgres://test:test@localhost/test",
+  DATABASE_URL: "file:./data/test-titan-zero.db",
+  DATABASE_DIALECT: "sqlite",
   REDIS_URL: "redis://localhost:6379/0",
   AUTH_SECRET: "this-is-a-valid-secret-exactly-32-chars!",
   NODE_ENV: "test",
+  TITAN_DEPLOYMENT_PROFILE: "test",
 };
 
 const ENV_KEYS = [
@@ -14,8 +16,12 @@ const ENV_KEYS = [
   "REDIS_URL",
   "AUTH_SECRET",
   "NODE_ENV",
+  "TITAN_DEPLOYMENT_PROFILE",
   "NEXT_PHASE",
   "BOOKING_ACCOUNT_ID",
+  "ANTHROPIC_API_KEY",
+  "SMTP_USER",
+  "SMTP_PASS",
 ] as const;
 
 describe("getEnv validation", () => {
@@ -63,11 +69,58 @@ describe("getEnv validation", () => {
     expect(() => getEnv()).not.toThrow();
   });
 
-  it("returns parsed env when all values are valid", () => {
+  it("returns parsed canonical SQLite env when all values are valid", () => {
     Object.assign(process.env, VALID_ENV);
     const env = getEnv();
     expect(env.DATABASE_URL).toBe(VALID_ENV.DATABASE_URL);
+    expect(env.DATABASE_DIALECT).toBe("sqlite");
     expect(env.AUTH_SECRET).toBe(VALID_ENV.AUTH_SECRET);
+    expect(env.TITAN_DEPLOYMENT_PROFILE).toBe("test");
+  });
+
+  it("accepts a production VPS profile with SQLite and no provider credential", () => {
+    Object.assign(process.env, {
+      ...VALID_ENV,
+      NODE_ENV: "production",
+      TITAN_DEPLOYMENT_PROFILE: "vps",
+      DATABASE_DIALECT: "sqlite",
+      DATABASE_URL: "file:/app/data/titan-zero.db",
+    });
+    delete process.env.ANTHROPIC_API_KEY;
+    expect(getEnv().TITAN_DEPLOYMENT_PROFILE).toBe("vps");
+  });
+
+  it("rejects a VPS profile selecting PostgreSQL without echoing the URL", () => {
+    Object.assign(process.env, {
+      ...VALID_ENV,
+      NODE_ENV: "production",
+      TITAN_DEPLOYMENT_PROFILE: "vps",
+      DATABASE_DIALECT: "postgres",
+      DATABASE_URL: "postgresql://user:secret@db.example/ai_fsm",
+    });
+    let message = "";
+    try { getEnv(); } catch (error) { message = error instanceof Error ? error.message : String(error); }
+    expect(message).toMatch(/DATABASE_DIALECT.*VPS profile requires SQLite/);
+    expect(message).not.toContain("secret");
+    expect(message).not.toContain("db.example");
+  });
+
+  it("rejects a local profile selecting PostgreSQL", () => {
+    Object.assign(process.env, {
+      ...VALID_ENV,
+      TITAN_DEPLOYMENT_PROFILE: "local",
+      DATABASE_DIALECT: "postgres",
+      DATABASE_URL: "postgresql://test:test@localhost/ai_fsm",
+    });
+    expect(() => getEnv()).toThrow(/local profile requires SQLite/);
+  });
+
+  it("does not require a shared remote AI or SMTP credential", () => {
+    Object.assign(process.env, VALID_ENV);
+    delete process.env.ANTHROPIC_API_KEY;
+    delete process.env.SMTP_USER;
+    delete process.env.SMTP_PASS;
+    expect(() => getEnv()).not.toThrow();
   });
 
   it("throws when BOOKING_ACCOUNT_ID is present but not a UUID", () => {

@@ -31,6 +31,45 @@ async function separateBusiness(f:any) {
  return {file,storage};
 }
 
+function watchChildMessages(child:ReturnType<typeof spawn>,stderr:()=>string) {
+ type Waiter={resolve:(message:any)=>void;reject:(error:Error)=>void;timer:ReturnType<typeof setTimeout>};
+ const messages:any[]=[];const waiters=new Map<string,Set<Waiter>>();
+ let failure:Error|undefined;let exitResult:{code:number|null;signal:NodeJS.Signals|null}|undefined;
+ let resolveExit:(result:{code:number|null;signal:NodeJS.Signals|null})=>void=()=>{};
+ const exited=new Promise<{code:number|null;signal:NodeJS.Signals|null}>(resolve=>{resolveExit=resolve;});
+ const remove=(phase:string,waiter:Waiter)=>{
+  clearTimeout(waiter.timer);const pending=waiters.get(phase);pending?.delete(waiter);if(pending?.size===0)waiters.delete(phase);
+ };
+ const failPending=(error:Error)=>{
+  for(const [phase,pending] of waiters)for(const waiter of [...pending]){remove(phase,waiter);waiter.reject(error);}
+ };
+ const onMessage=(message:any)=>{
+  messages.push(message);if(typeof message?.phase!=='string')return;
+  const pending=waiters.get(message.phase);if(pending)for(const waiter of [...pending]){remove(message.phase,waiter);waiter.resolve(message);}
+ };
+ const onError=(error:Error)=>{failure=new Error(`child-error:${error.message}${stderr()?`\n${stderr()}`:''}`);failPending(failure);};
+ const onExit=(code:number|null,signal:NodeJS.Signals|null)=>{
+  exitResult={code,signal};resolveExit(exitResult);
+  failure=new Error(`child-exited-before-expected-message:code=${code},signal=${signal}${stderr()?`\n${stderr()}`:''}`);failPending(failure);
+ };
+ child.on('message',onMessage);child.on('error',onError);child.on('exit',onExit);
+ return {
+  messages,
+  exited,
+  waitFor(phase:string,timeoutMs:number,errorMessage:string) {
+   const received=messages.find(message=>message?.phase===phase);if(received)return Promise.resolve(received);
+   if(failure)return Promise.reject(failure);
+   return new Promise<any>((resolve,reject)=>{
+    const waiter:Waiter={resolve,reject,timer:setTimeout(()=>{
+     remove(phase,waiter);reject(new Error(errorMessage));
+    },timeoutMs)};
+    const pending=waiters.get(phase)??new Set<Waiter>();pending.add(waiter);waiters.set(phase,pending);
+   });
+  },
+  dispose() {child.off('message',onMessage);child.off('error',onError);child.off('exit',onExit);},
+ };
+}
+
 for(const phase of ['before-effect','after-effect']) test(`SIGKILL ${phase}: restart reconciles without invoking provider again`,async()=>{
  const f=await fixture();let business:any;try{
   await f.storage.query('CREATE TABLE mutation_count(n INTEGER)');await f.storage.query('INSERT INTO mutation_count VALUES(0)');
@@ -128,27 +167,29 @@ for(const revocation of ['policy','access']) test(`revocation of ${revocation} i
 test('post-admission authority revocation commits during provider work; the admitted effect may finish',async()=>{
  let release:()=>void=()=>{};let entered:()=>void=()=>{};
  const barrier=new Promise<void>(resolve=>{release=resolve;});const atProvider=new Promise<void>(resolve=>{entered=resolve;});
- const f=await fixture();let pending:Promise<any>|undefined;let child:ReturnType<typeof spawn>|undefined;
+ const f=await fixture();let pending:Promise<any>|undefined;let child:ReturnType<typeof spawn>|undefined;let inbox:ReturnType<typeof watchChildMessages>|undefined;
  try{
   const complete=f.workOrders.complete;
   f.workOrders.complete=async(input:any)=>{entered();await barrier;input.authorityFence.assertCurrent();return complete(input);};
   pending=f.runtime.dispatch(f.input);await atProvider;
   child=spawn(process.execPath,['--import',fileURLToPath(new URL('../services/workforce/node_modules/tsx/dist/loader.mjs',import.meta.url)),fileURLToPath(new URL('./fixtures/native-execution-child.ts',import.meta.url)),f.file,'revoke-policy'],{env:{...process.env,TSX_TSCONFIG_PATH:fileURLToPath(new URL('../apps/web/tsconfig.json',import.meta.url))},stdio:['ignore','ignore','pipe','ipc']});
-  const exited=once(child,'exit');
-  const messages:any[]=[];child.on('message',message=>messages.push(message));
-  await once(child,'message');assert.equal(messages[0].phase,'attempting');
-  await new Promise<void>((resolve,reject)=>{
-   const timeout=setTimeout(()=>reject(new Error('post-admission authority update remained blocked')),3000);
-   const committed=(message:any)=>{if(message.phase==='committed'){clearTimeout(timeout);child?.off('message',committed);resolve();}};
-   child?.on('message',committed);
-  });
+  let stderr='';child.stderr?.on('data',chunk=>{stderr+=chunk;});
+  inbox=watchChildMessages(child,()=>stderr);
+  const attempting=await inbox.waitFor('attempting',3000,'child did not report authority update attempt within 3000ms');
+  assert.equal(attempting.phase,'attempting');
+  await inbox.waitFor('committed',3000,'post-admission authority update remained blocked');
   assert.equal((await f.storage.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status,'in_progress');
-  release();await pending;const [exit]=await exited;assert.equal(exit,0);
-  assert.ok(messages.some(message=>message.phase==='committed'));
+  release();await pending;const {code,signal}=await inbox.exited;assert.equal(code,0);assert.equal(signal,null);
+  assert.ok(inbox.messages.some(message=>message.phase==='committed'));
   assert.equal((await f.storage.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status,'completed');
   assert.equal(JSON.parse((await f.storage.query("SELECT envelope FROM authority_state WHERE id='grant'")).rows[0].envelope).policy_allows,false);
   assert.equal((await f.storage.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount,1);
- }finally{release();await pending?.catch(()=>{});if(child&&child.exitCode===null)child.kill('SIGKILL');await f.close();}
+ }finally{
+  release();await pending?.catch(()=>{});
+  if(child&&child.pid!==undefined&&child.exitCode===null&&child.signalCode===null){child.kill('SIGKILL');await inbox?.exited;}
+  inbox?.dispose();
+  await f.close();
+ }
 });
 
 test('noncooperative provider may finish after timeout; UNCERTAIN recovery never reexecutes it',async()=>{

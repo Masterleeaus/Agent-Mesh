@@ -32,7 +32,7 @@ jobs:
       - name: Checkout trusted policy
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          ref: main
           persist-credentials: false
 
       - name: Validate roadmap and claim

@@ -25,3 +25,21 @@ test("unknown capability fails closed by returning no requirement",async()=>{
 test("company-scoped registry cannot resolve another company",async()=>{
  await assert.rejects(()=>new CapabilityRequirementResolver({registry}).resolve({company_id:"co-2",capability:"jobs.view"}),/company-mismatch/);
 });
+
+test("canonical host action resolves through #640 authority without entering the tool list",async()=>{
+ const hostAction={
+  capability_id:"titan.workforce.reassign",kind:"host_action",operation:"reassign",effect:"write",mutates:true,
+  required_permissions:["titan.workforce.reassign"],risk_class:"MEDIUM",default_grants:[],grants_execution_authority:false,
+  execution_contract:{autonomy:"auto",evidence_required:["management_authority"],approval_required_for:["work_reassignment"]},
+ };
+ const current={...registry,action_capabilities:[hostAction]};
+ const r=await new CapabilityRequirementResolver({registry:current}).resolve({company_id:"co-1",capability:hostAction.capability_id});
+ assert.equal(r.capability,hostAction.capability_id);
+ assert.equal(r.operation,"reassign");
+ assert.equal(r.effect,"write");
+ assert.equal(r.protected_action,true);
+ assert.equal(r.minimum_autonomy_score,51);
+ assert.deepEqual(r.required_permissions,[hostAction.capability_id]);
+ assert.deepEqual(r.required_evidence,["management_authority"]);
+ assert.equal(r.approval_policy,"registry_required");
+});

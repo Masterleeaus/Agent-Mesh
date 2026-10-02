@@ -1,0 +1,57 @@
+name: Distribution Provenance Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "docs/contracts/distribution-provenance.json"
+      - "docs/contracts/package-license-audit.json"
+      - "docs/contracts/DISTRIBUTION-LICENSING.md"
+      - "**/package.json"
+      - "pnpm-lock.yaml"
+      - "archive/**"
+      - "**/LICENSE*"
+      - "**/LICENCE*"
+      - "**/COPYING*"
+      - "**/*NOTICE*"
+      - "apps/browser/SOURCE-MANIFEST.json"
+      - "apps/browser/imports/**"
+      - "apps/browser/src/intelligence/**"
+      - ".github/scripts/check-distribution-provenance.py"
+      - ".github/scripts/tests/test_distribution_provenance.py"
+      - ".github/workflows/distribution-provenance.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/contracts/distribution-provenance.json"
+      - "docs/contracts/package-license-audit.json"
+      - "docs/contracts/DISTRIBUTION-LICENSING.md"
+      - "**/package.json"
+      - "pnpm-lock.yaml"
+      - "archive/**"
+      - "**/LICENSE*"
+      - "**/LICENCE*"
+      - "**/COPYING*"
+      - "**/*NOTICE*"
+      - "apps/browser/SOURCE-MANIFEST.json"
+      - "apps/browser/imports/**"
+      - "apps/browser/src/intelligence/**"
+      - ".github/scripts/check-distribution-provenance.py"
+      - ".github/scripts/tests/test_distribution_provenance.py"
+      - ".github/workflows/distribution-provenance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate recorded licensing decisions and provenance
+        run: python3 .github/scripts/check-distribution-provenance.py --check
+      - name: Run fail-closed release guard tests
+        run: python3 -m unittest discover -s .github/scripts/tests -p 'test_distribution_provenance.py' -v

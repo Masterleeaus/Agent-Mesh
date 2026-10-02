@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { spawn } from 'node:child_process';
-import { mkdtemp, mkdir, readFile, rm, writeFile, chmod, symlink } from 'node:fs/promises';
+import { lstat, mkdtemp, mkdir, readFile, rm, symlink } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { once } from 'node:events';
+import { PassThrough } from 'node:stream';
 import https from 'node:https';
 import http from 'node:http';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -26,10 +27,12 @@ const browserPackage = join(scratch, 'workforce-extracted');
 const workforceArchiveRoot = join(scratch, 'workforce-package');
 const certPath = join(scratch, 'panel.crt');
 const keyPath = join(scratch, 'panel.key');
-const configPath = join(scratch, 'directadmin-relay.json');
+const lifecycleCallbacks = [];
 let host;
 let panel;
 let browser;
+let relayCore;
+let relayFixtureConfig = null;
 const cleanup = [];
 const relayObservations = [];
 const panelObservations = [];
@@ -78,22 +81,17 @@ function parseRaw(bytes) {
   assert.equal(Number(headers['content-length']?.[0]), body.length, 'RAW Content-Length matches the response body');
   return { status, headers, body };
 }
-async function spawnRaw(env, input) {
-  return await new Promise((resolve, reject) => {
-    const child = spawn(join(relayRoot, 'user/directadmin-gateway.raw'), [], { env, stdio: ['pipe', 'pipe', 'pipe'] });
-    const stdout = [];
-    let stderrBytes = 0;
-    const timer = setTimeout(() => child.kill('SIGKILL'), 15_000);
-    child.stdout.on('data', chunk => stdout.push(chunk));
-    child.stderr.on('data', chunk => { stderrBytes += chunk.byteLength; });
-    child.once('error', error => { clearTimeout(timer); reject(error); });
-    child.once('close', (code, signal) => {
-      clearTimeout(timer);
-      if (code !== 0 || signal) return reject(new Error(`RAW relay exited unsuccessfully (stderr bytes=${stderrBytes})`));
-      resolve(parseRaw(Buffer.concat(stdout)));
-    });
-    child.stdin.end(input);
-  });
+async function runRelayCore(env, input) {
+  const stdin = new PassThrough();
+  const chunks = [];
+  const stdout = { write(chunk) { chunks.push(Buffer.from(chunk)); return true; } };
+  stdin.end(input);
+  const options = { env, stdin, stdout };
+  // The production default is used for the denied/unconfigured request. The
+  // fake config loader is injected only for explicit in-process fixture runs.
+  if (relayFixtureConfig) options.configLoader = async () => relayFixtureConfig;
+  await relayCore.runRawGateway(options);
+  return parseRaw(Buffer.concat(chunks));
 }
 function cgiEnv(request, query, body) {
   const headers = request.headers;
@@ -111,9 +109,6 @@ function cgiEnv(request, query, body) {
   const env = {
     PATH: process.env.PATH,
     NODE_ENV: 'test',
-    TITAN_SERVER_NODE_HOME: relayRoot,
-    TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_CONFIG: configPath,
-    TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_NODE_BIN: process.execPath,
     REQUEST_METHOD: request.method,
     QUERY_STRING: query,
     HEADERS: encodeURIComponent(lines.join('\r\n')),
@@ -137,7 +132,10 @@ try {
   const relayPackage = packagePlugin({ sourceDir: join(relaySourceRoot, 'apps/directadmin/server-node'), outputDir: relayArchiveRoot });
   await mkdir(relayRoot, { recursive: true });
   execFileSync('tar', ['-xzf', relayPackage.archive, '-C', relayRoot]);
+  const relayManifest = await readFile(join(relayRoot, 'plugin.conf'), 'utf8');
+  assert.match(relayManifest, /^version=0\.3\.0$/m, 'integration extracts the current Server Node relay contract');
   const relayClient = await readFile(join(relayRoot, 'images/directadmin-relay-client.mjs'), 'utf8');
+  relayCore = await import(`${pathToFileURL(join(relayRoot, 'directadmin-relay.mjs')).href}?fixture=${encodeURIComponent(scratch)}`);
   const certResult = spawn('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', keyPath, '-out', certPath,
     '-subj', '/CN=127.0.0.1', '-days', '1', '-addext', 'subjectAltName=IP:127.0.0.1'], { stdio: 'ignore' });
   const [certCode] = await once(certResult, 'close');
@@ -186,7 +184,7 @@ try {
           } catch { observation.bodyKeys = ['invalid-json']; }
         }
         relayObservations.push(observation);
-        const result = await spawnRaw(cgiEnv(request, url.search.slice(1), body), body);
+        const result = await runRelayCore(cgiEnv(request, url.search.slice(1), body), body);
         observation.status = result.status;
         try { observation.code = JSON.parse(result.body.toString('utf8')).error ?? null; } catch { observation.code = 'non-json-response'; }
         const outgoingHeaders = Object.create(null);
@@ -209,7 +207,10 @@ try {
 
   for (const relative of ['', 'packages/titan-platform', 'packages/storage', 'services/workforce']) {
     const target = join(upstreamRoot, relative, 'node_modules');
-    if (!existsSync(target)) {
+    let targetExists = false;
+    try { await lstat(target); targetExists = true; }
+    catch (error) { if (error?.code !== 'ENOENT') throw error; }
+    if (!targetExists) {
       await mkdir(dirname(target), { recursive: true });
       await symlink(join(repo, relative, 'node_modules'), target, 'dir');
     }
@@ -218,9 +219,11 @@ try {
   const upstreamServerTs = pathToFileURL(join(upstreamRoot, 'services/workforce/src/server.ts')).href;
   const upstreamStorageTs = pathToFileURL(join(upstreamRoot, 'packages/storage/src/index.ts')).href;
   const upstreamStoreTs = pathToFileURL(join(upstreamRoot, 'services/workforce/src/sqlite-store.ts')).href;
-  const [{ createWorkforceServer }, { createSqliteStorage }, { SqliteWorkforceStore }] = await Promise.all([
+  const [{ createWorkforceServer }, storageApi, { SqliteWorkforceStore }] = await Promise.all([
     import(upstreamServerTs), import(upstreamStorageTs), import(upstreamStoreTs),
   ]);
+  const { createSqliteStorage, initializeSqliteCompanyPlacementRegistry,
+    createSqliteCompanyPlacementRegistry, createSqliteCompanyStoreOpener } = storageApi;
   const dbPath = join(scratch, 'workforce.db');
   const seedStorage = createSqliteStorage(dbPath);
   const store = new SqliteWorkforceStore(seedStorage);
@@ -236,16 +239,39 @@ try {
   }
   await seedStorage.close();
 
-  const lifecycleCallbacks = [];
   const bridgeFixture = await import(pathToFileURL(bridgeFixturePath).href);
   const auth = await bridgeFixture.fixture({ after: cleanupFn => lifecycleCallbacks.push(cleanupFn) }, {
     origin: panelOrigin, provider: `directadmin:${panelOrigin}`,
   });
   panel.fixtureCsrf = bridgeFixture.csrf;
   const { createDirectAdminGateway } = await import(pathToFileURL(hostSdkModulePath).href);
+  // #811's current hosted runtime requires the canonical company-placement
+  // ports even though this read-only projection fixture never opens a company
+  // business store. The registry records below exist only in this disposable
+  // test database; the canonical SQLite adapter owns their schema and reads.
+  const identityStoragePath = join(scratch, 'identity.db');
+  const placementRegistryStorage = createSqliteStorage(identityStoragePath);
+  cleanup.push(() => placementRegistryStorage.close());
+  await initializeSqliteCompanyPlacementRegistry({ storage: placementRegistryStorage, storage_role: 'GLOBAL_REGISTRY' });
+  for (const [company_id, placement_id] of [['company-a', 'fixture-placement-a'], ['company-b', 'fixture-placement-b']]) {
+    await placementRegistryStorage.query(
+      `INSERT INTO titan_company_storage_placements
+        (company_id, placement_id, placement_revision, provider, schema_version, status)
+       VALUES ($1, $2, 1, 'sqlite', 'native-fsm/1', 'READY')`,
+      [company_id, placement_id],
+    );
+  }
+  const companyPlacementRegistry = await createSqliteCompanyPlacementRegistry({ storage: placementRegistryStorage, storage_role: 'GLOBAL_REGISTRY' });
+  const companyStoreRoot = join(scratch, 'company-stores');
+  await mkdir(companyStoreRoot, { recursive: true, mode: 0o700 });
+  const companyStoreOpener = createSqliteCompanyStoreOpener({ companyStoreRoot });
+  assert.equal((await companyPlacementRegistry.findByCompanyId('company-a'))?.company_id, 'company-a');
+  assert.equal(await companyPlacementRegistry.findByCompanyId('unrelated-company'), null, 'placement lookup fails closed for unknown company IDs');
   const hostDeps = {
-    identityStoragePath: join(scratch, 'identity.db'),
+    identityStoragePath,
     credentialVerifier: { async verify() { throw new Error('not-used-by-directadmin-fixture'); } },
+    companyPlacementRegistry,
+    companyStoreOpener,
     workOrders: { async read() { throw new Error('not-used-by-read-only-projection'); }, async complete() { throw new Error('not-used-by-read-only-projection'); } },
     readiness: async () => ({ authentication: true, authority: true, provider: true, evidence: true }),
     directAdmin: {
@@ -277,12 +303,17 @@ try {
   await page.goto(panelOrigin);
   await page.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.', { exact: true }).waitFor();
   assert.equal(relayObservations.length, 1, `real relay received the initial context request; panel=${JSON.stringify(panelObservations)} page=${JSON.stringify(pageErrors)}`);
+  assert.equal(relayObservations[0].status, 503, 'the extracted relay production default fails closed without configuration');
+  assert.equal(relayObservations[0].code, 'cookie_boundary_unverified',
+    'the current production loader reports the unverified-cookie boundary explicitly');
   assert.equal(hostedObservations.length, 0, 'missing relay config refuses before calling the hosted owner');
   assert.equal(await page.getByRole('navigation').count(), 0, 'missing config exposes no company views');
   assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0, 'missing config exposes no controls');
 
-  await writeFile(configPath, JSON.stringify({ schema: 'titan.server-node.directadmin-relay.v1', public_origin: panelOrigin, workforce_origin: workforceOrigin }), { mode: 0o600 });
-  await chmod(configPath, 0o600);
+  // Only the extracted module's in-process test harness receives this fixture.
+  // No environment variable, config file, or production RAW executable enables forwarding.
+  relayFixtureConfig = Object.freeze({ publicOrigin: panelOrigin, publicHost: new URL(panelOrigin).host,
+    upstreamOrigin: workforceOrigin, upstreamUrl: new URL(workforceOrigin) });
   await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
   try { await page.getByText('Current hosted projection', { exact: true }).waitFor(); }
   catch {
@@ -302,15 +333,31 @@ try {
   assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0, 'canonical controls=[] keeps the UI read-only');
   assert.deepEqual(pageErrors, [], 'packaged role has no browser runtime errors');
 
-  const wrongCsrf = await page.evaluate(async () => {
-    const relay = await import('/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs');
-    const fetcher = relay.createDirectAdminRelayFetch();
-    const response = await fetcher('/v1/directadmin/context', { method: 'GET', headers: { Accept: 'application/json', 'X-Titan-CSRF': 'Z'.repeat(43) } });
-    return { status: response.status, body: await response.json() };
-  });
-  assert.ok([401, 403].includes(wrongCsrf.status), 'bad CSRF is denied by canonical session bridge');
-  assert.equal(wrongCsrf.body.read_only, true);
-  assert.ok(!JSON.stringify(wrongCsrf.body).includes(auth.token), 'denial response does not contain the session credential');
+  // A valid-length CSRF mismatch is a session-rejected response and clears
+  // that browser context's HttpOnly cookie. Keep it in an isolated context so
+  // the main operator session can continue through intent/company/expiry checks.
+  const csrfContext = await browser.newContext({ ignoreHTTPSErrors: true });
+  let wrongCsrf;
+  try {
+    await csrfContext.addCookies([{ name: '__Host-titan-da-session', value: auth.token, url: panelOrigin,
+      secure: true, httpOnly: true, sameSite: 'Strict' }]);
+    const csrfPage = await csrfContext.newPage();
+    await csrfPage.goto(panelOrigin);
+    await csrfPage.getByText('Current hosted projection', { exact: true }).waitFor();
+    wrongCsrf = await csrfPage.evaluate(async () => {
+      const relay = await import('/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs');
+      const fetcher = relay.createDirectAdminRelayFetch();
+      const response = await fetcher('/v1/directadmin/context', { method: 'GET', headers: { Accept: 'application/json', 'X-Titan-CSRF': 'Z'.repeat(43) } });
+      return { status: response.status, body: await response.json() };
+    });
+    assert.equal(wrongCsrf.status, 401, 'a well-formed but incorrect CSRF token is denied by the canonical bridge');
+    assert.equal(wrongCsrf.body.read_only, true);
+    assert.ok(!JSON.stringify(wrongCsrf.body).includes(auth.token), 'denial response does not contain the session credential');
+    assert.equal((await csrfContext.cookies(panelOrigin)).some(cookie => cookie.name === '__Host-titan-da-session'), false,
+      'the invalid-CSRF session-rejected response clears its isolated HttpOnly cookie');
+  } finally { await csrfContext.close(); }
+  assert.ok(relayObservations.some(entry => entry.status === 401 && entry.code === 'directadmin-session-rejected'),
+    'the real RAW route preserves canonical invalid-session denial');
 
   const beforeWork = await (async () => {
     const db = createSqliteStorage(dbPath);
@@ -335,8 +382,10 @@ try {
       } catch (error) { return { accepted: false, error: String(error?.message ?? '') }; }
     } finally { session.dispose(); }
   }, `data:text/javascript;base64,${Buffer.from(await readFile(join(browserPackage, 'images/sdk.mjs'))).toString('base64')}`);
-  assert.equal(denial.accepted, false, 'a noncanonical context revision must not produce an action receipt');
+  assert.equal(denial.accepted, false, 'canonical context reaches the unsupported action owner and is denied');
   assert.equal(denial.error, 'directadmin-http-403', 'the current #1049 gateway maps the typed #811 unsupported-action denial');
+  assert.equal((await context.cookies(panelOrigin)).some(cookie => cookie.name === '__Host-titan-da-session' && cookie.value === auth.token), true,
+    'typed governed-intent 403 leaves the still-valid DirectAdmin session cookie intact');
   assert.equal(hostedObservations.some(entry => entry.path === '/v1/directadmin/titan_workforce/intents'), true,
     'the canonical revision assertion passes through #812 to the host owner');
   assert.ok(!denial.error.includes('fixture-operation-denied'), 'the UI receives no intent/owner detail');
@@ -395,12 +444,13 @@ try {
   assert.equal(await page.getByText('fixture-company-b-worker', { exact: true }).count(), 0, 'expired upstream session clears current projection');
   assert.deepEqual(pageErrors, [], 'security denial and expiry remain handled states');
 
-  console.log('PASS extracted Workforce 0.1.4 + actual #812 RAW relay + #811 hosted optional gateway');
-  console.log(`PASS scenarios: missing relay config (HTTP 503), read-only company-a projection/evidence, empty controls, CSRF denial (${wrongCsrf.status}), hosted governed-action denial without DB/event effects (${denial.error}), company switch to company-b, upstream expiry and client data clearing; RAW requests=${relayObservations.length}, hosted routes=${hostedObservations.length}`);
+  console.log('PASS extracted Workforce 0.1.5 + Server Node 0.3.0 relay module + current #811 hosted source; production default denied, fixture config-loader injected in-process only; no CGI config or Apache proof');
+  console.log(`PASS scenarios: production default unavailable (HTTP 503 ${relayObservations[0].code}), read-only company-a projection/evidence, empty controls, CSRF denial (${wrongCsrf.status}), hosted governed-action denial without DB/event effects (${denial.error}), company switch to company-b, upstream expiry and client data clearing; relay requests=${relayObservations.length}, hosted routes=${hostedObservations.length}`);
 } finally {
   await browser?.close().catch(() => {});
   await host?.close().catch(() => {});
   if (panel) { panel.closeAllConnections(); await new Promise(resolve => panel.close(resolve)).catch(() => {}); }
   for (const close of cleanup) await Promise.resolve(close()).catch(() => {});
+  for (const close of lifecycleCallbacks) await Promise.resolve(close()).catch(() => {});
   await rm(scratch, { recursive: true, force: true });
 }

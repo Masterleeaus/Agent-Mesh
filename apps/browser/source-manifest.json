@@ -1930,8 +1930,8 @@
     },
     {
       "path": "src/integration/workforce-host-contract.js",
-      "bytes": 648,
-      "sha256": "d5e4b00a1ab150b9b29218b53ce6f789900c22d91bfe07fadd31844a2c6ac9e7"
+      "bytes": 733,
+      "sha256": "213147832344cdea4951bdefcc604101b9649ecc27794e495f3adf495480822b"
     },
     {
       "path": "src/integration/workforce-receiver-adapter.js",
@@ -2845,8 +2845,8 @@
     },
     {
       "path": "src/workforce/titan-workforce-gateway.js",
-      "bytes": 7347,
-      "sha256": "d26ce90dfd75b3c96f9a7139c44f6f3c1d7b74cd3f5fb620b73f0bc4b7d371d0"
+      "bytes": 7590,
+      "sha256": "c06b3bae603ab28c183a5b98ee094e5a2de0da20982276d6aeedb5f97955f544"
     },
     {
       "path": "src/workforce/tool-request.js",
@@ -3635,8 +3635,8 @@
     },
     {
       "path": "tests/test-deployment-workforce-gateway-runtime.js",
-      "bytes": 2635,
-      "sha256": "6c548210ecddf4dcee5f4dfdec217050253d31e6118421cee23654d7bba6b2e4"
+      "bytes": 2952,
+      "sha256": "c1f1ccff387985664afb34ec6490b297f75fc38bab7dfe30b33002b074018334"
     },
     {
       "path": "tests/test-diagnostic-auto-repair-step2.js",
@@ -5235,8 +5235,8 @@
     },
     {
       "path": "tests/test-workforce-gateway-authenticated-actor.js",
-      "bytes": 2333,
-      "sha256": "85df2d7686e53ce1c218d3c5e36fc10a9387735b5a5c2a0ed266dddaa9f339a6"
+      "bytes": 2426,
+      "sha256": "85a42560ac245dae448811bf9b8245648ae81094d813a90b7333d0dc5aa68dc7"
     },
     {
       "path": "tests/test-workforce-manager-attribution-and-extension-evidence.js",
