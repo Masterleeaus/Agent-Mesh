@@ -15,7 +15,8 @@
     "apps/web/app/api/v1/captures/route.ts",
     "packages/workforce/src/index.ts",
     "apps/web/app/api/v1/captures/[id]/review/route.ts",
-    "services/worker/src/process-captures.ts"
+    "services/worker/src/process-captures.ts",
+    "packages/titan-platform/src/counterfactual-branch.ts"
   ],
   "inventory": [
     {
@@ -404,6 +405,19 @@
         "Recovery transition history governs safe execution replay but does not establish a verified business outcome; accepted outcome evidence remains in the canonical ledger."
       ],
       "role_detail": "restart or execution recovery"
+    },
+    {
+      "path": "packages/titan-platform/src/counterfactual-branch.ts",
+      "role": "simulation-counterfactual",
+      "role_detail": "pure counterfactual branch contract",
+      "scope": "Builds isolated, company-scoped hypothetical branches from an accepted-evidence checkpoint; branch objects are marked COUNTERFACTUAL and cannot carry authority.",
+      "durability": "Pure immutable builder; no persistence is implemented in this module.",
+      "consumers": [
+        "packages/titan-platform/tests/counterfactual-branch.test.mjs"
+      ],
+      "limitations": [
+        "The branch contract is not itself evidence storage; repository-wide proof that every simulated execution is excluded from factual persistence remains open."
+      ]
     }
   ],
   "primary_roles": [
