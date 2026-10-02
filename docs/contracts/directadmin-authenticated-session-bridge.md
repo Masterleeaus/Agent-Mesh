@@ -57,11 +57,11 @@ On the current continuation, after merging current main `14163faa`:
 - A disposable end-to-end relay/SDK/#811 HTTP probe at merged main `14163faa` and relay PR head `9ffef58d` passed: Workforce projection returned for the selected company; the lifecycle owner returned 403; source revocation returned 401 before conversation input validation; work-order completion count stayed zero.
 - `git diff --check` — passed for the current source and documentation changes.
 - The full `node --test --test-reporter=tap ./tests/*.test.mjs` package suite was attempted after merging #1201 and test compilation: 1,051 passed, 72 failed and 2 skipped. The DirectAdmin-focused suite above passes; no full package test pass is claimed.
-- Exact-head #1049 hosted checks must run after publishing this continuation.
+- On published head `72385ee3`, Mission Closure Evidence Gate, Personal Zero Verification, Titan Zero Source Evidence Index and Titan Zero CI `validate` all passed. The evidence gate validated the refreshed mission evidence and current-main ancestry.
 
 ## Remaining acceptance work
 
-Keep this PR draft and the issue open. The current Workforce owners intentionally deny all proposed lifecycle controls with a typed 403, so this composition has no accepted action or business-effect evidence. #811 still has recovery/fence edge cases under review; the end-to-end probe does not certify duplicate requests, cancellation, or timeout/UNCERTAIN handling. Independent high-impact authentication review and exact-head CI are required before merge.
+Keep this PR draft and the issue open. The current Workforce owners intentionally deny all proposed lifecycle controls with a typed 403, so this composition has no accepted action or business-effect evidence. Although current main includes #1201's native acquisition deadline and restart-lineage checks, the end-to-end probe does not certify effect admission, duplicate requests, cancellation, or timeout/UNCERTAIN handling. Independent high-impact authentication review and exact-head CI are required before merge.
 
 Real DirectAdmin assertion issuance, approved actor/company/device mappings, secured browser and OS access, Evolution role-package installation, production reverse-proxy/HTML-header checks, registry commissioning, and a real-host smoke remain external prerequisites. No persistent credential, security setting, migration, server deployment or merge was performed.
 
