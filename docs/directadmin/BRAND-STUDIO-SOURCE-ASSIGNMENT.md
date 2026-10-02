@@ -88,3 +88,15 @@ Follow-up live audit: PR #1322 (provider observation validator), #1328 (rollback
 
 This document records the complete accessible-source/owner census and explicit missing inputs; it does **not** claim the unavailable external archive contents were inspected. The issue remains open until that donor requirement is actually satisfied or the maintainer authoritatively revises it, and until all code/security/live-host acceptance requirements are verified.
 
+## Microweber provider boundary research — 2026-10-03
+
+The official [Microweber REST API guide](https://github.com/microweber/microweber-docs/blob/master/guides/rest_api.md) describes public, authenticated-user and admin endpoints via `api_expose`, `api_expose_user` and `api_expose_admin`. Its current endpoint list includes content mutation/admin operations such as `save_content_admin`, `delete_content`, `content/set_published`, and `mw_apply_updates`; the guide explicitly warns that the endpoint list can change and directs integrators to the installed site's API index. The [developer guide](https://help.microweber.com/microweber/development/guides.md) likewise describes Microweber as a PHP/HTTP API with editable modules.
+
+Disposition for #1044:
+
+- Treat Microweber's API as a privileged, version-specific renderer/CMS boundary, not a stable Titan contract. Pin and certify the supported Microweber release and exact API behavior before implementing provider calls.
+- Keep admin credentials and API calls server-side behind the canonical Server Node/credential owner. DirectAdmin browser role pages and public rendered HTML must never call mutable admin endpoints or carry provider secrets.
+- Map a typed, approved Titan Builder snapshot to the chosen CMS operation; then independently read back the deployed version/hash/routes and public reachability. A successful HTTP/API response is only provider acknowledgement, not verified publication.
+- The public REST guide does not establish supported authentication/token lifecycle, atomic multi-page publish, rollback semantics, or an idempotent version API. These remain implementation/commissioning evidence requirements, not assumptions.
+
+This research narrows the safe adapter boundary; it does not implement or certify a Microweber provider, site lifecycle, or publish/rollback flow. The #1044 completion gate remains open.

@@ -12,12 +12,15 @@ export function CloseoutWizard({
   open,
   onClose,
   onBeforeSubmit,
+  onVisualAssurance,
 }: {
   visitId: string;
   open: boolean;
   onClose: () => void;
   /** e.g. save completion packet before closeout */
   onBeforeSubmit?: () => Promise<boolean>;
+  /** Optional provider-neutral visual assurance gate; false keeps governed closeout untouched. */
+  onVisualAssurance?: () => Promise<boolean>;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -59,6 +62,10 @@ export function CloseoutWizard({
     }
     setPending(true);
     try {
+      if (kind === "done" && onVisualAssurance) {
+        const assured = await onVisualAssurance();
+        if (!assured) return;
+      }
       if (onBeforeSubmit) {
         const ok = await onBeforeSubmit();
         if (!ok) return;

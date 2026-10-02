@@ -11,7 +11,10 @@ import '../services/titan_gateway.dart';
 class TitanCaptureScreen extends StatefulWidget {
   final String jobId;
   final TitanGateway gateway;
-  const TitanCaptureScreen({super.key, required this.jobId, required this.gateway});
+  /// Optional adapter into the provider-neutral visual evidence runtime.
+  /// Local evidence is queued first and remains usable if guidance is unavailable.
+  final Future<void> Function(TitanEvidenceItem item)? onVisualEvidenceQueued;
+  const TitanCaptureScreen({super.key, required this.jobId, required this.gateway, this.onVisualEvidenceQueued});
   @override State<TitanCaptureScreen> createState() => _TitanCaptureScreenState();
 }
 class _TitanCaptureScreenState extends State<TitanCaptureScreen> {
@@ -23,7 +26,20 @@ class _TitanCaptureScreenState extends State<TitanCaptureScreen> {
   String _id() => '${widget.jobId}-${DateTime.now().microsecondsSinceEpoch}';
   Future<void> _queue(String path, TitanEvidenceKind kind) async {
     final item = TitanEvidenceItem(id:_id(),jobId:widget.jobId,kind:kind,localPath:path,createdAt:DateTime.now());
-    final queued = await _sync.queue(item); if(mounted)setState(()=>_evidence.add(queued));
+    final queued = await _sync.queue(item);
+    if (mounted) setState(() => _evidence.add(queued));
+    final visualGuidance = widget.onVisualEvidenceQueued;
+    if (visualGuidance != null) {
+      try {
+        await visualGuidance(queued);
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Evidence saved. Visual guidance is unavailable right now.')),
+          );
+        }
+      }
+    }
   }
   Future<void> _photo() async { final x=await _picker.pickImage(source: ImageSource.camera, imageQuality: 85); if(x!=null)await _queue(x.path,TitanEvidenceKind.photo); }
   Future<void> _scan() async { final xs=await CunningDocumentScanner.getPictures(noOfPages: 10) ?? []; for(final p in xs){await _queue(p,TitanEvidenceKind.document);} }
