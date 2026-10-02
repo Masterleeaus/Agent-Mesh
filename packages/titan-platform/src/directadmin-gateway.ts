@@ -49,7 +49,7 @@ const json = (status: number, body: unknown, sessionCookie?: string) => new Resp
 /** #811 publishes this exact, non-mutating denial for unsupported Workforce
  * lifecycle proposals. Translate only its fixed typed contract; never echo an
  * exception's message, status, code, or attached diagnostics to the caller. */
-function isUnsupportedWorkforceActionDenial(error: unknown): boolean {
+function isTypedWorkforceDenial(error: unknown, expectedName: string, expectedCode: string): boolean {
   try {
     if (!(error instanceof Error)) return false;
     const prototype = Object.getPrototypeOf(error);
@@ -57,15 +57,21 @@ function isUnsupportedWorkforceActionDenial(error: unknown): boolean {
     const name = Object.getOwnPropertyDescriptor(error, 'name');
     const code = Object.getOwnPropertyDescriptor(error, 'code');
     const status = Object.getOwnPropertyDescriptor(error, 'status');
-    return Boolean(constructor?.name === 'DirectAdminWorkforceActionDenied' &&
+    return Boolean(constructor?.name === expectedName &&
       Object.getPrototypeOf(prototype) === Error.prototype &&
-      name && 'value' in name && name.value === 'DirectAdminWorkforceActionDenied' &&
-      code && 'value' in code && code.value === 'directadmin-workforce-action-unsupported' &&
+      name && 'value' in name && name.value === expectedName &&
+      code && 'value' in code && code.value === expectedCode &&
       status && 'value' in status && status.value === 403);
   } catch {
     // Proxies or hostile accessor-backed exceptions are ordinary owner failures.
     return false;
   }
+}
+function isUnsupportedWorkforceActionDenial(error: unknown): boolean {
+  return isTypedWorkforceDenial(error, 'DirectAdminWorkforceActionDenied', 'directadmin-workforce-action-unsupported');
+}
+function isWorkforceAuthorityDenial(error: unknown): boolean {
+  return isTypedWorkforceDenial(error, 'DirectAdminWorkforceAuthorityDenied', 'directadmin-workforce-authority-denied');
 }
 function bridgeFailure(error: unknown): Response {
   const kind = directAdminBridgeFailureKind(error);
@@ -198,6 +204,11 @@ export function createDirectAdminGateway(
       // Never return exception messages, cookies, credentials or arbitrary provider diagnostics.
       if (isUnsupportedWorkforceActionDenial(error)) {
         return json(403, { error: 'directadmin-workforce-action-unsupported', read_only: true });
+      }
+      if (isWorkforceAuthorityDenial(error)) {
+        // This is an authoritative denial, not an owner outage. Keep the live
+        // session and suppress the service's action-bearing diagnostic text.
+        return json(403, { error: 'directadmin-workforce-authority-denied', read_only: true });
       }
       return bridgeFailure(error);
     }

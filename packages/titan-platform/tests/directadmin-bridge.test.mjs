@@ -381,6 +381,79 @@ test('shared browser session consumes Workforce and encodes opaque canonical rev
   assert.equal(mismatch.status, 409);
 });
 
+test('browser initialization uses a trusted nonce, keeps the returned CSRF token in memory, and retries only with a fresh nonce', async t => {
+  const f = await fixture(t);
+  let nonce = 'N'.repeat(43);
+  let credential = null;
+  let providerCalls = 0;
+  let failBootstrapTransport = true;
+  const seen = [];
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async proof => {
+    providerCalls++;
+    assert.equal(proof.origin, ORIGIN);
+    assert.equal(proof.csrf_nonce, nonce);
+    assert.equal(proof.cookie, null);
+    assert.equal(proof.authorization, null);
+    const csrf_token = String.fromCharCode(66 + providerCalls).repeat(43);
+    const csrf_sha256 = b64(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(csrf_token)));
+    return { login_assertion: await f.loginFor(external.provider, `browser-client-bootstrap-${providerCalls}`, { csrf_sha256 }),
+      company_id: 'company-a', device_id: 'device-1', csrf_token };
+  } });
+  const fetcher = async (path, init) => {
+    seen.push({ path, method: init.method, body: init.body, credentials: init.credentials,
+      headers: { ...init.headers } });
+    if (path === '/v1/directadmin/bootstrap' && failBootstrapTransport) {
+      failBootstrapTransport = false;
+      throw new Error('fixture-private-cookie-and-token');
+    }
+    const headers = {
+      cookie: credential ? `__Host-titan-da-session=${credential}` : null,
+      'x-titan-csrf': init.headers['X-Titan-CSRF'] ?? null,
+      'x-titan-da-bootstrap-csrf': init.headers['X-Titan-DA-Bootstrap-CSRF'] ?? null,
+      'content-type': init.headers['Content-Type'] ?? null,
+    };
+    const request = f.request(path, { method: init.method, headers,
+      ...(init.body === undefined ? {} : { body: init.body }) });
+    const response = await gateway(request);
+    const cookie = response.headers.get('set-cookie')?.match(/^__Host-titan-da-session=([^;]*)/)?.[1];
+    if (cookie !== undefined) credential = cookie || null;
+    return response;
+  };
+  const session = new DirectAdminCockpitSession(() => nonce, fetcher);
+  t.after(() => session.dispose());
+
+  await assert.rejects(session.connect(), error => error.message === 'directadmin-bootstrap-unavailable' &&
+    !error.message.includes('fixture-private-cookie-and-token'));
+  const attemptedBootstrap = seen.filter(request => request.path === '/v1/directadmin/bootstrap');
+  assert.equal(attemptedBootstrap.length, 1);
+  assert.equal(attemptedBootstrap[0].body, '');
+  assert.equal(attemptedBootstrap[0].credentials, 'same-origin');
+  assert.equal(attemptedBootstrap[0].headers['X-Titan-DA-Bootstrap-CSRF'], nonce);
+  assert.equal(attemptedBootstrap[0].headers['X-Titan-CSRF'], undefined);
+
+  await assert.rejects(session.connect(), /directadmin-bootstrap-nonce-reused/);
+  assert.equal(seen.filter(request => request.path === '/v1/directadmin/bootstrap').length, 1);
+  assert.equal(providerCalls, 0);
+
+  nonce = 'R'.repeat(43);
+  await session.connect();
+  assert.equal(providerCalls, 1);
+  const csrfToken = 'C'.repeat(43);
+  const authenticatedContextRequest = seen.filter(request => request.path === '/v1/directadmin/context').at(-1);
+  assert.equal(authenticatedContextRequest.headers['X-Titan-CSRF'], csrfToken);
+  assert.equal(authenticatedContextRequest.headers['X-Titan-DA-Bootstrap-CSRF'], undefined);
+  assert.equal(credential?.startsWith('ey'), true);
+
+  const activeCredential = credential;
+  await f.sessions.revoke(activeCredential, { company_id: 'company-a', device_id: 'device-1' });
+  nonce = 'S'.repeat(43);
+  assert.equal((await session.connect()).company_id, 'company-a');
+  assert.equal(providerCalls, 2);
+  assert.equal(credential !== activeCredential, true);
+  const refreshedContextRequest = seen.filter(request => request.path === '/v1/directadmin/context').at(-1);
+  assert.equal(refreshedContextRequest.headers['X-Titan-CSRF'], 'D'.repeat(43));
+});
+
 test('SDK exchanges the authenticated DA session for a fixed selected-company Workforce child inside the owner callback', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   let childCredential;
@@ -605,6 +678,39 @@ test('gateway preserves only the canonical typed Workforce unsupported-action de
   assert.equal(response.headers.get('cache-control'), 'no-store');
 });
 
+test('gateway maps the canonical Workforce authority denial to sanitized 403, while outages remain 503 and expiry remains 401', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  class DirectAdminWorkforceAuthorityDenied extends Error {
+    code = 'directadmin-workforce-authority-denied';
+    status = 403;
+    constructor(action) {
+      super(`Current Workforce authority does not permit: ${action}`);
+      this.name = 'DirectAdminWorkforceAuthorityDenied';
+    }
+  }
+  const privateDiagnostic = `Current Workforce authority does not permit reassign; internal=${f.token}`;
+  f.owners.requestIntent = async () => { throw new DirectAdminWorkforceAuthorityDenied(privateDiagnostic); };
+  const denied = await gateway(f.request('/v1/directadmin/titan_workforce/intents', post(intentBody(f))));
+  assert.equal(denied.status, 403);
+  const deniedBody = await denied.text();
+  assert.equal(deniedBody, '{"error":"directadmin-workforce-authority-denied","read_only":true}');
+  assert.equal(deniedBody.includes(privateDiagnostic), false);
+  assert.equal(denied.headers.get('set-cookie'), null);
+  assert.equal((await gateway(f.request('/v1/directadmin/context'))).status, 200);
+
+  f.owners.requestIntent = async () => { throw new Error(`owner-down credential=${f.token}`); };
+  const outage = await gateway(f.request('/v1/directadmin/titan_workforce/intents', post(intentBody(f))));
+  assert.equal(outage.status, 503);
+  assert.deepEqual(await outage.json(), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.equal(outage.headers.get('set-cookie'), null);
+
+  await f.registry.revokeSession(proof.session_id, 1);
+  const expired = await gateway(f.request('/v1/directadmin/titan_workforce/intents', post(intentBody(f))));
+  assert.equal(expired.status, 401);
+  assert.deepEqual(await expired.json(), { error: 'directadmin-session-rejected', read_only: true });
+  assert.match(expired.headers.get('set-cookie') ?? '', /__Host-titan-da-session=;.*Max-Age=0/);
+});
+
 test('gateway treats status/code lookalikes and hostile typed-error accessors as service failures', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   let getterCalls = 0;
@@ -612,13 +718,16 @@ test('gateway treats status/code lookalikes and hostile typed-error accessors as
   const lookalike = Object.assign(new Error(`do-not-return:${f.token}`), {
     name: 'DirectAdminWorkforceActionDenied', code: 'directadmin-workforce-action-unsupported', status: 403,
   });
+  const authorityLookalike = Object.assign(new Error(`do-not-return:${f.token}`), {
+    name: 'DirectAdminWorkforceAuthorityDenied', code: 'directadmin-workforce-authority-denied', status: 403,
+  });
   class DirectAdminWorkforceActionDenied extends Error {
     status = 403;
     constructor() { super('hostile typed denial'); this.name = 'DirectAdminWorkforceActionDenied'; }
   }
   const accessorBacked = new DirectAdminWorkforceActionDenied();
   Object.defineProperty(accessorBacked, 'code', { get() { getterCalls++; throw new Error('getter must not run'); } });
-  for (const error of [generic403, lookalike, accessorBacked, new Error(`owner unavailable:${f.token}`)]) {
+  for (const error of [generic403, lookalike, authorityLookalike, accessorBacked, new Error(`owner unavailable:${f.token}`)]) {
     f.owners.requestIntent = async () => { throw error; };
     const response = await gateway(f.request('/v1/directadmin/titan_operations/intents', post(intentBody(f))));
     assert.equal(response.status, 503);
@@ -672,9 +781,13 @@ test('three real consumer modules share signed-session gateway over disposable H
 test('in-flight browser projections cannot repopulate after invalidation', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   let release; const waiting = new Promise(resolve => { release = resolve; });
+  let holdProjection = false;
   const session = new DirectAdminCockpitSession(() => csrf, async (path, init) => {
-    const response = await gateway(f.request(path, { headers: init.headers })); await waiting; return response;
+    const response = await gateway(f.request(path, { headers: init.headers }));
+    if (holdProjection) await waiting;
+    return response;
   }); t.after(() => session.dispose());
+  await session.connect(); holdProjection = true;
   const pending = session.projection('titan_zero'); session.invalidate(); release();
   await assert.rejects(pending, /context-invalidated/);
 });
@@ -687,13 +800,18 @@ for (const action of ['connect', 'projection']) for (const invalidate of ['inval
     session = new DirectAdminCockpitSession(() => csrf, async () => {
       calls++;
       return { ok: true, json: async () => {
-        queueMicrotask(() => queueMicrotask(() => session[invalidate]()));
-        return action === 'connect' ? auth.context : { context: auth.context, projection: await f.owners.projection('titan_zero', auth.context) };
+        const initialProjectionConnection = action === 'projection' && calls === 1;
+        if (action === 'connect' ? calls === 1 : calls === 2) {
+          queueMicrotask(() => queueMicrotask(() => session[invalidate]()));
+        }
+        return action === 'connect' || initialProjectionConnection
+          ? auth.context : { context: auth.context, projection: await f.owners.projection('titan_zero', auth.context) };
       } };
     }); t.after(() => session.dispose());
+    if (action === 'projection') await session.connect();
     await assert.rejects(action === 'connect' ? session.connect() : session.projection('titan_zero'), /context-invalidated/);
     await assert.rejects(session.intent('titan_zero', intentBody(f)), /context-mismatch/);
-    assert.equal(calls, 1);
+    assert.equal(calls, action === 'connect' ? 1 : 2);
   });
 }
 
@@ -884,9 +1002,11 @@ for (const [label, mutate] of [
   const gateway = createDirectAdminGateway(f.bridge, f.owners);
   assert.equal((await gateway(f.request('/v1/directadmin/titan_zero/projection'))).status, 503);
   const auth = await f.bridge.authenticate(f.request());
-  const session = new DirectAdminCockpitSession(() => csrf, async () => new Response(JSON.stringify({ context: auth.context,
-    projection: mutate(await original('titan_zero', auth.context)) }), { headers: { 'content-type': 'application/json' } }));
-  t.after(() => session.dispose()); await assert.rejects(session.projection('titan_zero'), /invalid-projection/);
+  const session = new DirectAdminCockpitSession(() => csrf, async path => new Response(JSON.stringify(path === '/v1/directadmin/context'
+    ? auth.context : { context: auth.context, projection: mutate(await original('titan_zero', auth.context)) }),
+    { headers: { 'content-type': 'application/json' } }));
+  t.after(() => session.dispose()); await session.connect();
+  await assert.rejects(session.projection('titan_zero'), /invalid-projection/);
 });
 
 for (const [label, modify, expected] of [
@@ -899,7 +1019,7 @@ for (const [label, modify, expected] of [
   f.owners.projection = async (...args) => modify(await original(...args));
   const gateway = createDirectAdminGateway(f.bridge, f.owners);
   const session = new DirectAdminCockpitSession(() => csrf, (path, init) => gateway(f.request(path, { headers: init.headers })));
-  t.after(() => session.dispose()); const r = root(); await mountZeroCore(session, r).refresh();
+  t.after(() => session.dispose()); await session.connect(); const r = root(); await mountZeroCore(session, r).refresh();
   assert.equal(r.attrs['data-state'], expected); assert.match(r.children[1].textContent, /^Read-only/);
   assert.doesNotMatch(r.children[1].textContent, /attention items/);
 });
