@@ -17,7 +17,7 @@ class GovernanceContractTests(unittest.TestCase):
         lower = (ROOT / '.github/pull_request_template.md').read_text()
         self.assertEqual(upper, lower)
         self.assertIn('**Linked issue:** Refs #', upper)
-        self.assertIn('focused commands and actual results', upper)
+        self.assertIn('Focused commands and actual results', upper)
         self.assertIn('does not need a full parent-criteria map', upper)
         self.assertIn('For a PR that closes an issue', upper)
         self.assertNotRegex(upper, r'```mission-evidence')
