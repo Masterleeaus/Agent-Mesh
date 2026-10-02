@@ -326,6 +326,10 @@ export function createCompanyStorageResolver<Client extends { close(): Promise<v
     const companyId = companyIdForScope(checkedScope);
     const record = await options.registry.findByCompanyId(companyId, { signal });
     throwIfAborted(signal);
+    // Registry I/O can outlive the authenticated context or public capability.
+    // Never issue a placement reference from a scope that expired while it was
+    // waiting for the control-plane lookup.
+    validateScope(checkedScope, now());
     const normalized = normalizePlacement(record, companyId) as RegisteredCompanyPlacement;
     placementScopes.set(normalized, checkedScope);
     return normalized;
@@ -348,10 +352,14 @@ export function createCompanyStorageResolver<Client extends { close(): Promise<v
     // registry or opening a company store so an expired scope cannot cause
     // even a physical-store attestation attempt.
     validateScope(checkedScope, now());
-    const current = normalizePlacement(
-      await options.registry.findByCompanyId(companyIdForScope(checkedScope), { signal }),
-      companyIdForScope(checkedScope),
-    ) as RegisteredCompanyPlacement;
+    const companyId = companyIdForScope(checkedScope);
+    const record = await options.registry.findByCompanyId(companyId, { signal });
+    throwIfAborted(signal);
+    // This helper gates both the pre-open lookup and open's final post-open
+    // lookup. Re-check after the registry await so expiry cannot authorize an
+    // opener call or let a newly expired scope receive a lease.
+    validateScope(checkedScope, now());
+    const current = normalizePlacement(record, companyId) as RegisteredCompanyPlacement;
     if (!samePlacement(placement, current)) throw new CompanyStorageResolutionError("placement-stale");
   }
 

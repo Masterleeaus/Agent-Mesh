@@ -51,6 +51,12 @@ function placement(overrides: Partial<CompanyPlacementRecord> = {}): CompanyPlac
   };
 }
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>(resolvePromise => { resolve = resolvePromise; });
+  return { promise, resolve };
+}
+
 function setup(options: {
   record?: CompanyPlacementRecord | null;
   assertCurrent?: (scope: VerifiedCompanyScope) => Promise<void>;
@@ -58,14 +64,21 @@ function setup(options: {
     descriptor: Parameters<CompanyStoreOpener<TestClient>["open"]>[0],
     setRecord: (record: CompanyPlacementRecord | null) => void,
   ) => Promise<CompanyStoreOpenResult<TestClient>>;
+  findByCompanyId?: (
+    companyId: string,
+    callNumber: number,
+  ) => Promise<CompanyPlacementRecord | null> | CompanyPlacementRecord | null;
   now?: () => number;
 } = {}) {
   const events: string[] = [];
   let currentRecord = options.record === undefined ? placement() : options.record;
+  let registryCalls = 0;
   const client: TestClient = { close: vi.fn(async () => { events.push("close"); }) };
   const registry = {
     findByCompanyId: vi.fn(async (companyId: string) => {
       events.push(`registry:${companyId}`);
+      registryCalls += 1;
+      if (options.findByCompanyId) return options.findByCompanyId(companyId, registryCalls);
       return currentRecord;
     }),
     setRecord(record: CompanyPlacementRecord | null) { currentRecord = record; },
@@ -168,6 +181,35 @@ describe("company storage resolver contract", () => {
     expect(f.opener.open).not.toHaveBeenCalled();
   });
 
+  it("does not issue a placement when scope expires during the initial registry lookup", async () => {
+    let currentTime = now();
+    const expiringScope: VerifiedCompanyScope = {
+      ...publicScope,
+      capability: { ...publicScope.capability, expires_at: "2026-10-02T12:00:00.500Z" },
+    };
+    const lookup = deferred<CompanyPlacementRecord | null>();
+    const lookupStarted = deferred<void>();
+    const f = setup({
+      now: () => currentTime,
+      findByCompanyId: (_companyId, callNumber) => {
+        if (callNumber === 1) {
+          lookupStarted.resolve(undefined);
+          return lookup.promise;
+        }
+        return placement();
+      },
+    });
+    const resolving = f.resolver.resolve(expiringScope);
+
+    await lookupStarted.promise;
+    currentTime += 1000;
+    lookup.resolve(placement());
+
+    await expect(resolving).rejects.toMatchObject({ code: "public-capability-expired" });
+    expect(f.registry.findByCompanyId).toHaveBeenCalledTimes(1);
+    expect(f.opener.open).not.toHaveBeenCalled();
+  });
+
   it("does not call the store opener when scope expires during placement revalidation", async () => {
     let currentTime = now();
     let verifierCalls = 0;
@@ -188,6 +230,78 @@ describe("company storage resolver contract", () => {
     expect(f.registry.findByCompanyId).toHaveBeenCalledTimes(1);
     expect(f.opener.open).not.toHaveBeenCalled();
     expect(f.events).toEqual(["scope:public-capability", "registry:company-a", "scope:public-capability"]);
+  });
+
+  it("does not call the store opener when scope expires during the pre-open registry lookup", async () => {
+    let currentTime = now();
+    const expiringScope: VerifiedCompanyScope = {
+      ...publicScope,
+      capability: { ...publicScope.capability, expires_at: "2026-10-02T12:00:00.500Z" },
+    };
+    const lookup = deferred<CompanyPlacementRecord | null>();
+    const lookupStarted = deferred<void>();
+    const f = setup({
+      now: () => currentTime,
+      findByCompanyId: (_companyId, callNumber) => {
+        if (callNumber === 2) {
+          lookupStarted.resolve(undefined);
+          return lookup.promise;
+        }
+        return placement();
+      },
+    });
+    const resolved = await f.resolver.resolve(expiringScope);
+    const opening = f.resolver.open(resolved);
+
+    await lookupStarted.promise;
+    currentTime += 1000;
+    lookup.resolve(placement());
+
+    await expect(opening).rejects.toMatchObject({ code: "public-capability-expired" });
+    expect(f.registry.findByCompanyId).toHaveBeenCalledTimes(2);
+    expect(f.opener.open).not.toHaveBeenCalled();
+    expect(f.events).toEqual([
+      "scope:public-capability", "registry:company-a",
+      "scope:public-capability", "registry:company-a",
+    ]);
+  });
+
+  it("closes the opened store when scope expires during the final registry lookup", async () => {
+    let currentTime = now();
+    const expiringScope: VerifiedCompanyScope = {
+      ...publicScope,
+      capability: { ...publicScope.capability, expires_at: "2026-10-02T12:00:00.500Z" },
+    };
+    const openedClient: TestClient = { close: vi.fn(async () => undefined) };
+    const lookup = deferred<CompanyPlacementRecord | null>();
+    const lookupStarted = deferred<void>();
+    const f = setup({
+      now: () => currentTime,
+      findByCompanyId: (_companyId, callNumber) => {
+        if (callNumber === 3) {
+          lookupStarted.resolve(undefined);
+          return lookup.promise;
+        }
+        return placement();
+      },
+      open: async descriptor => ({
+        ...descriptor,
+        provider: "sqlite",
+        client: openedClient,
+        assertPlacementBound: async () => undefined,
+      }),
+    });
+    const resolved = await f.resolver.resolve(expiringScope);
+    const opening = f.resolver.open(resolved);
+
+    await lookupStarted.promise;
+    currentTime += 1000;
+    lookup.resolve(placement());
+
+    await expect(opening).rejects.toMatchObject({ code: "public-capability-expired" });
+    expect(f.registry.findByCompanyId).toHaveBeenCalledTimes(3);
+    expect(f.opener.open).toHaveBeenCalledTimes(1);
+    expect(openedClient.close).toHaveBeenCalledTimes(1);
   });
 
   it("fails closed for absent, mismatched, unready, or invalid placement records", async () => {
