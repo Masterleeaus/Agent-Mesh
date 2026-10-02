@@ -1,5 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { fork } from "node:child_process";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createSqliteStorage } from "../../../packages/storage/src/index.js";
 import { createProductionRuntimeBootstrap } from "./production-runtime-bootstrap.js";
 
@@ -14,14 +19,64 @@ function ports(final="handled") {
   };
 }
 
-async function registerManager(bootstrap:any) {
+async function registerManager(bootstrap:any, company = company_id) {
   await bootstrap.workforce.registerWorker({
-    company_id,
+    company_id: company,
     worker_id:"zero-gm",
     kind:"digital",
     capabilities:["work.delegate"],
     active:true,
   });
+}
+
+const persistenceWorkerPath = fileURLToPath(new URL("./production-persistence-process-worker.mjs", import.meta.url));
+const workforceServiceRoot = fileURLToPath(new URL("../", import.meta.url));
+
+function startPersistenceWorker(databasePath: string) {
+  const child = fork(persistenceWorkerPath, [], {
+    cwd: workforceServiceRoot,
+    execArgv: ["--import", "tsx"],
+    env: { ...process.env, WORKFORCE_PERSISTENCE_TEST_DATABASE: databasePath },
+    silent: true,
+  });
+  let stderr = "";
+  child.stderr?.setEncoding("utf8");
+  child.stderr?.on("data", (chunk: string) => { stderr += chunk; });
+  const exited = new Promise<void>((resolve, reject) => {
+    child.once("exit", (code, signal) => {
+      if (code === 0) resolve();
+      else reject(new Error(`persistence-worker-exit:${code ?? signal}:${stderr}`));
+    });
+    child.once("error", reject);
+  });
+  const waitFor = (type: "ready" | "result") => new Promise<any>((resolve, reject) => {
+    const timer = setTimeout(() => finish(new Error(`persistence-worker-message-timeout:${type}:${stderr}`)), 10_000);
+    const onMessage = (message: any) => {
+      if (message?.type === "error") finish(new Error(`persistence-worker-error:${message.error}:${message.stack ?? ""}`));
+      else if (message?.type === type) finish(undefined, message);
+    };
+    const onExit = (code: number | null, signal: NodeJS.Signals | null) =>
+      finish(new Error(`persistence-worker-exit-before-message:${type}:${code ?? signal}:${stderr}`));
+    function finish(error?: Error, message?: any) {
+      clearTimeout(timer);
+      child.removeListener("message", onMessage);
+      child.removeListener("exit", onExit);
+      if (error) reject(error);
+      else resolve(message);
+    }
+    child.on("message", onMessage);
+    child.once("exit", onExit);
+  });
+  return {
+    child,
+    exited,
+    ready: waitFor("ready"),
+    dispatch(input: unknown) {
+      const result = waitFor("result");
+      child.send({ type: "dispatch", input });
+      return result;
+    },
+  };
 }
 
 test("production bootstrap composes the canonical Zero dispatcher over SQLite workforce and persistent runtime", async()=>{
@@ -114,6 +169,109 @@ test("concurrent Zero delivery creates only one WorkItem and persistent run", as
   await Promise.all([bootstrap.dispatch(input),bootstrap.dispatch(input)]);
   assert.equal((await storage.query('SELECT run_id FROM agent_runs WHERE company_id=$1 AND work_id=$2',[company_id,'zero:parallel:message'])).rowCount,1);
  }finally{await storage.close();}
+});
+
+test("separate Workforce processes deduplicate an uncertain effect and preserve replay state after restart", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "workforce-process-persistence-"));
+  const databasePath = join(directory, "runtime.sqlite");
+  let storage: ReturnType<typeof createSqliteStorage> | undefined = createSqliteStorage(databasePath);
+  const workers: ReturnType<typeof startPersistenceWorker>[] = [];
+  try {
+    const bootstrap = await createProductionRuntimeBootstrap({ storage, ports: ports() });
+    await registerManager(bootstrap, "company-process");
+    await storage.query(`CREATE TABLE workforce_test_model_calls (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, company_id TEXT NOT NULL, run_id TEXT NOT NULL
+    )`);
+    await storage.query(`CREATE TABLE workforce_test_effect_attempts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, company_id TEXT NOT NULL, run_id TEXT NOT NULL,
+      work_id TEXT NOT NULL, correlation_id TEXT NOT NULL, idempotency_key TEXT NOT NULL
+    )`);
+    await storage.close();
+    storage = undefined;
+
+    const input = {
+      company_id: "company-process", actor_id: "owner-process", conversation_id: "process-race",
+      interaction_id: "interaction-once", client_message_id: "message-once", text: "Inspect once",
+      correlation_id: "correlation-process", request_id: "request-process", operation_id: "operation-process",
+      trace_id: "trace-process", idempotency_key: "idempotency-process",
+    };
+    const first = startPersistenceWorker(databasePath);
+    const second = startPersistenceWorker(databasePath);
+    workers.push(first, second);
+    await Promise.all([first.ready, second.ready]);
+    const [firstResult, secondResult] = await Promise.all([first.dispatch(input), second.dispatch(input)]);
+    await Promise.all([first.exited, second.exited]);
+    assert.equal(firstResult.accepted, true);
+    assert.equal(secondResult.accepted, true);
+    assert.equal(firstResult.run_id, secondResult.run_id);
+    // A losing process may observe the deterministic run before its creator
+    // has finished advancing it. The post-exit replay below asserts final state.
+    const inFlightStates = ["QUEUED", "RUNNING", "WAITING_TOOL", "WAITING_EXTERNAL"];
+    assert.ok(inFlightStates.includes(firstResult.run_state), `unexpected first process run state: ${String(firstResult.run_state)}`);
+    assert.ok(inFlightStates.includes(secondResult.run_state), `unexpected second process run state: ${String(secondResult.run_state)}`);
+
+    const restarted = startPersistenceWorker(databasePath);
+    workers.push(restarted);
+    await restarted.ready;
+    const replay = await restarted.dispatch(input);
+    await restarted.exited;
+    assert.equal(replay.accepted, true);
+    assert.equal(replay.run_id, firstResult.run_id);
+    assert.equal(replay.run_state, "WAITING_EXTERNAL");
+
+    storage = createSqliteStorage(databasePath);
+    const workRows = await storage.query<{ company_id: string; work_id: string; state: string; payload: string }>(
+      "SELECT company_id,work_id,state,payload FROM workforce_work_items WHERE company_id=$1", [input.company_id]);
+    const runRows = await storage.query<{ company_id: string; run_id: string; state: string; payload: string }>(
+      "SELECT company_id,run_id,state,payload FROM agent_runs WHERE company_id=$1", [input.company_id]);
+    const modelCalls = await storage.query("SELECT id FROM workforce_test_model_calls WHERE company_id=$1", [input.company_id]);
+    const effects = await storage.query<{ company_id: string; run_id: string; work_id: string; correlation_id: string; idempotency_key: string }>(
+      "SELECT company_id,run_id,work_id,correlation_id,idempotency_key FROM workforce_test_effect_attempts WHERE company_id=$1", [input.company_id]);
+    assert.equal(workRows.rowCount, 1);
+    assert.equal(workRows.rows[0]!.company_id, input.company_id);
+    assert.equal(workRows.rows[0]!.work_id, "zero:process-race:message-once");
+    assert.equal(workRows.rows[0]!.state, "WAITING_EXTERNAL");
+    assert.equal(runRows.rowCount, 1);
+    assert.equal(runRows.rows[0]!.company_id, input.company_id);
+    assert.equal(runRows.rows[0]!.run_id, firstResult.run_id);
+    assert.equal(runRows.rows[0]!.state, "WAITING_EXTERNAL");
+    const run = JSON.parse(runRows.rows[0]!.payload);
+    assert.equal(run.wait.execution.state, "UNCERTAIN");
+    assert.equal(run.correlation_id, input.correlation_id);
+    assert.equal(run.request_id, input.request_id);
+    assert.equal(run.operation_id, input.operation_id);
+    assert.equal(run.trace_id, input.trace_id);
+    assert.equal(run.idempotency_key, input.idempotency_key);
+    assert.equal(modelCalls.rowCount, 1);
+    assert.equal(effects.rowCount, 1);
+    assert.deepEqual(effects.rows[0], {
+      company_id: input.company_id,
+      run_id: firstResult.run_id,
+      work_id: "zero:process-race:message-once",
+      correlation_id: input.correlation_id,
+      idempotency_key: "tool-effect-once",
+    });
+    const origin = JSON.parse(workRows.rows[0]!.payload).origin;
+    assert.match(origin.dispatch_fingerprint, /^[a-f0-9]{64}$/);
+    assert.deepEqual(origin, {
+      actor_id: input.actor_id,
+      conversation_id: input.conversation_id,
+      surface: "zero",
+      correlation_id: input.correlation_id,
+      request_id: input.request_id,
+      operation_id: input.operation_id,
+      trace_id: input.trace_id,
+      idempotency_key: input.idempotency_key,
+      dispatch_fingerprint: origin.dispatch_fingerprint,
+    });
+  } finally {
+    for (const worker of workers) {
+      if (worker.child.exitCode === null && worker.child.signalCode === null) worker.child.kill("SIGKILL");
+    }
+    await Promise.allSettled(workers.map(worker => worker.exited));
+    await storage?.close().catch(() => undefined);
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test("production bootstrap composes canonical authority gateway and refuses incomplete resolver ports", async()=>{
