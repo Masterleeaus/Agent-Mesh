@@ -390,6 +390,7 @@ importers:
         specifier: ^4.21.0
         version: 4.21.0
 
+
   services/worker:
     dependencies:
       '@titan-zero/domain':
@@ -456,6 +457,12 @@ importers:
       typescript:
         specifier: ^5.7.0
         version: 5.9.3
+
+  apps/pwa:
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.49.1
+        version: 1.58.2
 
 packages:
 
