@@ -1,4 +1,5 @@
 import type { StorageClient } from "../../../packages/storage/src/index.js";
+import type { CompanyStorageResolver } from "../../../packages/storage/src/company-storage-resolver.js";
 import { IdentitySessionRegistry, type CurrentSessionContext, type SessionSourceReference, type VerifiedSessionIdentity } from "../../../packages/titan-platform/src/security-boundary.js";
 // Existing native composition owns authority, provider verification and evidence.
 // @ts-expect-error Native runtime owner is JavaScript.
@@ -8,6 +9,7 @@ import { boundedAdapterCall } from "../../../packages/tools/execution-gateway.mj
 import type { ConversationAuth, ConversationSurface } from "./conversation-api.js";
 import type { DirectAdminGatewayFactory } from "./directadmin-workforce-owners.js";
 import { AUTHENTICATED_SESSION_PROOF_TYPE, type AuthenticatedWorkIdentity } from "./index.js";
+import { createCompanyScopedWorkOrders, type HostedCompanyWorkOrderOperations } from "./company-scoped-work-orders.js";
 
 const derivedWorkforceSessionPrefix = "workforce-zero-";
 
@@ -19,11 +21,10 @@ export type HostedWorkforceDependencies = {
   credentialVerifier: {
     verify(authorization: string, options?: { signal: AbortSignal }): Promise<VerifiedSessionIdentity & { audience: string; surface: ConversationSurface }>;
   };
-  /** Resolve current physical company storage within the canonical native provider. */
-  workOrders: {
-    complete(input: { company_id: string; actor_id: string; work_order_id: string; signal?: AbortSignal; authorityFence?: { assertCurrent(): void } }): Promise<unknown>;
-    read(input: { company_id: string; actor_id: string; work_order_id: string; signal?: AbortSignal }): Promise<unknown>;
-  };
+  /** Canonical #1233 registered placement resolver; no request-provided paths or placements. */
+  companyStorageResolver: CompanyStorageResolver<StorageClient>;
+  /** Existing native work-order owner, called only with the current leased company store. */
+  workOrders: HostedCompanyWorkOrderOperations;
   /** Actual observations of credential, authority, provider and evidence dependencies. */
   readiness(options?: { signal: AbortSignal }): Promise<{ authentication: boolean; authority: boolean; provider: boolean; evidence: boolean }>;
   /** Optional, separately commissioned #1049/#302 audience-bound session bridge.
@@ -104,6 +105,9 @@ function requireConsistentSessionProof(identity: AuthenticatedWorkIdentity): boo
 export async function createHostedRuntime(storage: StorageClient, identityStorage: StorageClient, dependencies: HostedWorkforceDependencies, signal?: AbortSignal) {
   const timeoutMs = dependencies.adapterTimeoutMs ?? 30_000;
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120_000) throw new Error("workforce-adapter-timeout-invalid");
+  if (typeof dependencies.companyStorageResolver?.resolve !== "function" || typeof dependencies.companyStorageResolver?.open !== "function") {
+    throw new Error("production-runtime-port-required:companyStorageResolver");
+  }
   const registry = new IdentitySessionRegistry(identityStorage);
   async function loadRunIdentity(input: RunIdentityInput, callSignal?: AbortSignal) {
     callSignal?.throwIfAborted();
@@ -141,6 +145,15 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
   const expected = (input: RunIdentityInput, identity: AuthenticatedWorkIdentity) => ({
     audience: "workforce", company_id: input.company_id, actor_id: input.actor_id,
     context_revision: identity.context_revision,
+  });
+  const companyWorkOrders = createCompanyScopedWorkOrders({
+    resolver: dependencies.companyStorageResolver,
+    async resolveCurrentSession(input) {
+      const loaded = await loadRunIdentity(input, input.signal);
+      input.signal?.throwIfAborted();
+      return registry.resolveCurrentSession(loaded.proof, expected(input, loaded.authenticated_identity), new Date().toISOString());
+    },
+    operations: dependencies.workOrders,
   });
   const sessionAdmission: SessionAdmission = async (input, effect) => {
     const loaded = await loadRunIdentity(input, input.signal);
@@ -189,11 +202,7 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
   };
   // Only these public provider ports cross the hosted boundary. In particular,
   // never forward the legacy same-store transaction port from an adapter object.
-  const workOrders = {
-    complete: (input: Parameters<HostedWorkforceDependencies["workOrders"]["complete"]>[0]) => dependencies.workOrders.complete(input),
-    read: (input: Parameters<HostedWorkforceDependencies["workOrders"]["read"]>[0]) => dependencies.workOrders.read(input),
-  };
-  const runtime = await createFieldServiceRuntime({ storage, workOrders, timeoutMs, signal, sessionAdmission,
+  const runtime = await createFieldServiceRuntime({ storage, workOrders: companyWorkOrders, timeoutMs, signal, sessionAdmission,
     async revalidateIdentity(input: { company_id: string; actor_id: string; run_id: string }) {
       signal?.throwIfAborted();
       const loaded = await loadRunIdentity(input, signal);

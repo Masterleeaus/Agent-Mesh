@@ -7,7 +7,7 @@ import { join } from "node:path";
 import { request as httpRequest } from "node:http";
 import { SignJWT } from "jose";
 import Database from "better-sqlite3";
-import { createSqliteStorage } from "../packages/storage/src/index.js";
+import { createCompanyStorageResolver, createSqliteStorage } from "../packages/storage/src/index.js";
 import { createIdentitySessionRegistry } from "../packages/titan-platform/src/security-boundary.js";
 import { completeAssignedWorkOrder } from "../apps/web/lib/work-orders/lead-access.ts";
 // @ts-expect-error Canonical authority store owner is JavaScript.
@@ -54,7 +54,65 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   const now = new Date().toISOString();
   const context = await registry.issueSession({ provider: "test-ed25519", subject: "subject", session_id: "session", device_id: "device", company_id: "a", audience: "workforce", issued_at: now, expires_at: new Date(Date.now() + 3600000).toISOString() }, now);
   const claims = { provider: "test-ed25519", subject: "subject", session_id: "session", device_id: "device", session_revision: 1, audience: "workforce", surface: "zero" as const, credential_expires_at: new Date(Date.now() + 3600000).toISOString() };
+  const verifiedProofs = new Map<string, any>();
+  const placements = new Map<string, any>([
+    ["a", { company_id: "a", placement_id: "company-a", placement_revision: 1, provider: "sqlite", schema_version: "native-v1", status: "READY" }],
+    ["b", { company_id: "b", placement_id: "company-b", placement_revision: 1, provider: "sqlite", schema_version: "native-v1", status: "READY" }],
+  ]);
+  const placementFiles = new Map([["company-a", files.a], ["company-b", files.b]]);
+  let companyOpens = 0;
+  let companyCloses = 0;
+  const companyStorageResolver = createCompanyStorageResolver({
+    registry: { async findByCompanyId(company_id, options) {
+      options?.signal?.throwIfAborted();
+      const placement = placements.get(company_id);
+      return placement ? { ...placement } : null;
+    } },
+    scopeRevalidator: { async assertCurrent(scope, options) {
+      options?.signal?.throwIfAborted();
+      if (scope.kind !== "authenticated") throw new Error("authenticated-company-scope-required");
+      const current = scope.current;
+      const proof = verifiedProofs.get(current.session_id);
+      if (!proof) throw new Error("verified-current-session-required");
+      const fresh = await registry.resolveCurrentSession(proof, {
+        audience: current.audience, company_id: current.company_id, actor_id: current.actor_id,
+        context_revision: current.context_revision,
+      }, new Date().toISOString());
+      if (fresh.session_id !== current.session_id || fresh.session_revision !== current.session_revision
+        || fresh.company_id !== current.company_id || fresh.actor_id !== current.actor_id
+        || fresh.context_revision !== current.context_revision || fresh.expires_at !== current.expires_at) {
+        throw new Error("company-session-not-current");
+      }
+    } },
+    opener: { async open(placement, options) {
+      options?.signal?.throwIfAborted();
+      const filename = placementFiles.get(placement.placement_id);
+      if (!filename) throw new Error("company-placement-not-mounted");
+      const client = createSqliteStorage(filename);
+      const identityProbe = createSqliteStorage(filename);
+      companyOpens += 1;
+      const companyStorage = { ...client, async close() { companyCloses += 1; await Promise.all([client.close(), identityProbe.close()]); } };
+      return {
+        company_id: placement.company_id, placement_id: placement.placement_id,
+        placement_revision: placement.placement_revision, provider: placement.provider,
+        schema_version: placement.schema_version, client: companyStorage,
+        async assertPlacementBound() {
+          const bound = await identityProbe.query("SELECT id FROM companies WHERE id=$1", [placement.company_id]);
+          if (bound.rowCount !== 1) throw new Error("company-database-identity-mismatch");
+        },
+      };
+    } },
+  });
   const keys = generateKeyPairSync("ed25519");
+  const rememberVerifiedProof = (verified: any) => {
+    verifiedProofs.set(verified.session_id, {
+      provider: verified.provider, subject: verified.subject, session_id: verified.session_id,
+      device_id: verified.device_id, session_revision: verified.session_revision,
+      ...(verified.credential_expires_at ? { credential_expires_at: verified.credential_expires_at } : {}),
+      ...(verified.source_session ? { source_session: verified.source_session } : {}),
+    });
+    return verified;
+  };
   function credential(overrides: Record<string, unknown> = {}) {
     const payload = Buffer.from(JSON.stringify({ ...claims, ...overrides })).toString("base64url");
     return `Bearer ${payload}.${sign(null, Buffer.from(payload), keys.privateKey).toString("base64url")}`;
@@ -68,7 +126,6 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   const workforce = new SqliteWorkforceStore(control);
   await workforce.migrate();
   await workforce.putWorker({ company_id: "a", worker_id: "manager", kind: "digital", active: true, capabilities: ["work.delegate", capability] });
-  const mapped = (company: string) => { if (company !== "a" && company !== "b") throw new Error("company-storage-unmapped"); return stores[company]; };
   let beforeRead: ((signal?: AbortSignal) => Promise<void>) | undefined;
   let beforeComplete: ((signal?: AbortSignal) => Promise<void>) | undefined;
   let afterComplete: ((signal?: AbortSignal) => Promise<void>) | undefined;
@@ -83,22 +140,25 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
       options?.signal.throwIfAborted();
       const match = /^Bearer ([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)$/.exec(authorization);
       if (!match || !verify(null, Buffer.from(match[1]), keys.publicKey, Buffer.from(match[2], "base64url"))) throw new Error("signature-invalid");
-      return JSON.parse(Buffer.from(match[1], "base64url").toString("utf8"));
+      return rememberVerifiedProof(JSON.parse(Buffer.from(match[1], "base64url").toString("utf8")));
     } },
+    companyStorageResolver,
     workOrders: {
-      async complete({ company_id, actor_id, work_order_id, signal, authorityFence }) {
+      async complete({ company_id, actor_id, work_order_id, signal, authorityFence, companyStorage, currentSession }) {
         if (beforeComplete) await beforeComplete(signal);
         signal?.throwIfAborted();
+        assert.equal(currentSession.company_id, company_id);
         nativeInvocations += 1;
-        const result = await mapped(company_id).transaction(tx => completeAssignedWorkOrder(tx, work_order_id, company_id, actor_id, authorityFence));
+        const result = await companyStorage.transaction(tx => completeAssignedWorkOrder(tx, work_order_id, company_id, actor_id, authorityFence));
         if (afterComplete) await afterComplete(signal);
         signal?.throwIfAborted();
         return result;
       },
-      async read({ company_id, actor_id, work_order_id, signal }) {
+      async read({ company_id, actor_id, work_order_id, signal, companyStorage, currentSession }) {
         if (beforeRead) { const hook = beforeRead; beforeRead = undefined; await hook(signal); }
         signal?.throwIfAborted();
-        return (await mapped(company_id).query("SELECT id,status,completed_at FROM work_orders WHERE company_id=$1 AND id=$2 AND assigned_user_id=$3", [company_id, work_order_id, actor_id])).rows[0] ?? null;
+        assert.equal(currentSession.company_id, company_id);
+        return (await companyStorage.query("SELECT id,status,completed_at FROM work_orders WHERE company_id=$1 AND id=$2 AND assigned_user_id=$3", [company_id, work_order_id, actor_id])).rows[0] ?? null;
       },
     },
     async close() { dependencyCloseCount += 1; },
@@ -116,12 +176,14 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   }
   await start();
   const input = { action: "start", company_id: "a", actor_id: "lead", device_id: "device", surface: "zero", session_id: "session", context_revision: context.context_revision, conversation_id: "conversation", interaction_id: "interaction", client_message_id: "message", request_id: "request", operation_id: "operation", correlation_id: "correlation", trace_id: "trace", idempotency_key: "idempotency", text: "complete work order wo" };
-  return { control, identity, dependencies, registry, stores, claims, context, authority, envelope, credential, input,
+  return { control, identity, dependencies, registry, stores, placements, companyStorageResolver, companyOpens: () => companyOpens, companyCloses: () => companyCloses, claims, context, authority, envelope, credential, input,
     async post(overrides: Record<string, unknown> = {}, token: string | null = credential()) { const response = await fetch(`${base}/v1/workforce/conversations`, { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: token } : {}) }, body: JSON.stringify({ ...input, ...overrides }) }); return { status: response.status, body: await response.json() as any }; },
     async status(company: "a" | "b" = "a") { return (await stores[company].query<{ status: string }>("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status; },
     async run() { const rows = await control.query<{ payload: string }>("SELECT payload FROM agent_runs WHERE company_id='a'"); return rows.rows.map(row => JSON.parse(row.payload)); },
     async executionStateCount(state: string) { return (await control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')=$1", [state])).rowCount; },
-    credentialVerifier(verifier: HostedWorkforceDependencies["credentialVerifier"]) { dependencies.credentialVerifier = verifier; },
+    credentialVerifier(verifier: HostedWorkforceDependencies["credentialVerifier"]) {
+      dependencies.credentialVerifier = { async verify(authorization, options) { return rememberVerifiedProof(await verifier.verify(authorization, options)); } };
+    },
     async workforceZero() {
       const { createSessionCredentialService, directAdminIssuer } = await import("../packages/titan-platform/src/security-boundary.js");
       const { createWorkforceSessionCredentialVerifier } = await import("../services/workforce/src/session-credential-verifier.ts");
@@ -151,7 +213,7 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
         registry, issuer: "titan:workforce-auth", key_id: "workforce-session-key", algorithm: "EdDSA",
         verification_key: workforceKeys.publicKey, upstream, directadmin: { node_id: "node-one" },
       });
-      dependencies.credentialVerifier = verifier;
+      dependencies.credentialVerifier = { async verify(authorization, options) { return rememberVerifiedProof(await verifier.verify(authorization, options)); } };
       return { authorization: `Bearer ${workforce.credential}`, context: workforce.context, da, workforce, sourceService };
     },
     get nativeInvocations() { return nativeInvocations; },
@@ -200,7 +262,7 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
 test("hosted signed identity reaches real native completion and durable accepted evidence; restart replay has one mutation", async () => {
   const f = await fixture(); try {
     const first = await f.post(); assert.equal(first.status, 200, JSON.stringify(first.body));
-    assert.equal(await f.status(), "completed"); assert.equal(await f.status("b"), "in_progress");
+    assert.equal(await f.status(), "completed", JSON.stringify(first.body)); assert.equal(await f.status("b"), "in_progress");
     const runs = await f.run(); assert.equal(runs.length, 1);
     const evidence = (await f.control.query<{ payload: string }>("SELECT payload FROM evidence WHERE evidence_type='gateway_execution' ORDER BY rowid")).rows.map(row => JSON.parse(row.payload));
     assert.ok(evidence.some(item => item.state === "VERIFIED"));
@@ -214,6 +276,55 @@ test("hosted signed identity reaches real native completion and durable accepted
     assert.equal((await f.run())[0].run_id, runs[0].run_id); assert.equal((await f.run()).length, 1);
     assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 1);
     assert.equal((await f.control.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status, "in_progress");
+    assert.ok(f.companyOpens() > 0);
+    assert.equal(f.companyOpens(), f.companyCloses(), "every resolver-issued company lease closes after native reads and replay");
+  } finally { await f.close(); }
+});
+
+test("placement rotation during a company read is denied before the native effect", async () => {
+  const f = await fixture();
+  try {
+    const current = f.placements.get("a");
+    f.beforeRead(async () => {
+      f.placements.set("a", { ...current, placement_revision: current.placement_revision + 1 });
+    });
+    await f.post();
+    assert.equal(await f.status(), "in_progress");
+    assert.ok(f.companyOpens() > 0);
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 0);
+    assert.equal(await f.executionStateCount("VERIFIED"), 0);
+    assert.equal(f.companyOpens(), f.companyCloses());
+  } finally { await f.close(); }
+});
+
+test("placement rotation after effect admission leaves the native outcome uncertain and unaccepted", async () => {
+  const f = await fixture();
+  try {
+    const current = f.placements.get("a");
+    f.beforeComplete(async () => {
+      f.placements.set("a", { ...current, placement_revision: current.placement_revision + 1 });
+    });
+    const response = await f.post();
+    assert.equal(response.status, 200, JSON.stringify(response.body));
+    assert.equal(f.nativeInvocations, 1, "an already admitted native effect may finish while its store is rotated");
+    assert.equal(await f.status(), "completed", "the native mutation may have committed before the stale lease is observed");
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 1);
+    assert.equal(await f.executionStateCount("UNCERTAIN"), 1);
+    assert.equal(await f.executionStateCount("VERIFIED"), 0, "a stale placement lease cannot produce accepted evidence");
+    assert.equal(f.companyOpens(), f.companyCloses());
+  } finally { await f.close(); }
+});
+
+test("a registered company mismatch is rejected before a physical database is opened", async () => {
+  const f = await fixture();
+  try {
+    f.placements.set("a", { ...f.placements.get("a"), company_id: "b" });
+    await f.post();
+    assert.equal(f.companyOpens(), 0);
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress");
+    assert.equal(await f.status("b"), "in_progress");
   } finally { await f.close(); }
 });
 
@@ -457,6 +568,14 @@ test("host launcher rejects absent, relative or malformed dependency factories b
     const file = join(dir, "invalid.mjs");
     writeFileSync(file, "export const createWorkforceDependencies = async () => ({});\n");
     await assert.rejects(() => loadWorkforceDependencies(file), /workforce-dependencies-invalid/);
+    const unplaced = join(dir, "unplaced.mjs");
+    writeFileSync(unplaced, `export const createWorkforceDependencies = async () => ({
+      identityStoragePath: "/tmp/identity.db",
+      credentialVerifier: { async verify() { return {}; } },
+      workOrders: { async read() { return null; }, async complete() { return null; } },
+      readiness: async () => ({ authentication: true, authority: true, provider: true, evidence: true }),
+    });\n`);
+    await assert.rejects(() => loadWorkforceDependencies(unplaced), /workforce-dependencies-invalid/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
@@ -665,7 +784,9 @@ for (const alias of ["symlink", "hardlink", "directory-symlink"] as const) test(
   try {
     const unavailable = async (): Promise<never> => { throw new Error("must-not-call-adapter"); };
     await assert.rejects(() => createWorkforceServer({ storagePath, dependencies: {
-      identityStoragePath, credentialVerifier: { verify: unavailable }, workOrders: { read: unavailable, complete: unavailable }, readiness: unavailable,
+      identityStoragePath, credentialVerifier: { verify: unavailable },
+      companyStorageResolver: { resolve: unavailable, open: unavailable },
+      workOrders: { read: unavailable, complete: unavailable }, readiness: unavailable,
     } }), /workforce-separate-identity-storage-required/);
     const observed = new Database(storagePath);
     try { assert.deepEqual(observed.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all(), [{ name: "operator_marker" }]); }

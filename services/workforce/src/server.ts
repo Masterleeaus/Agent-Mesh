@@ -258,7 +258,9 @@ export async function loadWorkforceDependencies(modulePath = process.env.WORKFOR
   const module = await import(pathToFileURL(modulePath).href);
   if (typeof module.createWorkforceDependencies !== "function") throw new Error("workforce-dependencies-factory-required");
   const dependencies = await module.createWorkforceDependencies();
-  if (!dependencies || typeof dependencies.credentialVerifier?.verify !== "function" || typeof dependencies.workOrders?.read !== "function" ||
+  if (!dependencies || typeof dependencies.credentialVerifier?.verify !== "function"
+    || typeof dependencies.companyStorageResolver?.resolve !== "function" || typeof dependencies.companyStorageResolver?.open !== "function"
+    || typeof dependencies.workOrders?.read !== "function" ||
     typeof dependencies.workOrders?.complete !== "function" || typeof dependencies.readiness !== "function" ||
     (dependencies.directAdmin !== undefined && (typeof dependencies.directAdmin.publicOrigin !== "string" ||
       typeof dependencies.directAdmin.createGateway !== "function"))) throw new Error("workforce-dependencies-invalid");
