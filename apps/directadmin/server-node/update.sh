@@ -51,6 +51,79 @@ validate_server_node_supervisor_runtime() {
   "$executable" -e 'if (Number(process.versions.node.split(".")[0]) < 20) process.exit(1)' || { echo 'supervisor requires Node.js 20+ at its configured executable' >&2; return 1; }
 }
 
+validate_server_node_directory() {
+  local directory="$1" expected_owner="${2:-0}"
+  node - "$directory" "$expected_owner" <<'JS'
+const fs = require('node:fs');
+const directory = process.argv[2];
+const expectedOwner = Number(process.argv[3]);
+const fail = message => { process.stderr.write(message + '\n'); process.exit(1); };
+let stat;
+try { stat = fs.lstatSync(directory); } catch { fail('Server Node directory cannot be inspected'); }
+if (!stat.isDirectory() || stat.isSymbolicLink()) fail('Server Node path must be a real directory');
+if (stat.uid !== expectedOwner || (stat.mode & 0o022) !== 0 || (stat.mode & 0o700) !== 0o700) {
+  fail('Server Node directory has untrusted ownership or mode');
+}
+JS
+}
+
+# Never source the persistent environment file as shell code. Its token is a
+# credential, so validation deliberately reports only path/metadata failures.
+validate_server_node_token_file() {
+  local config="$1" expected_owner="${2:-0}"
+  node - "$config" "$expected_owner" <<'JS'
+const fs = require('node:fs');
+const path = require('node:path');
+const file = process.argv[2];
+const expectedOwner = Number(process.argv[3]);
+const parent = path.dirname(file);
+const fail = message => { process.stderr.write(message + '\n'); process.exit(1); };
+let stat;
+try { stat = fs.lstatSync(file); }
+catch (error) {
+  if (error.code !== 'ENOENT') fail('cannot inspect Server Node token file metadata');
+  let absentParent;
+  try { absentParent = fs.lstatSync(parent); }
+  catch (parentError) { if (parentError.code === 'ENOENT') process.exit(0); fail('cannot inspect Server Node token directory metadata'); }
+  if (!absentParent.isDirectory() || absentParent.isSymbolicLink() || absentParent.uid !== expectedOwner || (absentParent.mode & 0o022) !== 0) {
+    fail('Server Node token directory must be a trusted non-writable directory');
+  }
+  process.exit(0);
+}
+if (!stat.isFile() || stat.isSymbolicLink() || stat.nlink !== 1) fail('Server Node token path must be a single-link regular file');
+if (stat.uid !== expectedOwner) fail('Server Node token file has an untrusted owner');
+if ((stat.mode & 0o777) !== 0o600) fail('Server Node token file must have mode 0600');
+let parentStat;
+try { parentStat = fs.lstatSync(parent); } catch { fail('cannot inspect Server Node token directory metadata'); }
+if (!parentStat.isDirectory() || parentStat.isSymbolicLink() || parentStat.uid !== expectedOwner || (parentStat.mode & 0o022) !== 0) {
+  fail('Server Node token directory must be a trusted non-writable directory');
+}
+JS
+}
+
+# An existing unit is accepted for upgrade only when it is the expected
+# root-owned Titan service. Initial install refuses any pre-existing unit.
+validate_server_node_existing_unit() {
+  local unit="$1" expected_owner="${2:-0}"
+  node - "$unit" "$expected_owner" <<'JS'
+const fs = require('node:fs');
+const file = process.argv[2];
+const expectedOwner = Number(process.argv[3]);
+const fail = message => { process.stderr.write(message + '\n'); process.exit(1); };
+let stat;
+try { stat = fs.lstatSync(file); } catch { fail('existing Server Node service unit cannot be inspected'); }
+if (!stat.isFile() || stat.isSymbolicLink()) fail('existing Server Node service unit must be a regular file');
+if (stat.uid !== expectedOwner || (stat.mode & 0o022) !== 0) fail('existing Server Node service unit has untrusted ownership or mode');
+const content = fs.readFileSync(file, 'utf8').split(/\r?\n/);
+for (const line of [
+  'Description=Titan Zero Server Node control plane',
+  'User=titan-node',
+  'Group=titan-node',
+  'ExecStart=/usr/bin/node /usr/local/titan/server-node/runtime.mjs --serve',
+]) if (!content.includes(line)) fail('existing service unit is not the expected Titan Server Node unit');
+JS
+}
+
 server_node_port() {
   # Parse only the endpoint setting. Never source a root-owned secrets file as
   # shell code or include its contents in reports/backups.
@@ -95,6 +168,8 @@ server_node_update_report() {
   node - "$@" <<'JS'
 const [lifecycle, status, artifact] = process.argv.slice(2);
 process.stdout.write(JSON.stringify({ plugin:'titan-server-node', lifecycle,
+  installed: lifecycle === 'updated' || status === 'restored' ? true : null,
+  updated: lifecycle === 'updated',
   ...(lifecycle === 'updated' ? {status} : {rollback:status}), rollback_artifact:artifact }) + '\n');
 JS
 }
@@ -178,12 +253,19 @@ main() {
   set -euo pipefail
   local root
   root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  validate_server_node_package "$root"
-  if command -v systemctl >/dev/null 2>&1 && [ "$(id -u)" -eq 0 ]; then
-    validate_server_node_supervisor_runtime
-    update_server_node "$root" /usr/local/titan/server-node /etc/systemd/system/titan-server-node.service /usr/local/titan/server-node-backups /etc/titan/server-node.env
-  else
-    printf '%s\n' '{"plugin":"titan-server-node","lifecycle":"validated","mode":"bounded-projection","updated":false}'
+  if [ "${1:-}" = "--validate-only" ] && [ "$#" -eq 1 ]; then
+    validate_server_node_package "$root"
+    printf '%s\n' '{"plugin":"titan-server-node","lifecycle":"validated","installation_attempted":false,"installed":null,"updated":false,"mode":"validation-only"}'
+    return 0
   fi
+  [ "$#" -eq 0 ] || { echo 'usage: update.sh [--validate-only]' >&2; return 2; }
+  validate_server_node_package "$root"
+  [ "$(id -u)" -eq 0 ] || { echo 'privileged Server Node update required' >&2; return 1; }
+  command -v systemctl >/dev/null 2>&1 || { echo 'systemd is required for Server Node update' >&2; return 1; }
+  validate_server_node_supervisor_runtime
+  validate_server_node_existing_unit /etc/systemd/system/titan-server-node.service 0
+  [ -e /etc/titan/server-node.env ] && [ ! -L /etc/titan/server-node.env ] || { echo 'existing Server Node token file required; refusing to create or rotate it during update' >&2; return 1; }
+  validate_server_node_token_file /etc/titan/server-node.env 0
+  update_server_node "$root" /usr/local/titan/server-node /etc/systemd/system/titan-server-node.service /usr/local/titan/server-node-backups /etc/titan/server-node.env
 }
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi

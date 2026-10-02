@@ -1,4 +1,4 @@
 #!/bin/sh
 set -eu
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-exec "$ROOT/uninstall.sh"
+exec "$ROOT/uninstall.sh" "$@"

@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import { createSocket } from "node:dgram";
 import { createServer } from "node:http";
 import { once } from "node:events";
 import { fileURLToPath } from "node:url";
@@ -420,6 +421,29 @@ test("the overall Workforce deadline includes DNS and blocks a connection after 
   resolveLookup([{ address: "127.0.0.1", family: 4 }]);
   await new Promise((resolve) => setTimeout(resolve, 40));
   assert.deepEqual(upstreamRequests, []);
+});
+
+test("the extracted RAW process cancels native DNS and exits on its deadline", async (t) => {
+  const f = await fixture(t);
+  const dnsServer = createSocket("udp4");
+  let queryCount = 0;
+  dnsServer.on("message", () => { queryCount++; }); // Intentionally withhold answers.
+  dnsServer.bind(0, "127.0.0.1");
+  await once(dnsServer, "listening");
+  t.after(() => dnsServer.close());
+
+  const address = dnsServer.address();
+  f.writeConfig("https://workforce-" + process.pid + ".internal:3010");
+  const request = cgi(f, { route: "context" });
+  request.env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_DNS_SERVER = "127.0.0.1:" + address.port;
+  request.env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_UPSTREAM_TIMEOUT_MS = "40";
+  const startedAt = Date.now();
+  const result = await spawnRaw(f.rawPath, request.env, request.input);
+  const elapsed = Date.now() - startedAt;
+
+  assert.equal(parseRaw(result.stdout).status, 504);
+  assert.equal(queryCount > 0, true, "the native Resolver query must be outstanding when timed out");
+  assert.equal(elapsed < 500, true, "standalone RAW process should exit promptly after resolver cancellation");
 });
 
 test("mixed private and public DNS answers are rejected before connecting", async () => {

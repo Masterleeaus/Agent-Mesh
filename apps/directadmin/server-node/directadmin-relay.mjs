@@ -383,7 +383,25 @@ async function pinnedLookup(url, resolveAddresses = dns.lookup) {
   const host = url.hostname.replace(/^\[|\]$/g, "");
   if (net.isIP(host)) return undefined;
   let addresses;
-  try { addresses = await resolveAddresses(host, { all: true, verbatim: true }); }
+  try {
+    // The production path uses Resolver queries instead of dns.lookup's
+    // uncancellable getaddrinfo work. The RAW process can therefore finish
+    // promptly when its overall deadline expires, without terminating the
+    // process from this reusable module.
+    if (resolveAddresses instanceof dns.Resolver) {
+      const query = (method, family) => resolveAddresses[method](host).then(
+        (values) => values.map((address) => ({ address, family })),
+        (error) => {
+          if (error?.code === "ENODATA" || error?.code === "ENOTFOUND") return [];
+          throw error;
+        },
+      );
+      const [ipv4, ipv6] = await Promise.all([query("resolve4", 4), query("resolve6", 6)]);
+      addresses = [...ipv4, ...ipv6];
+    } else {
+      addresses = await resolveAddresses(host, { all: true, verbatim: true });
+    }
+  }
   catch { throw relayError(502, "workforce_unreachable"); }
   if (!addresses.length || addresses.some((entry) => !isPrivateAddress(entry.address))) {
     throw relayError(502, "workforce_target_not_private");
@@ -483,6 +501,7 @@ export async function forwardRequest(config, envelope, body, {
   return new Promise((resolve, reject) => {
     let settled = false;
     let request;
+    let resolver;
     const finish = (error, result) => {
       if (settled) return;
       settled = true;
@@ -492,15 +511,21 @@ export async function forwardRequest(config, envelope, body, {
     const timer = setTimeout(() => {
       finish(relayError(504, "workforce_timeout"));
       request?.destroy();
+      try { resolver?.cancel(); } catch {}
     }, timeoutMs);
     void (async () => {
       try {
-        const lookup = await pinnedLookup(config.upstreamUrl, resolveAddresses);
-        // DNS resolvers do not expose cancellation. The overall deadline still
-        // settles the RAW request and prevents a late resolution from opening
-        // an upstream connection after the caller has timed out.
-        if (settled) return;
         const host = config.upstreamUrl.hostname.replace(/^\[|\]$/g, "");
+        if (!net.isIP(host) && resolveAddresses === dns.lookup) {
+          resolver = new dns.Resolver();
+          // Test-only override points the extracted RAW entrypoint at a
+          // disposable local DNS server. Production always uses OS-configured
+          // DNS servers through Node's cancellable c-ares Resolver.
+          const testServer = process.env.NODE_ENV === "test" && process.env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_DNS_SERVER;
+          if (testServer) resolver.setServers([testServer]);
+        }
+        const lookup = await pinnedLookup(config.upstreamUrl, resolver ?? resolveAddresses);
+        if (settled) return;
         const options = {
           hostname: host,
           port: config.upstreamUrl.port ? Number(config.upstreamUrl.port) : undefined,

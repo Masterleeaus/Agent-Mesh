@@ -26,6 +26,111 @@ async function unusedPort() {
   return port;
 }
 
+async function installFixture(t, { failAt = "", stopFails = false, startFails = false, existingTokenMode, existingTokenSymlink = false, unexpectedUnit = false } = {}) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "titan-node-install-"));
+  const installed = path.join(dir, "usr/local/titan/server-node");
+  const unit = path.join(dir, "etc/systemd/system/titan-server-node.service");
+  const state = path.join(dir, "var/lib/titan/server-node");
+  const config = path.join(dir, "etc/titan/server-node.env");
+  const events = path.join(dir, "install-events.log");
+  fs.mkdirSync(path.dirname(unit), { recursive: true });
+  if (unexpectedUnit) fs.writeFileSync(unit, "operator-owned unrelated unit\n", { mode: 0o640 });
+  if (existingTokenMode !== undefined) {
+    fs.mkdirSync(path.dirname(config), { recursive: true, mode: 0o750 });
+    fs.writeFileSync(config, "TITAN_NODE_AUTH_TOKEN=fixture-only-secret\n", { mode: existingTokenMode });
+    fs.chmodSync(config, existingTokenMode);
+  }
+  if (existingTokenSymlink) {
+    fs.mkdirSync(path.dirname(config), { recursive: true, mode: 0o750 });
+    const target = path.join(dir, "external-token-target");
+    fs.writeFileSync(target, "TITAN_NODE_AUTH_TOKEN=fixture-only-secret\n", { mode: 0o600 });
+    fs.symlinkSync(target, config);
+  }
+  const harness = path.join(dir, "run-install.sh");
+  fs.writeFileSync(harness, `#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT_SCRIPT="$1"; SOURCE_DIR="$2"; INSTALLED="$3"; UNIT="$4"; STATE_DIR="$5"; CONFIG="$6"; EXPECTED_UID="$7"; NODE_BIN="$8"; FAIL_AT="$9"; EVENT_LOG="${events}"; STOP_FAILS="${stopFails}"; START_FAILS="${startFails}"
+FAKE_USER_EXISTS=false; FAKE_ACTIVE=inactive; FAKE_ENABLED=disabled
+id() {
+  if [ "$#" -eq 1 ] && [ "$1" = "-u" ]; then command id -u; return; fi
+  if [ "$#" -eq 1 ] && [ "$1" = "titan-node" ]; then [ "$FAKE_USER_EXISTS" = true ]; return; fi
+  if [ "$#" -eq 2 ] && [ "$1" = "-u" ] && [ "$2" = "titan-node" ]; then [ "$FAKE_USER_EXISTS" = true ] && command id -u; return; fi
+  command id "$@"
+}
+useradd() { printf 'useradd\\n' >> "$EVENT_LOG"; FAKE_USER_EXISTS=true; }
+userdel() { printf 'userdel\\n' >> "$EVENT_LOG"; FAKE_USER_EXISTS=false; }
+install() {
+  local -a args=()
+  while [ "$#" -gt 0 ]; do
+    if [ "$1" = "-o" ] || [ "$1" = "-g" ]; then shift 2; else args+=("$1"); shift; fi
+  done
+  /usr/bin/install "\${args[@]}"
+}
+systemctl() {
+  printf '%s\\n' "$*" >> "$EVENT_LOG"
+  case "$1" in
+    daemon-reload) return 0 ;;
+    enable) [ "$START_FAILS" = false ] || return 1; FAKE_ACTIVE=active; FAKE_ENABLED=enabled; return 0 ;;
+    disable) [ "$STOP_FAILS" = false ] || return 1; FAKE_ACTIVE=inactive; FAKE_ENABLED=disabled; return 0 ;;
+    is-active) [ "$FAKE_ACTIVE" = active ] ;;
+    show)
+      case "$2" in
+        --property) [ "$3" = MainPID ] && echo 4242 ;;
+        --property=ActiveState) echo "$FAKE_ACTIVE" ;;
+        --property=LoadState) echo loaded ;;
+        --property=UnitFileState) echo "$FAKE_ENABLED" ;;
+        *) return 2 ;;
+      esac
+      ;;
+    *) return 2 ;;
+  esac
+}
+curl() { printf '{"ok":true,"service":"titan-server-node","pid":4242}'; }
+sleep() { :; }
+source "$ROOT_SCRIPT"
+server_node_install_checkpoint() { printf '%s\\n' "$1" >> "$EVENT_LOG"; [ "$FAIL_AT" != "$1" ]; }
+install_server_node "$SOURCE_DIR" "$INSTALLED" "$UNIT" "$STATE_DIR" "$CONFIG" "$EXPECTED_UID" titan-node titan-node "$NODE_BIN"
+`);
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const result = await run(harness, [
+    path.join(root, "install.sh"), root, installed, unit, state, config, String(process.getuid()), process.execPath, failAt,
+  ]);
+  return { dir, installed, unit, state, config, events, result };
+}
+
+async function uninstallFixture(t, { stopFails = false, noUnit = false } = {}) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "titan-node-uninstall-"));
+  const unit = path.join(dir, "titan-server-node.service");
+  const events = path.join(dir, "systemctl-events.log");
+  if (!noUnit) fs.copyFileSync(path.join(root, "titan-server-node.service"), unit);
+  const harness = path.join(dir, "run-uninstall.sh");
+  fs.writeFileSync(harness, `#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT_SCRIPT="$1"; UNIT="$2"; EXPECTED_UID="$3"; EVENT_LOG="${events}"; STOP_FAILS="${stopFails}"; FAKE_ACTIVE=active; FAKE_ENABLED=enabled
+id() { if [ "$#" -eq 1 ] && [ "$1" = "-u" ]; then command id -u; else command id "$@"; fi; }
+systemctl() {
+  printf '%s\\n' "$*" >> "$EVENT_LOG"
+  case "$1" in
+    show)
+      case "$2" in
+        --property=LoadState) echo "${noUnit ? "not-found" : "loaded"}" ;;
+        --property=ActiveState) echo "$FAKE_ACTIVE" ;;
+        --property=UnitFileState) echo "$FAKE_ENABLED" ;;
+        *) return 2 ;;
+      esac
+      ;;
+    disable) [ "$STOP_FAILS" = false ] || return 1; FAKE_ACTIVE=inactive; FAKE_ENABLED=disabled ;;
+    *) return 2 ;;
+  esac
+}
+source "$ROOT_SCRIPT"
+uninstall_server_node "$UNIT" "$EXPECTED_UID"
+`);
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const result = await run(harness, [path.join(root, "uninstall.sh"), unit, String(process.getuid())]);
+  return { dir, unit, events, result };
+}
+
 // The fixture supervisor starts real Node processes. The production updater
 // performs real file operations and HTTP probes; only systemd is substituted.
 async function fixture(t, behavior = "healthy") {
@@ -181,18 +286,34 @@ test("non-root lifecycle validation never invokes a host supervisor", async (t) 
   // Shell functions protect even root-run CI, without production test modes.
   for (const script of ["install.sh", "update.sh"]) {
     const harness = path.join(dir, script);
-    fs.writeFileSync(harness, `set -euo pipefail\nid() { echo 1000; }\nsystemctl() { echo 'HOST SUPERVISOR MUST NOT RUN' >&2; return 97; }\nexport -f id systemctl\nbash "$1"\n`);
-    const result = await run(harness, [path.join(root, script)]);
+    fs.writeFileSync(harness, `set -euo pipefail\nid() { echo 1000; }\nsystemctl() { echo 'HOST SUPERVISOR MUST NOT RUN' >&2; return 97; }\nexport -f id systemctl\nbash "$@"\n`);
+    const result = await run(harness, [path.join(root, script), "--validate-only"]);
     assert.equal(result.status, 0, result.stderr);
     assert.equal(JSON.parse(result.stdout).lifecycle, "validated");
+    assert.equal(JSON.parse(result.stdout).installed, null);
+    assert.equal(JSON.parse(result.stdout).installation_attempted, false);
+  }
+});
+
+test("ordinary non-root install, update and uninstall fail instead of claiming validation", async (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "titan-node-privileged-hooks-"));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  for (const script of ["install.sh", "update.sh", "uninstall.sh"]) {
+    const harness = path.join(dir, script);
+    fs.writeFileSync(harness, `set -euo pipefail\nid() { echo 1000; }\nsystemctl() { echo 'HOST SUPERVISOR MUST NOT RUN' >&2; return 97; }\nexport -f id systemctl\nbash "$@"\n`);
+    const result = await run(harness, [path.join(root, script)]);
+    assert.notEqual(result.status, 0, script);
+    assert.doesNotMatch(result.stdout, /"lifecycle":"validated"/);
+    assert.doesNotMatch(result.stderr, /HOST SUPERVISOR MUST NOT RUN/);
   }
 });
 
 // These are deployment configuration assertions, not substituted OS ownership.
 test("install keeps executable code root-owned and state owned by titan-node", () => {
   const script = fs.readFileSync(path.join(root, "install.sh"), "utf8");
-  assert.match(script, /install -d -o titan-node -g titan-node -m 0750 \/var\/lib\/titan\/server-node\n/);
-  assert.match(script, /install -d -m 0755 \/usr\/local\/titan\/server-node/);
+  assert.match(script, /install -d -o "\$service_user" -g "\$service_group" -m 0750 "\$state_dir"/);
+  assert.match(script, /validate_server_node_directory "\$install_parent" "\$token_owner"/);
+  assert.match(script, /mv -Tn -- "\$runtime_stage" "\$installed"/);
   assert.match(script, /verify_server_node_process/);
 });
 
@@ -239,4 +360,151 @@ test('root supervisor prerequisite checks the actual unit Node executable', asyn
   const real=await run(harness,[path.join(root,'update.sh'),process.execPath]);assert.equal(real.status,0,real.stderr);
   const oldNode=path.join(dir,'old-node');fs.writeFileSync(oldNode,'#!/usr/bin/env bash\nexit 1\n',{mode:0o755});
   const outdated=await run(harness,[path.join(root,'update.sh'),oldNode]);assert.notEqual(outdated.status,0);assert.match(outdated.stderr,/Node.js 20/);
+});
+
+test("initial install succeeds on disposable paths and reports an active installation", async (t) => {
+  const f = await installFixture(t);
+  assert.equal(f.result.status, 0, f.result.stderr);
+  const report = JSON.parse(f.result.stdout);
+  assert.equal(report.lifecycle, "installed");
+  assert.equal(report.installed, true);
+  assert.equal(fs.statSync(f.config).mode & 0o777, 0o600);
+  assert.equal(/^TITAN_NODE_AUTH_TOKEN=[a-f0-9]{64}\n$/.test(fs.readFileSync(f.config, "utf8")), true);
+  assert.equal(fs.statSync(f.unit).mode & 0o777, 0o644);
+  assert.equal(fs.existsSync(path.join(f.installed, "directadmin-relay.mjs")), true);
+  assert.equal(fs.existsSync(path.join(f.installed, "SHA256SUMS")), true);
+  assert.equal(f.result.stdout.includes("fixture-only-secret"), false);
+});
+
+for (const failAt of [
+  "preflight-complete", "runtime-staged", "unit-staged", "service-user-ready",
+  "state-directory-ready", "token-ready", "runtime-promoted", "unit-promoted",
+  "systemd-reloaded", "service-started", "service-live",
+]) {
+  test(`initial install rolls back safely after ${failAt}`, async (t) => {
+    const f = await installFixture(t, { failAt });
+    assert.notEqual(f.result.status, 0);
+    const report = JSON.parse(f.result.stdout);
+    assert.equal(report.lifecycle, "install-failed");
+    assert.equal(report.installed, false);
+    assert.equal(report.rollback, "complete", f.result.stderr);
+    assert.equal(fs.existsSync(f.installed), false);
+    assert.equal(fs.existsSync(f.unit), false);
+    const tokenExpected = ["token-ready", "runtime-promoted", "unit-promoted", "systemd-reloaded", "service-started", "service-live"].includes(failAt);
+    assert.equal(fs.existsSync(f.config), tokenExpected);
+    if (tokenExpected) assert.equal(fs.statSync(f.config).mode & 0o777, 0o600);
+    assert.equal(f.result.stdout.includes("fixture-only-secret"), false);
+  });
+}
+
+test("failed service stop retains newly promoted files for recovery", async (t) => {
+  const f = await installFixture(t, { failAt: "service-started", stopFails: true });
+  assert.notEqual(f.result.status, 0);
+  const report = JSON.parse(f.result.stdout);
+  assert.equal(report.rollback, "incomplete");
+  assert.equal(report.installed, null);
+  assert.equal(fs.existsSync(f.installed), true);
+  assert.equal(fs.existsSync(f.unit), true);
+  assert.equal(fs.existsSync(f.config), true);
+});
+
+test("a failed enable/start command is stopped, disabled and rolled back", async (t) => {
+  const f = await installFixture(t, { startFails: true });
+  assert.notEqual(f.result.status, 0);
+  const report = JSON.parse(f.result.stdout);
+  assert.equal(report.rollback, "complete");
+  assert.equal(report.installed, false);
+  assert.equal(fs.existsSync(f.installed), false);
+  assert.equal(fs.existsSync(f.unit), false);
+  assert.equal(fs.existsSync(f.config), true);
+  const events = fs.readFileSync(f.events, "utf8");
+  assert.match(events, /enable --now/);
+  assert.match(events, /disable --now/);
+});
+
+test("initial install refuses an unexpected unit without changing it", async (t) => {
+  const f = await installFixture(t, { unexpectedUnit: true });
+  assert.notEqual(f.result.status, 0);
+  assert.equal(fs.readFileSync(f.unit, "utf8"), "operator-owned unrelated unit\n");
+  assert.equal(fs.existsSync(f.installed), false);
+  assert.equal(fs.existsSync(f.config), false);
+  assert.match(f.result.stderr, /unexpected existing titan-server-node\.service/);
+  assert.equal(JSON.parse(f.result.stdout).installed, null);
+});
+
+test("initial install rejects insecure token files before creating host artifacts", async (t) => {
+  const f = await installFixture(t, { existingTokenMode: 0o640 });
+  assert.notEqual(f.result.status, 0, `stdout=${f.result.stdout} stderr=${f.result.stderr}`);
+  assert.match(f.result.stderr, /must have mode 0600/);
+  assert.equal(fs.existsSync(f.installed), false);
+  assert.equal(fs.existsSync(f.unit), false);
+  assert.equal(fs.readFileSync(f.config, "utf8"), "TITAN_NODE_AUTH_TOKEN=fixture-only-secret\n");
+  assert.equal(f.result.stdout.includes("fixture-only-secret"), false);
+});
+
+test("initial install rejects symlink token paths without reading or printing the target", async (t) => {
+  const f = await installFixture(t, { existingTokenSymlink: true });
+  assert.notEqual(f.result.status, 0);
+  assert.equal(fs.lstatSync(f.config).isSymbolicLink(), true);
+  assert.equal(fs.existsSync(f.installed), false);
+  assert.equal(fs.existsSync(f.unit), false);
+  assert.equal(f.result.stdout.includes("fixture-only-secret"), false);
+  assert.equal(f.result.stderr.includes("fixture-only-secret"), false);
+});
+
+test("token metadata validation rejects an untrusted owner without exposing its contents", async (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "titan-node-token-owner-"));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const token = path.join(dir, "server-node.env");
+  fs.writeFileSync(token, "TITAN_NODE_AUTH_TOKEN=fixture-only-secret\n", { mode: 0o600 });
+  fs.chmodSync(token, 0o600);
+  const harness = path.join(dir, "validate-token.sh");
+  fs.writeFileSync(harness, `#!/usr/bin/env bash\nset -euo pipefail\nsource "$1"\nvalidate_server_node_token_file "$2" "$3"\n`);
+  const result = await run(harness, [path.join(root, "update.sh"), token, String(process.getuid() + 1)]);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /untrusted owner/);
+  assert.equal(result.stdout.includes("fixture-only-secret"), false);
+  assert.equal(result.stderr.includes("fixture-only-secret"), false);
+});
+
+test("initial install and update wrappers pass explicit validation-only requests", async (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "titan-node-wrapper-"));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  for (const action of ["install", "update", "uninstall"]) {
+    const result = await run(path.join(root, "scripts", action + ".sh"), ["--validate-only"]);
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(JSON.parse(result.stdout).mode, "validation-only");
+  }
+});
+
+test("uninstall reports service-stop failures and retains recovery state", async (t) => {
+  const f = await uninstallFixture(t, { stopFails: true });
+  assert.notEqual(f.result.status, 0);
+  const report = JSON.parse(f.result.stdout);
+  assert.equal(report.lifecycle, "uninstall-failed");
+  assert.equal(report.uninstalled, false);
+  assert.equal(report.service, "unknown");
+  assert.equal(fs.existsSync(f.unit), true);
+  assert.match(fs.readFileSync(f.events, "utf8"), /disable --now/);
+});
+
+test("uninstall verifies inactive and disabled while preserving runtime artifacts", async (t) => {
+  const f = await uninstallFixture(t);
+  assert.equal(f.result.status, 0, f.result.stderr);
+  const report = JSON.parse(f.result.stdout);
+  assert.equal(report.lifecycle, "uninstalled");
+  assert.equal(report.uninstalled, true);
+  assert.equal(report.service, "inactive");
+  assert.equal(report.enabled, false);
+  assert.deepEqual(report.retained, ["unit", "runtime", "token", "control_state"]);
+  assert.equal(fs.readFileSync(f.unit, "utf8"), fs.readFileSync(path.join(root, "titan-server-node.service"), "utf8"));
+});
+
+test("uninstall is idempotent when systemd no longer knows the unit", async (t) => {
+  const f = await uninstallFixture(t, { noUnit: true });
+  assert.equal(f.result.status, 0, f.result.stderr);
+  const report = JSON.parse(f.result.stdout);
+  assert.equal(report.lifecycle, "uninstalled");
+  assert.equal(report.service, "absent");
+  assert.deepEqual(report.retained, []);
 });
