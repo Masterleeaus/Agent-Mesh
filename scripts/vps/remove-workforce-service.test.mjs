@@ -33,8 +33,11 @@ function fixture({ container = true } = {}) {
   writeFileSync(docker, `#!/usr/bin/env bash
 set -Eeuo pipefail
 printf '%s\\n' "$*" >> "$DOCKER_LOG"
+[[ "\${TZ_ENV_FILE:-}" == "$EXPECTED_TZ_ENV_FILE" ]] || { echo 'TZ_ENV_FILE missing or incorrect' >&2; exit 91; }
+[[ "\${TZ_DATA_ROOT:-}" == "$EXPECTED_TZ_DATA_ROOT" ]] || { echo 'TZ_DATA_ROOT missing or incorrect' >&2; exit 92; }
 case " $* " in
   *" ps --all --quiet workforce "*)
+    [[ "\${DOCKER_FAIL_ACTION:-}" != ps ]] || exit 27
     [[ -f "$DOCKER_STATE" ]] && cat "$DOCKER_STATE" || true
     ;;
   *" rm --stop --force workforce "*)
@@ -50,6 +53,8 @@ esac
     PATH: `${bin}${path.delimiter}${process.env.PATH ?? ''}`,
     DOCKER_LOG: logPath,
     DOCKER_STATE: statePath,
+    EXPECTED_TZ_ENV_FILE: envPath,
+    EXPECTED_TZ_DATA_ROOT: path.join(installRoot, 'shared', 'data'),
   };
   return { root, installRoot, envPath, composePath, logPath, statePath, env };
 }
@@ -107,6 +112,18 @@ test('propagates Docker removal failure and leaves persisted data untouched', (t
   assert.equal(result.status, 29);
   assert.equal(existsSync(f.statePath), true);
   assert.equal(readFileSync(path.join(f.installRoot, 'shared', 'data', 'runtime', 'identity.db'), 'utf8'), 'identity sentinel');
+});
+
+test('fails closed when Compose cannot inspect Workforce', (t) => {
+  const f = fixture();
+  t.after(() => rmSync(f.root, { recursive: true, force: true }));
+
+  const result = run(f, [], { DOCKER_FAIL_ACTION: 'ps' });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Could not inspect the Workforce Compose service/);
+  assert.doesNotMatch(result.stdout, /already absent/);
+  assert.equal(existsSync(f.statePath), true);
+  assert.equal(readFileSync(f.logPath, 'utf8').trim().split('\n').length, 1);
 });
 
 test('fails closed when install metadata is missing', (t) => {
