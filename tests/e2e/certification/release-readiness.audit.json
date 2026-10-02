@@ -1,7 +1,7 @@
 {
   "schema": "titan.readiness-audit-input/v1",
-  "observed_at": "2026-10-02T09:25:54Z",
-  "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+  "observed_at": "2026-10-02T09:53:10Z",
+  "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
   "scope": "28 user-requested audit headings; evidence presentation only, not a capability/host catalogue",
   "audit_completeness": "PARTIAL",
   "production_eligibility": "DENIED_MISSING_EVIDENCE",
@@ -88,7 +88,9 @@
       "canonical_owner_refs": [
         "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1171",
         "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542",
-        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811"
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049"
       ],
       "implementation_paths": [
         "apps/pwa/README.md",
@@ -99,12 +101,21 @@
         "apps/pwa/tests/browser-regression.test.mjs",
         "services/workforce/src/conversation-api.ts",
         "services/workforce/src/server.ts",
-        "apps/pwa/public/app.mjs"
+        "apps/pwa/public/app.mjs",
+        "apps/pwa/scripts/build.mjs",
+        "apps/web/app/api/v1/bootstrap/route.ts",
+        "apps/web/app/api/v1/zero/interactions/route.ts",
+        "apps/web/lib/auth/current-session.ts",
+        "packages/titan-platform/src/security-session-registry.ts",
+        "apps/directadmin/server-node/runtime.mjs",
+        "apps/directadmin/server-node/directadmin-relay.mjs",
+        "apps/directadmin/server-node/images/directadmin-relay-client.mjs"
       ],
-      "source_assessment": "Current main contains one separately installable Zero/Go/Hub PWA, distinct from apps/web and native mobile. The PWA client exposes only same-origin, no-store GET projections with a returned company_id check; its bounded working set is memory-only and partitions by company, actor, device, surface, audience, context revision and session revision. It has no authenticated session bootstrap or conversation POST/event transport. The merged Workforce host now exposes an authenticated conversation endpoint, but that path is not wired into this PWA; the host contract is currently commissioned only for Zero. The service worker caches the public shell only; no durable private database, encrypted evidence staging or governed command outbox/replay exists in the PWA. The served shell in apps/pwa/public/app.mjs only selects mode, reports browser connectivity and registers the shell worker; it does not import or invoke the projection client/working set. The shipped UI therefore has no PWA consumer for the existing read-only projection helper.",
+      "source_assessment": "Current main contains one separately installable Zero/Go/Hub PWA, distinct from apps/web and native mobile. Its shipped app.mjs remains a static mode/connectivity shell and does not import the projection client or working set. The GET-only createPwaProjectionClient and normalizePwaContext/PwaProjectionWorkingSet exist under apps/pwa/src, but build.mjs copies only public/ into the deployable shell, so those modules are not shipped to the browser. The PWA still has no authenticated, server-verified session/context bootstrap or configured projection endpoint. services/workforce/src/server.ts exposes POST /v1/workforce/conversations plus health/readiness and an optional /v1/directadmin/* forwarding mount; it does not expose a general PWA projection GET. apps/directadmin/server-node/runtime.mjs GET /v1/bootstrap is authenticated by the Server Node transport token and returns control_metadata_only, not a user/company session. The DirectAdmin relay exposes a fixed GET /v1/directadmin/titan_workforce/projection for its panel plugin, using DirectAdmin origin/session context; it is not a PWA session or general PWA projection endpoint. apps/web/app/api/v1/bootstrap/route.ts and apps/web/app/api/v1/zero/interactions/route.ts use the separate web getSession/accountId runtime; they do not supply the PWA canonical current-session context and are not a PWA host contract. The PWA must keep company_id as the canonical boundary and accept context only from a host-verified session; current shell does not consume business projections, stream events, or replay offline work.",
       "missing_requirements": [
-        "Wire the PWA view to a host-injected, server-verified session/context and the existing same-origin GET projection helper, with explicit configured/auth-required/stale/unavailable states. The repository currently defines neither PWA bootstrap nor a PWA projection route, so do not invent either or trust client-selected company identity.",
-        "Implement bounded encrypted private offline storage/evidence staging and governed reconnect replay only after #302 key/session lifecycle and canonical server revalidation contracts are available. Hosted conversation streaming/resume/cancel is also absent from the PWA and must use a host-owned event contract; physical-browser and production-host certification remain outstanding."
+        "Under #302, provide a browser-safe handoff of the canonical current session context (company_id, actor_id, device_id, context_revision and session revision) without exposing credentials or deriving authority from selected mode. The existing PWA normalizePwaContext input is a client validator, not an authenticator; apps/web current-session composition is server-side and the existing apps/web bootstrap is accountId-based.",
+        "Under #811, expose or commission the existing host-owned, authenticated read-only projection contract usable by the PWA and bind responses to that resolved context. Current services/workforce/src/server.ts has no general projection GET; do not treat its POST conversation endpoint, Server Node control-metadata /v1/bootstrap, or DA-only /v1/directadmin/titan_workforce/projection as the PWA projection API. #1049/#812 own the host/SDK adapter if the commissioned route is served through DirectAdmin.",
+        "Within #1171, package the existing PWA helper modules into the shell build/service-worker cache and render projection plus explicit unconfigured/auth-required/stale/unavailable states once #302/#811 provide the host contract. Then implement encrypted bounded offline storage/evidence staging and governed reconnect replay after key lifecycle and server revalidation are available. No physical-browser or production-host certification is established."
       ],
       "assessment_status": "INCOMPLETE",
       "source_evidence": "SOURCE_INSPECTED",
@@ -187,12 +198,18 @@
         "services/workforce/src/directadmin-workforce-owners.ts",
         "services/workforce/src/server.ts",
         "apps/directadmin/dev-access/README.md",
-        "apps/directadmin/dev-access/lib/app.php"
+        "apps/directadmin/dev-access/lib/app.php",
+        "apps/directadmin/server-node/runtime.security.test.mjs",
+        "apps/directadmin/server-node/directadmin-relay.mjs",
+        "apps/directadmin/server-node/directadmin-relay.test.mjs",
+        "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
+        "apps/directadmin/server-node/lifecycle.test.mjs",
+        "apps/directadmin/server-node/user/directadmin-gateway.raw"
       ],
-      "source_assessment": "Current main contains a loopback-only, read-only DirectAdmin health bridge plus an optional Workforce gateway mount. The mount stays unavailable without operator configuration; the Workforce owner currently projects canonical worker/work/run data and rejects lifecycle mutations. The host contract requires the #1049 SDK bridge and #302 current-session exchange for DirectAdmin company switch/revocation; those integration requirements are not established by the bounded health bridge. No live DirectAdmin install, update, recovery or production endpoint is evidenced. Current main also contains the optional Titan Dev Access plugin (#1048): its PHP source renders diagnostics, a bounded account-local command form, and SSH public-key add/fingerprint/revoke UI; the add-key handler receives PHP-parsed $_POST[public_key] after CSRF checking. No live portal interaction was performed. USER-REPORTED only: the Developer Portal is installed with diagnostics and its public-key POST rejects malformed/ambiguous form data. Live command execution and SSH key add/fingerprint/revoke lifecycle remain UNVERIFIED. This report is not independent evidence that the reported endpoint behavior occurred.",
+      "source_assessment": "Current main includes the loopback Server Node health bridge and the #1211 partial control API/DirectAdmin relay. The control API uses a node transport bearer and its /v1/bootstrap response is control_metadata_only; a canonical adapter is not commissioned, so lifecycle/recovery submissions remain unavailable/refused. The browser relay maps a fixed DirectAdmin RAW route set to the optional Workforce gateway, including GET /v1/directadmin/titan_workforce/projection. That projection is a DirectAdmin-panel adapter bound to its host/session context, not a PWA bootstrap or general PWA projection endpoint. The Workforce server only mounts /v1/directadmin/* when its operator-configured gateway is present. The Server Node README explicitly describes partial/fail-closed implementation and no live root installation. Current source includes the optional Titan Dev Access plugin (#1048): its PHP form offers diagnostics, bounded account-local commands, and SSH public-key add/fingerprint/revoke. USER-REPORTED only: the portal is installed with diagnostics and its public-key POST rejects malformed/ambiguous form data. No live portal interaction occurred; live command execution and key lifecycle remain UNVERIFIED.",
       "missing_requirements": [
-        "Complete #1048-owned Developer Portal/Dev Access acceptance through the shared #1049 SDK and #302 session/credential boundaries: verify form parsing/rejection, CSRF, valid public-key add/fingerprint/revoke, account-scoped command output and permissions on the actual DirectAdmin installation. Preserve the reported malformed/ambiguous POST rejection as user-reported until independently reproduced; command/key lifecycle and install/update/rollback remain unverified.",
-        "Complete the #812/#1049/#302 DirectAdmin-to-Workforce integration and run exact-artifact host commissioning, update, rollback and recovery. The loopback health bridge and source tests do not establish production business outcomes."
+        "Complete #812-owned Server Node host commissioning through #1049/#302 identity and host adapters and #811 Workforce composition: exact artifact install/update/rollback/reboot/recovery, canonical adapter commissioning, company-scoped authority and observed outcomes. Current tests are fixture/loopback evidence; no live DirectAdmin install, root action, provider operation, or business outcome was verified.",
+        "Complete #1048-owned Developer Portal/Dev Access acceptance through the shared #1049 SDK and #302 session/credential boundaries: verify form parsing/rejection, CSRF, valid public-key add/fingerprint/revoke, account-scoped command output and permissions on the actual installation. Preserve the malformed/ambiguous POST behavior as user-reported until independently reproduced; command/key lifecycle remains UNVERIFIED."
       ],
       "assessment_status": "INCOMPLETE",
       "source_evidence": "SOURCE_INSPECTED",
