@@ -142,6 +142,23 @@ function integration_expect_successful_pwd(string $html,string $home):void{
  integration_expect(trim(htmlspecialchars_decode($matches[1],ENT_QUOTES))===$home,'pwd output must be limited to the selected account HOME');
 }
 
+function integration_ssh_wire_string(string $value):string{
+ return pack('N',strlen($value)).$value;
+}
+function integration_synthetic_public_key(string $algorithm):string{
+ if($algorithm==='ssh-ed25519'){
+  $public=hex2bin('d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a');
+  $blob=integration_ssh_wire_string('ssh-ed25519').integration_ssh_wire_string($public);
+ }elseif($algorithm==='ssh-rsa'){
+  $exponent="\x01\x00\x01";
+  $modulus="\x7f".str_repeat("\xfb",254);
+  $blob=integration_ssh_wire_string('ssh-rsa').integration_ssh_wire_string($exponent).integration_ssh_wire_string($modulus);
+ }else{
+  throw new RuntimeException('Unsupported integration fixture algorithm.');
+ }
+ return $algorithm.' '.base64_encode($blob).' synthetic+fixture&marker=literal%25';
+}
+
 function integration_expect_successful_key(string $html,string $expectedKey,string $home):void{
  integration_expect(strpos($html,'Request rejected:')===false,'valid SSH public-key form must not be rejected');
  integration_expect(strpos($html,'Public key installed.')!==false,'valid synthetic SSH public key must be accepted');
@@ -269,14 +286,16 @@ integration_expect_successful_pwd($html,$homeA);
 
 
 $keyTransportCases=[
- 'raw-post-plus-slash-padding'=>[
-  'key'=>'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC+Synthetic/PublicKey== synthetic+fixture&marker=literal%25',
+ 'raw-post-terminal-lf-rsa'=>[
+  'key'=>integration_synthetic_public_key('ssh-rsa'),
   'line_ending'=>'',
+  'body_ending'=>"\n",
   'pipe'=>false
  ],
  'stdin-crlf-ed25519'=>[
-  'key'=>'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA+Synthetic/PublicKey== synthetic+fixture&marker=literal%25',
+  'key'=>integration_synthetic_public_key('ssh-ed25519'),
   'line_ending'=>"\r\n",
+  'body_ending'=>"\r\n",
   'pipe'=>true
  ]
 ];
@@ -291,16 +310,71 @@ foreach($keyTransportCases as $caseName=>$case){
  $postedKey=$case['key'].$case['line_ending'];
  $keyFields=['csrf'=>$keyToken,'public_key'=>$postedKey,'add_key'=>'1'];
  $keyBody=http_build_query($keyFields,'','&',PHP_QUERY_RFC1738);
+ $wireBody=$keyBody.$case['body_ending'];
  $keyEnvironment=array_replace($common,[
   'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,
   'QUERY_STRING'=>$case['pipe']?'pipe_post=yes':'',
-  'POST'=>$case['pipe']?'stdin=true':$keyBody,
-  'CONTENT_LENGTH'=>(string)strlen($keyBody),
+  'POST'=>$case['pipe']?'stdin=true':$wireBody,
+  'CONTENT_LENGTH'=>(string)strlen($wireBody),
   'HOME'=>$keyHome
  ]);
- $stdinBody=$case['pipe']?$keyBody:null;
+ $stdinBody=$case['pipe']?$wireBody:null;
  [$keyResult]=integration_run_role($root,'admin',$keyEnvironment,$stdinBody);
  integration_expect_successful_key($keyResult,$case['key'],$keyHome);
+}
+
+function integration_expect_invalid_key(string $html,string $home,string $case):void{
+ integration_expect(strpos($html,'Invalid public key format.')!==false,$case.' must be rejected as an invalid key line');
+ $path=$home.'/.ssh/authorized_keys';
+ integration_expect(is_file($path),'isolated test HOME must retain its existing authorized_keys file');
+ $contents=file_get_contents($path);
+ integration_expect(is_string($contents)&&$contents==='',$case.' must not append a key or a second authorized_keys record');
+}
+
+$syntheticEd25519=integration_synthetic_public_key('ssh-ed25519');
+$syntheticRsa=integration_synthetic_public_key('ssh-rsa');
+$edParts=explode(' ',$syntheticEd25519,3);
+$rsaParts=explode(' ',$syntheticRsa,3);
+integration_expect(strpos($edParts[1],'+')!==false,'Ed25519 public blob fixture must include a plus character');
+integration_expect(strpos($rsaParts[1],'+')!==false&&strpos($rsaParts[1],'/')!==false&&substr($rsaParts[1],-2)==='==','RSA public blob fixture must include plus, slash and base64 padding');
+$invalidKeyCases=[
+ 'raw-plus-corrupts-public-blob'=>[
+  'key'=>$syntheticEd25519,
+  'transport'=>'raw-plus'
+ ],
+ 'newline-after-key-algorithm'=>[
+  'key'=>'ssh-ed25519'."\n".$edParts[1].' synthetic+fixture',
+  'transport'=>'urlencoded'
+ ],
+ 'declared-type-does-not-match-blob'=>[
+  'key'=>'ssh-ed25519 '.$rsaParts[1].' synthetic+fixture',
+  'transport'=>'urlencoded'
+ ],
+ 'invalid-base64-padding'=>[
+  'key'=>'ssh-ed25519 '.$edParts[1].'A=== synthetic+fixture',
+  'transport'=>'urlencoded'
+ ]
+];
+foreach($invalidKeyCases as $caseName=>$case){
+ $invalidHome=$fixture.'/invalid-key-'.preg_replace('/[^a-z0-9-]/','-',strtolower($caseName));
+ integration_expect(mkdir($invalidHome,0700,true),'isolated invalid-key HOME must be created');
+ $invalidGet=array_replace($common,[
+  'REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'','HOME'=>$invalidHome
+ ]);
+ [$invalidPage]=integration_run_role($root,'admin',$invalidGet);
+ $invalidToken=integration_token($invalidPage);
+ if($case['transport']==='raw-plus'){
+  $encodedKey=str_replace('%2B','+',rawurlencode($case['key']));
+  $negativeBody='csrf='.rawurlencode($invalidToken).'&public_key='.$encodedKey.'&add_key=1';
+ }else{
+  $negativeBody=http_build_query(['csrf'=>$invalidToken,'public_key'=>$case['key'],'add_key'=>'1'],'','&',PHP_QUERY_RFC1738);
+ }
+ $invalidEnvironment=array_replace($common,[
+  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
+  'POST'=>$negativeBody,'CONTENT_LENGTH'=>(string)strlen($negativeBody),'HOME'=>$invalidHome
+ ]);
+ [$invalidResult]=integration_run_role($root,'admin',$invalidEnvironment);
+ integration_expect_invalid_key($invalidResult,$invalidHome,$caseName);
 }
 
 $missingCsrfBody=http_build_query(['cwd'=>$homeA,'command'=>'pwd','run'=>'1']);
