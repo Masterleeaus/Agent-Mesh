@@ -80,6 +80,7 @@ const collisionStatus = manifest.prefix_collisions.map(({ prefix, files }) => ({
   })),
 }));
 const schemaDump = run("pg_dump", [databaseUrl, "--schema-only", "--no-owner", "--no-privileges"])
+  .replace(/^-- Dumped on .*\r?\n/m, "")
   .split(/\r?\n/)
   .filter((line) => !/^\\(?:un)?restrict\b/.test(line))
   .join("\n");

@@ -15,7 +15,7 @@ if (!databaseUrl) {
 }
 
 function run(program, args) {
-  const result = spawnSync(program, args, { encoding: "utf8", env: { ...process.env, PGCONNECT_TIMEOUT: "10" } });
+  const result = spawnSync(program, args, { encoding: "utf8", maxBuffer: 64 * 1024 * 1024, env: { ...process.env, PGCONNECT_TIMEOUT: "10" } });
   if (result.error || result.status !== 0) {
     console.error(`${program} failed (exit ${result.status ?? "unavailable"}); output suppressed to avoid disclosing connection details`);
     process.exit(2);
@@ -37,11 +37,16 @@ if (tableExists) {
     process.exit(2);
   }
   const checksumExpr = columns.has("checksum") ? "COALESCE(checksum, '')" : "''";
+  const hasAppliedAt = columns.has("applied_at");
+  const appliedOrderExpr = hasAppliedAt
+    ? "CASE WHEN applied_at IS NOT NULL THEN row_number() OVER (ORDER BY applied_at, filename) ELSE NULL::bigint END"
+    : "NULL::bigint";
+  const orderByExpr = hasAppliedAt ? "applied_at NULLS FIRST, filename" : "filename";
   const rows = run("psql", [databaseUrl, "-X", "-A", "-t", "-F", "\t", "-v", "ON_ERROR_STOP=1", "-c",
-    `SELECT filename, ${checksumExpr} FROM schema_migrations ORDER BY filename`]);
+    `SELECT filename, ${checksumExpr}, ${appliedOrderExpr} FROM schema_migrations ORDER BY ${orderByExpr}`]);
   ledger = rows.split(/\r?\n/).filter(Boolean).map((line) => {
-    const [filename, checksum = ""] = line.split("\t");
-    return { filename, checksum: checksum || null };
+    const [filename, checksum = "", appliedOrder = ""] = line.split("\t");
+    return { filename, checksum: checksum || null, applied_order: appliedOrder ? Number(appliedOrder) : null };
   });
 }
 
@@ -75,7 +80,11 @@ const collisionStatus = manifest.prefix_collisions.map(({ prefix, files }) => ({
   })),
 }));
 const schemaDump = run("pg_dump", [databaseUrl, "--schema-only", "--no-owner", "--no-privileges"]);
-const normalizedSchemaDump = schemaDump.replace(/^-- Dumped on .*\r?\n/m, "");
+const normalizedSchemaDump = schemaDump
+  .replace(/^-- Dumped on .*\r?\n/m, "")
+  .split(/\r?\n/)
+  .filter((line) => !/^\\(?:un)?restrict\b/.test(line))
+  .join("\n");
 
 process.stdout.write(`${JSON.stringify({
   format: "titan-migration-history-evidence/v1",
