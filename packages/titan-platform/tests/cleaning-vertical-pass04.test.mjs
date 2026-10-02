@@ -97,13 +97,14 @@ test('adapter uses the real cleaning bundle and retained runtime contract',async
   assert.deepEqual(bundleIds,expectedBundleIds);
   assert.ok(payload.selections.every(selection=>bundleIds.includes(selection.job_type_id)));
 
-  let stored=null;
+  const records=new Map();
   const database={
-    async getRecord(){return stored;},
-    async putRecord(_context,record){stored={...record,version:Number(stored?.version||0)+1};return stored;}
+    async getRecord(context){return records.get(context.company_id)||null;},
+    async putRecord(context,record){const stored={...record,version:Number(records.get(context.company_id)?.version||0)+1};records.set(context.company_id,stored);return stored;}
   };
   const authority=createCleaningServiceSetupAuthority({database,cleaningBundle});
   await assert.rejects(authority.save({company_id:'company-a'},{...structuredClone(payload),recurrence:{...payload.recurrence,supported_frequencies:['yearly']}}),/unsupported cleaning recurrence frequency/);
+  await assert.rejects(authority.save({company_id:'company-a'},{...structuredClone(payload),company_id:'company-b'}),/Cross-company cleaning setup payload rejected/);
   const saved=await authority.save({company_id:'company-a'},payload);
   assert.deepEqual(saved.selected_job_types,expectedBundleIds);
   const view=await authority.read({company_id:'company-a'});
@@ -116,6 +117,12 @@ test('adapter uses the real cleaning bundle and retained runtime contract',async
   assert.equal(view.selections[5].pricing.fixed_price,220);
   assert.equal(view.selections[6].pricing.fixed_price,140);
   assert.deepEqual(view.recurrence,{enabled:true,supported_frequencies:['weekly','fortnightly'],default_frequency:'fortnightly',supported_job_type_ids:['domestic_recurring','deep_clean','airbnb_turnover','commercial','office']});
+  const otherCompany=await authority.read({company_id:'company-b'});
+  assert.deepEqual(otherCompany.selections,[]);
+  assert.equal(otherCompany.recurrence.enabled,false);
+  const restartedAuthority=createCleaningServiceSetupAuthority({database,cleaningBundle});
+  assert.deepEqual((await restartedAuthority.read({company_id:'company-a'})).recurrence,view.recurrence);
+  await assert.rejects(restartedAuthority.save({company_id:'company-a'},{...payload,expected_revision:0}),/cleaning setup revision mismatch/);
 });
 
 test('equipment and supply defaults are cleaning configuration, not implicit capabilities',()=>{
