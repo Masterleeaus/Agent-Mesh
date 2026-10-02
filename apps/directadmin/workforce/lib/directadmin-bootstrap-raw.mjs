@@ -85,15 +85,15 @@ function cookiesForAction(value, action) {
     const part = raw.trim();
     if (!part) throw new Error('invalid-cookie');
     const [name, cookieValue] = readCookiePair(part);
-    if (!['session', 'key', ...(action === 'bootstrap' ? [COOKIE_NAME] : [])].includes(name) || parsed.has(name)) {
+    if (!['session', 'key', COOKIE_NAME].includes(name) || parsed.has(name)) {
       throw new Error('invalid-cookie');
     }
     if (name === COOKIE_NAME && !SESSION_TOKEN.test(cookieValue)) throw new Error('invalid-cookie');
     parsed.set(name, cookieValue);
   }
-  if (!parsed.has('session') || !parsed.has('key') || (action === 'nonce' && parsed.size !== 2)) throw new Error('invalid-cookie');
+  if (!parsed.has('session') || !parsed.has('key')) throw new Error('invalid-cookie');
   const entries = [`session=${parsed.get('session')}`, `key=${parsed.get('key')}`];
-  if (parsed.has(COOKIE_NAME)) entries.push(`${COOKIE_NAME}=${parsed.get(COOKIE_NAME)}`);
+  if (action === 'bootstrap' && parsed.has(COOKIE_NAME)) entries.push(`${COOKIE_NAME}=${parsed.get(COOKIE_NAME)}`);
   return entries.join('; ');
 }
 

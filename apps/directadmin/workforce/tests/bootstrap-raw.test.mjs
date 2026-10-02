@@ -31,6 +31,7 @@ const csrf = 'C'.repeat(43);
 const sessionCookie = '__Host-titan-da-session=a.b.c; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=300';
 const daCookie = 'session=synthetic+session; key=synthetic+key';
 let mode = 'success';
+let responseSessionCookie = sessionCookie;
 const observations = [];
 const upstream = createServer(async (request, response) => {
   const chunks = [];
@@ -41,7 +42,7 @@ const upstream = createServer(async (request, response) => {
     auth: request.headers.authorization ?? null, csrf: request.headers['x-titan-da-bootstrap-csrf'] ?? null,
     headers: Object.keys(request.headers).sort(), bodyLength: body.length });
   const payload = request.url.endsWith('bootstrap-nonce') ? { csrf_nonce: nonce } : { csrf_token: csrf };
-  response.writeHead(200, { 'content-type': 'application/json; charset=utf-8', ...(request.url.endsWith('bootstrap') ? { 'set-cookie': sessionCookie } : {}) });
+  response.writeHead(200, { 'content-type': 'application/json; charset=utf-8', ...(request.url.endsWith('bootstrap') ? { 'set-cookie': responseSessionCookie } : {}) });
   if (mode === 'stall') return;
   if (mode === 'slow-drip') {
     response.write('{"csrf_nonce":"');
@@ -61,6 +62,7 @@ await chmod(portConfig, 0o400);
 function headers(lines) { return encodeURIComponent(lines.join('\r\n')); }
 function formHeaders(lines) { return headers(lines).replace(/%20/g, '+'); }
 function env(action, overrides = {}) {
+  const { cookieHeader = action === 'bootstrap' ? `${daCookie}; __Host-titan-da-session=a.b.c` : daCookie, ...environmentOverrides } = overrides;
   const base = {
     REQUEST_METHOD: 'POST',
     QUERY_STRING: 'headers_to_env=yes&pipe_post=yes',
@@ -68,14 +70,14 @@ function env(action, overrides = {}) {
       'Host: panel.example.test:2222',
       `Origin: ${origin}`,
       'Sec-Fetch-Site: same-origin',
-      `Cookie: ${action === 'bootstrap' ? `${daCookie}; __Host-titan-da-session=a.b.c` : daCookie}`,
+      `Cookie: ${cookieHeader}`,
       ...(action === 'bootstrap' ? [`X-Titan-DA-Bootstrap-CSRF: ${nonce}`] : []),
       'X-Caller-Company-ID: should-never-forward',
       'User-Agent: fixture',
     ]),
     POST: 'stdin=true',
     CONTENT_LENGTH: '0',
-    ...overrides,
+    ...environmentOverrides,
   };
   return base;
 }
@@ -162,6 +164,51 @@ test('all packaged role RAW entrypoints perform the fixed loopback nonce and ses
   assert.equal(observations.at(-1).headers.includes('user-agent'), false);
 });
 
+test('browser cookie jar can renew the session across a second nonce/bootstrap cycle', async () => {
+  const cookieJar = new Map([['session', 'synthetic+session'], ['key', 'synthetic+key']]);
+  const cookieHeader = () => [...cookieJar].map(([name, value]) => `${name}=${value}`).join('; ');
+  const storeSetCookie = value => {
+    const [pair] = value.split(';', 1);
+    const offset = pair.indexOf('=');
+    assert.ok(offset > 0, 'browser stores a well-formed Set-Cookie pair');
+    cookieJar.set(pair.slice(0, offset), pair.slice(offset + 1));
+  };
+
+  const nonceFile = join(packageDir, 'user/bootstrap-nonce.raw');
+  const bootstrapFile = join(packageDir, 'user/bootstrap.raw');
+  const firstNonce = parseRaw((await run(nonceFile, env('nonce', { cookieHeader: cookieHeader() }))).raw);
+  assert.equal(firstNonce.status, 200);
+  const firstBootstrap = parseRaw((await run(bootstrapFile, env('bootstrap', {
+    cookieHeader: cookieHeader(),
+    HEADERS: headers(['Host: panel.example.test:2222', `Origin: ${origin}`, 'Sec-Fetch-Site: same-origin',
+      `Cookie: ${cookieHeader()}`, `X-Titan-DA-Bootstrap-CSRF: ${firstNonce.body.csrf_nonce}`]),
+  }))).raw);
+  assert.equal(firstBootstrap.status, 200);
+  storeSetCookie(firstBootstrap.headers.get('set-cookie')[0]);
+  assert.equal(cookieJar.get('__Host-titan-da-session'), 'a.b.c');
+
+  const secondNonce = parseRaw((await run(nonceFile, env('nonce', { cookieHeader: cookieHeader() }))).raw);
+  assert.equal(secondNonce.status, 200, 'the browser automatically sends its HttpOnly Titan session cookie on the next nonce request');
+  assert.equal(observations.at(-1).cookie, daCookie, 'nonce forwarding strips Titan session material before Workforce');
+
+  const previous = responseSessionCookie;
+  responseSessionCookie = '__Host-titan-da-session=d.e.f; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=300';
+  try {
+    const renewal = parseRaw((await run(bootstrapFile, env('bootstrap', {
+      cookieHeader: cookieHeader(),
+      HEADERS: headers(['Host: panel.example.test:2222', `Origin: ${origin}`, 'Sec-Fetch-Site: same-origin',
+        `Cookie: ${cookieHeader()}`, `X-Titan-DA-Bootstrap-CSRF: ${secondNonce.body.csrf_nonce}`]),
+    }))).raw);
+    assert.equal(renewal.status, 200);
+    assert.equal(observations.at(-1).cookie, `${daCookie}; __Host-titan-da-session=a.b.c`,
+      'bootstrap alone forwards the existing Titan session for renewal');
+    storeSetCookie(renewal.headers.get('set-cookie')[0]);
+    assert.equal(cookieJar.get('__Host-titan-da-session'), 'd.e.f', 'the browser replaces its old HttpOnly cookie with the renewed value');
+  } finally {
+    responseSessionCookie = previous;
+  }
+});
+
 test('role RAW rejects malformed/duplicate headers, identity additions, foreign cookies, route flags and origins before loopback', async () => {
   const binary = join(packageDir, 'user/bootstrap-nonce.raw');
   const count = observations.length;
@@ -172,6 +219,8 @@ test('role RAW rejects malformed/duplicate headers, identity additions, foreign 
     env('nonce', { HEADERS: headers(['Host: attacker.example', `Origin: ${origin}`, 'Sec-Fetch-Site: same-origin', `Cookie: ${daCookie}`]) }),
     env('nonce', { HEADERS: headers(['Host: panel.example.test:2222', 'Origin: https://attacker.example', 'Sec-Fetch-Site: same-origin', `Cookie: ${daCookie}`]) }),
     env('nonce', { HEADERS: headers(['Host: panel.example.test:2222', `Origin: ${origin}`, 'Sec-Fetch-Site: same-origin', `Cookie: ${daCookie}; analytics=private-value`]) }),
+    env('nonce', { HEADERS: headers(['Host: panel.example.test:2222', `Origin: ${origin}`, 'Sec-Fetch-Site: same-origin', `Cookie: ${daCookie}; __Host-titan-da-session=a.b.c; __Host-titan-da-session=d.e.f`]) }),
+    env('nonce', { HEADERS: headers(['Host: panel.example.test:2222', `Origin: ${origin}`, 'Sec-Fetch-Site: same-origin', `Cookie: ${daCookie}; __Host-titan-da-session=malformed`]) }),
     env('nonce', { HEADERS: headers(['Host: panel.example.test:2222', `Origin: ${origin}`, 'Sec-Fetch-Site: same-origin', `Cookie: ${daCookie}`, 'X-Titan-Company-ID: forged']) }),
     env('nonce', { HEADERS: '%zz' }),
     env('nonce', { REQUEST_METHOD: 'GET' }),
