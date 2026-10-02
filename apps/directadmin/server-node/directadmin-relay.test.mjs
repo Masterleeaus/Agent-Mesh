@@ -868,6 +868,45 @@ test("mixed private and public DNS answers are rejected before connecting", asyn
   assert.deepEqual(lookupOptions, { all: true, verbatim: true });
 });
 
+test("remote hostname DNS rejects loopback and link-local answers before connecting", async () => {
+  const config = {
+    publicHost: "panel.example.test:2222",
+    publicOrigin: controlOrigin,
+    upstreamUrl: new URL("https://workforce.internal:3010"),
+  };
+  const envelope = {
+    route: { method: "GET", path: "/v1/directadmin/context" },
+    cookie: DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret",
+    csrf,
+    accept: "application/json",
+    referer: controlOrigin + "/CMD_PLUGINS/titan-server-node/admin/index.html",
+  };
+  for (const address of [
+    { address: "127.0.0.1", family: 4 },
+    { address: "::1", family: 6 },
+    { address: "169.254.1.2", family: 4 },
+    { address: "fe80::1", family: 6 },
+  ]) {
+    await assert.rejects(
+      forwardRequest(config, envelope, Buffer.alloc(0), {
+        resolveAddresses: async () => [address],
+      }),
+      (error) => error.status === 502 && error.code === "workforce_target_not_private",
+      address.address,
+    );
+  }
+  await assert.rejects(
+    forwardRequest(config, envelope, Buffer.alloc(0), {
+      resolveAddresses: async () => [
+        { address: "10.20.30.40", family: 4 },
+        { address: "127.0.0.1", family: 4 },
+      ],
+    }),
+    (error) => error.status === 502 && error.code === "workforce_target_not_private",
+    "a mixed RFC1918/loopback answer set is rejected",
+  );
+});
+
 test("POST body caps/timeouts and Workforce upstream timeout return bounded RAW errors", async (t) => {
   const f = await fixture(t, "hang");
   const body = '{"company_id":"company-a"}';
