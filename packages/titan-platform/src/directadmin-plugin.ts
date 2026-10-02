@@ -1,5 +1,8 @@
 /** DirectAdmin is an adapter shell. This module defines the shared, authority-neutral
  * contracts used by DirectAdmin plugins; it never grants Titan business authority. */
+export * from './directadmin-session-bridge.js';
+export * from './directadmin-gateway.js';
+export * from './directadmin-cockpit.js';
 export type DirectAdminRole = "admin" | "reseller" | "user";
 export type DirectAdminPluginPackage = Readonly<{
   plugin_id: string;
@@ -97,6 +100,8 @@ export type ContextResolution = Readonly<
 
 const nonEmpty = (value: unknown): value is string => typeof value === "string" && value.trim().length > 0;
 
+/** @deprecated Presentation-only compatibility adapter. Hosted requests must use
+ * DirectAdminSessionBridge; authenticated:true is not proof of authentication. */
 export async function resolveDirectAdminTitanContext(
   session: DirectAdminSession,
   resolveIdentity: IdentityResolver,
@@ -120,7 +125,7 @@ export async function resolveDirectAdminTitanContext(
     status: "resolved",
     context: Object.freeze({
       schema: "titan.directadmin.context/v1", actor_id: identity.actor_id,
-      company_id: identity.active_company_id, allowed_company_ids: Object.freeze(companies),
+      company_id: identity.active_company_id, allowed_company_ids: Object.freeze([identity.active_company_id]),
       entitlements: Object.freeze([...(identity.entitlements ?? [])]),
       session_revision: identity.session_revision,
       authority_revision: nonEmpty(identity.authority_revision) ? identity.authority_revision : null,
@@ -202,7 +207,7 @@ export type PluginAvailability = Readonly<{
   effective_authority: "not-checked" | "allowed" | "denied" | "unknown";
 }>;
 
-const SENSITIVE_KEY = /(?:authorization|access.?token|refresh.?token|secret|password|credential|private.?key|api.?key)/i;
+const SENSITIVE_KEY = /(?:authorization|token|cookie|csrf|session.?id|secret|password|credential|private.?key|api.?key)/i;
 const SENSITIVE_VALUE = /(?:\bBearer\s+)[A-Za-z0-9._~+/=-]+|-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g;
 export function redactDirectAdminDiagnostics(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(redactDirectAdminDiagnostics);
@@ -210,7 +215,7 @@ export function redactDirectAdminDiagnostics(value: unknown): unknown {
     return Object.fromEntries(Object.entries(value).map(([key, child]) =>
       [key, SENSITIVE_KEY.test(key) ? "[REDACTED]" : redactDirectAdminDiagnostics(child)]));
   }
-  return typeof value === "string" ? value.replace(SENSITIVE_VALUE, "[REDACTED]") : value;
+  return typeof value === "string" ? value.replace(SENSITIVE_VALUE, "[REDACTED]").replace(/\b[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{20,}\b/g, '[REDACTED]') : value;
 }
 export type CockpitWidget = Readonly<{
   id: string;
