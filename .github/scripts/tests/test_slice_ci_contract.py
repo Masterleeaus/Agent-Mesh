@@ -24,6 +24,12 @@ class SliceCIGateTests(unittest.TestCase):
         self.assertIn("contains(github.event.pull_request.body, '**Subproduct gate:** run')", workflow)
         self.assertIn("github.event_name == 'workflow_dispatch'", workflow)
 
+    def test_candidate_policy_workflow_avoids_global_test_discovery(self):
+        workflow = (ROOT / ".github/workflows/mission-evidence-tests.yml").read_text()
+        self.assertIn("test_validate_agent_claim.py", workflow)
+        self.assertIn("test_slice_ci_contract.py", workflow)
+        self.assertNotIn("--self-test", workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
