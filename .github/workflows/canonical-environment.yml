@@ -1,0 +1,32 @@
+name: Canonical environment defaults
+
+on:
+  pull_request:
+    paths:
+      - '.env.example'
+      - 'infra/vps.env.example'
+      - 'scripts/vps/install-sqlite-vps.sh'
+      - 'scripts/canonical-env-defaults.test.mjs'
+      - '.github/workflows/canonical-environment.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.env.example'
+      - 'infra/vps.env.example'
+      - 'scripts/vps/install-sqlite-vps.sh'
+      - 'scripts/canonical-env-defaults.test.mjs'
+      - '.github/workflows/canonical-environment.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  canonical-environment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate canonical defaults and bootstrap
+        run: node --test scripts/canonical-env-defaults.test.mjs

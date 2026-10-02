@@ -33,3 +33,10 @@ test("VPS template keeps canonical company storage root and marks legacy booking
   assert.match(env, /^TITAN_COMPANY_DATA_ROOT=/m);
   assert.equal(activeValue(env, "BOOKING_ACCOUNT_ID"), false);
 });
+
+test("VPS installer never invents an account selector or hardcodes legacy AI/PostgreSQL", () => {
+  const installer = read("scripts/vps/install-sqlite-vps.sh");
+  assert.doesNotMatch(installer, /setenv\s+BOOKING_ACCOUNT_ID/);
+  assert.doesNotMatch(installer, /kernel\/random\/uuid/);
+  assert.doesNotMatch(installer, /ANTHROPIC_API_KEY|POSTGRES_DB|ai_fsm/);
+});

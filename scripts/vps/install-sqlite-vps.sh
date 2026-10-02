@@ -67,7 +67,8 @@ setenv DATABASE_DIALECT sqlite; setenv DATABASE_URL file:/app/data/titan-zero.db
 [[ -n "$APP_DOMAIN" ]] && setenv APP_DOMAIN "$APP_DOMAIN"
 secret AUTH_SECRET; secret APP_ENCRYPTION_KEY
 [[ $NO_TLS -eq 1 ]] && setenv SECURE_COOKIES false || setenv SECURE_COOKIES true
-[[ "$(getenv BOOKING_ACCOUNT_ID)" != 00000000-0000-0000-0000-000000000000 && -n "$(getenv BOOKING_ACCOUNT_ID)" ]] || setenv BOOKING_ACCOUNT_ID "$(cat /proc/sys/kernel/random/uuid)"
+# Never mint a legacy account selector here. Public booking must use a trusted
+# company/surface context; an installer-generated UUID is not company identity.
 export TZ_ENV_FILE="$ENV" TZ_DATA_ROOT="$DATA" APP_PORT
 COMPOSE="$RELEASE/infra/compose.vps.yml"
 docker compose --env-file "$ENV" -f "$COMPOSE" config -q
