@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { ENABLED_PLUGINS, packagePortfolio } from "./package-directadmin-portfolio.mjs";
 import { EXECUTABLE_FILES as SERVER_NODE_EXECUTABLE_FILES, PACKAGE_FILES as SERVER_NODE_PACKAGE_FILES, packagePlugin } from "./package-directadmin-plugin.mjs";
 import { packageFiles as WORKFORCE_PACKAGE_FILES } from "../apps/directadmin/workforce/tools/package.mjs";
+import { renderEntry as renderBrandStudioEntry } from "../apps/directadmin/brand-studio/lib/entry.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -169,4 +170,42 @@ test("portfolio refuses to replace a previously emitted Workforce archive", (t) 
   fs.writeFileSync(sdkModule, `${sdkSource}export const changed = true;\n`);
   assert.throws(() => packagePortfolio({ outputDir, workforceSdkModulePath: sdkModule }), /refusing to overwrite existing file/);
   assert.deepEqual(fs.readFileSync(archive), original);
+});
+
+
+test("portfolio registers Titan Web under its stable ID with shared SDK and Server Node dependency", () => {
+  const descriptor = ENABLED_PLUGINS.find((plugin) => plugin.id === "titan_web");
+  assert.ok(descriptor, "portfolio must include the canonical Titan Web plugin");
+  assert.equal(descriptor.displayName, "Titan Web");
+  assert.equal(descriptor.source, "apps/directadmin/brand-studio");
+  assert.ok(descriptor.files.includes("plugin.conf"));
+  assert.ok(descriptor.files.includes("admin"));
+  assert.ok(descriptor.files.includes("reseller"));
+  assert.ok(descriptor.files.includes("user"));
+  assert.ok(descriptor.files.includes("hooks"));
+  assert.ok(descriptor.files.includes("images/sdk.mjs"));
+  assert.deepEqual(descriptor.generatedFiles, ["images/sdk.mjs"]);
+  assert.deepEqual(descriptor.dependencies, ["titan-server-node"]);
+  const source = path.resolve(ROOT, descriptor.source);
+  for (const file of descriptor.files) {
+    if (!descriptor.generatedFiles.includes(file)) assert.ok(fs.existsSync(path.join(source, file)), `Titan Web package source is missing ${file}`);
+  }
+  const manifest = fs.readFileSync(path.join(source, "plugin.conf"), "utf8");
+  assert.match(manifest, /^name=Titan Web$/m);
+  assert.match(manifest, /^version=\d+\.\d+\.\d+$/m);
+});
+
+test("Titan Web role entrypoints load the authenticated read-only cockpit and reject unknown roles", () => {
+  const sdkModule = "export const DirectAdminCockpitSession = class {}; export const mountDirectAdminProjection = () => {};";
+  for (const role of ["admin", "reseller", "user"]) {
+    const html = renderBrandStudioEntry(role, { sdkModule });
+    assert.match(html, new RegExp(`data-role="${role}"`));
+    assert.match(html, /<script type="importmap">/);
+    assert.match(html, /titan-sdk/);
+    assert.match(html, /mountDirectAdminProjection/);
+    assert.equal(/<script[^>]+src=/i.test(html), false);
+    assert.equal(html.includes("https://"), false);
+    assert.equal(html.includes("http://"), false);
+  }
+  assert.throws(() => renderBrandStudioEntry("root"), /unsupported DirectAdmin role/);
 });
