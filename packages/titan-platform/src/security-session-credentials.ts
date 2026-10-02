@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
 import { requireSecurityId, requireSecurityRevision, securityTimestamp } from './security-boundary.js';
-import type { CurrentSessionContext, IdentitySessionRegistry, SessionSourceReference, VerifiedSessionIdentity } from './security-session-registry.js';
+import { isIdentityRegistryUnavailableError, type CurrentSessionContext, type IdentitySessionRegistry,
+  type SessionSourceReference, type VerifiedSessionIdentity } from './security-session-registry.js';
 
 type Algorithm = 'ES256' | 'RS256' | 'HS256' | 'EdDSA';
 type Key = CryptoKey | Uint8Array;
@@ -54,7 +55,7 @@ function trust(input: Trust): Trust {
   if (input.algorithm === 'HS256' && (!(key instanceof Uint8Array) || key.byteLength < 32)) throw new Error('credential-key-invalid');
   if (input.algorithm !== 'HS256' && key instanceof Uint8Array) throw new Error('credential-key-invalid');
   return Object.freeze({ issuer: input.issuer, audience: input.audience, key_id: input.key_id,
-    algorithm: input.algorithm, verification_key: key instanceof Uint8Array ? key.slice() : key });
+    algorithm: input.algorithm, verification_key: key instanceof Uint8Array ? new Uint8Array(key) : key });
 }
 
 function id(payload: JWTPayload, field: string): string {
@@ -111,7 +112,7 @@ export function createSessionCredentialService(options: SessionCredentialOptions
   const clock = options.now ?? (() => new Date());
   const lifetime = options.lifetime_seconds ?? 300;
   if (!Number.isSafeInteger(lifetime) || lifetime < 1 || lifetime > 900) throw new Error('credential-lifetime-invalid');
-  const signingKey = options.signing_key instanceof Uint8Array ? options.signing_key.slice() : options.signing_key;
+  const signingKey = options.signing_key instanceof Uint8Array ? new Uint8Array(options.signing_key) : options.signing_key;
   if (signingKey !== undefined && policy.algorithm === 'HS256' && (!(signingKey instanceof Uint8Array) || signingKey.byteLength < 32)) throw new Error('credential-key-invalid');
   if (signingKey !== undefined && policy.algorithm !== 'HS256' && signingKey instanceof Uint8Array) throw new Error('credential-key-invalid');
   const workforceLifetime = options.workforce_zero_exchange?.lifetime_seconds ?? 300;
@@ -124,6 +125,13 @@ export function createSessionCredentialService(options: SessionCredentialOptions
       || (workforceTarget.algorithm === 'HS256' && (!(workforceSigningKey instanceof Uint8Array) || workforceSigningKey.byteLength < 32))
       || (workforceTarget.algorithm !== 'HS256' && workforceSigningKey instanceof Uint8Array)) throw new Error('credential-key-invalid');
   }
+  // A signing service trusted for a DirectAdmin issuer must not use generic
+  // issue() to mint an independent Workforce session. DA-derived Workforce
+  // credentials must go through the fixed, source-bound Zero exchange. A
+  // public-key-only Workforce verifier is still allowed to validate those
+  // derived credentials.
+  if (signingKey !== undefined && workforceTarget === undefined && policy.audience === 'workforce'
+    && canonicalDirectAdminProvider(upstream.issuer)) throw new Error('workforce-zero-exchange-required');
 
   function now(): Date {
     const value = clock();
@@ -245,7 +253,10 @@ export function createSessionCredentialService(options: SessionCredentialOptions
 
   // Errors deliberately omit JWTs, crypto diagnostics, claim values and storage details.
   async function deny<T>(operation: () => Promise<T>): Promise<T> {
-    try { return await operation(); } catch { throw new Error('authentication-denied'); }
+    try { return await operation(); } catch (error) {
+      if (isIdentityRegistryUnavailableError(error)) throw new Error('identity-registry-unavailable');
+      throw new Error('authentication-denied');
+    }
   }
 
   return Object.freeze({
@@ -312,6 +323,10 @@ export function createSessionCredentialService(options: SessionCredentialOptions
       return deny(async () => {
         if (workforceTarget === undefined || workforceSigningKey === undefined || daNode === undefined) {
           throw new Error('workforce-zero-exchange-disabled');
+        }
+        if (expectation !== undefined && Object.keys(expectation).some(field =>
+          !['company_id', 'device_id', 'actor_id', 'context_revision'].includes(field))) {
+          throw new Error('workforce-zero-target-fixed');
         }
         if (expectation !== undefined) expected(expectation);
         const at = now();

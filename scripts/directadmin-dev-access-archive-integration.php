@@ -189,6 +189,31 @@ integration_expect((file_get_contents($rawAuthorizedKeys) ?: '') === $syntheticK
 integration_expect(strpos($rawDuplicate, 'Key already installed.') !== false, 'raw POST duplicate must remain idempotent');
 integration_expect((file_get_contents($rawAuthorizedKeys) ?: '') === $syntheticKey . "\n", 'raw POST duplicate must not append a second key');
 
+$rawCrLfBody = $body . "\r\n";
+$rawCrLfPostEnvironment = array_replace($baseEnvironment, [
+    'REQUEST_METHOD' => 'POST',
+    'SCRIPT_NAME' => $route,
+    'QUERY_STRING' => '',
+    'POST' => $rawCrLfBody,
+    'CONTENT_LENGTH' => (string)strlen($rawCrLfBody),
+]);
+[$rawCrLfResult] = integration_run_role($entrypoint, $pluginRoot, $rawCrLfPostEnvironment);
+integration_expect(strpos($rawCrLfResult, 'Request rejected: malformed or ambiguous form data.') === false, 'raw POST with a terminal CRLF must not be rejected as malformed or ambiguous');
+integration_expect(strpos($rawCrLfResult, 'Key already installed.') !== false, 'raw POST terminal-CRLF form must reach idempotent key validation');
+integration_expect((file_get_contents($authorizedKeys) ?: '') === $syntheticKey . "\n", 'raw POST terminal CRLF must not change the installed synthetic key');
+
+$trailingSeparatorBody = $body . "&";
+$trailingByteEnvironment = array_replace($baseEnvironment, [
+    'REQUEST_METHOD' => 'POST',
+    'SCRIPT_NAME' => $route,
+    'QUERY_STRING' => 'pipe_post=yes',
+    'POST' => 'stdin=true',
+    'CONTENT_LENGTH' => (string)strlen($trailingSeparatorBody),
+]);
+[$rejected] = integration_run_role($entrypoint, $pluginRoot, $trailingByteEnvironment, $trailingSeparatorBody);
+integration_expect(strpos($rejected, 'Request rejected: malformed or ambiguous form data.') !== false, 'an empty trailing form field must fail closed with the reported diagnostic (observed=' . integration_rejection_kind($rejected) . ')');
+integration_expect((file_get_contents($authorizedKeys) ?: '') === $syntheticKey . "\n", 'rejected trailing-separator form must not change authorized_keys');
+
 $invalidHome = $fixture . '/embedded-newline-home';
 integration_expect(@mkdir($invalidHome, 0700, true), 'embedded-newline HOME must be created');
 $invalidSecretDirectory = $invalidHome . '/.titan-dev-access';
