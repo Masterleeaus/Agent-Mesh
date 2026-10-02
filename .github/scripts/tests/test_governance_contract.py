@@ -18,6 +18,9 @@ class GovernanceContractTests(unittest.TestCase):
         self.assertEqual(upper, lower)
         self.assertIn('**Linked issue:** Refs #', upper)
         self.assertIn('agent/issue-<issue-number>', upper)
+        self.assertIn('**Parent issue:** Refs #<parent, or none>', upper)
+        self.assertIn('**Subproduct gate:** defer / run', upper)
+        self.assertIn('Closes #child', upper)
         blocks = re.findall(r'```mission-evidence\n(.*?)\n```', upper, re.S)
         self.assertEqual(len(blocks), 1)
         evidence = json.loads(blocks[0])
@@ -35,7 +38,8 @@ class GovernanceContractTests(unittest.TestCase):
         contract = (ROOT / 'docs/agent/MISSION_CLOSURE_EVIDENCE.md').read_text()
         for required in ('Planning/specification', 'Implementation', 'Integration',
                          'Certification', 'Mandatory human review', 'Premature closure',
-                         'SUPERSEDED', 'september-28-plugin-mission.json'):
+                         'SUPERSEDED', 'september-28-plugin-mission.json',
+                         'child implementation issue', 'Subproduct gate', 'parent remains open'):
             self.assertIn(required, contract)
 
     def test_trusted_workflow_does_not_execute_candidate_code(self):
@@ -59,6 +63,16 @@ class GovernanceContractTests(unittest.TestCase):
         self.assertIn('persist-credentials: false', workflow)
         self.assertIn('contents: read', workflow)
         self.assertIn('validate-agent-claim.py --self-test', workflow)
+
+    def test_titan_ci_defers_broad_gates_to_subproduct_completion(self):
+        workflow = (ROOT / '.github/workflows/titan-ci.yml').read_text()
+        self.assertIn('Slice merge hygiene', workflow)
+        self.assertIn('**Subproduct gate:** run', workflow)
+        self.assertIn("github.event_name != 'pull_request'", workflow)
+        contract = (ROOT / 'AGENTS.md').read_text()
+        self.assertIn('small implementation issues', contract)
+        self.assertIn('company isolation', contract)
+        self.assertIn('parent stays open', contract)
 
     def test_evidence_ledger_ownership_inventory_is_complete_and_gated(self):
         script = ROOT / '.github/scripts/check-evidence-ledger-ownership.py'
