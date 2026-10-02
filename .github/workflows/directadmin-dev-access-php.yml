@@ -1,0 +1,87 @@
+name: DirectAdmin Developer Portal PHP verification
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/directadmin/dev-access/**"
+      - ".github/workflows/directadmin-dev-access-php.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/directadmin/dev-access/**"
+      - ".github/workflows/directadmin-dev-access-php.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: directadmin-dev-access-php-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php-package-and-transport:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      # Full-SHA pin for actions/checkout v4.2.2.
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Verify documented preinstalled PHP CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Ubuntu 24.04 runner image manifest lists PHP 8.3.6:
+          # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md#php-tools
+          if ! command -v php >/dev/null 2>&1; then
+            echo "::error::Ubuntu 24.04 runner is missing its documented preinstalled PHP CLI. No runtime installation will be attempted."
+            exit 1
+          fi
+          php --version
+          php -r '
+            if (PHP_MAJOR_VERSION !== 8 || PHP_MINOR_VERSION !== 3) {
+              fwrite(STDERR, "::error::Expected documented PHP 8.3.x CLI; found ".PHP_VERSION.PHP_EOL);
+              exit(1);
+            }
+            fwrite(STDOUT, "Verified preinstalled PHP CLI ".PHP_VERSION.PHP_EOL);
+          '
+
+      - name: Run the complete Developer Portal package gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          TDA_PACKAGE_DIST="$RUNNER_TEMP/developer-portal-package" \
+            bash apps/directadmin/dev-access/tools/package.sh
+
+      - name: Lint every PHP source and executable role page
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="apps/directadmin/dev-access"
+          for file in \
+            "$root/lib/app.php" \
+            "$root/tools/request-integration-test.php" \
+            "$root/tools/security-test.php" \
+            "$root/admin/index.html" \
+            "$root/reseller/index.html" \
+            "$root/user/index.html"; do
+            php -l "$file"
+          done
+
+      - name: Verify and exercise the versioned v1.3.2 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="apps/directadmin/dev-access"
+          candidate="$root/dist/v1.3.2/titan_dev_access.tar.gz"
+          (
+            cd "$root/dist/v1.3.2"
+            sha256sum --check titan_dev_access.tar.gz.sha256
+          )
+          bash "$root/tools/plugin-lab.sh" "$candidate"
+          extracted="$RUNNER_TEMP/developer-portal-v1.3.2"
+          mkdir -p "$extracted"
+          tar -xzf "$candidate" -C "$extracted"
+          php "$root/tools/request-integration-test.php" "$extracted"
