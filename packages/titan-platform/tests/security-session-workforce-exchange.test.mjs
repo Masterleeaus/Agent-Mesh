@@ -196,8 +196,12 @@ test('exchange rejects login assertions, wrong DA host/audience/node/algorithm/k
     ['key identifier', await f.signSource(da.credential, {}, { kid: 'untrusted-key' })],
     ['type', await f.signSource(da.credential, {}, { typ: 'JWT' })],
     ['algorithm', await f.signSource(da.credential, {}, { alg: 'HS256', kid: 'da-session-key' }, wrongAlgorithmKey)],
-    ['signature', `${da.credential.slice(0, -1)}${da.credential.endsWith('a') ? 'b' : 'a'}`],
   ];
+  const parts = da.credential.split('.');
+  const signature = Buffer.from(parts[2], 'base64url');
+  signature[0] ^= 1;
+  parts[2] = signature.toString('base64url');
+  variants.push(['signature', parts.join('.')]);
   for (const [label, token] of variants) await assert.rejects(f.source.exchangeWorkforceZero(token, sourceExpectation), { message: 'authentication-denied' }, label);
 
   const { workforce } = await f.exchange({ jti: 'second-login' });
