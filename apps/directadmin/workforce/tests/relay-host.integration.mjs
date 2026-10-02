@@ -137,6 +137,8 @@ try {
   const relayPackage = packagePlugin({ sourceDir: join(relaySourceRoot, 'apps/directadmin/server-node'), outputDir: relayArchiveRoot });
   await mkdir(relayRoot, { recursive: true });
   execFileSync('tar', ['-xzf', relayPackage.archive, '-C', relayRoot]);
+  const relayManifest = await readFile(join(relayRoot, 'plugin.conf'), 'utf8');
+  assert.match(relayManifest, /^version=0\.3\.0$/m, 'integration extracts the current Server Node relay contract');
   const relayClient = await readFile(join(relayRoot, 'images/directadmin-relay-client.mjs'), 'utf8');
   const certResult = spawn('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', keyPath, '-out', certPath,
     '-subj', '/CN=127.0.0.1', '-days', '1', '-addext', 'subjectAltName=IP:127.0.0.1'], { stdio: 'ignore' });
@@ -281,7 +283,11 @@ try {
   assert.equal(await page.getByRole('navigation').count(), 0, 'missing config exposes no company views');
   assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0, 'missing config exposes no controls');
 
-  await writeFile(configPath, JSON.stringify({ schema: 'titan.server-node.directadmin-relay.v1', public_origin: panelOrigin, workforce_origin: workforceOrigin }), { mode: 0o600 });
+  // Synthetic parser configuration only. The v2 marker is a test value; this
+  // does not install or verify the Apache :443 cookie filter or commission a host.
+  await writeFile(configPath, JSON.stringify({ schema: 'titan.server-node.directadmin-relay.v2',
+    cookie_boundary: 'apache-443-strip-titan-cookie-v1', public_origin: panelOrigin,
+    workforce_origin: workforceOrigin }), { mode: 0o600 });
   await chmod(configPath, 0o600);
   await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
   try { await page.getByText('Current hosted projection', { exact: true }).waitFor(); }
@@ -413,7 +419,7 @@ try {
   assert.equal(await page.getByText('fixture-company-b-worker', { exact: true }).count(), 0, 'expired upstream session clears current projection');
   assert.deepEqual(pageErrors, [], 'security denial and expiry remain handled states');
 
-  console.log('PASS extracted Workforce 0.1.4 + actual #812 RAW relay + #811 hosted optional gateway');
+  console.log('PASS extracted Workforce 0.1.5 + Server Node 0.3.0 RAW relay + current #811 hosted source; synthetic config only, no Apache boundary or commissioning proof');
   console.log(`PASS scenarios: missing relay config (HTTP 503), read-only company-a projection/evidence, empty controls, CSRF denial (${wrongCsrf.status}), hosted governed-action denial without DB/event effects (${denial.error}), company switch to company-b, upstream expiry and client data clearing; RAW requests=${relayObservations.length}, hosted routes=${hostedObservations.length}`);
 } finally {
   await browser?.close().catch(() => {});

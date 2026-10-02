@@ -53,13 +53,22 @@ private token in a URL, or assume Apache 443 can install a handler on DirectAdmi
 port 2222. See the install-readiness checklist in
 `docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md`.
 
-The relay integration evidence is pinned to #812 / PR #1211 pre-change source head
-`8cae7034f6d2ec7c9063ac0c3aba40c6f41b3d89`. Current main includes #812 commit
-`89ff2427339a6f216281c970376be4634ee9fb9f`, which adds experimental v2 relay config
-and an Apache `:443` cookie-boundary marker/template. This package has not adopted
-that marker or tested Apache behavior. Independent contract review and verification
-on a disposable real Apache/DirectAdmin host are required before relying on the new
-contract; a config marker alone does not prove cookie isolation.
+The earlier extracted relay run used #812's pre-v2 source head
+`8cae7034f6d2ec7c9063ac0c3aba40c6f41b3d89`. The current local rerun extracted
+Server Node 0.3.0 and the hosted owner from main
+`d508a2695fccc36e039f18e60cb96adfbe318813` and supplied the v2 config shape
+with a synthetic marker in a `NODE_ENV=test` fixture. This exercised the RAW
+relay and hosted route fixtures; it did not run Apache, DirectAdmin CGI, or the
+`:443` cookie filter. The marker alone does not prove cookie isolation.
+
+**Commissioning blocker:** the experimental #812 Apache `:443` cookie filter
+fails open when the Titan cookie is split across duplicate physical `Cookie`
+headers. The `:2222` RAW parser's duplicate-header behavior is a separate boundary
+and does not repair or verify that filter. Do not commission or install until #812
+fixes this failure and the behavior is independently verified on an authorized
+disposable Apache/DirectAdmin host using cookie-name-only evidence. See the exact
+run limits and remaining host inputs in
+`docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md`.
 
 The UI displays canonical roster/worker identity, hierarchy relationships, work
 states, owner-provided source/freshness/evidence and receipt references. It only
@@ -90,7 +99,7 @@ The builder requires the current canonical browser session and package-validator
 and runs the shared validator on the extracted final package. It produces a flat `titan_workforce.tar.gz` and SHA256 sidecar, applies
 executable modes, extracts the final tarball, compares contents/modes and runs
 staging-location preflight. The manifest controls the artifact version (currently
-0.1.4). Tests and development fixtures are excluded. The package requires the
+0.1.5). Tests and development fixtures are excluded. The package requires the
 separately installed Titan Server Node plugin for its published relay module; it
 does not vendor or shadow that owner.
 
@@ -142,17 +151,19 @@ out-of-order responses, duplicate clicks, false verification and hostile text.
   upstream credentials and protected provisioning remain uncommissioned requirements.
 - #14/#640: execution/authority; #913: evidence and verified outcome provenance.
 - #1045: infrastructure health (linked by role route); #1046: Zero summary.
-- #1084/#1179: shared build/index/lock repair. This branch merges that prerequisite
-  with provenance instead of implementing competing repairs.
+- #1084/#1179: shared build/index/lock repair is owned centrally and #1179 is merged.
+  This package consumes the shared source without implementing a competing repair.
 
 Useful donor semantics are retained at canonical owners: WorkforceService and
 SqliteWorkforceStore provide identity/work, runtime dispatcher preserves run and
 conversation continuity, native workforce command routes preserve native FSM.
 The existing `apps/web/app/workforce/page.tsx` is a marketing page, not a cockpit
 runtime donor. Browser Codee Workforce tooling is development infrastructure,
-not a production registry. Neither is copied into this package. The old #1143
-agent/team contract was already accepted through #1145; existing history is
-preserved by a non-rewriting merge on `agent/issue-1050`.
+not a production registry. Neither is copied into this package. The earlier
+agent/team projection contract was accepted through #1145, and the #1143
+consumer/package slice is merged to main. This bounded v0.1.5 consumer/package
+continuation is tracked on the canonical `agent/issue-1050` branch; #1050 remains
+open for its wider acceptance.
 
 ## Remaining mission acceptance
 
@@ -164,5 +175,7 @@ staffing evidence, external competency/credential revocation, Zero SDK summary,
 and real DirectAdmin install/update/uninstall/reinstall/theme/session certification.
 The issue's later Time Attendance delta (clock entry lifecycle, review, policies,
 QR/IP/geofence/device evidence, offline replay, overlap, corrections/void and
-accepted-entry payroll export) remains preserved in #1050; this bounded cockpit
-continuation does not declare those outcomes delivered or close the issue.
+accepted-entry payroll export), reusable department packs including Supply & Asset
+Continuity, and evidence-backed earned tier/autonomy progression with all required
+company authorization gates also remain in #1050. This bounded cockpit continuation
+does not declare those outcomes delivered or close the issue.

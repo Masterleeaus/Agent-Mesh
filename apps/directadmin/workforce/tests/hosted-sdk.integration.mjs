@@ -18,6 +18,7 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
   // Canonical #302-issued credential, registry and ephemeral DB are explicit test fixtures.
   const auth = await fixture(t);
   const intents = [];
+  let projectionUnavailable = false;
   let pendingIntent;
   let releaseIntent;
   let markIntentEntered;
@@ -25,6 +26,7 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
   const gateway = createDirectAdminGateway(auth.bridge, {
     projection: async (plugin, context) => {
       assert.equal(plugin, 'titan_workforce');
+      if (projectionUnavailable) throw new Error('fixture-hosted-owner-temporarily-unavailable');
       const company_id = context.company_id;
       return { company_id, source: 'fixture-hosted-workforce-owner', freshness: new Date().toISOString(), evidence_refs: [],
         data: { schema: 'titan.workforce-cockpit.v1', company_id,
@@ -55,7 +57,9 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
   const session = new DirectAdminCockpitSession(() => csrf, fetcher, undefined);
   t.after(() => session.dispose());
   const controller = new WorkforceController(new WorkforceApi(session));
-  session.subscribe(() => controller.invalidate());
+  let sessionInvalidations = 0;
+  const unsubscribe = session.subscribe(() => { sessionInvalidations++; controller.invalidate(); });
+  t.after(unsubscribe);
   await controller.connect();
   assert.equal(controller.state.phase, 'ready', controller.state.error);
   assert.equal(controller.state.context.company_id, 'company-a');
@@ -89,9 +93,24 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
   assert.equal(controller.state.context.company_id, 'company-b');
   assert.equal(controller.state.discovery.workers[0].worker_id, 'company-b-worker');
 
+  // An owner outage is a sanitized 503, not an identity revocation. The panel
+  // clears its projection but keeps the current SDK session usable for retry.
+  sessionInvalidations = 0;
+  projectionUnavailable = true;
+  await controller.connect();
+  assert.equal(controller.state.phase, 'unavailable');
+  assert.equal(controller.state.context, null);
+  assert.equal(sessionInvalidations, 0, 'owner 503 must not invalidate the authenticated DirectAdmin session');
+  projectionUnavailable = false;
+  await controller.connect();
+  assert.equal(controller.state.phase, 'ready', controller.state.error);
+  assert.equal(controller.state.context.company_id, 'company-b');
+  assert.equal(sessionInvalidations, 0, 'the current company session recovers after the owner returns');
+
   await auth.registry.revokeSession(proof.session_id, 2);
   await controller.submit({ action: 'pause', work_id: 'company-b-work', reason: 'Revoked fixture request' });
   assert.equal(intents.length, 2);
+  assert.ok(sessionInvalidations > 0, 'a canonical revoked-session 401 invalidates the shared SDK session');
   assert.equal(controller.state.phase, 'denied');
   assert.equal(controller.state.discovery, null);
   assert.equal(controller.state.receipt, null);
