@@ -301,8 +301,9 @@ function ConfiguredNavbar({ context }) {
 
 export default function Navbar() {
   const context = getCurrentSiteContext()
-  if (context.kind === 'hub' || context.kind === 'industry') {
-    return <ConfiguredNavbar context={context} />
+  const publicContext = context.kind === 'preview' ? { ...context, kind: 'hub' } : context
+  if (publicContext.kind === 'hub' || publicContext.kind === 'industry') {
+    return <ConfiguredNavbar context={publicContext} />
   }
-  return context.kind === 'preview' ? <LegacyNavbar /> : null
+  return null
 }
