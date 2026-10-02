@@ -4,18 +4,19 @@ This checklist verifies a **packaging candidate** in a local workspace or dispos
 
 The v0.1.4 record and the first v0.1.5 hashes below are historical candidates.
 The latest v0.1.5 candidate uses app sources on the canonical `agent/issue-1050`
-branch and exact current main `bfbb06a5a22591100e2c0101e6598bee9c6f4589` after
-#1246 merged. The DirectAdmin SDK source tree is unchanged from `8c1161f2`
-and includes #1243 session behavior. Current-source results and hashes are at
-the end.
+branch and current main `64561e4d077ec07a3cb40dfb43284b0e7dff4dbf` after #1247
+merged. The DirectAdmin SDK and hosted Workforce/relay owner sources are unchanged
+from the previously tested `bfbb06a5` baseline. The DirectAdmin SDK source tree is
+unchanged from `8c1161f2` and includes #1243 session behavior. Current-source
+results and hashes are at the end.
 
 ## Build the SDK and package
 
 For the current candidate, use the exact canonical SDK source from main
-`bfbb06a5a22591100e2c0101e6598bee9c6f4589` (including #1243 session replacement
-and registry-outage handling). Its `packages/titan-platform` tree is unchanged
-from `8c1161f2`. No shared SDK implementation is copied into the Workforce
-source. Node 22.23.3 and the repository's locked dependencies were used.
+`64561e4d077ec07a3cb40dfb43284b0e7dff4dbf` (including #1243 session replacement
+and registry-outage handling). Its DirectAdmin SDK paths are unchanged from
+`bfbb06a5`. No shared SDK implementation is copied into the Workforce source.
+Node 22.23.3 and the repository's locked dependencies were used.
 
 ```sh
 work_area=/tmp/1050-sdk-current
@@ -23,7 +24,7 @@ source_area=/tmp/1050-workforce-source
 rm -rf "$work_area" "$source_area" /tmp/1050-sdk-current.mjs
 mkdir -p "$work_area" "$source_area"
 source_ref=$(git rev-parse HEAD)
-git archive bfbb06a5a22591100e2c0101e6598bee9c6f4589 packages/titan-platform \
+git archive 64561e4d077ec07a3cb40dfb43284b0e7dff4dbf packages/titan-platform \
   | tar -xf - -C "$work_area"
 ln -s "$PWD/packages/titan-platform/node_modules" \
   "$work_area/packages/titan-platform/node_modules"
@@ -236,9 +237,9 @@ was involved. This run predates the #1245 merge and is historical evidence.
 The 39/39 cockpit result was local evidence. The separate secretless Node 22
 hosted CI job remains with #1157 and was not changed here. #1050 remains open.
 
-## Current-source v0.1.5 candidate — main bfbb06a5
+## Prior current-source v0.1.5 record — main bfbb06a5
 
-Current main is `bfbb06a5a22591100e2c0101e6598bee9c6f4589`, which merges #1246;
+At this run, main was `bfbb06a5a22591100e2c0101e6598bee9c6f4589`, which merges #1246;
 #1245 merged earlier at `faab3c5c9bdfd90179d5d3bfee21c479dceb3613`. The #1049
 SDK source tree is unchanged from main `8c1161f2`; its bundle compiled from
 exact `bfbb06a5` source using Node v22.23.3 has SHA256
@@ -264,3 +265,59 @@ opener using canonical SQLite adapters and disposable records. These are local
 compatibility checks, not Apache, DirectAdmin CGI, or commissioning evidence.
 No dedicated hosted Workforce CI ran these entrypoints; that work remains with
 #1157. #1050 remains open.
+
+## Latest current-source v0.1.5 candidate — main 64561e4d (2026-10-02)
+
+Main `64561e4d077ec07a3cb40dfb43284b0e7dff4dbf` merges #1247. Its changed
+authority/runtime files do not touch the DirectAdmin SDK, hosted Workforce owner,
+Server Node relay, Workforce app or their tests. The SDK was rebuilt from the
+exact main archive using Node v22.23.3 and has SHA256
+`5d266ad5233d3a816d1c4fd839ea901a7ee632591872558813834d2d791c989d`.
+
+Two builds of the 19-file v0.1.5 candidate from the current claim-branch app
+source and that exact-main SDK were byte-identical at
+`/tmp/1050-package-current-main645-a/titan_workforce.tar.gz` and
+`/tmp/1050-package-current-main645-b/titan_workforce.tar.gz`. Archive SHA256:
+`022be439598b90fb433b6138efefd70bc226d9c479384464186342e5b758b176`.
+The matching sidecar, file count, SDK inclusion, executable role/lifecycle
+modes and staged install/update/uninstall preflight passed. Uninstall preserved
+hosted business state; no DirectAdmin server was modified.
+
+On this SDK bundle, the consumer/browser/hosted-session/package suite passed
+**39/39**, shared bridge **83/83**, and DirectAdmin package-script tests **3/3**.
+The extracted relay-to-host test used a full source archive from exact main
+`64561e4d` and passed **14 requests / 15 hosted routes**. Production RAW returned
+sanitized `503 cookie_boundary_unverified` with no upstream request. Fixture
+forwarding used an in-process injected loader and canonical SQLite placement
+adapters with disposable records; no production RAW process, CGI config, Apache,
+DirectAdmin host or real cookie boundary was exercised. The host still publishes
+`controls: []`, and typed governed-action denial produced no business DB/event
+writes. These are local compatibility checks, not commissioning evidence.
+
+The independent security reviewer found no issue in the fixture seam or package
+provenance; the final documentation-only baseline update does not change those
+boundaries. Hosted Workforce CI remains with #1157. #1050 is partial and open.
+
+Exact bounded commands on Node v22.23.3:
+
+```sh
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
+TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-main645.mjs \
+  /tmp/1050-node22-dist/bin/node --test \
+  apps/directadmin/workforce/tests/*.test.mjs \
+  apps/directadmin/workforce/tests/sdk-contract.integration.mjs \
+  apps/directadmin/workforce/tests/hosted-sdk.integration.mjs
+
+/tmp/1050-node22-dist/bin/node --test packages/titan-platform/tests/directadmin-bridge.test.mjs
+/tmp/1050-node22-dist/bin/node --test scripts/package-directadmin-plugin.test.mjs
+
+TITAN_WORKFORCE_HOST_ROOT=/tmp/1050-extracted-main645/host \
+TITAN_SERVER_NODE_SOURCE_ROOT=/tmp/1050-extracted-main645/host \
+TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-main645.mjs \
+TITAN_HOST_SDK_MODULE=/tmp/1050-sdk-main645.mjs \
+TITAN_BRIDGE_FIXTURE_MODULE=/tmp/1050-extracted-main645/host/packages/titan-platform/tests/fixtures/directadmin-bridge-fixture.mjs \
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
+  /tmp/1050-node22-dist/bin/node \
+  --import /workspace/Titan-Zero-Field-Service-Workforce/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/loader.mjs \
+  apps/directadmin/workforce/tests/relay-host.integration.mjs
+```

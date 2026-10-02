@@ -54,7 +54,7 @@ port 2222. See the install-readiness checklist in
 `docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md`.
 
 The current extracted relay-to-host run used Server Node 0.3.0 and the hosted
-owner from current main `bfbb06a5a22591100e2c0101e6598bee9c6f4589`, including #811's
+owner from main `64561e4d077ec07a3cb40dfb43284b0e7dff4dbf`, including #811's
 merged production dependency composition and #1245's disabled RAW default. The
 disposable host fixture supplies the required company-placement registry/opener
 through canonical SQLite storage adapters; those temporary placements are
