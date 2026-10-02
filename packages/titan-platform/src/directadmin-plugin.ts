@@ -18,6 +18,8 @@ export type PluginValidation = Readonly<{ valid: boolean; errors: readonly strin
 
 const ID = /^[a-z][a-z0-9_-]{1,62}$/;
 const VERSION = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
+/** Contribution API version; independent of the package release version. */
+export const DIRECTADMIN_SDK_COMPATIBILITY_VERSION = "1.0.0";
 const ROLE_PATH: Readonly<Record<DirectAdminRole, string>> = {
   admin: "admin/index.html", reseller: "reseller/index.html", user: "user/index.html",
 };
@@ -248,12 +250,23 @@ function validRoute(route: string): boolean {
 export class DirectAdminContributionRegistry {
   #items = new Map<string, CockpitContribution>();
   #degraded = new Map<string, string>();
+  #supportedSdkMajor: string;
+
+  constructor(sdkCompatibilityVersion = DIRECTADMIN_SDK_COMPATIBILITY_VERSION) {
+    const version = VERSION.exec(sdkCompatibilityVersion);
+    if (!version) throw new Error("invalid-sdk-compatibility-version");
+    this.#supportedSdkMajor = version[1];
+  }
 
   register(contribution: CockpitContribution): void {
     const pluginId = String(contribution?.plugin_id ?? "");
     try {
-      if (!ID.test(pluginId) || !VERSION.test(contribution.plugin_version) || !VERSION.test(contribution.sdk_compatibility)) {
+      const compatibility = VERSION.exec(contribution.sdk_compatibility);
+      if (!ID.test(pluginId) || !VERSION.test(contribution.plugin_version) || !compatibility) {
         throw new Error("invalid-plugin-version-or-id");
+      }
+      if (compatibility[1] !== this.#supportedSdkMajor) {
+        throw new Error(`sdk-compatibility-mismatch:required-major-${compatibility[1]}:supported-major-${this.#supportedSdkMajor}`);
       }
       if (this.#items.has(pluginId)) throw new Error("duplicate-plugin-contribution");
       const navIds = new Set<string>();

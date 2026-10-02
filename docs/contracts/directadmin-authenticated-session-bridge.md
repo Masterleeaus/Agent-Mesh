@@ -48,18 +48,20 @@ The Fetch gateway is not a listener, CLI or deployment. The launched #811/#812 h
 
 The exported support-diagnostics sanitizer removes sensitive object fields and inline Bearer, Basic-authorization, `X-Titan-CSRF`/`csrf` values, JWT-shaped values and PEM private keys. Adversarial tests cover CSRF and Basic credentials embedded in free-form diagnostic messages.
 
+Contribution SDK compatibility is a separately versioned API contract (currently `1.0.0`, independent of the package release version). The registry accepts compatible minor/patch versions and exposes a stable degraded reason when a plugin requires another major. This only isolates incompatible plugin UI/contributions; it does not change or grant downstream authority.
+
 ## Current verification
 
 On the current continuation, after merging current main `14163faa`:
 
-- Package TypeScript test compilation followed by `node --test tests/directadmin-*.test.mjs` — 95/95 passed, including SDK package contracts, inline diagnostic-secret redaction, fixed DA-to-Workforce handoff invalidation, typed-403 retention, and injected raw/canonical service-failure cases.
-- `node --test tests/security-session-workforce-exchange.test.mjs tests/directadmin-*.test.mjs` after test compilation — 111/111 passed, including canonical child exchange and source switch/revocation coverage.
+- Package TypeScript test compilation followed by `node --test tests/directadmin-*.test.mjs` — 96/96 passed, including SDK compatibility-major degradation/recovery, inline diagnostic-secret redaction, fixed DA-to-Workforce handoff invalidation, typed-403 retention, and injected raw/canonical service-failure cases.
+- `node --test tests/security-session-workforce-exchange.test.mjs tests/directadmin-*.test.mjs` after test compilation — 112/112 passed, including canonical child exchange and source switch/revocation coverage.
 - `PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers node --test packages/titan-platform/tests/directadmin-browser.browser.mjs` — 1/1 passed in system Chromium, including browser Web Crypto revision encoding.
 - `node ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit` — passed.
 - A disposable end-to-end relay/SDK/#811 HTTP probe at merged main `14163faa` and relay PR head `9ffef58d` passed: Workforce projection returned for the selected company; the lifecycle owner returned 403; source revocation returned 401 before conversation input validation; work-order completion count stayed zero.
-- Disposable #1183/#1049 integration at #1183 candidate `1158e68f` plus the revised #1049 handoff fixture passed TypeScript and 172/172 focused credential, exchange, bridge and consumer tests; the browser test passed 1/1. Its full package run had 1,054 passed, 72 failed and 2 skipped out of 1,128. The #1049-only full run had 1,052 passed, 72 failed and 2 skipped out of 1,126; failed test names were unchanged in the combined run.
+- Disposable merged integration of current #1183 candidate `1158e68f6b2adf92db775a0469a32b84515979ba` with the current #1049 SDK sources passed package typecheck, 114/114 focused credential, exchange, bridge and consumer tests, and the Chromium test 1/1. It exercised the #1183 `workforce-zero-exchange-required` guard, the fixed DA-to-Workforce/Zero exchange, and rejection of the derived child after either source-company switch or revocation. The candidate merge was disposable; no #302 identity/storage or Workforce owner file was changed on #1049.
 - `git diff --check` — passed for the current source and documentation changes.
-- The full `node --test --test-reporter=tap ./tests/*.test.mjs` package suite was rerun on this source update: 1,053 passed, 72 failed and 2 skipped out of 1,127. The DirectAdmin-focused suite above passes; no full package test pass is claimed.
+- The full `node --test --test-reporter=tap ./tests/*.test.mjs` package suite was rerun on this source update: 1,054 passed, 72 failed and 2 skipped out of 1,128. The 72 failed test names match the immediately preceding baseline; no new failures. The DirectAdmin-focused suite above passes; no full package test pass is claimed.
 - Hosted checks are recorded per published head in this PR's mission-evidence block. Local results above do not imply hosted or live-host readiness.
 
 ## Remaining acceptance work
