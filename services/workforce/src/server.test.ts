@@ -1,9 +1,26 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createWorkforceServer } from "./server.js";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { createWorkforceServer, type WorkforceServerOptions } from "./server.js";
+
+async function temporaryWorkforceServer(options: WorkforceServerOptions = {}) {
+  const directory = await mkdtemp(join(tmpdir(), "titan-workforce-"));
+  const databasePath = join(directory, "workforce.db");
+  const host = await createWorkforceServer({ ...options, storagePath: databasePath });
+  return {
+    host,
+    databasePath,
+    async cleanup() {
+      await host.close();
+      await rm(directory, { recursive: true, force: true });
+    },
+  };
+}
 
 test("Server Node exposes the authenticated Workforce lifecycle without a demo fallback", async () => {
-  const workforce = await createWorkforceServer({
+  const workforce = await temporaryWorkforceServer({
     conversation: {
       auth: { async resolve() {
         return { company_id: "company-1", actor_id: "actor-1", device_id: "device-1", surface: "zero", session_id: "session-1", context_revision: "rev-1" };
@@ -13,9 +30,9 @@ test("Server Node exposes the authenticated Workforce lifecycle without a demo f
       } },
     },
   });
-  await new Promise<void>(resolve => workforce.server.listen(0, "127.0.0.1", () => resolve()));
+  await new Promise<void>(resolve => workforce.host.server.listen(0, "127.0.0.1", resolve));
   try {
-    const address = workforce.server.address();
+    const address = workforce.host.server.address();
     assert.ok(address && typeof address !== "string");
     const response = await fetch(`http://127.0.0.1:${address.port}/v1/workforce/conversations`, {
       method: "POST",
@@ -33,38 +50,31 @@ test("Server Node exposes the authenticated Workforce lifecycle without a demo f
     assert.equal(body.schema_version, "titan.workforce.conversation.v1");
     assert.equal(body.continuation_token, "continue-1");
   } finally {
-    await workforce.close();
+    await workforce.cleanup();
   }
 });
 
 test("unconfigured Server Node fails closed instead of serving demo conversations", async () => {
-  const workforce = await createWorkforceServer();
-  await new Promise<void>(resolve => workforce.server.listen(0, "127.0.0.1", () => resolve()));
+  const workforce = await temporaryWorkforceServer();
+  await new Promise<void>(resolve => workforce.host.server.listen(0, "127.0.0.1", resolve));
   try {
-    const address = workforce.server.address();
+    const address = workforce.host.server.address();
     assert.ok(address && typeof address !== "string");
     const response = await fetch(`http://127.0.0.1:${address.port}/v1/workforce/conversations`, { method: "POST", body: "{}" });
     assert.equal(response.status, 503);
     assert.equal((await response.json() as Record<string, unknown>).error, "conversation-host-not-configured");
   } finally {
-    await workforce.close();
+    await workforce.cleanup();
   }
 });
 
 test("workforce host exposes truthful health and ready state backed by durable storage", async () => {
-  const { mkdtemp, readFile } = await import("node:fs/promises");
-  const { tmpdir } = await import("node:os");
-  const { join } = await import("node:path");
-  const directory = await mkdtemp(join(tmpdir(), "titan-workforce-"));
-  const databasePath = join(directory, "workforce.db");
-  const previousPath = process.env.WORKFORCE_SQLITE_PATH;
-  process.env.WORKFORCE_SQLITE_PATH = databasePath;
-  const host = await createWorkforceServer();
-  await new Promise<void>((resolve) => host.server.listen(0, "127.0.0.1", resolve));
-  const address = host.server.address();
-  assert.ok(address && typeof address !== "string");
-  const baseUrl = `http://127.0.0.1:${address.port}`;
+  const workforce = await temporaryWorkforceServer();
+  await new Promise<void>((resolve) => workforce.host.server.listen(0, "127.0.0.1", resolve));
   try {
+    const address = workforce.host.server.address();
+    assert.ok(address && typeof address !== "string");
+    const baseUrl = `http://127.0.0.1:${address.port}`;
     const health = await fetch(`${baseUrl}/health`);
     assert.equal(health.status, 200);
     const healthBody = await health.json() as Record<string, unknown>;
@@ -73,11 +83,10 @@ test("workforce host exposes truthful health and ready state backed by durable s
     const ready = await fetch(`${baseUrl}/ready`);
     assert.equal(ready.status, 200);
     assert.match(await ready.text(), /"service":"workforce"/);
-    await host.close();
-    const database = await readFile(databasePath);
+    await workforce.host.close();
+    const database = await readFile(workforce.databasePath);
     assert.ok(database.byteLength > 0);
   } finally {
-    if (previousPath === undefined) delete process.env.WORKFORCE_SQLITE_PATH;
-    else process.env.WORKFORCE_SQLITE_PATH = previousPath;
+    await rm(workforce.databasePath.replace(/workforce\.db$/, ""), { recursive: true, force: true });
   }
 });

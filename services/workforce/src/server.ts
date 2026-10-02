@@ -11,12 +11,12 @@ import {
 } from "./conversation-api.js";
 
 const port = Number(process.env.WORKFORCE_PORT ?? "3010");
-const storagePath = process.env.WORKFORCE_SQLITE_PATH ?? process.env.SQLITE_PATH ?? "/app/runtime/workforce.db";
 const conversationPath = "/v1/workforce/conversations";
 
 export interface WorkforceServer { server: Server; close(): Promise<void>; }
 
 export type WorkforceServerOptions = {
+  storagePath?: string;
   conversation?: {
     auth: ConversationAuth;
     runtime: ConversationHostRuntime;
@@ -51,6 +51,7 @@ async function handleConversation(
 }
 
 export async function createWorkforceServer(options: WorkforceServerOptions = {}): Promise<WorkforceServer> {
+  const storagePath = options.storagePath ?? process.env.WORKFORCE_SQLITE_PATH ?? process.env.SQLITE_PATH ?? "/app/runtime/workforce.db";
   const storage = createSqliteStorage(storagePath);
   const store = new SqliteWorkforceStore(storage);
   await store.migrate();
