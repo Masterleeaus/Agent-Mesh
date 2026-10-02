@@ -1,11 +1,9 @@
-import fs from "node:fs";
 import http from "node:http";
 import https from "node:https";
 import net from "node:net";
 import dns from "node:dns/promises";
 import { fileURLToPath } from "node:url";
 
-export const DIRECTADMIN_RELAY_CONFIG = "/etc/titan/server-node-directadmin-relay.json";
 export const DIRECTADMIN_SESSION_COOKIE = "__Host-titan-da-session";
 export const MAX_HEADER_BYTES = 16 * 1024;
 export const MAX_REQUEST_BODY_BYTES = 64 * 1024;
@@ -269,12 +267,6 @@ function exactOrigin(value, expectedOrigin, code) {
   } catch { throw invalidRequest(code); }
 }
 
-function isLoopbackAddress(address) {
-  address = address.replace(/^\[|\]$/g, "");
-  if (net.isIPv4(address)) return Number(address.split(".")[0]) === 127;
-  return address.toLowerCase() === "::1";
-}
-
 function isPrivateAddress(address) {
   if (net.isIPv4(address)) {
     const octets = address.split(".").map(Number);
@@ -289,60 +281,8 @@ function isPrivateAddress(address) {
   return (first & 0xfe00) === 0xfc00;
 }
 
-function parseOrigin(value, name) {
-  let parsed;
-  try { parsed = new URL(value); } catch { throw relayError(503, name + "_invalid"); }
-  if (parsed.origin !== value || parsed.username || parsed.password || parsed.pathname !== "/" || parsed.search || parsed.hash ||
-      !parsed.hostname || !["https:", "http:"].includes(parsed.protocol)) throw relayError(503, name + "_invalid");
-  return parsed;
-}
-
-function parseConfig(raw) {
-  let value;
-  try { value = parseStrictJson(raw); } catch { throw relayError(503, "relay_not_configured"); }
-  if (!value || typeof value !== "object" || Array.isArray(value) ||
-      Object.keys(value).sort().join(",") !== "cookie_boundary,public_origin,schema,workforce_origin" ||
-      value.schema !== "titan.server-node.directadmin-relay.v2" ||
-      value.cookie_boundary !== "apache-443-strip-titan-cookie-v1" ||
-      typeof value.public_origin !== "string" || typeof value.workforce_origin !== "string") {
-    throw relayError(503, "relay_not_configured");
-  }
-  const publicUrl = parseOrigin(value.public_origin, "public_origin");
-  if (publicUrl.protocol !== "https:") throw relayError(503, "public_origin_invalid");
-  const upstreamUrl = parseOrigin(value.workforce_origin, "workforce_origin");
-  const upstreamHost = upstreamUrl.hostname.replace(/^\[|\]$/g, "");
-  if (upstreamUrl.protocol === "http:" && !isLoopbackAddress(upstreamHost)) {
-    throw relayError(503, "workforce_transport_unprotected");
-  }
-  if (upstreamUrl.protocol === "https:" && net.isIP(upstreamHost) && !isPrivateAddress(upstreamHost)) {
-    throw relayError(503, "workforce_target_not_private");
-  }
-  if (upstreamUrl.protocol === "https:" && !net.isIP(upstreamHost) && !upstreamHost.endsWith(".internal")) {
-    throw relayError(503, "workforce_target_not_private");
-  }
-  return Object.freeze({ publicOrigin: publicUrl.origin, publicHost: publicUrl.host, upstreamOrigin: upstreamUrl.origin, upstreamUrl });
-}
-
-async function loadConfig(env = process.env, configPath) {
-  const path = configPath ?? (env.NODE_ENV === "test" && env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_CONFIG
-    ? env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_CONFIG : DIRECTADMIN_RELAY_CONFIG);
-  let stat;
-  try {
-    const linkStat = fs.lstatSync(path);
-    if (linkStat.isSymbolicLink() || !linkStat.isFile() || linkStat.size > 4096 || (linkStat.mode & 0o022) !== 0) {
-      throw relayError(503, "relay_not_configured");
-    }
-    if (path === DIRECTADMIN_RELAY_CONFIG && linkStat.uid !== 0) throw relayError(503, "relay_not_configured");
-    stat = linkStat;
-  } catch (error) {
-    if (error?.code && error.code !== "ENOENT") throw error;
-    throw relayError(503, "relay_not_configured");
-  }
-  if (!stat) throw relayError(503, "relay_not_configured");
-  let raw;
-  try { raw = fs.readFileSync(path, "utf8"); }
-  catch { throw relayError(503, "relay_not_configured"); }
-  return parseConfig(raw);
+async function loadProductionConfig() {
+  throw relayError(503, "cookie_boundary_unverified");
 }
 
 export async function readBoundedBody(stream, { declaredLength, maxBytes = MAX_REQUEST_BODY_BYTES, timeoutMs = BODY_TIMEOUT_MS } = {}) {
@@ -498,7 +438,7 @@ function requestHeadersForUpstream(envelope, config, body) {
 
 export async function forwardRequest(config, envelope, body, {
   timeoutMs = UPSTREAM_TIMEOUT_MS, maxResponseBytes = MAX_RESPONSE_BODY_BYTES,
-  resolveAddresses = dns.lookup,
+  resolveAddresses = dns.lookup, createResolver = () => new dns.Resolver(),
 } = {}) {
   const transport = config.upstreamUrl.protocol === "https:" ? https : http;
   const headers = requestHeadersForUpstream(envelope, config, body);
@@ -521,12 +461,7 @@ export async function forwardRequest(config, envelope, body, {
       try {
         const host = config.upstreamUrl.hostname.replace(/^\[|\]$/g, "");
         if (!net.isIP(host) && resolveAddresses === dns.lookup) {
-          resolver = new dns.Resolver();
-          // Test-only override points the extracted RAW entrypoint at a
-          // disposable local DNS server. Production always uses OS-configured
-          // DNS servers through Node's cancellable c-ares Resolver.
-          const testServer = process.env.NODE_ENV === "test" && process.env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_DNS_SERVER;
-          if (testServer) resolver.setServers([testServer]);
+          resolver = createResolver();
         }
         const lookup = await pinnedLookup(config.upstreamUrl, resolver ?? resolveAddresses);
         if (settled) return;
@@ -595,9 +530,11 @@ export async function runRawGateway({
   env = process.env,
   stdin = process.stdin,
   stdout = process.stdout,
-  configLoader = loadConfig,
+  configLoader = loadProductionConfig,
   bodyReader = readBoundedBody,
   forward = forwardRequest,
+  bodyTimeoutMs = BODY_TIMEOUT_MS,
+  upstreamTimeoutMs = UPSTREAM_TIMEOUT_MS,
 } = {}) {
   try {
     // DirectAdmin warns that a piped POST must be consumed. Drain it with a
@@ -606,15 +543,11 @@ export async function runRawGateway({
     if (typeof env.CONTENT_LENGTH === "string" && /^(0|[1-9][0-9]{0,5})$/.test(env.CONTENT_LENGTH)) {
       earlyLength = Number(env.CONTENT_LENGTH);
     }
-    const testBodyTimeout = env.NODE_ENV === "test" && /^[1-9][0-9]{0,3}$/.test(env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_BODY_TIMEOUT_MS ?? "")
-      ? Number(env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_BODY_TIMEOUT_MS) : BODY_TIMEOUT_MS;
-    const testUpstreamTimeout = env.NODE_ENV === "test" && /^[1-9][0-9]{0,3}$/.test(env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_UPSTREAM_TIMEOUT_MS ?? "")
-      ? Number(env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_UPSTREAM_TIMEOUT_MS) : UPSTREAM_TIMEOUT_MS;
     const pipedBody = env.POST === "stdin=true"
-      ? await bodyReader(stdin, { declaredLength: earlyLength, timeoutMs: testBodyTimeout })
+      ? await bodyReader(stdin, { declaredLength: earlyLength, timeoutMs: bodyTimeoutMs })
       : Buffer.alloc(0);
     const envelope = parseRequestEnvelope(env);
-    const config = await configLoader(env);
+    const config = await configLoader();
     if (envelope.host.toLowerCase() !== config.publicHost.toLowerCase()) throw invalidRequest("host_mismatch");
     const body = envelope.route.method === "POST" ? pipedBody : Buffer.alloc(0);
     if (envelope.route.body === "none" && body.length !== 0) throw invalidRequest("get_body_forbidden");
@@ -624,7 +557,7 @@ export async function runRawGateway({
       catch (error) { if (error?.status) throw error; throw invalidRequest("request_body_invalid"); }
       validateBody(envelope.route, parsed);
     }
-    const result = await forward(config, envelope, body, { timeoutMs: testUpstreamTimeout });
+    const result = await forward(config, envelope, body, { timeoutMs: upstreamTimeoutMs });
     stdout.write(rawResponse(result.status, result.body, result.headers));
   } catch (error) {
     const status = Number.isInteger(error?.status) ? error.status : 502;
