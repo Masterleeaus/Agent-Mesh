@@ -6,7 +6,7 @@ import type { DirectAdminRole } from './directadmin-plugin.js';
  * It adds DirectAdmin browser protections around that authenticated boundary. */
 export type DirectAdminBridgeConfig = Readonly<{
   origin: string; audience: string; node_id: string;
-  sessions: Pick<ReturnType<typeof createSessionCredentialService>, 'authenticate' | 'switchCompany' | 'revoke' | 'exchangeWorkforceZero'>;
+  sessions: Pick<ReturnType<typeof createSessionCredentialService>, 'issue' | 'authenticate' | 'switchCompany' | 'revoke' | 'exchangeWorkforceZero'>;
 }>;
 type WorkforceZeroIssuance = Awaited<ReturnType<DirectAdminBridgeConfig['sessions']['exchangeWorkforceZero']>>;
 type CompanySessionIssuance = Awaited<ReturnType<DirectAdminBridgeConfig['sessions']['switchCompany']>>;
@@ -26,7 +26,8 @@ export type WithWorkforceZeroSession = <T>(
   consume: (credential: string, context: WorkforceZeroBridgeContext) => Promise<T>,
 ) => Promise<T>;
 const COOKIE = '__Host-titan-da-session';
-type DirectAdminBridgeFailureKind = 'request-rejected' | 'session-rejected' | 'unavailable';
+type DirectAdminBridgeFailureKind = 'request-rejected' | 'session-rejected' | 'unavailable' |
+  'session-rejected-clear-cookie' | 'unavailable-clear-cookie' | 'session-binding-mismatch';
 // tsx fixtures and separately bundled gateway/bridge modules can load through
 // distinct module instances, so use a private, non-enumerable symbol marker.
 const bridgeFailureMarker = Symbol.for('titan.directadmin.bridge.failure.v1');
@@ -39,13 +40,17 @@ export function directAdminBridgeFailureKind(error: unknown): DirectAdminBridgeF
   try {
     if (!(error instanceof Error)) return undefined;
     const descriptor = Object.getOwnPropertyDescriptor(error, bridgeFailureMarker);
-    return descriptor && 'value' in descriptor && ['request-rejected', 'session-rejected', 'unavailable'].includes(descriptor.value)
+    return descriptor && 'value' in descriptor && ['request-rejected', 'session-rejected', 'unavailable',
+      'session-rejected-clear-cookie', 'unavailable-clear-cookie', 'session-binding-mismatch'].includes(descriptor.value)
       ? descriptor.value as DirectAdminBridgeFailureKind : undefined;
   } catch { return undefined; }
 }
 const fail = (): never => { throw bridgeError('session-rejected', 'directadmin-session-rejected'); };
+const failAndClear = (): never => { throw bridgeError('session-rejected-clear-cookie', 'directadmin-session-rejected'); };
 const rejectRequest = (): never => { throw bridgeError('request-rejected', 'directadmin-session-rejected-request'); };
 const unavailable = (): never => { throw bridgeError('unavailable', 'directadmin-service-unavailable'); };
+const unavailableAndClear = (): never => { throw bridgeError('unavailable-clear-cookie', 'directadmin-service-unavailable'); };
+const bindingMismatch = (): never => { throw bridgeError('session-binding-mismatch', 'directadmin-session-binding-mismatch'); };
 function safeErrorMessage(error: unknown): string | undefined {
   try {
     if (!(error instanceof Error)) return undefined;
@@ -71,6 +76,33 @@ const id = (v: unknown): v is string => typeof v === 'string' && v.length > 0 &&
 function encode(value: Uint8Array): string {
   return btoa(String.fromCharCode(...value)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
+async function csrfDigest(value: string): Promise<string> {
+  return encode(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))));
+}
+export type DirectAdminBootstrapInput = Readonly<{
+  login_assertion: string; company_id: string; device_id: string; csrf_token: string;
+}>;
+/** Allowlisted ambient proof envelope passed to the trusted server-only
+ * DirectAdmin assertion provider after the browser boundary checks succeed. */
+export type DirectAdminBootstrapRequestProof = Readonly<{
+  origin: string; cookie: string | null; authorization: string | null; csrf_nonce: string;
+}>;
+function validBootstrapInput(value: unknown): value is DirectAdminBootstrapInput {
+  try {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+    const keys = Reflect.ownKeys(value);
+    if (keys.length !== 4 || keys.some(key => typeof key !== 'string' ||
+        !['login_assertion', 'company_id', 'device_id', 'csrf_token'].includes(key))) return false;
+    const fields = Object.getOwnPropertyDescriptors(value);
+    const values = Object.fromEntries(keys.map(key => {
+      const descriptor = fields[key as string];
+      return [key as string, descriptor && 'value' in descriptor ? descriptor.value : undefined];
+    }));
+    return typeof values.login_assertion === 'string' && values.login_assertion.length > 0 &&
+      values.login_assertion.length <= 16384 && id(values.company_id) && id(values.device_id) &&
+      typeof values.csrf_token === 'string' && /^[A-Za-z0-9_-]{43,128}$/.test(values.csrf_token);
+  } catch { return false; }
+}
 /** Short, versioned transport assertion for the canonical revision. #302's
  * revision is an opaque JSON snapshot string; the DirectAdmin relay accepts
  * bounded URL-safe identifiers only. This digest carries no authority and is
@@ -95,6 +127,68 @@ function cookie(request: Request): string {
   return credential;
 }
 
+type BootstrapCookies = Readonly<{ titanCredential?: string; directAdminCookie: string | null }>;
+/** Remove Titan's HttpOnly bearer before the remaining DirectAdmin cookies are
+ * passed to the trusted host provider. Cookie headers are untrusted input. */
+function bootstrapCookies(request: Request): BootstrapCookies {
+  const header = request.headers.get('cookie');
+  if (header === null || header === '') return Object.freeze({ directAdminCookie: null });
+  if (header.length > 16384 || /[\r\n\u0000]/.test(header)) return rejectRequest();
+  const passThrough: string[] = [];
+  let titanCredential: string | undefined;
+  for (const raw of header.split(';')) {
+    const part = raw.trim();
+    if (!part) continue;
+    const separator = part.indexOf('=');
+    if (separator <= 0) return rejectRequest();
+    const name = part.slice(0, separator).trim();
+    if (name === COOKIE) {
+      if (titanCredential !== undefined) return rejectRequest();
+      titanCredential = part.slice(separator + 1);
+      if (!titanCredential || titanCredential.length > 16384) return rejectRequest();
+    } else passThrough.push(part);
+  }
+  const directAdminCookie = passThrough.length ? passThrough.join('; ') : null;
+  if (directAdminCookie && directAdminCookie.length > 8192) return rejectRequest();
+  return Object.freeze({ ...(titanCredential === undefined ? {} : { titanCredential }), directAdminCookie });
+}
+function usableDirectAdminSession(authenticated: AuthenticatedSessionCredential, provider: string, audience: string, nodeId: string): boolean {
+  const binding = authenticated.directadmin;
+  return authenticated.provider === provider && id(authenticated.subject) && authenticated.context.audience === audience &&
+    binding?.node_id === nodeId && /^[A-Za-z0-9_-]{43}$/.test(binding.csrf_sha256) &&
+    ['admin', 'reseller', 'user'].includes(binding.da_role) &&
+    id(authenticated.context.session_id) && id(authenticated.context.actor_id) &&
+    id(authenticated.context.company_id) && id(authenticated.context.device_id) &&
+    typeof authenticated.context.context_revision === 'string' && authenticated.context.context_revision.length > 0 &&
+    authenticated.context.context_revision.length <= 4096 &&
+    Number.isSafeInteger(authenticated.context.session_revision) && authenticated.context.session_revision > 0 &&
+    Number.isFinite(Date.parse(authenticated.context.expires_at));
+}
+function bootstrapFailureFor(error: unknown, staleCookie: boolean): never {
+  const message = safeErrorMessage(error);
+  if (message === 'directadmin-session-rejected-request') return rejectRequest();
+  if (message === 'directadmin-session-rejected' || message === 'authentication-denied') {
+    return staleCookie ? failAndClear() : fail();
+  }
+  return staleCookie ? unavailableAndClear() : unavailable();
+}
+async function hasEmptyBody(request: Request): Promise<boolean> {
+  const reader = request.body?.getReader();
+  if (!reader) return true;
+  let timedOut = false;
+  const deadline = setTimeout(() => { timedOut = true; void reader.cancel().catch(() => {}); }, 5000);
+  let empty = false;
+  try {
+    const first = await reader.read();
+    empty = first.done && !timedOut;
+  } catch { /* malformed or aborted bodies fail closed */ }
+  finally {
+    clearTimeout(deadline);
+    if (!empty) void reader.cancel().catch(() => {});
+  }
+  return empty;
+}
+
 /** Retains the opaque credential and calls #302 again on every revalidation.
  * Caller IDs, company headers, DA roles and session IDs never grant authority. */
 export class DirectAdminSessionBridge {
@@ -103,13 +197,155 @@ export class DirectAdminSessionBridge {
   constructor(config: DirectAdminBridgeConfig) {
     const origin = new URL(config.origin);
     if (origin.protocol !== 'https:' || origin.origin !== config.origin || !id(config.audience) || !id(config.node_id) ||
-        !['authenticate', 'switchCompany', 'revoke', 'exchangeWorkforceZero'].every(method => typeof config.sessions?.[method as keyof typeof config.sessions] === 'function')) fail();
+        !['issue', 'authenticate', 'switchCompany', 'revoke', 'exchangeWorkforceZero'].every(method => typeof config.sessions?.[method as keyof typeof config.sessions] === 'function')) fail();
     // This is only the expected namespace check; #302 remains the sole
     // credential authenticator. Keep the browser-shared SDK free of the
     // server-only security-boundary barrel and its storage/Node dependencies.
     const provider = `directadmin:${origin.origin}`;
     this.#provider = provider;
     this.#config = Object.freeze({ ...config });
+  }
+  /**
+   * Exchange a trusted DirectAdmin login assertion for a browser session
+   * cookie. On document reload the same flow renews a canonically current
+   * session after the host reauthenticates its DirectAdmin cookie. The assertion,
+   * selected company/device expectations and CSRF nonce must come from the
+   * authenticated DirectAdmin adapter, never from caller identity headers or
+   * a browser-supplied role/session ID. #302 verifies the assertion and resolves
+   * the existing actor, company membership, device and current revisions.
+   *
+   * The trusted provider consumes the one-time pre-authentication CSRF nonce,
+   * authenticates the DirectAdmin session proof and returns a signed assertion,
+   * canonical selected company/device and a fresh CSRF token bound into that
+   * assertion. The browser supplies no identity fields. The returned credential
+   * is only in the Secure HttpOnly cookie; the CSRF token is returned separately
+   * for the browser client. No identity store or assertion signer lives here.
+   * A reload nonce is never treated as the prior session's CSRF token. The
+   * prior Titan cookie is authenticated only by #302, then stripped before the
+   * remaining DirectAdmin cookies reach the host provider. Outages preserve a
+   * still-current prior session; successful renewal rotates it only after the
+   * replacement is reauthenticated and bound to the same provider, subject,
+   * actor and device.
+   */
+  async bootstrapBrowserSession(
+    request: Request,
+    resolveInput: (proof: DirectAdminBootstrapRequestProof) => Promise<unknown>,
+  ): Promise<Readonly<{ set_cookie: string; csrf_token: string }>> {
+    let url: URL;
+    try { url = new URL(request.url); } catch { return rejectRequest(); }
+    const csrfNonce = request.headers.get('x-titan-da-bootstrap-csrf') ?? '';
+    const contentLength = request.headers.get('content-length');
+    if (request.method !== 'POST' || url.origin !== this.#config.origin || url.pathname !== '/v1/directadmin/bootstrap' ||
+        url.search || url.hash || request.headers.get('origin') !== this.#config.origin ||
+        request.headers.get('sec-fetch-site') !== 'same-origin' || request.headers.has('content-encoding') ||
+        (contentLength !== null && !/^0+$/.test(contentLength)) ||
+        !/^[A-Za-z0-9_-]{43,128}$/.test(csrfNonce) || typeof resolveInput !== 'function') {
+      return rejectRequest();
+    }
+    if (!await hasEmptyBody(request)) return rejectRequest();
+
+    // Origin, Fetch Metadata, the empty request body and nonce syntax are
+    // checked before canonical identity reads or the trusted provider run.
+    const cookies = bootstrapCookies(request);
+    let previous: AuthenticatedSessionCredential | undefined;
+    let staleCookie = false;
+    if (cookies.titanCredential !== undefined) {
+      let current: AuthenticatedSessionCredential;
+      try {
+        current = await this.#config.sessions.authenticate(cookies.titanCredential);
+      } catch (error) {
+        const message = safeErrorMessage(error);
+        if (message === 'identity-registry-unavailable' || message === 'directadmin-service-unavailable') return unavailable();
+        if (message === 'authentication-denied' || message === 'directadmin-session-rejected') staleCookie = true;
+        else return unavailable();
+      }
+      if (!staleCookie) {
+        // Canonical authentication succeeded, so this is not an expired or
+        // rejected credential. A binding mismatch must stop renewal and keep
+        // the cookie intact; otherwise a provider response could replace a
+        // verified identity with an unrelated session.
+        if (!usableDirectAdminSession(current!, this.#provider, this.#config.audience, this.#config.node_id)) return bindingMismatch();
+        previous = current!;
+      }
+    }
+
+    // Authorization is not part of the DirectAdmin browser-session proof. The
+    // host provider authenticates filtered cookies against its configured HTTPS
+    // /api/session endpoint; browser bearer headers are never forwarded.
+    const proof: DirectAdminBootstrapRequestProof = Object.freeze({
+      origin: request.headers.get('origin')!,
+      cookie: cookies.directAdminCookie,
+      authorization: null,
+      csrf_nonce: csrfNonce,
+    });
+    let input: unknown;
+    try { input = await resolveInput(proof); }
+    catch (error) { return bootstrapFailureFor(error, staleCookie); }
+    if (!validBootstrapInput(input)) return rejectRequest();
+
+    // These expectations must be obtained by the trusted DirectAdmin adapter;
+    // #302 additionally matches them to signed assertion claims and registry truth.
+    const expected = Object.freeze({ company_id: input.company_id, device_id: input.device_id });
+    let csrfHash: string;
+    try { csrfHash = await csrfDigest(input.csrf_token); }
+    catch { return staleCookie ? unavailableAndClear() : unavailable(); }
+    let issued: Awaited<ReturnType<DirectAdminBridgeConfig['sessions']['issue']>>;
+    try { issued = await this.#config.sessions.issue(input.login_assertion, expected); }
+    catch (error) { return bootstrapFailureFor(error, staleCookie); }
+
+    // Read the freshly issued credential back through #302 before setting a
+    // browser cookie. This proves issuer, audience, node, nonce and current state.
+    let authenticated: AuthenticatedSessionCredential;
+    try { authenticated = await this.#config.sessions.authenticate(issued.credential, expected); }
+    catch (error) { return bootstrapFailureFor(error, staleCookie); }
+    const context = authenticated.context;
+    const issuedContext = issued.context;
+    const binding = authenticated.directadmin;
+    if (authenticated.provider !== this.#provider || !id(authenticated.subject) || context.audience !== this.#config.audience ||
+        !id(context.session_id) || !id(context.actor_id) || !id(context.company_id) || !id(context.device_id) ||
+        typeof context.context_revision !== 'string' || !context.context_revision || context.context_revision.length > 4096 ||
+        !Number.isSafeInteger(context.session_revision) || context.session_revision < 1 ||
+        context.company_id !== input.company_id || context.device_id !== input.device_id ||
+        !binding || binding.node_id !== this.#config.node_id || binding.csrf_sha256 !== csrfHash ||
+        !['admin', 'reseller', 'user'].includes(binding.da_role) ||
+        context.session_id !== issuedContext.session_id || context.actor_id !== issuedContext.actor_id ||
+        context.company_id !== issuedContext.company_id || context.device_id !== issuedContext.device_id ||
+        context.session_revision !== issuedContext.session_revision || context.context_revision !== issuedContext.context_revision) {
+      try { await this.#config.sessions.revoke(issued.credential, expected); }
+      catch { return staleCookie ? unavailableAndClear() : unavailable(); }
+      return staleCookie ? failAndClear() : fail();
+    }
+    if (previous && (authenticated.provider !== previous.provider || authenticated.subject !== previous.subject ||
+        context.actor_id !== previous.context.actor_id || context.device_id !== previous.context.device_id ||
+        context.session_id === previous.context.session_id)) {
+      try { await this.#config.sessions.revoke(issued.credential, expected); }
+      catch { return unavailable(); }
+      return bindingMismatch();
+    }
+    const expiresAt = Math.min(Date.parse(context.expires_at), Date.parse(authenticated.credential_expires_at));
+    const seconds = Math.min(300, Math.floor((expiresAt - Date.now()) / 1000));
+    if (!Number.isFinite(seconds) || seconds <= 0 || /[;\r\n]/.test(issued.credential)) {
+      try { await this.#config.sessions.revoke(issued.credential, expected); }
+      catch { return staleCookie ? unavailableAndClear() : unavailable(); }
+      return staleCookie ? failAndClear() : fail();
+    }
+    if (previous && cookies.titanCredential !== undefined) {
+      try {
+        await this.#config.sessions.revoke(cookies.titanCredential, {
+          company_id: previous.context.company_id, device_id: previous.context.device_id,
+          actor_id: previous.context.actor_id, context_revision: previous.context.context_revision,
+        });
+      } catch (error) {
+        // A concurrent expiry/revoke already removed the old session; all other
+        // failures are sanitized outages and do not deliver the new cookie.
+        const message = safeErrorMessage(error);
+        if (message !== 'authentication-denied' && message !== 'directadmin-session-rejected') return unavailable();
+      }
+    }
+    return Object.freeze({
+      set_cookie: `${COOKIE}=${issued.credential}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=${seconds}`,
+      csrf_token: input.csrf_token,
+    });
   }
   async authenticate(request: Request): Promise<{
     context: DirectAdminBridgeContext;
@@ -131,7 +367,7 @@ export class DirectAdminSessionBridge {
       const credential = cookie(request);
       const csrf = request.headers.get('x-titan-csrf') ?? '';
       if (!/^[A-Za-z0-9_-]{43,128}$/.test(csrf)) return rejectRequest();
-      const csrfHash = encode(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(csrf))));
+      const csrfHash = await csrfDigest(csrf);
       const check = (authenticated: AuthenticatedSessionCredential): AuthenticatedSessionCredential => {
         // Also reject a miswired canonical service for a different host/audience.
         if (authenticated.provider !== this.#provider || authenticated.context.audience !== this.#config.audience ||
