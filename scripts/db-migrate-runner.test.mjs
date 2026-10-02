@@ -15,7 +15,7 @@ function harness(initial = {}) {
   const bin = path.join(root, "bin");
   mkdirSync(bin);
   const statePath = path.join(root, "state.json");
-  writeFileSync(statePath, JSON.stringify({ applied: {}, appliedOrder: [], legacySchema: false, ...initial }));
+  writeFileSync(statePath, JSON.stringify({ applied: {}, appliedOrder: [], legacySchema: false, flooringEnum: false, ...initial }));
   const fakePsql = path.join(bin, "psql");
   writeFileSync(fakePsql, `#!/usr/bin/env python3
 import json, os, re, sys
@@ -48,6 +48,11 @@ if '-f' in args:
         raise SystemExit('migration SQL and ledger are not wrapped in one transaction')
     if os.environ.get('FAKE_PSQL_FAIL_FILENAME') == filename:
         sys.exit(7)
+    if filename == '089_flooring_catalog.sql':
+        if 'ALTER TYPE price_book_category ADD VALUE' in transaction:
+            raise SystemExit('enum extension must commit before migration uses the new value')
+        if not state['flooringEnum'] or "'flooring'" not in transaction:
+            raise SystemExit('flooring enum must exist before its migration data is applied')
     insert_line = next((line for line in transaction.splitlines() if line.startswith('INSERT INTO schema_migrations')), '')
     inserted_values = re.findall("'([^']+)'", insert_line)
     if inserted_values != [filename, checksum]:
@@ -70,6 +75,9 @@ if 'SELECT filename || E' in query:
         print(filename + '\\t' + (checksum or ''))
 elif 'SELECT CASE' in query:
     print('seed' if not state['applied'] and state['legacySchema'] else 'migrate')
+elif "ALTER TYPE price_book_category ADD VALUE IF NOT EXISTS 'flooring'" in query:
+    state['flooringEnum'] = True
+    save()
 elif 'SELECT COALESCE(checksum' in query:
     filename = re.search(r"filename = '([^']+)'", query).group(1)
     value = state['applied'].get(filename)
@@ -186,5 +194,22 @@ test("failed migration transaction leaves no ledger row and can resume", () => {
     assert.equal(resumed.status, 0, resumed.stderr);
     assert.deepEqual(h.state().appliedOrder, manifest.entries.map((item) => item.filename));
     for (const item of manifest.entries) assert.equal(h.state().applied[item.filename], item.sha256);
+  } finally { h.cleanup(); }
+});
+
+test("flooring enum extension commits first and its migration transaction resumes safely", () => {
+  const flooring = manifest.entries.find((entry) => entry.filename === "089_flooring_catalog.sql");
+  const h = harness();
+  try {
+    const interrupted = h.run({ failFilename: flooring.filename });
+    assert.notEqual(interrupted.status, 0);
+    assert.equal(h.state().flooringEnum, true);
+    assert.equal(h.state().applied[flooring.filename], undefined);
+
+    const resumed = h.run();
+    assert.equal(resumed.status, 0, resumed.stderr);
+    assert.equal(h.state().flooringEnum, true);
+    assert.equal(h.state().applied[flooring.filename], flooring.sha256);
+    assert.deepEqual(h.state().appliedOrder, manifest.entries.map((entry) => entry.filename));
   } finally { h.cleanup(); }
 });

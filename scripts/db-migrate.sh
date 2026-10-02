@@ -139,6 +139,21 @@ while IFS=$'\t' read -r filename expected_checksum; do
   fi
 
   echo "applying migration: $filename"
+  # PostgreSQL does not allow an enum value added inside a transaction to be
+  # used until that transaction commits. Migration 089 adds `flooring` and
+  # immediately inserts rows using it, so commit that idempotent enum extension
+  # first, then keep the remaining data/schema changes and history row atomic.
+  # If the second transaction is interrupted, rerunning this IF NOT EXISTS
+  # statement is safe and the migration can resume.
+  if [[ "${filename}" == "089_flooring_catalog.sql" ]]; then
+    enum_statement="ALTER TYPE price_book_category ADD VALUE IF NOT EXISTS 'flooring';"
+    if [[ "$(grep -Fxc "${enum_statement}" "${file}")" != "1" ]]; then
+      echo "expected exactly one flooring enum extension in ${filename}; refusing to migrate" >&2
+      exit 1
+    fi
+    psql_cmd -v ON_ERROR_STOP=1 -c "${enum_statement}"
+  fi
+
   # Execute the migration and ledger write in one PostgreSQL transaction so a
   # connection failure cannot leave applied SQL without its history record.
   # Migration 088 contains its own top-level BEGIN/COMMIT; strip only those
@@ -149,6 +164,8 @@ while IFS=$'\t' read -r filename expected_checksum; do
     printf 'BEGIN;\n'
     if [[ "${filename}" == "088_condition_tier.sql" ]]; then
       sed -e '/^BEGIN;$/d' -e '/^COMMIT;$/d' "$file"
+    elif [[ "${filename}" == "089_flooring_catalog.sql" ]]; then
+      sed "/^ALTER TYPE price_book_category ADD VALUE IF NOT EXISTS 'flooring';$/d" "$file"
     else
       cat -- "$file"
     fi
