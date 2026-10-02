@@ -331,3 +331,34 @@ change the security limitations or acceptance scope: there is still no live
 DirectAdmin/Apache cookie proof, hosted production identity/provisioning, positive
 governed control or receipt, or shared conversation integration. #1050 remains
 partial and open.
+
+## Relay fixture review follow-up — source commit 29f01078 (2026-10-02)
+
+After the independent #1248 workflow review, the #1050 fixture now executes the
+identity fixture's registered `t.after` cleanup callback before removing its
+temporary workspace. It also requires the exact current #812 production default
+`503 cookie_boundary_unverified`; it no longer accepts the older generic
+`relay_not_configured` response. The fixture source commit is
+`29f010786843ff529de2f9974fcb2e8e740df234`; file SHA256 is
+`e66aee498fb4ba43a42c5f9c4267ab71debbafc3f8dee5b45eb1deaf3b7dafab`.
+
+The focused Node v22.23.3 extracted relay test passed **14 requests / 15 hosted
+routes** against exact main `64561e4d077ec07a3cb40dfb43284b0e7dff4dbf`. It
+observed the exact disabled production response with no upstream request, then
+used only the in-process fixture loader for local company, denial, and expiry
+scenarios. It does not prove an Apache/DirectAdmin CGI or live cookie boundary.
+The #1157 workflow still owns updating its pin to this fixture commit and hash.
+
+Exact focused command:
+
+```sh
+TITAN_WORKFORCE_HOST_ROOT=/tmp/1050-extracted-main645/host \
+TITAN_SERVER_NODE_SOURCE_ROOT=/tmp/1050-extracted-main645/host \
+TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-main645.mjs \
+TITAN_HOST_SDK_MODULE=/tmp/1050-sdk-main645.mjs \
+TITAN_BRIDGE_FIXTURE_MODULE=/tmp/1050-extracted-main645/host/packages/titan-platform/tests/fixtures/directadmin-bridge-fixture.mjs \
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
+/tmp/1050-node22-dist/bin/node \
+--import /workspace/Titan-Zero-Field-Service-Workforce/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/loader.mjs \
+apps/directadmin/workforce/tests/relay-host.integration.mjs
+```
