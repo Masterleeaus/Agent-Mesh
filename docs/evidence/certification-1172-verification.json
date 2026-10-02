@@ -3309,6 +3309,45 @@
       },
       "production_eligible": false,
       "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T11:40:56Z",
+      "workspace_head_before_contract_fix": "9b1cfc34aef3a25b6c77c52623034d2129d9470b",
+      "source_commit": "c46774cc007a324ec618ecdfdfe5a04acd44780f",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Fix the evidence-input contract mismatch detected by hosted CI after the c46774cc source refresh. Remove an unsupported extra related_evidence entry; preserve the full append-only verification history in its dedicated evidence file. No implementation or owner source changed.",
+      "ci_failure": {
+        "pull_request": 1178,
+        "head_sha": "9b1cfc34aef3a25b6c77c52623034d2129d9470b",
+        "workflow": "Certification evidence contract",
+        "run_id": 37002245020,
+        "job_id": 110822367226,
+        "failed_test": "readiness-snapshot.test.mjs",
+        "finding": "Expected related_evidence to contain only tests/e2e/certification/critical-path-matrix.generated.json; audit input also listed docs/evidence/certification-1172-verification.json."
+      },
+      "correction": {
+        "files": [
+          "tests/e2e/certification/release-readiness.audit.json",
+          "tests/e2e/certification/release-readiness-matrix.generated.json",
+          "docs/evidence/certification-1172-verification.json"
+        ],
+        "action": "Removed unsupported snapshot cross-reference while retaining verification history in docs/evidence; regenerated deterministic snapshot.",
+        "hosted_rerun": "PENDING_ON_FOLLOW_UP_HEAD"
+      },
+      "commands": [
+        {
+          "command": "Read-only GitHub Actions failure log inspection",
+          "status": "PASS",
+          "detail": "Isolated one contract expectation mismatch; evaluator and earlier integration assertions in the job passed."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs; --check; JSON parse; git diff --check",
+          "status": "PASS",
+          "detail": "Regenerated and checked the 28-row snapshot successfully; all evidence JSON parsed and git diff --check passed."
+        }
+      ],
+      "production_eligible": false,
+      "mission_complete": false
     }
   ]
 }

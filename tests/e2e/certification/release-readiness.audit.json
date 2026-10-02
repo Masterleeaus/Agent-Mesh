@@ -7,8 +7,7 @@
   "production_eligibility": "DENIED_MISSING_EVIDENCE",
   "published_state": "UNKNOWN",
   "related_evidence": [
-    "tests/e2e/certification/critical-path-matrix.generated.json",
-    "docs/evidence/certification-1172-verification.json"
+    "tests/e2e/certification/critical-path-matrix.generated.json"
   ],
   "external_sources": [
     {
