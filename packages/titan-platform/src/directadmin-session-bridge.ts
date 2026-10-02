@@ -183,9 +183,11 @@ export class DirectAdminSessionBridge {
     let url: URL;
     try { url = new URL(request.url); } catch { return rejectRequest(); }
     const csrfNonce = request.headers.get('x-titan-da-bootstrap-csrf') ?? '';
+    const contentLength = request.headers.get('content-length');
     if (request.method !== 'POST' || url.origin !== this.#config.origin || url.pathname !== '/v1/directadmin/bootstrap' ||
         url.search || url.hash || request.headers.get('origin') !== this.#config.origin ||
         request.headers.get('sec-fetch-site') !== 'same-origin' || request.headers.has('content-encoding') ||
+        (contentLength !== null && !/^0+$/.test(contentLength)) ||
         hasCookie(request, COOKIE) || !/^[A-Za-z0-9_-]{43,128}$/.test(csrfNonce) || typeof resolveInput !== 'function') {
       return rejectRequest();
     }

@@ -287,6 +287,7 @@ test('bootstrap route validates same-origin and one-time CSRF nonce before the t
     bootstrapRequest(f, { origin: 'https://attacker.test' }),
     bootstrapRequest(f, { 'sec-fetch-site': 'same-site' }),
     bootstrapRequest(f, { 'x-titan-da-bootstrap-csrf': 'short' }),
+    bootstrapRequest(f, { 'content-length': '1' }),
     f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: {
       cookie: null, 'x-titan-csrf': null, 'x-titan-da-bootstrap-csrf': bootstrapNonce,
       'content-type': 'application/json',
