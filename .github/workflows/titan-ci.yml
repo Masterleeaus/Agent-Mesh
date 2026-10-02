@@ -107,6 +107,10 @@ jobs:
             echo "::warning::Web typecheck still contains recorded Merge84 baseline debt; no regression detected."
           fi
 
+      - name: Install Chromium for PWA browser tests
+        if: ${{ hashFiles('apps/pwa/tests/browser-regression.test.mjs') != '' }}
+        run: pnpm --filter @titan-zero/pwa exec playwright install --with-deps chromium
+
       - name: Strict tests for clean packages
         run: pnpm -r --filter '!@titan-zero/titan-platform' --filter '!@titan-zero/worker' --filter '!@titan-zero/web' --if-present test
 
@@ -174,7 +178,6 @@ jobs:
         shell: bash
         run: |
           echo "::notice::Full Next.js web build becomes a strict gate when the recorded web TypeScript baseline reaches zero."
-
   mobile:
     runs-on: ubuntu-latest
     steps:
