@@ -44,8 +44,20 @@ export interface CompanyFilePlacementRecord {
   readonly status: CompanyPlacementStatus;
 }
 
+declare const registeredCompanyFilePlacementBrand: unique symbol;
+export type RegisteredCompanyFilePlacement = Readonly<CompanyFilePlacementRecord & {
+  readonly [registeredCompanyFilePlacementBrand]: true;
+}>;
+
+const registeredFilePlacements = new WeakSet<object>();
+
+/** True only for a file placement reference returned by the trusted registry adapter. */
+export function isRegisteredCompanyFilePlacement(value: unknown): value is RegisteredCompanyFilePlacement {
+  return typeof value === "object" && value !== null && registeredFilePlacements.has(value);
+}
+
 export interface CompanyFilePlacementRegistry {
-  findFileByCompanyId(companyId: string, options?: CompanyStorageResolverOptions): Promise<CompanyFilePlacementRecord | null>;
+  findFileByCompanyId(companyId: string, options?: CompanyStorageResolverOptions): Promise<RegisteredCompanyFilePlacement | null>;
 }
 
 function requireGlobalRegistry(input: GlobalRegistryStorageInput): StorageClient {
@@ -158,14 +170,14 @@ function placementFromRow(row: PlacementRow): CompanyPlacementRecord {
   });
 }
 
-function filePlacementFromRow(row: FilePlacementRow): CompanyFilePlacementRecord {
+function filePlacementFromRow(row: FilePlacementRow): RegisteredCompanyFilePlacement {
   if (!validId(row.company_id) || !validPlacementId(row.file_placement_id)
     || !Number.isSafeInteger(row.file_placement_revision) || Number(row.file_placement_revision) < 1
     || row.provider !== "localfs" || !validId(row.schema_version)
     || typeof row.status !== "string" || !placementStatuses.includes(row.status as CompanyPlacementStatus)) {
     throw new CompanyStorageResolutionError("placement-invalid");
   }
-  return Object.freeze({
+  const record = Object.freeze({
     company_id: row.company_id,
     file_placement_id: row.file_placement_id,
     file_placement_revision: row.file_placement_revision as number,
@@ -173,6 +185,8 @@ function filePlacementFromRow(row: FilePlacementRow): CompanyFilePlacementRecord
     schema_version: row.schema_version,
     status: row.status as CompanyPlacementStatus,
   });
+  registeredFilePlacements.add(record);
+  return record as RegisteredCompanyFilePlacement;
 }
 
 /** Create a read-only adapter over the existing, separately supplied registry. */
