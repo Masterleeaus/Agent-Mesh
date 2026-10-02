@@ -204,8 +204,11 @@ test("separate Workforce processes deduplicate an uncertain effect and preserve 
     assert.equal(firstResult.accepted, true);
     assert.equal(secondResult.accepted, true);
     assert.equal(firstResult.run_id, secondResult.run_id);
-    assert.ok(["RUNNING", "WAITING_EXTERNAL"].includes(firstResult.run_state));
-    assert.ok(["RUNNING", "WAITING_EXTERNAL"].includes(secondResult.run_state));
+    // A losing process may observe the deterministic run before its creator
+    // has finished advancing it. The post-exit replay below asserts final state.
+    const inFlightStates = ["QUEUED", "RUNNING", "WAITING_TOOL", "WAITING_EXTERNAL"];
+    assert.ok(inFlightStates.includes(firstResult.run_state), `unexpected first process run state: ${String(firstResult.run_state)}`);
+    assert.ok(inFlightStates.includes(secondResult.run_state), `unexpected second process run state: ${String(secondResult.run_state)}`);
 
     const restarted = startPersistenceWorker(databasePath);
     workers.push(restarted);
