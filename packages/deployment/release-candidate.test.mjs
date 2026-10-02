@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { generateKeyPairSync, sign, createHash } from 'node:crypto';
+import { constants as fsConstants } from 'node:fs';
 import fs from 'node:fs/promises';
 import { mkdtemp, writeFile, rm, mkdir, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -159,9 +160,11 @@ test('rejects a final artifact symlink swapped in after path validation', async 
   await writeFile(matchingExternal, 'fixture web');
   const originalOpen = fs.open.bind(fs);
   let replaced = false;
+  let openFlags;
   t.mock.method(fs, 'open', async function (path, flags, ...rest) {
     if (!replaced && path === artifactPath) {
       replaced = true;
+      openFlags = flags;
       await rm(artifactPath);
       await symlink(matchingExternal, artifactPath);
     }
@@ -169,6 +172,8 @@ test('rejects a final artifact symlink swapped in after path validation', async 
   });
   await assert.rejects(verify(f), /artifact-path-raced/);
   assert.equal(replaced, true);
+  assert.ok((openFlags & fsConstants.O_NOFOLLOW) !== 0);
+  assert.ok((openFlags & fsConstants.O_NONBLOCK) !== 0);
 });
 
 test('requires and accepts DirectAdmin owner verification for that profile', async t => {
