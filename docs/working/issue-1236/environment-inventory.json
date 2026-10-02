@@ -192,6 +192,7 @@
       "services/worker/src/db-runtime.ts"
     ],
     "DATABASE_URL": [
+      "services/worker/src/db-runtime.ts",
       "services/worker/src/index.ts"
     ],
     "DB_DIALECT": [
