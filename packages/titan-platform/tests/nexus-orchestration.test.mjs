@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {resolveNexusPlan,approveNexusPlan,acceptNexusVerification} from './nexus-orchestration.ts';
+import {resolveNexusPlan,approveNexusPlan,acceptNexusVerification} from '../.test-dist/nexus-orchestration.js';
 
 const input={company_id:'company-1',plan_id:'plan-1',idempotency_key:'idem-1',configuration_revision:'rev-1',native_capabilities:['native.jobs'],requested_facets:[]};
 test('resolves native-only plan without provider dependency',()=>{const plan=resolveNexusPlan(input);assert.equal(plan.state,'PROPOSED');assert.equal(plan.authority_granted,false);});
