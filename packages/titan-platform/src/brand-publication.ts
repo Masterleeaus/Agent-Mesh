@@ -336,6 +336,27 @@ export async function compileMicroweberPageDraft(value:unknown,verification:{ver
  const content_html=renderMicroweberNode(document.root);
  return Object.freeze({schema:"titan.microweber-page-draft/v1",company_id:request.company_id,publication_id:request.publication_id,site_id:request.site_id,version:request.version,route,title,content_html,source_snapshot_hash:request.source.snapshot_hash,authority_granted:false});
 }
+export type MicroweberSiteDraft=Readonly<{
+ schema:"titan.microweber-site-draft/v1";company_id:string;publication_id:string;site_id:string;version:number;environment:"preview"|"live";
+ routes:readonly string[];pages:readonly MicroweberPageDraft[];source_snapshot_hash:string;authority_granted:false;
+}>;
+/** Compiles a bounded set of independently verified Builder page snapshots into one deterministic site draft. */
+export async function compileMicroweberSiteDraft(values:readonly unknown[],verification:{verifyApproval?:(approval:BrandPublicationApproval,snapshot:BuilderDocument)=>Promise<boolean>;verifyCurrentSnapshot:BrandSnapshotCurrentVerifier}):Promise<MicroweberSiteDraft> {
+ if(!Array.isArray(values)||values.length===0||values.length>100)throw new Error("microweber-site-page-limit");
+ const requests=await Promise.all(values.map(value=>assertBrandRendererRequest(value,verification.verifyApproval,verification.verifyCurrentSnapshot)));
+ const first=requests[0];
+ if(first.renderer!=="microweber")throw new Error("microweber-renderer-request-required");
+ for(const request of requests){
+  if(request.renderer!=="microweber"||request.company_id!==first.company_id||request.publication_id!==first.publication_id||request.site_id!==first.site_id||request.version!==first.version||request.environment!==first.environment)throw new Error("microweber-site-scope-mismatch");
+ }
+ const pages=(await Promise.all(requests.map(request=>compileMicroweberPageDraft(request,verification)))).sort((a,b)=>a.route.localeCompare(b.route));
+ const routes=pages.map(page=>page.route);
+ if(new Set(routes).size!==routes.length)throw new Error("microweber-site-duplicate-route");
+ const identity=JSON.stringify(pages.map(page=>[page.route,page.title,page.content_html,page.source_snapshot_hash]));
+ const digest=new Uint8Array(await globalThis.crypto.subtle.digest("SHA-256",new TextEncoder().encode(identity)));
+ const source_snapshot_hash=`sha256:${[...digest].map(byte=>byte.toString(16).padStart(2,"0")).join("")}`;
+ return Object.freeze({schema:"titan.microweber-site-draft/v1",company_id:first.company_id,publication_id:first.publication_id,site_id:first.site_id,version:first.version,environment:first.environment,routes:Object.freeze(routes),pages:Object.freeze(pages),source_snapshot_hash,authority_granted:false});
+}
 export type BrandPublicationApproval=Readonly<{company_id:string;builder_document_id:string;revision:number;snapshot_hash:string;approved_by:string;approved_at:string}>;
 export type BrandSnapshotCurrentVerifier=(company_id:string,builder_document_id:string,revision:number,snapshot_hash:string)=>Promise<boolean>;
 export async function computeBrandPublicationIdempotencyKey(input:{company_id:string;site_id:string;version:number;environment:"preview"|"live"}):Promise<string> {
