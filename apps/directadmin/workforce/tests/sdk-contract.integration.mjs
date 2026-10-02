@@ -424,14 +424,14 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     page.on('response', response => network.push(`RESPONSE ${response.status()} ${response.url()}`));
     page.on('requestfailed', request => network.push(`FAILED ${request.url()} ${request.failure()?.errorText ?? ''}`));
     const submitCancel = async (targetPage, companyId, reason) => {
-      await targetPage.getByRole('button', { name: 'Controls', exact: true }).click();
+      await targetPage.getByRole('button', { name: 'Governed actions', exact: true }).click();
       await targetPage.getByLabel('Operation').selectOption('cancel');
       await targetPage.getByLabel('Work item').selectOption(`${companyId}-work`);
       await targetPage.getByLabel('Reason', { exact: true }).fill(reason);
       const receiptId = `browser-fixture-receipt-${acceptedIntents.length + 1}`;
       await targetPage.getByRole('button', { name: 'Submit governed request' }).click();
       await targetPage.getByText('Requested', { exact: true }).waitFor();
-      await targetPage.getByRole('button', { name: 'Evidence', exact: true }).click();
+      await targetPage.getByRole('button', { name: 'Receipts & evidence', exact: true }).click();
       await targetPage.getByText(receiptId, { exact: true }).waitFor();
       return receiptId;
     };
@@ -449,9 +449,9 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
     await page.getByText('company-a', { exact: true }).waitFor();
     assert.equal(await page.getByText('Current hosted projection', { exact: true }).count(), 1);
-    await page.getByRole('button', { name: 'Health', exact: true }).click();
+    await page.getByRole('button', { name: 'Host status', exact: true }).click();
     await page.getByText('controlled-test-http-owner', { exact: true }).waitFor();
-    await page.getByRole('button', { name: 'Controls', exact: true }).click();
+    await page.getByRole('button', { name: 'Governed actions', exact: true }).click();
     await page.getByLabel('Operation').selectOption('cancel');
     await page.getByLabel('Work item').selectOption('company-a-work');
     await page.getByLabel('Reason', { exact: true }).fill('Browser cancellation acceptance fixture');
@@ -471,7 +471,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     assert.equal(await page.getByText('Verified outcome with evidence', { exact: true }).count(), 0);
     assert.doesNotMatch(await page.locator('#titan-workforce').innerText(), /\bVERIFIED\b|Verified outcome/i,
       'the hosted transport acknowledgement remains REQUESTED and never becomes a verified outcome');
-    await page.getByRole('button', { name: 'Evidence', exact: true }).click();
+    await page.getByRole('button', { name: 'Receipts & evidence', exact: true }).click();
     await page.getByText('browser-fixture-receipt-1', { exact: true }).waitFor();
     assert.equal(await page.getByText('Requested', { exact: true }).count(), 1);
     assert.equal(await page.getByText('Verified outcome with evidence', { exact: true }).count(), 0);
@@ -480,7 +480,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     const contextReadsBeforeDenial = requests.filter(item => item.method === 'GET' && item.path === '/v1/directadmin/context').length;
     const projectionReadsBeforeDenial = requests.filter(item => item.method === 'GET' && item.path === '/v1/directadmin/titan_workforce/projection').length;
     denyNextIntent = true;
-    await page.getByRole('button', { name: 'Controls', exact: true }).click();
+    await page.getByRole('button', { name: 'Governed actions', exact: true }).click();
     await page.getByLabel('Reason', { exact: true }).fill('Unsupported action denial fixture');
     await page.getByRole('button', { name: 'Submit governed request' }).click();
     await page.getByText('The host denied that request. Current company data was refreshed; review it before retrying.', { exact: true }).waitFor();
@@ -524,11 +524,11 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     await page.reload();
     await page.getByText('company-b', { exact: true }).waitFor();
     assert.equal(await page.getByText(reloadReceipt, { exact: true }).count(), 0, 'full reload starts with no in-memory receipt');
-    await page.getByRole('button', { name: 'Evidence', exact: true }).click();
+    await page.getByRole('button', { name: 'Receipts & evidence', exact: true }).click();
     await page.getByText('Submit a permitted governed request to inspect its receipt.').waitFor();
 
     const navigationReceipt = `browser-fixture-receipt-${acceptedIntents.length + 1}`;
-    await page.getByRole('button', { name: 'Controls', exact: true }).click();
+    await page.getByRole('button', { name: 'Governed actions', exact: true }).click();
     await page.getByLabel('Operation').selectOption('cancel');
     await page.getByLabel('Work item').selectOption('company-b-work');
     await page.getByLabel('Reason', { exact: true }).fill('Canceled navigation receipt fixture');
@@ -542,12 +542,12 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     pendingIntent = null;
     await page.goBack();
     await page.getByText('company-b', { exact: true }).waitFor();
-    await page.getByRole('button', { name: 'Evidence', exact: true }).click();
+    await page.getByRole('button', { name: 'Receipts & evidence', exact: true }).click();
     await page.getByText('Submit a permitted governed request to inspect its receipt.').waitFor();
     assert.equal(await page.getByText(navigationReceipt, { exact: true }).count(), 0, 'a late acknowledgement cannot restore a receipt after real navigation');
 
     denyProjectionAfterAcceptedIntent = true;
-    await page.getByRole('button', { name: 'Controls', exact: true }).click();
+    await page.getByRole('button', { name: 'Governed actions', exact: true }).click();
     await page.getByLabel('Operation').selectOption('cancel');
     await page.getByLabel('Work item').selectOption('company-b-work');
     await page.getByLabel('Reason', { exact: true }).fill('Accepted request with denied read refresh fixture');
@@ -569,7 +569,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     const expiryPage = await expiryContext.newPage();
     await expiryPage.goto(origin);
     await expiryPage.getByText('company-b', { exact: true }).waitFor();
-    await expiryPage.getByRole('button', { name: 'Controls', exact: true }).click();
+    await expiryPage.getByRole('button', { name: 'Governed actions', exact: true }).click();
     await expiryPage.getByLabel('Operation').selectOption('cancel');
     await expiryPage.getByLabel('Work item').selectOption('company-b-work');
     await expiryPage.getByLabel('Reason', { exact: true }).fill('Expired authorization acceptance fixture');
@@ -622,7 +622,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     await readOnlyPage.goto(origin);
     await readOnlyPage.getByText('company-b', { exact: true }).waitFor();
     const intentCountBeforeReadOnlyView = requests.filter(item => item.method === 'POST' && item.path === '/v1/directadmin/titan_workforce/intents').length;
-    await readOnlyPage.getByRole('button', { name: 'Controls', exact: true }).click();
+    await readOnlyPage.getByRole('button', { name: 'Governed actions', exact: true }).click();
     await readOnlyPage.getByText('This is a read-only Workforce projection. The canonical owner has not exposed an authorized lifecycle control; no request was sent.', { exact: true }).waitFor();
     assert.equal(await readOnlyPage.getByRole('button', { name: 'Submit governed request' }).count(), 0);
     assert.equal(requests.filter(item => item.method === 'POST' && item.path === '/v1/directadmin/titan_workforce/intents').length, intentCountBeforeReadOnlyView);

@@ -323,12 +323,12 @@ try {
   await page.getByText('fixture-company-a-worker', { exact: true }).waitFor();
   assert.ok(hostedObservations.some(entry => entry.path === '/v1/directadmin/context'));
   assert.ok(hostedObservations.some(entry => entry.path === '/v1/directadmin/titan_workforce/projection'));
-  await page.getByRole('button', { name: 'Work', exact: true }).click();
+  await page.getByRole('button', { name: 'Cleaning work queue', exact: true }).click();
   await page.getByText('fixture-company-a-work', { exact: true }).waitFor();
-  await page.getByRole('button', { name: 'Evidence', exact: true }).click();
+  await page.getByRole('button', { name: 'Receipts & evidence', exact: true }).click();
   await page.getByText('fixture-company-a-work', { exact: true }).click();
   await page.getByText('fixture-evidence-company-a', { exact: true }).waitFor();
-  await page.getByRole('button', { name: 'Controls', exact: true }).click();
+  await page.getByRole('button', { name: 'Governed actions', exact: true }).click();
   await page.getByText('This is a read-only Workforce projection. The canonical owner has not exposed an authorized lifecycle control; no request was sent.', { exact: true }).waitFor();
   assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0, 'canonical controls=[] keeps the UI read-only');
   assert.deepEqual(pageErrors, [], 'packaged role has no browser runtime errors');
@@ -444,7 +444,7 @@ try {
   assert.equal(await page.getByText('fixture-company-b-worker', { exact: true }).count(), 0, 'expired upstream session clears current projection');
   assert.deepEqual(pageErrors, [], 'security denial and expiry remain handled states');
 
-  console.log('PASS extracted Workforce 0.1.5 + Server Node 0.3.0 relay module + current #811 hosted source; production default denied, fixture config-loader injected in-process only; no CGI config or Apache proof');
+  console.log('PASS extracted Workforce 0.1.6 + Server Node 0.3.0 relay module + current #811 hosted source; production default denied, fixture config-loader injected in-process only; no CGI config or Apache proof');
   console.log(`PASS scenarios: production default unavailable (HTTP 503 ${relayObservations[0].code}), read-only company-a projection/evidence, empty controls, CSRF denial (${wrongCsrf.status}), hosted governed-action denial without DB/event effects (${denial.error}), company switch to company-b, upstream expiry and client data clearing; relay requests=${relayObservations.length}, hosted routes=${hostedObservations.length}`);
 } finally {
   await browser?.close().catch(() => {});

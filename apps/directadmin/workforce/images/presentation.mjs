@@ -60,7 +60,7 @@ export function workforceContribution(state, role = 'user') {
   const route = role === 'admin' ? '/CMD_PLUGINS_ADMIN/titan_workforce'
     : role === 'reseller' ? '/CMD_PLUGINS_RESELLER/titan_workforce' : '/CMD_PLUGINS/titan_workforce';
   return {
-    plugin_id: 'titan_workforce', plugin_version: '0.1.5', sdk_compatibility: '1.0.0',
+    plugin_id: 'titan_workforce', plugin_version: '0.1.6', sdk_compatibility: '1.0.0',
     navigation: [{ id: 'workforce', label: 'Workforce', route, roles: ['admin', 'reseller', 'user'] }],
     widgets: [{ id: 'workforce-status', title: 'Workforce',
       status: state.phase === 'ready' ? 'ready' : state.phase === 'denied' ? 'permission-denied' : state.phase === 'loading' ? 'loading' : 'unavailable',
