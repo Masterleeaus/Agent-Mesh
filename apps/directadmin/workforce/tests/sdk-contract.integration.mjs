@@ -421,6 +421,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     const network = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('request', request => network.push(`${request.method()} ${request.url()}`));
+    page.on('response', response => network.push(`RESPONSE ${response.status()} ${response.url()}`));
     page.on('requestfailed', request => network.push(`FAILED ${request.url()} ${request.failure()?.errorText ?? ''}`));
     const submitCancel = async (targetPage, companyId, reason) => {
       await targetPage.getByRole('button', { name: 'Controls', exact: true }).click();
