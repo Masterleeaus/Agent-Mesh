@@ -1,0 +1,9 @@
+# Business evidence SQLite migration and recovery
+
+`006_business_evidence_ledger.sql` adds versioned classification and acceptance fields to the existing evidence table. Existing rows receive `evidence_version = 1`, `classification = factual`, and `acceptance_state = accepted` so they remain visible under the prior evidence contract. This backfill does **not** claim that a provider acknowledgement is a verified business outcome: legacy rows retain null `event_type` and `verification_id`, and consumers must not infer verification from the defaults.
+
+Migration `007_business_evidence_company_delete_cascade.sql` preserves the existing company-level foreign-key cleanup while blocking direct evidence updates and deletes. Company deletion uses a transaction-local-in-effect guard inserted by the parent `companies` delete trigger; successful cascade cleanup removes the guard, and a failed deletion rolls the marker back. Ordinary evidence deletion remains rejected.
+
+The production runner `node scripts/sqlite-migrate.mjs` records each migration filename in `schema_migrations` and skips a recorded file on rerun. The regression suite `node --test db/sqlite/006_business_evidence_ledger.test.mjs` builds a populated database from migrations 001–005, runs that production migrator twice, checks old values/defaults and append-only behavior, and backs up/restores the database before exercising isolation and company cascade cleanup.
+
+These migrations are forward-only. Do not remove accepted evidence, triggers, or columns to roll back an application release. Restore a verified pre-upgrade backup only as a controlled recovery operation, or deploy a reviewed forward migration that preserves evidence and provenance. Validate the restored database with `PRAGMA integrity_check`, `PRAGMA foreign_key_check`, and the focused migration test before reconnecting it to a company placement.
