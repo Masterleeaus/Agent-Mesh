@@ -1,54 +1,56 @@
 # DirectAdmin authenticated session bridge — #1049
 
-Status: implemented adapter and disposable integration evidence; **not commissioned on a DirectAdmin host**. PR #1204 remains draft/non-closing. This contract depends on #302 / PR #1183 (`1351a6ccb0b73c3a15879e23ddda01435ef25559`) and its inherited #1084/#1179 prerequisite (`ad43d010d50ba262c02beaf0ed892b656174ff58`). Dependency changes are merged with provenance, not reimplemented here.
+Status: implemented canonical credential adapter and disposable integration evidence; **not commissioned on a DirectAdmin host**. PR #1204 remains draft/non-closing. The current integration uses #302 / PR #1183 head `bd3075ef91222e32a23a1f09111a84b3c01af515` (credential implementation `ec61f95a769a8c7b1ebaf1de91d6c2c6ead9a965`). Its shared dependency changes are merged with provenance, not copied or reimplemented here.
 
-## Owners and composition
+## Canonical owner and API
 
-- `packages/titan-platform/src/directadmin-session-bridge.ts`: cryptographic session verification and adaptation to the canonical `IdentitySessionRegistry` exported by `security-boundary.ts`.
-- `directadmin-gateway.ts`: bounded Fetch Request/Response handler; no listener, CLI, deployment or new authority engine.
-- `directadmin-cockpit.ts`: one browser session lifecycle and accessible text-only projection renderer shared by `apps/directadmin/{zero-core,operations-hub,brand-studio}/cockpit.mjs`.
-- `directadmin-plugin.ts`: public SDK entry point. The earlier injectable `resolveDirectAdminTitanContext` is deprecated presentation compatibility, **not authentication**. Its exposed company list is now selected-company-only too.
-- #811/#1201 and #812/#1211 own launch, reverse proxy, commissioned issuer configuration, capability routing, and execution integration. #1182/#1188 owns conversation transport. This continuation adds no changes to their server/bootstrap files. Such changes visible in the PR diff are inherited dependency commits.
+`packages/titan-platform/src/directadmin-session-bridge.ts` imports the canonical credential service's **type** from `security-boundary.ts`. The earlier hand-written `titan-da-session+jwt` verifier has been removed. There are no SDK signing keys, signature parsers, credential issuers, identity stores or registry provisioning methods. Browser requests use only #302's `titan-session+jwt` credentials; upstream login assertions, the provisional token type and legacy credentials are rejected.
 
-`createDirectAdminGateway(bridge, owners)` receives canonical projection and governed-intent owners from the launched host composition. Projection callbacks receive only the authenticated selected-company context, never arbitrary caller headers. The adapter revalidates before and after reads. `requestIntent` receives a revalidation function; the execution owner **must call it at authorization and immediately before effects**, and preserve/revalidate the original company context for queued work. The SDK does not grant effective authority or execute providers. Its 202 response says `REQUESTED`, not authorized or verified.
+The trusted host supplies:
 
-Inspected #811/#1201 head `99cd1bf86fa75c4c0a4e2ec45b39e9baccbe16fd`: `hosted-runtime.ts` requires a credential verifier returning a verified identity with audience `workforce` and a canonical `zero`/`go`/`hub` surface; it persists the authenticated identity into the run and rechecks #302 before native effects. A DirectAdmin credential configured for a separate audience cannot be forwarded to that route or relabelled as `workforce`. Parent-coordinated composition must establish an authenticated audience-bound handoff and explicit business surface through canonical owners. This patch neither introduces such an exchange nor alters the conversation owner. Its per-request revalidation closure alone is not a durable queued-work credential.
+```ts
+const bridge = new DirectAdminSessionBridge({
+  origin: 'https://panel.example:2222',
+  audience: 'titan-directadmin:node-1',
+  node_id: 'node-1',
+  sessions, // canonical createSessionCredentialService(config), commissioned separately
+});
+const handle = createDirectAdminGateway(bridge, owners);
+```
 
-## Credential and browser contract
+`bridge.authenticate(request)` returns selected-company `context`, `revalidate()`, `switchCompany(company_id)` and `logout()`. It calls `sessions.authenticate(cookie)` and validates the canonical result's audience and signed DirectAdmin node/CSRF binding. Retained revalidation calls `sessions.authenticate(cookie, expected)` again with the original company/device/actor/context revision. Switch and logout call the canonical `switchCompany` and `revoke` methods, never raw registry mutation.
 
-The host must commission an authentication issuer before enabling these routes. This repository does not assume that DirectAdmin emits this credential natively. The issuer must independently authenticate the actual DirectAdmin session/human, rotate login state to resist fixation, and use the canonical #302 mapping/session rather than script ownership, role, headers or a bare session ID. It may sign only the authenticated session binding. No persistent signing keys or credentials are created by this implementation or its tests.
+#302 owns verification of issuer/provider, subject, session/device/revision, exact audience, expiry and current actor/company/membership/external binding. It also owns durable one-time login assertion exchange and signed DirectAdmin node/role/CSRF metadata. See [Authenticated session credentials](authenticated-session-credentials.md) for the sole credential format and key policy. DA role is descriptive presentation context, not Titan authority. No fixture identity or automatic membership backfill is a production prerequisite substitute.
 
-Ownership update: #302 is implementing canonical Titan credential issuance/verification. The verifier here is restricted to the DirectAdmin **provider attestation boundary**, not an alternative canonical Titan token service. Its format below is provisional/uncommissioned and must be reconciled with #302's exported verifier before host integration. #1049 must not mint a competing Titan credential, create a signing-key store, blanket-backfill memberships, or bypass #302. Required handoff to that owner: cryptographically verified issuer/provider, subject, session ID, device ID, session revision, fixed audience/node and expiry, plus selected-company/context and CSRF/session binding. The stable #302 current-state resolver remains mandatory after cryptographic verification.
+The bridge projects `company_ids: [current.company_id]` only. Canonical `allowed_company_ids` are switch choices and never become operation scope. No Frappe/provider mapping is required for native Titan FSM. The deprecated `resolveDirectAdminTitanContext` remains presentation compatibility only, and also exposes selected-company-only scope.
 
-The bridge verifies compact JWS using pinned **public Ed25519** keys. The protected header is exactly `alg: EdDSA`, `typ: titan-da-session+jwt`, and a configured `kid`; remote key discovery, alternate algorithms and extra header parameters are rejected. Key rotation replaces commissioned bridge configuration. Upstream private keys stay outside plugins/browser code.
+## Browser/session protections
 
-Signed claims:
+The commissioned issuer must deliver the canonical credential using `__Host-titan-da-session` with **Secure; HttpOnly; SameSite=Strict; Path=/** and no Domain. Its separately authenticated bootstrap supplies the CSRF nonce to `DirectAdminCockpitSession`; credentials never belong in JavaScript, browser storage, URLs or diagnostics. #302 signs the nonce's SHA-256 binding. No real keys or credentials are created by this SDK.
 
-| Claim | Binding |
-| --- | --- |
-| `iss`, `sub` | Configured issuer and authenticated external subject; passed to canonical provider/subject mapping |
-| `aud`, `node_id` | Exact configured audience and node, never request-selected |
-| `session_id`, `device_id`, `session_revision` | Exact persisted current session/device/revision |
-| `actor_id`, `company_id`, `context_revision` | Exact canonical selected actor/company and current identity generation |
-| `iat`, `exp` | Integer Unix seconds; no future issuance, maximum lifetime 300 seconds, expiry checked on every revalidation |
-| `csrf_sha256` | Base64url SHA-256 of a separate random browser CSRF nonce (at least 32 random bytes) |
-| `da_role` | `admin`, `reseller` or `user`; presentation only |
+Every gateway request requires the cookie, `X-Titan-CSRF`, `Sec-Fetch-Site: same-origin`, and the configured HTTPS request origin. POST requires exact Origin. GET may use an exact same-origin Referer when Origin is absent. The SDK hashes the nonce and compares it to the **verified** canonical binding. Missing/invalid browser metadata fails closed. No Host/forwarded/company/caller header changes identity or the configured node/audience.
 
-Credential delivery must use `__Host-titan-da-session` with **Secure; HttpOnly; SameSite=Strict; Path=/** and no Domain. The separately authenticated HTML/bootstrap supplies the CSRF nonce to `DirectAdminCockpitSession`; never put the credential into JavaScript, local storage, URLs or diagnostic payloads. Cookie values are not minted/set by this SDK. It clears the cookie after successful switch/logout.
+API responses are no-store JSON with nosniff, no-referrer, same-origin framing and restrictive CSP. HTML entrypoints must independently apply their corresponding Evolution-compatible headers; API headers do not protect a parent HTML document. Bodies are limited to 64 KiB/five seconds; at most 32 concurrent requests are admitted. Browser fetches time out at ten seconds. The launched host still owns total request/header deadlines, connection limits and rate limiting.
 
-Every gateway call requires the cookie, `X-Titan-CSRF`, `Sec-Fetch-Site: same-origin`, and the configured HTTPS request origin. POST requires an exact Origin header. Browser GET may instead use an exact same-origin Referer when Origin is absent. No forwarded header changes the configured origin. A missing browser signal fails closed. The real proxy must preserve trusted request-origin metadata and restrict direct gateway access; host-specific proxy behavior is unverified.
+POST `/v1/directadmin/company` verifies the old credential and calls canonical switching, which atomically increments the persisted revision. The bridge verifies the returned replacement through the canonical service, then gives the gateway a server-only Set-Cookie value with Secure/HttpOnly/Strict/Path=/ and a lifetime bounded by the unchanged canonical expiry. JSON contains only `context-changed`. All plugins stay cleared until they refresh under the new credential; old credentials fail. The SDK neither mints a replacement nor exposes one in JSON or JavaScript. Failed post-switch delivery remains fail-closed and requires fresh upstream authentication; it never rolls back a revision. Logout revokes the durable session then clears the cookie. Signing-disabled canonical service configurations can read but fail closed on switching.
 
-Responses are no-store JSON with nosniff, no-referrer, same-origin framing, and restrictive CSP. HTML entrypoints must independently apply their corresponding additive Evolution-compatible headers; API response headers alone do not protect a parent HTML document. The handler limits bodies to 64 KiB and five seconds, and admits at most 32 concurrent requests. The launched host must still configure total request/header deadlines, connection limits and authentication rate limiting. Browser fetches time out at ten seconds.
+Every mounted consumer shares one `DirectAdminCockpitSession`. Switch/logout invalidate immediately, even on failure; expiry clears context; in-flight completions cannot repopulate it. An origin-local BroadcastChannel propagates invalidation only, never company/authority values. A projection cannot silently select a different company or restore an intent context. Default fetch wrappers preserve native browser invocation semantics.
 
-## Company rotation and replay
+The browser uses the canonical **persisted session** expiry supplied by #302. Each server call additionally re-verifies credential expiry. If #302 supports a credential expiring earlier than its persisted session, it should expose verified credential expiry so the UI can retire context at that earlier instant without decoding credentials. The current bridge does not decode a token to infer this value.
 
-The public context contains `company_ids: [current.company_id]` only. #302's `allowed_company_ids` are switch choices, not current authorization scope; they are not copied into this context. No Frappe/provider mapping is required for native Titan FSM.
+## Gateway and execution ownership
 
-POST `/v1/directadmin/company` validates the old proof, performs the canonical switch, increments the persisted revision, and clears the credential cookie. All plugins invalidate immediately, including failed switch attempts. The upstream issuer must authenticate again and bind a fresh credential to the new revision before reads resume. Old credentials and in-flight projection responses are rejected by canonical revision checks. Logout revokes the durable session, not just the cookie.
+`directadmin-gateway.ts` is a Fetch Request/Response handler, not a listener, CLI or deployment. The launched #811/#812 composition supplies canonical projection owners and governed-intent ingress. The adapter revalidates before and after reads and checks both the projection envelope and nested canonical data company. Source/freshness/evidence metadata must be structurally valid; one unavailable plugin degrades locally.
 
-One shared `DirectAdminCockpitSession` must be supplied to all mounted consumers. It purges rendered data on switch/logout/expiry and suppresses stale asynchronous completions. Browser instances use an origin-local BroadcastChannel to propagate **invalidation only**, never identity or authority. Such a message cannot select a company. Requests never rebind a queued intent to the newly selected company. Governed ingress must enforce canonical operation idempotency/replay rules; these reusable short-lived session cookies are not one-use execution authorizations.
+`requestIntent` receives a revalidation function. The canonical execution owner **must call it again at authorization and immediately before effects**, and preserve the original authenticated company context for queued work. This per-request closure is not a durable queue credential. The SDK neither grants effective authority nor executes providers; 202 means `REQUESTED`, not authorized or verified. Canonical execution remains responsible for idempotency, replay protection and accepted evidence.
 
-## Routes and actual consumers
+Inspected #811/#1201 head `99cd1bf86fa75c4c0a4e2ec45b39e9baccbe16fd`: `hosted-runtime.ts` requires a verified credential with audience `workforce` and an independently validated `zero`/`go`/`hub` surface, then rechecks durable identity at effects. A DirectAdmin-audience credential cannot be relabelled or forwarded there. #302's public-key verifier can support that owner, but a separately authenticated commissioned workforce audience/surface is still required. No cross-audience exchange is implemented here. Parent coordination owns the handoff; the SDK continuation does not edit server/bootstrap/conversation files.
+
+## Actual consumers and routes
+
+`apps/directadmin/{zero-core,operations-hub,brand-studio}/cockpit.mjs` execute the same SDK renderer and session, using canonical `titan.zero-cockpit.v1`, `titan.operations-health.v1` and `titan.brand-publication.v1` projections. They render source/freshness/evidence using textContent, expose keyboard-operable Refresh and a live status region, and share explicit loading/ready/read-only/unavailable/incompatible/stale/unknown states. Unknown or more-than-five-minute-old freshness is visibly read-only, without presenting a fresh business summary. These modules remain sources for owning plugin bundlers/entrypoints, not certified installed DirectAdmin packages.
+
+Routes:
 
 - GET `/v1/directadmin/context`
 - GET `/v1/directadmin/{titan_zero,titan_operations,titan_web}/projection`
@@ -56,24 +58,27 @@ One shared `DirectAdminCockpitSession` must be supplied to all mounted consumers
 - POST `/v1/directadmin/company` with `{ "company_id": "..." }`
 - POST `/v1/directadmin/logout`
 
-The three consumer modules execute the same SDK renderer with different canonical data schemas (`titan.zero-cockpit.v1`, `titan.operations-health.v1`, `titan.brand-publication.v1`). They render source/freshness/evidence fields, isolate an unavailable plugin, and use DOM textContent rather than executable HTML. They are source modules ready for the owning plugin's bundler/entrypoint, **not installed DirectAdmin packages**. No copied authentication clients, hardcoded privileged API tokens or provider credentials are introduced.
-
-## Evidence and residual work
-
-Executed in the continuation workspace:
+## Executed evidence
 
 ```sh
 node_modules/.bin/tsc -p packages/titan-platform/tsconfig.json --noEmit
 node_modules/.bin/tsc -p packages/titan-platform/tsconfig.json --noEmit false --outDir packages/titan-platform/.test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false
-node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/titan-platform/tests/directadmin-plugin.test.mjs packages/titan-platform/tests/security-boundary.test.mjs packages/titan-platform/tests/security-session-registry.test.mjs scripts/package-directadmin-plugin.test.mjs scripts/validate-directadmin-plugin.test.mjs
+node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/titan-platform/tests/directadmin-plugin.test.mjs packages/titan-platform/tests/security-boundary.test.mjs packages/titan-platform/tests/security-session-registry.test.mjs packages/titan-platform/tests/security-session-credentials.test.mjs scripts/package-directadmin-plugin.test.mjs scripts/validate-directadmin-plugin.test.mjs
+PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers node --test packages/titan-platform/tests/directadmin-browser.browser.mjs
 ```
 
-122 tests pass: 45 new bridge/consumer cases, 12 SDK cases, 61 canonical security/session cases, and 4 package cases. Tests generate ephemeral signing keys and use the real canonical SQLite registry; the cross-plugin test calls the actual three consumer modules through a disposable loopback HTTP listener. Rendering uses a minimal DOM fixture, not a real Evolution browser. The native SQLite test dependency was built locally; no persistent credentials or host deployment occurred.
+197 Node tests pass: 61 bridge/consumer cases, 12 SDK cases, 61 canonical security/session cases, 59 canonical credential cases, and 4 package cases. Fixtures use ephemeral keys, actual canonical issuance and SQLite. The three real consumer modules run through a disposable HTTP gateway in Node integration tests.
 
-Independent read-only review found a microtask invalidation race between network settlement and accepting context. It was fixed with pre-accept epoch/disposal checks; all four regression variants and independent follow-up probes pass. Additional independent probes verified redacted exceptions, concurrency-slot recovery and stalled-body cancellation. This does not replace required independent PR authentication review before merge.
+One additional Chromium integration test passes over disposable loopback HTTPS. It exercises all three consumers, actual browser Origin/Fetch Metadata/CSRF headers, HttpOnly/Strict cookie handling, keyboard refresh, text-only injection-safe rendering, incompatible versions, cross-tab company invalidation, secure cookie rotation, reconnect to company B and logout cookie deletion. Its temporary self-signed key/certificate and isolated browser trust exception exist only for the fixture; cleanup removes them. No system trust setting or user server was changed. This is real-browser SDK evidence, not DirectAdmin Evolution host certification.
 
-Required `pnpm gate:fast` and `pnpm gate` were attempted, including retry with writable XDG/store locations after an initial `/home/agent/.local/share/pnpm` error. Both remain blocked before gate execution by `ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION`: locked `resend@6.32.0` was published at `2026-10-01T20:28:20Z`, inside the configured package-age cutoff. The lockfile and security policy were preserved; no allowlist/bypass was added. Focused TypeScript and Node verification above ran directly. Repository-wide lint/build/integration/E2E are not claimed passed.
+The initial independent review found a microtask invalidation race; fixed and all four regression variants pass. Follow-up probes verified redacted exceptions, concurrency recovery and stalled-body cancellation. A fresh independent review of canonical delegation found the switch-delivery gap; it was fixed by delivering the canonical replacement only as an HttpOnly cookie. Required PR review remains independent of local test evidence.
 
-Not proven: real DirectAdmin authentication/issuer commissioning, secured browser access and OS details, role entrypoint packaging/migration, real Evolution rendering and headers, production reverse proxy, launched #811/#812 routes, canonical downstream authorization/effect integration, durable queued-intent recovery, host revocation/logout propagation, live install/upgrade/rollback and the remaining broad #1049 acceptance criteria. Those requirements remain open. The uncommissioned #812 CLI stays fail-closed. No production deployment or PR merge is authorized by this evidence.
+On published head `51b22e92569b2d76ce97078fe3975ce7be091590`, corrected template/linkage passed Claim Gate run `36952805244`. Workforce, Production Convergence, Personal Zero, Browser Node and Source Evidence passed. General CI failed the worker regression gate (35 failures vs baseline 24); VPS smoke failed compose `TZ_ENV_FILE` handling. Subsequent merged #302 prerequisites include the shared owners' worker/VPS fixes; those are not independent SDK edits.
 
-Rollback: withdraw the new gateway routes and three consumer modules; no SDK database migration or new credential store exists. Do not revert the separately owned #302 identity schema or other inherited prerequisite work as part of SDK rollback.
+Local `pnpm gate:fast` / `pnpm gate` were attempted and retried with writable XDG/store paths. They remain blocked before execution by `ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION` for locked `resend@6.32.0` (published `2026-10-01T20:28:20Z`). No safety policy, baseline or lockfile repair was invented by the SDK. Direct compilation/Node/Chromium commands above ran. Repository-wide lint/build/integration/E2E are not claimed passed.
+
+## Residual commissioning and rollback
+
+Still required: real DA authentication and trusted #302 issuer configuration; approved stable membership/device mapping; OS and secured browser access; production reverse proxy and HTML headers; installed role entrypoint packaging/migration; launched #811/#812 routes; commissioned audience/surface handoff; downstream authorization/effect and durable queue recovery; real Evolution coexistence/theme/accessibility; live install/upgrade/rollback and the remaining broad #1049 criteria. PHP is absent. No real credential provisioning, TLS/security changes, deployment or merge was performed or implied.
+
+Rollback withdraws the SDK gateway/consumer modules. It adds no SDK persistence migration or credential store. Retain separately owned #302 registry data and revocations; never restore weaker legacy fallback or revert shared prerequisite repairs as SDK rollback.

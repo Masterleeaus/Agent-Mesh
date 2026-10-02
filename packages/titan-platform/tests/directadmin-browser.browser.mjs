@@ -112,6 +112,16 @@ test('Chromium: real consumers, cookie flags, browser CSRF headers, safe renderi
   assert.equal(await sibling.locator('section pre').allTextContents().then(text => text.join('')), '');
   const post = observed.find(r => r.path === '/v1/directadmin/company');
   assert.equal(post.headers.origin, origin); assert.equal(post.headers['x-titan-csrf'], csrf);
+  const rotated = (await context.cookies()).find(c => c.name === '__Host-titan-da-session');
+  assert.ok(rotated); assert.notEqual(rotated.value, f.token);
+  assert.equal(rotated.httpOnly, true); assert.equal(rotated.secure, true); assert.equal(rotated.sameSite, 'Strict');
+  assert.equal(await page.evaluate(() => document.cookie.includes('__Host-titan-da-session')), false);
+  const selected = await page.evaluate(async () => {
+    const current = await window.session.connect(); await Promise.all(window.mounts.map(m => m.refresh())); return current.company_id;
+  });
+  assert.equal(selected, 'company-b'); assert.equal(await page.locator('[data-state="ready"]').count(), 3);
+  assert.equal(await sibling.locator('[data-state="read-only"]').count(), 3);
+  await page.evaluate(() => window.session.logout());
   assert.equal((await context.cookies()).some(c => c.name === '__Host-titan-da-session'), false);
   assert.deepEqual(errors, []);
 });

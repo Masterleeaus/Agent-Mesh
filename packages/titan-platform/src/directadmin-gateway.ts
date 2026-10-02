@@ -31,8 +31,8 @@ export type DirectAdminGatewayOwners = Readonly<{
   requestIntent: (plugin: DirectAdminPluginId, intent: GovernedIntentRequest,
     context: DirectAdminBridgeContext, revalidate: () => Promise<DirectAdminBridgeContext>) => Promise<{ receipt_id: string }>;
 }>;
-const json = (status: number, body: unknown, clear = false) => new Response(JSON.stringify(body), {
-  status, headers: { ...DIRECTADMIN_RESPONSE_HEADERS, ...(clear ? { 'set-cookie': DIRECTADMIN_CLEAR_SESSION_COOKIE } : {}) },
+const json = (status: number, body: unknown, sessionCookie?: string) => new Response(JSON.stringify(body), {
+  status, headers: { ...DIRECTADMIN_RESPONSE_HEADERS, ...(sessionCookie ? { 'set-cookie': sessionCookie } : {}) },
 });
 async function body(request: Request): Promise<Record<string, unknown>> {
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json' || request.headers.has('content-encoding')) throw new Error('invalid-body');
@@ -74,13 +74,13 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
       if (request.method === 'GET' && path === '/v1/directadmin/context') return json(200, session.context);
       if (request.method === 'POST' && path === '/v1/directadmin/logout') {
         await session.logout();
-        return json(200, { status: 'reauthentication-required' }, true);
+        return json(200, { status: 'reauthentication-required' }, DIRECTADMIN_CLEAR_SESSION_COOKIE);
       }
       if (request.method === 'POST' && path === '/v1/directadmin/company') {
         const input = await body(request);
         if (typeof input.company_id !== 'string' || Object.keys(input).length !== 1) return json(400, { error: 'invalid-company-selection' });
-        await session.switchCompany(input.company_id);
-        return json(200, { status: 'reauthentication-required' }, true);
+        const switched = await session.switchCompany(input.company_id);
+        return json(200, { status: 'context-changed' }, switched.set_cookie);
       }
       const route = /^\/v1\/directadmin\/(titan_zero|titan_operations|titan_web)\/(projection|intents)$/.exec(path);
       if (!route) return json(404, { error: 'unknown-plugin-route' });

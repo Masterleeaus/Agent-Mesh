@@ -72,7 +72,7 @@ for (const [label, revoke] of [
   ['membership', r => r.putMembership({ actor_id: 'actor-1', company_id: 'company-a', role: 'member', status: 'revoked' }, 1)],
   ['device', r => r.putDevice({ actor_id: 'actor-1', device_id: 'device-1', status: 'revoked' }, 1)],
   ['binding', r => r.putExternalBinding({ ...external, binding_id: 'mapping-company-a', actor_id: 'actor-1', company_id: 'company-a', status: 'revoked' }, 1)],
-  ['session', r => r.revokeSession('session-1', 1)],
+  ['session', r => r.revokeSession(proof.session_id, 1)],
 ]) test(`current ${label} revocation invalidates authenticated pending work`, async t => {
   const f = await fixture(t); const auth = await f.bridge.authenticate(f.request());
   await revoke(f.registry); await assert.rejects(auth.revalidate(), /session-rejected/);
@@ -98,25 +98,28 @@ test('company switch changes canonical revision and old credentials fail for all
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   const pending = await f.bridge.authenticate(f.request());
   const response = await gateway(f.request('/v1/directadmin/company', post({ company_id: 'company-b' })));
-  assert.equal(response.status, 200); assert.match(response.headers.get('set-cookie'), /Secure; HttpOnly; SameSite=Strict; Max-Age=0/);
+  assert.equal(response.status, 200); assert.match(response.headers.get('set-cookie'), /Secure; HttpOnly; SameSite=Strict; Max-Age=[1-9]/);
+  assert.deepEqual(await response.json(), { status: 'context-changed' });
   await assert.rejects(pending.revalidate(), /session-rejected/);
   for (const plugin of ['titan_zero','titan_operations','titan_web']) assert.equal((await gateway(f.request(`/v1/directadmin/${plugin}/projection`))).status, 401);
   const current = await f.registry.resolveCurrentSession({ ...proof, session_revision: 2 }, { ...expected, company_id: 'company-b' }, new Date(f.now).toISOString());
-  const token = await f.sign({ company_id: 'company-b', session_revision: 2, context_revision: current.context_revision });
+  const token = response.headers.get('set-cookie').split(';')[0].slice('__Host-titan-da-session='.length);
+  assert.notEqual(token, f.token);
+  assert.equal((await f.sessions.authenticate(token)).context.context_revision, current.context_revision);
   const auth = await f.bridge.authenticate(f.request(undefined, { headers: { cookie: `__Host-titan-da-session=${token}` } }));
   assert.deepEqual(auth.context.company_ids, ['company-b']);
 });
 
 test('revocation while a canonical read is pending suppresses the returned company data', async t => {
   const f = await fixture(t); const original = f.owners.projection;
-  f.owners.projection = async (...args) => { const result = await original(...args); await f.registry.revokeSession('session-1', 1); return result; };
+  f.owners.projection = async (...args) => { const result = await original(...args); await f.registry.revokeSession(proof.session_id, 1); return result; };
   const response = await createDirectAdminGateway(f.bridge, f.owners)(f.request('/v1/directadmin/titan_zero/projection'));
   assert.equal(response.status, 401); assert.equal(JSON.stringify(await response.json()).includes('company-a'), false);
 });
 
 test('downstream effect revalidation rejects an intent revoked after ingress', async t => {
   const f = await fixture(t);
-  f.owners.requestIntent = async (_p, _i, _c, revalidate) => { await f.registry.revokeSession('session-1', 1); await revalidate(); f.effects.push('executed'); return { receipt_id: 'never' }; };
+  f.owners.requestIntent = async (_p, _i, _c, revalidate) => { await f.registry.revokeSession(proof.session_id, 1); await revalidate(); f.effects.push('executed'); return { receipt_id: 'never' }; };
   const response = await createDirectAdminGateway(f.bridge, f.owners)(f.request('/v1/directadmin/titan_zero/intents', post(intentBody(f))));
   assert.equal(response.status, 401); assert.deepEqual(f.effects, []);
 });
@@ -277,4 +280,50 @@ test('a projection response cannot silently replace the selected company or rest
   await assert.rejects(session.projection('titan_zero'), /context-invalidated/);
   await assert.rejects(session.intent('titan_zero', { ...intentBody(f), company_id: 'company-b' }), /context-mismatch/);
   assert.equal(requests, 2);
+});
+
+test('DA browser bridge accepts only canonical session credentials, not login assertions or the removed provisional format', async t => {
+  const f = await fixture(t);
+  const auth = await f.bridge.authenticate(f.request());
+  assert.equal(auth.context.company_id, 'company-a');
+  for (const token of [f.upstreamToken, await f.sign({}, { typ: 'titan-da-session+jwt' })]) {
+    await assert.rejects(f.bridge.authenticate(f.request(undefined, { headers: { cookie: `__Host-titan-da-session=${token}` } })), /session-rejected/);
+  }
+  await assert.rejects(f.sessions.issue(f.upstreamToken, { company_id: 'company-a', device_id: 'device-1' }), /authentication-denied/);
+});
+
+test('bridge checks its commissioned node and audience even if a different canonical service was supplied', async t => {
+  const f = await fixture(t);
+  for (const patch of [{ node_id: 'node-2' }, { audience: 'workforce' }]) {
+    const bridge = new DirectAdminSessionBridge({ origin: ORIGIN, node_id: 'node-1', audience: expected.audience, sessions: f.sessions, ...patch });
+    await assert.rejects(bridge.authenticate(f.request()), /session-rejected/);
+  }
+});
+
+test('every retained bridge revalidation returns through the canonical credential authenticator', async t => {
+  const f = await fixture(t); let calls = 0;
+  const sessions = { ...f.sessions, authenticate: async (...args) => { calls++; return f.sessions.authenticate(...args); } };
+  const bridge = new DirectAdminSessionBridge({ origin: ORIGIN, node_id: 'node-1', audience: expected.audience, sessions });
+  const auth = await bridge.authenticate(f.request()); await auth.revalidate(); await auth.revalidate();
+  assert.equal(calls, 3);
+  await f.sessions.revoke(f.token, { company_id: 'company-a', device_id: 'device-1' });
+  await assert.rejects(auth.revalidate(), /session-rejected/); assert.equal(calls, 4);
+});
+
+test('a signing-disabled canonical service can read but cannot switch company', async t => {
+  const f = await fixture(t);
+  const { createSessionCredentialService } = await import('../.test-dist/security-boundary.js');
+  const sessions = createSessionCredentialService({ ...f.policy, signing_key: undefined });
+  const bridge = new DirectAdminSessionBridge({ origin: ORIGIN, node_id: 'node-1', audience: expected.audience, sessions });
+  const auth = await bridge.authenticate(f.request(undefined, { method: 'POST' }));
+  await assert.rejects(auth.switchCompany('company-b'), /session-rejected/);
+  assert.equal((await auth.revalidate()).company_id, 'company-a');
+});
+
+test('canonical Workforce audience cannot accept or relabel a DirectAdmin session credential', async t => {
+  const f = await fixture(t);
+  const { createSessionCredentialVerifier } = await import('../.test-dist/security-boundary.js');
+  const verifier = createSessionCredentialVerifier({ ...f.policy, audience: 'workforce' });
+  await assert.rejects(verifier.authenticate(f.token), /authentication-denied/);
+  await assert.rejects(verifier.resolve(f.token, { company_id: 'company-a', device_id: 'device-1' }), /authentication-denied/);
 });
