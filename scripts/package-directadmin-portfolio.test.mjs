@@ -157,7 +157,8 @@ test("portfolio delegates Workforce packaging and pins its exact Server Node dep
     sha256: serverNode.sha256,
   }]);
   assert.equal(workforceRecord.build_inputs.sdk.source, "packages/titan-platform/src/directadmin-plugin.ts");
-  assert.equal(workforceRecord.build_inputs.sdk.compiler, "esbuild@0.27.3");
+  const rootPackage = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+  assert.equal(workforceRecord.build_inputs.sdk.compiler, `esbuild@${rootPackage.devDependencies.esbuild}`);
   assert.deepEqual(workforceRecord.build_inputs.sdk.compiler_flags, ["--bundle", "--format=esm", "--platform=browser", "--target=es2022"]);
   assert.match(workforceRecord.build_inputs.sdk.source_sha256, /^[a-f0-9]{64}$/);
   assert.match(workforceRecord.build_inputs.sdk.compiled_sha256, /^[a-f0-9]{64}$/);
@@ -165,6 +166,22 @@ test("portfolio delegates Workforce packaging and pins its exact Server Node dep
     assert.equal(fs.readFileSync(`${artifact.archive}.sha256`, "utf8"), `${artifact.sha256}  ${path.basename(artifact.archive)}\n`);
   }
 });
+
+test("portfolio refuses to replace a previously emitted Workforce archive", (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "titan-da-workforce-immutable-test-"));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const sdkModule = path.join(root, "canonical-sdk.mjs");
+  const outputDir = path.join(root, "portfolio");
+  const sdkSource = "export class DirectAdminCockpitSession {}\nexport const validateDirectAdminPluginPackage = () => ({ valid: true });\nexport const assertPluginCanBeInstalled = () => true;\n";
+  fs.writeFileSync(sdkModule, sdkSource);
+  const first = packagePortfolio({ outputDir, workforceSdkModulePath: sdkModule });
+  const archive = first.artifacts.find((artifact) => artifact.plugin_id === "titan_workforce").archive;
+  const original = fs.readFileSync(archive);
+  fs.writeFileSync(sdkModule, `${sdkSource}export const changed = true;\n`);
+  assert.throws(() => packagePortfolio({ outputDir, workforceSdkModulePath: sdkModule }), /refusing to overwrite existing file/);
+  assert.deepEqual(fs.readFileSync(archive), original);
+});
+
 
 test("portfolio registers Titan Web under its stable ID with shared SDK and Server Node dependency", () => {
   const descriptor = ENABLED_PLUGINS.find((plugin) => plugin.id === "titan_web");
@@ -191,29 +208,16 @@ test("portfolio registers Titan Web under its stable ID with shared SDK and Serv
 });
 
 test("Titan Web role entrypoints load the authenticated read-only cockpit and reject unknown roles", () => {
+  const sdkModule = "export const DirectAdminCockpitSession = class {}; export const mountDirectAdminProjection = () => {};";
   for (const role of ["admin", "reseller", "user"]) {
-    const html = renderBrandStudioEntry(role, { sdkModule: "export const DirectAdminCockpitSession = class {}; export const mountDirectAdminProjection = () => {};" });
-    assert.match(html, new RegExp(`data-role=\"${role}\"`));
-    assert.match(html, /<script type=\"importmap\">/);
+    const html = renderBrandStudioEntry(role, { sdkModule });
+    assert.match(html, new RegExp(`data-role="${role}"`));
+    assert.match(html, /<script type="importmap">/);
     assert.match(html, /titan-sdk/);
     assert.match(html, /mountDirectAdminProjection/);
-    assert.doesNotMatch(html, /<script[^>]+src=|https?:\/\//i);
+    assert.equal(/<script[^>]+src=/i.test(html), false);
+    assert.equal(html.includes("https://"), false);
+    assert.equal(html.includes("http://"), false);
   }
   assert.throws(() => renderBrandStudioEntry("root"), /unsupported DirectAdmin role/);
 });
-
-test("portfolio refuses to replace a previously emitted Workforce archive", (t) => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "titan-da-workforce-immutable-test-"));
-  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  const sdkModule = path.join(root, "canonical-sdk.mjs");
-  const outputDir = path.join(root, "portfolio");
-  const sdkSource = "export class DirectAdminCockpitSession {}\nexport const validateDirectAdminPluginPackage = () => ({ valid: true });\nexport const assertPluginCanBeInstalled = () => true;\n";
-  fs.writeFileSync(sdkModule, sdkSource);
-  const first = packagePortfolio({ outputDir, workforceSdkModulePath: sdkModule });
-  const archive = first.artifacts.find((artifact) => artifact.plugin_id === "titan_workforce").archive;
-  const original = fs.readFileSync(archive);
-  fs.writeFileSync(sdkModule, `${sdkSource}export const changed = true;\n`);
-  assert.throws(() => packagePortfolio({ outputDir, workforceSdkModulePath: sdkModule }), /refusing to overwrite existing file/);
-  assert.deepEqual(fs.readFileSync(archive), original);
-});
-
