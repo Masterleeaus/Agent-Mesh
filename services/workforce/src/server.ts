@@ -1,16 +1,7 @@
-import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
+import { createServer, type Server } from "node:http";
 import { createSqliteStorage } from "../../../packages/storage/src/index.js";
 import { SqliteWorkforceStore } from "./sqlite-store.js";
-import {
-  conversationHttpStatus,
-  handleConversationRequest,
-  readConversationBody,
-  writeConversationResponse,
-  type ConversationAuth,
-  type ConversationHostRuntime,
-} from "./conversation-api.js";
 
-const conversationPath = "/v1/workforce/conversations";
 const configuredStoragePath = () =>
   process.env.WORKFORCE_SQLITE_PATH ?? process.env.SQLITE_PATH ?? "/app/runtime/workforce.db";
 
@@ -19,54 +10,7 @@ export interface WorkforceServer {
   close(): Promise<void>;
 }
 
-export type WorkforceServerOptions = {
-  storagePath?: string;
-  conversation?: {
-    auth: ConversationAuth;
-    runtime: ConversationHostRuntime;
-  };
-};
-
-function json(response: ServerResponse, status: number, body: Record<string, unknown>, headers: Record<string, string> = {}): void {
-  response.writeHead(status, {
-    "content-type": "application/json",
-    "cache-control": "no-store",
-    ...headers,
-  });
-  response.end(JSON.stringify(body));
-}
-
-async function handleConversation(
-  request: IncomingMessage,
-  response: ServerResponse,
-  options: WorkforceServerOptions,
-): Promise<void> {
-  if (!options.conversation) {
-    json(response, 503, { error: "conversation-host-not-configured" });
-    return;
-  }
-  try {
-    const body = await readConversationBody(request);
-    const value = await handleConversationRequest(
-      body,
-      options.conversation.auth,
-      options.conversation.runtime,
-      typeof request.headers.authorization === "string" ? request.headers.authorization : undefined,
-    );
-    const stream = request.headers.accept?.includes("text/event-stream") === true;
-    writeConversationResponse(
-      response,
-      value,
-      stream,
-      typeof request.headers["last-event-id"] === "string" ? request.headers["last-event-id"] : undefined,
-    );
-  } catch (error) {
-    const code = error instanceof Error ? error.message : "conversation-failed";
-    json(response, conversationHttpStatus(code), { error: code });
-  }
-}
-
-export async function createWorkforceServer(options: WorkforceServerOptions = {}): Promise<WorkforceServer> {
+export async function createWorkforceServer(options: { storagePath?: string } = {}): Promise<WorkforceServer> {
   const storage = createSqliteStorage(options.storagePath ?? configuredStoragePath());
   const store = new SqliteWorkforceStore(storage);
 
@@ -84,35 +28,36 @@ export async function createWorkforceServer(options: WorkforceServerOptions = {}
     try {
       pathname = new URL(request.url ?? "/", "http://workforce.internal").pathname;
     } catch {
-      json(response, 400, { error: "invalid_request_target" });
+      response.writeHead(400, { "content-type": "application/json", "cache-control": "no-store" });
+      response.end(JSON.stringify({ error: "invalid_request_target" }));
       return;
     }
-
-    if (pathname === conversationPath) {
-      if (request.method !== "POST") {
-        json(response, 405, { error: "method_not_allowed" }, { allow: "POST" });
-        return;
-      }
-      await handleConversation(request, response, options);
-      return;
-    }
-
     if (pathname !== "/health" && pathname !== "/ready") {
-      json(response, 404, { error: "not_found" });
+      response.writeHead(404, { "content-type": "application/json", "cache-control": "no-store" });
+      response.end(JSON.stringify({ error: "not_found" }));
       return;
     }
     if (request.method !== "GET") {
-      json(response, 405, { error: "method_not_allowed" }, { allow: "GET" });
+      response.writeHead(405, {
+        allow: "GET",
+        "content-type": "application/json",
+        "cache-control": "no-store",
+      });
+      response.end(JSON.stringify({ error: "method_not_allowed" }));
       return;
     }
 
     if (pathname === "/health") {
       const healthy = ready;
-      json(response, healthy ? 200 : 503, {
+      response.writeHead(healthy ? 200 : 503, {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+      });
+      response.end(JSON.stringify({
         status: healthy ? "ok" : "degraded",
         service: "workforce",
         checks: { process: healthy ? "ok" : "stopping" },
-      });
+      }));
       return;
     }
 
@@ -125,11 +70,15 @@ export async function createWorkforceServer(options: WorkforceServerOptions = {}
         // Do not expose storage errors or configuration details through a public probe.
       }
     }
-    json(response, storageReady ? 200 : 503, {
+    response.writeHead(storageReady ? 200 : 503, {
+      "content-type": "application/json",
+      "cache-control": "no-store",
+    });
+    response.end(JSON.stringify({
       status: storageReady ? "ok" : "degraded",
       service: "workforce",
       checks: { storage: storageReady ? "ok" : "fail" },
-    });
+    }));
   });
 
   return {

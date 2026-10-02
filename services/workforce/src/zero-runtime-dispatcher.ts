@@ -50,7 +50,6 @@ export interface ZeroPersistentRuntimePort {
     run_id: string;
     input?: { role: string; content: string };
   }): Promise<ZeroRuntimeRun>;
-  cancel?(input: { company_id: CompanyId; run_id: string; reason?: string }): Promise<ZeroRuntimeRun>;
 }
 
 export type ZeroRuntimeRun = {
@@ -268,26 +267,6 @@ export class ZeroWorkforceRuntimeDispatcher {
     await this.syncWorkFromRun(run, runtimeEvents);
     const updated = (await this.store.get(input.company_id, work.work_id))!;
     return this.result(input, updated, runtimeEvents, run);
-  }
-
-  async cancel(input: { company_id: CompanyId; actor_id: string; conversation_id: string; continuation_token: string; reason?: string }): Promise<ZeroWorkforceDispatchResult> {
-    const normalized = { ...input, company_id: required(input.company_id, "zero-company-id-required"), actor_id: required(input.actor_id, "zero-actor-id-required"), conversation_id: required(input.conversation_id, "zero-conversation-id-required") };
-    const continuation = decodeContinuation(required(input.continuation_token, "zero-continuation-required"));
-    const work = await this.store.get(normalized.company_id, continuation.work_id);
-    if (!work) throw new Error("zero-continuation-work-not-found");
-    this.assertOrigin(work, normalized as ZeroWorkforceDispatchInput);
-    const lookup = this.runtime.findByWork ?? this.runtime.findRecoverableByWork;
-    const recoverable = await lookup.call(this.runtime, { company_id: normalized.company_id, work_id: work.work_id }) as ZeroRuntimeRun | null;
-    if (!recoverable || recoverable.run_id !== continuation.run_id) throw new Error("zero-continuation-run-not-found");
-    if (!this.runtime.cancel) throw new Error("zero-cancellation-unavailable");
-    const events: ZeroRuntimeEvent[] = [];
-    const unsubscribe = this.runtime.events.subscribe(event => { if (event.company_id === normalized.company_id && event.run_id === continuation.run_id) events.push(structuredClone(event)); });
-    try {
-      const run = await this.runtime.cancel({ company_id: normalized.company_id, run_id: continuation.run_id, reason: input.reason ?? "cancelled-by-client" });
-      this.assertRun(run, normalized.company_id, work.work_id, normalized.conversation_id, work.assignee!);
-      await this.syncWorkFromRun(run, events);
-      return this.result(normalized as ZeroWorkforceDispatchInput, (await this.store.get(normalized.company_id, work.work_id))!, events, run);
-    } finally { unsubscribe(); }
   }
 
   private async resolveWorker(company_id: CompanyId, requested?: WorkerId, workers: WorkforceWorkerStore = this.workers): Promise<WorkforceWorker> {

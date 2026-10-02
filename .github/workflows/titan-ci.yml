@@ -15,6 +15,34 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"
+          channel: stable
+
+      - name: Install mobile dependencies
+        working-directory: apps/mobile
+        run: flutter pub get
+
+      - name: Check mobile formatting
+        working-directory: apps/mobile
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Analyze mobile app
+        working-directory: apps/mobile
+        run: flutter analyze
+
+      - name: Run mobile tests
+        working-directory: apps/mobile
+        run: flutter test
+
   validate:
     runs-on: ubuntu-latest
     steps:
