@@ -40,4 +40,4 @@ jobs:
       - name: Validate Server Node package contract
         run: node scripts/validate-directadmin-plugin.mjs apps/directadmin/server-node
       - name: Check lifecycle script syntax
-        run: bash -n apps/directadmin/server-node/*.sh apps/directadmin/dev-access/tools/package.sh
+        run: bash -n apps/directadmin/server-node/*.sh apps/directadmin/dev-access/scripts/*.sh apps/directadmin/dev-access/tools/package.sh
