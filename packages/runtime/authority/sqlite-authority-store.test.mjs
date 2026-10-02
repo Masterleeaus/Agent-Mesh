@@ -41,3 +41,22 @@ test("scoped approvals do not cross companies",async()=>{
   assert.equal(await store.latestApproval({company_id:"co-b",approval_scope:"act-1"}),null);
   await storage.close();
 });
+
+
+test("latest binding decision advances a single fork-free supersession chain",async()=>{
+  const {storage,store}=await fixture();
+  const base={company_id:"co-a",worker_id:"worker-1",capability:"booking.create",operation_id:"op-chain",action_id:"act-chain"};
+  const first={...base,authority_decision_id:"auth-chain-1",decision:"ALLOW",evaluated_at:"2026-09-28T00:00:00Z"};
+  const second={...base,authority_decision_id:"auth-chain-2",decision:"DENY",evaluated_at:"2026-09-28T00:01:00Z",supersedes_authority_decision_id:"auth-chain-1"};
+  await store.appendDecision(first);
+  await store.appendDecision(second);
+  assert.equal((await store.latestDecisionForBinding(base)).authority_decision_id,"auth-chain-2");
+  await assert.rejects(
+    ()=>store.appendDecision({...base,authority_decision_id:"auth-chain-fork",decision:"ALLOW",evaluated_at:"2026-09-28T00:02:00Z",supersedes_authority_decision_id:"auth-chain-1"}),
+    /authority-supersession-fork/,
+  );
+  const third={...base,authority_decision_id:"auth-chain-3",decision:"ALLOW",evaluated_at:"2026-09-28T00:03:00Z",supersedes_authority_decision_id:"auth-chain-2"};
+  await store.appendDecision(third);
+  assert.equal((await store.latestDecisionForBinding(base)).authority_decision_id,"auth-chain-3");
+  await storage.close();
+});
