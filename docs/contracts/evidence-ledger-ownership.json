@@ -20,7 +20,7 @@
   "inventory": [
     {
       "path": "packages/tools/accepted-evidence-ledger.mjs",
-      "role": "accepted-factual-history",
+      "role": "accepted-factual-business-evidence-ledger",
       "scope": "Verified consequential job-completion outcomes only; append-only normalization and deterministic job projection.",
       "durability": "The Workforce adapter persists accepted entries in its company-scoped evidence table; the ledger class itself is an in-memory validator/reducer.",
       "consumers": [
@@ -29,7 +29,8 @@
       "limitations": [
         "Not yet the accepted factual history for every business domain.",
         "Broader projection and placement convergence remains open under #1235 and #1233."
-      ]
+      ],
+      "role_detail": "job-completion history"
     },
     {
       "path": "packages/tools/execution-gateway.mjs",
@@ -41,7 +42,8 @@
       ],
       "limitations": [
         "This gateway is not the accepted factual history owner."
-      ]
+      ],
+      "role_detail": "governed execution, payment, or workflow outbox"
     },
     {
       "path": "services/workforce/src/field-service-runtime.mjs",
@@ -54,7 +56,8 @@
       "limitations": [
         "This is the only inventoried runtime adapter to the canonical ledger, not evidence that other business domains have converged.",
         "Cross-company storage placement and isolation remain coordinated with #1233."
-      ]
+      ],
+      "role_detail": "governed execution, payment, or workflow outbox"
     },
     {
       "path": "packages/offline/restart-checkpoint.mjs",
@@ -63,7 +66,8 @@
       "durability": "Delegates to the restart-evidence persistence contract.",
       "consumers": [
         "packages/offline/restart-evidence-ledger.mjs"
-      ]
+      ],
+      "role_detail": "restart or execution recovery"
     },
     {
       "path": "packages/titan-platform/src/ported/titan-revenue-journey/booking-job-origin-evidence.ts",
@@ -76,7 +80,8 @@
       "limitations": [
         "The web path is a re-export shim; no production callsite was found in the current source scan.",
         "Not the accepted factual ledger."
-      ]
+      ],
+      "role_detail": "legacy, donor, or mutable compatibility path"
     },
     {
       "path": "packages/titan-platform/src/ported/titan-revenue-journey/continuation-evidence.ts",
@@ -89,7 +94,8 @@
       "limitations": [
         "The web path is a re-export shim; no production callsite was found in the current source scan.",
         "Not the accepted factual ledger."
-      ]
+      ],
+      "role_detail": "legacy, donor, or mutable compatibility path"
     },
     {
       "path": "packages/titan-platform/src/ported/titan-revenue-journey/invoice-payment-evidence.ts",
@@ -102,7 +108,8 @@
       "limitations": [
         "The web path is a re-export shim; no production callsite was found in the current source scan.",
         "Not the accepted factual ledger."
-      ]
+      ],
+      "role_detail": "legacy, donor, or mutable compatibility path"
     },
     {
       "path": "packages/titan-platform/src/ported/titan-revenue-journey/lead-opportunity-evidence.ts",
@@ -115,7 +122,8 @@
       "limitations": [
         "The web path is a re-export shim; no production callsite was found in the current source scan.",
         "Not the accepted factual ledger."
-      ]
+      ],
+      "role_detail": "legacy, donor, or mutable compatibility path"
     },
     {
       "path": "packages/titan-platform/src/ported/titan-revenue-journey/quote-lifecycle-evidence.ts",
@@ -128,7 +136,8 @@
       "limitations": [
         "The web path is a re-export shim; no production callsite was found in the current source scan.",
         "Not the accepted factual ledger."
-      ]
+      ],
+      "role_detail": "legacy, donor, or mutable compatibility path"
     },
     {
       "path": "packages/titan-platform/src/ported/titan-revenue-journey/canonical-reconciliation.ts",
@@ -141,7 +150,8 @@
       "limitations": [
         "No production callsite was found in the current source scan; it does not read canonical domain stores.",
         "Not accepted factual history."
-      ]
+      ],
+      "role_detail": "derived projection or proposal"
     },
     {
       "path": "packages/titan-platform/src/ported/titan-revenue-journey/revenue-journey-projection.ts",
@@ -154,7 +164,8 @@
       "limitations": [
         "No production callsite was found in the current source scan; inputs are not fetched from canonical domain owners here.",
         "Not accepted factual history."
-      ]
+      ],
+      "role_detail": "derived projection or proposal"
     },
     {
       "path": "packages/offline/restart-evidence-ledger.mjs",
@@ -164,14 +175,16 @@
       "consumers": [
         "packages/offline/restart-checkpoint.mjs",
         "packages/offline/verify-pass07.mjs"
-      ]
+      ],
+      "role_detail": "restart or execution recovery"
     },
     {
       "path": "packages/settings/control-plane/settings-change-ledger.mjs",
-      "role": "configuration-audit",
+      "role": "donor-history-compatibility",
       "scope": "Settings-change audit records; validates company scope and redacts sensitive values; does not establish business outcomes or grant authority.",
       "durability": "Pure record builder; persistence belongs to the settings adapter.",
-      "consumers": []
+      "consumers": [],
+      "role_detail": "configuration audit"
     },
     {
       "path": "packages/titan-platform/src/workforce-evidence/value-ledger.ts",
@@ -180,65 +193,72 @@
       "durability": "Pure projection/receipt builder.",
       "consumers": [
         "packages/titan-platform/src/workforce-evidence/index.ts"
-      ]
+      ],
+      "role_detail": "derived projection or proposal"
     },
     {
       "path": "packages/domain/src/job-ledger.ts",
-      "role": "derived-commercial-projection",
+      "role": "derived-value-analytics",
       "scope": "Estimate-versus-actual commercial projection from supplied estimate, labor, expense, change-order, and payment inputs.",
       "durability": "Pure calculation; it does not persist accepted facts.",
       "consumers": [
         "packages/domain/src/index.ts"
-      ]
+      ],
+      "role_detail": "commercial projection"
     },
     {
       "path": "apps/web/lib/jobs/job-ledger.ts",
-      "role": "legacy-domain-projection-loader",
+      "role": "donor-history-compatibility",
       "scope": "Composes estimate, mutable SQL rows, time, expenses, change orders, and invoices for the legacy web Job Ledger UI; it is not accepted evidence.",
       "durability": "Reads application tables through the authenticated session query adapter.",
       "consumers": [
         "apps/web/app/app/jobs/[id]/page.tsx",
         "apps/web/app/app/jobs/[id]/materials/page.tsx"
-      ]
+      ],
+      "role_detail": "legacy domain projection loader"
     },
     {
       "path": "apps/web/lib/jobs/job-ledger-co-draft.ts",
-      "role": "commercial-proposal-builder",
+      "role": "donor-history-compatibility",
       "scope": "Builds an editable change-order proposal from a commercial projection; it neither accepts nor persists facts.",
       "durability": "Pure proposal builder.",
       "consumers": [
         "apps/web/app/app/jobs/[id]/DraftCoFromVarianceButton.tsx",
         "apps/web/app/app/jobs/[id]/JobLedgerCard.tsx"
-      ]
+      ],
+      "role_detail": "commercial proposal builder"
     },
     {
       "path": "apps/web/app/app/jobs/[id]/JobLedgerCard.tsx",
-      "role": "commercial-projection-ui",
+      "role": "derived-value-analytics",
       "scope": "Displays the commercial projection and proposal affordances; UI state is not factual history.",
       "durability": "Presentation only.",
       "consumers": [
         "apps/web/app/app/jobs/[id]/page.tsx"
-      ]
+      ],
+      "role_detail": "commercial projection UI"
     },
     {
       "path": "apps/browser/src/ai/ai-audit-ledger.js",
-      "role": "bounded-provider-request-diagnostics",
+      "role": "donor-history-compatibility",
       "scope": "In-memory, bounded provider/model request diagnostics; explicitly nonpersistent and not a business fact source.",
       "durability": "In-memory ring buffer capped at 250 records.",
       "consumers": [
         "apps/browser/src/ai/provider-gateway.js",
         "apps/browser/src/lib/onboard-ai-host-integration.js"
-      ]
+      ],
+      "role_detail": "bounded provider request diagnostics"
     },
     {
       "path": "apps/browser/src/titan-zero/manager-workspace-ledger.js",
-      "role": "development-workspace-coordination",
+      "role": "donor-history-compatibility",
       "scope": "Titan Code Manager workspace/claim/projection metadata; development tooling only, not production business state.",
       "durability": "No persistence in this module; immutable projections are built from supplied workspace state.",
       "consumers": [],
       "limitations": [
         "No active source import was found in the production application entrypoints during this inventory."
-      ]
+      ],
+      "role_detail": "development workspace coordination"
     },
     {
       "path": "apps/web/app/api/v1/captures/route.ts",
@@ -250,7 +270,8 @@
       ],
       "limitations": [
         "Capture is not independently verified and must not self-promote into accepted factual history."
-      ]
+      ],
+      "role_detail": "raw capture or human review artifact"
     },
     {
       "path": "packages/workforce/src/index.ts",
@@ -262,7 +283,8 @@
       ],
       "limitations": [
         "Completion accepts mutable result/evidence references without canonical accepted-evidence verification; production must continue excluding this legacy path."
-      ]
+      ],
+      "role_detail": "legacy, donor, or mutable compatibility path"
     },
     {
       "path": "apps/web/app/api/v1/captures/[id]/review/route.ts",
@@ -274,7 +296,8 @@
       ],
       "limitations": [
         "The mutable action item must not self-promote to accepted factual evidence of completed work."
-      ]
+      ],
+      "role_detail": "raw capture or human review artifact"
     },
     {
       "path": "services/worker/src/process-captures.ts",
@@ -286,7 +309,8 @@
       ],
       "limitations": [
         "Model/transcription output is not independently verified business fact and cannot complete work."
-      ]
+      ],
+      "role_detail": "derived projection or proposal"
     },
     {
       "path": "apps/web/lib/status-history.ts",
@@ -302,7 +326,8 @@
       ],
       "limitations": [
         "This history is not the canonical accepted factual ledger; certified domains must project from accepted evidence where available."
-      ]
+      ],
+      "role_detail": "legacy, donor, or mutable compatibility path"
     },
     {
       "path": "services/worker/src/stale-booking-requests.ts",
@@ -312,7 +337,8 @@
       "consumers": [],
       "limitations": [
         "Mutable application status and its history do not constitute accepted factual evidence."
-      ]
+      ],
+      "role_detail": "legacy, donor, or mutable compatibility path"
     },
     {
       "path": "apps/web/lib/workflow-events.ts",
@@ -328,7 +354,8 @@
       ],
       "limitations": [
         "Outbox delivery or processing state is not accepted business fact and must not self-promote to verified outcome."
-      ]
+      ],
+      "role_detail": "governed execution, payment, or workflow outbox"
     },
     {
       "path": "services/worker/src/workflow-events.ts",
@@ -340,7 +367,8 @@
       ],
       "limitations": [
         "Worker processing status is operational delivery state, not accepted business fact."
-      ]
+      ],
+      "role_detail": "governed execution, payment, or workflow outbox"
     },
     {
       "path": "apps/web/app/api/v1/dispatch/assign/route.ts",
@@ -350,7 +378,8 @@
       "consumers": [],
       "limitations": [
         "Assignment and outbox events are not accepted factual evidence of performed work."
-      ]
+      ],
+      "role_detail": "governed execution, payment, or workflow outbox"
     },
     {
       "path": "apps/web/app/api/webhooks/square/route.ts",
@@ -360,7 +389,8 @@
       "consumers": [],
       "limitations": [
         "Payment records are provider-backed domain state, not a substitute for the accepted evidence owner for consequential execution."
-      ]
+      ],
+      "role_detail": "governed execution, payment, or workflow outbox"
     },
     {
       "path": "packages/tools/governed-execution-recovery.mjs",
@@ -372,7 +402,17 @@
       ],
       "limitations": [
         "Recovery transition history governs safe execution replay but does not establish a verified business outcome; accepted outcome evidence remains in the canonical ledger."
-      ]
+      ],
+      "role_detail": "restart or execution recovery"
     }
+  ],
+  "primary_roles": [
+    "accepted-factual-business-evidence-ledger",
+    "execution-provider-receipt",
+    "observed-verification-artifact",
+    "restart-recovery-evidence",
+    "derived-value-analytics",
+    "simulation-counterfactual",
+    "donor-history-compatibility"
   ]
 }
