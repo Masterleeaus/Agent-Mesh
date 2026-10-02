@@ -32,7 +32,7 @@ The additional archive inventory included dedicated vertical-pack, quote variati
 | Donor behavior | Disposition in Titan Zero |
 | --- | --- |
 | Provider contract and analysis lineage | Adapted as bounded company/subject/revision/consent/purpose contracts and typed provider port for #1055. Only authorized media references are passed; raw bytes/secrets are absent from runtime prompts and logs. |
-| Capture quality metrics and duplicate detection | Deferred to the authorized #913 media-analysis/storage boundary. This package accepts quality outcomes and emits checklist guidance; it does not decode bytes or claim a quality verdict without an analyzer. |
+| Capture quality metrics and duplicate detection | Adapted as a versioned, provider-neutral threshold policy over authorized local quality metrics. Retake guidance is tied to the exact accepted evidence ref; image decoding and byte custody remain with the capture/#913 layer. |
 | Capture checklists and offline capture | Adapted as versioned checklist inputs and offline guidance over existing evidence refs; original media provenance remains with #913. |
 | Before/after comparison and change findings | Adapted as source-referenced proposals. Missing/changed source revisions, contradictory findings and uncertain results escalate; none establish a verified defect or completed task. |
 | Historical baseline comparison | Deferred until #913 exposes a canonical verified-baseline read contract; no unverified donor baseline behavior is reproduced. |
@@ -44,6 +44,6 @@ The additional archive inventory included dedicated vertical-pack, quote variati
 
 ## Verification
 
-The focused Titan visual evidence suite covers unsupported formats, cross-company refs, consent mismatch, bounded prompt references, checklist incompleteness/low quality, offline operation, changed revisions, provider outage/timeout, low-confidence and contradictory findings, review authority, lineage, and independent observed verification. The integrated fixture composes offline capture guidance, before/after comparison, uncertain-finding escalation, and a non-authoritative closeout proposal.
+The focused Titan visual evidence suite covers unsupported formats, cross-company and wrong-purpose refs, consent mismatch, bounded prompt references, blurry/low-resolution/low-exposure/small-subject/duplicate metrics, checklist incompleteness, offline operation, changed revisions, provider outage/timeout, low-confidence and contradictory findings, review authority, lineage, and independent observed verification. The integrated fixture composes offline capture guidance, a blurry capture and retake signal, before/after comparison, uncertain-finding escalation, a human observation decision, and independent verification without treating model output as proof.
 
-Native visit closeout preserves its existing `onBeforeSubmit` gate before the governed closeout API. Mobile capture continues to queue original evidence offline through its existing evidence sync service; visual-provider execution is optional and not a base-app dependency.
+Native visit closeout exposes an optional provider-neutral visual assurance gate that runs before the existing governed closeout API and can refuse submission. Mobile capture queues original evidence first, then offers its metadata to an optional visual-guidance adapter; adapter/provider failure leaves the queued evidence intact and surfaces a degraded-guidance message. The base app has no external Vision-provider dependency.
