@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createConnectorCredentialReference } from "../.test-dist/src/index.js";
+import { createConnectorCredentialReference } from "../.test-dist/index.js";
 
 test("credential contracts contain only opaque company-scoped references",()=>{
   const ref=createConnectorCredentialReference({company_id:"c1",credential_ref:"cred:abc123",provider:"OpenAI"});

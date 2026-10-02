@@ -1,0 +1,2778 @@
+{
+  "schema": "titan.release-readiness-audit/v1",
+  "observed_at": "2026-10-02T11:51:16Z",
+  "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+  "scope": "28 user-requested audit headings; evidence presentation only, not a capability/host catalogue",
+  "audit_completeness": "PARTIAL",
+  "production_eligibility": "DENIED_MISSING_EVIDENCE",
+  "published_state": "UNKNOWN",
+  "related_evidence": [
+    "tests/e2e/certification/critical-path-matrix.generated.json"
+  ],
+  "external_sources": [
+    {
+      "url": "https://titan-zero.titan-zero.chatgpt.site",
+      "kind": "METADATA_REPORTED",
+      "version": 39,
+      "source_commit": "1d27bd6c4309881244fe412bcf5b5ca63bd4f344",
+      "source_bytes_inspected": false,
+      "limitations": "Separate Sites source; metadata observed by coordinating audit. #1171 holds current source-scan report; not independently executed here."
+    }
+  ],
+  "delivery_board": {
+    "schema": "titan.directadmin-plugin-delivery-board/v1",
+    "observed_at": "2026-10-02T16:26:04Z",
+    "source_of_truth": "GitHub issue/claim branch/PR/CI; parent-supplied observations are labeled. This snapshot is not a second task ledger.",
+    "scope": "Only the three DirectAdmin plugins and immediate identity, runtime, authority, relay, and CI blockers.",
+    "basis": {
+      "main_sha": "15d8b1be1584ce07259762527f9abfe040c9d504",
+      "readiness_issue": 1172,
+      "readiness_pr": 1178,
+      "readiness_branch": "agent/issue-1172",
+      "pr_state_before_update": "OPEN_DRAFT",
+      "head_before_update": "af3a7f8e49b5533dc329e54bfd7be8a51093d1ee",
+      "issue_assignees": [],
+      "claim_check": "Existing workspace branch; no competing #1172 branch observed.",
+      "existing_28_area_audit_source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+      "note": "The broad 28-area audit remains pinned to its prior d508 source snapshot; no repository-wide audit was rerun. This board alone is scoped to current main 15d8b1be and the three DirectAdmin plugins/dependencies."
+    },
+    "priority_order": [
+      "developer-portal",
+      "business-node",
+      "workforce"
+    ],
+    "workflow_guidance": [
+      "One owner per canonical GitHub issue; exact agent/issue-N branch and PR are the claim/status record. Do not duplicate issues or implementation work; do not invent completion percentages.",
+      "Sequence: verify the existing Portal candidate and safe commands → establish the authenticated private Business Node gateway → prove one company-scoped governed Workforce action with a durable, independently verified receipt.",
+      "Partial PRs, green fixtures, REQUESTED receipts, and fail-closed 503s do not close missions. Keep parent issues open until full acceptance/deployment proof; use Refs for partial work.",
+      "Keep the RAW relay fail-closed. No credential or network changes without explicit authorization. Refresh this snapshot on material owner/CI/deployment events, not routine polling.",
+      "PARENT_REPORTED: #1255/#1257 recovery-rules implementation is owned by external task 01a0fd2e-59f8-77c3-ae79-676547aec0bd. Task 01a0fd4d-0777-7635-bb4e-f6b47bda0018 is the independent reviewer only and has stopped duplicate edits; it is not the implementation owner or a DirectAdmin plugin owner."
+    ],
+    "plugins": [
+      {
+        "id": "developer-portal",
+        "priority": 1,
+        "owner_task_id": "01a0fa66-adde-70e9-994a-e4683def0034",
+        "issue": {
+          "number": 1048,
+          "title": "[P2][CODEX] Developer Portal — scoped developer access, diagnostics, Codex & capability debugging",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1048",
+          "state": "OPEN",
+          "opened_at": "2026-09-28T06:36:49Z",
+          "age_hours": 104.97,
+          "github_assignees": []
+        },
+        "claim": {
+          "branch": "agent/issue-1048",
+          "open_pr": {
+            "number": 1250,
+            "state": "OPEN_DRAFT",
+            "head_sha": "a106179627626d9f847d69ae0194f826f7053aa9"
+          },
+          "latest_pr": {
+            "number": 1247,
+            "state": "MERGED",
+            "head_sha": "df8fb09b248a75fa97cd90a7ebfe1b146eed5b69",
+            "merge_sha": "64561e4d077ec07a3cb40dfb43284b0e7dff4dbf"
+          },
+          "candidate_pr": {
+            "number": 1244,
+            "state": "MERGED",
+            "head_sha": "2998a3509a3f9cd427c41e0e3c560cbc6cc4c8b8"
+          },
+          "remote_head": "a106179627626d9f847d69ae0194f826f7053aa9"
+        },
+        "file_ownership": [
+          "apps/directadmin/dev-access/**",
+          ".github/workflows/directadmin-dev-access-php.yml"
+        ],
+        "dependency": "PARENT_REPORTED: Library helper #401 returned HTTP 401 and did not deliver the archive; parent uploaded the exact artifact.",
+        "next_action": "PR #1250 at exact head a106179627626d9f847d69ae0194f826f7053aa9 proposes a bounded v1.3.6 POST transport repair. Its exact-head hosted PHP/package, portfolio, source-index and Titan Zero CI checks pass. PARENT_REPORTED: artifact 11236803104 was delivered to the user’s Library at 16:01 UTC; it is not installed or live-verified. Next executable step for the #1048 owner, after required host authorization, is install the exact artifact through Plugin Manager and retest harmless pwd/id on the installed form with the recorded checksum; do not certify unless the live retest passes.",
+        "candidate": {
+          "version": "1.3.5",
+          "archive": "Library v11",
+          "checksum_scheme": "SHA-256",
+          "sha256": "42b3ee3e100ff619ff72f2150db34690747615dc350f07b61b643beadc4cacfd",
+          "source_commit": "2998a3509a3f9cd427c41e0e3c560cbc6cc4c8b8",
+          "verification": "PARENT_REPORTED: exact archive verified; isolated PHP 8.3.35 extracted-package run 18/18 transport/security cases, 13 provenance hashes, safe packaging.",
+          "checksum_library_file_version": "v2"
+        },
+        "acceptance_evidence": [
+          "PR #1244 and #1247 merged as partial source slices; the exact v1.3.5 archive record remains Library v11, source 2998a3509a3f9cd427c41e0e3c560cbc6cc4c8b8, inner SHA-256 42b3ee3e100ff619ff72f2150db34690747615dc350f07b61b643beadc4cacfd.",
+          "PARENT_REPORTED: Jason explicitly instructed removal of the installed 1.3.3 plugin and reinstall, and secure password confirmation was received. Jason installed v1.3.5; DirectAdmin Plugin Manager confirmed it at 2026-10-02 15:10 UTC.",
+          "PARENT_REPORTED: three SSH fingerprints remain installed; ~/.ssh is mode 0700 and authorized_keys is mode 0600. Fingerprint values are omitted.",
+          "PARENT_REPORTED: harmless POST pwd returns field_value_invalid via transport=stdin, declared_bytes=unknown, body_bytes_read=108 versus expected ASCII 107; id returns 107 versus 106. Raw NUL or invalid UTF-8 are candidate causes; a one-byte trailer is not confirmed.",
+          "GitHub PR #1250 is OPEN_DRAFT at exact head a106179627626d9f847d69ae0194f826f7053aa9. Its body describes the v1.3.6 transport repair and review-only artifact with SHA-256 0ce80c3cb224de1a00b2d3c93f3f66c54fc153b1518cc4555aa6237ef12ddaf8. Exact-head PHP package/transport, portfolio, Source Evidence Index and Titan Zero CI checks are green. The PR body reports independent source review found no blocker; the GitHub review list is empty. This is hosted/source evidence, not an installed-host retest.",
+          "PARENT_REPORTED: Windows UI server-console/browser controls and private-key retry are unavailable and DirectAdmin Update is disabled. Plugin Manager sufficed for simple plugin replacement; a provider-console URL remains relevant only for privileged host/runtime operations if no supported route exists.",
+          "PARENT_REPORTED: artifact 11236803104 (v1.3.6; SHA-256 0ce80c3cb224de1a00b2d3c93f3f66c54fc153b1518cc4555aa6237ef12ddaf8) was delivered to the user’s Library at 2026-10-02 16:01 UTC. It has not been installed or live-verified."
+        ],
+        "still_required": "Install and verify the exact v1.3.6 candidate on an approved DirectAdmin host, then repeat harmless pwd and id POSTs through the installed form and confirm correct body bytes and CSRF acceptance. Preserve safe update/rollback and redaction/SSH-key lifecycle evidence. A provider-console URL is not a blocker for Plugin Manager replacement; it is relevant only for privileged host/runtime operations if no supported route exists.",
+        "deployment_state": "PARENT_REPORTED: v1.3.5 from the recorded exact archive remains installed and was confirmed by Plugin Manager at 15:10 UTC. Three SSH fingerprints and 0700/0600 modes remain. Harmless pwd/id POSTs still fail with field_value_invalid and the reported body-size discrepancies. The v1.3.6 candidate was delivered to the user’s Library at 16:01 UTC but is not installed or live-verified. Not working or certified.",
+        "blocker_age": {
+          "specific_onset": "UNKNOWN",
+          "last_observed_at": "2026-10-02T15:10:00Z",
+          "hours_since_last_observation": 0.92,
+          "live_1_3_3_post_observed_at": "2026-10-02T10:33:00Z",
+          "hours_since_live_post_observation": 5.04,
+          "mission_open_hours": 105.48
+        },
+        "repair_candidate": {
+          "version": "1.3.6",
+          "source_head": "a106179627626d9f847d69ae0194f826f7053aa9",
+          "artifact_id": 11236803104,
+          "artifact_name": "developer-portal-v1.3.6-a106179627626d9f847d69ae0194f826f7053aa9",
+          "sha256": "0ce80c3cb224de1a00b2d3c93f3f66c54fc153b1518cc4555aa6237ef12ddaf8",
+          "outer_artifact_digest": "sha256:94d704516cf3b3deb91a02df18677e19944e620dd3652bd687d47413c7315fce",
+          "delivery": "PARENT_REPORTED: delivered to the user’s Library at 2026-10-02 16:01 UTC.",
+          "installed": false,
+          "live_verified": false
+        }
+      },
+      {
+        "id": "business-node",
+        "priority": 2,
+        "owner_task_id": "01a0fac0-ec9f-767a-ba86-6836da88400b",
+        "issue": {
+          "number": 812,
+          "title": "[P0][CODEX] DirectAdmin Business Node control plane — meta-orchestration, Server Node & system estate",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/812",
+          "state": "OPEN",
+          "opened_at": "2026-09-27T09:41:03Z",
+          "age_hours": 125.9,
+          "github_assignees": []
+        },
+        "claim": {
+          "branch": "agent/issue-812",
+          "remote_head": "b2bde38aa4a54f85cb690f7cc3c643602c482a17",
+          "same_as_main": false,
+          "open_pr": {
+            "number": 1251,
+            "state": "OPEN_DRAFT",
+            "head_sha": "b2bde38aa4a54f85cb690f7cc3c643602c482a17"
+          },
+          "latest_pr": {
+            "number": 1245,
+            "state": "MERGED",
+            "head_sha": "eb568f20ccc5403b968eaacbb97c3dbb3cab9b08",
+            "merge_sha": "faab3c5c9bdfd90179d5d3bfee21c479dceb3613"
+          }
+        },
+        "file_ownership": [
+          "apps/directadmin/server-node/**"
+        ],
+        "dependencies": [
+          "#7 canonical capability IDs",
+          "#14 governed ExecutionGateway",
+          "#322 deployment/release primitives",
+          "#811 persistent Workforce runtime",
+          "#1049 shared DirectAdmin SDK/session bridge"
+        ],
+        "next_action": "PR #1251 is OPEN_DRAFT at exact head b2bde38aa4a54f85cb690f7cc3c643602c482a17 with exact-head hosted checks green. Next executable step is for an authorized host operator to run its read-only external and panel verifier against the exact authorized #811 private target and attach sanitized reports; preserve production RAW 503 until those results and #811/#302/#1049 contract confirmations are independently reviewed.",
+        "acceptance_evidence": [
+          "PR #1245 merged as a partial Server Node/RAW relay slice; issue #812 remains open.",
+          "Production RAW deliberately returns sanitized 503 before config/upstream; this is source/fixture evidence, not a commissioned live gateway.",
+          "Open draft PR #1251 is at exact head b2bde38aa4a54f85cb690f7cc3c643602c482a17; its PR body reports 12/12 verifier tests and 102/102 Server Node tests. Current GitHub exact-head checks are green, but no live-host or independent-network run was performed."
+        ],
+        "still_required": "Authorized direct-host and independent-network boundary evidence for PR #1251, followed by completion of the #812 mission: valid DirectAdmin install/update/uninstall lifecycle, persistent canonical Workforce supervision, governed and independently verified capability execution with evidence, restart/recovery and backup/restore, representative deployment, cross-company denial, and replacement-substrate proof.",
+        "deployment_state": "No commissioned Server Node or live host acceptance is evidenced. Production RAW intentionally returns sanitized 503 before config/upstream; no credential or network change is authorized.",
+        "blocker_age": {
+          "specific_onset": "UNKNOWN",
+          "last_observed_at": "2026-10-02T14:37:57Z",
+          "hours_since_last_observation": 1.46,
+          "mission_open_hours": 126.41
+        }
+      },
+      {
+        "id": "workforce",
+        "priority": 3,
+        "owner_task_id": "01a0fa2c-44bb-7234-9dde-0e775943c028",
+        "issue": {
+          "number": 1050,
+          "title": "[P1][CODEX] Workforce Manager — agents, teams, work, autonomy, evidence & control",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1050",
+          "state": "OPEN",
+          "opened_at": "2026-09-28T06:44:23Z",
+          "age_hours": 104.85,
+          "github_assignees": []
+        },
+        "claim": {
+          "branch": "agent/issue-1050",
+          "remote_ref": "ABSENT_AFTER_MERGED_PR_1249",
+          "open_pr": null,
+          "latest_pr": {
+            "number": 1249,
+            "state": "MERGED",
+            "head_sha": "1a5455f56064a268ca8c35612ab9044fd601bb35",
+            "merge_sha": "15d8b1be1584ce07259762527f9abfe040c9d504",
+            "merged_at": "2026-10-02T15:04:59Z"
+          }
+        },
+        "file_ownership": [
+          "apps/directadmin/workforce/**",
+          "docs/directadmin/WORKFORCE-*.md"
+        ],
+        "dependencies": [
+          "#811 runtime controls/durable receipts",
+          "#640 bounded authority/effect/evidence glue; PR #1253 is in independent review",
+          "#1049 shared SDK bootstrap producer/host composition; PR #1252 remains uncommissioned",
+          "#812 Server Node RAW relay",
+          "#1157/#1248 CI consuming the merged #1249 fixture; final human review pending"
+        ],
+        "next_action": "PARENT_REPORTED: the user approved PR #1248 for merge at 15:46 UTC, but it remains OPEN_DRAFT while explicit Ready state-change confirmation is pending; do not call it merged or change its draft state. Its exact head 920ff7c6e6ecb48fa7d819eb08b007c38f45832c has green GitHub checks. After Ready confirmation, the existing #1157/#1248 owner may transition it through normal review/merge protections. Continue toward one positive company-scoped governed workflow with a durable, independently verified receipt after #811 controls/receipts, #1049 producer/host composition, and #640 acceptance are resolved. Do not add plugin-local authority/evidence or duplicate CI.",
+        "acceptance_evidence": [
+          "PR #1249 merged at source head 1a5455f56064a268ca8c35612ab9044fd601bb35 into main as merge commit 15d8b1be1584ce07259762527f9abfe040c9d504 at 2026-10-02T15:04:59Z; issue #1050 remains OPEN. Explicit human approval at 15:05 is PARENT_REPORTED.",
+          "Historical only: at prior head 054c3651, the #1249 owner reported 39/39 consumer/browser/hosted/package tests, 83/83 shared-bridge tests, 3/3 package tests, and 14 RAW requests/15 hosted routes. These totals are not attributed to merged head 1a5455f5.",
+          "GitHub confirms PR #1248 remains OPEN_DRAFT at head 920ff7c6e6ecb48fa7d819eb08b007c38f45832c with workforce, DirectAdmin Workforce Consumer, validate, mobile and Mission Closure Evidence Gate checks green. PARENT_REPORTED: the user approved merge at 15:46 UTC; explicit Ready state-change confirmation is pending. It is not merged."
+        ],
+        "still_required": "One positive permitted host-owned control and durable receipt for the current company/session, independent outcome verification, idempotent recovery, and live-host commissioning. Current controls=[] and denial/no-write tests prove only fail-closed behavior.",
+        "deployment_state": "Packaging candidate only, not live-install-ready; no commissioned host or positive workflow receipt. Hosted /ready intentionally remains 503.",
+        "blocker_age": {
+          "specific_onset": "UNKNOWN",
+          "last_observed_at": "2026-10-02T15:35:08Z",
+          "hours_since_last_observation": 0.5,
+          "mission_open_hours": 105.35
+        }
+      }
+    ],
+    "dependency_owners": [
+      {
+        "id": "shared-identity",
+        "owner_task_id": "01a0fa3e-ef62-706b-bebc-9c82453ec02b",
+        "issue": 302,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1183,
+          "branch": "agent/issue-302",
+          "head": "14cb413fcb082f4426e298e46590de6e0fe577cc",
+          "state": "MERGED"
+        },
+        "active_branch": "NONE_OBSERVED",
+        "owned_paths": [
+          "apps/web/lib/auth/current-session.ts",
+          "packages/titan-platform/src/security-session-credentials.ts",
+          "packages/titan-platform/src/security-session-registry.ts"
+        ],
+        "used_by": [
+          "shared-sdk",
+          "workforce"
+        ],
+        "note": "Issue #302 current-session/company identity dependency. Owner evidence comment #5954574426; no production DirectAdmin commissioning evidenced.",
+        "evidence_comment_id": 5954574426
+      },
+      {
+        "id": "shared-sdk",
+        "owner_task_id": "01a0fa2b-6965-73e1-a96f-17b866d45036",
+        "issue": 1049,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1243,
+          "branch": "agent/issue-1049",
+          "head": "205fd94e44aa953c172ce9d419eb5e1dbbe1874b",
+          "merge_sha": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "state": "MERGED"
+        },
+        "active_branch": {
+          "branch": "agent/issue-1049",
+          "head": "2006836d0ced2226f0d34585e1e3ba7b7e0b4d73"
+        },
+        "owned_paths": [
+          "packages/titan-platform/src/directadmin-{cockpit,gateway,plugin,session-bridge}.ts",
+          "packages/titan-platform/tests/directadmin-*",
+          "apps/directadmin/*/cockpit.mjs",
+          "docs/contracts/directadmin-authenticated-session-bridge.md"
+        ],
+        "used_by": [
+          "developer-portal",
+          "business-node",
+          "workforce"
+        ],
+        "note": "PR #1204/#1243 remain partial merged SDK/session-bridge source. GitHub confirms open draft PR #1252 at 2006836d0ced2226f0d34585e1e3ba7b7e0b4d73; its body reports 92 focused tests, and exact-head Mission Closure Evidence Gate, Titan Zero CI and Source Evidence Index checks pass. PARENT_REPORTED: independent source-blob comparison confirmed the gateway/bridge code is identical between 19893cac161e2cbdd3c839b0f051072cc97d1031 and 2006836d0ced2226f0d34585e1e3ba7b7e0b4d73; the non-blocking route security review and Node 22 reviewer CI 92/92 at the earlier head therefore carry over to the same code. This is source/test evidence, not host commissioning. The trusted #302 assertion producer and #811/#812 host/page composition remain absent.",
+        "dependencies": [
+          "#302 canonical current-session/company identity"
+        ],
+        "open_pr": {
+          "number": 1252,
+          "state": "OPEN_DRAFT",
+          "branch": "agent/issue-1049",
+          "head": "2006836d0ced2226f0d34585e1e3ba7b7e0b4d73"
+        }
+      },
+      {
+        "id": "runtime",
+        "owner_task_id": "01a0fa2b-37fd-76a5-b80f-1ba8f207f03f",
+        "issue": 811,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1242,
+          "branch": "agent/issue-811",
+          "head": "360b6bcf6a721757530f7913b88a28c8b3397a33",
+          "state": "MERGED"
+        },
+        "active_branch": "NONE_OBSERVED",
+        "owned_paths": [
+          "services/workforce/**",
+          "infra/compose.vps.yml"
+        ],
+        "used_by": [
+          "workforce"
+        ],
+        "note": "PARENT_REPORTED: the #811 owner is working the permitted-controls/durable-receipts dependency; bounded #640 claim is authorized. Executor recovery was confirmed in this workspace by actual commands: `pwd` returned `/workspace/Titan-Zero-Field-Service-Workforce`, `id` returned `uid=1000(agent) gid=1000(agent) groups=1000(agent)`, and `git fetch origin main` succeeded at 15d8b1be1584ce07259762527f9abfe040c9d504. This proves executor shell access only, not production host recovery or a Workforce receipt."
+      },
+      {
+        "id": "authority-effect-evidence",
+        "issue": 640,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1203,
+          "branch": "agent/issue-640",
+          "head": "c6aa8d8ece6e9e031360111992f8853cca98ca91",
+          "state": "MERGED"
+        },
+        "overlap_check_at": "2026-10-02T15:35:08Z",
+        "branch_available": false,
+        "open_pr": true,
+        "owned_paths": [
+          "packages/runtime/authority/**",
+          "packages/titan-platform/src/mission-authority-policy.ts",
+          "packages/titan-platform/src/workforce-trust/**"
+        ],
+        "next_action": "PR #1253 current head is 46e36435f620c3777450a8259a3c31208699c94e. PARENT_REPORTED and verified from run 37030700194/job 110916486687: at prior head 4000f2c9128efc609fbc2f24dfa34c3139863cae, hosted Workforce typecheck and full suite passed 52/52, including seven owner tests. The separate Mission Closure Evidence Gate failure at that head was for partial Refs wording, not the hosted test result. Current-head GitHub checks show Mission Closure Evidence Gate, workforce, cleaning-convergence, mobile and source-index passed; validate and sqlite-compose-and-build remain in progress. The PR body still names the prior exact head. Next: finish the two current-head checks, align the PR body/evidence to 46e36435, then obtain independent review; keep #640 open.",
+        "active_branch": {
+          "branch": "agent/issue-640",
+          "head": "46e36435f620c3777450a8259a3c31208699c94e"
+        },
+        "active_pr": {
+          "number": 1253,
+          "state": "OPEN_DRAFT",
+          "branch": "agent/issue-640",
+          "head": "46e36435f620c3777450a8259a3c31208699c94e"
+        },
+        "note": "Issue #640 remains OPEN on agent/issue-640. At prior PR #1253 head 4000f2c9128efc609fbc2f24dfa34c3139863cae, hosted Workforce typecheck and the full suite passed 52/52, including seven owner tests (parent-reported; job 110916486687 in run 37030700194 completed successfully). A separate Mission Closure Evidence Gate failure at that head concerned partial Refs wording. PR #1253 has since advanced to 46e36435f620c3777450a8259a3c31208699c94e; current-head gate, workforce, cleaning-convergence, mobile and source-index checks pass, while validate and sqlite-compose-and-build are still running. The PR body still declares 4000f2 as exact head. No production credentials, grants, or host commissioning are evidenced."
+      },
+      {
+        "id": "hosted-ci",
+        "owner_task_id": "01a0fa39-ea03-72de-87ef-d577685f0020",
+        "issue": 1157,
+        "state": "OPEN",
+        "active_branch": {
+          "branch": "agent/issue-1157",
+          "head": "920ff7c6e6ecb48fa7d819eb08b007c38f45832c"
+        },
+        "pr": {
+          "number": 1248,
+          "state": "OPEN_DRAFT",
+          "head": "920ff7c6e6ecb48fa7d819eb08b007c38f45832c",
+          "checks": "GREEN"
+        },
+        "fixture_pr": {
+          "number": 1249,
+          "branch": "agent/issue-1050",
+          "head": "1a5455f56064a268ca8c35612ab9044fd601bb35",
+          "state": "MERGED",
+          "merge_sha": "15d8b1be1584ce07259762527f9abfe040c9d504"
+        },
+        "note": "GitHub confirms PR #1248 at exact head 920ff7c6e6ecb48fa7d819eb08b007c38f45832c uses merged #1249’s native fixture and all listed checks are green. PARENT_REPORTED: user approval at 15:46 UTC, but the PR remains OPEN_DRAFT pending explicit Ready state-change confirmation; no merge occurred."
+      }
+    ],
+    "paused_workstreams": [
+      {
+        "name": "website/waitlist",
+        "issue": 373,
+        "state": "PAUSED_BY_OWNER",
+        "directive": "Preserve existing work and stop; no code push or scan.",
+        "provenance": "PARENT_REPORTED; not inspected here."
+      }
+    ]
+  },
+  "subsystems": [
+    {
+      "subsystem_id": "apis-mcp",
+      "label": "APIs/MCP",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/432",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/644"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/mcp-projection.ts",
+        "packages/titan-platform/src/ported/titan-connect/mcp-host-contract.ts"
+      ],
+      "source_assessment": "MCP projection and host contracts exist.",
+      "missing_requirements": [
+        "Production standalone-client transport and canonical authority traversal across actual endpoints are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/mcp-projection.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:3f3091727dc46581e77cf8eeeb11d2ca878a49562faa2323c57b8aacae3eafe7",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/mcp-projection.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/ported/titan-connect/mcp-host-contract.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:311dbae9f0ea8f875c402863afdf969b0774e9084a461b5811a9e1905cc6b5ed",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/ported/titan-connect/mcp-host-contract.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "authentication-security",
+      "label": "Authentication/security",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/runtime.ts",
+        "packages/titan-platform/src/security-boundary.ts"
+      ],
+      "source_assessment": "Session/company-context security primitives exist.",
+      "missing_requirements": [
+        "Global identity/membership bootstrap, revocation and physical storage routing need integrated production evidence."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/runtime.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:29d01ceffdf94a606c5efb710fa8d9c797860fbaf6f8cf0c4d4bb0199479bc58",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/runtime.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/security-boundary.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:e7a05ecf47788dd3eab6b9eb958c730c734a487e43edabf5165fa61eb99747d4",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/security-boundary.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "base-fsm",
+      "label": "Base TypeScript FSM",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/809",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/183",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/353"
+      ],
+      "implementation_paths": [
+        "packages/domain/src/completion-criteria.ts",
+        "packages/domain/src/work-order-lifecycle.ts"
+      ],
+      "source_assessment": "Native work-order and completion criteria implementations exist; preserve their business behavior.",
+      "missing_requirements": [
+        "End-to-end company-isolated operational journeys and deployment remain unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/domain/src/completion-criteria.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:2f63b648e40e58b4ed6ed6906113d4f850bd1976d9bd2d1845d46db0a5e9ff3a",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/domain/src/completion-criteria.ts"
+        },
+        {
+          "path": "packages/domain/src/work-order-lifecycle.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:93ea4d9480fdd449745fa91179027e3c9d12339b91cd30665391f7abba197ca2",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/domain/src/work-order-lifecycle.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "channels-integrations",
+      "label": "Channels & Integrations",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1060",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/644"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/connector-runtime.ts",
+        "packages/titan-platform/src/ported/titan-connect/channel-binding.ts"
+      ],
+      "source_assessment": "Channel/provider binding and connector runtime source exists.",
+      "missing_requirements": [
+        "Current external-provider conformance, retries and company-safe production transport require execution evidence."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/connector-runtime.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:9cba730fdad80145ec46174fb0e4d6ad9f81b5da76976af6e53de4e19652f20b",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/connector-runtime.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/ported/titan-connect/channel-binding.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:eecdf637398308d80242936217bf6e5c267a5fa4755234367c0905c101d39b87",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/ported/titan-connect/channel-binding.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "communications",
+      "label": "Communications",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/333",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/403"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/communication-announcement.ts"
+      ],
+      "source_assessment": "Announcement contracts distinguish audience and authority.",
+      "missing_requirements": [
+        "Real delivery, callback correlation, consent and independently verified outcomes are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/communication-announcement.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:feb7818a07f1ba9e2b8d3f451122c86801b485cd015e491cd609fe2b1302b808",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/communication-announcement.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "decision",
+      "label": "Decision Engine",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/59",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/58",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/642"
+      ],
+      "implementation_paths": [
+        "docs/contracts/decision-lifecycle.md",
+        "packages/tools/decision-lifecycle.mjs"
+      ],
+      "source_assessment": "DecisionRuntime stores bounded in-memory packets; current contract file contains captured PowerShell error text.",
+      "missing_requirements": [
+        "Persistent real-provider governed path and usable contract documentation need owner follow-through."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "docs/contracts/decision-lifecycle.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:dc148626b5aa8a38f8fab8258844f03bd9d8ac9f0a16227987be65bbeba0c49e",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/contracts/decision-lifecycle.md"
+        },
+        {
+          "path": "packages/tools/decision-lifecycle.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:1ef02d01d462e54ec2817bd0d721caea8ff20f600bd3b97b684d22661c9f74fd",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/tools/decision-lifecycle.mjs"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "deployment",
+      "label": "Deployment/install/update/rollback",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/322",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/812",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/718"
+      ],
+      "implementation_paths": [
+        "docs/contracts/deployment-release-lifecycle.md",
+        "infra/compose.vps.yml",
+        "packages/deployment/release-lifecycle.mjs"
+      ],
+      "source_assessment": "Release lifecycle implementation and compose exist; verification evidence gates lifecycle transitions.",
+      "missing_requirements": [
+        "Exact-artifact clean install, update, rollback, restart and live-host proof remain missing; certification handoff consumer is not integrated."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "docs/contracts/deployment-release-lifecycle.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:e42a9b066586501f394bfd900e6f58af4221d38eaab675bcb3324e921c71b878",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/contracts/deployment-release-lifecycle.md"
+        },
+        {
+          "path": "infra/compose.vps.yml",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:0be5e7d52c1d122f3f7fb3af5b1638fed748f98856c95cfdba924608de2f1ea6",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/infra/compose.vps.yml"
+        },
+        {
+          "path": "packages/deployment/release-lifecycle.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:e9a4c4ecc0686e9dbce8142e7ad1d88961c2b5d14fe0f0fbd5a4a04dc199414b",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/deployment/release-lifecycle.mjs"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "directadmin",
+      "label": "DirectAdmin Business Node",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/812",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1048",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1050"
+      ],
+      "implementation_paths": [
+        ".github/workflows/directadmin-dev-access-php.yml",
+        ".github/workflows/directadmin-plugin-portfolio.yml",
+        "apps/directadmin/README.md",
+        "apps/directadmin/brand-studio/cockpit.mjs",
+        "apps/directadmin/dev-access/README.md",
+        "apps/directadmin/dev-access/dist/v1.3.2/provenance.json",
+        "apps/directadmin/dev-access/dist/v1.3.2/titan_dev_access.tar.gz",
+        "apps/directadmin/dev-access/lib/app.php",
+        "apps/directadmin/dev-access/scripts/update.sh",
+        "apps/directadmin/dev-access/tools/package.sh",
+        "apps/directadmin/dev-access/tools/plugin-lab.sh",
+        "apps/directadmin/dev-access/tools/request-integration-test.php",
+        "apps/directadmin/dev-access/tools/security-test.php",
+        "apps/directadmin/dev-access/tools/update-hook-test.sh",
+        "apps/directadmin/operations-hub/cockpit.mjs",
+        "apps/directadmin/server-node/README.md",
+        "apps/directadmin/server-node/directadmin-relay.mjs",
+        "apps/directadmin/server-node/directadmin-relay.test.mjs",
+        "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
+        "apps/directadmin/server-node/install.sh",
+        "apps/directadmin/server-node/lifecycle.test.mjs",
+        "apps/directadmin/server-node/runtime.mjs",
+        "apps/directadmin/server-node/runtime.security.test.mjs",
+        "apps/directadmin/server-node/runtime.test.mjs",
+        "apps/directadmin/server-node/update.sh",
+        "apps/directadmin/server-node/user/directadmin-gateway.raw",
+        "apps/directadmin/workforce/AGENTS.md",
+        "apps/directadmin/workforce/README.md",
+        "apps/directadmin/workforce/admin/index.html",
+        "apps/directadmin/workforce/hooks/admin_txt.html",
+        "apps/directadmin/workforce/hooks/reseller_txt.html",
+        "apps/directadmin/workforce/hooks/user_txt.html",
+        "apps/directadmin/workforce/images/api.mjs",
+        "apps/directadmin/workforce/images/cockpit.mjs",
+        "apps/directadmin/workforce/images/controller.mjs",
+        "apps/directadmin/workforce/images/presentation.mjs",
+        "apps/directadmin/workforce/images/style.css",
+        "apps/directadmin/workforce/lib/entry.mjs",
+        "apps/directadmin/workforce/reseller/index.html",
+        "apps/directadmin/workforce/scripts/install.sh",
+        "apps/directadmin/workforce/scripts/uninstall.sh",
+        "apps/directadmin/workforce/scripts/update.sh",
+        "apps/directadmin/workforce/tests/api.test.mjs",
+        "apps/directadmin/workforce/tests/browser.test.mjs",
+        "apps/directadmin/workforce/tests/controller.test.mjs",
+        "apps/directadmin/workforce/tests/hosted-sdk.integration.mjs",
+        "apps/directadmin/workforce/tests/package.test.mjs",
+        "apps/directadmin/workforce/tests/relay-host.integration.mjs",
+        "apps/directadmin/workforce/tests/sdk-contract.integration.mjs",
+        "apps/directadmin/workforce/tools/package.mjs",
+        "apps/directadmin/workforce/user/index.html",
+        "apps/directadmin/zero-core/cockpit.mjs",
+        "docs/contracts/directadmin-authenticated-session-bridge.md",
+        "docs/directadmin/DEVELOPER-PORTAL-RECOVERY-RUNBOOK.md",
+        "docs/directadmin/PLUGIN-RELEASE-RUNBOOK.md",
+        "docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md",
+        "docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md",
+        "packages/titan-platform/src/developer-portal.ts",
+        "packages/titan-platform/src/directadmin-cockpit.ts",
+        "packages/titan-platform/src/directadmin-gateway.ts",
+        "packages/titan-platform/src/directadmin-plugin.ts",
+        "packages/titan-platform/src/directadmin-session-bridge.ts",
+        "packages/titan-platform/tests/developer-portal.test.mjs",
+        "packages/titan-platform/tests/directadmin-bridge.test.mjs",
+        "packages/titan-platform/tests/directadmin-browser.browser.mjs",
+        "packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs",
+        "scripts/directadmin-dev-access-archive-integration.php",
+        "scripts/package-directadmin-plugin.mjs",
+        "scripts/package-directadmin-portfolio.mjs",
+        "scripts/package-directadmin-portfolio.test.mjs",
+        "scripts/test-directadmin-dev-access-archive.mjs",
+        "scripts/test-directadmin-dev-access-candidate.mjs",
+        "services/workforce/src/directadmin-workforce-owners.ts",
+        "services/workforce/src/hosted-runtime.ts",
+        "services/workforce/src/server.ts"
+      ],
+      "source_assessment": "Current main d508a2695fccc36e039f18e60cb96adfbe318813 includes the merged #1048/#1209 Dev Access hardening and #1197 deterministic package work, plus the partial #1049 DirectAdmin SDK/session bridge. PR #1204 merged at 75cc7f0; follow-up PR #1243 merged at d508a269 and distinguishes rejection of a replacement company-switch credential (401 and stale-cookie clearing) from canonical registry unavailability (redacted 503 without clearing the source cookie). Its source adds regression cases for both outcomes; issue #1049 remains open. The #1048 source rejects malformed/ambiguous requests and exercises them in PHP security/request-integration tests using a CLI-server fixture; the PHP 8.3 hosted package/transport workflow passed and builds a review-only v1.3.4 candidate. The previously archived v1.3.2 package has a locally verified checksum. This confirms isolated source/fixture behavior, not behavior on an installed DirectAdmin portal. The #1049 SDK now delegates identity and the fixed Workforce/Zero exchange to #302, uses a single-current-company browser context, Secure/HttpOnly session cookie and CSRF/Origin checks, binds child identity/revisions to the source session, and provides shared panel consumers. Hosted #1204 workflows passed (DirectAdmin package, Personal Zero Verification, Distribution Gateway contract, Source Evidence Index and Titan Zero CI); a local directadmin bridge/workforce-handoff run passed 83/83 tests using disposable identity fixtures. These are source-level and hosted CI results. The SDK remains a DirectAdmin panel bridge: it is not the PWA or native mobile transport, not a listener/deployment, and does not grant business authority. Its unsupported Workforce intent remains a typed 403 and the disposable coverage did not accept a consequential business action. Server Node /v1/bootstrap remains node-token control metadata; the DA projection route remains panel-specific. No live DirectAdmin install, update, rollback, root action, registered key lifecycle, production proxy check or business outcome is evidenced. The PWA still has no general authenticated bootstrap/projection endpoint; true incremental stream/replay and physical device behavior remain unverified. Main 468d42b also merges the partial #1050/#1143 DirectAdmin Workforce cockpit package. It has separate admin/reseller/user entrypoints and uses the shared #1049 DirectAdminCockpitSession plus the #812 relay adapter to consume the #811 company-scoped projection. The API validates nested company/freshness/evidence data; the controller clears view state on context change/revocation, drops stale async replies, and shows denied/unavailable states. Controls are rendered only from host-published capabilities; current #811 projection publishes controls:[], so it is read-only. Any receipt is REQUESTED with no evidence refs, not a verified outcome. The app README says packaging-candidate only; the tested relay integration is pinned to pre-change #812 source and does not attest current config-v2/Apache cookie-boundary marker. Issue #1050 remains open after PR #1143 merged. PR #1143 body reports 39/39 package/browser/hosted tests, but the #1143 hosted Actions inspected here ran DirectAdmin portfolio packaging, Source Evidence Index, and Titan Zero CI; they did not run apps/directadmin/workforce/tests/*.test.mjs. Treat 39/39 as owner-reported test evidence, not an independently rerun or live-host result. No approved DirectAdmin install or productive Workforce action is evidenced. This package is a distinct panel consumer, not the canonical PWA or native mobile application. Parent-reported host observation (not independently contacted from this execution environment): an authenticated DirectAdmin 1.711 session at 2026-10-02 10:33-10:34 UTC showed Developer Portal 1.3.3 installed, diagnostics admin UID 1000 at /home/admin with three keys, Server Node health unreachable, and a harmless pwd POST returning malformed/ambiguous. Source 1.3.4 at f7ae3aba4cc1287ee4d902b6321205d00091b18c was reportedly tested separately and is not installed; Library upload remains held pending user permission. These observations do not establish a functioning runtime or commissioned install.",
+      "missing_requirements": [
+        "Commission the #1050 package with the current #1049/#302 session and #812 relay against #811 in an approved DirectAdmin/Apache test host. The published package fixture is pinned to a pre-change relay; independently verify current config-v2 and Apache :443 cookie isolation, session/CSRF bootstrap, allowed CGI transport, and exact install/update/rollback on the host before relying on it.",
+        "Keep the current panel cockpit read-only while #811 publishes controls: []. Complete the canonical Workforce owner path for authorized lifecycle controls, identity/company scoping, persistent outcomes, cancellation/recovery and evidence receipts; a REQUESTED receipt or 403 is not a completed operation.",
+        "Finish the full #1050 mission acceptance (canonical roster/detail, conversations, Missions/hierarchy/approval, trust/autonomy, capacity/value/staffing, evidence views, and verified time-attendance/offline/payroll requirements) through its existing owner; PR #1143 is a partial consumer/package slice and #1050 remains open.",
+        "Do not reuse the DirectAdmin panel package as generic PWA/mobile API or host support. The PWA bootstrap/projection and native incremental conversation streaming/replay/cancel/lifecycle gaps listed in their rows remain open.",
+        "Recheck the parent-reported DirectAdmin 1.711 state in an authorized live session: health was unreachable and the harmless pwd POST was malformed/ambiguous; verify the installed 1.3.3 and any 1.3.4 candidate, exact endpoint health, and source/package identity. The 1.3.4 source commit is not installed, Library upload is held, and independent SSH/physical-client runtime evidence remains unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "The PR #1143 body reports 39/39 DirectAdmin Workforce package/browser/hosted tests in its owner report. Hosted Actions inspected here passed portfolio packaging, mobile and regression-gated Titan CI but did not execute the app-specific test glob. No test was run against a commissioned DirectAdmin/Apache host."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": ".github/workflows/directadmin-dev-access-php.yml",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:01d25babf84a56b2f65735fbfee8e21cbace94a44cf9876fcfe2e830eea020c1",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/.github/workflows/directadmin-dev-access-php.yml"
+        },
+        {
+          "path": ".github/workflows/directadmin-plugin-portfolio.yml",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:79f629dd64ca7ac2593bcf59cd64f7130592a2d34826962869d0ac71010e4a59",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/.github/workflows/directadmin-plugin-portfolio.yml"
+        },
+        {
+          "path": "apps/directadmin/README.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6bd0b9d8c998adbf2d33bf8aba1eaa525b6464fd36d209b537bb51b17a5f1940",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/README.md"
+        },
+        {
+          "path": "apps/directadmin/brand-studio/cockpit.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:c5d32b0d423781bb9cc4f042f2b5985b42ed602c08eff73b8865f5018b2c3796",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/brand-studio/cockpit.mjs"
+        },
+        {
+          "path": "apps/directadmin/dev-access/README.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:69dfbf4149754b883bc4b3ab777a1a893da86c44bb910c3d7533ca7b329aee1f",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/dev-access/README.md"
+        },
+        {
+          "path": "apps/directadmin/dev-access/dist/v1.3.2/provenance.json",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:d61d7bcfae3156e6f47f9b6012bced8a9ce506148ab2fd03500a76a9b1cf0407",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/dev-access/dist/v1.3.2/provenance.json"
+        },
+        {
+          "path": "apps/directadmin/dev-access/dist/v1.3.2/titan_dev_access.tar.gz",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:22b54eabaf2a12a5bba04c9b21d58f798f93b7c1a6845362035edf574c488755",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/dev-access/dist/v1.3.2/titan_dev_access.tar.gz"
+        },
+        {
+          "path": "apps/directadmin/dev-access/lib/app.php",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:3914decc86b7b9e5e9bd6747752e5e4551e2c99f8a3b01cae054dcb374c0169b",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/dev-access/lib/app.php"
+        },
+        {
+          "path": "apps/directadmin/dev-access/scripts/update.sh",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:1345f4f558033a51392a4fdca2c826ad939b1d42cac9ae3bcbb1af4482390439",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/dev-access/scripts/update.sh"
+        },
+        {
+          "path": "apps/directadmin/dev-access/tools/package.sh",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:cdf6bc01d87c32e4658bd15442d938df4a964abf2dd1a23adde511b057f0e041",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/dev-access/tools/package.sh"
+        },
+        {
+          "path": "apps/directadmin/dev-access/tools/plugin-lab.sh",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:3cc2a7efa52703ddda126b0221cf5b8cf61bb8e2f4a5da75294a8c65dc6d06e0",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/dev-access/tools/plugin-lab.sh"
+        },
+        {
+          "path": "apps/directadmin/dev-access/tools/request-integration-test.php",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:9591a150d5fdbdc1f4fa99d7b87c28829e0627de6fed9bd25099fc04c82352ee",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/dev-access/tools/request-integration-test.php"
+        },
+        {
+          "path": "apps/directadmin/dev-access/tools/security-test.php",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:fd12f9e0b381f43843fc1c0bcb1da7f76a257f0d6179f18563b1f8824f85e080",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/dev-access/tools/security-test.php"
+        },
+        {
+          "path": "apps/directadmin/dev-access/tools/update-hook-test.sh",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:eebfe843b324652612c4f19202411ba0d564e6521661fb3e74264afd872797b8",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/dev-access/tools/update-hook-test.sh"
+        },
+        {
+          "path": "apps/directadmin/operations-hub/cockpit.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:a0af6f2c3347192bf37e2a04e3a3f3475b4f6541dcc319a40d53569a4e4f6703",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/operations-hub/cockpit.mjs"
+        },
+        {
+          "path": "apps/directadmin/server-node/README.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:334c13b8725408f227fc5c0dd3a984814de96c2bb5924402eecd27dc523e4274",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/README.md"
+        },
+        {
+          "path": "apps/directadmin/server-node/directadmin-relay.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:7cf496aa5382784c79726838cffc759d9ecdca065a05b2f6962645adfc48e284",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/directadmin-relay.mjs"
+        },
+        {
+          "path": "apps/directadmin/server-node/directadmin-relay.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:c9d1c91cfe06f4a0abb148cf8d947140ddfc5e95a53c3d9baed6426449e38c1a",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/directadmin-relay.test.mjs"
+        },
+        {
+          "path": "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:b5c759627f31be55f1aea705ce8345459ad00f89085c15dbab3799caffd7f1c0",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/images/directadmin-relay-client.mjs"
+        },
+        {
+          "path": "apps/directadmin/server-node/install.sh",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6387f625d4925f47ed2c093d6f1a8ae3f2a3d43b67e32f46a2b2b6a823c5b421",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/install.sh"
+        },
+        {
+          "path": "apps/directadmin/server-node/lifecycle.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:a9abb799a8cbb211bc03ddcdf300fd308d5ad87639852d9d05dc70040b33db13",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/lifecycle.test.mjs"
+        },
+        {
+          "path": "apps/directadmin/server-node/runtime.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:af60bd99fc545292f118ebfecf57ec2a8874d1add37b92f0a169203e8ea6dc65",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/runtime.mjs"
+        },
+        {
+          "path": "apps/directadmin/server-node/runtime.security.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:3bb8d60c3a4f5906672a2dc5f86551e325a970f820a370f4aa9678b9ec92eb27",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/runtime.security.test.mjs"
+        },
+        {
+          "path": "apps/directadmin/server-node/runtime.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:88f3b9a92679017e81ccdd243edbb09ef6eabcfd1820bacdb8464be9af0145b9",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/runtime.test.mjs"
+        },
+        {
+          "path": "apps/directadmin/server-node/update.sh",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:ab26e4b8afa087b5271973d5b621dd6861d2fb47869406eb4e0dca5664c696ca",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/update.sh"
+        },
+        {
+          "path": "apps/directadmin/server-node/user/directadmin-gateway.raw",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:7d2d6cab76b3e3a1dd19226962745eb0b4232332978aa6c26757394267e0e755",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/user/directadmin-gateway.raw"
+        },
+        {
+          "path": "apps/directadmin/workforce/AGENTS.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:4b2b1578b18a21dc7c750ebee164a9066923dc1b8bbac365bb1f9484f640db7b",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/AGENTS.md"
+        },
+        {
+          "path": "apps/directadmin/workforce/README.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:90c12196d70736e5664467d81a246cdb23808315123736a88938d4bb2acd1300",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/README.md"
+        },
+        {
+          "path": "apps/directadmin/workforce/admin/index.html",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:d6fab3e7a7ac9873b7200fa90b35d89390d7d6756ab5fad6c9f1da6dde40063c",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/admin/index.html"
+        },
+        {
+          "path": "apps/directadmin/workforce/hooks/admin_txt.html",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:2840ff3912a716a6f9dcbc126bd37aa6fa71a9de01ca61cb591020aa9ab50b60",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/hooks/admin_txt.html"
+        },
+        {
+          "path": "apps/directadmin/workforce/hooks/reseller_txt.html",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:196931173ebd216e54681502e7084400c64f7171b2ed80301a3a6f858b83b389",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/hooks/reseller_txt.html"
+        },
+        {
+          "path": "apps/directadmin/workforce/hooks/user_txt.html",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6ea25bce7b69cb8b1ee76abfa10ffc1628fc888078721c3dd1d7a97ef1d27d4b",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/hooks/user_txt.html"
+        },
+        {
+          "path": "apps/directadmin/workforce/images/api.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:bbc0d35c9bf04264ba1f113933f04b8a08406b1c49eb779c54b58e1a0dfb2849",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/images/api.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/images/cockpit.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:e43bf27d118826ad73d297690d4246b0d9ec4d6f511bccc4e842c7c877d7a3bd",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/images/cockpit.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/images/controller.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:19c858b196033fadf0adfb120284dcc38958ec6e2bb03e182a0efbcb9fc264ce",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/images/controller.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/images/presentation.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6a5a0784dcee83ea2825c1269cb4bc5ccf5b203715949e12ebcad0405e637a80",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/images/presentation.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/images/style.css",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:9f89975ae49344c0df099b59fa4ed680393fb6e2b34ba34e9cb60e8ca77d6f65",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/images/style.css"
+        },
+        {
+          "path": "apps/directadmin/workforce/lib/entry.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:3319bdeb4f56092c44d951ba591c2fba92debb974e83e2351d9ae902daf6d7af",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/lib/entry.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/reseller/index.html",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:17ac23339e45709c363dd8ff08f5d9c9966654e08306537ed7cd0ab4e16a9d20",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/reseller/index.html"
+        },
+        {
+          "path": "apps/directadmin/workforce/scripts/install.sh",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:a275b2f862bd3b8e122655980133e0e4b547c1435e82b9cb7a551c7901cf34f5",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/scripts/install.sh"
+        },
+        {
+          "path": "apps/directadmin/workforce/scripts/uninstall.sh",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:b241d848707e56f923391a76ae59239b46a32692c090cce10e4c9daab118c3c5",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/scripts/uninstall.sh"
+        },
+        {
+          "path": "apps/directadmin/workforce/scripts/update.sh",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:5555fe537a6729f30299ca947182daef73576c15cc36cefe21abb7c721c8ef51",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/scripts/update.sh"
+        },
+        {
+          "path": "apps/directadmin/workforce/tests/api.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6c705653ef0683e5eacd17299ccf129bc2a9c19806df9908f1a7301e3d6d37bb",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/tests/api.test.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/tests/browser.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:f9a38f9830da0291fd664dd511e36527b21596bb3a047f5a578bcb21a4e7c25e",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/tests/browser.test.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/tests/controller.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:ac78b5bd80e418f10483f9c64850f58251b0671120f490ba72303d98f582cc24",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/tests/controller.test.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/tests/hosted-sdk.integration.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:024a7a9214636fa9f7798721b26cf511a1ae4cad8efaa5254fcc677e83e84997",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/tests/hosted-sdk.integration.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/tests/package.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:b134ce24d614b44c41a253fcf4c6b9b39036743d36b996c5e88e898b8ba93314",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/tests/package.test.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/tests/relay-host.integration.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:e84c86c4fa486ffa665cfbd475a6f30e3920502d5a7fd4d3581ad54a396e4751",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/tests/relay-host.integration.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/tests/sdk-contract.integration.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:12a8162426cc1f5ff4ec510b1293b1751c82080d2758548481c6245c80f85f6d",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/tests/sdk-contract.integration.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/tools/package.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6fb522822bbf5334dd50224f90a9ffea69df6d7b39e2cb14fe958ab0267eecaa",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/tools/package.mjs"
+        },
+        {
+          "path": "apps/directadmin/workforce/user/index.html",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:0b648ad0ff9fafb46e0a9abab4c55db427e4f08dec7a0c78c1bfc407701d1ea3",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/workforce/user/index.html"
+        },
+        {
+          "path": "apps/directadmin/zero-core/cockpit.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:10784723d1ba6404943e1f7bc626df2b278c6a3bb3aa9477f84f6d6cc88fc3c0",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/zero-core/cockpit.mjs"
+        },
+        {
+          "path": "docs/contracts/directadmin-authenticated-session-bridge.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:56ed0b2945691906820b9d327851769d6b52d4b100603e1dff9ff0ac4763b645",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/contracts/directadmin-authenticated-session-bridge.md"
+        },
+        {
+          "path": "docs/directadmin/DEVELOPER-PORTAL-RECOVERY-RUNBOOK.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:9dc4f337d65a0e518653beed3b69bf81837e2f1ce586014576531dc848c5101b",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/directadmin/DEVELOPER-PORTAL-RECOVERY-RUNBOOK.md"
+        },
+        {
+          "path": "docs/directadmin/PLUGIN-RELEASE-RUNBOOK.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:723361b07e67a2eaf94015ed8ffed2c8cf1a5f243ead4aeeea469f8eb9c2f48d",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/directadmin/PLUGIN-RELEASE-RUNBOOK.md"
+        },
+        {
+          "path": "docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:9d940468ef1acdb622b21700d91994c027971517df6aceb08b33e92776a29903",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md"
+        },
+        {
+          "path": "docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:47ceabb7441e0e526c49fa544740f88acd3cd0620566e48069c7784e35c63657",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md"
+        },
+        {
+          "path": "packages/titan-platform/src/developer-portal.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:8084801fe278c11cb566b8823deb5915df62edfc089a8c3c99cf30585519324f",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/developer-portal.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/directadmin-cockpit.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:a93fd51f498edb78d1c5aa65b7300750da61177a977586dedce4fb76e7099000",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/directadmin-cockpit.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/directadmin-gateway.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:31a410174ab1f2cbb175677761a5db6ed3a4d1631c24996d823138695dcbb7e0",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/directadmin-gateway.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/directadmin-plugin.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:7b5e7217ecd13e12e820ef4d712d867c1e5dda9885bfb20b1b626c269dbe4c88",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/directadmin-plugin.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/directadmin-session-bridge.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:a5d47da396526afe861a48e9c193317c1778f4918e8bbf3ad85a41d68be4ab2d",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/directadmin-session-bridge.ts"
+        },
+        {
+          "path": "packages/titan-platform/tests/developer-portal.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:052dd38634001d6bc68a23b08b1de712628ee10e697fd3de7e5c011a6a181e20",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/tests/developer-portal.test.mjs"
+        },
+        {
+          "path": "packages/titan-platform/tests/directadmin-bridge.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:224c074af56de884caa7f9d86bf4209956c2d708af35aac2c70e75697c246ccc",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/tests/directadmin-bridge.test.mjs"
+        },
+        {
+          "path": "packages/titan-platform/tests/directadmin-browser.browser.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:32c155290f9a6748ef6d19eb70f82c1a25f7bab1564d3f5eeab33dbb0a1f8b27",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/tests/directadmin-browser.browser.mjs"
+        },
+        {
+          "path": "packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6c1f8204b1000fb48d288975b37a30a80bf381af7b43bb7eeee00a50b937572b",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs"
+        },
+        {
+          "path": "scripts/directadmin-dev-access-archive-integration.php",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:f1ab7a559c0384c0e8b7fa6462e6e8d1d2be777a9e8a60f3eb10c3863729a629",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/scripts/directadmin-dev-access-archive-integration.php"
+        },
+        {
+          "path": "scripts/package-directadmin-plugin.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:d18300abe715d6c3f481a9208cc91c7d753098041d0f6cd06326581e90f7994e",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/scripts/package-directadmin-plugin.mjs"
+        },
+        {
+          "path": "scripts/package-directadmin-portfolio.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:05bfec82e18606cf41c30208d1db51dcf6f2d02d46a3667abe8f94a7643159a7",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/scripts/package-directadmin-portfolio.mjs"
+        },
+        {
+          "path": "scripts/package-directadmin-portfolio.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:c0edf32ce4b46be0a758316d83f24bdfb20cb4e8ae0b67e20179818895c5cfa3",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/scripts/package-directadmin-portfolio.test.mjs"
+        },
+        {
+          "path": "scripts/test-directadmin-dev-access-archive.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:3bdfec50b4b4e18ea400f84854cee5f5a9d5b68cb76d4e4fa029e173c69abad3",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/scripts/test-directadmin-dev-access-archive.mjs"
+        },
+        {
+          "path": "scripts/test-directadmin-dev-access-candidate.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:59ef130791a53c4522deecb84a5c74650f1896574b0abc4b9a7e0709523a1eb6",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/scripts/test-directadmin-dev-access-candidate.mjs"
+        },
+        {
+          "path": "services/workforce/src/directadmin-workforce-owners.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:bf9088ee332900104769de4b0481f598d5fdda256847a1927ae826b0efd863ce",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/directadmin-workforce-owners.ts"
+        },
+        {
+          "path": "services/workforce/src/hosted-runtime.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:ae4f1a0b216d824776d14808b39eec3f77443a6a38dee96e0930a1e67d395817",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/hosted-runtime.ts"
+        },
+        {
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/server.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "distribution",
+      "label": "Distribution Gateway",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1068",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/718"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/distribution-gateway.ts"
+      ],
+      "source_assessment": "Distribution manifests and lifecycle transitions exist.",
+      "missing_requirements": [
+        "Production generation-provider outputs, platform conformance receipts, exact artifacts and publication/recovery are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/distribution-gateway.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:baa2246501ad4c6511c8b6e836d96a8b7b2923bcf229ad0daa327480eea11567",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/distribution-gateway.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "documentation",
+      "label": "Documentation",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1066"
+      ],
+      "implementation_paths": [
+        "docs/architecture/CANONICAL-RULES.md",
+        "docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md"
+      ],
+      "source_assessment": "Canonical architecture/current rules establish hierarchy and full native FSM/PWA boundaries.",
+      "missing_requirements": [
+        "Documentation-to-current-runtime reconciliation and current command/contract correctness remain incomplete."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "docs/architecture/CANONICAL-RULES.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:0167d2d9c3bdae3b9b251f9cd9c2c2024d7246160a74a442dcd5dc5a829cb69c",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/architecture/CANONICAL-RULES.md"
+        },
+        {
+          "path": "docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6478bba0d769ef67999fa5d861ef26544b4528fa1786f33b28751611c36874b5",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "evidence-ledger",
+      "label": "Evidence Ledger",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/913",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/642"
+      ],
+      "implementation_paths": [
+        "packages/tools/accepted-evidence-ledger.mjs",
+        "packages/tools/accepted-evidence-ledger.schema.json"
+      ],
+      "source_assessment": "Accepted evidence ledger contract/implementation exists for bounded business evidence.",
+      "missing_requirements": [
+        "All-domain factual history, recovery and integrated consequential outcomes are not established by this audit."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/tools/accepted-evidence-ledger.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:d8ea41cc78df54c29f2fe46d08a72b08f190a90cbe337a0c8f1cbfb9809d8677",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/tools/accepted-evidence-ledger.mjs"
+        },
+        {
+          "path": "packages/tools/accepted-evidence-ledger.schema.json",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:7a44217060103ab6ca4dd43096e757f01bf0eea360c229873483dd869d2f7ba2",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/tools/accepted-evidence-ledger.schema.json"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "finance-commerce",
+      "label": "Finance/Commerce",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/263",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/343",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/383"
+      ],
+      "implementation_paths": [
+        "packages/domain/src/commerce.ts",
+        "packages/domain/src/finance-readiness.ts"
+      ],
+      "source_assessment": "Native provider-neutral finance/commerce domain contracts exist.",
+      "missing_requirements": [
+        "Verified service-to-invoice-to-payment/reconciliation journeys remain unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/domain/src/commerce.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:29d04d23a002bc3c292c5013a1326770866a62353559cdb256bae7d8aee632c9",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/domain/src/commerce.ts"
+        },
+        {
+          "path": "packages/domain/src/finance-readiness.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:e4d21a99a11bbd24470b50455e1b69bef81da4c5b359bf3b95241b1753440192",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/domain/src/finance-readiness.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "governance",
+      "label": "Governance/authority",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/640",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/914",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/423"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/constitution.ts",
+        "packages/titan-platform/src/governance/constitution.ts"
+      ],
+      "source_assessment": "Constitution and governed authority contracts exist.",
+      "missing_requirements": [
+        "Cross-substrate bypass, revocation and effective-authority enforcement require integrated negative tests."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/constitution.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:4616560bfc0a644f708c910790872b758495bd9c5aa9c5996f42d615de9e1d28",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/constitution.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/governance/constitution.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:1774027fe748c37ed4768ae286018b0cb9188a80fab5114ad71295428da732f0",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/governance/constitution.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "interaction",
+      "label": "Interaction Engine",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/21",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/725",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/interface-interaction-handoff.ts",
+        "packages/titan-platform/src/workforce-context/assembler.ts"
+      ],
+      "source_assessment": "Interface handoff and workforce-context components exist.",
+      "missing_requirements": [
+        "Cross-process production conversation/context binding and company-switch isolation require executed evidence."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/interface-interaction-handoff.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:1cfa293570655c5f06bacab88ff01f3b7ddf0d4289c51072339d2ef60ff88ab2",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/interface-interaction-handoff.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/workforce-context/assembler.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:a5a01eb2190a3324f7ee1a613ab2786bae361bdfb101ce3d61eb015adea9ee28",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/workforce-context/assembler.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "model-council",
+      "label": "Model Council",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/647",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1055"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts"
+      ],
+      "source_assessment": "Authority-neutral deterministic vote aggregation helper exists.",
+      "missing_requirements": [
+        "Real provider/model continuity and production consensus/outcome tests remain unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:29514a5c42930c9ac1df2f2857813d5085706d5a06fc6dcdf8305cdd2a5d0e61",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "native-mobile",
+      "label": "Native mobile",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1158",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1164",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1170",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1182",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811"
+      ],
+      "implementation_paths": [
+        ".github/workflows/titan-ci.yml",
+        "apps/mobile/lib/screens/splash_screen.dart",
+        "apps/mobile/lib/screens/titan_shell_screen.dart",
+        "apps/mobile/lib/titan/core/mobile_bootstrap_config.dart",
+        "apps/mobile/lib/titan/core/mobile_context_scope.dart",
+        "apps/mobile/lib/titan/core/mobile_session_context.dart",
+        "apps/mobile/lib/titan/core/titan_session.dart",
+        "apps/mobile/lib/titan/release/mobile_release_certification.dart",
+        "apps/mobile/lib/titan/services/hosted_conversation_transport.dart",
+        "apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart",
+        "apps/mobile/lib/titan/services/offline_replay_service.dart",
+        "apps/mobile/lib/titan/services/titan_gateway.dart",
+        "apps/mobile/lib/titan/storage/secure_store.dart",
+        "apps/mobile/test/hosted_conversation_transport_test.dart",
+        "apps/mobile/test/mobile_release_certification_test.dart",
+        "apps/mobile/test/titan/mobile_session_context_test.dart",
+        "apps/mobile/test/titan/scoped_offline_queue_test.dart",
+        "apps/mobile/test/titan_conversation_gateway_test.dart",
+        "apps/mobile/test/titan_shell_conversation_test.dart",
+        "docs/contracts/hosted-workforce-runtime.md",
+        "docs/mobile/ISSUE-1170-WORKFLOW-MATRIX.md",
+        "docs/mobile/MOBILE-COMPLETION-MATRIX.md",
+        "services/workforce/src/conversation-api.test.ts",
+        "services/workforce/src/conversation-api.ts"
+      ],
+      "source_assessment": "Current main includes the partial #1188 hosted conversation retry slice and #1196 mobile bootstrap/context isolation. The new mobile bootstrap reads a bearer from platform secure storage, requires build-time company/actor/device/surface and endpoint configuration in release, and has a retryable generic startup failure. Its own source says runtime identity/endpoints are build configuration, not authority. TitanSession still carries company/actor/device/surface but no session_revision. MobileSessionContext models server revalidation gates and MobileContextScope partitions by company, actor, device, surface and context_revision; neither is wired into the production screen/gateway or session-change lifecycle. SplashScreen loads config and constructs SurfaceSdkTitanGateway with HttpTitanSurfaceTransport only; although conversationEndpoint exists in config, HostedConversationTransport is not injected. The local ScopedOfflineCommandQueue now partitions and quarantines command intents by scope and has a restore-after-revalidation API, but it persists JSON in SharedPreferences, is not connected to a server revalidation call, does not include session_revision in MobileScopeKey, and is not a conversation/event replay queue. HostedConversationTransport carries session_id/context_revision and stable conversation, interaction, message, request, operation, correlation, trace and idempotency identities; it compares exact company/actor/device/surface/conversation/context_revision on completed responses and exposes start/continue/resume/cancel. It still sends Accept: application/json and joins the full response body before jsonDecode. Although the host response carries session_id, the client response check does not compare that field; TitanSession has no session_revision. It updates Last-Event-ID only after a completed response; reconnect() is a no-op. The host offers text/event-stream only when requested, but writes it only after dispatch returns; the mobile client currently requests JSON and neither parses live SSE nor gets durable event-log replay. Resume/cancel need a continuation token from a completed response; cancel is a follow-up request and does not abort the active request. No runtime logout, company-switch or revision-rotation hook clears in-flight request IDs, continuation/event IDs, projections or private queues. The later main commit #1199 adds inline unavailable messages for selected evidence/schedule/map/customer/commercial actions and notification/profile/attachment/voice controls until hosted scope/capabilities exist. These are client string/label heuristics, not server projection or capability authorization; generic conversation exceptions still collapse to one retry message, and startup remains generic rather than distinguishing auth, stale, unavailable and canceled outcomes. GitHub CI for #1199 passed the focused transport/context/audience step that includes the shell tests. Its tolerated legacy full-mobile diagnostic still exits nonzero: flutter analyze exit 1 and flutter test exit 1 (32 passed, 28 failed; unresolved package/import/test-source failures). Issue #1170 remains open after partial #1199; issue #1182 remains open after partial #1188; #302 and #1049 remain open after their merged partial identity/SDK slices. One native app and the distinct PWA each retain Zero/Go/Hub modes; mode names do not confer host authorization. The new #1158 mobile completion matrix is explicitly non-closing; its hosted conversation row still lists endpoint, reconnect/resume and deployed evidence as outstanding, so it does not change this source finding. No physical-device or live-host result is present.",
+      "missing_requirements": [
+        "Within the existing #1182 mobile owner, wire a production HostedConversationTransport from a host-authenticated current session and conversation endpoint. Use server-resolved company_id/actor/device/session identity; include and compare exact session_revision and context_revision after defining safe numeric revision serialization with #302. Do not change #302 identity implementation, #1049 SDK/Server Node consumers or #811 host authority in this client lane.",
+        "Add true incremental SSE/chunk parsing and maintain the last parsed event ID during response consumption. Resume against a durable #811 server event log using the same conversation/message identity and exact still-current session/context revision. Verify interrupted stream recovery has ordered events and no duplicate consequential actions; the existing retry test proves stable identity across a transient completed-request failure only.",
+        "Bind cancel to the live HTTP request and server cancellation path; clear conversation, continuation, event IDs, projections and queued private work on logout, company switch, actor/device change or revision rotation. Connect MobileSessionContext/scope freeze and command quarantine to actual lifecycle events; keep queued command replay separate from conversation replay and use encrypted private persistence where the canonical store permits it.",
+        "Build on the #1199 subset of inline unavailable messages with typed states for unconfigured, authentication-required/revoked, stale revision, unavailable/timeout, offline, canceled and recoverable outcomes; do not treat string/label guards as server authorization. Add Flutter cases for active cancel, chunked stream/disconnect/resume, revision rotation, logout/company isolation, deduplication and unavailable host; run analyzer and the complete mobile suite, then hosted integration with correlated IDs and signed physical iOS/Android Zero/Go/Hub verification. No mock transport or successful completed-event serialization substitutes for these results."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Deployed/physical subsystem acceptance is not certified by this source snapshot. Local test executions are recorded in the append-only refresh history; they do not establish production runtime or live-host readiness."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": ".github/workflows/titan-ci.yml",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:740f7b7844c27133cb85f3ef98ec964fb1e252873c6a4e8a93bcadc989dde360",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/.github/workflows/titan-ci.yml"
+        },
+        {
+          "path": "apps/mobile/lib/screens/splash_screen.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:27a578cc053c2576d5baa296e9b1a76cc34210d07ed95385c9b91f38f0a250e3",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/screens/splash_screen.dart"
+        },
+        {
+          "path": "apps/mobile/lib/screens/titan_shell_screen.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:fdd02963449aedb60f6d34be9574c3219b02e36acbeae92e0a8f6158398d39a3",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/screens/titan_shell_screen.dart"
+        },
+        {
+          "path": "apps/mobile/lib/titan/core/mobile_bootstrap_config.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:067f69c11a13a4c8dc504d5ae2aa0c093d3d6238a0f2b3d57858fc3ec17f7838",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/titan/core/mobile_bootstrap_config.dart"
+        },
+        {
+          "path": "apps/mobile/lib/titan/core/mobile_context_scope.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:0a975526054c252624661fe730501a6e0c419024ae4df72c376091789d083232",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/titan/core/mobile_context_scope.dart"
+        },
+        {
+          "path": "apps/mobile/lib/titan/core/mobile_session_context.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:947a6273eb7e9e705b6e8d8ba8463e8af9d3f3593ce81fcbf808c93d1f8880b3",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/titan/core/mobile_session_context.dart"
+        },
+        {
+          "path": "apps/mobile/lib/titan/core/titan_session.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:0c9163648bc8ce74b4d18ae16d5f3ba7ff1043f2f51f7fb57ca996b11146e0d8",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/titan/core/titan_session.dart"
+        },
+        {
+          "path": "apps/mobile/lib/titan/release/mobile_release_certification.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:e62b5bf82fc4a5aac045df80559245648af00d34ab4489d81122d8c045cb174c",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/titan/release/mobile_release_certification.dart"
+        },
+        {
+          "path": "apps/mobile/lib/titan/services/hosted_conversation_transport.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:5570fb2cbbb789eaf0dbaa0ffefce03823f1ca01fca5e829107f8772df5229f6",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/titan/services/hosted_conversation_transport.dart"
+        },
+        {
+          "path": "apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:ac149c8d8f5437da60a86c0c0af149dc19c70c1e715ceb05980d67e9cca61e49",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart"
+        },
+        {
+          "path": "apps/mobile/lib/titan/services/offline_replay_service.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:c0d22db94f6657cb9141d58e74af5b94e3a1b6818678966ca27d89c3640e6444",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/titan/services/offline_replay_service.dart"
+        },
+        {
+          "path": "apps/mobile/lib/titan/services/titan_gateway.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:cb0248b8f355074f5b3ab64a6c237e44fde9c84387d928a411c03d3c4ab6dd17",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/titan/services/titan_gateway.dart"
+        },
+        {
+          "path": "apps/mobile/lib/titan/storage/secure_store.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:3788a013c5188a76b4a667617911b1a54583b2a46917e5e9632aa6bc062ad5ea",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/lib/titan/storage/secure_store.dart"
+        },
+        {
+          "path": "apps/mobile/test/hosted_conversation_transport_test.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:70b08ad477b8241c853787483174994296c40c4b9bec298a790de853d61a622e",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/test/hosted_conversation_transport_test.dart"
+        },
+        {
+          "path": "apps/mobile/test/mobile_release_certification_test.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:004244f67dcaa0488a8e10565db47f5d90f2435be8740445afa53518be9a32f1",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/test/mobile_release_certification_test.dart"
+        },
+        {
+          "path": "apps/mobile/test/titan/mobile_session_context_test.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:9733b042f88d52006536e25ed0a94e1c14d52ab2b790b02823b90384844f4b69",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/test/titan/mobile_session_context_test.dart"
+        },
+        {
+          "path": "apps/mobile/test/titan/scoped_offline_queue_test.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:510c52593012b470f5e3adc72e5a4b8ebafb2a8ad7a8a8fab14d636666b77a2f",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/test/titan/scoped_offline_queue_test.dart"
+        },
+        {
+          "path": "apps/mobile/test/titan_conversation_gateway_test.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:44b43d3daa5842242b6b39663dac3e44f7bdeefa30777ef907d588e3c003f9df",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/test/titan_conversation_gateway_test.dart"
+        },
+        {
+          "path": "apps/mobile/test/titan_shell_conversation_test.dart",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:14726c0f15991f3bae17e7d927f9eb355ed6d9789481e58b5a57fc4ad9bcd77f",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/mobile/test/titan_shell_conversation_test.dart"
+        },
+        {
+          "path": "docs/contracts/hosted-workforce-runtime.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:9fb51ce9a2275e4ba93a23552d492b46f3576494c059bd216829801f227c2910",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/contracts/hosted-workforce-runtime.md"
+        },
+        {
+          "path": "docs/mobile/ISSUE-1170-WORKFLOW-MATRIX.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:9858c1900c01b5af815f50ed451d200dd3b444d87d4d62a9660e7ecf16889f94",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/mobile/ISSUE-1170-WORKFLOW-MATRIX.md"
+        },
+        {
+          "path": "docs/mobile/MOBILE-COMPLETION-MATRIX.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:dc8e7a57defcc514724e4ce41658201c77b5a9c50b027c0529ec665895edfa27",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/mobile/MOBILE-COMPLETION-MATRIX.md"
+        },
+        {
+          "path": "services/workforce/src/conversation-api.test.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:45d6d53ed30d91712676f7a1f8a44b31cb38cf9fdcc8f52e591a9471a3c3c5d4",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/conversation-api.test.ts"
+        },
+        {
+          "path": "services/workforce/src/conversation-api.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/conversation-api.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "nexus",
+      "label": "Nexus",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/647",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1055"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts"
+      ],
+      "source_assessment": "Deterministic authority-neutral orchestration recommendation helper exists.",
+      "missing_requirements": [
+        "Durable production orchestration, provider integration and failure certification are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:7f6633d9fb443cc01683c64f6423d0c37541927240d0990337cc5dbf87b9bdcb",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "observability",
+      "label": "Observability",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/313"
+      ],
+      "implementation_paths": [
+        "docs/contracts/observability-redaction.md",
+        "packages/observability/contracts.mjs"
+      ],
+      "source_assessment": "Canonical vendor-neutral company-scoped redaction/diagnostic contract exists.",
+      "missing_requirements": [
+        "End-to-end trace correlation, failure-injected SLO/alerts and reproducible load/scaling proof are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "docs/contracts/observability-redaction.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:e2b17cc8d8faa60a0eae1b7eb8c1af7603dc1fe63b859e194a92785b226e913e",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/contracts/observability-redaction.md"
+        },
+        {
+          "path": "packages/observability/contracts.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6ac6ca6f9d64f08f540769bb38d24c6a2b794c2f75574e4a99d64e05af338b74",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/observability/contracts.mjs"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "offline-edge",
+      "label": "Offline/edge",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/645",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/646",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1161"
+      ],
+      "implementation_paths": [
+        "packages/offline/authority-continuity.mjs",
+        "packages/offline/index.mjs"
+      ],
+      "source_assessment": "Offline recovery/checkpoint/authority-continuity components exist.",
+      "missing_requirements": [
+        "Real reconnect/process-death, fresh authority and physical company-storage replay need integrated/device verification."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/offline/authority-continuity.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:e8f5680a074e95067e82a847440891d62e40f11f079a6637370502a7a26bd88b",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/offline/authority-continuity.mjs"
+        },
+        {
+          "path": "packages/offline/index.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:0d5fa6d29d9782422305a4791ac6c26f73600fa8815505c0fdd56ad42a66041a",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/offline/index.mjs"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "platform-adapters",
+      "label": "Platform adapters",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/644",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/compatibility-pipeline.ts",
+        "packages/titan-platform/src/interface-registry.ts"
+      ],
+      "source_assessment": "Compatibility projection tuples and interface contribution registry exist.",
+      "missing_requirements": [
+        "Complete supported-host adapter inventory, compatibility and startup/runtime negotiation evidence remain unavailable."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/compatibility-pipeline.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:3124c69e21f4c9a6d429cf59a3feb27358c13b2c9a00f4f5d41adb35495e3716",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/compatibility-pipeline.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/interface-registry.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:4f54ca6597f87af9ec70df6afbdd06fa4a678ccbf72490ca5660e07c46d80bda",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/interface-registry.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "pwa",
+      "label": "PWA",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1171",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1240"
+      ],
+      "implementation_paths": [
+        "apps/directadmin/server-node/directadmin-relay.mjs",
+        "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
+        "apps/directadmin/server-node/runtime.mjs",
+        "apps/pwa/README.md",
+        "apps/pwa/public/app.mjs",
+        "apps/pwa/public/sw.js",
+        "apps/pwa/scripts/build.mjs",
+        "apps/pwa/src/api-client.mjs",
+        "apps/pwa/src/scope.mjs",
+        "apps/pwa/tests/browser-regression.test.mjs",
+        "apps/pwa/tests/contracts.test.mjs",
+        "apps/web/app/api/v1/bootstrap/route.ts",
+        "apps/web/app/api/v1/zero/interactions/route.ts",
+        "apps/web/lib/auth/__tests__/current-session.test.ts",
+        "apps/web/lib/auth/current-session.ts",
+        "packages/storage/src/company-placement-persistence.test.ts",
+        "packages/storage/src/company-placement-registry.ts",
+        "packages/storage/src/company-storage-resolver.test.ts",
+        "packages/storage/src/company-storage-resolver.ts",
+        "packages/storage/src/company-store-opener.ts",
+        "packages/titan-platform/src/security-session-credentials.ts",
+        "packages/titan-platform/src/security-session-registry.ts",
+        "packages/titan-platform/tests/security-session-credentials.test.mjs",
+        "packages/titan-platform/tests/security-session-workforce-exchange.test.mjs",
+        "services/workforce/src/conversation-api.ts",
+        "services/workforce/src/server.ts"
+      ],
+      "source_assessment": "Current main d508a2695fccc36e039f18e60cb96adfbe318813 contains one separately installable Zero/Go/Hub PWA, distinct from apps/web and native mobile. The shipped apps/pwa/public/app.mjs remains a static mode/network shell: it says Workforce is not configured and does not authenticate or load company projections. createPwaProjectionClient and the in-memory PwaProjectionWorkingSet exist under apps/pwa/src, but apps/pwa/scripts/build.mjs copies only public/, so these helpers are absent from the deployable shell. The helper is GET-only and same-origin; its context requires company_id, actor_id, device_id, surface, context_revision and string session_revision, and it partitions memory by both revisions. It provides no conversation transport, durable store or offline replay. #811/#1201, #302/#1183 and #1049/#1204 are merged code slices while their mission issues remain open; #1171 remains the canonical PWA owner after partial PR #1176. The #302 CurrentWebSessionAdapter and canonical session registry are server-side primitives, not a composed PWA bootstrap route. CurrentSessionContext exposes numeric session_revision whereas the PWA context helper requires a string, so an explicit safe serialization contract is still needed. The PWA has no configured authenticated session/bootstrap/projection endpoint. Workforce exposes POST /v1/workforce/conversations but no general projection GET; the Server Node /v1/bootstrap is control metadata, and /v1/directadmin/titan_workforce/projection is panel-only. Workforce emits its text/event-stream representation only after awaited dispatch has returned and filters a completed event array by Last-Event-ID. No PWA incremental stream, revision-bound resume, cancel, authenticated offline replay, or complete logout/company-switch purge is wired. company_id must continue to come from host-verified canonical identity; client-selected company or mode grants no authority. The merged #1049/#1204 SDK and #1050 cockpit are DirectAdmin panel consumers, not a generic browser/PWA transport.",
+      "missing_requirements": [
+        "Within #1171, ship the PWA helpers through the public build/service-worker cache and add a host-owned bootstrap/projection route composed with #302 verified current-company identity and #811 projection contracts. Pass only server-resolved company_id, actor_id, device_id and precisely serialized session/context revisions; keep client-selected identity and mode non-authoritative.",
+        "Under #811, provide an authenticated projection and conversation/event contract for the PWA. Deliver events incrementally during work and persist an event log for replay after the last parsed event ID, bound to the still-current session/context revision; retain company-scoped authority checks on every continuation. Do not reuse DirectAdmin-only SDK/bootstrap routes.",
+        "Under #1171, implement shipped UI states for unconfigured, authentication-required, stale-context, unavailable, canceled and offline-shell-only outcomes; implement cancel and revision-bound resume, plus encrypted bounded private work staging that is quarantined and replayed only after server revalidation. Test the built PWA in browser storage/network failure cases and obtain hosted/physical-browser evidence. No deployment or host certification is established."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Deployed/physical subsystem acceptance is not certified by this source snapshot. Local test executions are recorded in the append-only refresh history; they do not establish production runtime or live-host readiness."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "apps/directadmin/server-node/directadmin-relay.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:7cf496aa5382784c79726838cffc759d9ecdca065a05b2f6962645adfc48e284",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/directadmin-relay.mjs"
+        },
+        {
+          "path": "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:b5c759627f31be55f1aea705ce8345459ad00f89085c15dbab3799caffd7f1c0",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/images/directadmin-relay-client.mjs"
+        },
+        {
+          "path": "apps/directadmin/server-node/runtime.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:af60bd99fc545292f118ebfecf57ec2a8874d1add37b92f0a169203e8ea6dc65",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/directadmin/server-node/runtime.mjs"
+        },
+        {
+          "path": "apps/pwa/README.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:f442880e78b50b1d795a4df38a6f34695c208f63e004d2e5560cac929ec4efda",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/pwa/README.md"
+        },
+        {
+          "path": "apps/pwa/public/app.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:c15fd8f298fbd75a905d2ffeeda9175321a09b8b30e03bb8b76fb219724bcf9b",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/pwa/public/app.mjs"
+        },
+        {
+          "path": "apps/pwa/public/sw.js",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:98351d60c2b61845db249783a7023dfc227fdd85ea62194fd806c79cad7725cc",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/pwa/public/sw.js"
+        },
+        {
+          "path": "apps/pwa/scripts/build.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:b30d47dab93716ddbf89d4dd0d56bc80aca4d7536aa35f501ec61c5f55437682",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/pwa/scripts/build.mjs"
+        },
+        {
+          "path": "apps/pwa/src/api-client.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:b8f11b4859e17ff06e120760326e90e4fa8117c7d7646a165cfeebd754328529",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/pwa/src/api-client.mjs"
+        },
+        {
+          "path": "apps/pwa/src/scope.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6b3bfadf4616b4e466a25f49b679e914cfbc040d0f59b3c78e6fed1d60a6b368",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/pwa/src/scope.mjs"
+        },
+        {
+          "path": "apps/pwa/tests/browser-regression.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:25b6ee654a1b13b2e0ee5ccb610bedd1d3d4d3b296f36a1fb784d2e759dd1d39",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/pwa/tests/browser-regression.test.mjs"
+        },
+        {
+          "path": "apps/pwa/tests/contracts.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:711dc0f4b93b223f6f50c77f4f03d8f9e8e0f686650ef83f6a833060c0428caa",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/pwa/tests/contracts.test.mjs"
+        },
+        {
+          "path": "apps/web/app/api/v1/bootstrap/route.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:39e17f9feb39dc1413dfb9ffcf3974715a009f380e1cf33ecfa86b34b0e2ceb2",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/web/app/api/v1/bootstrap/route.ts"
+        },
+        {
+          "path": "apps/web/app/api/v1/zero/interactions/route.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:9d6130af1d229917ca89a08a53d1110e40180d00b1074b2b18a60a3ccde7e81e",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/web/app/api/v1/zero/interactions/route.ts"
+        },
+        {
+          "path": "apps/web/lib/auth/__tests__/current-session.test.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:94a48d7345208fde5fbeb705becf7ddf256623363430a7745b4ccf7d555c2e87",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/web/lib/auth/__tests__/current-session.test.ts"
+        },
+        {
+          "path": "apps/web/lib/auth/current-session.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:289f1df5dfc32720235df0fa14455a89adcf5c9deeb0f6b4d95232a368646423",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/web/lib/auth/current-session.ts"
+        },
+        {
+          "path": "packages/storage/src/company-placement-persistence.test.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:7251005d784aaf9cfb12cd63dcc4b19b7b72c49ba86b3a67fd0187fa0cc94581",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/storage/src/company-placement-persistence.test.ts"
+        },
+        {
+          "path": "packages/storage/src/company-placement-registry.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:2eccfa18a269636df36b75dbdef525c07d9f62ea5d19312e8c042c21919716c7",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/storage/src/company-placement-registry.ts"
+        },
+        {
+          "path": "packages/storage/src/company-storage-resolver.test.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:658e30554c974838d0ae770bdb427047b2cae43d580d385e6a0d00fca2f501c8",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/storage/src/company-storage-resolver.test.ts"
+        },
+        {
+          "path": "packages/storage/src/company-storage-resolver.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:2ba22082619e0d684f2df58a4aa6655ad9a650a6947c215da4e1653adff37a3f",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/storage/src/company-storage-resolver.ts"
+        },
+        {
+          "path": "packages/storage/src/company-store-opener.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:350cf39b125b49c8cbb50b88a482e0a4294fd2f19bbfd1b9c93663436335b87a",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/storage/src/company-store-opener.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/security-session-credentials.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:f34a046d304b432e1f3eeb57226d4f8673ee52fff15057b1e875fe5f32f33140",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/security-session-credentials.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/security-session-registry.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:d32043f8b967d7769a2c78144d13342b7908149afc7aa486811cf68244dcf714",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/security-session-registry.ts"
+        },
+        {
+          "path": "packages/titan-platform/tests/security-session-credentials.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:1b0c72dc30db4406236cd0fe6b778f1f8d2b8777ed15c8a1e39542a4db4bd235",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/tests/security-session-credentials.test.mjs"
+        },
+        {
+          "path": "packages/titan-platform/tests/security-session-workforce-exchange.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:b24c8bbf1b8709fb416643c7acb511831c15f4892e5994582bb02c8d23838fd2",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/tests/security-session-workforce-exchange.test.mjs"
+        },
+        {
+          "path": "services/workforce/src/conversation-api.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/conversation-api.ts"
+        },
+        {
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/server.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "release-readiness",
+      "label": "Release readiness",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1172",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/322",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/718",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1068"
+      ],
+      "implementation_paths": [
+        "packages/deployment/release-lifecycle.mjs",
+        "packages/titan-platform/src/certification-matrix.ts",
+        "packages/titan-platform/src/compatibility-pipeline.ts"
+      ],
+      "source_assessment": "Canonical eligibility, compatibility and deployment owners exist but baseline has no evaluator consumer.",
+      "missing_requirements": [
+        "No production candidate/artifact certification, upstream conformance receipts, deployment integration or publication proof is supplied."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/deployment/release-lifecycle.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:e9a4c4ecc0686e9dbce8142e7ad1d88961c2b5d14fe0f0fbd5a4a04dc199414b",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/deployment/release-lifecycle.mjs"
+        },
+        {
+          "path": "packages/titan-platform/src/certification-matrix.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6aeb372e8c33ddf097d6f88666c40c1289b7a63c9447e7f8511759bd3f07fc78",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/certification-matrix.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/compatibility-pipeline.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:3124c69e21f4c9a6d429cf59a3feb27358c13b2c9a00f4f5d41adb35495e3716",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/compatibility-pipeline.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "signal",
+      "label": "Signal",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/647",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1055"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/ported/titan-intelligence/signal/index.ts"
+      ],
+      "source_assessment": "Signal normalization and company-bound prioritization helper exists.",
+      "missing_requirements": [
+        "Production signal ingestion, persistence, correlation and failure behavior are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/ported/titan-intelligence/signal/index.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:022408b2ac2d36e33755c4251057c526fb2f90b5cb17fa87d11dc3f94348645b",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/ported/titan-intelligence/signal/index.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "sprout-builder",
+      "label": "Titan Sprout/Industry Builder",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1057"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/titan-builder/intent-planner.ts",
+        "packages/titan-platform/src/titan-builder/security-gate.ts"
+      ],
+      "source_assessment": "Builder planning and security-gate source exists.",
+      "missing_requirements": [
+        "Full governed generation, runtime binding and production user journeys are not certified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/titan-builder/intent-planner.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:e0643a3052d0ff49b87026725950ae7ff898dda781306a6cb3bd3baa350cbd8d",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/titan-builder/intent-planner.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/titan-builder/security-gate.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:b19788640a51d69ff6ee4b38945e2451406387d73179115d243bba454a71ebb8",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/titan-builder/security-gate.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "testing-certification",
+      "label": "Testing/certification",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1172",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/648",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/642"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/certification-matrix.ts",
+        "tests/e2e/certification/critical-path-matrix.generated.json"
+      ],
+      "source_assessment": "Baseline evaluator allows empty and mandatory SKIPPED coverage; historical 12-stage fixture reports path presence, not product execution.",
+      "missing_requirements": [
+        "This PR hardens evaluator/consumer separately; full inherited cross-host suite, trusted producer and canonical upstream conformance receipts remain incomplete."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/titan-platform/src/certification-matrix.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:6aeb372e8c33ddf097d6f88666c40c1289b7a63c9447e7f8511759bd3f07fc78",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/certification-matrix.ts"
+        },
+        {
+          "path": "tests/e2e/certification/critical-path-matrix.generated.json",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:43686e97dafe4e2d899bb343767af4fc0376a1d6e291d3ded3e98fdf6d95ff08",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/tests/e2e/certification/critical-path-matrix.generated.json"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "vertical-packs",
+      "label": "Vertical packs",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/719",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1057"
+      ],
+      "implementation_paths": [
+        "packages/domain/src/vertical-profile.ts",
+        "packages/titan-platform/src/vertical-profile.ts"
+      ],
+      "source_assessment": "Two compileVerticalProfile implementations expose incompatible version/input shapes.",
+      "missing_requirements": [
+        "Owner reconciliation and registry-derived exposure/parity need verification; do not silently create a third compiler."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "packages/domain/src/vertical-profile.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:f7eaf30ac499aae070ff427a4a3654ee8d86224a1d3cd9dc61962d8cef31e34e",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/domain/src/vertical-profile.ts"
+        },
+        {
+          "path": "packages/titan-platform/src/vertical-profile.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:023ad173e70c2db69050d7e8e6c466f26d36092260ce0e44b0f5e51c78ec9da6",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/packages/titan-platform/src/vertical-profile.ts"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "web-ui",
+      "label": "Web UI",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/809"
+      ],
+      "implementation_paths": [
+        "apps/web/app/layout.tsx",
+        "apps/web/package.json"
+      ],
+      "source_assessment": "Full Next.js base web application exists separately from canonical PWA.",
+      "missing_requirements": [
+        "Strict workspace reproducibility/typecheck repair is active under #1084/#648; production build/runtime and complete UX are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "apps/web/app/layout.tsx",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:b5ee6527166b608bb1ddb87cc8cd12e106586801da800bde8ada8ec5c5053ffb",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/web/app/layout.tsx"
+        },
+        {
+          "path": "apps/web/package.json",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:25d1d3f54912e57e5d80892e71c0cc5c4e7c3e5047e54622468801e5fe6fdf26",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/apps/web/package.json"
+        }
+      ]
+    },
+    {
+      "subsystem_id": "workforce",
+      "label": "Workforce",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/639",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/640",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1050",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1182"
+      ],
+      "implementation_paths": [
+        "docs/contracts/hosted-workforce-runtime.md",
+        "docs/operations/workforce-clean-host-acceptance.md",
+        "infra/compose.vps.yml",
+        "services/workforce/src/conversation-api.test.ts",
+        "services/workforce/src/conversation-api.ts",
+        "services/workforce/src/field-service-runtime.mjs",
+        "services/workforce/src/hosted-runtime.ts",
+        "services/workforce/src/production-runtime-bootstrap.test.ts",
+        "services/workforce/src/production-runtime-bootstrap.ts",
+        "services/workforce/src/server.test.ts",
+        "services/workforce/src/server.ts",
+        "services/workforce/src/session-credential-verifier.ts",
+        "services/workforce/src/zero-runtime-correlation.test.ts",
+        "services/workforce/src/zero-runtime-dispatcher.test.ts",
+        "services/workforce/src/zero-runtime-dispatcher.ts",
+        "tests/hosted-workforce-runtime.test.ts"
+      ],
+      "source_assessment": "Current main, including merged #811/#1201, contains a hosted runtime composed over durable SQLite run/work stores, cryptographically verified Workforce credentials, current identity-session resolution, company/session/context-revision binding, idempotent request/recovery, continuation and cancellation paths. POST /v1/workforce/conversations supports JSON and SSE and projects a bounded public event set. The server waits for dispatch/recovery/cancel to finish before writing the response; SSE and Last-Event-ID only serialize/filter the completed event array, not live incremental delivery or durable event-log replay. The hosted Workforce contract currently commissions the Zero surface; Go/Hub are rejected pending their authority-aware dispatcher. Code and local/CI tests establish implementation-level behavior, not a live commissioned host, production credential/provider operation or reboot/backup acceptance.",
+      "missing_requirements": [
+        "Run the clean-host commissioning, exact artifact/hash, real credential/provider, reboot/update/rollback and recovery acceptance in docs/operations/workforce-clean-host-acceptance.md. Deliver actual incremental stream and durable event resume plus broader mobile lifecycle under #1182; keep the host runtime at Zero-only until Go/Hub have their own authority-aware contract. Production/live-host and physical-client evidence remains outstanding."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Deployed/physical subsystem acceptance is not certified by this source snapshot. Local test executions are recorded in the append-only refresh history; they do not establish production runtime or live-host readiness."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      },
+      "sources": [
+        {
+          "path": "docs/contracts/hosted-workforce-runtime.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:9fb51ce9a2275e4ba93a23552d492b46f3576494c059bd216829801f227c2910",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/contracts/hosted-workforce-runtime.md"
+        },
+        {
+          "path": "docs/operations/workforce-clean-host-acceptance.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:b339ef935e2d0821876d990c0f323afd8593c9cb09b399abfd60898c421c7a3c",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/docs/operations/workforce-clean-host-acceptance.md"
+        },
+        {
+          "path": "infra/compose.vps.yml",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:0be5e7d52c1d122f3f7fb3af5b1638fed748f98856c95cfdba924608de2f1ea6",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/infra/compose.vps.yml"
+        },
+        {
+          "path": "services/workforce/src/conversation-api.test.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:45d6d53ed30d91712676f7a1f8a44b31cb38cf9fdcc8f52e591a9471a3c3c5d4",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/conversation-api.test.ts"
+        },
+        {
+          "path": "services/workforce/src/conversation-api.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/conversation-api.ts"
+        },
+        {
+          "path": "services/workforce/src/field-service-runtime.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:c009aeb765d3a3b40f214ebfc0d1c103957b1658ef787550873715042562ffb4",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/field-service-runtime.mjs"
+        },
+        {
+          "path": "services/workforce/src/hosted-runtime.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:ae4f1a0b216d824776d14808b39eec3f77443a6a38dee96e0930a1e67d395817",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/hosted-runtime.ts"
+        },
+        {
+          "path": "services/workforce/src/production-runtime-bootstrap.test.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:be8737e06b779ee08680e4a89b99533a7f5853a1bec98b5ce6fb54bf2c7e8ff4",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/production-runtime-bootstrap.test.ts"
+        },
+        {
+          "path": "services/workforce/src/production-runtime-bootstrap.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:2b884bffa0c8efed15fdd2b0277823458908301ddfd8fc7f824b078a0ceeb3af",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/production-runtime-bootstrap.ts"
+        },
+        {
+          "path": "services/workforce/src/server.test.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:cde5309e0e9db2e50f976192527669ad300ffbaa0f5cfeaca7b81ab8f72943cd",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/server.test.ts"
+        },
+        {
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/server.ts"
+        },
+        {
+          "path": "services/workforce/src/session-credential-verifier.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:a26a501fc1e85fc2f492d7d1047e365331fc6f2417d2656c84fbd088175e2956",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/session-credential-verifier.ts"
+        },
+        {
+          "path": "services/workforce/src/zero-runtime-correlation.test.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:f56038cdfc1084f7e59300d396b29d81b7e4386a3af8329fb86ed81a5108f3d0",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/zero-runtime-correlation.test.ts"
+        },
+        {
+          "path": "services/workforce/src/zero-runtime-dispatcher.test.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:5ff1abaaba57b85ee8fdafce23e3e7b5f1478149d259bac3058f4bda4f3a14dd",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/zero-runtime-dispatcher.test.ts"
+        },
+        {
+          "path": "services/workforce/src/zero-runtime-dispatcher.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:c699319c8af083bb7b3a125e4d12a4038d5d9dffbde730488390c20ac7539758",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/services/workforce/src/zero-runtime-dispatcher.ts"
+        },
+        {
+          "path": "tests/hosted-workforce-runtime.test.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "content_hash": "sha256:5b49a2a5900983d3bd8d8f8109b991cbb1399ef59846bb4ed91a1e0e352d9dfa",
+          "kind": "SOURCE_INSPECTED",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/d508a2695fccc36e039f18e60cb96adfbe318813/tests/hosted-workforce-runtime.test.ts"
+        }
+      ]
+    }
+  ],
+  "generator": "scripts/generate-readiness-snapshot.mjs",
+  "authorityGranted": false,
+  "eligibility_input": false
+}

@@ -11,6 +11,8 @@ class _SurfaceTransport implements TitanSurfaceTransport {
     'surface': surface,
     'schema_version': '1.0',
     'actor_id': 'actor-1',
+    'worker_id': 'actor-1',
+    'assignment_revision': 'assignment-1',
     'revision': 'rev-12',
     'issued_at': '2026-10-01T00:00:00Z',
     'expires_at': expiry,
@@ -74,12 +76,12 @@ void main() {
 
     transport.responses.add(accepted({
       ...transport.requests[1],
-      'conversation_id': 'next-conversation',
-      'request_id': 'next-request',
+      'conversation_id': 'id-4',
+      'request_id': 'id-3',
     }));
     await gateway.converse('Check my next job');
-    expect(transport.requests[2]['conversation_id'], 'next-conversation');
-    expect(transport.requests[2]['request_id'], 'next-request');
+    expect(transport.requests[2]['conversation_id'], 'id-4');
+    expect(transport.requests[2]['request_id'], 'id-3');
     expect(transport.requests[2]['request_id'], isNot(transport.requests[0]['request_id']));
   });
 

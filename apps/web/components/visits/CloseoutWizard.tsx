@@ -19,7 +19,7 @@ export function CloseoutWizard({
   onClose: () => void;
   /** e.g. save completion packet before closeout */
   onBeforeSubmit?: () => Promise<boolean>;
-  /** Optional provider-neutral visual assurance gate; false keeps the governed closeout untouched. */
+  /** Optional provider-neutral visual assurance gate; false keeps governed closeout untouched. */
   onVisualAssurance?: () => Promise<boolean>;
 }) {
   const router = useRouter();

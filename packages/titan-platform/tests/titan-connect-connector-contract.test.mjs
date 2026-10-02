@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createTitanConnectorDescriptor, TITAN_CONNECTOR_CONTRACT } from "../.test-dist/src/index.js";
+import { createTitanConnectorDescriptor, TITAN_CONNECTOR_CONTRACT } from "../.test-dist/index.js";
 
 test("Titan Connect descriptor is company-scoped and authority-neutral", () => {
   const descriptor = createTitanConnectorDescriptor({

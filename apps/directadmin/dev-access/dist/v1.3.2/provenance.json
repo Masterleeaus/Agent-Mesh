@@ -1,0 +1,60 @@
+{
+  "archive": {
+    "filename": "titan_dev_access.tar.gz",
+    "flat_root": true,
+    "sha256": "22b54eabaf2a12a5bba04c9b21d58f798f93b7c1a6845362035edf574c488755"
+  },
+  "build": {
+    "method": "staged the same source paths and chmod/tar normalization used by tools/package.sh; the normal package.sh command is PHP-gated and could not finish here",
+    "php_cli_available": false,
+    "php_required_checks": "not run: php command not found"
+  },
+  "candidate_status": "uninstalled; PHP-required release gates remain blocked in this workspace",
+  "display_name": "Developer Portal",
+  "plugin_id": "titan_dev_access",
+  "previous_candidate": {
+    "filename": "titan_dev_access.tar.gz",
+    "preserved": true,
+    "sha256": "a41d5217cd914bcbba5984712ec4f130001be50afe894d466be86d08d70f73cc",
+    "version": "1.3.1"
+  },
+  "schema_version": 1,
+  "source": {
+    "base_commit_before_candidate_changes": "8d94630cc106752bd4c0a545cbe4f948b4d5e1a2",
+    "branch": "agent/issue-1048",
+    "builder_and_test_file_sha256": {
+      "apps/directadmin/dev-access/tools/package.sh": "df7d5ae3513b4fe6047f5d2f2e980c6de21c93d84c5cb9901c431940ba5650b0",
+      "apps/directadmin/dev-access/tools/plugin-lab.sh": "bfb1aff6bbbcbbec776cd8bed577dc061741813c4e5bf779a840ed28abe9e317",
+      "apps/directadmin/dev-access/tools/update-hook-test.sh": "eebfe843b324652612c4f19202411ba0d564e6521661fb3e74264afd872797b8"
+    },
+    "packaged_file_sha256": {
+      "apps/directadmin/dev-access/AGENTS.md": "1aeeade75598992b06bec9eb9745489614408a66f77beaa07cd5fb6b0b5ff179",
+      "apps/directadmin/dev-access/README.md": "7a333a2db6302cfc208faee3b8dec94667994abb3e15c11118704ab438a327ac",
+      "apps/directadmin/dev-access/admin/index.html": "054371cdb4bca050a8a9abadd2783e9b99f72477c3510c7f951ee07cec2ccdd8",
+      "apps/directadmin/dev-access/hooks/admin_txt.html": "67359b48328f209eb2ba4ae92f9d5370d4a5fff90826f36324d7f0ef732f1e9a",
+      "apps/directadmin/dev-access/hooks/reseller_txt.html": "885e8842481ea408f68d5a78c3e2436ff539046b59b6eca27d5810eaabef0bb8",
+      "apps/directadmin/dev-access/hooks/user_txt.html": "08cc65f1db6516ad05d42223401007a2b41465825822c0bb60682e2a0b41a4ea",
+      "apps/directadmin/dev-access/lib/app.php": "d4570bc09c352f2a86d8a45fc928a70cab6886f1fbcc93df7a30c2056dab6e3f",
+      "apps/directadmin/dev-access/plugin.conf": "06cf65d51e14dcc4b35fc763d515242dbbd4ffdfee22d53816089f4ff97a9c69",
+      "apps/directadmin/dev-access/reseller/index.html": "054371cdb4bca050a8a9abadd2783e9b99f72477c3510c7f951ee07cec2ccdd8",
+      "apps/directadmin/dev-access/scripts/install.sh": "98f0c2c9dadaa0b77b5496b756bb01516ebfa976eb67308de71fc700d9e49679",
+      "apps/directadmin/dev-access/scripts/uninstall.sh": "2a7e75c1bf43b52adade3e32a5141c54ff97dd8b6cd554608b650c0637c7dd1d",
+      "apps/directadmin/dev-access/scripts/update.sh": "1345f4f558033a51392a4fdca2c826ad939b1d42cac9ae3bcbb1af4482390439",
+      "apps/directadmin/dev-access/user/index.html": "054371cdb4bca050a8a9abadd2783e9b99f72477c3510c7f951ee07cec2ccdd8"
+    },
+    "upstream_read_only_hook": {
+      "commit": "2daaae786670dd62ab0eb4071ccfbb47279dba7c",
+      "pr": 1197
+    }
+  },
+  "verification": {
+    "archive_root_identity_modes_symlink_and_payload_comparison": "passed",
+    "live_directadmin_update_install_rollback": "not run; no action approved",
+    "php_security_and_directadmin_transport_integration": "blocked: PHP CLI unavailable",
+    "plugin_lab_archive_only": "passed; PHP source and archive lint explicitly skipped",
+    "private_key_block_scan": "passed by Plugin Lab; archive dist excluded from scan",
+    "shell_syntax": "passed",
+    "update_hook_positive_negative": "passed: read-only snapshot, missing file, non-executable file, leaf symlink, parent directory symlink, script directory symlink"
+  },
+  "version": "1.3.2"
+}

@@ -5,7 +5,7 @@ import {
   buildWorkforceKnowledgeAuthorityPacket,
   evaluateWorkforceKnowledgeUse,
   buildWorkforceKnowledgeUseReceipt,
-} from "../.test-dist/src/ported/titan-workforce/knowledge/workforce-knowledge-authority-runtime.js";
+} from "../.test-dist/ported/titan-workforce/knowledge/workforce-knowledge-authority-runtime.js";
 
 const publicSource = {
   knowledge_id: "public-1",

@@ -5,9 +5,22 @@ const list=value=>Array.isArray(value)?[...new Set(value.map(v=>String(v).trim()
 function findEntry(registry,capability){
   const id=text(capability);
   if(!id)return null;
-  return registry?.entries?.find(entry=>
+  const entry=registry?.entries?.find(entry=>
     entry.id===id || entry.registry_id===id || entry.capabilities?.includes?.(id)
-  )??null;
+  );
+  if(entry)return entry;
+  const action=registry?.action_capabilities?.find(item=>(item.capability_id??item.id)===id);
+  if(!action)return null;
+  // #7 stores host actions in the same canonical registry while keeping them
+  // out of the general tool/launch projection. Normalize only at the existing
+  // authority contract boundary; do not create another action catalogue.
+  return {
+    ...action,
+    id,
+    registry_id:id,
+    permissions:action.required_permissions??[],
+    raw:action,
+  };
 }
 
 function effectFor(entry){

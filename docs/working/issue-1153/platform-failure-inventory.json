@@ -1,0 +1,1188 @@
+{
+  "issue": 1153,
+  "node": "22.23.3",
+  "pnpm": "9.12.0",
+  "base_main": "ee1a3ee3709b9201fc728fc162067d9a5ab78e45",
+  "prerequisite": "743e70789b85571fa0eafb1029630f0cbc6b7eb6",
+  "integration_commit": "d5a683f3",
+  "command": "pnpm --filter @titan-zero/titan-platform test",
+  "cwd": "repository root; pnpm executes package script in packages/titan-platform",
+  "artifact_comparison": "Both before/after preceded by canonical platform build. After also repeated with dist absent and freshly regenerated .test-dist: identical names and totals.",
+  "before": {
+    "pass": 606,
+    "fail": 111,
+    "skip": 2,
+    "names": [
+      "Builder API obtains projection plan from server runtime handoff rather than client DTO input",
+      "Generate route obtains server-owned signals",
+      "agent profiles expose focused command sets",
+      "creates an authority-neutral company-scoped surface projection",
+      "governed install requires explicit approval",
+      "hub projection excludes explicitly non-customer-safe semantic items",
+      "live canvas consumes mapped preview props",
+      "preview route installs server capability-owned provider",
+      "profile authorization fails closed",
+      "shared client reads a projection and submits only validated intents",
+      "studio can receive runtime previews without persisting them into Builder document",
+      "studio consumes server runtime previews and clears stale data on edits",
+      "tests/business-ops-crm-booking-library-parity.test.mjs",
+      "tests/business-ops-field-library-parity.test.mjs",
+      "tests/business-ops-finance-library-parity.test.mjs",
+      "tests/business-ops-operations-convergence.test.mjs",
+      "tests/business-ops-people-reach-library-parity.test.mjs",
+      "tests/capability-registry-library-parity.test.mjs",
+      "tests/cleaning-vertical-pass02.test.mjs",
+      "tests/cleaning-vertical-pass03.test.mjs",
+      "tests/cleaning-vertical-pass04.test.mjs",
+      "tests/cleaning-vertical-pass05.test.mjs",
+      "tests/cleaning-vertical-pass06.test.mjs",
+      "tests/cleaning-vertical-pass07.test.mjs",
+      "tests/cleaning-vertical-pass08.test.mjs",
+      "tests/cleaning-vertical-pass09.test.mjs",
+      "tests/cleaning-vertical-pass10.test.mjs",
+      "tests/distributed-contracts.test.mjs",
+      "tests/five-tier-call-qualification.test.mjs",
+      "tests/interface-runtime-native.test.mjs",
+      "tests/knowledge-authority-library-parity.test.mjs",
+      "tests/licensed-trades-pass02.test.mjs",
+      "tests/licensed-trades-pass03.test.mjs",
+      "tests/licensed-trades-pass04.test.mjs",
+      "tests/licensed-trades-pass05.test.mjs",
+      "tests/licensed-trades-pass06.test.mjs",
+      "tests/licensed-trades-pass07.test.mjs",
+      "tests/licensed-trades-pass08.test.mjs",
+      "tests/licensed-trades-pass09.test.mjs",
+      "tests/licensed-trades-pass10.test.mjs",
+      "tests/native-agents.test.mjs",
+      "tests/prime-library-parity.test.mjs",
+      "tests/retriever-native-pass02.test.mjs",
+      "tests/retriever-native-pass03-lifecycle.test.mjs",
+      "tests/retriever-native-pass04-surface-bridge.test.mjs",
+      "tests/retriever-native-pass06-recovery.test.mjs",
+      "tests/retriever-native-pass07-retirement-ledger.test.mjs",
+      "tests/retriever-native-pass08-regression-certification.test.mjs",
+      "tests/titan-builder-auto-binding.test.mjs",
+      "tests/titan-builder-binding-policy.test.mjs",
+      "tests/titan-builder-projection-providers.test.mjs",
+      "tests/titan-builder-runtime-bridge.test.mjs",
+      "tests/titan-builder-signal-priority.test.mjs",
+      "tests/titan-connect-connector-contract.test.mjs",
+      "tests/titan-connector-credential.test.mjs",
+      "tests/titan-cost-sovereignty.test.mjs",
+      "tests/titan-mcp-host-contract.test.mjs",
+      "tests/titan-storage-convergence.test.mjs",
+      "tests/workforce-capacity-pass02.test.mjs",
+      "tests/workforce-capacity-pass03.test.mjs",
+      "tests/workforce-capacity-pass04.test.mjs",
+      "tests/workforce-capacity-pass05.test.mjs",
+      "tests/workforce-capacity-pass06.test.mjs",
+      "tests/workforce-capacity-pass07.test.mjs",
+      "tests/workforce-capacity-pass08.test.mjs",
+      "tests/workforce-capacity-pass09.test.mjs",
+      "tests/workforce-capacity-pass10-certification.test.mjs",
+      "tests/workforce-context-access.test.mjs",
+      "tests/workforce-context-assembler.test.mjs",
+      "tests/workforce-context-checkpoint.test.mjs",
+      "tests/workforce-context-compaction.test.mjs",
+      "tests/workforce-context-continuity.test.mjs",
+      "tests/workforce-context-contract.test.mjs",
+      "tests/workforce-context-diagnostics.test.mjs",
+      "tests/workforce-context-freshness.test.mjs",
+      "tests/workforce-context-handoff.test.mjs",
+      "tests/workforce-context-projection.test.mjs",
+      "tests/workforce-delegation-pass01.test.mjs",
+      "tests/workforce-delegation-pass02.test.mjs",
+      "tests/workforce-delegation-pass03.test.mjs",
+      "tests/workforce-delegation-pass04.test.mjs",
+      "tests/workforce-delegation-pass05.test.mjs",
+      "tests/workforce-delegation-pass06.test.mjs",
+      "tests/workforce-delegation-pass07.test.mjs",
+      "tests/workforce-delegation-pass08.test.mjs",
+      "tests/workforce-delegation-pass09.test.mjs",
+      "tests/workforce-delegation-pass10.test.mjs",
+      "tests/workforce-hierarchy-diagnostics.test.mjs",
+      "tests/workforce-hierarchy-e2e.test.mjs",
+      "tests/workforce-lifecycle-configuration.test.mjs",
+      "tests/workforce-lifecycle-contracts.test.mjs",
+      "tests/workforce-lifecycle-health.test.mjs",
+      "tests/workforce-lifecycle-migration.test.mjs",
+      "tests/workforce-lifecycle-pass10-chaos.test.mjs",
+      "tests/workforce-lifecycle-registration.test.mjs",
+      "tests/workforce-lifecycle-replacement.test.mjs",
+      "tests/workforce-lifecycle-retirement.test.mjs",
+      "tests/workforce-lifecycle-transitions.test.mjs",
+      "tests/workforce-lifecycle-ui-integration.test.mjs",
+      "tests/workforce-native-booking.test.mjs",
+      "tests/workforce-native-contracts.test.mjs",
+      "tests/workforce-native-customer-care.test.mjs",
+      "tests/workforce-native-governance.test.mjs",
+      "tests/workforce-native-jobs.test.mjs",
+      "tests/workforce-native-pass10-certification.test.mjs",
+      "tests/workforce-native-reception.test.mjs",
+      "tests/workforce-native-sales.test.mjs",
+      "tests/workforce-native-scheduling.test.mjs",
+      "tests/workforce-native-workflow.test.mjs",
+      "tests/workforce-roadmap-impact.test.mjs",
+      "workforce-native and workforce-delegation public exports coexist"
+    ]
+  },
+  "after": {
+    "pass": 694,
+    "fail": 93,
+    "skip": 2,
+    "names": [
+      "Builder API obtains projection plan from server runtime handoff rather than client DTO input",
+      "Generate route obtains server-owned signals",
+      "agent profiles expose focused command sets",
+      "live canvas consumes mapped preview props",
+      "preview route installs server capability-owned provider",
+      "profile authorization fails closed",
+      "studio can receive runtime previews without persisting them into Builder document",
+      "studio consumes server runtime previews and clears stale data on edits",
+      "tests/cleaning-vertical-pass02.test.mjs",
+      "tests/cleaning-vertical-pass03.test.mjs",
+      "tests/cleaning-vertical-pass04.test.mjs",
+      "tests/cleaning-vertical-pass05.test.mjs",
+      "tests/cleaning-vertical-pass06.test.mjs",
+      "tests/cleaning-vertical-pass07.test.mjs",
+      "tests/cleaning-vertical-pass08.test.mjs",
+      "tests/cleaning-vertical-pass09.test.mjs",
+      "tests/cleaning-vertical-pass10.test.mjs",
+      "tests/distributed-contracts.test.mjs",
+      "tests/five-tier-call-qualification.test.mjs",
+      "tests/interface-runtime-native.test.mjs",
+      "tests/licensed-trades-pass02.test.mjs",
+      "tests/licensed-trades-pass03.test.mjs",
+      "tests/licensed-trades-pass04.test.mjs",
+      "tests/licensed-trades-pass05.test.mjs",
+      "tests/licensed-trades-pass06.test.mjs",
+      "tests/licensed-trades-pass07.test.mjs",
+      "tests/licensed-trades-pass08.test.mjs",
+      "tests/licensed-trades-pass09.test.mjs",
+      "tests/licensed-trades-pass10.test.mjs",
+      "tests/native-agents.test.mjs",
+      "tests/retriever-native-pass02.test.mjs",
+      "tests/retriever-native-pass03-lifecycle.test.mjs",
+      "tests/retriever-native-pass04-surface-bridge.test.mjs",
+      "tests/retriever-native-pass06-recovery.test.mjs",
+      "tests/retriever-native-pass07-retirement-ledger.test.mjs",
+      "tests/retriever-native-pass08-regression-certification.test.mjs",
+      "tests/titan-builder-auto-binding.test.mjs",
+      "tests/titan-builder-binding-policy.test.mjs",
+      "tests/titan-builder-projection-providers.test.mjs",
+      "tests/titan-builder-runtime-bridge.test.mjs",
+      "tests/workforce-capacity-pass02.test.mjs",
+      "tests/workforce-capacity-pass03.test.mjs",
+      "tests/workforce-capacity-pass04.test.mjs",
+      "tests/workforce-capacity-pass05.test.mjs",
+      "tests/workforce-capacity-pass06.test.mjs",
+      "tests/workforce-capacity-pass07.test.mjs",
+      "tests/workforce-capacity-pass08.test.mjs",
+      "tests/workforce-capacity-pass09.test.mjs",
+      "tests/workforce-capacity-pass10-certification.test.mjs",
+      "tests/workforce-context-access.test.mjs",
+      "tests/workforce-context-assembler.test.mjs",
+      "tests/workforce-context-checkpoint.test.mjs",
+      "tests/workforce-context-compaction.test.mjs",
+      "tests/workforce-context-continuity.test.mjs",
+      "tests/workforce-context-contract.test.mjs",
+      "tests/workforce-context-diagnostics.test.mjs",
+      "tests/workforce-context-freshness.test.mjs",
+      "tests/workforce-context-handoff.test.mjs",
+      "tests/workforce-context-projection.test.mjs",
+      "tests/workforce-delegation-pass01.test.mjs",
+      "tests/workforce-delegation-pass02.test.mjs",
+      "tests/workforce-delegation-pass03.test.mjs",
+      "tests/workforce-delegation-pass04.test.mjs",
+      "tests/workforce-delegation-pass05.test.mjs",
+      "tests/workforce-delegation-pass06.test.mjs",
+      "tests/workforce-delegation-pass07.test.mjs",
+      "tests/workforce-delegation-pass08.test.mjs",
+      "tests/workforce-delegation-pass09.test.mjs",
+      "tests/workforce-delegation-pass10.test.mjs",
+      "tests/workforce-hierarchy-diagnostics.test.mjs",
+      "tests/workforce-hierarchy-e2e.test.mjs",
+      "tests/workforce-lifecycle-configuration.test.mjs",
+      "tests/workforce-lifecycle-contracts.test.mjs",
+      "tests/workforce-lifecycle-health.test.mjs",
+      "tests/workforce-lifecycle-migration.test.mjs",
+      "tests/workforce-lifecycle-pass10-chaos.test.mjs",
+      "tests/workforce-lifecycle-registration.test.mjs",
+      "tests/workforce-lifecycle-replacement.test.mjs",
+      "tests/workforce-lifecycle-retirement.test.mjs",
+      "tests/workforce-lifecycle-transitions.test.mjs",
+      "tests/workforce-lifecycle-ui-integration.test.mjs",
+      "tests/workforce-native-booking.test.mjs",
+      "tests/workforce-native-contracts.test.mjs",
+      "tests/workforce-native-customer-care.test.mjs",
+      "tests/workforce-native-governance.test.mjs",
+      "tests/workforce-native-jobs.test.mjs",
+      "tests/workforce-native-pass10-certification.test.mjs",
+      "tests/workforce-native-reception.test.mjs",
+      "tests/workforce-native-sales.test.mjs",
+      "tests/workforce-native-scheduling.test.mjs",
+      "tests/workforce-native-workflow.test.mjs",
+      "tests/workforce-roadmap-impact.test.mjs",
+      "workforce-native and workforce-delegation public exports coexist"
+    ]
+  },
+  "clean_artifact_after": {
+    "pass": 694,
+    "fail": 93,
+    "skip": 2,
+    "same_failure_names": true
+  },
+  "baseline_unchanged": 97,
+  "introduced_failures": [],
+  "resolved_failures": [
+    "creates an authority-neutral company-scoped surface projection",
+    "governed install requires explicit approval",
+    "hub projection excludes explicitly non-customer-safe semantic items",
+    "shared client reads a projection and submits only validated intents",
+    "tests/business-ops-crm-booking-library-parity.test.mjs",
+    "tests/business-ops-field-library-parity.test.mjs",
+    "tests/business-ops-finance-library-parity.test.mjs",
+    "tests/business-ops-operations-convergence.test.mjs",
+    "tests/business-ops-people-reach-library-parity.test.mjs",
+    "tests/capability-registry-library-parity.test.mjs",
+    "tests/knowledge-authority-library-parity.test.mjs",
+    "tests/prime-library-parity.test.mjs",
+    "tests/titan-builder-signal-priority.test.mjs",
+    "tests/titan-connect-connector-contract.test.mjs",
+    "tests/titan-connector-credential.test.mjs",
+    "tests/titan-cost-sovereignty.test.mjs",
+    "tests/titan-mcp-host-contract.test.mjs",
+    "tests/titan-storage-convergence.test.mjs"
+  ],
+  "classifications": {
+    "Builder API obtains projection plan from server runtime handoff rather than client DTO input": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline assertion; retain under domain/shared-owner coordination, no suppression or semantic rewrite."
+    },
+    "Generate route obtains server-owned signals": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline assertion; retain under domain/shared-owner coordination, no suppression or semantic rewrite."
+    },
+    "agent profiles expose focused command sets": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline assertion; retain under domain/shared-owner coordination, no suppression or semantic rewrite."
+    },
+    "creates an authority-neutral company-scoped surface projection": {
+      "status": "repaired",
+      "classification": "Legacy command ingress must normalize to canonical zero per surface-context-revalidation contract; authority and receipt assertions retained."
+    },
+    "governed install requires explicit approval": {
+      "status": "repaired",
+      "classification": "Compatibility approval error wording drift; verify rejection before provider calls and that approved marker remains non-authoritative."
+    },
+    "hub projection excludes explicitly non-customer-safe semantic items": {
+      "status": "repaired",
+      "classification": "Hub visibility requires explicit customer_safe=true, including domains; missing/false/string markers must stay excluded."
+    },
+    "live canvas consumes mapped preview props": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline assertion; retain under domain/shared-owner coordination, no suppression or semantic rewrite."
+    },
+    "preview route installs server capability-owned provider": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline assertion; retain under domain/shared-owner coordination, no suppression or semantic rewrite."
+    },
+    "profile authorization fails closed": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline assertion; retain under domain/shared-owner coordination, no suppression or semantic rewrite."
+    },
+    "shared client reads a projection and submits only validated intents": {
+      "status": "repaired",
+      "classification": "Legacy command ingress must normalize to canonical zero per surface-context-revalidation contract; authority and receipt assertions retained."
+    },
+    "studio can receive runtime previews without persisting them into Builder document": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline assertion; retain under domain/shared-owner coordination, no suppression or semantic rewrite."
+    },
+    "studio consumes server runtime previews and clears stale data on edits": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline assertion; retain under domain/shared-owner coordination, no suppression or semantic rewrite."
+    },
+    "tests/business-ops-crm-booking-library-parity.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path from .test-dist/src to .test-dist; existing assertions unchanged."
+    },
+    "tests/business-ops-field-library-parity.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path from .test-dist/src to .test-dist; existing assertions unchanged."
+    },
+    "tests/business-ops-finance-library-parity.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path from .test-dist/src to .test-dist; existing assertions unchanged."
+    },
+    "tests/business-ops-operations-convergence.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path from .test-dist/src to .test-dist; existing assertions unchanged."
+    },
+    "tests/business-ops-people-reach-library-parity.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path from .test-dist/src to .test-dist; existing assertions unchanged."
+    },
+    "tests/capability-registry-library-parity.test.mjs": {
+      "status": "repaired",
+      "classification": "Additive test compiler entry; inherited production compiler files and complete graph preserved."
+    },
+    "tests/cleaning-vertical-pass02.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.cleaning-test-dist/verticals/cleaning/catalogue.js"
+      ]
+    },
+    "tests/cleaning-vertical-pass03.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.cleaning-test-dist/verticals/cleaning/pricing.js"
+      ]
+    },
+    "tests/cleaning-vertical-pass04.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.cleaning-test-dist/verticals/cleaning/onboarding.js"
+      ]
+    },
+    "tests/cleaning-vertical-pass05.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.cleaning-test-dist/verticals/cleaning/scheduling.js"
+      ]
+    },
+    "tests/cleaning-vertical-pass06.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.cleaning-test-dist/verticals/cleaning/execution.js"
+      ]
+    },
+    "tests/cleaning-vertical-pass07.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.cleaning-test-dist/verticals/cleaning/execution.js",
+        "../.cleaning-test-dist/verticals/cleaning/qa.js"
+      ]
+    },
+    "tests/cleaning-vertical-pass08.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.cleaning-test-dist/verticals/cleaning/contracts.js"
+      ]
+    },
+    "tests/cleaning-vertical-pass09.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.cleaning-test-dist/verticals/cleaning/language.js"
+      ]
+    },
+    "tests/cleaning-vertical-pass10.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.cleaning-test-dist/verticals/cleaning/blueprint.js",
+        "../.cleaning-test-dist/verticals/cleaning/language.js",
+        "../.cleaning-test-dist/verticals/cleaning/contracts.js"
+      ]
+    },
+    "tests/distributed-contracts.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/distributed/index.js"
+      ]
+    },
+    "tests/five-tier-call-qualification.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce.js"
+      ]
+    },
+    "tests/interface-runtime-native.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/interface-runtime.js"
+      ]
+    },
+    "tests/knowledge-authority-library-parity.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path from .test-dist/src to .test-dist; existing assertions unchanged."
+    },
+    "tests/licensed-trades-pass02.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.licensed-trades-test-dist/catalogue.js"
+      ]
+    },
+    "tests/licensed-trades-pass03.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.licensed-trades-test-dist/triage.js"
+      ]
+    },
+    "tests/licensed-trades-pass04.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.licensed-trades-test-dist/qualification.js"
+      ]
+    },
+    "tests/licensed-trades-pass05.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.licensed-trades-test-dist/pricing.js"
+      ]
+    },
+    "tests/licensed-trades-pass06.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.licensed-trades-test-dist/assets.js"
+      ]
+    },
+    "tests/licensed-trades-pass07.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.licensed-trades-test-dist/execution.js"
+      ]
+    },
+    "tests/licensed-trades-pass08.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.licensed-trades-test-dist/recurrence.js"
+      ]
+    },
+    "tests/licensed-trades-pass09.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.licensed-trades-test-dist/language.js"
+      ]
+    },
+    "tests/licensed-trades-pass10.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.licensed-trades-test-dist/certification.js"
+      ]
+    },
+    "tests/native-agents.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/native-agents.js"
+      ]
+    },
+    "tests/prime-library-parity.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path from .test-dist/src to .test-dist; existing assertions unchanged."
+    },
+    "tests/retriever-native-pass02.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/retriever/index.js"
+      ]
+    },
+    "tests/retriever-native-pass03-lifecycle.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/retriever/index.js"
+      ]
+    },
+    "tests/retriever-native-pass04-surface-bridge.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/retriever/index.js"
+      ]
+    },
+    "tests/retriever-native-pass06-recovery.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/retriever/index.js"
+      ]
+    },
+    "tests/retriever-native-pass07-retirement-ledger.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/retriever/index.js"
+      ]
+    },
+    "tests/retriever-native-pass08-regression-certification.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/retriever/index.js"
+      ]
+    },
+    "tests/titan-builder-auto-binding.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:fs",
+        "node:assert/strict"
+      ]
+    },
+    "tests/titan-builder-binding-policy.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../dist-test/titan-builder/binding-policy.js"
+      ]
+    },
+    "tests/titan-builder-projection-providers.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../dist-test/titan-builder/projection-providers.js"
+      ]
+    },
+    "tests/titan-builder-runtime-bridge.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.tmp-builder-bridge/interface-runtime.js",
+        "../.tmp-builder-bridge/titan-builder/index.js"
+      ]
+    },
+    "tests/titan-builder-signal-priority.test.mjs": {
+      "status": "repaired",
+      "classification": "Stale source-format regex replaced with executable normalized company/surface isolation, ranking, stable ordering and advisory-only tests."
+    },
+    "tests/titan-connect-connector-contract.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path from .test-dist/src to .test-dist; existing assertions unchanged."
+    },
+    "tests/titan-connector-credential.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path from .test-dist/src to .test-dist; existing assertions unchanged."
+    },
+    "tests/titan-cost-sovereignty.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path from .test-dist/src to .test-dist; existing assertions unchanged."
+    },
+    "tests/titan-mcp-host-contract.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path from .test-dist/src to .test-dist; existing assertions unchanged."
+    },
+    "tests/titan-storage-convergence.test.mjs": {
+      "status": "repaired",
+      "classification": "Correct emitted module path; compose canonical company repository around memory adapter, preserving negative cross-company tests."
+    },
+    "tests/workforce-capacity-pass02.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-capacity/index.js"
+      ]
+    },
+    "tests/workforce-capacity-pass03.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-capacity/index.js"
+      ]
+    },
+    "tests/workforce-capacity-pass04.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-capacity/index.js"
+      ]
+    },
+    "tests/workforce-capacity-pass05.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-capacity/index.js"
+      ]
+    },
+    "tests/workforce-capacity-pass06.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-capacity/index.js",
+        "node:fs"
+      ]
+    },
+    "tests/workforce-capacity-pass07.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-capacity/index.js"
+      ]
+    },
+    "tests/workforce-capacity-pass08.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "node:fs",
+        "../.test-dist/workforce-capacity/index.js"
+      ]
+    },
+    "tests/workforce-capacity-pass09.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-capacity/index.js"
+      ]
+    },
+    "tests/workforce-capacity-pass10-certification.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "node:fs",
+        "node:path",
+        "../.test-dist/workforce-capacity/index.js"
+      ]
+    },
+    "tests/workforce-context-access.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../../.tmp-wf-context-build/assembler.js",
+        "../../.tmp-wf-context-build/projection.js",
+        "../../.tmp-wf-context-build/access.js"
+      ]
+    },
+    "tests/workforce-context-assembler.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../../.tmp-wf-context-build/assembler.js"
+      ]
+    },
+    "tests/workforce-context-checkpoint.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../../.tmp-wf-context-build/assembler.js",
+        "../../.tmp-wf-context-build/projection.js",
+        "../../.tmp-wf-context-build/checkpoint.js"
+      ]
+    },
+    "tests/workforce-context-compaction.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../../.tmp-wf-context-build/assembler.js",
+        "../../.tmp-wf-context-build/projection.js",
+        "../../.tmp-wf-context-build/checkpoint.js",
+        "../../.tmp-wf-context-build/compaction.js"
+      ]
+    },
+    "tests/workforce-context-continuity.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../../.tmp-wf-context-build/assembler.js",
+        "../../.tmp-wf-context-build/projection.js",
+        "../../.tmp-wf-context-build/checkpoint.js",
+        "../../.tmp-wf-context-build/handoff.js",
+        "../../.tmp-wf-context-build/continuity.js"
+      ]
+    },
+    "tests/workforce-context-contract.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../.context-test-dist/contract.js"
+      ]
+    },
+    "tests/workforce-context-diagnostics.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../../.tmp-wf-context-build/assembler.js",
+        "../../.tmp-wf-context-build/projection.js",
+        "../../.tmp-wf-context-build/access.js",
+        "../../.tmp-wf-context-build/freshness.js",
+        "../../.tmp-wf-context-build/diagnostics.js"
+      ]
+    },
+    "tests/workforce-context-freshness.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../../.tmp-wf-context-build/assembler.js",
+        "../../.tmp-wf-context-build/projection.js",
+        "../../.tmp-wf-context-build/checkpoint.js",
+        "../../.tmp-wf-context-build/freshness.js"
+      ]
+    },
+    "tests/workforce-context-handoff.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../../.tmp-wf-context-build/assembler.js",
+        "../../.tmp-wf-context-build/projection.js",
+        "../../.tmp-wf-context-build/checkpoint.js",
+        "../../.tmp-wf-context-build/handoff.js"
+      ]
+    },
+    "tests/workforce-context-projection.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../../.tmp-wf-context-build/assembler.js",
+        "../../.tmp-wf-context-build/projection.js"
+      ]
+    },
+    "tests/workforce-delegation-pass01.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-delegation/index.js"
+      ]
+    },
+    "tests/workforce-delegation-pass02.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-delegation/index.js"
+      ]
+    },
+    "tests/workforce-delegation-pass03.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-delegation/index.js"
+      ]
+    },
+    "tests/workforce-delegation-pass04.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-delegation/index.js"
+      ]
+    },
+    "tests/workforce-delegation-pass05.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-delegation/index.js"
+      ]
+    },
+    "tests/workforce-delegation-pass06.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-delegation/index.js"
+      ]
+    },
+    "tests/workforce-delegation-pass07.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-delegation/index.js",
+        "../.test-dist/ported/titan-workforce/gateway/failure-retry.js"
+      ]
+    },
+    "tests/workforce-delegation-pass08.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-delegation/index.js"
+      ]
+    },
+    "tests/workforce-delegation-pass09.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-delegation/index.js"
+      ]
+    },
+    "tests/workforce-delegation-pass10.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-delegation/index.js"
+      ]
+    },
+    "tests/workforce-hierarchy-diagnostics.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../.test-dist/workforce-hierarchy/manager-runtime.js",
+        "../.test-dist/workforce-hierarchy/supervisor-runtime.js",
+        "../.test-dist/workforce-hierarchy/agent-binding.js",
+        "../.test-dist/workforce-hierarchy/worker-runtime.js",
+        "../.test-dist/workforce-hierarchy/state-persistence.js",
+        "../.test-dist/workforce-hierarchy/diagnostics.js"
+      ]
+    },
+    "tests/workforce-hierarchy-e2e.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../.test-dist/workforce-hierarchy/e2e-verification.js",
+        "../.test-dist/workforce-hierarchy/manager-runtime.js",
+        "../.test-dist/workforce-hierarchy/supervisor-runtime.js",
+        "../.test-dist/workforce-hierarchy/agent-binding.js",
+        "../.test-dist/workforce-hierarchy/worker-runtime.js",
+        "../.test-dist/workforce-hierarchy/delegation-envelope.js",
+        "../.test-dist/workforce-hierarchy/escalation-runtime.js"
+      ]
+    },
+    "tests/workforce-lifecycle-configuration.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.lifecycle-test-dist/workforce-lifecycle/configuration.js"
+      ]
+    },
+    "tests/workforce-lifecycle-contracts.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.lifecycle-test-dist/workforce-lifecycle/index.js"
+      ]
+    },
+    "tests/workforce-lifecycle-health.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.lifecycle-test-dist/workforce-lifecycle/index.js"
+      ]
+    },
+    "tests/workforce-lifecycle-migration.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.lifecycle-test-dist/workforce-lifecycle/index.js"
+      ]
+    },
+    "tests/workforce-lifecycle-pass10-chaos.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.lifecycle-test-dist/workforce-lifecycle/index.js"
+      ]
+    },
+    "tests/workforce-lifecycle-registration.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.lifecycle-test-dist/workforce-lifecycle/index.js"
+      ]
+    },
+    "tests/workforce-lifecycle-replacement.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.lifecycle-test-dist/workforce-lifecycle/index.js"
+      ]
+    },
+    "tests/workforce-lifecycle-retirement.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.lifecycle-test-dist/workforce-lifecycle/index.js"
+      ]
+    },
+    "tests/workforce-lifecycle-transitions.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.lifecycle-test-dist/workforce-lifecycle/index.js"
+      ]
+    },
+    "tests/workforce-lifecycle-ui-integration.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "node:fs"
+      ]
+    },
+    "tests/workforce-native-booking.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-native/index.js"
+      ]
+    },
+    "tests/workforce-native-contracts.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-native/index.js"
+      ]
+    },
+    "tests/workforce-native-customer-care.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-native/index.js"
+      ]
+    },
+    "tests/workforce-native-governance.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-native/governance.js",
+        "../.test-dist/workforce-native/contracts.js"
+      ]
+    },
+    "tests/workforce-native-jobs.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-native/index.js"
+      ]
+    },
+    "tests/workforce-native-pass10-certification.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "node:fs",
+        "node:path",
+        "../.test-dist/workforce-native/index.js"
+      ]
+    },
+    "tests/workforce-native-reception.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-native/index.js"
+      ]
+    },
+    "tests/workforce-native-sales.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-native/index.js"
+      ]
+    },
+    "tests/workforce-native-scheduling.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:assert/strict",
+        "node:test",
+        "../.test-dist/workforce-native/scheduling.js"
+      ]
+    },
+    "tests/workforce-native-workflow.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "../.test-dist/workforce-native/index.js"
+      ]
+    },
+    "tests/workforce-roadmap-impact.test.mjs": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline suite failure; donor/owner harness or contract requires separate review before source/semantic changes.",
+      "imports": [
+        "node:test",
+        "node:assert/strict",
+        "node:fs",
+        "node:path",
+        "node:url",
+        "../.test-dist/workforce-lifecycle/roadmap-impact.js",
+        "../.test-dist/workforce-lifecycle/roadmap-impact.js",
+        "../.test-dist/workforce-lifecycle/roadmap-impact.js",
+        "../.test-dist/workforce-lifecycle/roadmap-impact.js",
+        "../.test-dist/workforce-lifecycle/roadmap-impact.js",
+        "../.test-dist/workforce-lifecycle/roadmap-impact.js",
+        "../.test-dist/workforce-lifecycle/roadmap-impact.js",
+        "../.test-dist/workforce-lifecycle/roadmap-impact.js",
+        "../.test-dist/workforce-lifecycle/roadmap-impact.js"
+      ]
+    },
+    "workforce-native and workforce-delegation public exports coexist": {
+      "status": "remaining",
+      "classification": "Unchanged allowed baseline assertion; retain under domain/shared-owner coordination, no suppression or semantic rewrite."
+    }
+  },
+  "preserved_sha256": {
+    "packages/titan-platform/src/index.ts": "685598470151403d1b6ab89ba98a91190118c87e6b3f68649c20edc432a5603f",
+    "packages/titan-platform/tsconfig.json": "c2b6bb046652af5ab6e5b9a434fc40bb10b8aa3f67229031954498410a87f849",
+    ".github/ci/titan-platform-test-baseline.json": "721e5943bbdec7bcc5dbb38f23094e8b472cc0c5045bf6a0cdeffe978909b841"
+  },
+  "log_sha256": {
+    "titan-1153-before.log": "170dbe9d3b46b0ae11327f0a8717cab10984e9e9283f42de017ebb0407e5ff62",
+    "titan-1153-after.log": "b65b4352d272ede446dbaf566ffe4e168c364fafe8f00618d0ebf44da43e7f55",
+    "titan-1153-clean.log": "0c9c5358b931c34679d9f0c6a800a047188d5f37321d43d68bafc5760b28484b"
+  }
+}

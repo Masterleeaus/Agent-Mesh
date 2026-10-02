@@ -1,0 +1,24 @@
+import { afterEach, expect, it, vi } from "vitest";
+const state=vi.hoisted(()=>({ query:vi.fn(), close:vi.fn() }));
+vi.mock("./db-runtime.js",()=>({createWorkerDatabaseClient:vi.fn(async()=>({dialect:"sqlite",query:state.query,close:state.close}))}));
+vi.mock("./automations/runner.js",()=>({runAllDueAutomations:vi.fn()}));
+vi.mock("./workflow-events.js",()=>({processWorkflowEvents:vi.fn(async()=>0)}));
+vi.mock("./notification/dispatch.js",()=>({dispatchNotificationQueue:vi.fn(async()=>({sent:0,failed:0,retried:0,delayed:0,cancelled:0}))}));
+vi.mock("./expire-estimates.js",()=>({expireEstimates:vi.fn(async()=>({expired:0}))}));
+vi.mock("./stale-booking-requests.js",()=>({closeStaleBookingRequests:vi.fn(async()=>({closed:0}))}));
+vi.mock("./prune-location-events.js",()=>({pruneLocationEvents:vi.fn(async()=>({deleted:0}))}));
+vi.mock("./prune-attention-events.js",()=>({pruneAttentionEvents:vi.fn(async()=>({deleted:0}))}));
+vi.mock("./vehicle-maintenance-reminder.js",()=>({runVehicleMaintenanceReminders:vi.fn()}));
+vi.mock("./process-captures.js",()=>({processCaptures:vi.fn(async()=>({processed:0,errors:0}))}));
+vi.mock("./logger.js",()=>({logger:{info:vi.fn(),error:vi.fn()}}));
+afterEach(()=>{vi.clearAllTimers();vi.useRealTimers();vi.unstubAllEnvs();vi.resetModules();});
+it("the real timer cannot overlap poll operations on its shared database connection",async()=>{
+  vi.useFakeTimers();vi.stubEnv("WORKER_POLL_MS","1000");
+  let release!:()=>void;const held=new Promise<void>(resolve=>{release=resolve;});let calls=0;
+  state.query.mockImplementation(async()=>{calls++;if(calls===2)await held;return {rows:[{due_count:0}],rowCount:1};});
+  await import("./index.js");await vi.advanceTimersByTimeAsync(0);expect(calls).toBe(1);
+  await vi.advanceTimersByTimeAsync(1000);await vi.advanceTimersByTimeAsync(3000);
+  const overlappingCalls=calls;release();await vi.advanceTimersByTimeAsync(0);
+  expect(overlappingCalls).toBe(2);
+  await vi.advanceTimersByTimeAsync(1000);expect(calls).toBe(3);
+});

@@ -1,0 +1,22 @@
+[Unit]
+Description=Titan Zero Server Node control plane
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/usr/local/titan/server-node
+ExecStart=/usr/bin/node /usr/local/titan/server-node/runtime.mjs --serve
+Restart=on-failure
+RestartSec=5
+User=titan-node
+Group=titan-node
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/titan/server-node
+Environment=TITAN_NODE_STORE_PATH=/var/lib/titan/server-node/control.json
+EnvironmentFile=-/etc/titan/server-node.env
+
+[Install]
+WantedBy=multi-user.target

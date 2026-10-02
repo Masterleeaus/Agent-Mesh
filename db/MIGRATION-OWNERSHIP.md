@@ -73,3 +73,46 @@ New files under `db/migrations/` require an explicit current storage owner in th
 New native FSM schema changes are allowed when they extend a Titan-owned mature capability and declare their storage/domain owner. Frappe is not the default owner simply because a similar ERPNext DocType exists.
 
 `company_id` is Titan's canonical logical company identity. Existing `account_id` columns remain compatibility schema until migrated and do not redefine canonical tenancy.
+
+## Immutable legacy PostgreSQL sequence
+
+`db/migrations/MANIFEST.json` is the reviewed inventory for the legacy
+PostgreSQL compatibility stream. Each entry binds an exact filename to its
+numeric-prefix sort position and SHA-256. The runner validates the manifest
+before database access, then executes that explicit sequence. Migration
+identity remains the filename because deployed `schema_migrations` tables use
+`filename` as their primary key; filenames and SQL are not renamed to repair
+duplicate numbers.
+
+The 16 duplicate-prefix groups are explicitly resolved for deterministic
+ordering by exact filename. Their actual applied status is recorded as
+**unverified** because no deployed `schema_migrations` snapshots are available
+in this repository. Existing filename-only rows remain checksum-unverified;
+the runner does not invent a checksum for them. Newly applied rows record the
+manifest checksum, and a later checksum mismatch fails before applying further
+migrations. Pending SQL and its ledger insert run in a single PostgreSQL
+transaction. Legacy no-ledger adoption seeds all filenames in one transaction,
+so an interrupted seed cannot look like a partial established history.
+Migration 088's explicit top-level transaction markers are removed only in the
+generated execution wrapper so its unchanged, checksum-verified source
+participates in the same transaction. Migration 089 is split at its enum-add
+statement because PostgreSQL requires that enum value to be committed before
+later statements can use it. Its earlier writes are idempotent upserts; if the
+final transaction fails, the manifest ledger remains absent and a retry safely
+replays those stages. Before certifying a supported historical deployment,
+collect a sanitized per-company filename inventory and schema fingerprint, then classify
+each pair as applied/not applied for that installation. Do not infer live
+history from the repository manifest.
+
+To collect sanitized evidence from a supported installation, set
+`MIGRATION_DATABASE_URL` through the host's protected environment and run
+`node scripts/export-migration-history-evidence.mjs`. It emits migration
+filenames, recorded checksums/status, duplicate-pair status, and a SHA-256 of a
+schema-only dump. It does not emit the connection URL, database name, applied
+timestamps, or company rows. Share only this JSON artifact; do not provide a
+full database dump for history classification.
+
+The manifest covers only `db/migrations/`, the legacy PostgreSQL compatibility
+stream. It does not certify the mixed `db/sqlite/` stream or supply the
+owner-classified `COMPANY_NATIVE_FSM` manifest required for per-company
+provisioning; those paths must not be conflated.

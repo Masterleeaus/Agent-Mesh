@@ -121,7 +121,7 @@ test("production bootstrap composes canonical authority gateway and refuses inco
   const base=ports();
   await assert.rejects(
     ()=>createProductionRuntimeBootstrap({storage,ports:{modelRouter:base.modelRouter,capabilities:base.capabilities,contextProvider:base.contextProvider,executionGateway:{async execute(){return {state:"VERIFIED",verified:true};}}} as any}),
-    /production-runtime-port-required:requirementResolver.resolve/,
+    /production-runtime-port-required:governanceResolver.resolve/,
   );
   await storage.close();
 });

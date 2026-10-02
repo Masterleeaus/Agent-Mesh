@@ -1,70 +1,97 @@
 #!/usr/bin/env node
 /**
- * TASK-128 / Part B T4: reject NEW duplicate db/migrations NNN_ prefixes.
+ * Validate the immutable legacy PostgreSQL migration manifest.
  *
- * Existing collisions on main are grandfathered by exact filename. Never
- * renumber applied files — adding a third file to a frozen prefix, or a
- * second file to a currently unique prefix, fails.
+ * Prefix collisions are resolved by stable filename identities and an explicit
+ * sequence, not by renaming files whose deployed status is unknown. The
+ * manifest freezes the exact current file set and bytes; an unregistered file,
+ * new collision, reorder, or edited migration fails closed.
  */
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-/** Prefixes that already collide on main. Filenames are frozen. */
-export const GRANDFATHERED = {
-  100: ["100_booking_request_pricing_mode.sql", "100_comms_log_dedup.sql"],
-  137: ["137_accounts_day_review_settings.sql", "137_project_work_order_visit_schema.sql"],
-  141: ["141_invoice_source_visit.sql", "141_vehicle_session_capture_method.sql"],
-  142: ["142_client_square_customer_fields.sql", "142_invoice_line_item_source_expense.sql"],
-  153: ["153_booking_request_funnel.sql", "153_communications_outcome_received.sql"],
-  162: ["162_expense_commercial_tag.sql", "162_materials_catalog_stats.sql"],
-  175: ["175_capture_evidence.sql", "175_push_subscriptions.sql"],
-};
+export function migrationOrder(a, b) {
+  const ap = a.match(/^(\d+)_/)?.[1];
+  const bp = b.match(/^(\d+)_/)?.[1];
+  const lexical = a < b ? -1 : a > b ? 1 : 0;
+  if (!ap || !bp) return lexical;
+  return Number(ap) - Number(bp) || lexical;
+}
 
 export function groupMigrationFiles(filenames) {
-  /** @type {Map<string, string[]>} */
   const byPrefix = new Map();
   for (const name of filenames) {
-    if (!name.endsWith(".sql")) continue;
-    if (name.includes("seed")) continue;
+    if (!name.endsWith(".sql") || name.includes("seed")) continue;
     const match = name.match(/^(\d+)_/);
     if (!match) continue;
-    const prefix = match[1];
-    const list = byPrefix.get(prefix) ?? [];
+    const list = byPrefix.get(match[1]) ?? [];
     list.push(name);
-    byPrefix.set(prefix, list);
+    byPrefix.set(match[1], list);
   }
+  for (const names of byPrefix.values()) names.sort();
   return byPrefix;
 }
 
-/**
- * @param {string[]} filenames
- * @param {Record<string, string[]>} grandfathered
- * @returns {{ ok: boolean, errors: string[] }}
- */
-export function checkMigrationPrefixes(filenames, grandfathered = GRANDFATHERED) {
-  const byPrefix = groupMigrationFiles(filenames);
+export function validateMigrationManifest(manifest, filenames, readMigration) {
   const errors = [];
+  const expected = filenames
+    .filter((name) => name.endsWith(".sql") && !name.includes("seed"))
+    .sort(migrationOrder);
+  const entries = manifest?.entries;
+  if (manifest?.schema !== "titan-db-migration-manifest/v1" ||
+      manifest?.stream !== "legacy-postgres-compatibility" ||
+      manifest?.ordering !== "ascending numeric prefix, then exact filename; sequence is explicit" ||
+      !Array.isArray(entries)) {
+    return { ok: false, errors: ["migration manifest schema/stream/ordering is invalid"], unverifiedHistoryPrefixes: [] };
+  }
 
-  for (const [prefix, files] of [...byPrefix.entries()].sort(([a], [b]) => Number(a) - Number(b))) {
-    const allowed = grandfathered[prefix];
-    const sorted = [...files].sort();
-    if (allowed) {
-      const allowedSorted = [...allowed].sort();
-      const extra = sorted.filter((f) => !allowedSorted.includes(f));
-      if (extra.length > 0) {
-        errors.push(
-          `prefix ${prefix} is frozen (${allowedSorted.join(", ")}); new file(s): ${extra.join(", ")}`,
-        );
-      }
-      continue;
+  const actualNames = entries.map((entry) => entry?.filename);
+  if (JSON.stringify(actualNames) !== JSON.stringify(expected)) {
+    errors.push("manifest entries must exactly match the ordered non-seed SQL file set");
+  }
+
+  entries.forEach((entry, index) => {
+    const filename = entry?.filename;
+    const prefix = typeof filename === "string" ? filename.match(/^(\d+)_/)?.[1] : null;
+    if (!prefix || entry.prefix !== prefix) errors.push(`entry ${index + 1} has an invalid numeric prefix`);
+    if (entry.sequence !== index + 1) errors.push(`entry ${filename ?? index + 1} has a non-contiguous sequence`);
+    if (entry.migration_id !== `db/migrations/${filename}`) errors.push(`entry ${filename ?? index + 1} has an unstable migration_id`);
+    if (!/^[a-f0-9]{64}$/.test(entry.sha256 ?? "")) errors.push(`entry ${filename ?? index + 1} has an invalid SHA-256`);
+    if (typeof readMigration === "function" && typeof filename === "string" && expected.includes(filename)) {
+      const actualHash = createHash("sha256").update(readMigration(filename)).digest("hex");
+      if (entry.sha256 !== actualHash) errors.push(`migration content changed without a manifest update: ${filename}`);
     }
-    if (sorted.length > 1) {
-      errors.push(`prefix ${prefix} collides: ${sorted.join(", ")}`);
+  });
+
+  const groups = groupMigrationFiles(expected);
+  const actualCollisions = [...groups.entries()]
+    .filter(([, names]) => names.length > 1)
+    .map(([prefix, names]) => ({ prefix, files: names }));
+  const declared = manifest.prefix_collisions;
+  if (!Array.isArray(declared)) {
+    errors.push("manifest prefix_collisions must explicitly classify every existing duplicate prefix");
+  } else {
+    const normalized = declared.map((item) => ({ prefix: item?.prefix, files: item?.files }));
+    if (JSON.stringify(normalized) !== JSON.stringify(actualCollisions)) {
+      errors.push("manifest prefix collision classifications do not exactly match the migration files");
+    }
+    for (const item of declared) {
+      if (item?.resolution !== "immutable-filename-identity-and-explicit-sequence") {
+        errors.push(`prefix ${item?.prefix ?? "?"} has no explicit deterministic resolution`);
+      }
+      if (item?.applied_history !== "unverified-no-installation-ledger-snapshot-available") {
+        errors.push(`prefix ${item?.prefix ?? "?"} makes an unsupported applied-history claim`);
+      }
     }
   }
 
-  return { ok: errors.length === 0, errors };
+  return {
+    ok: errors.length === 0,
+    errors,
+    unverifiedHistoryPrefixes: actualCollisions.map(({ prefix }) => prefix),
+  };
 }
 
 export function filenamesFromDir(dir) {
@@ -80,12 +107,29 @@ function isMain() {
 if (isMain()) {
   const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const dir = path.join(repoRoot, "db", "migrations");
-  const result = checkMigrationPrefixes(filenamesFromDir(dir));
-  if (!result.ok) {
-    console.error("Duplicate migration prefixes (TASK-128):");
-    for (const err of result.errors) console.error(`  - ${err}`);
-    console.error("Claim the next unused number. Never renumber an applied file.");
+  const manifestPath = path.join(dir, "MANIFEST.json");
+  let manifest;
+  try {
+    manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  } catch (error) {
+    console.error(`migration manifest missing or invalid: ${error.message}`);
     process.exit(1);
   }
-  console.log("migration prefixes: ok");
+  const result = validateMigrationManifest(
+    manifest,
+    filenamesFromDir(dir),
+    (filename) => fs.readFileSync(path.join(dir, filename)),
+  );
+  if (!result.ok) {
+    console.error("Invalid legacy PostgreSQL migration manifest:");
+    for (const err of result.errors) console.error(`  - ${err}`);
+    process.exit(1);
+  }
+  if (process.argv.includes("--list")) {
+    for (const entry of manifest.entries) console.log(`${entry.filename}\t${entry.sha256}`);
+  } else {
+    console.log(`migration manifest: ${manifest.entries.length} immutable files verified`);
+    console.log(`prefixes resolved by filename/order: ${result.unverifiedHistoryPrefixes.join(", ")}`);
+    console.log("deployed applied-history status remains unverified; no migration was renumbered");
+  }
 }
