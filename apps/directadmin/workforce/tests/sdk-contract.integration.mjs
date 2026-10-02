@@ -16,8 +16,10 @@ test('real package satisfies the canonical shared SDK archive contract', async (
   try {
     const result = await buildPackage({ outputDir, sdkModulePath: sdkPath });
     const manifest = await readFile(new URL('../plugin.conf', import.meta.url), 'utf8');
+    const version = manifest.match(/^version=(\d+\.\d+\.\d+)$/m)?.[1];
+    assert.ok(version, 'plugin manifest declares a semantic version');
     const validation = SDK.validateDirectAdminPluginPackage({
-      plugin_id: 'titan_workforce', version: '0.1.0', archive_filename: 'titan_workforce.tar.gz', manifest_content: manifest,
+      plugin_id: 'titan_workforce', version, archive_filename: 'titan_workforce.tar.gz', manifest_content: manifest,
       files: packageFiles, executable_files: packageFiles.filter(file => /^(admin|reseller|user)\//.test(file) || file.startsWith('scripts/')),
       role_entrypoints: { admin: 'admin/index.html', reseller: 'reseller/index.html', user: 'user/index.html' },
       hooks: ['hooks/admin_txt.html', 'hooks/reseller_txt.html', 'hooks/user_txt.html'],
@@ -46,7 +48,11 @@ test('published SDK without commissioned CSRF/session fails closed in real execu
     execFileSync('tar', ['-xzf', result.archivePath, '-C', folder]);
     browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
     for (const role of ['admin', 'reseller', 'user']) {
-      const html = execFileSync(join(folder, role, 'index.html'), [], { encoding: 'utf8' });
+      const html = execFileSync(join(folder, role, 'index.html'), [], {
+        encoding: 'utf8', input: 'company_id=attacker-company&csrf=attacker-token',
+        env: { ...process.env, REQUEST_METHOD: 'POST', QUERY_STRING: 'company_id=query-company', CONTENT_TYPE: 'application/x-www-form-urlencoded', CONTENT_LENGTH: '48', TITAN_COMPANY_ID: 'env-company', TITAN_DIRECTADMIN_CSRF: 'env-token', HTTP_COOKIE: 'session=attacker-session' },
+      });
+      assert.doesNotMatch(html, /attacker-company|attacker-token|query-company|env-company|env-token|attacker-session/);
       const page = await browser.newPage();
       const errors = []; page.on('pageerror', error => errors.push(error.message));
       await page.setContent(html);

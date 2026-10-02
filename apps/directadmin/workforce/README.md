@@ -16,6 +16,13 @@ Authenticated host HTML must supply `<meta name="titan-directadmin-csrf" content
 with the separately bound nonce; the plugin never creates this nonce or an identity
 from DirectAdmin environment/role. The credential remains an HttpOnly cookie.
 A fixture-based passing test does not prove a commissioned host or identity bridge.
+DirectAdmin role executables emit the HTML document only. They do not consume CGI
+POST stdin, PHP superglobals, query parameters, or host environment variables as
+identity/CSRF inputs. The browser SDK makes same-origin API requests; the direct
+DirectAdmin POST/environment bridge is not assumed to work. Installed Dev Access
+1.1.3 has a reported CSRF failure and #1048 is repairing and verifying that bridge.
+Until the host request owner proves it, session bootstrap and governed POSTs remain
+uncommissioned and the cockpit stays unavailable/denied.
 
 The UI displays canonical roster/worker identity, hierarchy relationships, work
 states, permitted lifecycle intent submission and receipt/evidence references.
@@ -43,13 +50,20 @@ node apps/directadmin/workforce/tools/package.mjs \
 The builder requires the current canonical browser session and package-validator exports,
 and runs the shared validator on the extracted final package. It produces a flat `titan_workforce.tar.gz` and SHA256 sidecar, applies
 executable modes, extracts the final tarball, compares contents/modes and runs
-staging-location preflight. Tests and development fixtures are excluded.
+staging-location preflight. The manifest controls the artifact version (currently
+0.1.1). Tests and development fixtures are excluded.
 
 Install/update only checks package/runtime prerequisites. It does not provision
 users, secrets, server processes, reverse proxies, permissions or databases.
 Uninstall never deletes Workforce/business data. DirectAdmin Plugin Manager owns
 code activation/removal. Production installation requires separately approved
 commissioning and live certification; no deployment is performed by this work.
+For a future approved update, retain the currently installed verified archive and
+its SHA256, verify the candidate sidecar, and use DirectAdmin Plugin Manager to
+update. Smoke-test the role pages in read-only/uncommissioned state. Roll back by
+restoring that retained archive through the manager; plugin rollback must never
+restore or delete canonical runtime state, company storage, credentials, revocations,
+or evidence. This repository has not performed those host operations.
 
 Role routes: `/CMD_PLUGINS_ADMIN/titan_workforce`,
 `/CMD_PLUGINS_RESELLER/titan_workforce`, `/CMD_PLUGINS/titan_workforce`.

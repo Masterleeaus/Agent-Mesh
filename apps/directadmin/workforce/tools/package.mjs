@@ -35,6 +35,10 @@ export async function buildPackage({ sourceDir = resolve(dirname(fileURLToPath(i
   }
   const temporary = await mkdtemp(join(tmpdir(), 'titan-workforce-package-'));
   try {
+    const manifest = await readFile(join(sourceDir, 'plugin.conf'), 'utf8');
+    const versionMatch = manifest.match(/^version=(\d+\.\d+\.\d+)$/m);
+    if (!versionMatch) throw new Error('plugin.conf must declare a semantic version.');
+    const version = versionMatch[1];
     const stage = join(temporary, 'stage');
     const verify = join(temporary, 'verify');
     await mkdir(stage); await mkdir(verify);
@@ -59,7 +63,7 @@ export async function buildPackage({ sourceDir = resolve(dirname(fileURLToPath(i
       if (!(await readFile(join(verify, file))).equals(await readFile(join(stage, file)))) throw new Error(`Archive content mismatch: ${file}`);
     }
     SDK.assertPluginCanBeInstalled(SDK.validateDirectAdminPluginPackage({
-      plugin_id: 'titan_workforce', version: '0.1.0', archive_filename: 'titan_workforce.tar.gz',
+      plugin_id: 'titan_workforce', version, archive_filename: 'titan_workforce.tar.gz',
       manifest_content: await readFile(join(verify, 'plugin.conf'), 'utf8'), files: listing,
       executable_files: listing.filter(executable),
       role_entrypoints: { admin: 'admin/index.html', reseller: 'reseller/index.html', user: 'user/index.html' },
