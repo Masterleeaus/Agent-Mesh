@@ -2,7 +2,8 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -67,6 +68,38 @@ function runMigrator(url, expectedSuccess = true) {
   return result;
 }
 
+function runHistoricalPrefix(url, throughFilename) {
+  const stopIndex = manifest.entries.findIndex((entry) => entry.filename === throughFilename);
+  assert.notEqual(stopIndex, -1, `unknown historical checkpoint ${throughFilename}`);
+  const entries = manifest.entries.slice(0, stopIndex + 1);
+  const names = new Set(entries.map((entry) => entry.filename));
+  const collisions = manifest.prefix_collisions.filter((collision) => collision.files.every((filename) => names.has(filename)));
+  const root = mkdtempSync(path.join(os.tmpdir(), "titan-migration-checkpoint-"));
+  try {
+    mkdirSync(path.join(root, "scripts"), { recursive: true });
+    mkdirSync(path.join(root, "db/migrations"), { recursive: true });
+    cpSync(path.join(repoRoot, "scripts/db-migrate.sh"), path.join(root, "scripts/db-migrate.sh"));
+    cpSync(path.join(repoRoot, "scripts/check-migration-prefixes.mjs"), path.join(root, "scripts/check-migration-prefixes.mjs"));
+    for (const entry of entries) {
+      cpSync(path.join(repoRoot, "db/migrations", entry.filename), path.join(root, "db/migrations", entry.filename));
+    }
+    writeFileSync(path.join(root, "db/migrations/MANIFEST.json"), `${JSON.stringify({
+      ...manifest,
+      entries,
+      prefix_collisions: collisions,
+    }, null, 2)}\n`);
+    const result = spawnSync("bash", [path.join(root, "scripts/db-migrate.sh")], {
+      cwd: root,
+      encoding: "utf8",
+      env: { ...process.env, DATABASE_URL: url, MIGRATION_DATABASE_URL: url },
+    });
+    assert.equal(result.status, 0, `historical prefix runner failed:\n${result.stdout}\n${result.stderr}`);
+    return entries;
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+}
+
 function addLedgerRejectTrigger(url, rejectFilename = null) {
   psql(url, `
     CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -95,6 +128,7 @@ function removeLedgerRejectTrigger(url) {
 const freshDb = "titan_migration_fresh_test";
 const seedDb = "titan_migration_seed_test";
 const enumRetryDb = "titan_migration_enum_retry_test";
+const checkpointDb = "titan_migration_checkpoint_test";
 try {
   recreateDatabase(freshDb);
   const freshUrl = databaseUrl(freshDb);
@@ -157,9 +191,35 @@ try {
   assert.equal(scalar(enumRetryUrl, "SELECT COUNT(*) FROM price_book WHERE code IN ('9010','9011','9012','9013')"), "4");
   assertManifestLedger(enumRetryUrl);
 
-  console.log("postgres migration integration: PASS (fresh rollback/resume/replay, atomic legacy seed, and migration 089 enum-stage retry)");
+  const first151 = manifest.entries.findIndex((entry) => entry.filename === "151_business_pricing_settings.sql");
+  const second151 = manifest.entries.findIndex((entry) => entry.filename === "151_field_completion_evidence.sql");
+  assert.equal(second151, first151 + 1, "collision members must be adjacent in the canonical sequence");
+
+  // Historical checkpoint after only the first member of the duplicate prefix.
+  recreateDatabase(checkpointDb);
+  const checkpointUrl = databaseUrl(checkpointDb);
+  const appliedPrefix = runHistoricalPrefix(checkpointUrl, manifest.entries[first151].filename);
+  assert.equal(appliedPrefix.length, first151 + 1);
+  assert.equal(scalar(checkpointUrl, "SELECT COUNT(*) FROM schema_migrations WHERE filename='151_business_pricing_settings.sql'"), "1");
+  assert.equal(scalar(checkpointUrl, "SELECT COUNT(*) FROM schema_migrations WHERE filename='151_field_completion_evidence.sql'"), "0");
+  runMigrator(checkpointUrl);
+  assertManifestLedger(checkpointUrl);
+
+  // A supported installation may have recorded only the second colliding file.
+  recreateDatabase(checkpointDb);
+  const reverseCheckpointUrl = databaseUrl(checkpointDb);
+  runHistoricalPrefix(reverseCheckpointUrl, manifest.entries[first151 - 1].filename);
+  const laterFile = manifest.entries[second151].filename;
+  const laterSql = readFileSync(path.join(repoRoot, "db/migrations", laterFile), "utf8");
+  psql(reverseCheckpointUrl, `BEGIN;\n${laterSql}\nINSERT INTO schema_migrations (filename, checksum) VALUES ('${laterFile}', '${manifest.entries[second151].sha256}');\nCOMMIT;`);
+  assert.equal(scalar(reverseCheckpointUrl, `SELECT COUNT(*) FROM schema_migrations WHERE filename='${laterFile}'`), "1");
+  runMigrator(reverseCheckpointUrl);
+  assertManifestLedger(reverseCheckpointUrl);
+
+  console.log("postgres migration integration: PASS (fresh rollback/resume/replay, atomic legacy seed, migration 089 enum-stage retry, and both partial 151 collision checkpoints)");
 } finally {
   psql(adminUrl, `DROP DATABASE IF EXISTS ${freshDb} WITH (FORCE)`);
   psql(adminUrl, `DROP DATABASE IF EXISTS ${seedDb} WITH (FORCE)`);
   psql(adminUrl, `DROP DATABASE IF EXISTS ${enumRetryDb} WITH (FORCE)`);
+  psql(adminUrl, `DROP DATABASE IF EXISTS ${checkpointDb} WITH (FORCE)`);
 }
