@@ -86,7 +86,7 @@ function normalizeEvidence(input, sequence, recorded_at) {
   if (input.kind === 'simulated' || input.factual === false) {
     throw new Error('simulated-evidence-cannot-enter-factual-ledger');
   }
-  if (input.final_outcome === 'verified' && input.verification?.verified !== true) {
+  if (input.final_outcome === 'verified' && (input.state !== 'VERIFIED' || input.verification?.verified !== true)) {
     throw new Error('verified-evidence-requires-independent-verification');
   }
   return {

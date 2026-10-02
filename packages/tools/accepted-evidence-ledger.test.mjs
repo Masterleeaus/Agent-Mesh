@@ -99,5 +99,9 @@ test('unverified records cannot assert a verified business outcome', () => {
     evidence_id: 'event-unverified', company_id: 'company-a', work_id: 'job-1',
     state: 'VERIFIED', final_outcome: 'verified', observed_result: { status: 'complete' },
   }), /verified-evidence-requires-independent-verification/);
+  assert.throws(() => ledger.append({
+    evidence_id: 'event-conflicting-state', company_id: 'company-a', work_id: 'job-1',
+    state: 'PROVIDER_ACKNOWLEDGED', final_outcome: 'verified', verification: { verified: true },
+  }), /verified-evidence-requires-independent-verification/);
   assert.equal(ledger.projectJob('company-a', 'job-1').status, 'UNKNOWN');
 });
