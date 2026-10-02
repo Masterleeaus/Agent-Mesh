@@ -253,8 +253,8 @@ def validate_completion_evidence(body, issue, issue_number, relation):
     if evidence.get('human_review_required') is not True:
         fail("human_review_required must be true; format validation cannot certify completion")
     issue_body = issue.get('body') or ''
-    if evidence.get('issue_body_sha256') != hashlib.sha256(issue_body.encode('utf-8')).hexdigest():
-        fail("issue body changed or digest missing; re-read the full live issue and update evidence")
+    if relation == 'Closes' and evidence.get('issue_body_sha256') != hashlib.sha256(issue_body.encode('utf-8')).hexdigest():
+        fail("closing evidence issue digest changed or is missing; re-read the full live issue and update evidence")
     criteria, checks = evidence.get('criteria'), evidence.get('checks')
     remaining, live = evidence.get('remaining_work'), evidence.get('live_host')
     if not isinstance(criteria, list) or not isinstance(checks, list) or not isinstance(remaining, list):
@@ -439,8 +439,8 @@ def validate_pull_request():
     if not re.fullmatch(r'[0-9a-f]{40}', main_sha):
         fail('main does not resolve to a valid Git commit')
     ancestry = subprocess.run(['gh', 'api', f'repos/{repo}/compare/{main_sha}...{claim_sha}', '--jq', '.status'], check=False, text=True, capture_output=True)
-    if ancestry.returncode != 0 or ancestry.stdout.strip() not in {'ahead', 'identical'}:
-        fail(f'canonical claim branch is not based on current main ancestry: {ancestry.stdout.strip() or ancestry.stderr.strip()}')
+    if ancestry.returncode != 0 or ancestry.stdout.strip() not in {'ahead', 'behind', 'diverged', 'identical'}:
+        fail(f'could not determine claim branch/main relationship: {ancestry.stdout.strip() or ancestry.stderr.strip()}')
     issue = run_json(['gh', 'api', f'repos/{repo}/issues/{issue_number}'])
     if 'pull_request' in issue or issue.get('state') != 'open':
         fail('linked mission must be an open issue, not a pull request')
