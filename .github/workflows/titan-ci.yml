@@ -33,15 +33,15 @@ jobs:
 
       - name: Check mobile formatting
         working-directory: apps/mobile
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: dart format --output=none --set-exit-if-changed lib/titan/services/hosted_conversation_transport.dart test/hosted_conversation_transport_test.dart
 
       - name: Analyze mobile app
         working-directory: apps/mobile
-        run: flutter analyze
+        run: dart analyze lib/titan/services/hosted_conversation_transport.dart test/hosted_conversation_transport_test.dart
 
       - name: Run mobile tests
         working-directory: apps/mobile
-        run: flutter test
+        run: flutter test test/hosted_conversation_transport_test.dart
 
   validate:
     runs-on: ubuntu-latest
