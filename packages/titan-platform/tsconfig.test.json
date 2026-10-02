@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/ported/titan-capabilities/capability-registry.ts",
+    "src/distribution-catalog.ts"
+  ]
+}

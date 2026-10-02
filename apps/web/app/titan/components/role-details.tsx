@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AlertTriangle, CalendarDays, Camera, Check, ChevronRight, Clock3, MapPin, MessageSquare, Navigation, PackageCheck, Route, ShieldCheck, Sparkles, Wifi, WifiOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import type { TitanRole } from "./role-chat";
 import {
   applyGoReceipt,
@@ -58,8 +58,8 @@ function GoDetails() {
             {job.recoveryAction === "navigate" ? <Button aria-label="Travel to next job"><Navigation/>Navigate</Button> : null}
             {job.recoveryAction === "stage_supply" ? <Button onClick={() => prepareRecovery(job.job_id, "stage_supply", "Stage spot cleaner before departure.")}><PackageCheck/>Stage supply</Button> : null}
             {job.recoveryAction === "verify_access" ? <Button onClick={() => prepareRecovery(job.job_id, "verify_access", "Verify key pickup and parking before departure.")}><ShieldCheck/>Verify access</Button> : null}
-            {job.recoveryAction !== "navigate" ? <Button variant="outline" onClick={() => prepareRecovery(job.job_id, "prepare_customer_eta", "Prepare an accurate arrival update from the latest route projection.")}><Clock3/>Prepare customer ETA</Button> : null}
-            {job.recoveryAction === "verify_access" ? <Button variant="outline" onClick={() => prepareRecovery(job.job_id, "notify_dispatch", "Key pickup is not confirmed; verify before departure.")}><MessageSquare/>Notify dispatch</Button> : null}
+            {job.recoveryAction !== "navigate" ? <Button variant="secondary" onClick={() => prepareRecovery(job.job_id, "prepare_customer_eta", "Prepare an accurate arrival update from the latest route projection.")}><Clock3/>Prepare customer ETA</Button> : null}
+            {job.recoveryAction === "verify_access" ? <Button variant="secondary" onClick={() => prepareRecovery(job.job_id, "notify_dispatch", "Key pickup is not confirmed; verify before departure.")}><MessageSquare/>Notify dispatch</Button> : null}
           </div>
         </article>;
       }) : <div className="field-empty-state"><CalendarDays/><strong>No jobs scheduled for today</strong><span>Message dispatch if you expect work.</span><Button>Message dispatch</Button></div>}</div>
@@ -108,7 +108,8 @@ export function GoNext() {
       return;
     }
     if (result.status === "queued_offline") {
-      setQueue((items) => [...items, result.queue_item]);
+      const queueItem = result.queue_item;
+      if (queueItem) setQueue((items) => [...items, queueItem]);
       setNotice("Queued offline. Job state has not changed.");
       return;
     }
@@ -137,7 +138,8 @@ export function GoNext() {
 
   function reportIssue() {
     const result = prepareGoIssue(session, { type: "access_problem", note: "Rear entrance is not accessible.", online });
-    if (result.queue_item) setQueue((items) => [...items, result.queue_item]);
+    const queueItem = result.queue_item;
+    if (queueItem) setQueue((items) => [...items, queueItem]);
     setNotice(result.status === "queued_offline" ? "Critical issue queued offline for dispatch." : "Access issue sent to dispatch with job context.");
   }
 
@@ -164,9 +166,9 @@ export function GoNext() {
       <aside className="next-actions">
         <Button onClick={() => setView("route")}><Navigation />Navigate</Button>
         <Button className="start-job" disabled={session.stage === "complete"} onClick={() => requestTransition(primary.action)}>{primary.label}</Button>
-        <Button variant="outline"><MessageSquare />Message customer</Button>
-        <Button variant="outline" onClick={addEvidence}><Camera />Evidence {session.evidence_count} of {session.required_evidence_count}</Button>
-        <Button variant="outline" onClick={reportIssue}><AlertTriangle/>Report issue</Button>
+        <Button variant="secondary"><MessageSquare />Message customer</Button>
+        <Button variant="secondary" onClick={addEvidence}><Camera />Evidence {session.evidence_count} of {session.required_evidence_count}</Button>
+        <Button variant="secondary" onClick={reportIssue}><AlertTriangle/>Report issue</Button>
         <div className="go-action-notice" aria-live="polite"><strong>{notice}</strong><small>State changes require a matching Titan receipt.</small></div>
         {blockers.length ? <div className="go-blockers">{blockers.map((item) => <span key={item.code}><strong>{item.message}</strong><small>{item.recovery}</small></span>)}</div> : null}
         <small><strong>{online ? "Online and governed" : "Working offline"}</strong> · {online ? "Every action is receipt-controlled." : "Syncs when you reconnect."}</small>
@@ -177,7 +179,7 @@ export function GoNext() {
 }
 
 function HubDetails() {
-  return <div className="hub-detail"><section className="hub-next-card"><header><div className="gen-icon"><CalendarDays /></div><div><p className="eyeline">Next service</p><h2>Clinic clean</h2><span>Tomorrow · 9:00–10:30 AM</span></div><b>Confirmed</b></header><div className="hub-service-journey"><strong>Service journey</strong><div className="visit-progress"><span className="done"><i/>Booked</span><span className="done"><i/>Confirmed</span><span><i/>On the way</span><span><i/>Complete</span></div><small>Arrival updates enabled · we’ll notify you when Alex and Mia depart.</small></div><div className="hub-info-grid"><span><strong>Service address</strong>18 Hartwell Road, Westbridge</span><span><strong>Team</strong>Alex Morgan and Mia Chen</span><span><strong>Access</strong>Rear entrance · notify Sarah first</span><span><strong>Reference</strong>BK-1048 · Weekly</span></div><div className="service-expect"><div><p className="eyeline">What to expect</p><strong>A 90-minute clinic clean</strong><span>Reception, waiting room and treatment rooms using your saved clinic-safe products.</span></div><div><p className="eyeline">Order summary</p><strong>Service total</strong><span className="service-price">$145</span><small>Pay today to save $10.</small></div></div><div className="hub-detail-offers"><div><p className="eyeline">Popular add-ons</p><strong>Front windows</strong><span>Add inside and outside cleaning for $35.</span></div><Button variant="outline">Add service</Button></div><div className="detail-actions"><Button variant="outline">Reschedule</Button><Button><MessageSquare />Message team</Button><Button className="hub-pay-button"><span><strong>Pay now</strong><small>$135 today · save $10</small></span></Button></div></section><section className="hub-records hub-history"><header><div><p className="eyeline">Recent services</p><h2>Completed visits</h2></div></header><button><Check/><span><strong>Clinic clean · 23 August</strong><small>Completed by Alex and Mia · 12 photos</small></span><b>Download receipt</b><ChevronRight/></button><button><Check/><span><strong>Clinic clean · 16 August</strong><small>Completed on time · 11 photos</small></span><b>View report</b><ChevronRight/></button></section></div>;
+  return <div className="hub-detail"><section className="hub-next-card"><header><div className="gen-icon"><CalendarDays /></div><div><p className="eyeline">Next service</p><h2>Clinic clean</h2><span>Tomorrow · 9:00–10:30 AM</span></div><b>Confirmed</b></header><div className="hub-service-journey"><strong>Service journey</strong><div className="visit-progress"><span className="done"><i/>Booked</span><span className="done"><i/>Confirmed</span><span><i/>On the way</span><span><i/>Complete</span></div><small>Arrival updates enabled · we’ll notify you when Alex and Mia depart.</small></div><div className="hub-info-grid"><span><strong>Service address</strong>18 Hartwell Road, Westbridge</span><span><strong>Team</strong>Alex Morgan and Mia Chen</span><span><strong>Access</strong>Rear entrance · notify Sarah first</span><span><strong>Reference</strong>BK-1048 · Weekly</span></div><div className="service-expect"><div><p className="eyeline">What to expect</p><strong>A 90-minute clinic clean</strong><span>Reception, waiting room and treatment rooms using your saved clinic-safe products.</span></div><div><p className="eyeline">Order summary</p><strong>Service total</strong><span className="service-price">$145</span><small>Pay today to save $10.</small></div></div><div className="hub-detail-offers"><div><p className="eyeline">Popular add-ons</p><strong>Front windows</strong><span>Add inside and outside cleaning for $35.</span></div><Button variant="secondary">Add service</Button></div><div className="detail-actions"><Button variant="secondary">Reschedule</Button><Button><MessageSquare />Message team</Button><Button className="hub-pay-button"><span><strong>Pay now</strong><small>$135 today · save $10</small></span></Button></div></section><section className="hub-records hub-history"><header><div><p className="eyeline">Recent services</p><h2>Completed visits</h2></div></header><button><Check/><span><strong>Clinic clean · 23 August</strong><small>Completed by Alex and Mia · 12 photos</small></span><b>Download receipt</b><ChevronRight/></button><button><Check/><span><strong>Clinic clean · 16 August</strong><small>Completed on time · 11 photos</small></span><b>View report</b><ChevronRight/></button></section></div>;
 }
 
 export function RoleDetails({ role, command }: { role: TitanRole; command: React.ReactNode }) {

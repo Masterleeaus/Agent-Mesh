@@ -27,3 +27,11 @@ test("coverage snapshot enumerates 300 configurations and 6300 adapter projectio
   assert.equal(VERTICAL_PROFILE_SLOTS.filter((slot) => slot.disposition === "IDENTITY_PENDING").length, 10);
   assert.ok(VERTICAL_PROFILE_SLOTS.every((slot) => slot.disposition === "IDENTITY_PENDING" ? slot.label === null : slot.canonical_ref === null));
 });
+
+test("coverage snapshot binds the exact canonical issue-body digests", () => {
+  assert.deepEqual(buildDistributionCoverageSnapshot().source_issue_body_hashes, [
+    { issue: 719, sha256: "65aa851baa2a8f3e247641c8787da0f1d4520831e4c3124282ef013e1482d97c" },
+    { issue: 1042, sha256: "763bdcf31676d2a657c25847676a4a74931432346c62afbcd3ec189cf962a1b9" },
+    { issue: 1068, sha256: "da5b8a5a674a8463251beb2eff9154f1e6d0c8b49671ad12e7a3b38a013e513f" },
+  ]);
+});

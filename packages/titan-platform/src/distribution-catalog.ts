@@ -196,7 +196,7 @@ export function buildDistributionCoverageSnapshot(): DistributionCoverageSnapsho
     source_issue_body_hashes: Object.freeze([
       Object.freeze({ issue: 719 as const, sha256: "65aa851baa2a8f3e247641c8787da0f1d4520831e4c3124282ef013e1482d97c" }),
       Object.freeze({ issue: 1042 as const, sha256: "763bdcf31676d2a657c25847676a4a74931432346c62afbcd3ec189cf962a1b9" }),
-      Object.freeze({ issue: 1068 as const, sha256: "dfcda6d835f92c4709685f6cd0796e0f51ad889f1063ae44f37d641e5370a82f" }),
+      Object.freeze({ issue: 1068 as const, sha256: "da5b8a5a674a8463251beb2eff9154f1e6d0c8b49671ad12e7a3b38a013e513f" }),
     ]),
     schema: "titan.distribution-coverage/v1",
     source_owners: Object.freeze([1042, 719, 1068] as const),

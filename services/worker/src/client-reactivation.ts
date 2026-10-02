@@ -99,7 +99,7 @@ async function emitClientReactivation(client: DatabaseClient, inactive: Inactive
 export async function processClientReactivation(client: DatabaseClient, automation: AutomationRow): Promise<RunResult> {
   const result: RunResult = { automationId: automation.id, accountId: automation.account_id, sent: 0, skipped: 0, errors: 0 };
   for (const inactive of await findInactiveClients(client, automation)) {
-    try { (await emitClientReactivation(client, inactive, automation.id)) ? result.sent++ : result.skipped++; }
+    try { if (await emitClientReactivation(client, inactive, automation.id)) result.sent++; else result.skipped++; }
     catch (error) { result.errors++; logger.error("client-reactivation: failed to emit", error, { clientId: inactive.id }); }
   }
   return result;
