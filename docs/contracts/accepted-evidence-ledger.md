@@ -7,13 +7,14 @@ Status: active for the certified job-completion slice (`titan.business.accepted-
 | Concern | Canonical owner | Boundary |
 | --- | --- | --- |
 | Authority and consequential execution | `packages/tools/execution-gateway.mjs` | Decides whether a provider may run and requires independent verification. |
+| Workforce production composition | `services/workforce/src/field-service-runtime.mjs` | Persists gateway transitions in the company-scoped evidence table, normalizes verified accepted evidence through the canonical ledger, and rebuilds the job projection on read. |
 | Accepted factual history | `packages/tools/accepted-evidence-ledger.mjs` | Append-only, company-scoped records. Corrections are new records with `supersedes_evidence_id`. |
 | Job current-state projection | `rebuildJobProjection()` in the accepted-evidence ledger | Deterministically rebuilds a read projection; it is not a second domain store. |
 | Restart/recovery evidence | `packages/offline/restart-evidence-ledger.mjs` | Operational recovery evidence only; it is not business fact. |
 | Workforce/value analytics | `packages/titan-platform/src/workforce-evidence/*` | Derived performance/value evidence; it cannot manufacture authority or business fact. |
 | Provider receipts | `ExecutionGateway` evidence sink input | Intermediate execution history; provider acknowledgement is never a verified outcome. |
 
-This matrix is intentionally scoped to the job-completion slice. The linked inventory classifies other active ledger-named sources and their reachability so that recovery, configuration audit, commercial projections, development tooling, and value analytics are not mistaken for accepted factual history.
+This matrix is intentionally scoped to the certified job-completion slice. The linked inventory combines active ledger-named sources with the critical gateway, runtime adapter, and restart-checkpoint paths, and records their reachability so recovery, configuration audit, commercial projections, development tooling, and value analytics are not mistaken for accepted factual history. It is not yet a repository-wide exhaustive census of every evidence-bearing module; issue #1235 remains open for the broader scan and convergence.
 
 ## Certified flow
 

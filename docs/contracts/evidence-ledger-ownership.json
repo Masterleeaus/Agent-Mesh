@@ -1,6 +1,11 @@
 {
   "schema": "titan.evidence-ledger-ownership.v1",
   "accepted_factual_owner": "packages/tools/accepted-evidence-ledger.mjs",
+  "ownership_critical_paths": [
+    "packages/tools/execution-gateway.mjs",
+    "services/workforce/src/field-service-runtime.mjs",
+    "packages/offline/restart-checkpoint.mjs"
+  ],
   "inventory": [
     {
       "path": "packages/tools/accepted-evidence-ledger.mjs",
@@ -9,6 +14,29 @@
       "durability": "The Workforce adapter persists accepted entries in its company-scoped evidence table; the ledger class itself is an in-memory validator/reducer.",
       "consumers": ["services/workforce/src/field-service-runtime.mjs"],
       "limitations": ["Not yet the accepted factual history for every business domain.", "Broader projection and placement convergence remains open under #1235 and #1233."]
+    },
+    {
+      "path": "packages/tools/execution-gateway.mjs",
+      "role": "execution-provider-receipt",
+      "scope": "Governed provider execution transitions and independent outcome verification; acknowledgement is an intermediate state and cannot produce a VERIFIED result by itself.",
+      "durability": "Emits transition receipts to an injected evidence sink; its default completed-execution cache is in-memory.",
+      "consumers": ["services/workforce/src/field-service-runtime.mjs"],
+      "limitations": ["This gateway is not the accepted factual history owner."]
+    },
+    {
+      "path": "services/workforce/src/field-service-runtime.mjs",
+      "role": "execution-provider-receipt",
+      "scope": "Production composition for the bounded work-order completion flow; persists gateway receipts in the company-scoped evidence table, admits accepted evidence through the canonical ledger, and rebuilds the job-completion projection on read.",
+      "durability": "SQLite evidence rows persist transitions and normalized accepted records; projection is reconstructed at read time.",
+      "consumers": ["services/workforce/src/production-runtime-bootstrap.ts"],
+      "limitations": ["This is the only inventoried runtime adapter to the canonical ledger, not evidence that other business domains have converged.", "Cross-company storage placement and isolation remain coordinated with #1233."]
+    },
+    {
+      "path": "packages/offline/restart-checkpoint.mjs",
+      "role": "restart-recovery-evidence",
+      "scope": "Operational restart checkpoint creation and recovery coordination; checkpoint state is not an accepted business outcome.",
+      "durability": "Delegates to the restart-evidence persistence contract.",
+      "consumers": ["packages/offline/restart-evidence-ledger.mjs"]
     },
     {
       "path": "packages/offline/restart-evidence-ledger.mjs",

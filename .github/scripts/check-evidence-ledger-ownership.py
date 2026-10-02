@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Require every active ledger-named source file to have an explicit role."""
+"""Require active ledger-named and ownership-critical sources to be classified."""
 import json
 from pathlib import Path
 import sys
@@ -44,7 +44,18 @@ def main():
             raise ValueError(f"incomplete classification: {path}")
         by_path[path] = row
 
-    sources = active_ledger_sources()
+    critical = document.get("ownership_critical_paths")
+    if not isinstance(critical, list) or not critical or any(not isinstance(path, str) for path in critical):
+        raise ValueError("ownership_critical_paths must be a non-empty array of repository paths")
+    for path in critical:
+        if not (ROOT / path).is_file():
+            raise ValueError(f"ownership-critical source does not exist: {path}")
+    for row in rows:
+        consumers = row.get("consumers")
+        if not isinstance(consumers, list) or any(not isinstance(path, str) or not (ROOT / path).is_file() for path in consumers):
+            raise ValueError(f"consumer paths must exist and be listed as an array: {row['path']}")
+
+    sources = active_ledger_sources() | set(critical)
     missing = sorted(sources - by_path.keys())
     stale = sorted(by_path.keys() - sources)
     if missing or stale:
@@ -56,7 +67,7 @@ def main():
     accepted = [row["path"] for row in rows if row["role"] == "accepted-factual-history"]
     if accepted != [document.get("accepted_factual_owner")]:
         raise ValueError("exactly the declared accepted factual owner must hold that role")
-    print(f"Evidence ledger ownership inventory is complete ({len(sources)} active ledger-named sources).")
+    print(f"Evidence ownership inventory is complete ({len(sources)} ledger-named or ownership-critical sources).")
     return 0
 
 
