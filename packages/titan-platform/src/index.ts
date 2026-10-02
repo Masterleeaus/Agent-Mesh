@@ -5,6 +5,7 @@ export * from "./workforce-native/index.js";
 export * from "./workforce-delegation/index.js";
 export * from "./intelligence.js";
 export * from "./business-ops.js";
+export * from "./business-evidence.js";
 export * from "./memory-knowledge.js";
 export * from "./memory-ingestion.js";
 export * from "./user-experience.js";
