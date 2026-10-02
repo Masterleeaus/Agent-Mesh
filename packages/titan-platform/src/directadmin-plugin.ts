@@ -160,7 +160,7 @@ export type DirectAdminApiFetch = (input: string | URL, init?: RequestInit) => P
 export class DirectAdminTitanApiClient {
   constructor(
     private readonly context: DirectAdminTitanContext,
-    private readonly fetcher: DirectAdminApiFetch = fetch,
+    private readonly fetcher: DirectAdminApiFetch = (input, init) => fetch(input, init),
     private readonly requestId: () => string = () => crypto.randomUUID(),
   ) {}
 

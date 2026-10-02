@@ -93,7 +93,7 @@ async function emitEstimateFollowup(client: DatabaseClient, est: EligibleEstimat
 export async function processEstimateFollowups(client: DatabaseClient, automation: AutomationRow): Promise<RunResult> {
   const result: RunResult = { automationId: automation.id, accountId: automation.account_id, sent: 0, skipped: 0, errors: 0 };
   for (const est of await findEligibleEstimates(client, automation)) {
-    try { (await emitEstimateFollowup(client, est, automation.id)) ? result.sent++ : result.skipped++; }
+    try { if (await emitEstimateFollowup(client, est, automation.id)) result.sent++; else result.skipped++; }
     catch (error) { result.errors++; logger.error("estimate-followup: failed to emit", error, { estimateId: est.id }); }
   }
   return result;

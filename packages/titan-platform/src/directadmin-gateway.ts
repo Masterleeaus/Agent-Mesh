@@ -7,6 +7,22 @@ export type DirectAdminProjection = Readonly<{
   company_id: string; source: string; freshness: string | null;
   evidence_refs: readonly string[]; data: unknown;
 }>;
+
+/** Validate the transport envelope at both ingress and browser boundaries. A
+ * correctly stamped outer envelope cannot relabel another company's projection. */
+export function assertDirectAdminProjection(value: unknown, company_id: string): asserts value is DirectAdminProjection {
+  if (!value || typeof value !== 'object') throw new Error('directadmin-invalid-projection');
+  const projection = value as DirectAdminProjection;
+  const data = projection.data as Record<string, unknown> | null;
+  if (projection.company_id !== company_id || !data || typeof data !== 'object' || Array.isArray(data) ||
+      data.company_id !== company_id || typeof data.schema !== 'string' || !data.schema ||
+      typeof projection.source !== 'string' || !projection.source.trim() || projection.source.length > 1024 ||
+      (projection.freshness !== null && (typeof projection.freshness !== 'string' || !Number.isFinite(Date.parse(projection.freshness)))) ||
+      !Array.isArray(projection.evidence_refs) || projection.evidence_refs.length > 256 ||
+      projection.evidence_refs.some(ref => typeof ref !== 'string' || !ref.trim() || ref.length > 2048)) {
+    throw new Error('directadmin-invalid-projection');
+  }
+}
 /** Composition supplies canonical projection owners and governed intent ingress.
  * revalidate MUST be called again by the execution owner at authorization/effect,
  * including queued work. A successful ingress response is only REQUESTED. */
@@ -15,8 +31,8 @@ export type DirectAdminGatewayOwners = Readonly<{
   requestIntent: (plugin: DirectAdminPluginId, intent: GovernedIntentRequest,
     context: DirectAdminBridgeContext, revalidate: () => Promise<DirectAdminBridgeContext>) => Promise<{ receipt_id: string }>;
 }>;
-const json = (status: number, body: unknown, clear = false) => new Response(JSON.stringify(body), {
-  status, headers: { ...DIRECTADMIN_RESPONSE_HEADERS, ...(clear ? { 'set-cookie': DIRECTADMIN_CLEAR_SESSION_COOKIE } : {}) },
+const json = (status: number, body: unknown, sessionCookie?: string) => new Response(JSON.stringify(body), {
+  status, headers: { ...DIRECTADMIN_RESPONSE_HEADERS, ...(sessionCookie ? { 'set-cookie': sessionCookie } : {}) },
 });
 async function body(request: Request): Promise<Record<string, unknown>> {
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json' || request.headers.has('content-encoding')) throw new Error('invalid-body');
@@ -58,13 +74,13 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
       if (request.method === 'GET' && path === '/v1/directadmin/context') return json(200, session.context);
       if (request.method === 'POST' && path === '/v1/directadmin/logout') {
         await session.logout();
-        return json(200, { status: 'reauthentication-required' }, true);
+        return json(200, { status: 'reauthentication-required' }, DIRECTADMIN_CLEAR_SESSION_COOKIE);
       }
       if (request.method === 'POST' && path === '/v1/directadmin/company') {
         const input = await body(request);
         if (typeof input.company_id !== 'string' || Object.keys(input).length !== 1) return json(400, { error: 'invalid-company-selection' });
-        await session.switchCompany(input.company_id);
-        return json(200, { status: 'reauthentication-required' }, true);
+        const switched = await session.switchCompany(input.company_id);
+        return json(200, { status: 'context-changed' }, switched.set_cookie);
       }
       const route = /^\/v1\/directadmin\/(titan_zero|titan_operations|titan_web|titan_workforce)\/(projection|intents)$/.exec(path);
       if (!route) return json(404, { error: 'unknown-plugin-route' });
@@ -72,7 +88,7 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
       if (request.method === 'GET' && route[2] === 'projection') {
         const context = await session.revalidate();
         const projection = await owners.projection(plugin, context);
-        if (projection.company_id !== context.company_id) throw new Error('projection-scope');
+        assertDirectAdminProjection(projection, context.company_id);
         await session.revalidate(); // suppress an in-flight response after a switch/revocation
         return json(200, { context, projection });
       }

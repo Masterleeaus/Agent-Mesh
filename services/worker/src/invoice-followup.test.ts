@@ -51,7 +51,8 @@ describe("findDueFollowups", () => {
 
     expect(result).toEqual([AUTOMATION]);
     expect(client.query).toHaveBeenCalledWith(
-      expect.stringContaining("invoice_followup")
+      expect.stringContaining("invoice_followup"),
+      [expect.any(String)]
     );
   });
 
@@ -143,9 +144,9 @@ describe("emitInvoiceFollowup", () => {
   it("inserts audit_log entry and returns true for new follow-up", async () => {
     const queryFn = vi.fn();
     // First call: check existing (none found)
-    queryFn.mockResolvedValueOnce({ rowCount: 0 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 0 });
     // Second call: insert
-    queryFn.mockResolvedValueOnce({ rowCount: 1 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 1 });
     const client = { query: queryFn } as unknown as Client;
 
     const result = await emitInvoiceFollowup(client, INVOICE, AUTOMATION.id, 7);
@@ -161,8 +162,8 @@ describe("emitInvoiceFollowup", () => {
 
   it("returns false and skips insert if follow-up already exists for cadence step", async () => {
     const queryFn = vi.fn();
-    // First call: check existing (found one)
-    queryFn.mockResolvedValueOnce({ rowCount: 1 });
+    // First call: check existing (found matching cadence)
+    queryFn.mockResolvedValueOnce({ rows: [{ new_value: JSON.stringify({ days_overdue_step: 7 }) }], rowCount: 1 });
     const client = { query: queryFn } as unknown as Client;
 
     const result = await emitInvoiceFollowup(client, INVOICE, AUTOMATION.id, 7);
@@ -173,8 +174,8 @@ describe("emitInvoiceFollowup", () => {
 
   it("stores cadence step and invoice details in new_value", async () => {
     const queryFn = vi.fn();
-    queryFn.mockResolvedValueOnce({ rowCount: 0 });
-    queryFn.mockResolvedValueOnce({ rowCount: 1 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 0 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 1 });
     const client = { query: queryFn } as unknown as Client;
 
     await emitInvoiceFollowup(client, INVOICE, AUTOMATION.id, 14);
@@ -192,18 +193,19 @@ describe("emitInvoiceFollowup", () => {
     expect(newValue.followup_queued_at).toBeDefined();
   });
 
-  it("checks idempotency using cadence step in new_value jsonb", async () => {
+  it("loads company-scoped cadence evidence through the portable row contract", async () => {
     const queryFn = vi.fn();
-    queryFn.mockResolvedValueOnce({ rowCount: 0 });
-    queryFn.mockResolvedValueOnce({ rowCount: 1 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 0 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 1 });
     const client = { query: queryFn } as unknown as Client;
 
     await emitInvoiceFollowup(client, INVOICE, AUTOMATION.id, 7);
 
-    // The check query should filter by days_overdue_step in the jsonb
+    // Cadence matching uses parsed evidence, without PostgreSQL-only JSON SQL
     const checkArgs = queryFn.mock.calls[0];
-    expect(checkArgs[0]).toContain("days_overdue_step");
-    expect(checkArgs[1]).toContain(String(7));
+    expect(checkArgs[0]).toContain("SELECT new_value");
+    expect(checkArgs[0]).toContain("account_id = $2");
+    expect(checkArgs[1]).toEqual([INVOICE.id, INVOICE.account_id]);
   });
 });
 
@@ -223,11 +225,11 @@ describe("processInvoiceFollowup", () => {
     };
     queryFn.mockResolvedValueOnce({ rows: [invoice28days] });
     // emitInvoiceFollowup for step 7: check (not exists)
-    queryFn.mockResolvedValueOnce({ rowCount: 0 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 0 });
     // emitInvoiceFollowup for step 7: insert
-    queryFn.mockResolvedValueOnce({ rowCount: 1 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 1 });
     // emitInvoiceFollowup for step 14: check (already exists)
-    queryFn.mockResolvedValueOnce({ rowCount: 1 });
+    queryFn.mockResolvedValueOnce({ rows: [{ new_value: { days_overdue_step: 14 } }], rowCount: 1 });
 
     const client = { query: queryFn } as unknown as Client;
     const result = await processInvoiceFollowup(client, AUTOMATION);
@@ -251,9 +253,9 @@ describe("processInvoiceFollowup", () => {
     };
     queryFn.mockResolvedValueOnce({ rows: [invoice8days] });
     // emitInvoiceFollowup for step 7: check (not exists)
-    queryFn.mockResolvedValueOnce({ rowCount: 0 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 0 });
     // emitInvoiceFollowup for step 7: insert
-    queryFn.mockResolvedValueOnce({ rowCount: 1 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 1 });
 
     const client = { query: queryFn } as unknown as Client;
     const result = await processInvoiceFollowup(client, autoNoConfig);
@@ -275,9 +277,9 @@ describe("processInvoiceFollowup", () => {
     // inv-1 step 7 check: throws
     queryFn.mockRejectedValueOnce(new Error("connection lost"));
     // inv-2 step 7 check: not exists
-    queryFn.mockResolvedValueOnce({ rowCount: 0 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 0 });
     // inv-2 step 7 insert
-    queryFn.mockResolvedValueOnce({ rowCount: 1 });
+    queryFn.mockResolvedValueOnce({ rows: [], rowCount: 1 });
 
     const client = { query: queryFn } as unknown as Client;
     const result = await processInvoiceFollowup(client, AUTOMATION);
