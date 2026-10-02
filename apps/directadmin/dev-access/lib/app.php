@@ -359,8 +359,7 @@ function directadmin_git_command_args($context,$arguments){
   '-c','core.fsmonitor=false',
   '-c','credential.helper=',
   '-c','diff.external=',
-  '--no-pager',
-  '--no-optional-locks'
+  '--no-pager'
  ],$arguments);
 }
 function directadmin_git_environment(){
