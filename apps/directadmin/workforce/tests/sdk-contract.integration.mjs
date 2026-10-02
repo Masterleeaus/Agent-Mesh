@@ -69,7 +69,7 @@ test('published SDK without commissioned CSRF/session fails closed in real execu
   } finally { await browser?.close(); await rm(folder, { recursive: true, force: true }); }
 });
 
-test('packaged cockpit handles hosted-route loss, governed cancel, company change, expired-session response and shared logout in a real browser', async () => {
+test('packaged cockpit handles owner loss, governed cancel, context expiry and receipt invalidation in a real browser', async () => {
   const { execFileSync } = await import('node:child_process');
   const { chromium } = await import('@playwright/test');
   const folder = await mkdtemp(join(tmpdir(), 'workforce-browser-acceptance-'));
@@ -78,6 +78,7 @@ test('packaged cockpit handles hosted-route loss, governed cancel, company chang
   const requests = [];
   const acceptedIntents = [];
   let activeCompany = 'company-a';
+  let contextLifetimeMs = 15 * 60_000;
   let ownerAvailable = false;
   let expireNextIntent = false;
   let loggedOut = false;
@@ -102,7 +103,7 @@ test('packaged cockpit handles hosted-route loss, governed cancel, company chang
   };
   const contextFor = company_id => ({ schema: 'titan.directadmin.session/v1', actor_id: 'browser-fixture-actor', company_id,
     company_ids: [company_id], context_revision: `revision-${company_id}`, session_revision: 7, da_role: 'user',
-    expires_at: Date.now() + 15 * 60_000, authority: 'not-carried' });
+    expires_at: Date.now() + contextLifetimeMs, authority: 'not-carried' });
   const projectionFor = company_id => ({ company_id, source: 'controlled-test-http-owner', freshness: new Date().toISOString(), evidence_refs: [],
     data: { company_id, schema: 'titan.workforce-cockpit.v1',
       discovery: { company_id, workers: [{ company_id, worker_id: `${company_id}-worker`, kind: 'digital', role: 'worker', active: true, capabilities: ['work.cancel'] }],
@@ -189,6 +190,18 @@ test('packaged cockpit handles hosted-route loss, governed cancel, company chang
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
+    const submitCancel = async (targetPage, companyId, reason) => {
+      await targetPage.getByRole('button', { name: 'Controls', exact: true }).click();
+      await targetPage.getByLabel('Operation').selectOption('cancel');
+      await targetPage.getByLabel('Work item').selectOption(`${companyId}-work`);
+      await targetPage.getByLabel('Reason', { exact: true }).fill(reason);
+      const receiptId = `browser-fixture-receipt-${acceptedIntents.length + 1}`;
+      await targetPage.getByRole('button', { name: 'Submit governed request' }).click();
+      await targetPage.getByText('Requested', { exact: true }).waitFor();
+      await targetPage.getByRole('button', { name: 'Evidence', exact: true }).click();
+      await targetPage.getByText(receiptId, { exact: true }).waitFor();
+      return receiptId;
+    };
     await page.goto(origin);
     await page.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.').waitFor();
     assert.equal(requests.filter(item => item.path === '/v1/directadmin/titan_workforce/projection').length, 1, 'real shared SDK attempted the same-origin owner route');
@@ -237,6 +250,24 @@ test('packaged cockpit handles hosted-route loss, governed cancel, company chang
     assert.equal(await page.getByText('company-a-work', { exact: true }).count(), 0);
     assert.equal(await page.getByText('browser-fixture-receipt-1', { exact: true }).count(), 0, 'company change clears the prior receipt');
 
+    const switchReceipt = await submitCancel(page, 'company-b', 'Company switch receipt fixture');
+    assert.equal(switchReceipt, 'browser-fixture-receipt-2');
+    // The actual packaged pagehide listener must clear the receipt before a BFCache restore reconnects.
+    await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pagehide', { persisted: true })));
+    await page.getByText('Context changed. Reconnect to load permitted Workforce.').waitFor();
+    assert.equal(await page.getByText(switchReceipt, { exact: true }).count(), 0, 'pagehide clears a pending-view receipt');
+    assert.equal(await page.getByText('company-b', { exact: true }).count(), 0);
+    await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })));
+    await page.getByText('company-b', { exact: true }).waitFor();
+    assert.equal(await page.getByText(switchReceipt, { exact: true }).count(), 0, 'BFCache reconnect loads no prior request receipt');
+
+    const reloadReceipt = await submitCancel(page, 'company-b', 'Reload receipt fixture');
+    await page.reload();
+    await page.getByText('company-b', { exact: true }).waitFor();
+    assert.equal(await page.getByText(reloadReceipt, { exact: true }).count(), 0, 'full reload starts with no in-memory receipt');
+    await page.getByRole('button', { name: 'Evidence', exact: true }).click();
+    await page.getByText('Submit a permitted governed request to inspect its receipt.').waitFor();
+
     const expiryContext = await browser.newContext();
     await expiryContext.addCookies([{ name: 'titan_test_session', value: 'browser-fixture-only', url: origin, sameSite: 'Strict' }]);
     const expiryPage = await expiryContext.newPage();
@@ -254,14 +285,30 @@ test('packaged cockpit handles hosted-route loss, governed cancel, company chang
     assert.equal(await expiryPage.getByText('session-expired', { exact: true }).count(), 0, 'transport diagnostics are not rendered');
     await expiryContext.close();
 
+    const logoutReceipt = await submitCancel(page, 'company-b', 'Logout receipt fixture');
     const helper = await context.newPage();
     await helper.goto(`${origin}/logout-helper`);
     await helper.waitForFunction(() => typeof window.logoutSharedSession === 'function');
     await helper.evaluate(() => window.logoutSharedSession());
     await page.getByText('Context changed. Reconnect to load permitted Workforce.').waitFor();
     assert.equal(await page.getByText('company-b', { exact: true }).count(), 0, 'shared logout invalidation clears company data');
+    assert.equal(await page.getByText(logoutReceipt, { exact: true }).count(), 0, 'shared logout invalidation clears the latest receipt');
     assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0);
     assert.equal(requests.some(item => item.method === 'POST' && item.path === '/v1/directadmin/logout'), true, 'logout uses the shared SDK route');
+
+    loggedOut = false;
+    contextLifetimeMs = 1200;
+    const timerContext = await browser.newContext();
+    await timerContext.addCookies([{ name: 'titan_test_session', value: 'browser-fixture-only', url: origin, sameSite: 'Strict' }]);
+    const timerPage = await timerContext.newPage();
+    timerPage.on('pageerror', error => errors.push(error.message));
+    await timerPage.goto(origin);
+    await timerPage.getByText('company-b', { exact: true }).waitFor();
+    await timerPage.getByText('Current hosted projection', { exact: true }).waitFor();
+    await timerPage.getByText('Context changed. Reconnect to load permitted Workforce.', { timeout: 5000 }).waitFor();
+    assert.equal(await timerPage.getByText('company-b', { exact: true }).count(), 0, 'the SDK local expires_at timer invalidates the real cockpit session');
+    assert.equal(await timerPage.getByRole('button', { name: 'Submit governed request' }).count(), 0);
+    await timerContext.close();
     for (const item of requests.filter(item => item.path.startsWith('/v1/directadmin/'))) {
       assert.equal(item.headers['x-titan-csrf'], csrf, 'shared SDK supplies its bootstrapped nonce');
       assert.equal(item.headers.cookie?.includes(cookie), true, 'same-origin requests retain the host cookie');
