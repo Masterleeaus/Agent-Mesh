@@ -55,6 +55,7 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
   }, bootstrapProviderFor(auth, 'workforce-consumer', { csrf_token: csrf }));
   let credential = auth.token;
   let cookie = `da_session=fixture-authenticated; __Host-titan-da-session=${credential}`;
+  const responses = [];
   const fetcher = async (path, init) => {
     const bootstrap = path === '/v1/directadmin/bootstrap';
     if (!bootstrap) assert.equal(init?.headers?.['X-Titan-CSRF'], csrf, 'SDK must send the separately bootstrapped CSRF token');
@@ -64,6 +65,7 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
         'x-titan-csrf': bootstrap ? null : (init?.headers?.['X-Titan-CSRF'] ?? null),
         'x-titan-da-bootstrap-csrf': bootstrap ? (init?.headers?.['X-Titan-DA-Bootstrap-CSRF'] ?? null) : null } });
     const response = await gateway(request);
+    responses.push({ path, status: response.status });
     const rotated = response.headers.get('set-cookie')?.match(/^__Host-titan-da-session=([^;]+)/)?.[1];
     if (rotated) { credential = rotated; cookie = `da_session=fixture-authenticated; __Host-titan-da-session=${credential}`; }
     return response;
@@ -75,7 +77,7 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
   const unsubscribe = session.subscribe(() => { sessionInvalidations++; controller.invalidate(); });
   t.after(unsubscribe);
   await controller.connect();
-  assert.equal(controller.state.phase, 'ready', controller.state.error);
+  assert.equal(controller.state.phase, 'ready', `${controller.state.error}; responses=${JSON.stringify(responses)}`);
   assert.equal(controller.state.context.company_id, 'company-a');
   assert.equal(controller.state.status.work[0].state, 'COMPLETED');
   assert.equal(verifiedOutcome(controller.state.status.work[0]), false);
