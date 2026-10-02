@@ -1,0 +1,46 @@
+# Developer Portal recovery runbook
+
+Status: preparation only. No live server backup, upload, install, delete, or restore was performed for this runbook. Use only after the server owner authorizes a specific maintenance window and the recovery destination.
+
+## Installed paths
+
+The stable DirectAdmin plugin ID is `titan_dev_access`:
+
+```text
+/usr/local/directadmin/plugins/titan_dev_access/
+```
+
+Resolve `DA_HOME` from the exact DirectAdmin account that owns the request. Do not assume that the DirectAdmin role name is the Unix account name. The plugin's per-account state and SSH authorization file are:
+
+```text
+$DA_HOME/.titan-dev-access/csrf.key
+$DA_HOME/.ssh/authorized_keys
+```
+
+The CSRF key is secret material. The SSH authorization file grants access even though it contains public keys. Do not print either file, attach it to GitHub, or send it to Codex. Private keys are outside this plugin's expected state and must not be inspected or copied as part of this procedure.
+
+## Before a future replacement
+
+1. Confirm the DirectAdmin version, plugin ID, installed version, effective Unix owner, and the exact `DA_HOME` for the affected account. Record paths and metadata only; do not collect credentials or secret values.
+2. Use the host's approved backup facility and an encrypted, access-restricted destination outside the plugin tree. Back up `/usr/local/directadmin/plugins/titan_dev_access/` as a complete tree while preserving numeric ownership, permissions, timestamps, ACLs, extended attributes, and symlink metadata. Record a SHA-256 manifest for the backup artifact and verify it after writing.
+3. Preserve `$DA_HOME/.titan-dev-access/csrf.key` only through the same approved secret-capable backup facility, with access limited to the server owner/operators who need recovery. Its expected directory/file modes are `0700`/`0600`; record modes and ownership without recording its contents or value. Do not rotate, regenerate, or replace it during a package-only recovery.
+4. Preserve `$DA_HOME/.ssh/authorized_keys` through the site's approved access-control backup process, retaining owner and modes. Do not display its contents in evidence. Do not include, read, or copy any private key.
+5. Retain the exact package artifacts and checksum files separately from the server backup. v1.3.2 SHA-256 `22b54eabaf2a12a5bba04c9b21d58f798f93b7c1a6845362035edf574c488755` and v1.3.1 SHA-256 `a41d5217cd914bcbba5984712ec4f130001be50afe894d466be86d08d70f73cc` are historical artifact references only, not validated rollbacks. Library v1.3.3 SHA-256 `6145b02a9fc0626f31bf7350f881419cf5cfe41036879b724e5abf4c38addbbc` is also retained for audit but must not be installed: synthetic tests found malformed/multiline public-key acceptance and Git remote mutation/read-output gaps. The v1.3.4 source security candidate does not yet have a final archive hash; use it only after the exact-head PHP archive gate passes and independent source/archive review is recorded.
+6. Test the chosen update/recovery procedure on a disposable DirectAdmin host matching the installed host version. Verify role routes, CSRF form submission, install/update failure handling, ownership/modes, and recovery before scheduling any production operation.
+
+## Recovery sequence
+
+1. Stop before using Plugin Manager Delete/Add or replacing files if the exact in-place update behavior and failure semantics have not been proven on the disposable host. DirectAdmin may reject a duplicate plugin ID, and failed Add behavior can remove the plugin. The current `update.sh` is a read-only validator, not an updater or rollback mechanism.
+2. Verify the selected archive's checksum and flat archive root. Record the pre-operation plugin-tree backup identifier and checksum manifest.
+3. Follow only the already-tested, owner-authorized recovery procedure for the exact DirectAdmin version. Restore the backed-up plugin tree to `/usr/local/directadmin/plugins/titan_dev_access/`, preserving ownership and metadata. Do not restore, replace, or rotate the account CSRF key or SSH authorization file as part of a plugin-code restore.
+4. Verify the restored plugin version, route executability, role-page rendering, and valid/invalid CSRF behavior through actual DirectAdmin requests. Confirm the CSRF key and SSH authorization file remain unchanged using the approved host procedure; do not disclose their contents.
+5. If verification fails, keep the plugin disabled from further use through the host owner's approved procedure and preserve logs/metadata for diagnosis. Do not broaden permissions, add sudo/root execution, or weaken CSRF validation to make the page load.
+
+## Current compatibility limits
+
+- Installed Titan Dev Access 1.1.3 has a reproduced invalid-CSRF response on a harmless `pwd` form submission and is not an operationally validated rollback.
+- v1.3.1 is retained as an artifact reference; downgrade behavior has not been tested.
+- v1.3.2 is a historical, checksum-verified artifact only; v1.3.3 is an unsafe prior candidate with confirmed synthetic validation gaps. Neither is a current install choice or a proven rollback.
+- v1.3.4 is the source security candidate for strict SSH-key and HOME-bound Git fixes. Its package hash and review status must be filled from exact-head hosted PHP/package and independent review evidence before use; it has not been tested on DirectAdmin.
+- No supported in-place update path or live rollback has been demonstrated. Treat recovery as unproven until the disposable-host sequence passes.
+- This document contains no secret values and does not authorize any server-side action.
