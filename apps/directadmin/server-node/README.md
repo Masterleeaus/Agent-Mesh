@@ -62,3 +62,59 @@ Keep the existing mission open. No successor or duplicate host is created by thi
 - **Hosted runtime (#811):** active claim `agent/issue-811` / PR #1201 owns Workforce host work. Its storage-aware readiness slice still declares missing production bootstrap/dispatch/provider integration. Coordinate there; do not create another Workforce service. Server Node composition remains within this existing #1155/#812 mission.
 - **Estate discovery (#812/#1045):** supply owned health/dependency projections for optional Frappe, databases, Redis, DNS/TLS, email, apps, devices and backups; absent observations must remain unknown.
 - **Certification (#812/#1157):** on an explicitly authorized disposable supported host, verify OS/DirectAdmin/Node/systemd/util-linux prerequisites and exact artifact checksum; install as the package administrator; prove service-user permissions and blocked out-of-state writes; reboot/crash and recheck identity/receipts; exercise real scoped authority revocation and two-company denials; execute one harmless allowlisted lifecycle operation with independent observation and accepted evidence; rehearse governed snapshot recovery; stage a different artifact and inject restart failure to verify exact rollback. Record host, OS, versions, source/artifact digests and sanitized evidence. No such clean-host run has occurred.
+
+## Browser to private Workforce gateway relay
+
+The DirectAdmin listener owns HTTPS on port 2222. A browser on that origin must call the Server Node role RAW endpoint, which forwards only a fixed route set to the optional #811 Workforce directAdmin Fetch gateway. Apache 443 configuration cannot install a handler on DirectAdmin's port 2222.
+
+DirectAdmin documents role plugin scripts and RAW mode in its [plugin structure guide](https://docs.directadmin.com/developer/plugins/structure.html) and [RAW mode guide](https://docs.directadmin.com/developer/plugins/raw_mode.html). The official [1.57.0 changelog](https://docs.directadmin.com/changelog/version-1.57.0.html) says headers_to_env=yes populates HEADERS with URL-encoded request headers. The official [1.53.0 changelog](https://docs.directadmin.com/changelog/version-1.53.0.html) says pipe_post=yes sends POST bytes to stdin and sets POST=stdin=true. Titan DA 1.711 exceeds those feature versions. The documented description does not define a detailed HEADERS escaping grammar; the relay accepts one percent-decoded CRLF or LF header block and rejects malformed or ambiguous forms. Disposable CGI-style tests cover that contract. Real DirectAdmin panel verification remains required.
+
+### #1050 browser contract
+
+Import the static helper from the Server Node plugin and inject it into the existing #1049 session. The helper translates only exact #1049 paths and methods; it does not parse identity, issue credentials, or create receipts.
+
+    import { DirectAdminCockpitSession } from "titan-sdk";
+    import { createDirectAdminRelayFetch } from "/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs";
+    const session = new DirectAdminCockpitSession(readCurrentCsrfValue, createDirectAdminRelayFetch());
+
+The RAW endpoint is /CMD_PLUGINS/titan-server-node/directadmin-gateway.raw.
+
+| SDK request | RAW selector | Required query flags |
+| --- | --- | --- |
+| GET /v1/directadmin/context | context | headers_to_env=yes |
+| POST /v1/directadmin/logout | logout | headers_to_env=yes and pipe_post=yes |
+| POST /v1/directadmin/company | company | headers_to_env=yes and pipe_post=yes |
+| GET /v1/directadmin/titan_workforce/projection | workforce-projection | headers_to_env=yes |
+| POST /v1/directadmin/titan_workforce/intents | workforce-intents | headers_to_env=yes and pipe_post=yes |
+
+The helper also has fixed selectors for the existing Zero, Operations and Web routes. Unknown SDK paths, query strings, method changes and extra RAW query keys fail closed. #1050 still depends on its #1049 titan_workforce route allowlist addition; this relay does not edit either owner.
+
+### Operator configuration and transport
+
+The operator creates /etc/titan/server-node-directadmin-relay.json as a regular root-owned, non-group/world-writable file. It contains only origins, never credentials:
+
+    {
+      "schema": "titan.server-node.directadmin-relay.v1",
+      "public_origin": "https://<operator-approved-control-plane-host>:2222",
+      "workforce_origin": "http://127.0.0.1:3010"
+    }
+
+public_origin must exactly match #811's HostedWorkforceDependencies.directAdmin.publicOrigin. The upstream path and Host header are constructed from fixed code and that config. Use http://127.0.0.1:3010 only when Workforce is on the same host and its port is loopback-only; a separate Workforce host must use HTTPS to a private IP or .internal name with certificate validation and private DNS resolution. Public plain HTTP, redirects, caller-supplied targets/paths, and port-opening instructions are not supported. The config is absent until commissioning, so the RAW endpoint returns a sanitized 503.
+
+The relay forwards the Titan __Host-titan-da-session cookie only, plus Origin, the #1049-required same-origin Sec-Fetch-Site, Referer when needed, X-Titan-CSRF, Accept and JSON content type. Other DirectAdmin cookies are dropped. It rejects duplicate headers/cookies/query keys/JSON keys, conflicting Titan identity headers, unsupported encoding, oversized bodies, malformed context payloads, and redirects. Content-Length is recomputed. Request bodies are capped at 64 KiB with a 5 second read deadline; upstream responses are capped at 1 MiB with a 10 second total deadline. The existing #1049 gateway bounds concurrent work and returns its busy response; the relay preserves that status/body as backpressure. It does not forward Authorization, user/role environment fields, or form data as identity.
+
+The #811 mount validates the incoming Host against its HTTPS publicOrigin; this relay connects to the configured private origin but sets that fixed public Host value so the shared mount can reconstruct its canonical Fetch request. It does not open port 3010 or 3015 to the public Internet. No request/response headers, cookies, config contents, or bodies are logged.
+
+Only the shared gateway's fixed JSON security headers are returned. A single valid Set-Cookie for __Host-titan-da-session is written as its own HTTP header line, after checking the Secure, HttpOnly, Path=/, SameSite=Strict, no-Domain attributes. This supports #1049 context switching and logout without coalescing the session cookie.
+
+### Host isolation gate
+
+Cookies do not isolate by port. The #1049 host-only __Host-titan-da-session; Path=/ cookie set on titanzero.io:2222 is also sent by browsers to titanzero.io:443. Same-origin on port 2222 does not protect the cookie from the 443 marketing handler. Before commissioning, use a dedicated control-plane hostname or verify the 443 handler strips this cookie before its application receives the request. No DNS, firewall, cookie, or live host configuration was changed for this PR. Do not record cookie values in diagnostics or verification evidence.
+
+For commissioning diagnostics, verify cookie-name presence only: the browser sends the Titan cookie to the intended :2222 plugin request, and the :443 application receives no Titan cookie name after handler-level stripping (or the control plane has a separate hostname). Do not copy request headers, enable cookie/header tracing, or include values in screenshots, logs, or evidence. The automated fixture checks relay-side cookie filtering only; it cannot prove browser or 443-handler isolation.
+
+### Package and rollback
+
+The archive includes the root plugin.conf, role user/index.html, executable user/directadmin-gateway.raw, static browser helper, and official scripts/install.sh, scripts/update.sh, and scripts/uninstall.sh lifecycle entrypoints. Those lifecycle wrappers delegate to the existing Server Node lifecycle scripts. The bounded relay module is staged and checksummed with the supervised runtime; update failure restores the previous module and service artifact. Persistent control metadata and operator configuration remain outside package-managed files and are preserved by uninstall/update.
+
+Use the existing packager: node scripts/package-directadmin-plugin.mjs apps/directadmin/server-node dist/directadmin. It emits dist/directadmin/titan-server-node.tar.gz with a SHA-256. Package tests inspect the extracted archive root and modes; relay tests execute the extracted RAW entrypoint against a fake loopback Workforce gateway. These tests do not certify the actual DirectAdmin CGI environment, TLS termination, root file ownership, firewall, hostname, or production session issuer.

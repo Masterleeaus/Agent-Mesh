@@ -1,0 +1,360 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { spawn } from "node:child_process";
+import { createServer } from "node:http";
+import { once } from "node:events";
+import { fileURLToPath } from "node:url";
+import { createDirectAdminRelayFetch } from "./images/directadmin-relay-client.mjs";
+import { packagePlugin } from "../../../scripts/package-directadmin-plugin.mjs";
+import { readBoundedBody, DIRECTADMIN_SESSION_COOKIE } from "./directadmin-relay.mjs";
+
+const sourceRoot = path.dirname(fileURLToPath(import.meta.url));
+const controlOrigin = "https://panel.example.test:2222";
+const csrf = "c".repeat(43);
+
+function setCookie(value) {
+  return DIRECTADMIN_SESSION_COOKIE + "=" + value + "; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=" + (value ? "120" : "0");
+}
+
+function headerBlock(extra = []) {
+  return encodeURIComponent([
+    "Host: panel.example.test:2222",
+    "Cookie: DAID=unrelated-cookie; " + DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret",
+    "Sec-Fetch-Site: same-origin",
+    "X-Titan-CSRF: " + csrf,
+    "Accept: application/json",
+    ...extra,
+  ].join("\r\n"));
+}
+
+function parseRaw(bytes) {
+  const split = bytes.indexOf(Buffer.from("\r\n\r\n"));
+  assert.notEqual(split, -1, "RAW entrypoint must write a complete HTTP response");
+  const headers = bytes.subarray(0, split).toString("latin1").split("\r\n");
+  const status = Number(headers.shift().split(" ")[1]);
+  const values = new Map();
+  for (const line of headers) {
+    const index = line.indexOf(":");
+    if (index < 1) continue;
+    const name = line.slice(0, index).toLowerCase();
+    const value = line.slice(index + 1).trim();
+    if (!values.has(name)) values.set(name, []);
+    values.get(name).push(value);
+  }
+  const body = bytes.subarray(split + 4);
+  assert.equal(Number(values.get("content-length")?.[0]), body.length);
+  return { status, headers: values, body };
+}
+
+async function spawnRaw(rawPath, env, input, { keepInputOpen = false } = {}) {
+  const child = spawn(rawPath, [], { env, stdio: ["pipe", "pipe", "pipe"] });
+  const out = [];
+  const err = [];
+  child.stdin.on("error", () => {});
+  child.stdout.on("data", (part) => out.push(part));
+  child.stderr.on("data", (part) => err.push(part));
+  if (!keepInputOpen) child.stdin.end(input ?? Buffer.alloc(0));
+  const [code, signal] = await once(child, "close");
+  return { code, signal, stdout: Buffer.concat(out), stderr: Buffer.concat(err) };
+}
+
+async function fixture(t, responseMode = "normal") {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "titan-da-relay-"));
+  const packageOutput = path.join(dir, "package");
+  const extracted = path.join(dir, "extract");
+  fs.mkdirSync(extracted);
+  const packed = packagePlugin({ sourceDir: sourceRoot, outputDir: packageOutput });
+  const tar = spawn("/usr/bin/tar", ["-xzf", packed.archive, "-C", extracted], { stdio: "ignore" });
+  const [tarCode] = await once(tar, "close");
+  assert.equal(tarCode, 0);
+
+  const requests = [];
+  const upstream = createServer((request, response) => {
+    const chunks = [];
+    request.on("data", (chunk) => chunks.push(chunk));
+    request.on("end", () => {
+      const record = {
+        method: request.method,
+        path: request.url,
+        headers: request.headers,
+        body: Buffer.concat(chunks),
+      };
+      requests.push(record);
+      if (responseMode === "hang") return;
+      response.setHeader("cache-control", "no-store");
+      response.setHeader("content-type", "application/json; charset=utf-8");
+      response.setHeader("x-content-type-options", "nosniff");
+      response.setHeader("referrer-policy", "no-referrer");
+      response.setHeader("content-security-policy", "default-src 'none'; frame-ancestors 'self'; base-uri 'none'; form-action 'self'");
+      response.setHeader("x-frame-options", "SAMEORIGIN");
+      if (responseMode === "set-cookie") response.setHeader("set-cookie", setCookie("new-session-fixture"));
+      if (responseMode === "clear-cookie") response.setHeader("set-cookie", setCookie(""));
+      if (responseMode === "busy") {
+        response.statusCode = 503;
+        response.end(JSON.stringify({ error: "directadmin-busy", read_only: true }));
+        return;
+      }
+      if (responseMode === "redirect") {
+        response.statusCode = 302;
+        response.setHeader("location", "https://attacker.invalid/");
+        response.end("{}");
+        return;
+      }
+      response.end(JSON.stringify({ ok: true }));
+    });
+  });
+  upstream.listen(0, "127.0.0.1");
+  await once(upstream, "listening");
+  const address = upstream.address();
+  const configPath = path.join(dir, "directadmin-relay.json");
+  const writeConfig = (workforceOrigin = "http://127.0.0.1:" + address.port, publicOrigin = controlOrigin) => {
+    fs.writeFileSync(configPath, JSON.stringify({
+      schema: "titan.server-node.directadmin-relay.v1",
+      public_origin: publicOrigin,
+      workforce_origin: workforceOrigin,
+    }), { mode: 0o644 });
+    fs.chmodSync(configPath, 0o644);
+  };
+  writeConfig();
+  const env = {
+    NODE_ENV: "test",
+    TITAN_SERVER_NODE_HOME: extracted,
+    TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_NODE_BIN: process.execPath,
+    TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_CONFIG: configPath,
+  };
+  t.after(async () => {
+    upstream.closeAllConnections();
+    await new Promise((resolve) => upstream.close(resolve));
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+  return { dir, rawPath: path.join(extracted, "user/directadmin-gateway.raw"), configPath, writeConfig, env, requests, upstream };
+}
+
+function cgi(f, { route = "context", method = "GET", headerLines = [], body = "", extraEnv = {}, queryExtras = "" } = {}) {
+  const flags = "route=" + route + "&headers_to_env=yes" + (method === "POST" ? "&pipe_post=yes" : "") + queryExtras;
+  const browserHeaders = [...headerLines];
+  if (method === "GET" && !browserHeaders.some((line) => /^(?:origin|referer):/i.test(line))) {
+    browserHeaders.push("Referer: " + controlOrigin + "/CMD_PLUGINS/titan-server-node/admin/index.html");
+  }
+  const headers = headerBlock(browserHeaders);
+  const input = Buffer.from(body, "utf8");
+  return {
+    env: {
+      ...f.env,
+      REQUEST_METHOD: method,
+      QUERY_STRING: flags,
+      HEADERS: headers,
+      ...(method === "POST" ? { POST: "stdin=true", CONTENT_LENGTH: String(input.length), CONTENT_TYPE: "application/json" } : {}),
+      ...extraEnv,
+    },
+    input,
+  };
+}
+
+test("extracted RAW role entrypoint maps Workforce projection and strips unrelated DirectAdmin cookies", async (t) => {
+  const f = await fixture(t, "set-cookie");
+  const { env, input } = cgi(f, {
+    route: "workforce-projection",
+    headerLines: ["Referer: " + controlOrigin + "/CMD_PLUGINS/titan_workforce/admin/index.html"],
+  });
+  delete env.ORIGIN;
+  const result = await spawnRaw(f.rawPath, env, input);
+  assert.equal(result.code, 0, result.stderr.toString());
+  assert.equal(result.stderr.length, 0);
+  const response = parseRaw(result.stdout);
+  assert.equal(response.status, 200);
+  assert.deepEqual(response.headers.get("set-cookie"), [setCookie("new-session-fixture")]);
+  assert.equal(response.headers.get("cache-control")[0], "no-store");
+  assert.equal(response.body.toString(), '{"ok":true}');
+  assert.equal(result.stdout.toString().includes("session-fixture-secret"), false);
+  assert.equal(result.stdout.toString().includes("unrelated-cookie"), false);
+  assert.equal(f.requests.length, 1);
+  const request = f.requests[0];
+  assert.equal(request.method, "GET");
+  assert.equal(request.path, "/v1/directadmin/titan_workforce/projection");
+  assert.equal(request.headers.host, "panel.example.test:2222");
+  assert.equal(request.headers.cookie, DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret");
+  assert.equal(request.headers.origin, undefined);
+  assert.equal(request.headers.referer, controlOrigin + "/CMD_PLUGINS/titan_workforce/admin/index.html");
+  assert.equal(request.headers["sec-fetch-site"], "same-origin");
+  assert.equal(request.headers["x-titan-csrf"], csrf);
+  assert.equal(request.headers.authorization, undefined);
+  assert.equal(request.headers["x-titan-company-id"], undefined);
+  assert.equal(request.headers["directadmin-uid"], undefined);
+  assert.equal(request.headers["directadmin-role"], undefined);
+  assert.equal(request.body.length, 0);
+});
+
+test("POST intent uses pipe_post stdin and preserves only approved SDK headers/body", async (t) => {
+  const f = await fixture(t, "clear-cookie");
+  const body = JSON.stringify({
+    company_id: "company-a",
+    actor_id: "actor-a",
+    context_revision: "context-2",
+    capability_id: "workforce.manage",
+    operation_id: "operation-2",
+    correlation_id: "correlation-2",
+    input: { action: "pause", work_id: "work-1" },
+  });
+  const { env, input } = cgi(f, {
+    route: "workforce-intents",
+    method: "POST",
+    body,
+    headerLines: [
+      "Origin: " + controlOrigin,
+      "Content-Type: application/json",
+      "Content-Length: " + Buffer.byteLength(body),
+    ],
+  });
+  const result = await spawnRaw(f.rawPath, env, input);
+  assert.equal(result.code, 0, result.stderr.toString());
+  const response = parseRaw(result.stdout);
+  assert.equal(response.status, 200);
+  assert.deepEqual(response.headers.get("set-cookie"), [setCookie("")]);
+  assert.equal(f.requests.length, 1);
+  const request = f.requests[0];
+  assert.equal(request.method, "POST");
+  assert.equal(request.path, "/v1/directadmin/titan_workforce/intents");
+  assert.equal(request.headers.host, "panel.example.test:2222");
+  assert.equal(request.headers.cookie, DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret");
+  assert.equal(request.headers["content-type"], "application/json");
+  assert.equal(request.headers["content-length"], String(Buffer.byteLength(body)));
+  assert.equal(request.headers.authorization, undefined);
+  assert.equal(request.body.toString(), body);
+});
+
+test("shared browser fetch helper maps fixed SDK routes and refuses arbitrary URLs, methods, and identity headers", async () => {
+  const calls = [];
+  const fetcher = createDirectAdminRelayFetch(async (input, init) => {
+    calls.push({ input, init });
+    return new Response("{}", { status: 200 });
+  });
+  const result = await fetcher("/v1/directadmin/titan_workforce/intents", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { Accept: "application/json", "Content-Type": "application/json", "X-Titan-CSRF": csrf },
+    body: "{}",
+  });
+  assert.equal(result.status, 200);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].input, "/CMD_PLUGINS/titan-server-node/directadmin-gateway.raw?route=workforce-intents&headers_to_env=yes&pipe_post=yes");
+  assert.equal(calls[0].init.credentials, "same-origin");
+  assert.equal((await fetcher("/v1/directadmin/context?company_id=company-a", { method: "GET" })).status, 400);
+  assert.equal((await fetcher("https://attacker.invalid/v1/directadmin/context", { method: "GET" })).status, 400);
+  assert.equal((await fetcher("/v1/directadmin/context", { method: "POST", body: "{}" })).status, 405);
+  assert.equal((await fetcher("/v1/directadmin/context", { method: "GET", headers: { "X-Titan-Actor-ID": "forged" } })).status, 400);
+  assert.equal(calls.length, 1);
+});
+
+test("duplicate headers, cookie names, query keys and JSON keys fail before Workforce", async (t) => {
+  const f = await fixture(t);
+  const badCases = [
+    cgi(f, { route: "context", headerLines: ["Host: panel.example.test:2222"] }),
+    cgi(f, { route: "context", headerLines: ["Cookie: " + DIRECTADMIN_SESSION_COOKIE + "=one; " + DIRECTADMIN_SESSION_COOKIE + "=two"] }),
+    cgi(f, { route: "context", headerLines: ["X-Titan-Actor-ID: forged"] }),
+    cgi(f, { route: "context", queryExtras: "&route=context" }),
+    cgi(f, { route: "context", queryExtras: "&target=http%3A%2F%2F127.0.0.1%3A9999" }),
+    cgi(f, { route: "company", method: "POST", body: '{"company_id":"a","company_id":"b"}',
+      headerLines: ["Origin: " + controlOrigin, "Content-Type: application/json"] }),
+    cgi(f, { route: "company", method: "POST", body: '{"company_id":["company-a"]}',
+      headerLines: ["Origin: " + controlOrigin, "Content-Type: application/json"] }),
+    cgi(f, { route: "company", method: "POST", body: '{"company_id":"company-a","actor_id":"forged"}',
+      headerLines: ["Origin: " + controlOrigin, "Content-Type: application/json"] }),
+    cgi(f, { route: "titan-zero-intents", method: "POST", body: '{"company_id":"company-a","actor_id":"actor-a","context_revision":"revision-a","capability_id":"capability-a","operation_id":"operation-a","correlation_id":"correlation-a","input":{},"role":"admin"}',
+      headerLines: ["Origin: " + controlOrigin, "Content-Type: application/json"] }),
+    cgi(f, { route: "context", headerLines: ["Origin: https://evil.example"] }),
+    cgi(f, { route: "context", headerLines: ["Authorization: Bearer forged"] }),
+  ];
+  badCases[0].env.HEADERS = encodeURIComponent([
+    "Host: panel.example.test:2222",
+    "Host: panel.example.test:2222",
+    "Cookie: " + DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret",
+    "Sec-Fetch-Site: same-origin", "X-Titan-CSRF: " + csrf, "Accept: application/json",
+  ].join("\r\n"));
+  for (const bad of badCases) {
+    const result = await spawnRaw(f.rawPath, bad.env, bad.input);
+    assert.equal(parseRaw(result.stdout).status >= 400, true);
+  }
+  assert.equal(f.requests.length, 0);
+});
+
+test("invalid and uncommissioned configuration fails closed without logging request credentials", async (t) => {
+  const f = await fixture(t);
+  const request = cgi(f, { route: "context" });
+  const valid = await spawnRaw(f.rawPath, request.env, request.input);
+  assert.equal(parseRaw(valid.stdout).status, 200);
+  assert.equal(f.requests.length, 1);
+  f.writeConfig("http://203.0.113.10:3010");
+  const publicPlainHttp = await spawnRaw(f.rawPath, request.env, request.input);
+  assert.equal(parseRaw(publicPlainHttp.stdout).status, 503);
+  assert.equal(f.requests.length, 1);
+  f.writeConfig("https://gateway.example.com:3010");
+  const nonPrivateHttps = await spawnRaw(f.rawPath, request.env, request.input);
+  assert.equal(parseRaw(nonPrivateHttps.stdout).status, 503);
+  assert.equal(f.requests.length, 1);
+  fs.unlinkSync(f.configPath);
+  const absent = await spawnRaw(f.rawPath, request.env, request.input);
+  assert.equal(parseRaw(absent.stdout).status, 503);
+  assert.equal(absent.stdout.toString().includes("session-fixture-secret"), false);
+  assert.equal(absent.stderr.length, 0);
+  assert.equal(f.requests.length, 1);
+});
+
+test("busy gateway backpressure and redirects are handled without following them", async (t) => {
+  const busy = await fixture(t, "busy");
+  const request = cgi(busy, { route: "context" });
+  const result = await spawnRaw(busy.rawPath, request.env, request.input);
+  const busyResponse = parseRaw(result.stdout);
+  assert.equal(busyResponse.status, 503);
+  assert.equal(busyResponse.body.toString(), '{"error":"directadmin-busy","read_only":true}');
+  assert.equal(busy.requests.length, 1);
+
+  const redirect = await fixture(t, "redirect");
+  const redirectRequest = cgi(redirect, { route: "context" });
+  const refused = await spawnRaw(redirect.rawPath, redirectRequest.env, redirectRequest.input);
+  assert.equal(parseRaw(refused.stdout).status, 502);
+  assert.equal(redirect.requests.length, 1);
+});
+
+test("POST body caps/timeouts and Workforce upstream timeout return bounded RAW errors", async (t) => {
+  const f = await fixture(t, "hang");
+  const body = '{"company_id":"company-a"}';
+  const post = cgi(f, {
+    route: "company",
+    method: "POST",
+    body,
+    headerLines: ["Origin: " + controlOrigin, "Content-Type: application/json", "Content-Length: " + Buffer.byteLength(body)],
+  });
+  post.env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_BODY_TIMEOUT_MS = "35";
+  const stalled = await spawnRaw(f.rawPath, post.env, undefined, { keepInputOpen: true });
+  assert.equal(parseRaw(stalled.stdout).status, 408);
+  assert.equal(f.requests.length, 0);
+
+  const tooLargeBody = "x".repeat(64 * 1024 + 1);
+  const large = cgi(f, {
+    route: "company",
+    method: "POST",
+    body: tooLargeBody,
+    headerLines: ["Origin: " + controlOrigin, "Content-Type: application/json", "Content-Length: " + Buffer.byteLength(tooLargeBody)],
+  });
+  const oversized = await spawnRaw(f.rawPath, large.env, large.input);
+  assert.equal(parseRaw(oversized.stdout).status, 413);
+  assert.equal(f.requests.length, 0);
+
+  const get = cgi(f, { route: "context" });
+  get.env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_UPSTREAM_TIMEOUT_MS = "35";
+  const timedOut = await spawnRaw(f.rawPath, get.env, get.input);
+  assert.equal(parseRaw(timedOut.stdout).status, 504);
+  assert.equal(f.requests.length, 1);
+});
+
+test("bounded body reader rejects stalled streams", async () => {
+  const { PassThrough } = await import("node:stream");
+  const stream = new PassThrough();
+  const result = readBoundedBody(stream, { timeoutMs: 20 });
+  await assert.rejects(result, (error) => error.code === "request_body_timeout");
+});
+

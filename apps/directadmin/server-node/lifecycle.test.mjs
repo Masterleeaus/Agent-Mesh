@@ -48,9 +48,22 @@ process.once("SIGTERM", () => server.close(() => process.exit(0)));
 `;
   const oldRuntime = runtime("old", true);
   const newRuntime = runtime("new", behavior !== "unready");
-  for (const name of ["plugin.conf", "package.json", "health.sh", "titan-server-node.service"]) fs.copyFileSync(path.join(root, name), path.join(source, name));
+  const packageFiles = [
+    "plugin.conf", "package.json", "health.sh", "titan-server-node.service", "directadmin-relay.mjs",
+    "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh",
+    "user/index.html", "user/directadmin-gateway.raw", "images/directadmin-relay-client.mjs",
+  ];
+  for (const name of packageFiles) {
+    const sourceFile = path.join(source, name);
+    fs.mkdirSync(path.dirname(sourceFile), { recursive: true });
+    fs.copyFileSync(path.join(root, name), sourceFile);
+    if (["scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh", "user/index.html", "user/directadmin-gateway.raw"].includes(name)) fs.chmodSync(sourceFile, 0o755);
+  }
   fs.writeFileSync(path.join(source, "runtime.mjs"), newRuntime);
+  const oldRelay = "export const relayRelease = 'previous';\n";
+  const newRelay = fs.readFileSync(path.join(root, "directadmin-relay.mjs"), "utf8");
   fs.writeFileSync(path.join(installed, "runtime.mjs"), oldRuntime);
+  fs.writeFileSync(path.join(installed, "directadmin-relay.mjs"), oldRelay);
   fs.writeFileSync(path.join(installed, "package.json"), '{"type":"module","name":"previous"}\n');
   fs.writeFileSync(path.join(installed, "prior-only.txt"), "keep in rollback artifact\n");
   fs.writeFileSync(unit, "previous service unit\n");
@@ -85,7 +98,7 @@ throw new Error("unexpected systemctl command: " + command);
     try { process.kill(Number(fs.readFileSync(pidFile, "utf8")), "SIGTERM"); } catch {}
     fs.rmSync(dir, { recursive: true, force: true });
   });
-  return { dir, source, installed, unit, backups, store, config, log, oldRuntime, newRuntime, port,
+  return { dir, source, installed, unit, backups, store, config, log, oldRuntime, newRuntime, oldRelay, newRelay, port,
     update: () => run(harness, [path.join(root, "update.sh"), source, installed, unit, backups, config]),
   };
 }
@@ -102,12 +115,14 @@ test("update promotes staged runtime and unit and retains the previous artifact"
   const result = await f.update();
   assert.equal(result.status, 0, result.stderr);
   assert.equal(fs.readFileSync(path.join(f.installed, "runtime.mjs"), "utf8"), f.newRuntime);
+  assert.equal(fs.readFileSync(path.join(f.installed, "directadmin-relay.mjs"), "utf8"), f.newRelay);
   assert.equal(fs.readFileSync(f.unit, "utf8"), fs.readFileSync(path.join(f.source, "titan-server-node.service"), "utf8"));
   assert.equal(fs.existsSync(path.join(f.installed, "prior-only.txt")), false);
   const report = JSON.parse(result.stdout);
   assert.equal(report.lifecycle, "updated");
   assert.equal(report.status, "live");
   assert.equal(fs.readFileSync(path.join(report.rollback_artifact, "runtime/runtime.mjs"), "utf8"), f.oldRuntime);
+  assert.equal(fs.readFileSync(path.join(report.rollback_artifact, "runtime/directadmin-relay.mjs"), "utf8"), f.oldRelay);
   assert.equal(fs.readFileSync(path.join(report.rollback_artifact, "titan-server-node.service"), "utf8"), "previous service unit\n");
   assert.equal((await (await fetch(`http://127.0.0.1:${f.port}/live`)).json()).version, "new");
   assert.equal(fs.readFileSync(f.store, "utf8"), '{"fixture":"durable control metadata"}\n');
@@ -120,6 +135,7 @@ for (const behavior of ["restart-fails", "unready", "wrong-pid"]) {
     const result = await f.update();
     assert.notEqual(result.status, 0);
     assert.equal(fs.readFileSync(path.join(f.installed, "runtime.mjs"), "utf8"), f.oldRuntime);
+    assert.equal(fs.readFileSync(path.join(f.installed, "directadmin-relay.mjs"), "utf8"), f.oldRelay);
     assert.equal(fs.readFileSync(f.unit, "utf8"), "previous service unit\n");
     assert.equal(fs.statSync(f.unit).mode & 0o777, 0o600);
     assert.equal(fs.readFileSync(path.join(f.installed, "prior-only.txt"), "utf8"), "keep in rollback artifact\n");
@@ -137,6 +153,7 @@ test("invalid staged runtime leaves the installation untouched and never restart
   const result = await f.update();
   assert.notEqual(result.status, 0);
   assert.equal(fs.readFileSync(path.join(f.installed, "runtime.mjs"), "utf8"), f.oldRuntime);
+  assert.equal(fs.readFileSync(path.join(f.installed, "directadmin-relay.mjs"), "utf8"), f.oldRelay);
   assert.equal(fs.readFileSync(f.unit, "utf8"), "previous service unit\n");
   assert.equal(fs.existsSync(f.log), false);
   assert.match(result.stderr, /SyntaxError/);

@@ -15,7 +15,7 @@ if command -v systemctl >/dev/null 2>&1 && [ "$(id -u)" -eq 0 ]; then
   fi
   install -d -o titan-node -g titan-node -m 0750 /var/lib/titan/server-node
   install -d -m 0755 /usr/local/titan/server-node
-  install -m 0644 "$ROOT/runtime.mjs" "$ROOT/package.json" "$ROOT/plugin.conf" /usr/local/titan/server-node/
+  install -m 0644 "$ROOT/runtime.mjs" "$ROOT/directadmin-relay.mjs" "$ROOT/package.json" "$ROOT/plugin.conf" /usr/local/titan/server-node/
   install -m 0755 "$ROOT/health.sh" /usr/local/titan/server-node/
   install -m 0644 "$ROOT/titan-server-node.service" /etc/systemd/system/titan-server-node.service
   if [ ! -f /etc/titan/server-node.env ]; then

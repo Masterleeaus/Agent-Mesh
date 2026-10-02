@@ -3,17 +3,33 @@
 # lifecycle. No company data, business authority, or evidence is mutated here.
 
 validate_server_node_package() {
-  local source="$1" file
-  for file in plugin.conf runtime.mjs package.json health.sh titan-server-node.service; do
+  local source="$1" package_kind="${2:-plugin}" file
+  case "$package_kind" in plugin|runtime) ;; *) echo 'invalid Server Node package validation mode' >&2; return 1 ;; esac
+  for file in plugin.conf runtime.mjs directadmin-relay.mjs package.json health.sh titan-server-node.service; do
     if [ ! -f "$source/$file" ] || [ -L "$source/$file" ]; then
       echo "package input must be a regular file: $file" >&2; return 1
     fi
   done
+  if [ "$package_kind" = plugin ]; then
+    for file in scripts/install.sh scripts/update.sh scripts/uninstall.sh user/index.html user/directadmin-gateway.raw images/directadmin-relay-client.mjs; do
+      if [ ! -f "$source/$file" ] || [ -L "$source/$file" ]; then
+        echo "package input must be a regular file: $file" >&2; return 1
+      fi
+    done
+  fi
   command -v flock >/dev/null 2>&1 || { echo 'flock is required for durable single-writer state' >&2; return 1; }
   command -v node >/dev/null 2>&1 || { echo 'Node.js 20+ is required' >&2; return 1; }
   node -e 'if (Number(process.versions.node.split(".")[0]) < 20) process.exit(1)' || { echo 'Node.js 20+ is required' >&2; return 1; }
   node --check "$source/runtime.mjs" || return 1
+  node --check "$source/directadmin-relay.mjs" || return 1
+  if [ "$package_kind" = plugin ]; then node --check "$source/images/directadmin-relay-client.mjs" || return 1; fi
   bash -n "$source/health.sh" || return 1
+  if [ "$package_kind" = plugin ]; then
+    for file in scripts/install.sh scripts/update.sh scripts/uninstall.sh user/index.html user/directadmin-gateway.raw; do
+      bash -n "$source/$file" || return 1
+      [ -x "$source/$file" ] || { echo "DirectAdmin entrypoint must be executable: $file" >&2; return 1; }
+    done
+  fi
   node - "$source" <<'JS'
 const fs = require('node:fs'), path = require('node:path'), root = process.argv[2];
 const manifest = fs.readFileSync(path.join(root, 'plugin.conf'), 'utf8');
@@ -101,18 +117,20 @@ update_server_node() (
   trap '[ -z "$stage" ] || rm -rf -- "$stage"; [ -z "$unit_stage" ] || rm -f -- "$unit_stage"' EXIT
   stage="$(mktemp -d "${installed}.stage.XXXXXX")"
   chmod 0755 "$stage"
-  for file in runtime.mjs package.json plugin.conf; do install -m 0644 "$source/$file" "$stage/$file"; done
+  for file in runtime.mjs directadmin-relay.mjs package.json plugin.conf; do install -m 0644 "$source/$file" "$stage/$file"; done
   install -m 0755 "$source/health.sh" "$stage/health.sh"
   install -m 0644 "$source/titan-server-node.service" "$stage/titan-server-node.service"
-  validate_server_node_package "$stage"
+  validate_server_node_package "$stage" runtime
   unit_stage="$(mktemp "${unit}.stage.XXXXXX")"
   install -m 0644 "$stage/titan-server-node.service" "$unit_stage"
   install -d -m 0700 "$backups"
   backup="$(mktemp -d "$backups/release.XXXXXX")"
   cp -a "$installed" "$backup/runtime"
   cp -p "$unit" "$backup/titan-server-node.service"
-  (cd "$backup"; sha256sum runtime/runtime.mjs runtime/package.json titan-server-node.service > SHA256SUMS)
-  (cd "$stage"; sha256sum runtime.mjs package.json plugin.conf health.sh titan-server-node.service > SHA256SUMS)
+  backup_hash_files=(runtime/runtime.mjs runtime/package.json titan-server-node.service)
+  if [ -f "$backup/runtime/directadmin-relay.mjs" ]; then backup_hash_files+=(runtime/directadmin-relay.mjs); fi
+  (cd "$backup"; sha256sum "${backup_hash_files[@]}" > SHA256SUMS)
+  (cd "$stage"; sha256sum runtime.mjs directadmin-relay.mjs package.json plugin.conf health.sh titan-server-node.service > SHA256SUMS)
 
   rollback_update() {
     local original_status="$1" restored=true
