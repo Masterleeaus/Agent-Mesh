@@ -367,7 +367,12 @@ export function createMicroweberSitemapDraft(value:unknown,canonical_origin:stri
  if(!Array.isArray(value.routes)||value.routes.length===0||value.routes.length>100||!Array.isArray(value.pages)||value.pages.length!==value.routes.length)throw new Error("microweber-sitemap-site-invalid");
  const routes=value.routes.map(safeRoute);
  if(new Set(routes).size!==routes.length)throw new Error("microweber-sitemap-duplicate-route");
- const pageRoutes=value.pages.map(page=>record(page)?safeRoute(page.route):(()=>{throw new Error("microweber-sitemap-site-invalid")})());
+ const pageRoutes=value.pages.map(page=>{
+  if(!record(page))throw new Error("microweber-sitemap-site-invalid");
+  if(page.company_id!==company_id)throw new Error("microweber-sitemap-company-mismatch");
+  if(page.site_id!==site_id||page.publication_id!==value.publication_id||page.version!==value.version||page.authority_granted!==false)throw new Error("microweber-sitemap-site-invalid");
+  return safeRoute(page.route);
+ });
  if(pageRoutes.length!==routes.length||pageRoutes.some(route=>!routes.includes(route)))throw new Error("microweber-sitemap-site-invalid");
  if(typeof canonical_origin!=="string")throw new Error("microweber-sitemap-origin-invalid");
  let origin:URL;
