@@ -5,13 +5,13 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const PACKAGE_FILES = [
+export const PACKAGE_FILES = [
   "plugin.conf", "install.sh", "update.sh", "uninstall.sh", "health.sh",
   "runtime.mjs", "directadmin-relay.mjs", "package.json", "titan-server-node.service",
   "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh",
   "user/index.html", "user/directadmin-gateway.raw", "images/directadmin-relay-client.mjs",
 ];
-const EXECUTABLE_FILES = [
+export const EXECUTABLE_FILES = [
   "install.sh", "update.sh", "uninstall.sh", "health.sh",
   "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh",
   "user/index.html", "user/directadmin-gateway.raw",

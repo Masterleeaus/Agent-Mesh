@@ -127,6 +127,9 @@ class HttpTitanSurfaceTransport implements TitanSurfaceTransport {
     final body = await utf8.decoder.bind(response).join();
     if (response.statusCode != expected &&
         response.statusCode != alternateExpected) {
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        throw StateError('surface-authentication-required');
+      }
       throw HttpException(
         'titan-surface-transport-${response.statusCode}',
         uri: response.redirects.isNotEmpty ? response.redirects.last.location : null,
