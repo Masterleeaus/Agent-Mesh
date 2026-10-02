@@ -15,7 +15,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Broad checks run on main, manual dispatch, or when a PR declares the
+  # parent/subproduct completion gate. Ordinary slices use fast hygiene below.
+  slice-hygiene:
+    name: Slice merge hygiene
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check patch whitespace
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          git fetch origin "$BASE_REF" --quiet
+          git diff --check "origin/$BASE_REF...HEAD"
+
   mobile:
+    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.body || '', '**Subproduct gate:** run') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -81,6 +101,7 @@ jobs:
             exit 1
           fi
   validate:
+    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.body || '', '**Subproduct gate:** run') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout canonical repository
