@@ -1,6 +1,6 @@
 # DirectAdmin authenticated session bridge — #1049
 
-Status: PR #1204 remains an open draft and #1049 remains partial/non-closing. The current local branch head is `0c449dfc2601256af8e2033a508b01ceb3201df7`, based on merged main `df52782d26e0387608351b254c785911f99a20e9` (#1179). The SDK now exercises the real canonical #302 DirectAdmin-to-Workforce/Zero exchange, but the current #811 host does not yet preserve the source proof through hosted revalidation or effect admission. No DirectAdmin host is commissioned.
+Status: PR #1204 remains an open draft and #1049 remains partial/non-closing. The branch incorporates merge commit `0c449dfc2601256af8e2033a508b01ceb3201df7` from current main `df52782d26e0387608351b254c785911f99a20e9` (#1179). The SDK now exercises the real canonical #302 DirectAdmin-to-Workforce/Zero exchange, but the current #811 host does not yet preserve the source proof through hosted revalidation or effect admission. No DirectAdmin host is commissioned.
 
 ## Canonical identity and browser boundary
 
@@ -43,7 +43,7 @@ On the current branch after merging main `df52782d`:
 - `node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs` — 68/68 passed.
 - `node --test packages/titan-platform/tests/directadmin-*.test.mjs` after compiling the package test artifacts — 80/80 passed, including the standalone package contract tests.
 - `node_modules/.bin/tsc -p packages/titan-platform/tsconfig.json --noEmit` — passed. The malformed-newline/export blocker from the previous main snapshot is resolved by merged #1179 and is not a current blocker.
-- Strict changed-gateway compilation and `git diff --check` — passed before the main merge; rerun on the published head.
+- Strict standalone compilation of `directadmin-gateway.ts` and its imports — passed after the main merge. `git diff --check` passes for the current source and documentation changes.
 - The full `tests/*.test.mjs` package suite was attempted, but the shared `tsconfig.test.json` emits only its selected build inputs and leaves modules imported by many unrelated tests absent from `.test-dist`. The DirectAdmin-focused suite above passes; no full package test pass is claimed.
 - Per the #1179 handoff, all seven hosted checks passed on reviewed commit `b9bc071b` before it merged to main. This does not replace exact-head #1049 CI, which must run after publishing this continuation.
 
