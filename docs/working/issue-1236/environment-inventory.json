@@ -97,7 +97,8 @@
         "SMTP_HOST",
         "SMTP_PASS",
         "SMTP_PORT",
-        "SMTP_USER"
+        "SMTP_USER",
+        "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE"
       ]
     },
     "apps/marketing/nexjob/.env.example": {
@@ -118,6 +119,7 @@
     "TZ_DATA_ROOT",
     "TZ_ENV_FILE",
     "WORKFORCE_COMPANY_STORE_HOST_ROOT",
+    "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE",
     "WORKFORCE_DIRECTADMIN_NODE_ID",
     "WORKFORCE_IDENTITY_SQLITE_HOST_PATH",
     "WORKFORCE_PORT",
