@@ -82,7 +82,7 @@ The current disposable integration fixture used PR head `1f57f03c209199f2e724e70
 
 ## Current verification (2026-10-02 continuation)
 
-This continuation was based on current main `44890007b4a2f4ab75f2866c5a9b9104819bd6fb` and keeps identity ownership in #302. It changes only the SDK bootstrap bridge/gateway, the Workforce consumer contract test, the SDK bridge tests, and this document.
+This continuation was based on current main `64244edefb93a07c9ba55fb15276bbf91b7414ea` and keeps identity ownership in #302. It changes only the SDK bootstrap bridge/gateway, the Workforce consumer contract test, the SDK bridge tests, and this document.
 
 - Titan Platform typecheck passed: `tsc -p tsconfig.json --noEmit`.
 - Titan Platform test compilation passed, followed by the focused canonical credential, nonce/provider, bridge/gateway, plugin-consumer and new end-to-end composition suite: **176/176 passed**, zero skips.
