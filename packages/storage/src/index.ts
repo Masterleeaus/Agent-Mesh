@@ -4,10 +4,14 @@ import { dirname } from "node:path";
 
 export type StorageDialect = "sqlite" | "postgres" | "mysql";
 export interface QueryResult<T = Record<string, unknown>> { rows: T[]; rowCount: number; }
+export interface StorageTransactionOptions {
+  /** Absolute performance.now() deadline for queueing and SQLite writer-lock admission. */
+  acquireDeadlineMs?: number;
+}
 export interface StorageClient {
   readonly dialect: StorageDialect;
   query<T = Record<string, unknown>>(sql: string, params?: readonly unknown[]): Promise<QueryResult<T>>;
-  transaction<T>(fn: (tx: StorageClient) => Promise<T>): Promise<T>;
+  transaction<T>(fn: (tx: StorageClient) => Promise<T>, options?: StorageTransactionOptions): Promise<T>;
   close(): Promise<void>;
 }
 export interface CompanyStorage {
@@ -53,10 +57,40 @@ export function createSqliteStorage(filename = process.env.SQLITE_PATH ?? ".tita
 
   // One connection must not enlist another request in an async transaction.
   let pending: Promise<unknown> = Promise.resolve();
-  function serialize<T>(operation: () => Promise<T>): Promise<T> {
-    const result = pending.then(operation);
+  function serialize<T>(operation: () => Promise<T>, acquireDeadlineMs?: number): Promise<T> {
+    let admitted = false;
+    let cancelledBeforeAdmission = false;
+    let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
+    const result = pending.then(async () => {
+      if (cancelledBeforeAdmission || (acquireDeadlineMs !== undefined && performance.now() >= acquireDeadlineMs)) {
+        throw new Error("storage-transaction-acquire-timeout");
+      }
+      admitted = true;
+      if (deadlineTimer) clearTimeout(deadlineTimer);
+      return operation();
+    });
     pending = result.then(() => undefined, () => undefined);
-    return result;
+    if (acquireDeadlineMs === undefined) return result;
+
+    return new Promise<T>((resolve, reject) => {
+      const remaining = acquireDeadlineMs - performance.now();
+      if (remaining <= 0) {
+        cancelledBeforeAdmission = true;
+        reject(new Error("storage-transaction-acquire-timeout"));
+      }
+      else {
+        deadlineTimer = setTimeout(() => {
+          if (!admitted) {
+            cancelledBeforeAdmission = true;
+            reject(new Error("storage-transaction-acquire-timeout"));
+          }
+        }, remaining);
+      }
+      result.then(
+        value => { if (deadlineTimer) clearTimeout(deadlineTimer); resolve(value); },
+        error => { if (deadlineTimer) clearTimeout(deadlineTimer); reject(error); },
+      );
+    });
   }
   const directQuery = async <T>(sql: string, params: readonly unknown[] = []): Promise<QueryResult<T>> => {
     const rewritten = sqliteSql(sql, params);
@@ -70,22 +104,48 @@ export function createSqliteStorage(filename = process.env.SQLITE_PATH ?? ".tita
   const client: StorageClient = {
     dialect: "sqlite",
     query: <T>(sql: string, params: readonly unknown[] = []) => serialize(() => directQuery<T>(sql, params)),
-    transaction: <T>(fn: (tx: StorageClient) => Promise<T>) => serialize(async () => {
-      db.exec("BEGIN IMMEDIATE");
-      let active = true;
-      const tx: StorageClient = {
-        dialect: "sqlite",
-        query: <R>(sql: string, params: readonly unknown[] = []) => {
-          if (!active) return Promise.reject(new Error("sqlite-transaction-closed"));
-          return directQuery<R>(sql, params);
-        },
-        transaction: async () => { throw new Error("sqlite-nested-transaction-unsupported"); },
-        close: async () => { throw new Error("sqlite-transaction-does-not-own-connection"); },
-      };
-      try { const result = await fn(tx); db.exec("COMMIT"); return result; }
-      catch (error) { db.exec("ROLLBACK"); throw error; }
-      finally { active = false; }
-    }),
+    transaction: <T>(fn: (tx: StorageClient) => Promise<T>, options?: StorageTransactionOptions) => {
+      const deadline = options?.acquireDeadlineMs;
+      if (deadline !== undefined && (!Number.isFinite(deadline) || deadline < 0)) {
+        return Promise.reject(new Error("storage-transaction-acquire-deadline-invalid"));
+      }
+      return serialize(async () => {
+        const previousBusyTimeout = 5000;
+        let began = false;
+        if (deadline !== undefined) {
+          const remaining = Math.floor(deadline - performance.now());
+          if (remaining <= 0) throw new Error("storage-transaction-acquire-timeout");
+          db.pragma(`busy_timeout = ${Math.max(1, remaining)}`);
+        }
+        try { db.exec("BEGIN IMMEDIATE"); began = true; }
+        catch (error) {
+          if (deadline !== undefined && (performance.now() >= deadline || String(error).includes("SQLITE_BUSY") || String(error).includes("database is locked"))) {
+            throw new Error("storage-transaction-acquire-timeout", { cause: error });
+          }
+          throw error;
+        } finally {
+          if (deadline !== undefined) db.pragma(`busy_timeout = ${previousBusyTimeout}`);
+        }
+        if (deadline !== undefined && performance.now() >= deadline) {
+          db.exec("ROLLBACK");
+          began = false;
+          throw new Error("storage-transaction-acquire-timeout");
+        }
+        let active = true;
+        const tx: StorageClient = {
+          dialect: "sqlite",
+          query: <R>(sql: string, params: readonly unknown[] = []) => {
+            if (!active) return Promise.reject(new Error("sqlite-transaction-closed"));
+            return directQuery<R>(sql, params);
+          },
+          transaction: async () => { throw new Error("sqlite-nested-transaction-unsupported"); },
+          close: async () => { throw new Error("sqlite-transaction-does-not-own-connection"); },
+        };
+        try { const result = await fn(tx); db.exec("COMMIT"); return result; }
+        catch (error) { if (began) db.exec("ROLLBACK"); throw error; }
+        finally { active = false; if (deadline !== undefined) db.pragma(`busy_timeout = ${previousBusyTimeout}`); }
+      }, deadline);
+    },
     close: () => serialize(async () => { db.close(); }),
   };
   return client;
