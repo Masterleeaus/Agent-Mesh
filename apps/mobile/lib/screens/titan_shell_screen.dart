@@ -114,7 +114,7 @@ class _ContextCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                        Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600)),
                         const SizedBox(height: 3),
                         Text(value, maxLines: 2, overflow: TextOverflow.ellipsis),
                       ],
