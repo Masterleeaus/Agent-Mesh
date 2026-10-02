@@ -314,10 +314,23 @@ export async function createSqliteCompanyPlacementRegistryWriter(
           [input.status, input.company_id, input.placement_id, input.placement_revision, input.expected_status],
         );
         if (changed.rowCount !== 1) throw new CompanyStorageResolutionError("placement-stale");
-        await tx.query(
-          `UPDATE ${filePlacementTable} SET status = $1 WHERE company_id = $2 AND status = $3`,
-          [input.status, input.company_id, input.expected_status],
+        const currentFiles = await tx.query<FilePlacementRow>(
+          `SELECT company_id, file_placement_id, file_placement_revision, provider, schema_version, status
+             FROM ${filePlacementTable} WHERE company_id = $1`, [input.company_id],
         );
+        if (currentFiles.rows.length > 1 || currentFiles.rows.some(row => row.status !== input.expected_status)) {
+          throw new CompanyStorageResolutionError("placement-stale");
+        }
+        if (currentFiles.rows.length === 1) {
+          const fileChanged = await tx.query(
+            `UPDATE ${filePlacementTable} SET status = $1
+              WHERE company_id = $2 AND file_placement_id = $3
+                AND file_placement_revision = $4 AND status = $5`,
+            [input.status, input.company_id, currentFiles.rows[0].file_placement_id,
+              currentFiles.rows[0].file_placement_revision, input.expected_status],
+          );
+          if (fileChanged.rowCount !== 1) throw new CompanyStorageResolutionError("placement-stale");
+        }
         const database = await tx.query<PlacementRow>(
           `SELECT company_id, placement_id, placement_revision, provider, schema_version, status
              FROM ${placementTable} WHERE company_id = $1`, [input.company_id],
