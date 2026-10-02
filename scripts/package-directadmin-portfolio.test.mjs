@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { ENABLED_PLUGINS, packagePortfolio } from "./package-directadmin-portfolio.mjs";
 import { EXECUTABLE_FILES as SERVER_NODE_EXECUTABLE_FILES, PACKAGE_FILES as SERVER_NODE_PACKAGE_FILES, packagePlugin } from "./package-directadmin-plugin.mjs";
 import { packageFiles as WORKFORCE_PACKAGE_FILES } from "../apps/directadmin/workforce/tools/package.mjs";
+import { packageFiles as BRAND_STUDIO_PACKAGE_FILES } from "../apps/directadmin/brand-studio/tools/package.mjs";
 import { renderEntry as renderBrandStudioEntry } from "../apps/directadmin/brand-studio/lib/entry.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -129,14 +130,23 @@ test("portfolio delegates Workforce packaging and pins its exact Server Node dep
   assert.deepEqual(repeated.artifacts.map(({ plugin_id, sha256 }) => [plugin_id, sha256]), result.artifacts.map(({ plugin_id, sha256 }) => [plugin_id, sha256]));
   assert.deepEqual(fs.readFileSync(result.provenance), fs.readFileSync(repeated.provenance));
   const workforce = result.artifacts.find((artifact) => artifact.plugin_id === "titan_workforce");
+  const titanWeb = result.artifacts.find((artifact) => artifact.plugin_id === "titan_web");
   const serverNode = result.artifacts.find((artifact) => artifact.plugin_id === "titan-server-node");
   assert.ok(workforce);
+  assert.ok(titanWeb);
   assert.ok(serverNode);
   assert.equal(workforce.version, "0.1.5");
   assert.equal(path.basename(workforce.archive), "titan_workforce.tar.gz");
   assert.equal(workforce.archive_filename, "titan_workforce.tar.gz");
   assert.equal(fs.readFileSync(workforce.archive).length > 0, true);
   assert.equal(fs.readFileSync(`${workforce.archive}.sha256`, "utf8"), `${workforce.sha256}  titan_workforce.tar.gz\n`);
+  assert.equal(titanWeb.version, "0.1.0");
+  assert.equal(path.basename(titanWeb.archive), "titan_web.tar.gz");
+  assert.equal(titanWeb.archive_filename, "titan_web.tar.gz");
+  assert.equal(fs.readFileSync(`${titanWeb.archive}.sha256`, "utf8"), `${titanWeb.sha256}  titan_web.tar.gz\n`);
+  const titanWebListing = spawnSync("tar", ["-tzf", titanWeb.archive], { encoding: "utf8" });
+  assert.equal(titanWebListing.status, 0, titanWebListing.stderr);
+  assert.deepEqual(titanWebListing.stdout.trim().split("\n"), [...BRAND_STUDIO_PACKAGE_FILES]);
 
   const provenance = JSON.parse(fs.readFileSync(result.provenance, "utf8"));
   const workforceRecord = provenance.artifacts.find((artifact) => artifact.plugin_id === "titan_workforce");
@@ -179,13 +189,15 @@ test("portfolio registers Titan Web under its stable ID with shared SDK and Serv
   assert.equal(descriptor.displayName, "Titan Web");
   assert.equal(descriptor.source, "apps/directadmin/brand-studio");
   assert.ok(descriptor.files.includes("plugin.conf"));
-  assert.ok(descriptor.files.includes("admin"));
-  assert.ok(descriptor.files.includes("reseller"));
-  assert.ok(descriptor.files.includes("user"));
-  assert.ok(descriptor.files.includes("hooks"));
+  assert.ok(descriptor.files.includes("admin/index.html"));
+  assert.ok(descriptor.files.includes("reseller/index.html"));
+  assert.ok(descriptor.files.includes("user/index.html"));
+  assert.ok(descriptor.files.includes("hooks/admin_txt.html"));
   assert.ok(descriptor.files.includes("images/sdk.mjs"));
   assert.deepEqual(descriptor.generatedFiles, ["images/sdk.mjs"]);
   assert.deepEqual(descriptor.dependencies, ["titan-server-node"]);
+  assert.equal(descriptor.packager, "apps/directadmin/brand-studio/tools/package.mjs");
+  assert.deepEqual(descriptor.files, BRAND_STUDIO_PACKAGE_FILES);
   const source = path.resolve(ROOT, descriptor.source);
   for (const file of descriptor.files) {
     if (!descriptor.generatedFiles.includes(file)) assert.ok(fs.existsSync(path.join(source, file)), `Titan Web package source is missing ${file}`);

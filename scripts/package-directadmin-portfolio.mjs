@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { PACKAGE_FILES as SERVER_NODE_PACKAGE_FILES, EXECUTABLE_FILES as SERVER_NODE_EXECUTABLE_FILES } from "./package-directadmin-plugin.mjs";
 import { packageFiles as WORKFORCE_PACKAGE_FILES } from "../apps/directadmin/workforce/tools/package.mjs";
+import { packageFiles as BRAND_STUDIO_PACKAGE_FILES } from "../apps/directadmin/brand-studio/tools/package.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const WORKFORCE_SDK_SOURCE = "packages/titan-platform/src/directadmin-plugin.ts";
@@ -19,7 +20,7 @@ export const ENABLED_PLUGINS = [
   { id: "titan-server-node", displayName: "titan-server-node", source: "apps/directadmin/server-node", files: SERVER_NODE_PACKAGE_FILES, executableFiles: SERVER_NODE_EXECUTABLE_FILES },
   { id: "titan_dev_access", displayName: "Developer Portal", legacyDisplayNames: { "1.2.0": "Titan Dev Access" }, source: "apps/directadmin/dev-access", files: ["plugin.conf", "README.md", "AGENTS.md", "admin", "reseller", "user", "hooks", "lib", "scripts"], executableFiles: DEVELOPER_PORTAL_EXECUTABLE_FILES },
   { id: "titan_workforce", displayName: "Titan Workforce", source: "apps/directadmin/workforce", files: WORKFORCE_PACKAGE_FILES, generatedFiles: ["images/sdk.mjs"], executableFiles: ["admin/index.html", "reseller/index.html", "user/index.html", "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh"], packager: "apps/directadmin/workforce/tools/package.mjs", dependencies: ["titan-server-node"] },
-  { id: "titan_web", displayName: "Titan Web", source: "apps/directadmin/brand-studio", files: ["plugin.conf", "README.md", "AGENTS.md", "admin", "reseller", "user", "hooks", "lib", "scripts", "images/cockpit.mjs", "images/style.css", "images/sdk.mjs"], generatedFiles: ["images/sdk.mjs"], executableFiles: ["admin/index.html", "reseller/index.html", "user/index.html", "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh"], dependencies: ["titan-server-node"] },
+  { id: "titan_web", displayName: "Titan Web", source: "apps/directadmin/brand-studio", files: BRAND_STUDIO_PACKAGE_FILES, generatedFiles: ["images/sdk.mjs"], executableFiles: ["admin/index.html", "reseller/index.html", "user/index.html", "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh"], packager: "apps/directadmin/brand-studio/tools/package.mjs", dependencies: ["titan-server-node"] },
 ];
 
 function sha256File(file) {
@@ -81,8 +82,8 @@ function buildCanonicalWorkforceSdk(temporaryDir) {
   };
 }
 
-function runCanonicalWorkforcePackager({ plugin, source, sdkModulePath, temporaryDir }) {
-  const packageOutput = path.join(temporaryDir, "workforce-package");
+function runCanonicalPluginPackager({ plugin, source, sdkModulePath, temporaryDir }) {
+  const packageOutput = path.join(temporaryDir, `${plugin.id}-package`);
   fs.mkdirSync(packageOutput);
   const packager = path.join(ROOT, plugin.packager);
   const result = spawnSync(process.execPath, [packager, "--source-dir", source, "--sdk-module", sdkModulePath, "--output-dir", packageOutput], { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
@@ -134,7 +135,7 @@ function validateArchive(archive, plugin) {
   if (listing.error || listing.status !== 0) throw listing.error ?? new Error(`${plugin.id}: archive cannot be listed`);
   const entries = listing.stdout.split(/\r?\n/).filter(Boolean).map((entry) => entry.replace(/^\.\//, ""));
   if (entries.some((entry) => entry.startsWith("/") || entry.split("/").includes(".."))) throw new Error(`${plugin.id}: archive contains unsafe path`);
-  for (const required of plugin.files) if (!entries.includes(required) && !entries.includes(`${required}/`)) throw new Error(`${plugin.id}: archive missing ${required}`);
+  for (const required of plugin.files) if (!entries.includes(required) && !entries.includes(`${required}/`) && !entries.some((entry) => entry.startsWith(`${required}/`))) throw new Error(`${plugin.id}: archive missing ${required}`);
   for (const executablePath of plugin.executableFiles) if (!entries.includes(executablePath)) throw new Error(`${plugin.id}: archive missing executable ${executablePath}`);
   const details = spawnSync("tar", ["-tvzf", archive], { encoding: "utf8" });
   if (details.error || details.status !== 0) throw details.error ?? new Error(`${plugin.id}: archive metadata cannot be read`);
@@ -179,8 +180,8 @@ export function packagePortfolio({ plugins = ENABLED_PLUGINS, outputDir = path.j
       let candidate;
       let sha256;
       if (plugin.packager) {
-        if (plugin.id !== "titan_workforce") throw new Error(`${plugin.id}: unsupported canonical packager ${plugin.packager}`);
-        const packaged = runCanonicalWorkforcePackager({ plugin, source, sdkModulePath: workforceSdk.sdkModulePath, temporaryDir });
+        if (!["titan_workforce", "titan_web"].includes(plugin.id)) throw new Error(`${plugin.id}: unsupported canonical packager ${plugin.packager}`);
+        const packaged = runCanonicalPluginPackager({ plugin, source, sdkModulePath: workforceSdk.sdkModulePath, temporaryDir });
         candidate = packaged.archive;
         sha256 = packaged.sha256;
         validateArchive(candidate, plugin);
