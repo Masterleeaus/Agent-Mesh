@@ -142,6 +142,12 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
     }
     return mapped;
   };
+  const captureAdmissionUnavailable = (): Error => {
+    const failure = new Error("zero-execution-admission-unavailable");
+    const scope = requestIdentityFailure.getStore();
+    if (scope && !scope.effectAdmitted) scope.failure = failure.message;
+    return failure;
+  };
   async function loadRunIdentity(input: RunIdentityInput, callSignal?: AbortSignal) {
     callSignal?.throwIfAborted();
     const row = (await storage.query<{ payload: string }>("SELECT payload FROM agent_runs WHERE company_id=$1 AND run_id=$2", [input.company_id, input.run_id])).rows[0];
@@ -212,17 +218,24 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
     catch (error) { throw captureIdentityFailure(error); }
     const context = expected(input, loaded.authenticated_identity);
     if (loaded.proof.source_session !== undefined) {
-      let enteredEffect = false;
+      let admissionCompleted = false;
       try {
         return await registry.withCurrentSessionFence(loaded.proof, context, { signal: input.signal },
-          (current, signal, acquireDeadlineMs) => {
-            enteredEffect = true;
+          async (current, signal, acquireDeadlineMs) => {
+            const result = await effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: true, signal, acquire_deadline_ms: acquireDeadlineMs });
+            // `effect` is the control-store admission transaction. Its promise
+            // resolves only after the durable EXECUTING transition commits, so
+            // callback entry alone must not suppress timeout classification.
+            admissionCompleted = true;
             const scope = requestIdentityFailure.getStore();
             if (scope) scope.effectAdmitted = true;
-            return effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: true, signal, acquire_deadline_ms: acquireDeadlineMs });
+            return result;
           });
       } catch (error) {
-        if (!enteredEffect) throw captureIdentityFailure(error);
+        if (!admissionCompleted && error instanceof Error && error.message === "storage-transaction-acquire-timeout") {
+          throw captureAdmissionUnavailable();
+        }
+        if (!admissionCompleted) throw captureIdentityFailure(error);
         throw error;
       }
     }
@@ -232,9 +245,17 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
     try { current = await registry.resolveCurrentSession(loaded.proof, context, loaded.now); }
     catch (error) { throw captureIdentityFailure(error); }
     input.signal?.throwIfAborted();
-    const scope = requestIdentityFailure.getStore();
-    if (scope) scope.effectAdmitted = true;
-    return effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: false, signal: input.signal });
+    try {
+      const result = await effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: false, signal: input.signal });
+      const scope = requestIdentityFailure.getStore();
+      if (scope) scope.effectAdmitted = true;
+      return result;
+    } catch (error) {
+      if (error instanceof Error && error.message === "storage-transaction-acquire-timeout") {
+        throw captureAdmissionUnavailable();
+      }
+      throw error;
+    }
   };
   const auth: ConversationAuth = {
     async resolve({ request, authorization }) {

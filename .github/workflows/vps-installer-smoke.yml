@@ -32,9 +32,12 @@ jobs:
           cp infra/vps.env.example .env.vps
           sed -i 's/GENERATED_BY_INSTALLER/local-smoke-test-only/g' .env.vps
           mkdir -p "$RUNNER_TEMP/titan-data/sqlite" "$RUNNER_TEMP/titan-data/uploads"
+          mkdir -p "$RUNNER_TEMP/workforce-company-stores"
           export TZ_ENV_FILE="$PWD/.env.vps"
           export TZ_DATA_ROOT="$RUNNER_TEMP/titan-data"
-          printf 'TZ_ENV_FILE=%s\nTZ_DATA_ROOT=%s\n' "$TZ_ENV_FILE" "$TZ_DATA_ROOT" >> "$GITHUB_ENV"
+          export WORKFORCE_COMPANY_STORE_HOST_ROOT="$RUNNER_TEMP/workforce-company-stores"
+          printf 'TZ_ENV_FILE=%s\nTZ_DATA_ROOT=%s\nWORKFORCE_COMPANY_STORE_HOST_ROOT=%s\n' \
+            "$TZ_ENV_FILE" "$TZ_DATA_ROOT" "$WORKFORCE_COMPANY_STORE_HOST_ROOT" >> "$GITHUB_ENV"
           docker compose --env-file .env.vps -f infra/compose.vps.yml config > "$RUNNER_TEMP/compose.yml"
           if grep -Eiq '(^|[[:space:]])postgres:|postgresql://' "$RUNNER_TEMP/compose.yml"; then
             echo 'PostgreSQL leaked into canonical VPS topology' >&2

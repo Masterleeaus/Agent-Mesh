@@ -15,6 +15,7 @@ import {
 } from "../packages/storage/src/index.js";
 import { createIdentitySessionRegistry } from "../packages/titan-platform/src/security-boundary.js";
 import { completeAssignedWorkOrder } from "../apps/web/lib/work-orders/lead-access.ts";
+import { conversationHttpStatus } from "../services/workforce/src/conversation-api.js";
 // @ts-expect-error Canonical authority store owner is JavaScript.
 import { SqliteAuthorityStore, SqliteWorkerAccessStore } from "../packages/runtime/authority/index.mjs";
 import type { WorkforceServer } from "../services/workforce/src/server.js";
@@ -151,7 +152,7 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   }
   await start();
   const input = { action: "start", company_id: "a", actor_id: "lead", device_id: "device", surface: "zero", session_id: "session", context_revision: context.context_revision, conversation_id: "conversation", interaction_id: "interaction", client_message_id: "message", request_id: "request", operation_id: "operation", correlation_id: "correlation", trace_id: "trace", idempotency_key: "idempotency", text: "complete work order wo" };
-  return { control, identity, dependencies, registry, stores, companyPlacementRegistry, companyStoreOpener, companyOpens: () => companyOpens, companyCloses: () => companyCloses, claims, context, authority, envelope, credential, input,
+  return { control, controlPath: storagePath, identity, dependencies, registry, stores, companyPlacementRegistry, companyStoreOpener, companyOpens: () => companyOpens, companyCloses: () => companyCloses, claims, context, authority, envelope, credential, input,
     async post(overrides: Record<string, unknown> = {}, token: string | null = credential()) { const response = await fetch(`${base}/v1/workforce/conversations`, { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: token } : {}) }, body: JSON.stringify({ ...input, ...overrides }) }); return { status: response.status, body: await response.json() as any }; },
     async status(company: "a" | "b" = "a") { return (await stores[company].query<{ status: string }>("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status; },
     async run() { const rows = await control.query<{ payload: string }>("SELECT payload FROM agent_runs WHERE company_id='a'"); return rows.rows.map(row => JSON.parse(row.payload)); },
@@ -402,6 +403,148 @@ test("identity registry outage at source-session fence is sanitized as 503 witho
     assert.equal(f.nativeInvocations, 0);
     assert.equal(await f.status(), "in_progress");
     assert.equal(await f.executionStateCount("VERIFIED"), 0);
+  } finally { await f.close(); }
+});
+
+test("source-session callback entry does not hide a blocked control-store admission timeout", { timeout: 5000 }, async () => {
+  const f = await fixture();
+  let admissionStorage: ReturnType<typeof createSqliteStorage> | undefined;
+  let releaseControlWriter!: () => void;
+  let controlWriterEntered!: () => void;
+  const controlWriterReady = new Promise<void>(resolve => { controlWriterEntered = resolve; });
+  const releaseControl = new Promise<void>(resolve => { releaseControlWriter = resolve; });
+  let signalAdmissionSettled!: () => void;
+  const admissionSettled = new Promise<void>(resolve => { signalAdmissionSettled = resolve; });
+  try {
+    const identity = await f.workforceZero();
+    const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
+      session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+    await f.closeHost();
+    admissionStorage = createSqliteStorage(f.controlPath);
+    const { createHostedRuntime } = await import("../services/workforce/src/hosted-runtime.ts");
+    const { normalizeConversationRequest } = await import("../services/workforce/src/conversation-api.js");
+    const hosted = await createHostedRuntime(admissionStorage, f.identity, f.dependencies);
+    const authenticated = await hosted.auth.resolve({ request: normalizeConversationRequest(input), authorization: identity.authorization });
+    const runId = "control-admission-timeout-run";
+    const workId = "control-admission-timeout-work";
+    const updatedAt = new Date().toISOString();
+    const run = {
+      run_id: runId, company_id: "a", actor_id: "lead", agent_id: "manager", role: "agent",
+      conversation_id: input.conversation_id, work_id: workId, authenticated_identity: authenticated.authenticated_identity,
+      session_id: authenticated.session_id, context_revision: authenticated.context_revision,
+      state: "RUNNING", updated_at: updatedAt,
+    };
+    await admissionStorage.query(
+      "INSERT INTO agent_runs(company_id,run_id,state,conversation_id,agent_id,work_id,payload,updated_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
+      ["a", runId, run.state, run.conversation_id, run.agent_id, workId, JSON.stringify(run), updatedAt],
+    );
+
+    // A second real SQLite connection holds the control-store writer lock. The
+    // current-session fence can enter its callback, but the nested admission
+    // transaction cannot acquire that store before the shared deadline.
+    const held = f.control.transaction(async () => {
+      controlWriterEntered();
+      await releaseControl;
+    });
+    await controlWriterReady;
+    let callbackEntered = false;
+    let admissionTransactionEntered = false;
+    let nativeInvocations = 0;
+    const admissionInput = { company_id: "a", actor_id: "lead", run_id: runId, work_id: workId };
+    const failure = await hosted.sessionAdmission(
+      admissionInput,
+      async ({ acquire_deadline_ms }) => {
+        callbackEntered = true;
+        try {
+          await admissionStorage!.transaction(async () => { admissionTransactionEntered = true; }, { acquireDeadlineMs: acquire_deadline_ms });
+          nativeInvocations += 1; // the provider boundary follows successful admission
+        } finally { signalAdmissionSettled(); }
+      },
+    ).then(() => null, error => error);
+
+    assert.equal(callbackEntered, true, "the source-session fence callback entered before control-store admission");
+    assert.ok(failure instanceof Error, "the blocked control-store admission is rejected");
+    assert.equal(conversationHttpStatus(failure.message), 503, failure.message);
+    assert.ok(["identity-registry-unavailable", "zero-execution-admission-unavailable"].includes(failure.message), failure.message);
+
+    releaseControlWriter();
+    await held;
+    await admissionSettled;
+    assert.equal(admissionTransactionEntered, false, "the bounded transaction callback never acquired the SQLite writer lock");
+    assert.equal(nativeInvocations, 0, "provider entry remains blocked until durable admission succeeds");
+    assert.equal(await f.executionStateCount("EXECUTING"), 0, "no EXECUTING transition committed");
+    assert.equal(await f.executionStateCount("VERIFIED"), 0, "no accepted operation was recorded");
+    assert.equal(await f.status(), "in_progress", "the company business store was not mutated");
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 0);
+
+    const classifiedControlTimeout = await hosted.sessionAdmission(admissionInput, async () => {
+      throw new Error("storage-transaction-acquire-timeout");
+    }).then(() => null, error => error);
+    assert.ok(classifiedControlTimeout instanceof Error);
+    assert.equal(classifiedControlTimeout.message, "zero-execution-admission-unavailable");
+    assert.equal(conversationHttpStatus(classifiedControlTimeout.message), 503);
+  } finally {
+    releaseControlWriter();
+    await admissionStorage?.close();
+    await f.close();
+  }
+});
+
+test("pre-admission fence timeout still surfaces as 503 after gateway recovery", { timeout: 5000 }, async () => {
+  const f = await fixture();
+  let admissionReached!: () => void;
+  let admissionDelayCompleted!: () => void;
+  const admissionStarted = new Promise<void>(resolve => { admissionReached = resolve; });
+  const admissionFinished = new Promise<void>(resolve => { admissionDelayCompleted = resolve; });
+  let blockedExecutingEvidence = false;
+  try {
+    const identity = await f.workforceZero();
+    const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
+      session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+    await f.closeHost();
+    const { createHostedRuntime } = await import("../services/workforce/src/hosted-runtime.ts");
+    const { handleConversationRequest, normalizeConversationRequest } = await import("../services/workforce/src/conversation-api.js");
+    const delayedControl: any = {
+      dialect: f.control.dialect,
+      query: (sql: string, params?: readonly unknown[]) => f.control.query(sql, params),
+      transaction(operation: (tx: any) => Promise<unknown>, options?: unknown) {
+        return f.control.transaction((tx: any) => operation(Object.assign(Object.create(tx), {
+          async query(sql: string, params: readonly unknown[] = []) {
+            if (!blockedExecutingEvidence && sql.startsWith("INSERT INTO evidence") && params[4] === "gateway_execution") {
+              const evidence = JSON.parse(String(params[6] ?? "{}"));
+              if (evidence.state === "EXECUTING") {
+                blockedExecutingEvidence = true;
+                admissionReached();
+                // Stay inside the real SQLite control transaction beyond the
+                // 500 ms source-session fence while the durable admission row
+                // is pending. The fence signal must make the transaction roll
+                // back before the native provider can be called.
+                await new Promise(resolve => setTimeout(resolve, 650));
+                admissionDelayCompleted();
+              }
+            }
+            return tx.query(sql, params);
+          },
+        })), options as any);
+      },
+      close: async () => {},
+    };
+    const hosted = await createHostedRuntime(delayedControl, f.identity, f.dependencies);
+    const failure = await handleConversationRequest(
+      normalizeConversationRequest(input), hosted.auth, hosted.runtime as any, identity.authorization,
+    ).then(() => null, error => error);
+
+    assert.equal(blockedExecutingEvidence, true, "the actual governed admission transaction reached its durable transition");
+    assert.ok(failure instanceof Error, "gateway recovery does not convert the pre-admission timeout into success");
+    assert.equal(conversationHttpStatus(failure.message), 503, failure.message);
+    assert.ok(["identity-registry-unavailable", "zero-execution-admission-unavailable"].includes(failure.message), failure.message);
+    await admissionStarted;
+    await admissionFinished;
+    assert.equal(f.nativeInvocations, 0, "the native provider remained behind the unsuccessful admission fence");
+    assert.equal(await f.executionStateCount("EXECUTING"), 0, "the pending EXECUTING transaction rolled back");
+    assert.equal(await f.executionStateCount("VERIFIED"), 0, "the timeout cannot create accepted evidence");
+    assert.equal(await f.status(), "in_progress", "the company work order is unchanged");
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 0);
   } finally { await f.close(); }
 });
 
