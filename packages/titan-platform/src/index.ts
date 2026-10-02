@@ -35,6 +35,8 @@ export type { ConnectorCredentialReference } from "./ported/titan-connect/creden
 export * from "./knowledge-governance.js";
 
 export * from "./mission-planning.js";
+export * from "./titan-forge/runtime.js";
 
-export * from "./field-service-lifecycle.js";
-\nexport * from "./counterfactual-branch.js";\n
+export * from "./maps-intelligence/runtime.js";
+
+export * from "./signal/runtime.js";
