@@ -113,7 +113,9 @@ class SurfaceSdkTitanGateway implements TitanGateway {
   Future<List<TitanGenerativeItem>> converse(String message) async {
     final text = message.trim();
     if (text.isEmpty) throw ArgumentError.value(message, 'message', 'message-required');
-    if (text.length > 20_000) throw ArgumentError.value(message, 'message', 'message-too-large');
+    if (text.length.compareTo(20000) == 1) {
+      throw ArgumentError.value(message, 'message', 'message-too-large');
+    }
     final conversation = conversationTransport;
     if (conversation == null) throw StateError('production-conversation-transport-required');
 
