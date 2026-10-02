@@ -20,11 +20,11 @@ Current implemented slice:
 - Read-only canonical Server Node health projection from the fixed loopback `/v1/status` endpoint; malformed, oversized or unavailable responses fail closed.
 - No private-key storage and no automatic sudo/root elevation.
 
-Version 1.3.4 is the current **source security candidate**, not an install-ready or live-certified release. It carries the bounded DirectAdmin request bridge, strict one-line SSH public-key wire-format validation, and the HOME-bound read-only Git policy described above. Its PHP integration/security tests run the packaged role executables and use disposable account/repository fixtures only. The exact-head PHP workflow must pass and an independent security reviewer must inspect the source before this candidate is distributed.
+Version 1.3.5 is the current **source security candidate**, not an install-ready or live-certified release. It carries the bounded DirectAdmin request bridge with exact terminal LF/CRLF normalization, sanitized rejection codes and byte-count diagnostics, strict one-line SSH public-key wire-format validation, and the HOME-bound read-only Git policy described above. The Git metadata walk streams directory entries within its 65,536-entry cap. Its PHP integration/security tests run the packaged role executables and use disposable account/repository fixtures only. The exact-head PHP workflow must pass and an independent security reviewer must inspect the source before this candidate is distributed.
 
 The previously Library-published v1.3.3 archive (SHA-256 `6145b02a9fc0626f31bf7350f881419cf5cfe41036879b724e5abf4c38addbbc`) is **not a safe current candidate**: independent synthetic probes found malformed or multiline SSH key payloads were accepted and Git remote commands were not actually read-only. Keep that historical artifact intact for audit, but do not install it or treat it as a rollback.
 
-The committed v1.3.2 archive (SHA-256 `22b54eabaf2a12a5bba04c9b21d58f798f93b7c1a6845362035edf574c488755`) is historical and checksum-verified. It is not an operational rollback. v1.3.1 is also retained only as an artifact reference. No existing archive has been verified as a working rollback for the installed 1.1.3 plugin. The v1.3.4 archive must be generated from the exact tested head, accompanied by a version/hash provenance sidecar, and independently reviewed before any publication or installation. Live DirectAdmin update, install, remove/reinstall, and rollback behavior still require a matching disposable-host check.
+The committed v1.3.2 archive (SHA-256 `22b54eabaf2a12a5bba04c9b21d58f798f93b7c1a6845362035edf574c488755`) is historical and checksum-verified. It is not an operational rollback. v1.3.1 is also retained only as an artifact reference. No existing archive has been verified as a working rollback for the installed 1.1.3 plugin. The v1.3.5 archive must be generated from the exact tested head, accompanied by a version/hash provenance sidecar, and independently reviewed before any publication or installation. Live DirectAdmin update, install, remove/reinstall, and rollback behavior still require a matching disposable-host check.
 
 This plugin does **not** grant Titan business authority. Mutating or privileged repair work belongs to canonical governed execution and deployment/runtime owners.
 
@@ -45,3 +45,4 @@ bash tools/package.sh
 The resulting archive is written to `dist/titan_dev_access.tar.gz`.
 
 See `AGENTS.md` for the server-validated DirectAdmin packaging, routing and live-host verification rules.
+
