@@ -2,8 +2,9 @@ import SectionLabel from '../components/SectionLabel'
 import FadeIn from '../components/FadeIn'
 import CTASection from '../components/CTASection'
 import { Link } from 'react-router-dom'
+import { additionalIndustryConfigs } from '../data/industryExtensions'
 
-const industries = [
+const existingIndustries = [
   { icon: '🧹', name: 'Cleaning', slug: 'cleaning', desc: 'Coordinate enquiries, recurring services, team assignments, property notes, checklists, customer communication and follow-up.', tags: ['Recurring Service', 'Team Coordination', 'Property Notes'] },
   { icon: '🌿', name: 'Landscaping & Lawn Care', slug: 'landscaping', desc: 'Keep recurring routes, seasonal work, crews, customer requests and follow-up connected around the systems you already use.', tags: ['Recurring Routes', 'Seasonal Work', 'Crew Coordination'] },
   { icon: '🏊', name: 'Pool Service', slug: 'pools', desc: 'Support recurring visits, service histories, customer communication, technician notes and exception handling across the service cycle.', tags: ['Service History', 'Recurring Visits', 'Customer Updates'] },
@@ -12,6 +13,17 @@ const industries = [
   { icon: '🪟', name: 'Window Cleaning', slug: 'window-cleaning', desc: 'Manage repeat customers, route-aware scheduling, team assignments, service notes and proactive rebooking.', tags: ['Rebooking', 'Scheduling', 'Team Assignment'] },
   { icon: '🏠', name: 'Property Maintenance', slug: 'property-maintenance', desc: 'Coordinate multi-service requests, properties, jobs, field teams, evidence and ongoing customer relationships.', tags: ['Multi-Service', 'Properties', 'Work Coordination'] },
   { icon: '🚐', name: 'Mobile Services', slug: 'mobile-services', desc: 'Support businesses that take the service to the customer with location-aware scheduling, communication, job context and follow-up.', tags: ['Mobile Workforce', 'Location Context', 'Customer Comms'] },
+]
+
+const industries = [
+  ...existingIndustries,
+  ...Object.entries(additionalIndustryConfigs).map(([slug, config]) => ({
+    icon: config.icon,
+    name: config.name,
+    slug,
+    desc: config.directoryDescription,
+    tags: config.tags,
+  })),
 ]
 
 export default function Industries() {
