@@ -24,6 +24,8 @@ export type CompiledContractInventory = Readonly<{
   items: readonly CompiledContractItem[];
 }>;
 
+const sourceKinds: ReadonlySet<string> = new Set(["OPENAPI", "JSON_SCHEMA", "WEBHOOK", "MCP"]);
+
 function nonEmpty(value: unknown, field: string): string {
   if (typeof value !== "string" || value.trim() === "") throw new Error(`${field}-required`);
   return value.trim();
@@ -36,21 +38,50 @@ function object(value: unknown): Record<string, unknown> {
   return value as Record<string, unknown>;
 }
 
+function validateSource(source: unknown): ContractSource {
+  const candidate = object(source);
+  if (typeof candidate.kind !== "string" || !sourceKinds.has(candidate.kind)) {
+    throw new Error("contract-source-kind-invalid");
+  }
+  const source_ref = nonEmpty(candidate.source_ref, "source_ref");
+  const source_revision = nonEmpty(candidate.source_revision, "source_revision");
+  object(candidate.document);
+  return {
+    kind: candidate.kind as ContractSourceKind,
+    document: candidate.document,
+    source_ref,
+    source_revision,
+  };
+}
+
 function sortedUnique(values: string[]): string[] {
   const normalized = values.map((value) => nonEmpty(value, "contract-item-id"));
   if (new Set(normalized).size !== normalized.length) throw new Error("contract-item-id-duplicate");
   return normalized.sort((a, b) => a < b ? -1 : a > b ? 1 : 0);
 }
 
+function identityKey(item: Pick<CompiledContractItem, "source_kind" | "source_ref" | "local_id">): string {
+  return JSON.stringify([item.source_kind, item.source_ref, item.local_id]);
+}
+
+function compareIdentity(left: CompiledContractItem, right: CompiledContractItem): number {
+  if (left.source_kind !== right.source_kind) return left.source_kind < right.source_kind ? -1 : 1;
+  if (left.source_ref !== right.source_ref) return left.source_ref < right.source_ref ? -1 : 1;
+  if (left.local_id !== right.local_id) return left.local_id < right.local_id ? -1 : 1;
+  return 0;
+}
+
 function collect(source: ContractSource): CompiledContractItem[] {
   const document = object(source.document);
+  const source_ref = nonEmpty(source.source_ref, "source_ref");
+  const source_revision = nonEmpty(source.source_revision, "source_revision");
   const items: CompiledContractItem[] = [];
   const add = (localId: unknown, operation: string, schemaRef: string | null = null) => {
     const id = nonEmpty(localId, "contract-item-id");
     items.push(Object.freeze({
       source_kind: source.kind,
-      source_ref: nonEmpty(source.source_ref, "source_ref"),
-      source_revision: nonEmpty(source.source_revision, "source_revision"),
+      source_ref,
+      source_revision,
       local_id: id,
       operation,
       schema_ref: schemaRef,
@@ -92,12 +123,15 @@ function collect(source: ContractSource): CompiledContractItem[] {
         }
       }
     }
-  } else {
-    const tools = Array.isArray(document.tools) ? document.tools : [];
+  } else if (source.kind === "MCP") {
+    if (!Array.isArray(document.tools)) throw new Error("mcp-tools-array-required");
+    const tools = document.tools;
     for (const entry of tools) {
       const tool = object(entry);
       add(tool.name, "MCP_TOOL");
     }
+  } else {
+    throw new Error("contract-source-kind-invalid");
   }
 
   const ids = sortedUnique(items.map((item) => item.local_id));
@@ -107,14 +141,11 @@ function collect(source: ContractSource): CompiledContractItem[] {
 
 export async function compileContractInventory(sources: readonly ContractSource[]): Promise<CompiledContractInventory> {
   if (!Array.isArray(sources) || sources.length === 0) throw new Error("contract-source-required");
-  const items = sources.flatMap(collect);
-  const keys = items.map((item) => `${item.source_kind}:${item.source_ref}:${item.local_id}`);
+  const validatedSources = sources.map(validateSource);
+  const items = validatedSources.flatMap(collect);
+  const keys = items.map(identityKey);
   if (new Set(keys).size !== keys.length) throw new Error("contract-item-duplicate");
-  items.sort((a, b) => {
-    const left = `${a.source_kind}:${a.source_ref}:${a.local_id}`;
-    const right = `${b.source_kind}:${b.source_ref}:${b.local_id}`;
-    return left < right ? -1 : left > right ? 1 : 0;
-  });
+  items.sort(compareIdentity);
   const serialized = JSON.stringify(items);
   const digest = await globalThis.crypto.subtle.digest("SHA-256", new TextEncoder().encode(serialized));
   const hash = [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");

@@ -37,3 +37,38 @@ test("fails closed for malformed contracts and duplicate source-local identities
   await assert.rejects(compileContractInventory([source("OPENAPI", { openapi: "2.0", paths: {} })]), /openapi-3-required/);
   await assert.rejects(compileContractInventory([source("MCP", { tools: [{ name: "same" }, { name: "same" }] })]), /contract-item-id-duplicate/);
 });
+
+test("rejects unknown source kinds, malformed MCP tools, and missing provenance for empty inventories", async () => {
+  await assert.rejects(
+    compileContractInventory([source("UNTRUSTED_KIND", { tools: [{ name: "candidate" }] })]),
+    /contract-source-kind-invalid/,
+  );
+  await assert.rejects(
+    compileContractInventory([source("MCP", { tools: "not-an-array" })]),
+    /mcp-tools-array-required/,
+  );
+  await assert.rejects(
+    compileContractInventory([{ kind: "MCP", document: { tools: [] }, source_ref: " ", source_revision: "rev-1" }]),
+    /source_ref-required/,
+  );
+  await assert.rejects(
+    compileContractInventory([{ kind: "MCP", document: { tools: [] }, source_ref: "mcp.json", source_revision: " " }]),
+    /source_revision-required/,
+  );
+
+  const empty = await compileContractInventory([source("MCP", { tools: [] })]);
+  assert.deepEqual(empty.items, []);
+});
+
+test("uses unambiguous tuple identities and ordering for colon-bearing references and IDs", async () => {
+  const sourceAndItemColon = source("MCP", { tools: [{ name: "c" }] }, "a:b");
+  const sourceColon = source("MCP", { tools: [{ name: "b:c" }] }, "a");
+  const first = await compileContractInventory([sourceAndItemColon, sourceColon]);
+  const reversed = await compileContractInventory([sourceColon, sourceAndItemColon]);
+
+  assert.equal(first.inventory_hash, reversed.inventory_hash);
+  assert.deepEqual(first.items.map(({ source_ref, local_id }) => [source_ref, local_id]), [
+    ["a", "b:c"],
+    ["a:b", "c"],
+  ]);
+});
