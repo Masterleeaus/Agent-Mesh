@@ -1129,7 +1129,7 @@
         {
           "command": "node --test scripts/certification/*.test.mjs",
           "status": "PASS",
-          "detail": "8/8 certification contract tests pass after keeping the #1048 owner link on the DirectAdmin row and preserving the snapshot’s top-level related_evidence contract."
+          "detail": "8/8 certification contract tests pass after keeping the #1048 owner link on the DirectAdmin row and preserving the snapshot\u2019s top-level related_evidence contract."
         },
         {
           "command": "node scripts/generate-readiness-snapshot.mjs --check",
@@ -2118,6 +2118,686 @@
         "public_key_add_fingerprint_revoke_lifecycle": "UNVERIFIED"
       },
       "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T10:53:41Z",
+      "workspace_head": "91c253aacc94ae9db1d5b92fdc331868ccc8a4a8",
+      "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only current-main refresh after #1049/#1204 SDK bridge merged. Rechecked PWA/native client boundaries, hosted Workforce and DirectAdmin evidence, current CI baseline, and the disposable saved-environment composition. Authored changes remain limited to #1172 evidence files; no owner implementation or live host changed.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "75cc7f020353063aba129e5238b35e78de62291c",
+        "workspace_claim_sha_before_evidence_commit": "91c253aacc94ae9db1d5b92fdc331868ccc8a4a8",
+        "remote_claim_sha_before_update": "20557ff2d39c04de832b0808fa99a870de92d8da",
+        "current_main_is_ancestor_after_merge": true,
+        "pr_1178_before_evidence_push": {
+          "state": "OPEN",
+          "draft": true,
+          "head_sha": "20557ff2d39c04de832b0808fa99a870de92d8da",
+          "base_sha": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "latest_named_checks": {
+            "Mission Closure Evidence Gate": "success",
+            "evidence-contract": "success",
+            "mobile": "success",
+            "source-index": "success",
+            "validate": "success"
+          },
+          "note": "These checks were green on the previously pushed head only. They predate the merged 75cc main and this evidence refresh; refresh after publishing the current branch."
+        },
+        "owner_lanes": [
+          {
+            "issue": 811,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 812,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1211,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:43:19Z",
+            "merge_commit_sha": "8199494eeacc3513b293311d88a469a654ee4dea"
+          },
+          {
+            "issue": 1171,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 1182,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1188,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T10:15:24Z",
+            "head_sha": "26b2de56fbf915887aeea95fbebcb6b6e90ec433"
+          },
+          {
+            "issue": 302,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:56:16Z",
+            "head_sha": "14cb413fcb082f4426e298e46590de6e0fe577cc"
+          },
+          {
+            "issue": 1049,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:46:53Z",
+            "head_sha": "5b1275df1b0ffea533baa8866080b149cef29549",
+            "base_sha": "ccf8010a35292caa17bac393214b43b1a8209e2a",
+            "merge_commit_sha": "75cc7f020353063aba129e5238b35e78de62291c"
+          },
+          {
+            "issue": 1048,
+            "priority": "P2",
+            "state": "OPEN",
+            "pull_request": 1209,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T10:36:43Z",
+            "head_sha": "f7ae3aba4cc1287ee4d902b6321205d00091b18c"
+          },
+          {
+            "issue": 1172,
+            "priority": "P1",
+            "state": "OPEN"
+          },
+          {
+            "pull_request": 1240,
+            "state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:07:02Z"
+          },
+          {
+            "pull_request": 1197,
+            "state": "MERGED",
+            "merged_at": "2026-10-02T10:23:55Z",
+            "head_sha": "43605017efe6504d0cee397592cbcb1fdfe7b18c",
+            "package_check": "success"
+          }
+        ],
+        "latest_hosted_checks_for_pr_1204_head": {
+          "head_sha": "5b1275df1b0ffea533baa8866080b149cef29549",
+          "DirectAdmin plugin portfolio": "success",
+          "Personal Zero Verification": "success",
+          "Distribution Gateway contract": "success",
+          "Titan Zero Source Evidence Index": "success",
+          "Titan Zero CI": "success",
+          "mobile_job": "success",
+          "validate_job": "success",
+          "note": "Checks ran on the PR head/merge candidate before merge. CI success is baseline-gated and does not imply all product suites are failure-free."
+        },
+        "current_hosted_regression_baseline": {
+          "web_typecheck": {
+            "current": 0,
+            "baseline": 16,
+            "result": "clean; baseline removable"
+          },
+          "worker_tests": {
+            "current": 0,
+            "baseline": 24,
+            "result": "clean; baseline removable"
+          },
+          "pwa_tests": {
+            "passed": 7,
+            "failed": 0
+          },
+          "workforce_tests": {
+            "passed": 34,
+            "failed": 0
+          },
+          "web_tests": {
+            "current_failures": 85,
+            "baseline_failures": 86,
+            "result": "no new failure; one failure fewer than baseline"
+          },
+          "titan_platform_tests": {
+            "total": 1151,
+            "passed": 1077,
+            "failed": 72,
+            "skipped": 2,
+            "baseline_failures": 97,
+            "result": "72/97 baseline; no regression, not a clean suite"
+          }
+        },
+        "directadmin_php_hosted_check": "On main 2ef430e, #1048/#1209 PHP package/transport workflow passed on hosted PHP 8.3: lint, security and malformed-request CLI-server tests, archive integrity, current source candidate and provenance. This is an isolated runner fixture; no actual DirectAdmin SAPI/version was observed."
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "directadmin",
+          "path": ".github/workflows/directadmin-dev-access-php.yml",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "01d25babf84a56b2f65735fbfee8e21cbace94a44cf9876fcfe2e830eea020c1"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/lib/app.php",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "3914decc86b7b9e5e9bd6747752e5e4551e2c99f8a3b01cae054dcb374c0169b"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/tools/security-test.php",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "fd12f9e0b381f43843fc1c0bcb1da7f76a257f0d6179f18563b1f8824f85e080"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/tools/request-integration-test.php",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "9591a150d5fdbdc1f4fa99d7b87c28829e0627de6fed9bd25099fc04c82352ee"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/tools/update-hook-test.sh",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "eebfe843b324652612c4f19202411ba0d564e6521661fb3e74264afd872797b8"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/tools/plugin-lab.sh",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "3cc2a7efa52703ddda126b0221cf5b8cf61bb8e2f4a5da75294a8c65dc6d06e0"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/tools/package.sh",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "cdf6bc01d87c32e4658bd15442d938df4a964abf2dd1a23adde511b057f0e041"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/README.md",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "69dfbf4149754b883bc4b3ab777a1a893da86c44bb910c3d7533ca7b329aee1f"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/directadmin/DEVELOPER-PORTAL-RECOVERY-RUNBOOK.md",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "9dc4f337d65a0e518653beed3b69bf81837e2f1ce586014576531dc848c5101b"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/developer-portal.ts",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "8084801fe278c11cb566b8823deb5915df62edfc089a8c3c99cf30585519324f"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/tests/developer-portal.test.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "052dd38634001d6bc68a23b08b1de712628ee10e697fd3de7e5c011a6a181e20"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/directadmin-plugin.ts",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "7b5e7217ecd13e12e820ef4d712d867c1e5dda9885bfb20b1b626c269dbe4c88"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/directadmin-session-bridge.ts",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "33f169447c360d56e806c1d27dd7c66e78772b7814b6341c2416d6015cb2b59b"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/directadmin-gateway.ts",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "31a410174ab1f2cbb175677761a5db6ed3a4d1631c24996d823138695dcbb7e0"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/directadmin-cockpit.ts",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "a93fd51f498edb78d1c5aa65b7300750da61177a977586dedce4fb76e7099000"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/tests/directadmin-bridge.test.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "ca175aab9342ffb87316cc64f4195b19aad2a841c2666f4988f3ddac69e99dc0"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "6c1f8204b1000fb48d288975b37a30a80bf381af7b43bb7eeee00a50b937572b"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/tests/directadmin-browser.browser.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "32c155290f9a6748ef6d19eb70f82c1a25f7bab1564d3f5eeab33dbb0a1f8b27"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/contracts/directadmin-authenticated-session-bridge.md",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "833aa6fc2c5d76f025022f495e37cb8bb3619a3df9061771201e0b0f94c00420"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/README.md",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "6bd0b9d8c998adbf2d33bf8aba1eaa525b6464fd36d209b537bb51b17a5f1940"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/zero-core/cockpit.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "10784723d1ba6404943e1f7bc626df2b278c6a3bb3aa9477f84f6d6cc88fc3c0"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/operations-hub/cockpit.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "a0af6f2c3347192bf37e2a04e3a3f3475b4f6541dcc319a40d53569a4e4f6703"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/brand-studio/cockpit.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "c5d32b0d423781bb9cc4f042f2b5985b42ed602c08eff73b8865f5018b2c3796"
+        }
+      ],
+      "client_host_findings": [
+        "PWA: one Zero/Go/Hub PWA remains separate from apps/web and native mobile. Shipped app.mjs is still a static shell; src projection helpers are not copied into the deployable build. No host-verified generic PWA bootstrap/projection route exists. The merged #1049/#1204 bridge is DirectAdmin-panel-only and is not a PWA endpoint. Company identity remains server derived; mode and client company values grant no authority.",
+        "PWA/Workforce stream: current host still returns completed-response SSE after awaited dispatch; Last-Event-ID filters the completed event array. No real incremental stream, durable revision-bound event replay, PWA cancel or governed offline conversation replay is established.",
+        "Mobile: #1188 is merged while issue #1182 is currently open. HostedConversationTransport remains full-body JSON, reconnect() is a no-op, active requests are not abortable, continuation tokens are available only after full completion, and the transport is not injected by production SplashScreen. Offline command replay is not conversation replay; logout/company/context revision purge and explicit unavailable states remain absent.",
+        "Identity/storage composition: local earlier smoke at source main 2ef used a disposable global registry and separate company SQLite stores to prove canonical session-to-placement resolution, cross-company rejection, context switch, old-lease rejection and Workforce runtime migrations. It manually composed #1240 because the production Workforce workOrders port still receives company_id/actor_id/IDs rather than CurrentSessionContext or CompanyStoreLease. That smoke preceded #1204 and does not prove host wiring or production effects.",
+        "DirectAdmin: #1048/#1209 malformed/ambiguous request behavior is now independently represented by PHP security/request tests plus CLI-server integration fixtures; #1049/#1204 adds a panel-scoped cookie/session bridge and server-side Workforce Zero exchange. Local 83/83 bridge/handoff tests and hosted workflows confirm source/fixture behavior only; unsupported Workforce intents remain typed 403. No installed panel or production host was contacted."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Merged 75cc7f020353063aba129e5238b35e78de62291c into the existing agent/issue-1172 claim branch; main ancestry confirmed."
+        },
+        {
+          "command": "node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs",
+          "status": "PASS",
+          "detail": "83/83 local tests passed using disposable canonical identity/registry fixtures, including issuer, CSRF, revision, company switch, revocation, session invalidation, typed 403 and unavailable-state cases."
+        },
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 canonical evaluator tests passed against refreshed audit input."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification CLI, contract and deterministic snapshot tests passed."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Commit-bound audit snapshot matches; production eligibility remains denied."
+        },
+        {
+          "command": "cd apps/directadmin/dev-access/dist/v1.3.2 && sha256sum --check titan_dev_access.tar.gz.sha256",
+          "status": "PASS",
+          "detail": "Archived v1.3.2 source package checksum verified locally; this does not certify the current v1.3.4 candidate or an installation."
+        },
+        {
+          "command": "Read-only GitHub review of #1178, client/host issues, #1204/#1209 PRs and workflow jobs/logs",
+          "status": "PASS",
+          "detail": "Confirmed #1204 and #1209 merged; current owner issue states, hosted focused jobs and baseline deltas recorded above. No GitHub mutation or live host call."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in the three evidence-only files."
+        }
+      ],
+      "environment_limits": {
+        "php_cli": "NOT_INSTALLED_LOCALLY; PHP 8.3 security/transport/package workflow ran only in hosted CI.",
+        "flutter_dart": "NOT_INSTALLED_LOCALLY; Flutter format/analyze/hosted transport test ran only in hosted CI.",
+        "node": "24.19.0; local TypeScript, SQLite and tsx dependencies available.",
+        "live_host": "NOT_CONTACTED by request.",
+        "physical_devices": "NOT_AVAILABLE."
+      },
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T11:02:59Z",
+      "workspace_head": "31a634525f3fc8e8a92924e8d48c98c61abf7f19",
+      "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only refresh after #1050/#1143 DirectAdmin Workforce consumer/package merged. Rechecked latest main, panel versus PWA/native boundaries, actual local and hosted evidence, and baseline status. Only #1172 evidence files are authored; owner source and production hosts were not changed.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "468d42b1a93401a2357f2da253f639694cb4a937",
+        "workspace_claim_sha_before_evidence_commit": "31a634525f3fc8e8a92924e8d48c98c61abf7f19",
+        "remote_claim_sha_before_evidence_update": "20557ff2d39c04de832b0808fa99a870de92d8da",
+        "current_main_is_ancestor_after_merge": true,
+        "pr_1178_before_publish": {
+          "state": "OPEN",
+          "draft": true,
+          "head_sha": "20557ff2d39c04de832b0808fa99a870de92d8da",
+          "base_sha": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "latest_named_checks": {
+            "Mission Closure Evidence Gate": "success",
+            "evidence-contract": "success",
+            "mobile": "success",
+            "source-index": "success",
+            "validate": "success"
+          },
+          "note": "These checks apply to the old pushed head only. The current local source merges main through 468d42b; publish and rerun before treating the branch as current."
+        },
+        "owner_lanes": [
+          {
+            "issue": 811,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 812,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1211,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:43:19Z",
+            "merge_commit_sha": "8199494eeacc3513b293311d88a469a654ee4dea"
+          },
+          {
+            "issue": 1050,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1143,
+            "pull_request_state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:54:39Z",
+            "head_sha": "f2f750e434f9f82d964920351ebc80245bd680f3"
+          },
+          {
+            "issue": 1171,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 1182,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1188,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T10:15:24Z",
+            "head_sha": "26b2de56fbf915887aeea95fbebcb6b6e90ec433"
+          },
+          {
+            "issue": 302,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:56:16Z",
+            "head_sha": "14cb413fcb082f4426e298e46590de6e0fe577cc"
+          },
+          {
+            "issue": 1049,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:46:53Z",
+            "head_sha": "5b1275df1b0ffea533baa8866080b149cef29549",
+            "base_sha": "ccf8010a35292caa17bac393214b43b1a8209e2a",
+            "merge_commit_sha": "75cc7f020353063aba129e5238b35e78de62291c"
+          },
+          {
+            "issue": 1048,
+            "priority": "P2",
+            "state": "OPEN",
+            "pull_request": 1209,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T10:36:43Z",
+            "head_sha": "f7ae3aba4cc1287ee4d902b6321205d00091b18c"
+          },
+          {
+            "issue": 1172,
+            "priority": "P1",
+            "state": "OPEN"
+          },
+          {
+            "pull_request": 1240,
+            "state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:07:02Z"
+          },
+          {
+            "pull_request": 1197,
+            "state": "MERGED",
+            "merged_at": "2026-10-02T10:23:55Z",
+            "head_sha": "43605017efe6504d0cee397592cbcb1fdfe7b18c",
+            "package_check": "success"
+          }
+        ],
+        "hosted_checks_for_pr_1143_head": {
+          "head_sha": "f2f750e434f9f82d964920351ebc80245bd680f3",
+          "DirectAdmin plugin portfolio": "success",
+          "Titan Zero Source Evidence Index": "success",
+          "Titan Zero CI": "success",
+          "Titan Zero CI jobs": {
+            "mobile": "success",
+            "validate": "success"
+          },
+          "note": "The hosted job list did not run apps/directadmin/workforce/tests/*.test.mjs. PR body reports 39/39 package/browser/hosted tests as owner evidence, not independently confirmed by this review or by that Actions run."
+        },
+        "current_hosted_regression_baseline": {
+          "web_typecheck": {
+            "current": 0,
+            "baseline": 16,
+            "result": "clean; baseline removable"
+          },
+          "worker_tests": {
+            "current": 0,
+            "baseline": 24,
+            "result": "clean; baseline removable"
+          },
+          "pwa_tests": {
+            "passed": 7,
+            "failed": 0
+          },
+          "workforce_tests": {
+            "passed": 34,
+            "failed": 0
+          },
+          "web_tests": {
+            "current_failures": 85,
+            "baseline_failures": 86,
+            "result": "no new failure; one failure fewer than baseline"
+          },
+          "titan_platform_tests": {
+            "total": 1151,
+            "passed": 1077,
+            "failed": 72,
+            "skipped": 2,
+            "baseline_failures": 97,
+            "result": "72/97 baseline; no regression, not a clean suite"
+          },
+          "lockfile_convergence": "still reported as debt"
+        }
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/README.md",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "90c12196d70736e5664467d81a246cdb23808315123736a88938d4bb2acd1300"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/images/api.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "bbc0d35c9bf04264ba1f113933f04b8a08406b1c49eb779c54b58e1a0dfb2849"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/images/cockpit.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "e43bf27d118826ad73d297690d4246b0d9ec4d6f511bccc4e842c7c877d7a3bd"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/images/controller.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "19c858b196033fadf0adfb120284dcc38958ec6e2bb03e182a0efbcb9fc264ce"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/images/presentation.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "6a5a0784dcee83ea2825c1269cb4bc5ccf5b203715949e12ebcad0405e637a80"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tools/package.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "6fb522822bbf5334dd50224f90a9ffea69df6d7b39e2cb14fe958ab0267eecaa"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/api.test.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "6c705653ef0683e5eacd17299ccf129bc2a9c19806df9908f1a7301e3d6d37bb"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/browser.test.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "f9a38f9830da0291fd664dd511e36527b21596bb3a047f5a578bcb21a4e7c25e"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/controller.test.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "ac78b5bd80e418f10483f9c64850f58251b0671120f490ba72303d98f582cc24"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/hosted-sdk.integration.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "024a7a9214636fa9f7798721b26cf511a1ae4cad8efaa5254fcc677e83e84997"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/relay-host.integration.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "e84c86c4fa486ffa665cfbd475a6f30e3920502d5a7fd4d3581ad54a396e4751"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/sdk-contract.integration.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "12a8162426cc1f5ff4ec510b1293b1751c82080d2758548481c6245c80f85f6d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/package.test.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "b134ce24d614b44c41a253fcf4c6b9b39036743d36b996c5e88e898b8ba93314"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "9d940468ef1acdb622b21700d91994c027971517df6aceb08b33e92776a29903"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "47ceabb7441e0e526c49fa544740f88acd3cd0620566e48069c7784e35c63657"
+        }
+      ],
+      "client_host_findings": [
+        "PWA: one Zero/Go/Hub PWA remains distinct from apps/web and native mobile. Its shipped app.mjs is still the static shell; projection helpers are not included in the built shell. No generic authenticated PWA bootstrap/projection or hosted conversation endpoint exists. The new #1050 DirectAdmin cockpit consumes a separate panel session/relay contract and is not a PWA API.",
+        "Mobile: #1188 is merged while issue #1182 is currently open. HostedConversationTransport still collects full JSON, reconnect() is a no-op, active requests are not aborted, tokens arrive only after completed responses, and SplashScreen does not inject this transport. The DirectAdmin Workforce panel explicitly does not integrate native conversation transport.",
+        "Stream/continuity: Workforce still serializes its SSE after awaited dispatch and filters a completed event array by Last-Event-ID. No incremental stream or durable event log was established; no PWA/mobile revision-bound resume, active cancel, governed offline replay, or complete logout/company/context purge is proven.",
+        "DirectAdmin Workforce consumer: #1050/#1143 provides a packaged admin/reseller/user cockpit backed by #1049 session and #812 relay to #811. Current host publishes controls:[]; the package stays read-only and displays REQUESTED receipts only. Package/install and Apache cookie boundaries are not commissioned. The #1143 PR reports 39/39 tests but its inspected hosted jobs do not run the app-specific test glob.",
+        "Authority boundary remains company_id from host-verified canonical identity. Current company is not inferred from mode, a browser header, DirectAdmin role or client-selected identity. PWA and mobile remain their own canonical apps."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Fetched and merged latest main 468d42b1a93401a2357f2da253f639694cb4a937 into existing agent/issue-1172; main ancestry confirmed."
+        },
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 evaluator regressions passed after refresh of the 28-row audit input."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification CLI, contract and deterministic snapshot tests passed after refresh."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Deterministic source snapshot matches main 468d42b; production eligibility remains denied."
+        },
+        {
+          "command": "node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs",
+          "status": "PASS",
+          "detail": "83/83 SDK/session bridge tests passed on prior source 75cc7f0 before #1143 merged its separate Workforce UI consumer; #1143 did not change those SDK tests. This did not run the Workforce app-specific test glob."
+        },
+        {
+          "command": "sha256sum --check apps/directadmin/dev-access/dist/v1.3.2/titan_dev_access.tar.gz.sha256",
+          "status": "PASS",
+          "detail": "Historical archive checksum verified from its archive directory; no current candidate was installed."
+        },
+        {
+          "command": "Read-only review of PR #1143 owner report, source and GitHub Actions job steps",
+          "status": "PASS",
+          "detail": "Confirmed partial PR merged, issue remains open, package/CI jobs green, and current hosted tests are baseline-relative. No GitHub write or host contact."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in the evidence-only worktree."
+        }
+      ],
+      "environment_limits": {
+        "node": "24.19.0; local TypeScript, SQLite, tsx available.",
+        "php_cli": "NOT_INSTALLED_LOCALLY; #1048 PHP 8.3 workflow ran only in hosted CI.",
+        "flutter_dart": "NOT_INSTALLED_LOCALLY; Flutter format/analyze/hosted transport test ran only in hosted CI.",
+        "new_workforce_cockpit_suite": "Not run locally during this review; PR body owner-report says 39/39, hosted jobs inspected did not run the app test glob.",
+        "live_host": "NOT_CONTACTED by request.",
+        "physical_devices": "NOT_AVAILABLE."
+      },
       "production_eligible": false,
       "mission_complete": false
     }
