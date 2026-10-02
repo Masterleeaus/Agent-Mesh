@@ -54,7 +54,7 @@ test("ExecutionGateway routes ACK and verified outcomes into company-scoped cano
   assert.equal(jobFact.actor_id, "actor-1");
   assert.equal(jobFact.agent_id, "agent-1");
   assert.equal(jobFact.correlation_id, "job-1");
-  assert.equal(jobFact.causation_id, "decision-1");
+  assert.equal(jobFact.causation_id, verified.evidence_id);
   assert.equal(jobFact.decision_id, verified.decision_id);
   assert.equal(jobFact.authority_decision_id, "authority-1");
 });
