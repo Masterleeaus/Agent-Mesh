@@ -73,7 +73,7 @@ test("revocation or downgrade after authorization blocks execution before provid
   const planned={status:"approved",decision_id:"auth-1",canonical:canonical("ALLOW")};
   await assert.rejects(
     ()=>gateway.execute({decision:planned,capability:{name:"booking.create"},input:{},idempotency_key:`tool-${currentDecision}`,company_id:"co-1",work_id:"work-1",agent_id:"worker-1",run_id:"run-1"}),
-    /authority-decision-not-allow/,
+    /authority-not-allowed/,
   );
   assert.equal(evaluations,1);
   assert.equal(providerCalls,0);
@@ -83,7 +83,7 @@ test("revocation or downgrade after authorization blocks execution before provid
 test("current authority decision is persisted as a superseding decision before execution",async()=>{
  const appended=[];
  const gateway=new RuntimeAuthorityGateway({
-  contextResolver:{async evaluate(value)=>canonical("ALLOW","co-1",{
+  contextResolver:{async evaluate(value){return canonical("ALLOW","co-1",{
     authority_decision_id:value.authority_decision_id,
     supersedes_authority_decision_id:value.supersedes_authority_decision_id,
     evaluated_at:value.now,
