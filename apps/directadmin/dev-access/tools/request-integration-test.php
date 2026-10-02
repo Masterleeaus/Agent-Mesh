@@ -288,7 +288,7 @@ $environment=$common+[
  'CONTENT_LENGTH'=>'0','csrf[]'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'
 ];
 [$result]=integration_run_role($root,'admin',$environment);
-integration_expect(strpos($result,'Request rejected: invalid CSRF token.')!==false,'array-shaped environment fields must not be accepted as CSRF');
+integration_expect(strpos($result,'Request rejected: invalid CSRF token.')!==false||strpos($result,'Request rejected: malformed or ambiguous form data.')!==false,'array-shaped environment fields must fail closed even when PHP omits the bracketed environment name');
 integration_expect(strpos($result,'Exit code:')===false,'array-shaped environment fields must not execute a command');
 
 $environment=$common+[
