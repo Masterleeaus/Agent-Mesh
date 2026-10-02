@@ -402,7 +402,7 @@ def validate_pull_request():
                                       f'repos/{repo}/pulls/{number}/commits?per_page=100']))
     if type(pr.get('commits')) is not int or len(commits) != pr['commits']:
         fail('PR commit listing incomplete or changed; cannot determine whether it closes a mission')
-    closing_text = '\\n'.join([pr.get('title') or '', pr.get('body') or ''] +
+    closing_text = '\n'.join([pr.get('title') or '', pr.get('body') or ''] +
                                [(commit.get('commit') or {}).get('message') or '' for commit in commits])
     targets = set(closing_targets(closing_text, repo) + linked_closing_issues(repo, number))
 
@@ -427,7 +427,34 @@ def validate_pull_request():
     missing = missing_agent_pr_structure(body)
     if missing:
         fail('mission-closing PR body is missing evidence structure: ' + ', '.join(missing))
-    link = re.findall(r'(?m)^\\*\\*Linked issue:\\*\\*[ \\t]*Closes #([1-9][0-9]*)[ \\t]*$', body)
+    link = re.findall(r'(?m)^\*\*Linked issue:\*\*[ \t]*Closes #([1-9][0-9]*)[ \t]*, body)
+    if len(link) != 1 or int(link[0]) != issue_number:
+        fail('mission-closing PR must link exactly the issue it closes')
+    issue = run_json(['gh', 'api', f'repos/{repo}/issues/{issue_number}'])
+    if 'pull_request' in issue or issue.get('state') != 'open':
+        fail('linked mission must be an open issue, not a pull request')
+    validate_completion_evidence(body, issue, issue_number, 'Closes')
+    issue_now = run_json(['gh', 'api', f'repos/{repo}/issues/{issue_number}'])
+    if issue_now.get('body') != issue.get('body') or issue_now.get('state') != 'open':
+        fail('issue changed during validation; refresh the closure evidence and retry')
+    print(f'Mission closure evidence is structurally complete for #{issue_number}; human semantic review remains required.')
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--self-test", action="store_true")
+    args = parser.parse_args()
+
+    if args.self_test:
+        validate_roadmap_integrity()
+        result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s',
+                                 str(ROOT / '.github/scripts/tests'), '-v'], check=False)
+        raise SystemExit(result.returncode)
+    validate_pull_request()
+
+
+if __name__ == "__main__":
+    main()
+, body)
     if len(link) != 1 or int(link[0]) != issue_number:
         fail('mission-closing PR must link exactly the issue it closes')
     issue = run_json(['gh', 'api', f'repos/{repo}/issues/{issue_number}'])
