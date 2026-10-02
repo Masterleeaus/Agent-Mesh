@@ -183,6 +183,7 @@ $adminGet=$common+['REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$routes['admin'],'QUER
 [$adminHtml]=integration_run_role($root,'admin',$adminGet);
 $token=integration_token($adminHtml);
 integration_expect(strpos($adminHtml,'operator actions enabled')!==false,'admin route must expose operator mode');
+integration_expect(substr_count($adminHtml,'action="?pipe_post=yes"')===2,'rendered admin run/add-key forms must request DirectAdmin stdin POST transport');
 
 foreach(['reseller','user'] as $role){
  $environment=$common+['REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$routes[$role],'QUERY_STRING'=>''];
@@ -201,7 +202,7 @@ $environment=$common+[
 foreach($fields as $name=>$value)$environment[$name]=$value;
 [$html]=integration_run_role($root,'admin',$environment);
 integration_expect_successful_pwd($html,$homeA);
-integration_expect(substr_count($html,'action="?pipe_post=yes"')===3,'rendered admin forms must request DirectAdmin stdin POST transport');
+
 
 foreach(['reseller','user'] as $role){
  $actions=[
