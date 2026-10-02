@@ -20,6 +20,7 @@ export type DistributionState =
   | "RETIRED";
 
 export type DistributionManifest = Readonly<{
+  schema: "titan.distribution-manifest.v1";
   manifest_id: string;
   company_id: string;
   product_ref: string;
@@ -51,11 +52,15 @@ function required(value: string, name: string): string {
   return normalized;
 }
 
+function compareText(left: string, right: string): number {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
 function uniqueReferences(values: readonly string[], name: string): readonly string[] {
   if (!Array.isArray(values) || values.length === 0) throw new Error(`${name}-required`);
   const normalized = values.map((value) => required(value, name));
   if (new Set(normalized).size !== normalized.length) throw new Error(`${name}-duplicate`);
-  return Object.freeze([...normalized].sort((left, right) => left.localeCompare(right)));
+  return Object.freeze([...normalized].sort(compareText));
 }
 
 export function createDistributionManifest(
@@ -73,6 +78,7 @@ export function createDistributionManifest(
   if (!/^sha256:[a-f0-9]{64}$/i.test(artifact_hash)) throw new Error("artifact-hash-invalid");
 
   return Object.freeze({
+    schema: "titan.distribution-manifest.v1" as const,
     manifest_id,
     company_id,
     product_ref,
@@ -127,6 +133,6 @@ export function projectMatrix(
           platform,
         }),
       )
-      .sort((left, right) => left.manifest_id.localeCompare(right.manifest_id)),
+      .sort((left, right) => compareText(left.manifest_id, right.manifest_id)),
   );
 }
