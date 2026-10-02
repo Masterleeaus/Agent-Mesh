@@ -15,6 +15,7 @@ PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=/var/lib/titan/server-node
+Environment=TITAN_NODE_STORE_PATH=/var/lib/titan/server-node/control.json
 EnvironmentFile=-/etc/titan/server-node.env
 
 [Install]
