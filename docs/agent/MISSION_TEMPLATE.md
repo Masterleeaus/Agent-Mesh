@@ -65,7 +65,9 @@ Cross-boundary edits are allowed only when required to achieve the outcome; stat
 Run focused checks for each slice. Schedule broad cross-system, live-host and release verification after the sub-product is assembled, in a separate integration/certification milestone. Record exact commands and results.
 
 ## Branch discipline
-Inherit the root `AGENTS.md` claim protocol. Use exactly `agent/issue-<issue-number>` from the required current `main` SHA. If it exists, do not create an alternate/suffix branch. Keep the same branch through implementation, conflicts, verification, PR and fixes. After merge, do not open a successor branch for the completed mission.
+
+Use a short-lived branch from current `main`; `agent/issue-<number>` is a suggested name, not a lock. A bounded child issue or recovery may use its own branch. Preserve reachable commits and coordinate only actual file or contract conflicts. Keep the same branch through review when practical. Branch naming and claim comments do not block a merge.
+
 
 ## Mission closure evidence
 
