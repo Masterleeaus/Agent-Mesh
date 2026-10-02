@@ -135,6 +135,17 @@ Merge is a delivery decision for the code in the PR. Mission closure and product
 - Keep slice evidence proportional: identify changed paths, focused commands/results, known gaps, and linked parent/child issues. The full parent acceptance map is required only to close the parent issue.
 - Do not disable organization/repository protection rules or falsify results. GitHub-enforced settings remain authoritative.
 
+### Merge-state triage
+
+When a PR is not mergeable, identify the state and take the matching next step:
+
+- **Conflicting or stale head:** compare changed files with current `main`; bring current changes into the existing work or a linked recovery branch, resolve only overlapping files, then rerun focused checks.
+- **Draft:** mark ready when the bounded slice and its focused evidence are reviewable.
+- **Changed-scope check failed:** fix the failure and rerun that check. For unrelated/flaky/baseline failures, record the exact run and affected scope; do not hold unrelated slices.
+- **Pending required check:** wait for that check to finish. If it is required by GitHub protection, satisfy it or report the exact protection rule; do not bypass it.
+- **Review or unresolved thread required:** request the missing review or resolve the concrete thread. Keep working on independent slices while review is pending.
+- **Evidence/linkage issue:** partial delivery uses `Refs` and concise slice evidence. Full closure uses `Closes` with the complete current mission-evidence record.
+
 If an environment prevents a focused check, record:
 - exact command not run,
 - exact blocker,
@@ -163,7 +174,7 @@ A mission is complete only when all are true:
 - No known relevant regression is left unexplained.
 - Canonical docs/contracts are updated if behavior or architecture changed.
 - PR contains concrete evidence: commands, results, changed boundaries, risks, and rollback/compatibility notes.
-- Branch is the canonical claim branch and the PR closes the issue only after the mission closure gate is satisfied. A non-closing slice is not a completed mission.
+- The PR links the issue and closes it only after its full acceptance criteria and closure evidence pass. A merged partial slice does not close its parent.
 - Remaining work is explicitly out of scope or represented by a separate issue; do not hide TODOs in prose.
 
 Required task report:
@@ -176,18 +187,9 @@ Required task report:
 
 ### Mission closure gate
 
-### Bounded blocked-work handoff
+### Bounded issue decomposition
 
-When a small, independently executable remainder blocks finishing the current issue, use this sequence:
-
-1. Confirm the current branch has completed and verified all work it can safely deliver. Do not use this for unfinished work that still belongs in the current branch or for a broad, unbounded scope split.
-2. Create the successor issue **before** closing the original. It must name the blocker, preserve every unmet acceptance/verification/Done requirement, identify the canonical owner and dependencies, and link the original issue and the delivered PR. Check for an existing owner/issue first.
-3. Keep the PR non-closing: use `Refs #<original>`, `mode: partial`, and state that the mission is not fully delivered. Link the successor prominently and retain exact test/live-host gaps.
-4. Merge the completed slice on the existing canonical claim branch after its normal required reviews/checks pass. Do not create a replacement branch.
-5. After merge, add a durable handoff note to the original issue linking the merged PR and successor, enumerating what landed and what remains. Keep both issues open; the original remains authoritative until every acceptance criterion and required verification is complete. Never administratively close or represent the original as complete while any requirement remains unmet.
-6. If GitHub policy or a required gate prevents this sequence, leave both issues open and report the precise gate; do not bypass protection.
-
-Do not create a successor merely to evade tests, review, implementation, or a dependency that can be resolved within the claimed work. The handoff is for a genuinely separate blocker or bounded remainder and preserves, rather than removes, the original unmet scope.
+When a mission is too broad to finish as one reviewable change, split it into linked child issues with one observable outcome, a short acceptance list, a canonical owner and focused checks. Merge each completed slice with `Refs #parent` or close a fully completed child with `Closes #child`; keep the parent open for integration and product certification. Do not close a parent just to move its remaining work elsewhere.
 
 A mission issue closes only after its full acceptance criteria and Done condition are satisfied. A related commit, green CI, contract, schema, projection, documentation slice, or partial implementation is not full completion. A bounded handoff may preserve work and ownership, but it never authorizes closing the original mission early.
 
@@ -202,11 +204,11 @@ A mission issue closes only after its full acceptance criteria and Done conditio
 
 Before final push or PR update:
 - Fetch/re-read current `main` and changed files.
-- Resolve conflicts on the existing claim branch.
+- Resolve conflicts by preserving reachable work on its current branch or a linked recovery branch.
 - Re-run verification invalidated by conflict resolution.
 - Keep commits reviewable and avoid unrelated formatting churn.
 
-If blocked, leave durable evidence on the issue/PR and keep the canonical branch. Use the bounded blocked-work handoff above to record ownership and preserve unmet scope only; keep the original issue open until fully complete. Do not create a replacement branch.
+If blocked, leave durable evidence on the issue/PR and keep the issue open. Create a linked child issue for a bounded independent remainder; use a recovery branch when the current workspace or branch cannot be continued safely.
 
 Lifecycle may be projected as:
 `AVAILABLE → CLAIMED → ACTIVE → VERIFYING → READY → PR_OPEN → MERGED → COMPLETED`

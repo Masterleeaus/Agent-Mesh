@@ -1,11 +1,10 @@
 ## Titan Zero Agent / Codex PR
 
-> Required mission claim: exactly `agent/issue-<issue-number>`. One mission, one branch through review and merge.
+> Link the issue being delivered. Use a short-lived branch; branch names are coordination aids.
 
 **Linked issue:** Refs #
 **Subgoal ID:** <optional roadmap traceability; not a claim>
-**Claim branch:** `agent/issue-<issue-number>`
-**Base main SHA:** `...`
+**Branch / base SHA:** <optional>
 
 ### Outcome
 State the observable outcome completed by this PR.
@@ -57,10 +56,16 @@ Unrun/blocked checks and residual risk:
 - [ ] No Titan Code/Codex development tooling became a production runtime dependency
 
 ### Concurrency / branch discipline
-- [ ] Work remained on the single canonical claim branch
-- [ ] Changed files/current `main` were re-read before finalization
-- [ ] Conflicts were resolved on this branch, not by creating a replacement branch
-- [ ] Verification invalidated by conflict resolution was rerun
+- [ ] Current `main` and changed files were re-read before finalization
+- [ ] Reachable work was preserved while resolving any conflicts
+- [ ] Focused verification invalidated by conflict resolution was rerun
+
+### Product gate
+
+**Subproduct gate:** defer / run
+
+Set this to `run` only when this PR completes the full linked subproduct and should
+run the broad Titan CI suite. Ordinary implementation slices leave it at `defer`.
 
 ### Slice evidence
 

@@ -36,7 +36,7 @@ jobs:
         run: python3 .github/scripts/validate-agent-claim.py --self-test
 
   mobile:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '**Subproduct gate:** run')) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -102,7 +102,7 @@ jobs:
             exit 1
           fi
   validate:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '**Subproduct gate:** run')) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout canonical repository
