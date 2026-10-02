@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { ExecutionGateway, EXECUTION_CLASSES } from "./execution-gateway.mjs";
-import { createBusinessEvidenceExecutionSink } from "./business-evidence-execution-sink.mjs";
+import { EXECUTION_CLASSES } from "./execution-gateway.mjs";
+import { createBusinessEvidenceExecutionGateway, createBusinessEvidenceExecutionSink } from "./business-evidence-execution-sink.mjs";
 
 function memoryStore({ failOnceFor } = {}) {
   const rows = new Map();
@@ -36,9 +36,8 @@ const request = {
 
 test("ExecutionGateway routes ACK and verified outcomes into company-scoped canonical evidence", async () => {
   const store = memoryStore();
-  const sink = createBusinessEvidenceExecutionSink({ store });
-  const gateway = new ExecutionGateway({
-    evidenceSink: sink,
+  const gateway = createBusinessEvidenceExecutionGateway({
+    store,
     providers: [{
       id: "native-field-service", executionClass: EXECUTION_CLASSES.NATIVE, capabilities: ["job.complete"],
       execute: async () => ({ external_ref: "work-order-1", result: { status: "completed" } }),
