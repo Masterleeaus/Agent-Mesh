@@ -105,10 +105,19 @@ test("company-scoped consumer verifies the physical schema and applies the requi
       },
       operations,
     });
+    // Untrusted URL/path fields must not influence the registered placement lookup or opener.
     const input = { company_id: companyId, actor_id: actorId, run_id: "run-native-a", work_id: "work-item-a",
-      work_order_id: "work-a", signal: new AbortController().signal };
+      work_order_id: "work-a", DATABASE_URL: "sqlite:///attacker-company.sqlite",
+      database_url: "postgres://attacker/company-b", path: "/tmp/company-b.sqlite",
+      signal: new AbortController().signal };
     const read = await consumer.read(input);
     assert.deepEqual(read, { id: "work-a", status: "in_progress", completed_at: null });
+
+    // A valid current session for A cannot be used to ask this consumer to open B.
+    await assert.rejects(
+      consumer.read({ ...input, company_id: "native-company-b" }),
+      /workforce-company-session-binding-invalid/,
+    );
 
     await globalStore.query(
       "UPDATE titan_company_storage_placements SET placement_revision=2 WHERE company_id=$1", [companyId],
@@ -138,6 +147,11 @@ test("company-scoped consumer verifies the physical schema and applies the requi
     await drifted.query("CREATE TABLE unapproved_native_object(id TEXT PRIMARY KEY)");
     await drifted.close();
     await assert.rejects(consumer.read(input), /company-native-schema-fingerprint-mismatch/);
+
+    // Placement alone is insufficient: the current membership is re-resolved on
+    // every operation, so revocation after queue admission denies access.
+    await identity.putMembership({ company_id: companyId, actor_id: actorId, role: "owner", status: "revoked" }, 1);
+    await assert.rejects(consumer.read(input), /scope-not-current/);
   } finally {
     await globalStore.close();
     rmSync(root, { recursive: true, force: true });

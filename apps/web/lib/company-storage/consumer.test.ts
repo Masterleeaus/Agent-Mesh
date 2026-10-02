@@ -66,7 +66,8 @@ describe("native company-store consumer", () => {
     expect(f.registry.findByCompanyId).toHaveBeenCalledWith("company-a", { signal: undefined });
     expect(f.opener.open).toHaveBeenCalledWith(expect.objectContaining({
       company_id: "company-a", placement_id: "opaque-company-a", placement_revision: 4,
-    }), { signal: undefined });
+      provider: "sqlite", schema_version: "native-fsm/1",
+    }), expect.objectContaining({ assertCurrent: expect.any(Function), signal: undefined }));
     expect(operation).toHaveBeenCalledWith(f.client);
     expect(f.client.close).toHaveBeenCalledTimes(1);
   });

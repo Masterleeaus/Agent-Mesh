@@ -1,7 +1,7 @@
 import * as SDK from 'titan-sdk';
 import { WorkforceController } from 'workforce-controller';
 import { WorkforceApi } from 'workforce-api';
-import { boundedText, position, workState, receiptState, verifiedOutcome } from 'workforce-presentation';
+import { boundedText, identityType, position, teamMemberships, workState, receiptState, verifiedOutcome } from 'workforce-presentation';
 
 const root = document.getElementById('titan-workforce');
 const role = root.dataset.role;
@@ -52,7 +52,7 @@ function render(state) {
   const context = panel('Current company');
   fields(context, { Company: state.context.company_id, Actor: state.context.actor_id, 'DirectAdmin role (presentation only)': role, 'Execution authority': 'Re-evaluated by the canonical host for every request' }); root.append(context);
   const nav = node('nav', undefined, { 'aria-label': 'Workforce views' });
-  for (const title of ['Roster', 'Organisation', 'Work', 'Controls', 'Evidence', 'Health']) {
+  for (const title of ['Roster', 'Teams', 'Organisation', 'Work', 'Controls', 'Evidence', 'Health']) {
     const item = button(title, () => { tab = title; render(controller.state); }); item.setAttribute('aria-current', title === tab ? 'page' : 'false'); nav.append(item);
   }
   root.append(nav);
@@ -60,7 +60,7 @@ function render(state) {
   const work = state.status?.work ?? [];
   const view = panel(tab); root.append(view);
   if (tab === 'Roster') {
-    table(view, ['Identity', 'Kind / position', 'Status', 'Manager', 'Capabilities'], workers.map(worker => [button(worker.worker_id, () => { selectedAgent = worker.worker_id; render(controller.state); }), position(worker), worker.active ? 'Active' : 'Inactive', worker.manager_id ?? 'Not supplied', (worker.capabilities ?? []).join(', ')]));
+    table(view, ['Identity', 'Identity type', 'Position', 'Activity status', 'Team', 'Manager', 'Capabilities'], workers.map(worker => [button(worker.worker_id, () => { selectedAgent = worker.worker_id; render(controller.state); }), identityType(worker), position(worker), worker.active ? 'Active' : 'Inactive', worker.team_id ?? 'Unassigned', worker.manager_id ?? 'Not supplied', (worker.capabilities ?? []).join(', ')]));
     const agent = workers.find(worker => worker.worker_id === selectedAgent);
     if (agent) {
       const detail = panel('Agent / participant detail'); fields(detail, { Identity: agent.worker_id, Company: agent.company_id, Kind: agent.kind, Position: position(agent), Team: agent.team_id, Manager: agent.manager_id, Capabilities: agent.capabilities });
@@ -68,6 +68,18 @@ function render(state) {
       table(detail, ['Current work', 'State', 'Evidence'], work.filter(item => item.assignee === agent.worker_id).map(item => [item.work_id, workState(item.state), (item.evidence_refs ?? []).join(', ')]));
       unavailable(detail, 'Operation-specific trust, approved knowledge references, model/provider bindings and attributable value'); root.append(detail);
     }
+  } else if (tab === 'Teams') {
+    const groups = teamMemberships(workers);
+    table(view, ['Team', 'Human participants', 'AI / digital participants', 'Active', 'Inactive', 'Members'], groups.map(group => {
+      const humans = group.members.filter(worker => worker.kind === 'human');
+      const digital = group.members.filter(worker => worker.kind === 'digital');
+      return [group.team_id ?? 'Unassigned', humans.length, digital.length,
+        group.members.filter(worker => worker.active).length,
+        group.members.filter(worker => !worker.active).length,
+        group.members.map(worker => `${worker.worker_id} (${identityType(worker)})`).join(', ')];
+    }));
+    view.append(node('p', 'Membership is grouped from the current company roster’s canonical team_id values; it is not a separate team registry.', { class: 'notice' }));
+    unavailable(view, 'Hosted team names and skill catalog');
   } else if (tab === 'Organisation') {
     // Flat relation table cannot recurse forever on malformed/cyclic upstream hierarchy.
     table(view, ['Participant', 'Kind / position', 'Reports to', 'Team'], workers.map(worker => [worker.worker_id, position(worker), worker.manager_id ?? 'Not supplied', worker.team_id ?? 'Not supplied']));

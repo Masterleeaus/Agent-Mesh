@@ -49,12 +49,14 @@ export type DirectAdminBootstrapNonceIssue = Readonly<{
   impersonating: boolean; company_id: string; device_id: string;
   lifetime_seconds?: number;
 }>;
+export type DirectAdminBootstrapNonceIdentityIssue = Omit<DirectAdminBootstrapNonceIssue, 'company_id' | 'device_id'>;
 export type DirectAdminBootstrapNonceIssued = Readonly<{ csrf_nonce: string; expires_at: string }>;
 export type DirectAdminBootstrapNonceConsume = Readonly<{
   origin: string; issuer: string; subject: string; real_subject: string;
   da_role: 'admin' | 'reseller' | 'user'; impersonating: boolean; csrf_nonce: string;
 }>;
 export type DirectAdminBootstrapNonceSelection = Readonly<{ company_id: string; device_id: string }>;
+export type DirectAdminBootstrapNonceIssuedSelection = DirectAdminBootstrapNonceIssued & DirectAdminBootstrapNonceSelection;
 type SessionRow = Omit<SessionBinding, 'revoked'> & {
   revoked: number; binding_id: string; audience: string; context_generation: string;
 };
@@ -399,6 +401,37 @@ export class IdentitySessionRegistry {
       context_generation,issued_at,expires_at,consumed_at FROM ${bootstrapNonceTable} LIMIT 0`);
   }
 
+  private async uniqueDirectAdminBootstrapContext(tx: StorageClient, issuer: string, subject: string): Promise<{
+    selection: DirectAdminBootstrapNonceSelection; identity: CurrentIdentity;
+  }> {
+    validateIdentity({ provider: issuer, subject });
+    const bindings = (await tx.query<ExternalBinding & RecordRow>(
+      "SELECT * FROM titan_security_external_bindings WHERE provider=$1 AND subject=$2 AND status='active'",
+      [issuer, subject],
+    )).rows;
+    if (bindings.length === 0) throw new Error('identity-binding-unavailable');
+    const actors = new Set(bindings.map(binding => binding.actor_id));
+    if (actors.size !== 1) throw new Error('identity-binding-ambiguous');
+    const actorId = bindings[0].actor_id;
+    const contexts = (await tx.query<DirectAdminBootstrapNonceSelection>(
+      `SELECT DISTINCT b.company_id,d.device_id
+       FROM titan_security_external_bindings b
+       JOIN titan_security_actors a ON a.actor_id=b.actor_id AND a.status='active'
+       JOIN titan_security_companies c ON c.company_id=b.company_id AND c.status='active'
+       JOIN titan_security_memberships m ON m.actor_id=b.actor_id AND m.company_id=b.company_id AND m.status='active'
+       JOIN titan_security_devices d ON d.actor_id=b.actor_id AND d.status='active'
+       WHERE b.provider=$1 AND b.subject=$2 AND b.actor_id=$3 AND b.status='active'
+       ORDER BY b.company_id,d.device_id`,
+      [issuer, subject, actorId],
+    )).rows;
+    if (contexts.length === 0) throw new Error('identity-bootstrap-selection-unavailable');
+    if (contexts.length !== 1) throw new Error('identity-bootstrap-selection-ambiguous');
+    const selection = Object.freeze({ company_id: contexts[0].company_id, device_id: contexts[0].device_id });
+    const identity = await this.identity(tx, { provider: issuer, subject }, selection.company_id, selection.device_id);
+    if (identity.binding.actor_id !== actorId) throw new Error('identity-binding-ambiguous');
+    return { selection, identity };
+  }
+
   private async put(table: string, values: Record<string, string>, keys: readonly string[], immutable: readonly string[], expected: number | null): Promise<number> {
     for (const [key, value] of Object.entries(values)) requireSecurityId(value, key);
     if (!['active', 'suspended', 'revoked', 'deleted'].includes(values.status)) throw new Error('identity-status-invalid');
@@ -478,6 +511,44 @@ export class IdentitySessionRegistry {
       return expiry;
     });
     return Object.freeze({ csrf_nonce: nonce, expires_at: expiresAt });
+  }
+
+  /**
+   * Resolve and bind a first-session company/device only when the authenticated
+   * DirectAdmin identity has exactly one active canonical binding, membership,
+   * company, and device pair. Selection and nonce persistence share one
+   * GLOBAL_REGISTRY transaction; no first-row/default-company fallback or list
+   * of choices is exposed. Call only with identity projected from the
+   * configured host's authenticated `/api/session` response.
+   */
+  async issueDirectAdminBootstrapNonceForUniqueContext(
+    input: DirectAdminBootstrapNonceIdentityIssue,
+  ): Promise<DirectAdminBootstrapNonceIssuedSelection> {
+    const origin = canonicalDirectAdminOrigin(input.origin);
+    const issuer = directAdminProviderForOrigin(origin);
+    validateDirectAdminNonceIdentity(input);
+    const lifetime = input.lifetime_seconds ?? bootstrapNonceDefaultLifetimeSeconds;
+    if (!Number.isSafeInteger(lifetime) || lifetime < 1 || lifetime > bootstrapNonceMaxLifetimeSeconds) {
+      throw new Error('directadmin-bootstrap-nonce-lifetime-invalid');
+    }
+    const nonce = randomBytes(32).toString('base64url');
+    const nonceHash = directAdminNonceHash(nonce);
+    const issued = await this.bootstrapNonceTransaction(async tx => {
+      await this.requireDirectAdminBootstrapNonceStore(tx);
+      const { selection, identity } = await this.uniqueDirectAdminBootstrapContext(tx, issuer, input.subject);
+      const now = trustedClock(this.clock);
+      const issuedAt = now.toISOString();
+      const expiresAt = new Date(now.getTime() + lifetime * 1000).toISOString();
+      await tx.query(`DELETE FROM ${bootstrapNonceTable} WHERE expires_at <= $1`, [issuedAt]);
+      await tx.query(`INSERT INTO ${bootstrapNonceTable}
+        (nonce_hash,issuer,subject,real_subject,da_role,impersonating,origin,actor_id,company_id,device_id,
+          context_generation,issued_at,expires_at,consumed_at)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,NULL)`,
+        [nonceHash,issuer,input.subject,input.real_subject,input.da_role,input.impersonating ? 1 : 0,origin,
+          identity.binding.actor_id,selection.company_id,selection.device_id,identity.generation,issuedAt,expiresAt]);
+      return Object.freeze({ expires_at: expiresAt, ...selection });
+    });
+    return Object.freeze({ csrf_nonce: nonce, ...issued });
   }
 
   /**

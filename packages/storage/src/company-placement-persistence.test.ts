@@ -230,6 +230,26 @@ describe("persistent SQLite company placements", () => {
     await expect(resolver.open(oldPlacement)).rejects.toMatchObject({ code: "placement-stale" });
   });
 
+  it("rechecks registry readiness inside a queued opener transaction after resolver admission", async () => {
+    const directory = tempDirectory();
+    const companyStoreRoot = join(directory, "company-stores");
+    mkdirSync(companyStoreRoot, { mode: 0o700 });
+    const storage = trackStorage(join(directory, "global-registry.sqlite"));
+    await initializeSqliteCompanyPlacementRegistry({ storage, storage_role: "GLOBAL_REGISTRY" });
+    await insertPlacement(storage, placementRow({ companyId: "company-a", placementId: "placement-a", status: "READY" }));
+    createCompanyDb(join(companyStoreRoot, "placement-a.sqlite"), "company-a", "initial row");
+    const resolver = await resolverFor(storage, companyStoreRoot);
+    const lease = await resolver.open(await resolver.resolve(scope("company-a")));
+
+    await storage.query("UPDATE titan_company_storage_placements SET status='FAILED' WHERE company_id=$1", ["company-a"]);
+    await expect(lease.client.query(
+      "INSERT INTO work_orders(id,company_id,label) VALUES($1,$2,$3)", ["late-write", "company-a", "late"],
+    )).rejects.toMatchObject({ code: "placement-not-ready" });
+    const inspection = trackStorage(join(companyStoreRoot, "placement-a.sqlite"));
+    expect((await inspection.query("SELECT id FROM work_orders WHERE id='late-write'")).rows).toEqual([]);
+    await lease.close();
+  });
+
   it("rejects traversal, missing files, symlinks, and replacement of an opened store", async () => {
     const directory = tempDirectory();
     const companyStoreRoot = join(directory, "company-stores");
