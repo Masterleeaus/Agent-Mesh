@@ -101,4 +101,27 @@ expect_true(strpos($redacted,'abc123')===false,'token value must be redacted');
 expect_true(strpos($redacted,'super-secret')===false,'bearer token must be redacted');
 expect_true(strpos($redacted,'hunter2')===false,'password must be redacted');
 
+
+
+$healthyStatus=normalize_server_node_status(json_encode([
+ 'schema'=>'titan.server-node.health.v1',
+ 'status'=>'healthy',
+ 'ready'=>true,
+ 'checked_at'=>'2026-10-02T05:00:00Z',
+ 'checks'=>[
+  ['id'=>'web','critical'=>true,'status'=>'healthy','http_status'=>200],
+  ['id'=>'workforce','critical'=>true,'status'=>'healthy','http_status'=>204],
+ ],
+]));
+expect_true($healthyStatus['state']==='CONNECTED','healthy Server Node must project CONNECTED');
+expect_true(count($healthyStatus['checks'])===2,'Server Node checks must be preserved within bounds');
+expect_true($healthyStatus['checks'][0]['id']==='web','Server Node check ID must be sanitized');
+
+$badStatus=normalize_server_node_status('{"schema":"wrong","ready":true}');
+expect_true($badStatus['state']==='UNAVAILABLE','unexpected Server Node schema must fail closed');
+
+$oversizedStatus=normalize_server_node_status(str_repeat('x',65537));
+expect_true($oversizedStatus['state']==='UNAVAILABLE','oversized Server Node status must fail closed');
+
+
 echo "Developer Portal security regression tests passed".PHP_EOL;
