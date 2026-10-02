@@ -30,7 +30,7 @@ jobs:
           bash -n scripts/vps/backup-vps.sh
           bash -n scripts/vps/update-vps.sh
           cp infra/vps.env.example .env.vps
-          sed -i 's/GENERATED_BY_INSTALLER/local-smoke-test-only/g' .env.vps
+          sed -i 's/GENERATED_BY_INSTALLER/ci-smoke-placeholder-not-a-real-secret-00000000000000000000000000000000/g' .env.vps
           mkdir -p "$RUNNER_TEMP/titan-data/sqlite" "$RUNNER_TEMP/titan-data/uploads" \
             "$RUNNER_TEMP/titan-data/runtime" "$RUNNER_TEMP/workforce-company-stores" \
             "$RUNNER_TEMP/workforce-keys"
@@ -153,9 +153,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
+          if ! TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
             docker compose --env-file .env.vps -f infra/compose.vps.yml \
-            -f "$RUNNER_TEMP/workforce-smoke.compose.yml" up -d redis workforce
+            -f "$RUNNER_TEMP/workforce-smoke.compose.yml" up -d redis workforce; then
+            docker compose --env-file .env.vps -f infra/compose.vps.yml \
+              -f "$RUNNER_TEMP/workforce-smoke.compose.yml" logs --tail=200 web workforce
+            exit 1
+          fi
           for attempt in $(seq 1 30); do
             if [[ "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3010/health || true)" == "200" ]]; then
               break
