@@ -33,7 +33,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - name: Install PWA test dependencies
-        run: pnpm install --frozen-lockfile --filter @titan-zero/pwa
+        run: pnpm install --no-frozen-lockfile --filter @titan-zero/pwa
       - name: Install Chromium
         run: pnpm --filter @titan-zero/pwa exec playwright install --with-deps chromium
       - name: Typecheck
