@@ -4,10 +4,11 @@ import { dirname } from "node:path";
 
 export type StorageDialect = "sqlite" | "postgres" | "mysql";
 export interface QueryResult<T = Record<string, unknown>> { rows: T[]; rowCount: number; }
+export interface StorageTransactionOptions { acquireDeadlineMs?: number; }
 export interface StorageClient {
   readonly dialect: StorageDialect;
   query<T = Record<string, unknown>>(sql: string, params?: readonly unknown[]): Promise<QueryResult<T>>;
-  transaction<T>(fn: (tx: StorageClient) => Promise<T>): Promise<T>;
+  transaction<T>(fn: (tx: StorageClient) => Promise<T>, options?: StorageTransactionOptions): Promise<T>;
   close(): Promise<void>;
 }
 export interface CompanyStorage {
@@ -70,8 +71,26 @@ export function createSqliteStorage(filename = process.env.SQLITE_PATH ?? ".tita
   const client: StorageClient = {
     dialect: "sqlite",
     query: <T>(sql: string, params: readonly unknown[] = []) => serialize(() => directQuery<T>(sql, params)),
-    transaction: <T>(fn: (tx: StorageClient) => Promise<T>) => serialize(async () => {
-      db.exec("BEGIN IMMEDIATE");
+    transaction: <T>(fn: (tx: StorageClient) => Promise<T>, options?: StorageTransactionOptions) => serialize(async () => {
+      const deadline = options?.acquireDeadlineMs;
+      if (deadline !== undefined && (!Number.isFinite(deadline) || deadline < 0)) throw new Error("storage-transaction-acquire-deadline-invalid");
+      const previousBusyTimeout = 5000;
+      let began = false;
+      try {
+        if (deadline !== undefined) {
+          const remaining = Math.floor(deadline - performance.now());
+          if (remaining <= 0) throw new Error("storage-transaction-acquire-timeout");
+          db.pragma(`busy_timeout = ${Math.max(1, remaining)}`);
+        }
+        try { db.exec("BEGIN IMMEDIATE"); began = true; }
+        catch (error) {
+          if (deadline !== undefined && (performance.now() >= deadline || String(error).includes("SQLITE_BUSY") || String(error).includes("database is locked"))) {
+            throw new Error("storage-transaction-acquire-timeout", { cause: error });
+          }
+          throw error;
+        } finally {
+          if (deadline !== undefined) db.pragma(`busy_timeout = ${previousBusyTimeout}`);
+        }
       let active = true;
       const tx: StorageClient = {
         dialect: "sqlite",
@@ -83,8 +102,9 @@ export function createSqliteStorage(filename = process.env.SQLITE_PATH ?? ".tita
         close: async () => { throw new Error("sqlite-transaction-does-not-own-connection"); },
       };
       try { const result = await fn(tx); db.exec("COMMIT"); return result; }
-      catch (error) { db.exec("ROLLBACK"); throw error; }
-      finally { active = false; }
+      catch (error) { if (began) db.exec("ROLLBACK"); throw error; }
+      finally { active = false; if (deadline !== undefined) db.pragma(`busy_timeout = ${previousBusyTimeout}`); }
+      } catch (error) { if (deadline !== undefined && performance.now() >= deadline && !(error instanceof Error && error.message === "storage-transaction-acquire-timeout")) throw new Error("storage-transaction-acquire-timeout", { cause: error }); throw error; }
     }),
     close: () => serialize(async () => { db.close(); }),
   };
