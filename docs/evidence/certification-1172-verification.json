@@ -3348,6 +3348,116 @@
       ],
       "production_eligible": false,
       "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T11:51:16Z",
+      "workspace_head_after_main_merge": "1614ebb9513c75cb7425ca59010a31db520366d9",
+      "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only source and evidence refresh after current main merged PR #1243. Inspected the exact main delta and DirectAdmin bridge change, updated DirectAdmin/PWA source provenance, and merged current main into the existing #1178 claim branch after a no-conflict preview. The change is a panel-session error-classification correction; the PWA/native/Workforce implementation paths were untouched in the delta, so their prior source findings remain applicable. No product implementation files were authored by this refresh; no host contact, credential handling, device run, deployment or eligibility promotion.",
+      "refreshed_rows": [
+        "directadmin",
+        "pwa",
+        "release-readiness"
+      ],
+      "github_state": {
+        "remote_refs_before_refresh": {
+          "main": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "agent/issue-1172": "05cd3aee555d70c4ad22c8fa24056f509ad65051"
+        },
+        "pr_1178_before_refresh": {
+          "state": "OPEN",
+          "draft": true,
+          "head_sha": "05cd3aee555d70c4ad22c8fa24056f509ad65051",
+          "base_ref": "main",
+          "merge_state": "CLEAN",
+          "mergeable": true,
+          "previous_head_checks": {
+            "Mission Closure Evidence Gate": "SUCCESS",
+            "evidence-contract": "SUCCESS",
+            "mobile": "SUCCESS",
+            "source-index": "SUCCESS",
+            "validate": "SUCCESS"
+          },
+          "note": "The five checks were on the prior PR head; this refresh merge changes the branch head, so its checks must be re-evaluated after push."
+        },
+        "issue_1049": "OPEN",
+        "pr_1204": {
+          "state": "MERGED",
+          "merge_commit_sha": "75cc7f020353063aba129e5238b35e78de62291c",
+          "merged_at": "2026-10-02T10:46:53Z"
+        },
+        "pr_1243": {
+          "state": "MERGED",
+          "head_sha": "205fd94e44aa953c172ce9d419eb5e1dbbe1874b",
+          "merge_commit_sha": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "merged_at": "2026-10-02T11:46:24Z",
+          "reported_checks": {
+            "mobile": "SUCCESS",
+            "source-index": "SUCCESS",
+            "validate": "SUCCESS",
+            "Mission Closure Evidence Gate": "SUCCESS on later attempts; earlier attempts were failed/cancelled"
+          }
+        }
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/directadmin-session-bridge.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "sha256": "a5d47da396526afe861a48e9c193317c1778f4918e8bbf3ad85a41d68be4ab2d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/tests/directadmin-bridge.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "sha256": "224c074af56de884caa7f9d86bf4209956c2d708af35aac2c70e75697c246ccc"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/contracts/directadmin-authenticated-session-bridge.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "sha256": "56ed0b2945691906820b9d327851769d6b52d4b100603e1dff9ff0ac4763b645"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/package-directadmin-plugin.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "sha256": "fc07e19065c34ddd5db44343d69cf7b04e3f21d616e65cb08e8cad4a23144f33"
+        }
+      ],
+      "source_claims_and_executed_evidence": [
+        "Diff from c46774cc to d508a269 changes four paths: the DirectAdmin session bridge, its regression tests, the authenticated-session contract, and a packaging test fixture. No PWA, native-mobile, Workforce or identity source path changed.",
+        "The merged bridge change maps explicit rejection of the replacement credential after company switch to authentication failure and stale-cookie clearing; registry outage remains a redacted unavailable response without clearing the source cookie. Two regression tests are present in current main.",
+        "PR #1243 metadata reports merged at d508a269; its check rollup contains successful mobile, source-index and validate jobs plus later successful mission-gate attempts, after earlier failed/cancelled mission-gate attempts. These are hosted CI observations; no local directadmin regression suite was rerun for this refresh.",
+        "The PWA and native-mobile assessments remain source observations from their last audited implementation revisions because the c46774cc..d508a269 delta contains no paths in those owners. This source refresh does not change their no-live-stream, no-revision-bound-resume and no-production-runtime findings.",
+        "Prior DirectAdmin host observations are retained from the parent-provided authenticated read-only session and were not repeated or independently contacted here."
+      ],
+      "commands": [
+        {
+          "command": "git diff --name-status c46774cc..origin/main; inspect exact PR #1243 source diff",
+          "status": "PASS",
+          "detail": "The current-main delta was four paths and the bridge semantics were read directly from current source/tests."
+        },
+        {
+          "command": "git merge-tree --write-tree HEAD origin/main",
+          "status": "PASS",
+          "detail": "Read-only merge preview completed without conflicts before integrating d508a269 into the existing claim branch."
+        },
+        {
+          "command": "git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Current main merged into the existing agent/issue-1172 branch; no implementation files were authored in this lane."
+        }
+      ],
+      "environment_limits": {
+        "live_host": "No direct host contact; prior parent-provided session observation remains separately attributed.",
+        "ssh": "NOT_VERIFIED",
+        "physical_devices": "NOT_VERIFIED",
+        "library_upload": "HELD_PENDING_USER_PERMISSION"
+      },
+      "production_eligible": false,
+      "mission_complete": false
     }
   ]
 }
