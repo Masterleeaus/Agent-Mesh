@@ -42,6 +42,13 @@ export class SqliteAuthorityStore {
       const prior=await this.getDecision(company_id,parent);
       if(!prior)throw new Error("authority-supersession-parent-missing");
       assertAuthorityDecisionSupersessionContinuity(prior,decision);
+      const child=await this.storage.query(
+        `SELECT authority_decision_id FROM authority_decisions
+         WHERE company_id=$1 AND supersedes_authority_decision_id=$2
+         ORDER BY evaluated_at DESC, created_at DESC LIMIT 1`,
+        [company_id,parent],
+      );
+      if(child.rows[0]&&String(child.rows[0].authority_decision_id)!==id)throw new Error("authority-supersession-fork");
     }
     await this.storage.query(
       `INSERT INTO authority_decisions(company_id,authority_decision_id,worker_id,capability,operation_id,action_id,decision,evaluated_at,supersedes_authority_decision_id,payload)
@@ -55,6 +62,23 @@ export class SqliteAuthorityStore {
     const result=await this.storage.query(
       `SELECT payload FROM authority_decisions WHERE company_id=$1 AND authority_decision_id=$2 LIMIT 1`,
       [required(company_id,"authority-company-id-required"),required(authority_decision_id,"authority-decision-id-required")],
+    );
+    return parse(result.rows[0]);
+  }
+
+  async latestDecisionForBinding({company_id,worker_id,capability,operation_id,action_id}){
+    const result=await this.storage.query(
+      `SELECT payload FROM authority_decisions
+       WHERE company_id=$1 AND worker_id=$2 AND capability=$3
+         AND operation_id=$4 AND action_id=$5
+       ORDER BY evaluated_at DESC, created_at DESC LIMIT 1`,
+      [
+        required(company_id,"authority-company-id-required"),
+        required(worker_id,"authority-worker-id-required"),
+        required(capability,"authority-capability-required"),
+        required(operation_id,"authority-operation-id-required"),
+        required(action_id,"authority-action-id-required"),
+      ],
     );
     return parse(result.rows[0]);
   }

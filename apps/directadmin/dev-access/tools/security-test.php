@@ -17,6 +17,42 @@ function expect_rejected(callable $action,string $message):void{
  try{$action();}catch(Throwable $e){return;}
  expect_true(false,$message);
 }
+function run_security_git_fixture(array $arguments,string $home):bool{
+ $descriptors=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
+ $environment=[
+  'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
+  'HOME'=>$home,
+  'GIT_CONFIG_NOSYSTEM'=>'1',
+  'GIT_CONFIG_GLOBAL'=>'/dev/null',
+  'GIT_TERMINAL_PROMPT'=>'0'
+ ];
+ $process=@proc_open(array_merge(['git'],$arguments),$descriptors,$pipes,$home,$environment,['bypass_shell'=>true]);
+ if(!is_resource($process)) return false;
+ fclose($pipes[0]);
+ $stdout=(string)stream_get_contents($pipes[1]);
+ $stderr=(string)stream_get_contents($pipes[2]);
+ fclose($pipes[1]);fclose($pipes[2]);
+ return proc_close($process)===0&&$stdout===''&&$stderr==='';
+}
+
+function run_security_git_capture(array $arguments,string $home):array{
+ $descriptors=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
+ $environment=[
+  'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
+  'HOME'=>$home,
+  'GIT_CONFIG_NOSYSTEM'=>'1',
+  'GIT_CONFIG_GLOBAL'=>'/dev/null',
+  'GIT_TERMINAL_PROMPT'=>'0'
+ ];
+ $process=@proc_open(array_merge(['git'],$arguments),$descriptors,$pipes,$home,$environment,['bypass_shell'=>true]);
+ if(!is_resource($process)) return [127,'','Unable to start fixture Git command.'];
+ fclose($pipes[0]);
+ $stdout=(string)stream_get_contents($pipes[1]);
+ $stderr=(string)stream_get_contents($pipes[2]);
+ fclose($pipes[1]);fclose($pipes[2]);
+ return [proc_close($process),$stdout,$stderr];
+}
+
 
 expect_true(function_exists('posix_geteuid')&&function_exists('posix_getpwuid')&&function_exists('posix_getpwnam'),'POSIX account context is required for DirectAdmin CLI verification');
 $account=posix_getpwuid(posix_geteuid());
@@ -81,6 +117,29 @@ expect_true(!valid_pubkey($wrongEmbeddedType),'declared algorithm must match the
 expect_true(add_key($splitEd25519)==='Invalid public key format.','malformed key must be rejected before key-directory setup');
 expect_true(!is_dir($home.'/.ssh'),'invalid public key must not create or alter the SSH directory');
 $terminalFields='csrf='.str_repeat('a',64).'&add_key=1';
+$terminalLength=strlen($terminalFields);
+expect_true(directadmin_request_body_length_matches($terminalFields,$terminalLength),'exact CONTENT_LENGTH must match the unmodified form body');
+expect_true(directadmin_request_body_length_matches($terminalFields."\n",$terminalLength),'one terminal LF may be present beyond CONTENT_LENGTH');
+expect_true(directadmin_request_body_length_matches($terminalFields."\r\n",$terminalLength),'one terminal CRLF may be present beyond CONTENT_LENGTH');
+expect_true(!directadmin_request_body_length_matches($terminalFields."\n\n",$terminalLength),'two terminal LF bytes beyond CONTENT_LENGTH must fail');
+expect_true(!directadmin_request_body_length_matches($terminalFields.'x',$terminalLength),'arbitrary CONTENT_LENGTH mismatch must fail');
+$diagnosticReasons=[
+ 'Invalid content length.'=>'content_length_invalid',
+ 'Unsupported form content type.'=>'content_type_invalid',
+ 'Raw DirectAdmin POST body is unavailable.'=>'raw_post_missing',
+ 'Invalid DirectAdmin POST marker.'=>'post_marker_invalid',
+ 'Duplicate form field.'=>'duplicate_field',
+ 'Form fields cannot be supplied in the query string.'=>'query_form_fields',
+ 'Ambiguous form action.'=>'action_ambiguous',
+ 'Request body length mismatch.'=>'body_length_mismatch'
+];
+foreach($diagnosticReasons as $message=>$code) expect_true(directadmin_request_error_code(new RuntimeException($message))===$code,'request error text must map only to static code '.$code);
+expect_true(directadmin_request_error_code(new RuntimeException('synthetic-secret-value=must-not-render'))==='request_rejected','unknown request errors must map to a static fallback code');
+$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'body_length_mismatch','transport'=>'stdin','declared_bytes'=>123,'body_bytes_read'=>125];
+expect_true(directadmin_request_diagnostic_summary()==='code=body_length_mismatch transport=stdin declared_bytes=123 body_bytes_read=125','request diagnostics must expose only bounded reason, transport and numeric lengths');
+$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'synthetic-secret','transport'=>'/home/private','declared_bytes'=>'secret','body_bytes_read'=>'secret'];
+expect_true(directadmin_request_diagnostic_summary()==='code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown','diagnostic output must reject unallowlisted codes, transports and nonnumeric lengths');
+unset($_SERVER['TDA_REQUEST_DIAGNOSTIC']);
 expect_true((directadmin_parse_form_body($terminalFields."\n")['add_key']??null)==='1','one DirectAdmin transport LF must be normalized after the complete form');
 expect_true((directadmin_parse_form_body($terminalFields."\r\n")['add_key']??null)==='1','one DirectAdmin transport CRLF must be normalized after the complete form');
 expect_rejected(static function()use($terminalFields){directadmin_parse_form_body($terminalFields."\n\n");},'multiple form terminators must remain rejected');
@@ -158,10 +217,114 @@ $gitInitOut=(string)stream_get_contents($gitPipes[1]);
 $gitInitErr=(string)stream_get_contents($gitPipes[2]);
 fclose($gitPipes[1]); fclose($gitPipes[2]);
 expect_true(proc_close($gitInit)===0&&$gitInitOut===''&&$gitInitErr==='','synthetic Git fixture must initialize without errors');
+expect_true(directadmin_git_metadata_tree_safe($gitRepo.'/.git',$home,1)===false,'metadata traversal must stop at a small configured entry bound');
 $gitContext=directadmin_git_repository_context($gitRepo);
 expect_true(is_array($gitContext)&&$gitContext['root']===$gitRepo,'ordinary HOME-contained Git root and gitdir must be accepted');
 [$gitStatus,$gitStatusExit,$gitStatusClass]=run_cmd('git status --short',$gitRepo);
 expect_true($gitStatusExit===0&&$gitStatusClass==='READ','allowlisted status must run successfully inside the validated repository');
+
+$textconvHelper=$home.'/synthetic-textconv-helper';
+$textconvMarker=$home.'/synthetic-textconv-marker';
+$textconvScript="#!/bin/sh\nprintf invoked >> ".escapeshellarg($textconvMarker)."\ncat \"$1\"\n";
+expect_true(file_put_contents($textconvHelper,$textconvScript)!==false,'synthetic textconv helper must be created');
+expect_true(chmod($textconvHelper,0700),'synthetic textconv helper must be executable');
+expect_true(file_put_contents($gitRepo.'/.gitattributes',"*.synthetic diff=synthetic\n")!==false,'synthetic textconv attribute must be created');
+expect_true(file_put_contents($gitRepo.'/textconv.synthetic',"\0before\n")!==false,'binary textconv fixture must be created');
+expect_true(run_security_git_fixture(['-C',$gitRepo,'add','--','.gitattributes','textconv.synthetic'],$home),'binary textconv fixture must be staged');
+expect_true(run_security_git_fixture(['-C',$gitRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--quiet','--message','textconv helper fixture'],$home),'binary textconv fixture must be committed');
+expect_true(run_security_git_fixture(['-C',$gitRepo,'config','diff.synthetic.textconv',$textconvHelper],$home),'repo-local textconv fixture must be configured');
+expect_true(file_put_contents($gitRepo.'/textconv.synthetic',"\0after\n")!==false,'binary textconv fixture must be changed');
+[$unboundedDiffExit,, $unboundedDiffError]=run_security_git_capture(['-C',$gitRepo,'diff'],$home);
+expect_true($unboundedDiffExit===0&&$unboundedDiffError===''&&is_file($textconvMarker),'unbounded Git diff must prove the synthetic repository textconv helper can execute');
+expect_true(unlink($textconvMarker),'synthetic textconv marker must be reset before bounded-command controls');
+foreach(['diff --stat','diff --name-only'] as $allowedDiffCommand){
+ [$rawAllowedDiffExit,$rawAllowedDiffOutput,$rawAllowedDiffError]=run_security_git_capture(array_merge(['-C',$gitRepo],preg_split('/\\s+/',$allowedDiffCommand)),$home);
+ expect_true($rawAllowedDiffExit===0&&$rawAllowedDiffError===''&&$rawAllowedDiffOutput!=='','plain '.$allowedDiffCommand.' fixture control must work');
+ expect_true(!is_file($textconvMarker),'plain '.$allowedDiffCommand.' must not execute textconv on the supported Git runner');
+}
+[$rawDiffClass,, $rawDiffAllowed]=command_policy('git diff');
+expect_true($rawDiffAllowed===false&&$rawDiffClass==='UNKNOWN','unbounded Git diff remains outside the user-facing command allowlist');
+$pagerEnvironment=directadmin_git_environment();
+foreach(['diff','show'] as $gitSubcommand){
+ $hardenedArguments=directadmin_git_command_args($gitContext,[$gitSubcommand,'HEAD']);
+ expect_true(in_array('--no-textconv',$hardenedArguments,true),$gitSubcommand.' must explicitly disable repository textconv helpers');
+ expect_true(in_array('--no-ext-diff',$hardenedArguments,true),$gitSubcommand.' must explicitly disable external diff helpers');
+ expect_true(in_array('--no-pager',$hardenedArguments,true),$gitSubcommand.' must explicitly disable configured pagers');
+}
+expect_true(($pagerEnvironment['GIT_PAGER']??null)==='cat'&&($pagerEnvironment['PAGER']??null)==='cat','Git process environment must override configured pagers');
+$safeDiffArguments=directadmin_git_command_args($gitContext,['diff']);
+[$safeDiffExit,$safeDiffOutput,$safeDiffError]=run_security_git_capture(array_slice($safeDiffArguments,1),$home);
+expect_true($safeDiffExit===0&&$safeDiffError===''&&$safeDiffOutput!=='','bounded Git diff must continue to return read-only output');
+expect_true(!is_file($textconvMarker),'bounded Git diff must not execute repository-configured textconv');
+[$unboundedShowExit,, $unboundedShowError]=run_security_git_capture(['-C',$gitRepo,'show','HEAD'],$home);
+expect_true($unboundedShowExit===0&&$unboundedShowError===''&&is_file($textconvMarker),'unbounded Git show must prove the synthetic textconv helper can execute');
+expect_true(unlink($textconvMarker),'synthetic textconv marker must be reset before hardened show');
+$safeShowArguments=directadmin_git_command_args($gitContext,['show','HEAD']);
+[$safeShowExit,$safeShowOutput,$safeShowError]=run_security_git_capture(array_slice($safeShowArguments,1),$home);
+expect_true($safeShowExit===0&&$safeShowError===''&&$safeShowOutput!=='','bounded Git show must continue to return read-only output');
+expect_true(!is_file($textconvMarker),'bounded Git show must not execute repository-configured textconv');
+[$diffStatOutput,$diffStatExit,$diffStatClass]=run_cmd('git diff --stat',$gitRepo);
+expect_true($diffStatExit===0&&$diffStatClass==='READ'&&$diffStatOutput!=='','allowlisted Git diff statistics must remain available');
+[$diffNamesOutput,$diffNamesExit,$diffNamesClass]=run_cmd('git diff --name-only',$gitRepo);
+expect_true($diffNamesExit===0&&$diffNamesClass==='READ'&&$diffNamesOutput!=='','allowlisted Git diff file names must remain available');
+[$showClass,, $showAllowed]=command_policy('git show --stat');
+expect_true($showAllowed===false&&$showClass==='UNKNOWN','Git show remains outside the user-facing read-only command allowlist');
+
+$externalMarker=$home.'/synthetic-external-diff-marker';
+$externalHelper=$home.'/synthetic-external-diff-helper';
+$externalScript="#!/bin/sh\nprintf invoked >> ".escapeshellarg($externalMarker)."\nexit 0\n";
+expect_true(file_put_contents($externalHelper,$externalScript)!==false,'synthetic external diff helper must be created');
+expect_true(chmod($externalHelper,0700),'synthetic external diff helper must be executable');
+expect_true(run_security_git_fixture(['-C',$gitRepo,'config','diff.external',$externalHelper],$home),'repo-local external diff helper must be configured');
+foreach(['diff --stat','diff --name-only'] as $allowedDiffCommand){
+ $textconvMarkerPresent=is_file($textconvMarker);
+ if($textconvMarkerPresent) expect_true(unlink($textconvMarker),'textconv marker must be cleared before '.$allowedDiffCommand);
+ [$allowedDiffExit,$allowedDiffOutput,$allowedDiffError]=run_security_git_capture(array_merge(['-C',$gitRepo],preg_split('/\\s+/',$allowedDiffCommand)),$home);
+ expect_true($allowedDiffExit===0&&$allowedDiffError===''&&$allowedDiffOutput!=='','repo-configured external helper must not break '.$allowedDiffCommand);
+ expect_true(!is_file($externalMarker)&&!is_file($textconvMarker),$allowedDiffCommand.' must not execute repository-configured external or textconv helpers');
+ [$allowedDiffClass,, $allowedDiffPolicy]=command_policy('git '.$allowedDiffCommand);
+ expect_true($allowedDiffPolicy===true&&$allowedDiffClass==='READ',$allowedDiffCommand.' must remain a read-only allowlisted command');
+}
+expect_true(file_put_contents($gitRepo.'/textconv.synthetic',"\0third\n")!==false,'binary fixture must change again for external diff tests');
+[$unboundedExternalDiffExit,, $unboundedExternalDiffError]=run_security_git_capture(['-C',$gitRepo,'diff'],$home);
+expect_true($unboundedExternalDiffExit===0&&$unboundedExternalDiffError===''&&is_file($externalMarker),'unbounded Git diff must prove the synthetic external diff helper can execute');
+expect_true(unlink($externalMarker),'external diff marker must be reset before hardened diff');
+[$safeExternalDiffExit,$safeExternalDiffOutput,$safeExternalDiffError]=run_security_git_capture(array_slice($safeDiffArguments,1),$home);
+expect_true($safeExternalDiffExit===0&&$safeExternalDiffError===''&&$safeExternalDiffOutput!=='','hardened Git diff must remain readable with a hostile repo-local external diff configured');
+expect_true(!is_file($externalMarker),'bounded Git diff must not execute repository-configured external diff');
+expect_true(run_security_git_fixture(['-C',$gitRepo,'add','--','textconv.synthetic'],$home),'external diff fixture change must be staged');
+expect_true(run_security_git_fixture(['-C',$gitRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--quiet','--message','external diff helper fixture'],$home),'external diff fixture change must be committed');
+[$unboundedExternalShowExit,, $unboundedExternalShowError]=run_security_git_capture(['-C',$gitRepo,'show','--ext-diff','HEAD'],$home);
+expect_true($unboundedExternalShowExit===0&&$unboundedExternalShowError===''&&is_file($externalMarker),'unbounded Git show with external diff enabled must prove the synthetic helper can execute');
+expect_true(unlink($externalMarker),'external diff marker must be reset before hardened show');
+$safeExternalShowArguments=directadmin_git_command_args($gitContext,['show','--ext-diff','HEAD']);
+[$safeExternalShowExit,$safeExternalShowOutput,$safeExternalShowError]=run_security_git_capture(array_slice($safeExternalShowArguments,1),$home);
+expect_true($safeExternalShowExit===0&&$safeExternalShowError===''&&$safeExternalShowOutput!=='','hardened Git show must remain readable with external diff explicitly requested');
+expect_true(!is_file($externalMarker),'bounded Git show must not execute repository-configured external diff');
+$linkedWorktree=$home.'/linked-contained';
+expect_true(run_security_git_fixture(['-C',$gitRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--allow-empty','--quiet','--message','linked worktree fixture'],$home),'synthetic repository must have a commit for linked-worktree coverage');
+expect_true(run_security_git_fixture(['-C',$gitRepo,'worktree','add','--detach','--quiet',$linkedWorktree,'HEAD'],$home),'HOME-contained linked worktree must be created for the positive regression');
+expect_true(is_file($linkedWorktree.'/.git'),'linked worktree must use DirectAdmin Git pointer-file layout');
+$linkedGitDir=directadmin_git_read_pointer($linkedWorktree.'/.git','gitdir',$linkedWorktree,$home,true);
+expect_true($linkedGitDir!==null,'linked worktree gitdir pointer must resolve within HOME');
+$commonPointerFile=$linkedGitDir.'/commondir';
+$commonPointerReadable=is_file($commonPointerFile);
+$commonPointerRaw=$commonPointerReadable?trim((string)file_get_contents($commonPointerFile)):'';
+$commonPointerCandidate=$commonPointerRaw!==''?realpath($linkedGitDir.'/'.$commonPointerRaw):false;
+expect_true($commonPointerReadable,'linked worktree common directory pointer file must exist');
+expect_true($commonPointerCandidate!==false&&path_within($commonPointerCandidate,$home),'linked worktree common pointer target must resolve within HOME');
+$linkedCommonDir=directadmin_git_read_pointer($commonPointerFile,'commondir',$linkedGitDir,$home,true);
+expect_true($linkedCommonDir!==null,'linked worktree common directory pointer parser must accept its safe pointer');
+$linkedBackPointer=directadmin_git_read_pointer($linkedGitDir.'/gitdir','worktree-gitdir',$linkedGitDir,$home,false);
+expect_true($linkedBackPointer!==null&&$linkedBackPointer===realpath($linkedWorktree.'/.git'),'linked worktree reverse pointer must identify its .git file');
+expect_true(directadmin_git_metadata_tree_safe($linkedGitDir,$home),'linked worktree private metadata must be safe');
+expect_true(directadmin_git_metadata_tree_safe($linkedCommonDir,$home),'linked worktree common metadata must be safe');
+$linkedContext=directadmin_git_repository_context($linkedWorktree);
+expect_true(is_array($linkedContext)&&$linkedContext['root']===$linkedWorktree,'HOME-contained linked worktree must not be falsely rejected');
+expect_true(path_within($linkedContext['git_dir'],$home)&&path_within($linkedContext['common_dir'],$home),'linked worktree and common metadata must both remain inside HOME');
+[$linkedLog,$linkedLogExit,$linkedLogClass]=run_cmd('git log --oneline -5',$linkedWorktree);
+expect_true($linkedLogExit===0&&$linkedLogClass==='READ'&&$linkedLog!=='','read-only Git inspection must work in a validated contained linked worktree');
+expect_true(run_security_git_fixture(['-C',$gitRepo,'worktree','remove','--force',$linkedWorktree],$home),'contained linked-worktree fixture must clean up through Git');
 
 $outsideRepo=$root.'/outside-git';
 expect_true(mkdir($outsideRepo,0700,true),'external Git fixture must be created');
