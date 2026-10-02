@@ -76,12 +76,12 @@ void main() {
 
     transport.responses.add(accepted({
       ...transport.requests[1],
-      'conversation_id': 'id-3',
-      'request_id': 'id-4',
+      'conversation_id': 'id-4',
+      'request_id': 'id-3',
     }));
     await gateway.converse('Check my next job');
-    expect(transport.requests[2]['conversation_id'], 'id-3');
-    expect(transport.requests[2]['request_id'], 'id-4');
+    expect(transport.requests[2]['conversation_id'], 'id-4');
+    expect(transport.requests[2]['request_id'], 'id-3');
     expect(transport.requests[2]['request_id'], isNot(transport.requests[0]['request_id']));
   });
 
