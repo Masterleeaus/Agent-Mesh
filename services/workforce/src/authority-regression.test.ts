@@ -46,11 +46,11 @@ test("consequential execution re-evaluates current authority and blocks a post-p
   assert.equal(providerCalls,0);
 });
 
-function resolver({limits,usage}:{limits:any;usage:any}){
+function resolver({limits,usage,score=65,entitlements=["booking"],handshake={platform:true,user:true,assurance:true}}:{limits:any;usage:any;score?:number;entitlements?:string[];handshake?:any}){
   const snapshot={
-    company_id,decision_id:"snap-1",capability,effective_score:65,status:"verified",source:"titan-autonomy",
+    company_id,decision_id:`snap-${score}`,capability,effective_score:score,status:"verified",source:"titan-autonomy",
     verified_at:"2026-10-02T00:00:00Z",expires_at:"2026-10-03T00:00:00Z",
-    trusted_auto_handshake:{platform:true,user:true,assurance:true},predictive_ready:false,
+    trusted_auto_handshake:handshake,predictive_ready:false,
   };
   const store={
     async latestAutonomySnapshot(){return snapshot;},
@@ -63,7 +63,7 @@ function resolver({limits,usage}:{limits:any;usage:any}){
       required_permissions:["booking.write"],required_entitlements:["booking"],
       required_evidence:[],minimum_autonomy_score:51,limits,
     };}},
-    accessResolver:{async resolve(){return {permissions:["booking.write"],entitlements:["booking"]};}},
+    accessResolver:{async resolve(){return {permissions:["booking.write"],entitlements};}},
     governanceResolver:{async resolve(){return {policy_allows:true,governance_allows:true,assurance_allows:true};}},
     evidenceResolver:{async resolve(){return {status:"not_required",refs:[]};}},
     riskResolver:{async resolve(){return {level:"low",source:"test",ref:"risk-1"};}},
@@ -130,4 +130,24 @@ test("a fresh verified authority decision can safely re-upgrade after a persiste
   assert.equal(evaluatedParent,"auth-contracted");
   assert.equal(providerCalls,1);
   assert.equal(result.state,"VERIFIED");
+});
+
+
+test("authority class ceilings, entitlement separation and recursive handshake fail closed at exact transitions",async()=>{
+  const noLimits={currency:null,max_amount:null,max_provider_cost:null,max_messages:null,max_recipients:null};
+  const below=await resolver({limits:noLimits,usage:{},score:50}).evaluate(authorityInput);
+  assert.equal(below.decision,"ESCALATE");
+  assert.ok(below.reason_codes.includes("autonomy_below_required"));
+  assert.equal((await resolver({limits:noLimits,usage:{},score:51}).evaluate(authorityInput)).decision,"ALLOW");
+
+  const noEntitlement=await resolver({limits:noLimits,usage:{},score:65,entitlements:[]}).evaluate(authorityInput);
+  assert.equal(noEntitlement.decision,"DENY");
+  assert.ok(noEntitlement.reason_codes.includes("missing_entitlement"));
+
+  const missingPlatform=await resolver({limits:noLimits,usage:{},score:71,handshake:{platform:false,user:true,assurance:true}}).evaluate(authorityInput);
+  assert.equal(missingPlatform.decision,"ESCALATE");
+  assert.ok(missingPlatform.reason_codes.includes("trusted_auto_platform_handshake_missing"));
+  const missingUser=await resolver({limits:noLimits,usage:{},score:71,handshake:{platform:true,user:false,assurance:true}}).evaluate(authorityInput);
+  assert.equal(missingUser.decision,"APPROVAL_REQUIRED");
+  assert.ok(missingUser.reason_codes.includes("trusted_auto_user_handshake_missing"));
 });
