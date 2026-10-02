@@ -52,20 +52,26 @@ class HostedConversationTransport {
     this.bearerToken,
     HttpClient? client,
     String Function()? idFactory,
-  }) : _client = client ?? HttpClient(), _idFactory = idFactory;
+  })  : _client = client ?? HttpClient(),
+        _idFactory = idFactory;
 
-  Future<List<TitanGenerativeItem>> send(String text, {Duration timeout = const Duration(seconds: 30)}) async {
+  Future<List<TitanGenerativeItem>> send(String text,
+      {Duration timeout = const Duration(seconds: 30)}) async {
     final action = _continuationToken == null ? 'start' : 'continue';
     final identity = _turnIdentity(action, text);
-    final response = await _request(action: action, text: text, identity: identity, timeout: timeout);
+    final response = await _request(
+        action: action, text: text, identity: identity, timeout: timeout);
     _pendingTurn = null;
     return _items(response);
   }
 
-  Future<List<TitanGenerativeItem>> resume(String text, {Duration timeout = const Duration(seconds: 30)}) async {
-    if (_continuationToken == null) throw StateError('conversation-resume-token-required');
+  Future<List<TitanGenerativeItem>> resume(String text,
+      {Duration timeout = const Duration(seconds: 30)}) async {
+    if (_continuationToken == null)
+      throw StateError('conversation-resume-token-required');
     final identity = _turnIdentity('resume', text);
-    final response = await _request(action: 'resume', text: text, identity: identity, timeout: timeout);
+    final response = await _request(
+        action: 'resume', text: text, identity: identity, timeout: timeout);
     _pendingTurn = null;
     return _items(response);
   }
@@ -151,21 +157,26 @@ class HostedConversationTransport {
     final request = await _client.postUrl(endpoint).timeout(timeout);
     request.headers.contentType = ContentType.json;
     request.headers.set(HttpHeaders.acceptHeader, ContentType.json.mimeType);
-    if (_lastEventId != null) request.headers.set('Last-Event-ID', _lastEventId!);
+    if (_lastEventId != null)
+      request.headers.set('Last-Event-ID', _lastEventId!);
     if (bearerToken != null && bearerToken!.isNotEmpty) {
-      request.headers.set(HttpHeaders.authorizationHeader, 'Bearer $bearerToken');
+      request.headers
+          .set(HttpHeaders.authorizationHeader, '***');
     }
     request.write(jsonEncode(body));
     final response = await request.close().timeout(timeout);
-    final decodedBody = await utf8.decoder.bind(response).join().timeout(timeout);
+    final decodedBody =
+        await utf8.decoder.bind(response).join().timeout(timeout);
     if (response.statusCode == 401 || response.statusCode == 403) {
       throw StateError('conversation-authentication-required');
     }
     if (response.statusCode != 200 && response.statusCode != 202) {
-      throw HttpException('conversation-host-${response.statusCode}', uri: endpoint);
+      throw HttpException('conversation-host-${response.statusCode}',
+          uri: endpoint);
     }
     final decoded = jsonDecode(decodedBody);
-    if (decoded is! Map) throw const FormatException('conversation-response-object-required');
+    if (decoded is! Map)
+      throw const FormatException('conversation-response-object-required');
     final value = Map<String, dynamic>.from(decoded);
     if (value['company_id'] != session.companyId ||
         value['actor_id'] != session.actorId ||
@@ -193,12 +204,25 @@ class HostedConversationTransport {
   List<TitanGenerativeItem> _items(Map<String, dynamic> response) {
     final rawItems = response['items'];
     if (rawItems is List) {
-      return rawItems.whereType<Map>().map((item) => TitanGenerativeItem.fromJson(Map<String, dynamic>.from(item))).toList(growable: false);
+      return rawItems
+          .whereType<Map>()
+          .map((item) =>
+              TitanGenerativeItem.fromJson(Map<String, dynamic>.from(item)))
+          .toList(growable: false);
     }
-    return ((response['events'] as List?) ?? const []).whereType<Map>().map((event) {
+    return ((response['events'] as List?) ?? const [])
+        .whereType<Map>()
+        .map((event) {
       final map = Map<String, dynamic>.from(event);
-      final text = map['delta'] ?? map['content'] ?? map['state'] ?? map['kind'] ?? 'Workforce event';
-      return TitanGenerativeItem(type: TitanGenerativeType.notice, title: text.toString(), context: map);
+      final text = map['delta'] ??
+          map['content'] ??
+          map['state'] ??
+          map['kind'] ??
+          'Workforce event';
+      return TitanGenerativeItem(
+          type: TitanGenerativeType.notice,
+          title: text.toString(),
+          context: map);
     }).toList(growable: false);
   }
 }
