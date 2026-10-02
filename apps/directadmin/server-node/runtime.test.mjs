@@ -1,5 +1,54 @@
-import test from "node:test";
 import assert from "node:assert/strict";
+import test from "node:test";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { createServerNodeRuntime, CONTROL_PLANE_SCHEMA } from "./runtime.mjs";
+
+async function fixture(t) {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "titan-server-node-"));
+  const runtime = createServerNodeRuntime({ authToken: "test-token", storePath: path.join(dir, "control.json"), dependencies: ["workforce", "redis"], dependencyProbe: async () => [{ name: "workforce", status: "healthy" }, { name: "redis", status: "healthy" }] });
+  const address = await runtime.start();
+  t.after(async () => { await runtime.close(); await fs.rm(dir, { recursive: true, force: true }); });
+  return { runtime, base: `http://127.0.0.1:${address.port}`, dir };
+}
+function headers(extra = {}) { return { authorization: "Bearer test-token", "x-titan-schema-version": "1", "x-titan-caller-id": "directadmin-test", "x-titan-company-id": "company-a", "x-titan-correlation-id": "corr-1", ...extra }; }
+async function call(base, route, init = {}) { const response = await fetch(`${base}${route}`, { ...init, headers: { ...headers(), ...(init.headers ?? {}) } }); return { status: response.status, body: await response.json() }; }
+
+test("serves authenticated health, bootstrap identity, and dependency graph projections", async t => {
+  const f = await fixture(t); const result = await call(f.base, "/v1/health");
+  assert.equal(result.status, 200); assert.equal(result.body.schema, CONTROL_PLANE_SCHEMA); assert.equal(result.body.dependencies[0].status, "healthy");
+  assert.equal(result.body.status, "degraded"); assert.equal(result.body.canonical_execution, "unavailable");
+  const bootstrap = await call(f.base, "/v1/bootstrap"); assert.equal(bootstrap.status, 200); assert.equal(bootstrap.body.control_metadata_only, true); assert.equal(bootstrap.body.capabilities.includes("node.lifecycle.request"), false);
+  const graph = await call(f.base, "/v1/dependencies"); assert.ok(Array.isArray(graph.body.graph)); assert.deepEqual(graph.body.graph[0].depends_on, []);
+});
+test("rejects missing identity, schema, and unauthorized callers", async t => {
+  const f = await fixture(t); assert.equal((await fetch(`${f.base}/v1/health`)).status, 401);
+  assert.equal((await call(f.base, "/v1/health", { headers: { "x-titan-schema-version": "9" } })).status, 426);
+  assert.equal((await call(f.base, "/v1/health", { headers: { authorization: "Bearer wrong" } })).status, 401);
+});
+test("refuses stale/cross-company and secret-bearing lifecycle envelopes before commissioning", async t => {
+  const f = await fixture(t);
+  const body = { kind: "service.restart", target_ref: "workforce", company_id: "company-a", capability_id: "node.lifecycle.request", idempotency_key: "intent-1", governed_execution_ref: "exec-1", authority_decision_ref: "decision-1", evidence_ref: "evidence-1", expires_at: new Date(Date.now() + 60000).toISOString() };
+  const post = value => call(f.base, "/v1/intents", { method: "POST", body: JSON.stringify(value) });
+  assert.equal((await post(body)).status, 503);
+  assert.equal((await post({ ...body, company_id: "company-b" })).status, 403);
+  assert.equal((await post({ ...body, expires_at: new Date(Date.now() - 1).toISOString() })).status, 409);
+  assert.equal((await post({ ...body, token: "do-not-store" })).status, 400);
+  assert.equal(Object.keys(f.runtime.store.state.intents).length, 0); assert.equal(f.runtime.store.state.denials.length, 3);
+});
+test("persists node identity across graceful service restart", async t => {
+  const f = await fixture(t); const identity = f.runtime.store.state.node_id; await f.runtime.close();
+  const runtime = createServerNodeRuntime({ authToken: "test-token", storePath: path.join(f.dir, "control.json") });
+  await runtime.start(); assert.equal(runtime.store.state.node_id, identity); await runtime.close();
+});
+test("refuses unsupported schemas and missing restore integrity", async t => {
+  const f = await fixture(t); const snapshot = f.runtime.store.exportSnapshot("company-a");
+  const response = await call(f.base, "/v1/recovery/restore", { method: "POST", body: JSON.stringify({ snapshot, manifest_digest: "wrong" }) });
+  assert.equal(response.status, 409);
+  await assert.rejects(() => f.runtime.store.restoreSnapshot({ ...snapshot, schema_version: "titan.server-node/v0" }, { manifestDigest: snapshot.snapshot_digest, companyId: "company-a" }), /snapshot/);
+});
+
 import { request as httpRequest, createServer as createHttpServer } from "node:http";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
