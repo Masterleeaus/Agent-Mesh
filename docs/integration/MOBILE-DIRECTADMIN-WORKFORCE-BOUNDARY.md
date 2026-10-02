@@ -1,47 +1,69 @@
 # Mobile ↔ DirectAdmin-hosted Titan Workforce boundary
 
-Status: repository contracts are present, but DirectAdmin deployment and end-to-end mobile integration are not certified. This inventory records source evidence, not a production deployment claim.
+Status: integration contract and inventory only; production endpoint wiring remains gated on the canonical hosted Workforce/API owners.
 
-Parent integration mission: #1169. Documentation slice: #1302.
+This document is the issue #1169 boundary record. It is deliberately explicit about what exists in the current repository versus what is required from the hosted system. It must not be read as deployment evidence.
 
-## Canonical owners and current source
+## Canonical owners
 
-| Concern | Owner | Source evidence |
+| Concern | Owner | Current repository evidence |
 | --- | --- | --- |
-| Mobile surface projections, command intents and conversation client | `apps/mobile` | `apps/mobile/lib/titan/services/titan_gateway.dart`, `http_titan_surface_transport.dart` |
-| Surface schema and receipt validation | Titan Platform | `packages/titan-platform/src/surface/index.ts` |
-| Hosted Workforce lifecycle and runtime composition | Workforce | `services/workforce/src/server.ts`, `hosted-runtime.ts`, `conversation-api.ts` |
-| DirectAdmin control-plane gateway | Server Node | `services/workforce/src/server.ts`, `directadmin-workforce-owners.ts`, `apps/directadmin/server-node/` |
-| Operator Workforce projection | Workforce Manager (#1050) | No deployed cockpit API verified by this source inventory |
-| Identity and company bridge | #1049/#302/#812 | Workforce accepts operator-supplied dependency adapters; production deployment wiring is not proven here |
-| Governed execution and evidence | #14/#913 and canonical runtime ports | Conversation path composes hosted auth, dispatch, recovery and cancellation; a provider acknowledgement is not an observed verified outcome |
+| Mobile projection/client and command intent | `apps/mobile` | `apps/mobile/lib/titan/services/titan_gateway.dart`, `http_titan_surface_transport.dart` |
+| Surface schema and receipt validation | Titan platform | `packages/titan-platform/src/surface/index.ts` |
+| Workforce work identity/lifecycle | Workforce service | `services/workforce/src/index.ts`, `production-runtime-bootstrap.ts` |
+| Persistent Workforce runtime | Workforce service + canonical runtime ports | `services/workforce/src/production-runtime-bootstrap.ts` |
+| DirectAdmin control-plane adapter | DirectAdmin Server Node | `apps/directadmin/server-node/` |
+| Operator Workforce projection | Workforce Manager mission #1050 | No deployed package/API verified in this repository |
+| Identity/company bridge | Business Node SDK/auth owners #1049/#302/#812 | No deployed mobile-facing endpoint verified in this repository |
+| Governance/evidence/verification | #14/#913 and canonical runtime ports | Bootstrap requires authority/evidence ports; provider acknowledgement is insufficient |
 
-## Current endpoint boundary
+## Versioned boundary
 
-The Workforce HTTP server currently exposes:
+The mobile-to-Titan boundary uses the existing Surface schema version `1.0`:
 
-- `GET /health` and `GET /ready`;
-- `POST /v1/workforce/conversations`, handled by `conversation-api.ts`, with hosted runtime authentication, dispatch, recovery, cancellation and optional event-stream responses;
-- `/v1/directadmin/*`, only when the operator-owned DirectAdmin gateway is configured.
+- Projection: `GET /v1/mobile/projections`
+- Command intent: `POST /v1/mobile/commands`
+- Conversation/continuation: owned by the hosted Workforce contract (#1159/#1182); do not invent a second mobile conversation API here.
+- Authentication: short-lived server-issued bearer token. The server resolves actor, company, entitlements, surface and revision; client-supplied identity is context for correlation only and never authority.
+- Required context: `company_id`, actor identity, device identity, canonical `zero|go|hub`, projection revision, request/operation/correlation/idempotency identity.
+- Receipt: the Surface `SurfaceReceipt` contract; `authority_source=server`, with receipt/event/signal/evidence references as available.
 
-The mobile conversation transport accepts an explicitly configured HTTPS endpoint and bearer credential. The source tree does not prove that a release bootstrap supplies this endpoint and a short-lived token from the canonical session bridge.
+The existing Flutter transport takes explicit endpoint URIs and refuses insecure non-local HTTP. The platform Surface contract enforces authority-neutral projections, capability checks, revision/expiry, company/surface binding and server receipts.
 
-Mobile projection and command transports accept configured endpoint URIs, but the Workforce server does not currently implement dedicated `/v1/mobile/projections` or `/v1/mobile/commands` routes. Any route delivery must derive actor/company authority from authenticated server context, keep projections authority-neutral, and send consequential commands through the governed command path.
+## Request/response obligations
 
-## Required trust boundary
+Every endpoint implementation must:
 
-- Server resolves actor, company membership, entitlements and context revision from the validated session. Client IDs are correlation/context assertions and never authority.
-- Requests remain bound to canonical `zero|go|hub`, company, actor, device and current context revision.
-- Go actions require current assignment/delegation; Hub projections enforce customer/object relationships; company and mode changes isolate caches and quarantine old-scope offline intents.
-- Conversation reconnect/resume is bounded and cannot replay consequential commands.
-- DirectAdmin roles, plugin credentials and provider identity never grant Titan business authority.
-- Local/demo inference stays outside the release path. Missing hosted configuration fails closed.
+1. derive and validate the authenticated Titan principal server-side;
+2. reject missing, revoked, expired or ambiguous identity/company mappings;
+3. enforce company scope and current surface/context revision;
+4. keep commands on the governed Command Bus;
+5. make idempotency durable before consequential execution;
+6. distinguish accepted/provider-acknowledged from completed/verified outcomes;
+7. return bounded, structured errors with a trace/correlation reference;
+8. preserve privacy minimisation for Hub and least-necessary assignment scope for Go;
+9. leave offline intents bound to their originating company, actor, device, surface and revision for reconnect revalidation.
 
-## Remaining product slices
+## Inventory result and current gap
 
-- #1160 covers secure mobile bootstrap and Zero/Go/Hub context isolation.
-- #1303 adds authenticated mobile projection and command routes.
-- #1304 implements the hosted conversation lifecycle beyond the current bounded endpoint.
-- #1305 certifies cross-surface hosted continuity and release evidence.
+The repository contains:
 
-Keep #1169 open until those product slices and its full hosted/mobile Done condition are verified.
+- a contract-compliant mobile projection/command client;
+- a canonical TypeScript Surface contract;
+- a persistent SQLite-backed Workforce runtime bootstrap with required authority/context/model ports;
+- DirectAdmin install/health shell scripts.
+
+The repository does **not** currently contain:
+
+- an authenticated mobile-facing route in `services/workforce/src/server.ts` (it currently serves only `/health` and `/ready`);
+- a deployed DirectAdmin Server Node API/identity bridge;
+- verified hosted Workforce conversation/stream/continuation endpoints;
+- deployed cross-surface identity evidence connecting mobile, Workforce Manager and another canonical surface.
+
+Therefore #1169 cannot honestly be closed from repository code alone yet. The remaining work is an integration dependency, not a documentation gap:
+
+- #1159/#1182 must provide the canonical hosted conversation lifecycle;
+- #1049/#302/#812 must provide the authenticated company/actor bridge;
+- #1050/#811 must provide the actual persistent hosted Workforce endpoint and deployment evidence.
+
+Until those contracts/endpoints are implemented and hosted verification is executed, mobile must remain fail-closed and no local/demo gateway may be promoted to production.
