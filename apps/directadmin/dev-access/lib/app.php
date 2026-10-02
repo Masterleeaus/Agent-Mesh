@@ -254,6 +254,39 @@ function directadmin_git_metadata_path_safe($path,$home,$expectDirectory){
  if($resolved===false||!path_within($resolved,$home)) return false;
  return $expectDirectory?is_dir($resolved):is_file($resolved);
 }
+/**
+ * Git follows nested paths under refs and objects. Fail closed on every
+ * metadata symlink and bound the scan so a large repository cannot stall a request.
+ */
+function directadmin_git_metadata_tree_safe($directory,$home){
+ $resolvedRoot=realpath($directory);
+ $rootStat=@lstat($directory);
+ if($resolvedRoot===false||!path_within($resolvedRoot,$home)||$rootStat===false||(($rootStat['mode']&0170000)!==0040000)) return false;
+ $pending=[$resolvedRoot];
+ $visited=0;
+ while($pending){
+  $current=array_pop($pending);
+  $entries=@scandir($current,SCANDIR_SORT_NONE);
+  if(!is_array($entries)) return false;
+  foreach($entries as $entry){
+   if($entry==='.'||$entry==='..') continue;
+   if(++$visited>65536) return false;
+   $child=$current.'/'.$entry;
+   $stat=@lstat($child);
+   if($stat===false) return false;
+   $type=$stat['mode']&0170000;
+   if($type===0120000) return false;
+   if($type===0040000){
+    $resolved=realpath($child);
+    if($resolved===false||!path_within($resolved,$home)) return false;
+    $pending[]=$resolved;
+    continue;
+   }
+   if($type!==0100000) return false;
+  }
+ }
+ return true;
+}
 function directadmin_git_resolve_path($path,$base,$home,$expectDirectory){
  if(!is_string($path)||$path===''||strpos($path,"\0")!==false) return null;
  $candidate=$path[0]==='/'?$path:rtrim($base,'/').'/'.$path;
@@ -331,6 +364,7 @@ function directadmin_git_repository_context($requested){
     if($backPointer===null||$expectedEntry===false||$backPointer!==$expectedEntry) return null;
    }
    foreach(array_values(array_unique([$gitDirectory,$commonDirectory])) as $metadataDirectory){
+    if(!directadmin_git_metadata_tree_safe($metadataDirectory,$home)) return null;
     foreach(['HEAD','config','packed-refs','index','shallow','commondir','gitdir'] as $file){
      if(!directadmin_git_metadata_path_safe($metadataDirectory.'/'.$file,$home,false)) return null;
     }
