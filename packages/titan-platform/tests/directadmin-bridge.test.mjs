@@ -17,8 +17,12 @@ const bootstrapNonce = 'N'.repeat(43);
 const bootstrapRequest = (f, headers = {}) => f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: {
   cookie: null, 'x-titan-csrf': null, 'x-titan-da-bootstrap-csrf': bootstrapNonce, ...headers,
 } });
-const trustedBootstrapInput = input => async (_request, csrfNonce) => {
-  assert.equal(csrfNonce, bootstrapNonce);
+const trustedBootstrapInput = input => async proof => {
+  assert.equal(proof.csrf_nonce, bootstrapNonce);
+  assert.equal(proof.origin, ORIGIN);
+  assert.equal(proof.cookie, null);
+  assert.equal(proof.authorization, null);
+  assert.deepEqual(Object.keys(proof).sort(), ['authorization', 'cookie', 'csrf_nonce', 'origin']);
   return input;
 };
 

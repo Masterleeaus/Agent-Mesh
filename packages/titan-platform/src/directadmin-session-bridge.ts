@@ -77,6 +77,11 @@ async function csrfDigest(value: string): Promise<string> {
 export type DirectAdminBootstrapInput = Readonly<{
   login_assertion: string; company_id: string; device_id: string; csrf_token: string;
 }>;
+/** Allowlisted ambient proof envelope passed to the trusted server-only
+ * DirectAdmin assertion provider after the browser boundary checks succeed. */
+export type DirectAdminBootstrapRequestProof = Readonly<{
+  origin: string; cookie: string | null; authorization: string | null; csrf_nonce: string;
+}>;
 function validBootstrapInput(value: unknown): value is DirectAdminBootstrapInput {
   try {
     if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
@@ -157,7 +162,7 @@ export class DirectAdminSessionBridge {
    */
   async bootstrapBrowserSession(
     request: Request,
-    resolveInput: (request: Request, csrfNonce: string) => Promise<unknown>,
+    resolveInput: (proof: DirectAdminBootstrapRequestProof) => Promise<unknown>,
   ): Promise<Readonly<{ set_cookie: string; csrf_token: string }>> {
     let url: URL;
     try { url = new URL(request.url); } catch { return rejectRequest(); }
@@ -171,8 +176,14 @@ export class DirectAdminSessionBridge {
 
     // Origin, Fetch Metadata, the empty request body, absence of an existing
     // Titan session and nonce syntax are checked before the trusted port runs.
+    const proof: DirectAdminBootstrapRequestProof = Object.freeze({
+      origin: request.headers.get('origin')!,
+      cookie: request.headers.get('cookie'),
+      authorization: request.headers.get('authorization'),
+      csrf_nonce: csrfNonce,
+    });
     let input: unknown;
-    try { input = await resolveInput(request, csrfNonce); }
+    try { input = await resolveInput(proof); }
     catch (error) { return normalizeAuthenticationFailure(error); }
     if (!validBootstrapInput(input)) return rejectRequest();
 

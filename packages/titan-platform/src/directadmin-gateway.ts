@@ -1,5 +1,6 @@
 import { DirectAdminSessionBridge, DIRECTADMIN_RESPONSE_HEADERS, DIRECTADMIN_CLEAR_SESSION_COOKIE,
   directAdminBridgeFailureKind, matchesDirectAdminContextRevision, type DirectAdminBootstrapInput,
+  type DirectAdminBootstrapRequestProof,
   type DirectAdminBridgeContext, type WithWorkforceZeroSession } from './directadmin-session-bridge.js';
 import type { GovernedIntentRequest } from './directadmin-plugin.js';
 
@@ -40,12 +41,7 @@ export type DirectAdminGatewayOwners = Readonly<{
  * fresh CSRF token. CGI usernames, browser identity fields and DA roles are
  * never authority. The SDK has no signer, nonce store or identity mapping. */
 export type DirectAdminBootstrapAssertionProvider = Readonly<{
-  provide: (input: Readonly<{
-    origin: string;
-    cookie: string | null;
-    authorization: string | null;
-    csrf_nonce: string;
-  }>) => Promise<DirectAdminBootstrapInput>;
+  provide: (proof: DirectAdminBootstrapRequestProof) => Promise<DirectAdminBootstrapInput>;
 }>;
 const json = (status: number, body: unknown, sessionCookie?: string) => new Response(JSON.stringify(body), {
   status, headers: { ...DIRECTADMIN_RESPONSE_HEADERS, ...(sessionCookie ? { 'set-cookie': sessionCookie } : {}) },
@@ -134,17 +130,11 @@ export function createDirectAdminGateway(
     if (path === '/v1/directadmin/bootstrap') {
       if (request.method !== 'POST') return json(405, { error: 'method-not-allowed' });
       try {
-        const bootstrap = await bridge.bootstrapBrowserSession(request, async (validatedRequest, csrfNonce) => {
+        const bootstrap = await bridge.bootstrapBrowserSession(request, async proof => {
           if (!bootstrapProvider) throw new Error('directadmin-service-unavailable');
-          // Pass only the ambient proof channels and the pre-auth nonce. Caller
-          // identity/company/role/session headers and request bodies are not
-          // part of the provider port.
-          return bootstrapProvider.provide(Object.freeze({
-            origin: validatedRequest.headers.get('origin')!,
-            cookie: validatedRequest.headers.get('cookie'),
-            authorization: validatedRequest.headers.get('authorization'),
-            csrf_nonce: csrfNonce,
-          }));
+          // The bridge's allowlisted proof envelope excludes caller identity,
+          // company, role and session headers, and request bodies.
+          return bootstrapProvider.provide(proof);
         });
         return json(200, { csrf_token: bootstrap.csrf_token }, bootstrap.set_cookie);
       } catch (error) { return bootstrapFailure(error); }
