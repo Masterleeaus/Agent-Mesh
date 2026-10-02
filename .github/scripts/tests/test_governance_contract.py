@@ -68,6 +68,11 @@ class GovernanceContractTests(unittest.TestCase):
         self.assertIn('check-evidence-ledger-ownership.py', workflow)
         contract = (ROOT / 'docs/contracts/accepted-evidence-ledger.md').read_text()
         self.assertIn('evidence-ledger-ownership.json', contract)
+        inventory = json.loads((ROOT / 'docs/contracts/evidence-ledger-ownership.json').read_text())
+        allowed = set(inventory['primary_roles'])
+        self.assertEqual(len(allowed), 7)
+        self.assertTrue(all(row['role'] in allowed and row.get('role_detail') for row in inventory['inventory']))
+        self.assertEqual([row['path'] for row in inventory['inventory'] if row['role'] == 'accepted-factual-business-evidence-ledger'], [inventory['accepted_factual_owner']])
 
     def test_evidence_guard_discovers_durable_writer_without_ledger_filename(self):
         script = ROOT / '.github/scripts/check-evidence-ledger-ownership.py'
