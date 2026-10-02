@@ -19,6 +19,318 @@
       "limitations": "Separate Sites source; metadata observed by coordinating audit. #1171 holds current source-scan report; not independently executed here."
     }
   ],
+  "delivery_board": {
+    "schema": "titan.directadmin-plugin-delivery-board/v1",
+    "observed_at": "2026-10-02T14:19:05Z",
+    "source_of_truth": "GitHub issue/claim branch/PR/CI; parent-supplied observations are labeled. This snapshot is not a second task ledger.",
+    "scope": "Only the three DirectAdmin plugins and immediate identity, runtime, authority, relay, and CI blockers.",
+    "basis": {
+      "main_sha": "64561e4d077ec07a3cb40dfb43284b0e7dff4dbf",
+      "readiness_issue": 1172,
+      "readiness_pr": 1178,
+      "readiness_branch": "agent/issue-1172",
+      "pr_state_before_update": "OPEN_DRAFT",
+      "head_before_update": "e9e51239b3236621987b56b3d68358eaf720b162",
+      "issue_assignees": [],
+      "claim_check": "Existing workspace branch; no competing #1172 branch observed.",
+      "existing_28_area_audit_source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+      "note": "The broad 28-area audit remains pinned to its prior d508 source snapshot; no repository-wide audit was rerun. This board alone is scoped to current main 64561 and the three DirectAdmin plugins/dependencies."
+    },
+    "priority_order": [
+      "developer-portal",
+      "business-node",
+      "workforce"
+    ],
+    "workflow_guidance": [
+      "One owner per canonical GitHub issue; exact agent/issue-N branch and PR are the claim/status record. Do not duplicate issues or implementation work; do not invent completion percentages.",
+      "Sequence: verify the existing Portal candidate and safe commands → establish the authenticated private Business Node gateway → prove one company-scoped governed Workforce action with a durable, independently verified receipt.",
+      "Partial PRs, green fixtures, REQUESTED receipts, and fail-closed 503s do not close missions. Keep parent issues open until full acceptance/deployment proof; use Refs for partial work.",
+      "Keep the RAW relay fail-closed. No credential or network changes without explicit authorization. Refresh this snapshot on material owner/CI/deployment events, not routine polling."
+    ],
+    "plugins": [
+      {
+        "id": "developer-portal",
+        "priority": 1,
+        "owner_task_id": "01a0fa66-adde-70e9-994a-e4683def0034",
+        "issue": {
+          "number": 1048,
+          "title": "[P2][CODEX] Developer Portal — scoped developer access, diagnostics, Codex & capability debugging",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1048",
+          "state": "OPEN",
+          "opened_at": "2026-09-28T06:36:49Z",
+          "age_hours": 103.7,
+          "github_assignees": []
+        },
+        "claim": {
+          "branch": "agent/issue-1048",
+          "remote_ref": "ABSENT_AFTER_MERGED_PARTIALS",
+          "open_pr": null,
+          "latest_pr": {
+            "number": 1247,
+            "state": "MERGED",
+            "head_sha": "df8fb09b248a75fa97cd90a7ebfe1b146eed5b69",
+            "merge_sha": "64561e4d077ec07a3cb40dfb43284b0e7dff4dbf"
+          },
+          "candidate_pr": {
+            "number": 1244,
+            "state": "MERGED",
+            "head_sha": "2998a3509a3f9cd427c41e0e3c560cbc6cc4c8b8"
+          }
+        },
+        "file_ownership": [
+          "apps/directadmin/dev-access/**",
+          ".github/workflows/directadmin-dev-access-php.yml"
+        ],
+        "dependency": "Library helper #401 delivered the existing archive; do not rebuild or re-upload.",
+        "next_action": "Parent supplies the ordinary provider-console login URL; Portal verifier then runs normal UI/Evolution-wrapper POST, session/CSRF and safe-command acceptance against the already verified archive. Do not install or deploy it.",
+        "candidate": {
+          "version": "1.3.5",
+          "archive": "Library v11",
+          "checksum_scheme": "checksumv2",
+          "sha256": "42b3ee3e100ff619ff72f2150db34690747615dc350f07b61b643beadc4cacfd",
+          "source_commit": "2998a3509a3f9cd427c41e0e3c560cbc6cc4c8b8",
+          "verification": "PARENT_REPORTED: exact archive verified; isolated PHP 8.3.35 extracted-package run 18/18 transport/security cases, 13 provenance hashes, safe packaging."
+        },
+        "acceptance_evidence": [
+          "PR #1244 and #1247 merged as partial source slices.",
+          "Parent reports installed DirectAdmin 1.3.3 POST broken (first observed 2026-10-02 10:33Z).",
+          "Parent reports Windows UI lacks server-console/browser controls and private-key retry; DirectAdmin Update is disabled."
+        ],
+        "still_required": "Ordinary provider-console URL and UI acceptance; safe update/rollback and complete redaction/SSH-key lifecycle evidence.",
+        "deployment_state": "1.3.3 installed with POST broken; exact 1.3.5 archive verified but NOT_DEPLOYED. No production update authorized.",
+        "blocker_age": {
+          "specific_onset": "UNKNOWN",
+          "last_observed_at": "2026-10-02T14:19:05Z",
+          "hours_since_last_observation": 0,
+          "live_1_3_3_post_observed_at": "2026-10-02T10:33:00Z",
+          "hours_since_live_post_observation": 3.77,
+          "mission_open_hours": 103.7
+        }
+      },
+      {
+        "id": "business-node",
+        "priority": 2,
+        "owner_task_id": "01a0fac0-ec9f-767a-ba86-6836da88400b",
+        "issue": {
+          "number": 1049,
+          "title": "[P1][CODEX] Business Node SDK — shared plugin shell, identity bridge, navigation, widgets & contracts",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049",
+          "state": "OPEN",
+          "opened_at": "2026-09-28T06:44:21Z",
+          "age_hours": 103.58,
+          "github_assignees": []
+        },
+        "claim": {
+          "branch": "agent/issue-1049",
+          "remote_head": "64561e4d077ec07a3cb40dfb43284b0e7dff4dbf",
+          "same_as_main": true,
+          "open_pr": null,
+          "latest_pr": {
+            "number": 1243,
+            "state": "MERGED",
+            "head_sha": "205fd94e44aa953c172ce9d419eb5e1dbbe1874b",
+            "merge_sha": "d508a2695fccc36e039f18e60cb96adfbe318813"
+          }
+        },
+        "file_ownership": [
+          "packages/titan-platform/src/directadmin-{cockpit,gateway,plugin,session-bridge}.ts",
+          "packages/titan-platform/tests/directadmin-*",
+          "apps/directadmin/*/cockpit.mjs",
+          "docs/contracts/directadmin-authenticated-session-bridge.md"
+        ],
+        "dependencies": [
+          "#302 canonical current-session/company identity",
+          "#812 verified private RAW relay; retain its current owner"
+        ],
+        "next_action": "SDK owner completes the existing commissioning/provisioning source slice while preserving current-session and company binding; keep the relay at 503 and make no credential/network changes. After explicit host authorization, run one authenticated same-company private-gateway probe.",
+        "acceptance_evidence": [
+          "PR #1204/#1243 are partial; explicit replacement-session rejection maps to 401, registry outage to redacted 503.",
+          "PR #1245 production RAW default returns sanitized 503 cookie_boundary_unverified before config/upstream.",
+          "Parent reports DirectAdmin 1.711 Server Node health unreachable; no production session commissioning."
+        ],
+        "still_required": "Approved private route, verified current identity/company exchange, actual DirectAdmin origin/cookie/CSRF behavior, and a live authenticated request without secret exposure.",
+        "deployment_state": "Production relay intentionally disabled (503); no commissioned private gateway or production proof. Credential/network changes are not authorized.",
+        "blocker_age": {
+          "specific_onset": "UNKNOWN",
+          "last_observed_at": "2026-10-02T12:43:49Z",
+          "hours_since_last_observation": 1.59,
+          "mission_open_hours": 103.58
+        }
+      },
+      {
+        "id": "workforce",
+        "priority": 3,
+        "owner_task_id": "01a0fa2c-44bb-7234-9dde-0e775943c028",
+        "issue": {
+          "number": 1050,
+          "title": "[P1][CODEX] Workforce Manager — agents, teams, work, autonomy, evidence & control",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1050",
+          "state": "OPEN",
+          "opened_at": "2026-09-28T06:44:23Z",
+          "age_hours": 103.58,
+          "github_assignees": []
+        },
+        "claim": {
+          "branch": "agent/issue-1050",
+          "head": "054c3651e6ee8c849add75ad6d10516bcd91c919",
+          "open_pr": {
+            "number": 1249,
+            "state": "OPEN_DRAFT",
+            "head_sha": "054c3651e6ee8c849add75ad6d10516bcd91c919"
+          },
+          "latest_pr": {
+            "number": 1246,
+            "state": "MERGED",
+            "head_sha": "87deeb75ae8341eb88c7b870bd965075f0347e2a",
+            "merge_sha": "bfbb06a5a22591100e2c0101e6598bee9c6f4589"
+          }
+        },
+        "file_ownership": [
+          "apps/directadmin/workforce/**",
+          "docs/directadmin/WORKFORCE-*.md"
+        ],
+        "dependencies": [
+          "#811 runtime controls/durable receipts",
+          "#640 bounded authority/effect/evidence glue",
+          "#1049 commissioning/provisioning SDK",
+          "#812 RAW relay",
+          "#1157/#1248 CI consuming #1249 fixture"
+        ],
+        "next_action": "Wait for the runtime owner’s authorized bounded #640 work and SDK #1049 commissioning source; then use the existing #1249 fixture through #1248 to prove one positive company-scoped governed workflow with a durable, independently verified receipt. Do not add plugin-local authority/evidence or duplicate CI.",
+        "acceptance_evidence": [
+          "PR #1249 owner report: 39/39 consumer/browser/hosted/package tests, 83/83 shared-bridge tests, 3/3 package tests, and 14 RAW requests/15 hosted routes.",
+          "GitHub run 37016533940 job 110868659965 passed the fixture: controls empty, CSRF 401, governed-action denial with no DB/event effects, production RAW 503.",
+          "PR #1248 head 0391b65d has successful mission gate, Workforce, DirectAdmin Workforce Consumer, mobile and validate checks; cross-review pairing with #1249 is parent-reported."
+        ],
+        "still_required": "One positive permitted host-owned control and durable receipt for the current company/session, independent outcome verification, idempotent recovery, and live-host commissioning. Current controls=[] and denial/no-write tests prove only fail-closed behavior.",
+        "deployment_state": "Packaging candidate only, not live-install-ready; no commissioned host or positive workflow receipt. Hosted /ready intentionally remains 503.",
+        "blocker_age": {
+          "specific_onset": "UNKNOWN",
+          "last_observed_at": "2026-10-02T14:03:08Z",
+          "hours_since_last_observation": 0.27,
+          "mission_open_hours": 103.58
+        }
+      }
+    ],
+    "dependency_owners": [
+      {
+        "id": "shared-identity",
+        "owner_task_id": "01a0fa2b-6965-73e1-a96f-17b866d45036",
+        "issue": 302,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1183,
+          "branch": "agent/issue-302",
+          "head": "14cb413fcb082f4426e298e46590de6e0fe577cc",
+          "state": "MERGED"
+        },
+        "active_branch": "NONE_OBSERVED",
+        "owned_paths": [
+          "apps/web/lib/auth/current-session.ts",
+          "packages/titan-platform/src/security-session-credentials.ts",
+          "packages/titan-platform/src/security-session-registry.ts"
+        ],
+        "used_by": [
+          "business-node",
+          "workforce"
+        ],
+        "note": "Partial current-session/company primitives; no production DirectAdmin commissioning evidenced."
+      },
+      {
+        "id": "runtime",
+        "owner_task_id": "01a0fa2b-37fd-76a5-b80f-1ba8f207f03f",
+        "issue": 811,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1242,
+          "branch": "agent/issue-811",
+          "head": "360b6bcf6a721757530f7913b88a28c8b3397a33",
+          "state": "MERGED"
+        },
+        "active_branch": "NONE_OBSERVED",
+        "owned_paths": [
+          "services/workforce/**",
+          "infra/compose.vps.yml"
+        ],
+        "used_by": [
+          "workforce"
+        ],
+        "note": "Parent reports runtime environment recovered and the owner is working the permitted-controls/durable-receipts dependency; bounded #640 claim is authorized."
+      },
+      {
+        "id": "authority-effect-evidence",
+        "issue": 640,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1203,
+          "branch": "agent/issue-640",
+          "head": "c6aa8d8ece6e9e031360111992f8853cca98ca91",
+          "state": "MERGED"
+        },
+        "overlap_check_at": "2026-10-02T14:07Z",
+        "branch_available": true,
+        "open_pr": false,
+        "owned_paths": [
+          "packages/runtime/authority/**",
+          "packages/titan-platform/src/mission-authority-policy.ts",
+          "packages/titan-platform/src/workforce-trust/**"
+        ],
+        "next_action": "Runtime owner claims exact agent/issue-640 and implements only the bounded lifecycle authority/effect/evidence glue required by #1050; keep #640 canonical and do not move authority into the plugin."
+      },
+      {
+        "id": "server-node-relay",
+        "issue": 812,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1245,
+          "branch": "agent/issue-812",
+          "head": "eb568f20ccc5403b968eaacbb97c3dbb3cab9b08",
+          "state": "MERGED"
+        },
+        "active_branch": {
+          "branch": "agent/issue-812",
+          "head": "092e4d4688c249ef093f660dab142452f3ad000d"
+        },
+        "used_by": [
+          "business-node",
+          "workforce"
+        ],
+        "note": "Production RAW deliberately returns sanitized 503 before upstream. No credential or network change is authorized."
+      },
+      {
+        "id": "hosted-ci",
+        "owner_task_id": "01a0fa39-ea03-72de-87ef-d577685f0020",
+        "issue": 1157,
+        "state": "OPEN",
+        "active_branch": {
+          "branch": "agent/issue-1157",
+          "head": "0391b65d858b1725bccdd3651f0fe85314090fb9"
+        },
+        "pr": {
+          "number": 1248,
+          "state": "OPEN_DRAFT",
+          "head": "0391b65d858b1725bccdd3651f0fe85314090fb9",
+          "checks": "GREEN"
+        },
+        "fixture_pr": {
+          "number": 1249,
+          "branch": "agent/issue-1050",
+          "head": "054c3651e6ee8c849add75ad6d10516bcd91c919",
+          "state": "OPEN_DRAFT"
+        },
+        "note": "Parent reports paired cross-review with #1249; no duplicate CI run is needed."
+      }
+    ],
+    "paused_workstreams": [
+      {
+        "name": "website/waitlist",
+        "issue": 373,
+        "state": "PAUSED_BY_OWNER",
+        "directive": "Preserve existing work and stop; no code push or scan.",
+        "provenance": "PARENT_REPORTED; not inspected here."
+      }
+    ]
+  },
   "subsystems": [
     {
       "subsystem_id": "apis-mcp",
