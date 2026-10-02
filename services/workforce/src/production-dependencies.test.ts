@@ -216,6 +216,7 @@ test("production dependency factory mounts the operator DirectAdmin gateway and 
             return async request => {
               writeFileSync(${JSON.stringify(observationPath)}, JSON.stringify({
                 method: request.method,
+                url: request.url,
                 path: new URL(request.url).pathname,
                 origin: request.headers.get("origin"),
                 nonce: request.headers.get("x-titan-da-bootstrap-csrf"),
@@ -263,7 +264,8 @@ test("production dependency factory mounts the operator DirectAdmin gateway and 
     assert.equal(bootstrap.status, 503, `the mount cannot fabricate a successful bootstrap without the owner provider: ${bootstrap.body}`);
     assert.deepEqual(JSON.parse(bootstrap.body), { error: "directadmin-service-unavailable" });
     assert.deepEqual(JSON.parse(readFileSync(observationPath, "utf8")), {
-      method: "POST", path: "/v1/directadmin/bootstrap", origin: "https://panel.test.invalid",
+      method: "POST", url: "https://panel.test.invalid/v1/directadmin/bootstrap",
+      path: "/v1/directadmin/bootstrap", origin: "https://panel.test.invalid",
       nonce, authorization: null, cookie: directAdminCookie,
     }, "the production host mounts the operator gateway, pins its URL, preserves the DirectAdmin proof cookie and strips Authorization");
 
@@ -276,7 +278,10 @@ test("production dependency factory mounts the operator DirectAdmin gateway and 
       },
     });
     assert.equal(context.status, 503);
-    assert.equal(JSON.parse(readFileSync(observationPath, "utf8")).nonce, null,
+    assert.deepEqual(JSON.parse(context.body), { error: "directadmin-service-unavailable" });
+    const contextObservation = JSON.parse(readFileSync(observationPath, "utf8"));
+    assert.equal(contextObservation.url, "https://panel.test.invalid/v1/directadmin/context");
+    assert.equal(contextObservation.nonce, null,
       "the one-time bootstrap nonce is forwarded only for the exact bootstrap POST target");
 
     const bootstrapWithQuery = await requestHttp(`${baseUrl}/v1/directadmin/bootstrap?unexpected=1`, {
@@ -290,7 +295,10 @@ test("production dependency factory mounts the operator DirectAdmin gateway and 
       body: "",
     });
     assert.equal(bootstrapWithQuery.status, 503);
-    assert.equal(JSON.parse(readFileSync(observationPath, "utf8")).nonce, null,
+    assert.deepEqual(JSON.parse(bootstrapWithQuery.body), { error: "directadmin-service-unavailable" });
+    const queryObservation = JSON.parse(readFileSync(observationPath, "utf8"));
+    assert.equal(queryObservation.url, "https://panel.test.invalid/v1/directadmin/bootstrap?unexpected=1");
+    assert.equal(queryObservation.nonce, null,
       "query-bearing bootstrap near misses do not receive the one-time bootstrap nonce");
   } finally {
     if (host) await host.close();
