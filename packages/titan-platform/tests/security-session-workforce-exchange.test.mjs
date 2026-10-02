@@ -258,7 +258,7 @@ test('derived child cannot switch independently and a revoked idempotent child i
   const { da, workforce } = await f.exchange();
   const targetService = createSessionCredentialService({
     registry: f.registry, issuer: 'titan:workforce-auth', audience: 'workforce', key_id: 'workforce-session-key', algorithm: 'EdDSA',
-    signing_key: f.workforceKeys.privateKey, verification_key: f.workforceKeys.publicKey,
+    signing_key: undefined, verification_key: f.workforceKeys.publicKey,
     upstream: { issuer: f.provider, audience: 'da-login', key_id: 'da-login-key', algorithm: 'EdDSA', verification_key: f.daLoginKeys.publicKey },
     directadmin: { node_id: 'node-one' }, now: () => new Date(f.at),
   });

@@ -54,7 +54,7 @@ function trust(input: Trust): Trust {
   if (input.algorithm === 'HS256' && (!(key instanceof Uint8Array) || key.byteLength < 32)) throw new Error('credential-key-invalid');
   if (input.algorithm !== 'HS256' && key instanceof Uint8Array) throw new Error('credential-key-invalid');
   return Object.freeze({ issuer: input.issuer, audience: input.audience, key_id: input.key_id,
-    algorithm: input.algorithm, verification_key: key instanceof Uint8Array ? key.slice() : key });
+    algorithm: input.algorithm, verification_key: key instanceof Uint8Array ? new Uint8Array(key) : key });
 }
 
 function id(payload: JWTPayload, field: string): string {

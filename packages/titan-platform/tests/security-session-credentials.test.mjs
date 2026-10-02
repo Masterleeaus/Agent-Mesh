@@ -8,7 +8,7 @@ import { tsImport } from 'tsx/esm/api';
 import { createIdentitySessionRegistry, createSessionCredentialService, directAdminIssuer } from '../.test-dist/security-boundary.js';
 const { createSqliteStorage } = await tsImport('@titan-zero/storage', { parentURL: import.meta.url, tsconfig: false });
 const epoch = Date.parse('2026-10-02T00:00:00Z');
-const issuer = directAdminIssuer('https://da-one.example.test:2222');
+const issuer = 'https://idp-one.example.test';
 const expectation = { company_id: 'company-a', device_id: 'device-1' };
 
 async function fixture(t, config = {}) {
@@ -191,7 +191,7 @@ test('host namespaces and duplicate usernames remain isolated', async t => {
   assert.notEqual(directAdminIssuer('https://da-one.example.test'),directAdminIssuer('https://da-two.example.test'));
   for (const value of ['http://da.example.test','https://u:p@da.example.test','https://da.example.test/path','https://da.example.test?x=1']) assert.throws(()=>directAdminIssuer(value));
   const f = await fixture(t);
-  const otherIssuer = directAdminIssuer('https://da-two.example.test');
+  const otherIssuer = 'https://idp-two.example.test';
   const other = createSessionCredentialService({...f.policy,registry:f.registry,upstream:{...f.policy.upstream,issuer:otherIssuer}});
   await denied(other.issue(await f.login({iss:otherIssuer}),expectation));
   const old = await f.service.issue(await f.login(),expectation);
@@ -200,7 +200,7 @@ test('host namespaces and duplicate usernames remain isolated', async t => {
 });
 
 test('DA adapter receives authenticated CSRF/node metadata preserved through switch, never authority', async t => {
-  const f = await fixture(t,{directadmin:{node_id:'node-one'}});
+  const f = await fixture(t,{audience:'directadmin-browser',directadmin:{node_id:'node-one'}});
   const channel = { node_id:'node-one', csrf_sha256:Buffer.from(await crypto.subtle.digest('SHA-256',crypto.getRandomValues(new Uint8Array(32)))).toString('base64url'), da_role:'admin' };
   await denied(f.service.issue(await f.login(),expectation));
   await denied(f.service.issue(await f.login({...channel,node_id:'node-two'}),expectation));
