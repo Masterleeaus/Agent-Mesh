@@ -139,3 +139,8 @@ A targeted review of ten substantive repositories found active pull requests acr
 - Some PRs are marked WIP, depend on non-main bases, or overlap with other PRs. Maintain a per-repository queue with dependency order and canonical target rather than merging solely by branch name.
 - The portfolio cleanup process therefore has two distinct tracks: (1) repository disposition candidates with no unique branch history; (2) active implementation branches that need code review, tests, and merge decisions.
 - No branch or PR was merged, closed, or deleted in this pass.
+
+
+## Rebranding handoff
+
+A repository-by-repository naming map with proposed GitHub slugs, README titles, provenance notes, and disposition guidance is in [REPOSITORY-NAMING-PLAN.md](REPOSITORY-NAMING-PLAN.md). Repository names and descriptions were not changed because the connected GitHub capability here does not expose repository settings edits; the owner can apply the proposed slugs in GitHub.

@@ -80,7 +80,8 @@ export async function createProductionRuntimeBootstrap({storage,ports,eventBus}=
   const dispatch=(input)=>zeroDispatcher.dispatch(input);
 
   return Object.freeze({
-    storage,runStore,workforceStore,runtime,events,workforce,zeroDispatcher,dispatch,\n    conversationRuntime: { dispatch, cancel: (input) => zeroDispatcher.cancel(input) },
+    storage,runStore,workforceStore,runtime,events,workforce,zeroDispatcher,dispatch,
+    conversationRuntime: { dispatch, cancel: (input) => zeroDispatcher.cancel(input) },
     authorityGateway:authority.authorityGateway,
     authorityStore:authority.authorityStore,
     authorityContextResolver:authority.authorityContextResolver,

@@ -50,6 +50,7 @@ export interface ZeroPersistentRuntimePort {
     run_id: string;
     input?: { role: string; content: string };
   }): Promise<ZeroRuntimeRun>;
+  cancel?(input: { company_id: CompanyId; run_id: string; reason?: string }): Promise<ZeroRuntimeRun>;
 }
 
 export type ZeroRuntimeRun = {

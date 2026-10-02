@@ -85,5 +85,5 @@ test("SSE resume emits ordered events after Last-Event-ID and does not duplicate
 
 test("identity fields are bounded and malformed lifecycle input is rejected", () => {
   assert.throws(() => normalizeConversationRequest({}), /conversation-company-id-required/);
-  assert.throws(() => request({ text: "x".repeat(20_001) }), /conversation-text-too-large/);
+  assert.throws(() => request({ text: "x".repeat(20 * 1024 + 1) }), /conversation-text-too-large/);
 });
