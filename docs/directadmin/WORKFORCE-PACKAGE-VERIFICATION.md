@@ -73,6 +73,7 @@ For this continuation, the package builder consumed the exact #1049 SDK source a
 `/tmp/1050-package-candidate/titan_workforce.tar.gz`
 
 SHA256: `0ef7ce0d5b4d0a732d1869ec067ce117aae81879bf7fa123abc0fef6c23c0d8b`
+The same archive is recorded as Library item `libfile_72615f7136108191a0a2eada84474dba`, version 3, with candidate-only/not-live-install-ready metadata.
 
 
 Bundled SDK module SHA256: `c45d611fbdee263cd248e4c7f9736bbe64fa80d1b7cadb19c022e27fa970db95`.
