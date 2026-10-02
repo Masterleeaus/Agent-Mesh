@@ -911,6 +911,11 @@ test("host mounts only an injected Fetch gateway and keeps absent DirectAdmin br
     assert.deepEqual(forwarded, { url: "https://127.0.0.1/v1/directadmin/bootstrap",
       cookie: "__Host-titan-da-session=test-only", authorization: null,
       bootstrapCsrf: "b".repeat(43), body: "" });
+    const bootstrapWithQuery = await configured.directAdmin("/v1/directadmin/bootstrap?unexpected=1", { method: "POST", headers: {
+      "x-titan-da-bootstrap-csrf": "c".repeat(43),
+    } });
+    assert.equal(bootstrapWithQuery.status, 418);
+    assert.equal(forwarded?.bootstrapCsrf, null, "the nonce is not forwarded for query-bearing near-miss paths");
   } finally { await configured.close(); }
 });
 

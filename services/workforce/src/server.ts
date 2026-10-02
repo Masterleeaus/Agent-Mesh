@@ -74,7 +74,7 @@ function directAdminRequest(request: import("node:http").IncomingMessage, public
   const url = new URL(target, origin);
   if (url.origin !== publicOrigin) throw new Error("directadmin-origin-mismatch");
   const method = request.method ?? "GET";
-  const bootstrapRequest = method === "POST" && url.pathname === "/v1/directadmin/bootstrap";
+  const bootstrapRequest = method === "POST" && target === "/v1/directadmin/bootstrap";
   const headers = new Headers();
   for (const name of [...directAdminForwardHeaders, ...(bootstrapRequest ? directAdminBootstrapForwardHeaders : [])]) {
     const value = request.headers[name];
