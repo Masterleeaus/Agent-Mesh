@@ -44,7 +44,15 @@
     "./workforce-coverage": "./src/workforce-coverage.ts",
     "./business-reality": "./src/business-reality.ts",
     "./constitution": "./src/constitution.ts",
-    "./field-service-lifecycle": "./src/field-service-lifecycle.ts"
+    "./field-service-lifecycle": "./src/field-service-lifecycle.ts",
+    "./directadmin-plugin": "./src/directadmin-plugin.ts"
+  },
+  "dependencies": {
+    "@titan-zero/storage": "workspace:*",
+    "jose": "^6.1.3"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",

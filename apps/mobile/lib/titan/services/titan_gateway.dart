@@ -3,6 +3,7 @@ import '../models/generative_item.dart';
 import '../models/titan_command.dart';
 import '../generative/demo_engine.dart';
 import 'offline_command_queue.dart';
+import 'hosted_conversation_transport.dart';
 import '../core/mobile_audience_guard.dart';
 
 /// Authority-neutral mobile boundary mirroring the canonical TypeScript
@@ -36,6 +37,7 @@ class SurfaceSdkTitanGateway implements TitanGateway {
   final TitanSession session;
   final TitanSurfaceTransport transport;
   final TitanConversationTransport? conversationTransport;
+  final HostedConversationTransport? hostedConversationTransport;
   final String Function()? idFactory;
   final Map<String, String> _messageRequestIds = {};
   final Map<String, String> _conversationIdsByMessage = {};
@@ -44,7 +46,7 @@ class SurfaceSdkTitanGateway implements TitanGateway {
   Map<String, dynamic>? _projection;
 
   SurfaceSdkTitanGateway(this.session, this.transport,
-      {this.conversationTransport, this.idFactory});
+      {this.conversationTransport, this.hostedConversationTransport, this.idFactory});
 
   Future<Map<String, dynamic>> refreshProjection() async {
     final projection = await transport.getProjection(
@@ -111,6 +113,7 @@ class SurfaceSdkTitanGateway implements TitanGateway {
 
   @override
   Future<List<TitanGenerativeItem>> converse(String message) async {
+    if (hostedConversationTransport != null) return hostedConversationTransport!.send(message);
     final text = message.trim();
     if (text.isEmpty) throw ArgumentError.value(message, 'message', 'message-required');
     if (text.length.compareTo(20000) == 1) {

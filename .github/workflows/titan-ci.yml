@@ -15,6 +15,52 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"
+          channel: stable
+      - name: Install mobile dependencies
+        working-directory: apps/mobile
+        run: flutter pub get
+      - name: Parse changed Dart files
+        working-directory: apps/mobile
+        run: dart format --output=none lib/titan/services/hosted_conversation_transport.dart test/hosted_conversation_transport_test.dart
+      - name: Analyze mobile transport
+        working-directory: apps/mobile
+        run: dart analyze lib/titan/services/hosted_conversation_transport.dart test/hosted_conversation_transport_test.dart
+      - name: Run hosted transport test
+        working-directory: apps/mobile
+        run: flutter test test/hosted_conversation_transport_test.dart
+      - name: Run mobile context and audience tests
+        working-directory: apps/mobile
+        run: >-
+          flutter test
+          test/titan/mobile_audience_guard_test.dart
+          test/titan/mobile_bootstrap_config_test.dart
+          test/titan/mobile_context_scope_test.dart
+          test/titan/mobile_session_context_test.dart
+          test/titan/scoped_offline_queue_test.dart
+          test/titan_conversation_gateway_test.dart
+          test/titan_shell_conversation_test.dart
+      - name: Run full mobile analysis and test suite
+        working-directory: apps/mobile
+        shell: bash
+        run: |
+          set +e
+          flutter analyze
+          ANALYZE_STATUS=$?
+          flutter test
+          TEST_STATUS=$?
+          if [ "$ANALYZE_STATUS" -ne 0 ] || [ "$TEST_STATUS" -ne 0 ]; then
+            echo "Flutter analysis exit: $ANALYZE_STATUS; full test exit: $TEST_STATUS"
+            exit 1
+          fi
   validate:
     runs-on: ubuntu-latest
     steps:
@@ -178,42 +224,4 @@ jobs:
         shell: bash
         run: |
           echo "::notice::Full Next.js web build becomes a strict gate when the recorded web TypeScript baseline reaches zero."
-  mobile:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout canonical repository
-        uses: actions/checkout@v4
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.24.0"
-          channel: stable
-          cache: true
-          cache-key: flutter-${{ runner.os }}-${{ hashFiles('apps/mobile/pubspec.lock') }}
-      - name: Install mobile dependencies
-        working-directory: apps/mobile
-        run: flutter pub get
-      - name: Run mobile context and audience tests
-        working-directory: apps/mobile
-        run: >-
-          flutter test
-          test/titan/mobile_audience_guard_test.dart
-          test/titan/mobile_bootstrap_config_test.dart
-          test/titan/mobile_context_scope_test.dart
-          test/titan/mobile_session_context_test.dart
-          test/titan/scoped_offline_queue_test.dart
-          test/titan_conversation_gateway_test.dart
-          test/titan_shell_conversation_test.dart
-      - name: Run full mobile analysis and test suite
-        working-directory: apps/mobile
-        shell: bash
-        run: |
-          set +e
-          flutter analyze
-          ANALYZE_STATUS=$?
-          flutter test
-          TEST_STATUS=$?
-          if [ "$ANALYZE_STATUS" -ne 0 ] || [ "$TEST_STATUS" -ne 0 ]; then
-            echo "Flutter analysis exit: $ANALYZE_STATUS; full test exit: $TEST_STATUS"
-            exit 1
-          fi
+
