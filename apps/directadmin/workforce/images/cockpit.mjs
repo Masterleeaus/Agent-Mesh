@@ -1,5 +1,6 @@
 import * as SDK from 'titan-sdk';
 import { WorkforceController } from 'workforce-controller';
+import { WorkforceApi } from 'workforce-api';
 import { boundedText, position, workState, receiptState, verifiedOutcome } from 'workforce-presentation';
 
 const root = document.getElementById('titan-workforce');
@@ -86,7 +87,7 @@ function render(state) {
     renderControls(view, state, workers, work);
   } else if (tab === 'Evidence') {
     if (state.receipt) {
-      fields(view, { 'Receipt state': receiptState(state.receipt), 'Operation ID': state.receipt.operation_id, 'Correlation ID': state.receipt.correlation_id, 'Work ID': state.receipt.work_id, 'Run ID': state.receipt.run_id, 'Decision ID': state.receipt.decision_id });
+      fields(view, { 'Receipt state': receiptState(state.receipt), 'Receipt ID': state.receipt.receipt_id, 'Operation ID': state.receipt.operation_id, 'Correlation ID': state.receipt.correlation_id, 'Work ID': state.receipt.work_id, 'Run ID': state.receipt.run_id, 'Decision ID': state.receipt.decision_id });
       evidence(view, state.receipt.evidence_refs);
     } else view.append(node('p', 'Submit a permitted governed request to inspect its receipt.'));
     for (const item of work.filter(item => item.evidence_refs?.length)) { const row = node('details'); row.append(node('summary', item.work_id)); evidence(row, item.evidence_refs); view.append(row); }
@@ -104,7 +105,7 @@ function renderControls(view, state, workers, work) {
   view.append(node('p', 'Requests are proposals to the governed host. Role, capability availability and trust do not authorize execution.'));
   // Only the exact host-published allowlist can expose a control. Never raw shell or generic JSON.
   const supported = new Set(['pause', 'resume', 'cancel', 'reassign', 'escalate', 'revoke']);
-  const actions = (state.discovery?.controls ?? []).filter(action => supported.has(action));
+  const actions = (state.discovery?.controls ?? []).filter(item => supported.has(item.action) && typeof item.capability_id === 'string').map(item => item.action);
   if (!actions.length) { unavailable(view, 'Governed lifecycle controls'); return; }
   const form = node('form');
   const select = (label, options) => { const wrapper = node('label', label); const input = node('select'); for (const [value, text] of options) input.append(node('option', text, { value })); wrapper.append(input); form.append(wrapper); return input; };
@@ -116,12 +117,12 @@ function renderControls(view, state, workers, work) {
   form.addEventListener('submit', event => { event.preventDefault(); if (!reason.value.trim()) return; void controller.submit({ action: action.value, work_id: target.value, target_worker_id: worker.value || undefined, reason: reason.value.trim() }); }); view.append(form);
 }
 
-// The real SDK bridge is the only transport. Missing bridge remains fail-closed.
-const api = typeof SDK.createDirectAdminWorkforceClient === 'function'
-  ? SDK.createDirectAdminWorkforceClient()
-  : { context: async () => { throw new Error('shared-sdk-bridge-unavailable'); } };
-const controller = new WorkforceController(api, render);
-window.addEventListener('pagehide', () => controller.invalidate());
+// #1049 owns the real session, CSRF/origin protection, expiry and cross-plugin invalidation.
+// Commissioned authenticated HTML supplies this nonce; a DA role/environment never supplies identity.
+const session = new SDK.DirectAdminCockpitSession(() => document.querySelector('meta[name="titan-directadmin-csrf"]')?.getAttribute('content') ?? '');
+const controller = new WorkforceController(new WorkforceApi(session), render);
+session.subscribe(() => controller.invalidate());
+window.addEventListener('pagehide', () => session.invalidate());
 window.addEventListener('pageshow', event => { if (event.persisted) void controller.connect(); });
-window.addEventListener('titan-context-changed', () => { controller.invalidate(); void controller.connect(); });
+window.addEventListener('titan-context-changed', () => { session.invalidate(); void controller.connect(); });
 void controller.connect();

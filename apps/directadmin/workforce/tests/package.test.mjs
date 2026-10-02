@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { buildPackage, packageFiles } from '../tools/package.mjs';
 
+const fixtureSdk = 'export const fixtureOnly = true; export class DirectAdminCockpitSession {} export const validateDirectAdminPluginPackage = () => ({valid:true}); export const assertPluginCanBeInstalled = () => true;\n';
 const pluginRoot = fileURLToPath(new URL('../', import.meta.url));
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), 'workforce-package-test-'));
@@ -18,7 +19,7 @@ async function fixture(t) {
     else await writeFile(join(sourceDir, file), `Fixture only: ${file}\n`);
   }
   const sdkModulePath = join(root, 'compiled-sdk.mjs');
-  await writeFile(sdkModulePath, 'export const fixtureOnly = true;\n');
+  await writeFile(sdkModulePath, fixtureSdk);
   return { root, sourceDir, sdkModulePath, outputDir: join(root, 'dist') };
 }
 
@@ -38,7 +39,7 @@ test('package is deterministic, flat, allowlisted, executable and checksummed', 
   await mkdir(stage);
   execFileSync('tar', ['--same-permissions', '-xzf', first.archivePath, '-C', stage]);
   assert.match(execFileSync('sh', [join(stage, 'scripts/update.sh')], { cwd: '/', encoding: 'utf8' }), /preflight passed/);
-  assert.equal(await readFile(join(stage, 'images/sdk.mjs'), 'utf8'), 'export const fixtureOnly = true;\n');
+  assert.equal(await readFile(join(stage, 'images/sdk.mjs'), 'utf8'), fixtureSdk);
   await chmod(join(stage, 'user/index.html'), 0o644);
   assert.throws(() => execFileSync('sh', [join(stage, 'scripts/install.sh')], { stdio: 'pipe' }), /must be executable/);
 });
@@ -82,4 +83,10 @@ test('uninstall preserves business state and does not invoke host management', a
   assert.equal(await readFile(businessFile, 'utf8'), 'canonical business state');
   const scripts = await Promise.all(['install', 'update', 'uninstall'].map(name => readFile(join(pluginRoot, `scripts/${name}.sh`), 'utf8')));
   for (const script of scripts) assert.doesNotMatch(script, /\b(sudo|systemctl|service|sqlite3|mysql|curl|wget|rm)\b/);
+});
+test('legacy SDK without the real browser session cannot be packaged', async t => {
+  const input = await fixture(t);
+  const legacy = join(input.root, 'legacy-sdk.mjs');
+  await writeFile(legacy, 'export const fixtureOnly = true;');
+  await assert.rejects(buildPackage({ ...input, sdkModulePath: legacy }), /canonical browser session/);
 });

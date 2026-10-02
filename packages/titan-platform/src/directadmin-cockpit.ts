@@ -78,7 +78,7 @@ export class DirectAdminCockpitSession {
     return this.accept(result);
   }
   async projection(plugin: DirectAdminPluginId): Promise<DirectAdminProjection> {
-    if (!['titan_zero', 'titan_operations', 'titan_web'].includes(plugin)) throw new Error('unknown-plugin');
+    if (!['titan_zero', 'titan_operations', 'titan_web', 'titan_workforce'].includes(plugin)) throw new Error('unknown-plugin');
     const epoch = this.#epoch;
     const result = await this.send(`/v1/directadmin/${plugin}/projection`) as { context: DirectAdminBridgeContext; projection: DirectAdminProjection };
     if (this.#disposed || epoch !== this.#epoch) throw new Error('directadmin-context-invalidated');
@@ -87,7 +87,7 @@ export class DirectAdminCockpitSession {
     return result.projection;
   }
   async intent(plugin: DirectAdminPluginId, intent: GovernedIntentRequest): Promise<unknown> {
-    if (!['titan_zero', 'titan_operations', 'titan_web'].includes(plugin) || !this.#context ||
+    if (!['titan_zero', 'titan_operations', 'titan_web', 'titan_workforce'].includes(plugin) || !this.#context ||
         this.#context.expires_at <= Date.now() || intent.company_id !== this.#context.company_id || intent.actor_id !== this.#context.actor_id) {
       throw new Error('directadmin-intent-context-mismatch');
     }

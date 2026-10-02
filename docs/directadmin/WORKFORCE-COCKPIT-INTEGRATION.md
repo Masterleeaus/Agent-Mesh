@@ -6,13 +6,13 @@ was accepted through #1145. History is retained without force-push or deletion.
 
 ## Sources inspected
 
-- Current main45bcd75c, then8a889c10, root/apps/packages AGENTS, ai/INVARIANTS,
+- Current main 45bcd75c, then 8a889c10, root/apps/packages AGENTS, ai/INVARIANTS,
   Blueprint v3, Canonical Rules, phase map and DirectAdmin development guide.
 - #1050 current issue and claim comments, #1143 and accepted #1145.
-- #1049 published SDK42233a2110e1caa387ccaefcd1f0136791760c5c.
-- #811 published host99cd1bf86fa75c4c0a4e2ec45b39e9baccbe16fd;
+- #1049 published SDK 51b22e92569b2d76ce97078fe3975ce7be091590 (merged with provenance).
+- #811 published host 99cd1bf86fa75c4c0a4e2ec45b39e9baccbe16fd;
   #1182 conversation transport; shared identity owner #302.
-- #1179 prerequisitead43d010d50ba262c02beaf0ed892b656174ff58 merged with provenance.
+- #1179 prerequisite ad43d010d50ba262c02beaf0ed892b656174ff58 merged with provenance.
 - No repository `.agents/skills` directory exists; executor `.agents` is empty.
 
 ## What this continuation implements
@@ -24,17 +24,24 @@ fixed Operations deep links, SDK-compatible summary shape and real archive/
 staging install/update/uninstall contracts. It introduces no business store,
 identity/auth resolver, authority engine, agent runtime or provider execution.
 
-The `WorkforceController` transport methods and the temporary browser factory
-probe are **private consumer test seams, not a published API or completed SDK
-integration**. Production remains fail-closed with the currently published SDK.
-The real #1049 bridge must replace this probe using its actual exported contract.
-Do not install a fixture or claim that an injected method proves integration.
+The browser now calls the actual #1049 `DirectAdminCockpitSession`, replacing the
+temporary factory. The only direct SDK changes add `titan_workforce` to the existing
+plugin type/gateway/browser allowlists. No identity, issuance, CSRF, authority or
+revalidation behavior is forked. The consumer sends capability/operation/correlation
+plus bounded control input to the shared intent ingress, which returns REQUESTED.
+
+The proposed projection data schema `titan.workforce-cockpit.v1` contains
+`discovery: {company_id, workers, controls: [{action, capability_id}]}` and
+`status: {company_id, work}`. These consumer expectations are **not a claim that
+the canonical host already implements this API**. Owner confirmation/composition
+is requested on #1201. It remains unavailable without the actual owner. Production
+never uses fixture data or grants authority from a control descriptor.
 
 ## Concrete integration blockers
 
 | Owner | Observed published behavior | Needed for functioning cockpit |
 |---|---|---|
-| #1049 / #1204 | `DirectAdminTitanApiClient`, injected context resolver and contribution/package contracts; no browser session bridge at42233a21 | Concrete current-context bootstrap, session-bound/CSRF-protected same-origin transport, revalidation and company-switch invalidation. Browser must never carry upstream provider credentials. |
+| #1049 / #1204 | Actual signed session bridge, `DirectAdminCockpitSession`, context/projection/intent routes, expiry/switch/logout invalidation at51b22e92, now consumed here | Commissioned issuer/CSRF HTML bootstrap and launched gateway owners; provisional attestation remains under #302 reconciliation. Browser never carries upstream credentials. |
 | #811 / #1201 | At99cd1bf8, `server.ts` routes only POST `/v1/workforce/conversations`, GET `/health`, GET `/ready` | Authenticated canonical roster/discover and work/run/evidence status projections; bounded governed lifecycle controls with operation/idempotency/correlation and receipts. Reuse `SqliteWorkforceStore.listWorkers/list` and canonical runtime/governance owners server-side; no surface DB reads. |
 | #1182 / #1188 | Conversation request/response preserves company/actor/device/session/context/conversation/operation/correlation/trace/idempotency and events | Shared gateway consumer integration; canonical conversation context and consequential requests through governance. Do not create a plugin-local conversation ledger. |
 | #302 / #1183 | Current-session resolver is published | Cryptographically verified credentials and protected provisioning on commissioned infrastructure remain upstream. |
@@ -46,12 +53,15 @@ upstream connections, not permission requests to recreate their owners.
 
 ## Verification
 
-- `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium node --test apps/directadmin/workforce/tests/*.test.mjs`: 17 tests.
-- `TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk/sdk.mjs PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium node --test apps/directadmin/workforce/tests/sdk-contract.integration.mjs`: 3 tests against compiled canonical SDK42233a21. Proves shared package/contribution acceptance and fail-closed real entrypoints when its browser bridge is missing; **does not prove hosted integration**.
-- `node_modules/.bin/tsc -p packages/titan-platform/tsconfig.json --noEmit`: passed after merging main8a889c10.
-- Package builder produces flat `titan_workforce.tar.gz`, SHA256 sidecar and verifies extracted modes/content/staging preflight. Extracted user entrypoint executes.
-- `pnpm gate:fast` and `pnpm gate`: fail at existing worker lint: booking-confirmed:113, client-reactivation:102, estimate-followup:96, invoice-followup:65, review-request:71 (`no-unused-expressions`). Initially pnpm could not create its home store; retry used `XDG_DATA_HOME=/tmp/1050-pnpm-data XDG_CACHE_HOME=/tmp/1050-pnpm-cache pnpm_config_manage_package_manager_versions=false pnpm_config_verify_deps_before_run=false`. No repository dependency/settings mutation.
-- Independent security review reproduced false VERIFIED fallback and stale refresh following revocation. Both fixed; regression coverage added. Real owner integration still requires another review.
+- `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium node --test apps/directadmin/workforce/tests/*.test.mjs`: 23 tests passed.
+- `node --test apps/directadmin/workforce/tests/hosted-sdk.integration.mjs`: 1 test passed. Uses real SDK signature verification, gateway, browser client and canonical SQLite identity registry; only upstream business projections/intents are explicit fixture owners. Revocation prevents further intent ingress.
+- `TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk/current-sdk.mjs PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium node --test apps/directadmin/workforce/tests/sdk-contract.integration.mjs`: 3 tests passed against compiled canonical SDK 51b22e92 plus Workforce allowlist registration. Proves shared package/contribution acceptance and fail-closed executable roles without commissioned credentials/CSRF.
+- Independent reviewer reran 26 plugin tests together: all passed. A subsequent legacy-SDK rejection regression brings the final combined run to 27 passed; no additional concrete security defect found after fixing false VERIFIED fallback, stale refresh after revocation and malformed evidence refs.
+- `node_modules/.bin/tsc -p packages/titan-platform/tsconfig.json --noEmit false --outDir packages/titan-platform/.test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false`: passed. Initial missing installed workspace links for the new declared storage/tsx dependencies were restored locally under ignored node_modules; no package/lock/compiler repair was made.
+- `node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/titan-platform/tests/directadmin-plugin.test.mjs packages/titan-platform/tests/security-boundary.test.mjs packages/titan-platform/tests/security-session-registry.test.mjs`: 118 shared security/SDK tests passed.
+- Browser SDK bundle built using existing esbuild0.28.2: `node_modules/.pnpm/esbuild@0.28.2/node_modules/esbuild/bin/esbuild packages/titan-platform/src/directadmin-plugin.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=/tmp/1050-sdk/current-sdk.mjs`.
+- Package builder produces flat `titan_workforce.tar.gz`, SHA256 sidecar and verifies extracted modes/content/shared SDK validation/staging preflight. Extracted role entrypoints execute.
+- `pnpm gate:fast` and `pnpm gate`: fail at existing worker lint: booking-confirmed:113, client-reactivation:102, estimate-followup:96, invoice-followup:65, review-request:71 (`no-unused-expressions`). Initially pnpm could not create its home store; retry used `XDG_DATA_HOME=/tmp/1050-pnpm-data XDG_CACHE_HOME=/tmp/1050-pnpm-cache pnpm_config_manage_package_manager_versions=false pnpm_config_verify_deps_before_run=false` to use installed dependencies without auto-install. No dependency security policy or repository settings changed.
 
 No production/server deployment or credentials/security-setting changes occurred.
 No live DirectAdmin/VPS certification has run. Package test fixtures are excluded

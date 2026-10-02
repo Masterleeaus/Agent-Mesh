@@ -2,7 +2,7 @@
 import { copyFile, lstat, mkdir, mkdtemp, readFile, readdir, rm, writeFile, chmod } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
@@ -12,7 +12,7 @@ export const packageFiles = Object.freeze([
   'admin/index.html', 'reseller/index.html', 'user/index.html',
   'hooks/admin_txt.html', 'hooks/reseller_txt.html', 'hooks/user_txt.html',
   'scripts/install.sh', 'scripts/update.sh', 'scripts/uninstall.sh',
-  'lib/entry.mjs', 'images/cockpit.mjs', 'images/controller.mjs', 'images/presentation.mjs', 'images/sdk.mjs', 'images/style.css',
+  'lib/entry.mjs', 'images/cockpit.mjs', 'images/controller.mjs', 'images/api.mjs', 'images/presentation.mjs', 'images/sdk.mjs', 'images/style.css',
 ].sort());
 const executable = (file) => /^(admin|reseller|user)\/index\.html$/.test(file) || file.startsWith('scripts/');
 
@@ -29,6 +29,10 @@ export async function buildPackage({ sourceDir = resolve(dirname(fileURLToPath(i
   sdkModulePath = resolve(sdkModulePath);
   await rejectSymlinks(sourceDir);
   if (!(await lstat(sdkModulePath)).isFile()) throw new Error('SDK module must be a regular file, not a symlink.');
+  const SDK = await import(pathToFileURL(sdkModulePath).href);
+  if (typeof SDK.DirectAdminCockpitSession !== 'function' || typeof SDK.validateDirectAdminPluginPackage !== 'function' || typeof SDK.assertPluginCanBeInstalled !== 'function') {
+    throw new Error('SDK must export the canonical browser session and package validators.');
+  }
   const temporary = await mkdtemp(join(tmpdir(), 'titan-workforce-package-'));
   try {
     const stage = join(temporary, 'stage');
@@ -54,6 +58,13 @@ export async function buildPackage({ sourceDir = resolve(dirname(fileURLToPath(i
       if (!stat.isFile() || (stat.mode & 0o777) !== (executable(file) ? 0o755 : 0o644)) throw new Error(`Archive mode/type mismatch: ${file}`);
       if (!(await readFile(join(verify, file))).equals(await readFile(join(stage, file)))) throw new Error(`Archive content mismatch: ${file}`);
     }
+    SDK.assertPluginCanBeInstalled(SDK.validateDirectAdminPluginPackage({
+      plugin_id: 'titan_workforce', version: '0.1.0', archive_filename: 'titan_workforce.tar.gz',
+      manifest_content: await readFile(join(verify, 'plugin.conf'), 'utf8'), files: listing,
+      executable_files: listing.filter(executable),
+      role_entrypoints: { admin: 'admin/index.html', reseller: 'reseller/index.html', user: 'user/index.html' },
+      hooks: listing.filter(file => file.startsWith('hooks/')),
+    }));
     execFileSync('sh', [join(verify, 'scripts/install.sh')], { stdio: 'pipe' });
     await mkdir(outputDir, { recursive: true });
     const archivePath = join(outputDir, 'titan_workforce.tar.gz');

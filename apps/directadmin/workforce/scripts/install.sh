@@ -10,7 +10,7 @@ for rel in admin reseller user hooks scripts lib images; do
     exit 1
   fi
 done
-for rel in AGENTS.md README.md plugin.conf admin/index.html reseller/index.html user/index.html hooks/admin_txt.html hooks/reseller_txt.html hooks/user_txt.html scripts/install.sh scripts/update.sh scripts/uninstall.sh lib/entry.mjs images/cockpit.mjs images/controller.mjs images/presentation.mjs images/sdk.mjs images/style.css; do
+for rel in AGENTS.md README.md plugin.conf admin/index.html reseller/index.html user/index.html hooks/admin_txt.html hooks/reseller_txt.html hooks/user_txt.html scripts/install.sh scripts/update.sh scripts/uninstall.sh lib/entry.mjs images/cockpit.mjs images/controller.mjs images/api.mjs images/presentation.mjs images/sdk.mjs images/style.css; do
   if [ ! -f "$PLUGIN_DIR/$rel" ] || [ -L "$PLUGIN_DIR/$rel" ]; then
     echo "Titan Workforce preflight failed: missing or unsafe $rel" >&2
     exit 1

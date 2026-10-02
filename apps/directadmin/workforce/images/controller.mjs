@@ -41,14 +41,14 @@ export class WorkforceController {
       if (typeof item.work_id !== 'string' || !item.work_id || typeof item.state !== 'string') throw new Error('workforce-projection-invalid');
     }
   }
-  #fail(error) {
+  #fail(error, submitted = false) {
     this.#epoch++;
     this.#pending = null;
     const message = String(error?.message ?? '');
     const denied = /401|403|409|denied|expired|revok|context|company-mismatch/.test(message);
     // Never render exception payloads (upstream errors may contain secrets or another company's IDs).
     this.#set({ phase: denied ? 'denied' : 'unavailable', context: null, discovery: null, status: null, receipt: null,
-      error: denied ? 'Access or company context changed. Reconnect to revalidate.' : 'Hosted Workforce is unavailable. Reconnect to retrieve current state.' });
+      error: denied ? 'Access or company context changed. Reconnect to revalidate.' : submitted ? 'Request outcome is unknown. Reconnect and inspect canonical work/history before submitting again.' : 'Hosted Workforce is unavailable. Reconnect to retrieve current state.' });
   }
   async submit(action) {
     if (this.state.phase !== 'ready' || this.#pending) return;
@@ -60,7 +60,7 @@ export class WorkforceController {
       const current = await this.api.context();
       if (epoch !== this.#epoch) return;
       if (current.company_id !== context.company_id || current.actor_id !== context.actor_id ||
-          current.session_revision !== context.session_revision) throw new Error('workforce-context-changed');
+          current.session_revision !== context.session_revision || current.context_revision !== context.context_revision) throw new Error('workforce-context-changed');
       const receipt = await this.api.control(current, this.#pending);
       if (epoch !== this.#epoch) return;
       scoped(receipt, context.company_id); assertNestedCompany(receipt, context.company_id);
@@ -75,7 +75,7 @@ export class WorkforceController {
     } catch (error) {
       if (epoch === this.#epoch) {
         this.#pending = null;
-        this.#fail(error);
+        this.#fail(error, true);
       }
     }
   }

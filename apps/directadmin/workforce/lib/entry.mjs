@@ -11,7 +11,7 @@ export function renderEntry(role) {
   // Import maps use data modules from the signed/installed package only. No remote code.
   const moduleUrl = name => `data:text/javascript;base64,${Buffer.from(asset(name)).toString('base64')}`;
   const imports = { 'titan-sdk': moduleUrl('sdk.mjs'), 'workforce-presentation': moduleUrl('presentation.mjs'),
-    'workforce-controller': moduleUrl('controller.mjs') };
+    'workforce-controller': moduleUrl('controller.mjs'), 'workforce-api': moduleUrl('api.mjs') };
   return `<main id="titan-workforce" data-role="${role}" aria-label="Titan Workforce"><h1>Titan Workforce</h1><p role="status">Loading current company context…</p></main>
 <style>${asset('style.css')}</style>
 <script type="importmap">${JSON.stringify({ imports })}</script>

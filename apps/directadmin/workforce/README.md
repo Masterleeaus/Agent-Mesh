@@ -8,9 +8,13 @@ Native Titan FSM remains the default; Frappe is optional.
 ## Integration status
 
 The executable role routes render the same company-scoped cockpit. The browser
-must use the shared #1049 session/company/CSRF bridge and #811 hosted API. Missing
-bridge, denied identity, invalid company data or unavailable host fail closed.
+uses the actual shared #1049 `DirectAdminCockpitSession` and its context/projection/intent routes.
+The #811/#812 host must still supply canonical projection and governed-intent owners. Missing
+commissioned session/CSRF bootstrap, denied identity, invalid company data or unavailable host fail closed.
 The current implementation is **not certified complete or ready for production**.
+Authenticated host HTML must supply `<meta name="titan-directadmin-csrf" content="…">`
+with the separately bound nonce; the plugin never creates this nonce or an identity
+from DirectAdmin environment/role. The credential remains an HttpOnly cookie.
 A fixture-based passing test does not prove a commissioned host or identity bridge.
 
 The UI displays canonical roster/worker identity, hierarchy relationships, work
@@ -36,7 +40,8 @@ node apps/directadmin/workforce/tools/package.mjs \
   --output-dir /tmp/titan-workforce-dist
 ```
 
-The builder produces a flat `titan_workforce.tar.gz` and SHA256 sidecar, applies
+The builder requires the current canonical browser session and package-validator exports,
+and runs the shared validator on the extracted final package. It produces a flat `titan_workforce.tar.gz` and SHA256 sidecar, applies
 executable modes, extracts the final tarball, compares contents/modes and runs
 staging-location preflight. Tests and development fixtures are excluded.
 
@@ -59,6 +64,10 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
 pnpm gate:fast
 pnpm gate
 ```
+
+The integration checks also use the compiled canonical SDK and real signed bridge/SQLite
+identity registry with explicitly fixture projection/intent owners. See
+`docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md` for exact commands and remaining dependencies.
 
 The browser executable override is optional when Playwright's matching browser
 is installed. Controller and browser tests use explicitly marked fixtures,

@@ -2,7 +2,7 @@ import { DirectAdminSessionBridge, DIRECTADMIN_RESPONSE_HEADERS, DIRECTADMIN_CLE
   type DirectAdminBridgeContext } from './directadmin-session-bridge.js';
 import type { GovernedIntentRequest } from './directadmin-plugin.js';
 
-export type DirectAdminPluginId = 'titan_zero' | 'titan_operations' | 'titan_web';
+export type DirectAdminPluginId = 'titan_zero' | 'titan_operations' | 'titan_web' | 'titan_workforce';
 export type DirectAdminProjection = Readonly<{
   company_id: string; source: string; freshness: string | null;
   evidence_refs: readonly string[]; data: unknown;
@@ -66,7 +66,7 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
         await session.switchCompany(input.company_id);
         return json(200, { status: 'reauthentication-required' }, true);
       }
-      const route = /^\/v1\/directadmin\/(titan_zero|titan_operations|titan_web)\/(projection|intents)$/.exec(path);
+      const route = /^\/v1\/directadmin\/(titan_zero|titan_operations|titan_web|titan_workforce)\/(projection|intents)$/.exec(path);
       if (!route) return json(404, { error: 'unknown-plugin-route' });
       const plugin = route[1] as DirectAdminPluginId;
       if (request.method === 'GET' && route[2] === 'projection') {

@@ -36,8 +36,7 @@ test('canonical SDK accepts authority-neutral Workforce contribution for all rol
     assert.deepEqual(registry.snapshot().contributions[0].widgets[0].permitted_actions, []);
   }
 });
-test('published SDK without a live bridge fails closed in real executable role routes', async () => {
-  if (typeof SDK.createDirectAdminWorkforceClient === 'function') return; // Superseded by hosted integration once bridge is published.
+test('published SDK without commissioned CSRF/session fails closed in real executable role routes', async () => {
   const { execFileSync } = await import('node:child_process');
   const { chromium } = await import('@playwright/test');
   const folder = await mkdtemp(join(tmpdir(), 'workforce-real-sdk-route-'));
