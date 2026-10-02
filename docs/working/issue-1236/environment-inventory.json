@@ -14,6 +14,7 @@
         "REDIS_URL",
         "SQLITE_PATH",
         "TITAN_COMPANY_DATA_ROOT",
+        "TITAN_DEPLOYMENT_PROFILE",
         "VAPID_PRIVATE_KEY",
         "VAPID_PUBLIC_KEY",
         "VAPID_SUBJECT",
@@ -58,6 +59,7 @@
         "AUTH_SECRET",
         "DATABASE_DIALECT",
         "DATABASE_URL",
+        "NODE_ENV",
         "NO_TLS",
         "REDIS_CONTAINER_MEMORY_LIMIT",
         "REDIS_CONTAINER_MEMORY_RESERVATION",
@@ -66,6 +68,7 @@
         "SECURE_COOKIES",
         "SQLITE_PATH",
         "TITAN_COMPANY_DATA_ROOT",
+        "TITAN_DEPLOYMENT_PROFILE",
         "VAPID_PRIVATE_KEY",
         "VAPID_PUBLIC_KEY",
         "VAPID_SUBJECT",
@@ -240,6 +243,7 @@
       "apps/web/app/ServiceWorkerRegistrar.tsx",
       "apps/web/app/api/v1/portal/auth/confirm/route.ts",
       "apps/web/lib/auth/session.ts",
+      "apps/web/lib/env.ts",
       "apps/web/lib/portal/session.ts"
     ],
     "NODE_OPTIONS": [
@@ -334,6 +338,9 @@
     ],
     "TITAN_CHATGPT_HOST_TOKEN": [
       "apps/llm-plugin/lib/titan/context.ts"
+    ],
+    "TITAN_DEPLOYMENT_PROFILE": [
+      "apps/web/lib/env.ts"
     ],
     "TITAN_MCP_CAPABILITY_TOOL_MAP": [
       "apps/llm-plugin/lib/titan/catalogue.ts"

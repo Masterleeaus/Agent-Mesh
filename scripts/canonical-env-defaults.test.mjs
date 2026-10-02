@@ -11,6 +11,7 @@ test("root env example defaults to SQLite/company placement, not retired shared 
   const env = read(".env.example");
   assert.match(env, /^DATABASE_DIALECT=sqlite$/m);
   assert.match(env, /^DATABASE_URL=file:/m);
+  assert.match(env, /^TITAN_DEPLOYMENT_PROFILE=local$/m);
   assert.match(env, /^TITAN_COMPANY_DATA_ROOT=/m);
   assert.equal(activeValue(env, "POSTGRES_DB"), false);
   assert.equal(activeValue(env, "POSTGRES_USER"), false);
@@ -58,6 +59,7 @@ test("VPS template declares the Workforce commissioning values and trusted key p
 test("VPS template keeps canonical company storage root and marks legacy booking selector inactive", () => {
   const env = read("infra/vps.env.example");
   assert.match(env, /^DATABASE_DIALECT=sqlite$/m);
+  assert.match(env, /^TITAN_DEPLOYMENT_PROFILE=vps$/m);
   assert.match(env, /^TITAN_COMPANY_DATA_ROOT=/m);
   assert.equal(activeValue(env, "BOOKING_ACCOUNT_ID"), false);
 });
