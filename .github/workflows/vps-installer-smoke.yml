@@ -230,11 +230,12 @@ jobs:
           original_redis_ids="$("${smoke_compose[@]}" ps --status running --quiet redis)"
           [[ -n "$original_web_ids" && "$original_web_ids" != *$'\n'* ]]
           [[ -n "$original_redis_ids" && "$original_redis_ids" != *$'\n'* ]]
+          workforce_init_host_pid="$(docker inspect --format '{{.State.Pid}}' "$original_workforce_ids")"
+          [[ "$workforce_init_host_pid" =~ ^[1-9][0-9]*$ ]]
           restart_count_before="$(docker inspect --format '{{.RestartCount}}' "$original_workforce_ids")"
           [[ "$restart_count_before" =~ ^[0-9]+$ ]]
-          docker exec "$original_workforce_ids" node -e 'process.kill(1, "SIGKILL")' \
-            >/dev/null 2>&1 &
-          kill_request_pid=$!
+          # Signal the daemon-owned process so Docker observes a crash and applies restart policy.
+          sudo kill --signal KILL "$workforce_init_host_pid"
           recovered=0
           for attempt in $(seq 1 30); do
             running_workforce_ids="$("${smoke_compose[@]}" ps --status running --quiet workforce)"
@@ -248,8 +249,12 @@ jobs:
             fi
             sleep 2
           done
-          wait "$kill_request_pid" || true
           [[ "$recovered" == 1 ]] || {
+            printf 'container=%s host-pid=%s restarts-before=%s restarts-after=%s running-ids=%s health=%s\n' \
+              "$original_workforce_ids" "$workforce_init_host_pid" "$restart_count_before" \
+              "$restart_count_after" "$running_workforce_ids" "$health_after_restart" >&2
+            docker inspect --format '{{.State.Status}} exit={{.State.ExitCode}} restarts={{.RestartCount}} error={{.State.Error}}' \
+              "$original_workforce_ids" >&2
             "${smoke_compose[@]}" logs --tail=150 workforce >&2
             echo 'Workforce did not recover after a killed process' >&2
             exit 1
