@@ -3238,6 +3238,77 @@
       },
       "production_eligible": false,
       "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T11:37:56Z",
+      "workspace_head_after_main_merge": "7e231af7f6295d647f483f7071557e94a069397c",
+      "source_commit": "c46774cc007a324ec618ecdfdfe5a04acd44780f",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only source refresh after documentation-only #1195 merged the #1158 native mobile completion matrix. The diff from main 9e6ab97e was one documentation file; no PWA/mobile implementation, Workforce, identity or SDK code changed. The acceptance index was checked against existing source and recorded as non-closing evidence.",
+      "refreshed_rows": [
+        "native-mobile",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "c46774cc007a324ec618ecdfdfe5a04acd44780f",
+        "issue_1158_state": "OPEN",
+        "pr_1195": {
+          "state": "MERGED",
+          "head_sha": "244a8d0b7e01c92d115654d6d27f1cc1c221e507",
+          "merge_commit_sha": "c46774cc007a324ec618ecdfdfe5a04acd44780f",
+          "merged_at": "2026-10-02T11:36:18Z"
+        },
+        "parent_reported_directadmin_observation": "Retained from prior history record; no new host contact or SSH/device observation."
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "native-mobile",
+          "path": "docs/mobile/MOBILE-COMPLETION-MATRIX.md",
+          "source_commit": "c46774cc007a324ec618ecdfdfe5a04acd44780f",
+          "sha256": "dc8e7a57defcc514724e4ce41658201c77b5a9c50b027c0529ec665895edfa27"
+        }
+      ],
+      "source_claims_and_executed_evidence": [
+        "Current-main diff from 9e6ab97e is documentation-only: docs/mobile/MOBILE-COMPLETION-MATRIX.md.",
+        "The matrix labels itself non-closing; it says the hosted conversation row still requires endpoint, reconnect/resume and deployed evidence.",
+        "Existing source review against 9e6ab97e remains valid for code because the only changed path is the documentation index; production eligibility remains denied.",
+        "DirectAdmin host observations remain parent-reported from the earlier authenticated session and were not repeated here."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git diff --name-status 9e6ab97e..origin/main",
+          "status": "PASS",
+          "detail": "Fetched main c46774cc; only docs/mobile/MOBILE-COMPLETION-MATRIX.md changed."
+        },
+        {
+          "command": "git merge-tree --write-tree HEAD origin/main",
+          "status": "PASS",
+          "detail": "Read-only preview produced 10f50c7cab18dccb759856772ac6c10b9befdce2 with no conflicts."
+        },
+        {
+          "command": "git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Merged current main documentation update into the existing claim branch."
+        },
+        {
+          "command": "Read-only #1158/#1195 state and matrix review",
+          "status": "PASS",
+          "detail": "Issue #1158 remains open; PR #1195 merged and matrix remains an acceptance index, not execution proof."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs; --check; JSON parse; git diff --check",
+          "status": "PASS",
+          "detail": "Regenerated and checked the 28-row snapshot, parsed all three evidence JSON files, and passed git diff --check."
+        }
+      ],
+      "environment_limits": {
+        "live_host": "No direct host contact; prior parent session observation retained with explicit attribution.",
+        "ssh": "NOT_VERIFIED",
+        "physical_devices": "NOT_VERIFIED",
+        "library_upload": "HELD_PENDING_USER_PERMISSION."
+      },
+      "production_eligible": false,
+      "mission_complete": false
     }
   ]
 }
