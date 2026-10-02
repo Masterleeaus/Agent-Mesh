@@ -1,0 +1,10 @@
+
+ RUN  v3.2.4 /workspace/Titan-Zero-Field-Service-Workforce/apps/web
+
+ ✓ app/api/portal/estimates/[token]/__tests__/response.integration.test.ts (2 tests) 72ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  01:57:35
+   Duration  368ms (transform 63ms, setup 0ms, collect 133ms, tests 72ms, environment 0ms, prepare 49ms)
+
