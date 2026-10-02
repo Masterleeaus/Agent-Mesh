@@ -29,6 +29,9 @@ export type ForgePlanStep = Readonly<{ id: string; kind: "GENERATE" | "BUILD" | 
 export type ForgeBuildPlan = Readonly<{ schema: string; plan_id: string; request_id: string; company_id: string; steps: readonly ForgePlanStep[]; plan_digest: string; deterministic: true; provider: "native" | "ai"; authority_effect: false }>;
 export type ForgeArtifact = Readonly<{ path: string; media_type: string; content: string; sha256: string; bytes: number; provenance: Readonly<{ source_ref: string; source_digest: string; generator: string }> }>;
 export type ForgeFinding = Readonly<{ code: string; severity: ForgeFindingSeverity; message: string; path?: string; evidence_ref: string }>;
+export type ForgePermissionPolicy = Readonly<{ network: false; secrets: false; database: false; max_bytes: number; max_files: number; timeout_ms: number }>;
+export type ForgeRiskSummary = Readonly<{ level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"; blocker_count: number; authority_effect: false }>;
+export type ForgeTestResult = Readonly<{ name: string; status: "passed" | "failed"; evidence_ref: string }>;
 export type ForgeReleaseCandidate = Readonly<{
   schema: string;
   candidate_id: string;
@@ -44,6 +47,9 @@ export type ForgeReleaseCandidate = Readonly<{
   evidence_refs: readonly string[];
   blockers: readonly string[];
   rollback: Readonly<{ supported: true; target_version: string | null }>;
+  permissions: ForgePermissionPolicy;
+  risk: ForgeRiskSummary;
+  test_results: readonly ForgeTestResult[];
   authority_effect: false;
 }>;
 export type ForgeCandidateStore = Readonly<{ get: (key: string) => Promise<ForgeReleaseCandidate | null> | ForgeReleaseCandidate | null; set: (key: string, candidate: ForgeReleaseCandidate) => Promise<void> | void }>;
@@ -51,7 +57,7 @@ export type ForgeCandidateStore = Readonly<{ get: (key: string) => Promise<Forge
 type ForgeGenerator = (context: Readonly<{ request: ForgeBuildRequest; plan: ForgeBuildPlan; limits: Required<NonNullable<ForgeBuildRequest["permissions"]>> }>) => Promise<readonly Readonly<{ path: string; media_type?: string; content: string }>[] | Readonly<{ path: string; media_type?: string; content: string }>[] >;
 type ForgeProvider = Readonly<{ id: string; kind: "native" | "ai"; enabled?: boolean; health?: "healthy" | "degraded" | "offline"; generate: ForgeGenerator }>;
 
-const DEFAULT_LIMITS = Object.freeze({ network: false, secrets: false, database: false, max_bytes: 1_000_000, max_files: 200, timeout_ms: 30_000 });
+const DEFAULT_LIMITS: ForgePermissionPolicy = Object.freeze({ network: false, secrets: false, database: false, max_bytes: 1_000_000, max_files: 200, timeout_ms: 30_000 });
 const SECRET_KEY = /(api[_-]?key|secret|password|token|credential|private[_-]?key|authorization|cookie)/i;
 const INJECTION = /(ignore (all|previous) instructions|system message|exfiltrat|curl\s+https?:|wget\s+https?:)/i;
 const LICENSE_DENY = /^(unknown|none|proprietary|gpl-3(?:\.0)?|agpl)/i;
@@ -109,7 +115,8 @@ export async function buildForgeCandidate(input: { request: ForgeBuildRequest; p
     for (const dep of (request.inputs.dependencies as unknown[] | undefined) ?? []) { const d = dep as Record<string, unknown>; const name = text(d.name, "forge_dependency_name_required"); const version = text(d.version, "forge_dependency_version_required"); const license = text(d.license, "forge_dependency_license_required"); sbom.push({ name, version, license }); if (LICENSE_DENY.test(license)) findings.push(finding("DEPENDENCY_LICENSE_REJECTED", "HIGH", `${name}@${version} uses disallowed license ${license}`, undefined, request)); }
     const blockers = findings.filter(f => f.severity === "HIGH" || f.severity === "CRITICAL").map(f => f.code);
     const now = input.now ?? (() => new Date().toISOString());
-    const candidate = { schema: TITAN_FORGE_CONTRACT.candidate_schema, candidate_id: candidateId, request_id: request.request_id, company_id: request.company_id, package_id: request.package_id, package_version: request.package_version, status: blockers.length ? "REJECTED" as const : "REVIEW_REQUIRED" as const, artifacts, findings, sbom, provenance: { source_ref: request.source_ref, source_digest: request.source_digest, plan_digest: plan.plan_digest, input_digest: sha(request.inputs), generated_at: now() }, evidence_refs: [...(input.evidence ?? []), `forge:evidence:${candidateId}`], blockers, rollback: { supported: true as const, target_version: request.inputs.previous_version ? String(request.inputs.previous_version) : null }, authority_effect: false as const };
+    const riskLevel = findings.some(f => f.severity === "CRITICAL") ? "CRITICAL" as const : findings.some(f => f.severity === "HIGH") ? "HIGH" as const : findings.some(f => f.severity === "MEDIUM") ? "MEDIUM" as const : "LOW" as const;
+    const candidate = { schema: TITAN_FORGE_CONTRACT.candidate_schema, candidate_id: candidateId, request_id: request.request_id, company_id: request.company_id, package_id: request.package_id, package_version: request.package_version, status: blockers.length ? "REJECTED" as const : "REVIEW_REQUIRED" as const, artifacts, findings, sbom, provenance: { source_ref: request.source_ref, source_digest: request.source_digest, plan_digest: plan.plan_digest, input_digest: sha(request.inputs), generated_at: now() }, permissions: max, risk: { level: riskLevel, blocker_count: blockers.length, authority_effect: false as const }, test_results: [{ name: "native-forge-validation", status: blockers.length ? "failed" as const : "passed" as const, evidence_ref: `forge:test:${candidateId}` }], evidence_refs: [...(input.evidence ?? []), `forge:evidence:${candidateId}`], blockers, rollback: { supported: true as const, target_version: request.inputs.previous_version ? String(request.inputs.previous_version) : null }, authority_effect: false as const };
     return freeze(candidate);
   } finally { generated = []; }
 }
