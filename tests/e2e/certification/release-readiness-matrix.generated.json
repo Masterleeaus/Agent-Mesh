@@ -21,7 +21,7 @@
   ],
   "delivery_board": {
     "schema": "titan.directadmin-plugin-delivery-board/v1",
-    "observed_at": "2026-10-02T15:35:08Z",
+    "observed_at": "2026-10-02T16:05:25Z",
     "source_of_truth": "GitHub issue/claim branch/PR/CI; parent-supplied observations are labeled. This snapshot is not a second task ledger.",
     "scope": "Only the three DirectAdmin plugins and immediate identity, runtime, authority, relay, and CI blockers.",
     "basis": {
@@ -30,7 +30,7 @@
       "readiness_pr": 1178,
       "readiness_branch": "agent/issue-1172",
       "pr_state_before_update": "OPEN_DRAFT",
-      "head_before_update": "e9e51239b3236621987b56b3d68358eaf720b162",
+      "head_before_update": "18f11ab8910f181e13a217502f2ed8c93b71ab93",
       "issue_assignees": [],
       "claim_check": "Existing workspace branch; no competing #1172 branch observed.",
       "existing_28_area_audit_source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
@@ -66,7 +66,7 @@
           "open_pr": {
             "number": 1250,
             "state": "OPEN_DRAFT",
-            "head_sha": "4f10a6dbfb9515e6daf7ea27b4159205e5f0c5c2"
+            "head_sha": "a106179627626d9f847d69ae0194f826f7053aa9"
           },
           "latest_pr": {
             "number": 1247,
@@ -79,14 +79,14 @@
             "state": "MERGED",
             "head_sha": "2998a3509a3f9cd427c41e0e3c560cbc6cc4c8b8"
           },
-          "remote_head": "4f10a6dbfb9515e6daf7ea27b4159205e5f0c5c2"
+          "remote_head": "a106179627626d9f847d69ae0194f826f7053aa9"
         },
         "file_ownership": [
           "apps/directadmin/dev-access/**",
           ".github/workflows/directadmin-dev-access-php.yml"
         ],
         "dependency": "PARENT_REPORTED: Library helper #401 returned HTTP 401 and did not deliver the archive; parent uploaded the exact artifact.",
-        "next_action": "PARENT_REPORTED: the #1048 owner now prioritizes the harmless POST transport hotfix following the 1.3.5 reinstall. Reproduce and fix the stdin body-size discrepancy for pwd/id; raw NUL or invalid UTF-8 are candidate causes and a one-byte trailer is only a hypothesis. Then verify those harmless POSTs through Plugin Manager; do not call 1.3.5 working or certified before they pass.",
+        "next_action": "PR #1250 at exact head a106179627626d9f847d69ae0194f826f7053aa9 proposes a bounded v1.3.6 POST transport repair. Its exact-head hosted PHP/package, portfolio, source-index and Titan Zero CI checks pass. PARENT_REPORTED: artifact 11236803104 was delivered to the user’s Library at 16:01 UTC; it is not installed or live-verified. Next executable step for the #1048 owner, after required host authorization, is install the exact artifact through Plugin Manager and retest harmless pwd/id on the installed form with the recorded checksum; do not certify unless the live retest passes.",
         "candidate": {
           "version": "1.3.5",
           "archive": "Library v11",
@@ -101,18 +101,30 @@
           "PARENT_REPORTED: Jason explicitly instructed removal of the installed 1.3.3 plugin and reinstall, and secure password confirmation was received. Jason installed v1.3.5; DirectAdmin Plugin Manager confirmed it at 2026-10-02 15:10 UTC.",
           "PARENT_REPORTED: three SSH fingerprints remain installed; ~/.ssh is mode 0700 and authorized_keys is mode 0600. Fingerprint values are omitted.",
           "PARENT_REPORTED: harmless POST pwd returns field_value_invalid via transport=stdin, declared_bytes=unknown, body_bytes_read=108 versus expected ASCII 107; id returns 107 versus 106. Raw NUL or invalid UTF-8 are candidate causes; a one-byte trailer is not confirmed.",
-          "PARENT_REPORTED: the current open PR #1250 is the local Git claim-readiness slice; its owner now prioritizes the POST transport hotfix. No hotfix implementation is represented by the current PR head.",
-          "PARENT_REPORTED: Windows UI server-console/browser controls and private-key retry are unavailable and DirectAdmin Update is disabled. Plugin Manager sufficed for simple plugin replacement; a provider-console URL remains relevant only for privileged host/runtime operations if no supported route exists."
+          "GitHub PR #1250 is OPEN_DRAFT at exact head a106179627626d9f847d69ae0194f826f7053aa9. Its body describes the v1.3.6 transport repair and review-only artifact with SHA-256 0ce80c3cb224de1a00b2d3c93f3f66c54fc153b1518cc4555aa6237ef12ddaf8. Exact-head PHP package/transport, portfolio, Source Evidence Index and Titan Zero CI checks are green. The PR body reports independent source review found no blocker; the GitHub review list is empty. This is hosted/source evidence, not an installed-host retest.",
+          "PARENT_REPORTED: Windows UI server-console/browser controls and private-key retry are unavailable and DirectAdmin Update is disabled. Plugin Manager sufficed for simple plugin replacement; a provider-console URL remains relevant only for privileged host/runtime operations if no supported route exists.",
+          "PARENT_REPORTED: artifact 11236803104 (v1.3.6; SHA-256 0ce80c3cb224de1a00b2d3c93f3f66c54fc153b1518cc4555aa6237ef12ddaf8) was delivered to the user’s Library at 2026-10-02 16:01 UTC. It has not been installed or live-verified."
         ],
-        "still_required": "Fix and verify the DirectAdmin stdin POST path for harmless pwd and id requests with correct byte counts; do not assume the root cause before reproduction. Then complete safe update/rollback and redaction/SSH-key lifecycle evidence. The provider-console URL is not a blocker for Plugin Manager replacement; it is needed only for privileged host/runtime operations when no supported route exists.",
-        "deployment_state": "PARENT_REPORTED: v1.3.5 from the recorded exact archive is installed and was confirmed by Plugin Manager at 15:10 UTC. Three SSH fingerprints and 0700/0600 modes remain. Harmless pwd/id POSTs still fail with field_value_invalid and the reported body-size discrepancies. Installed, but not working or certified.",
+        "still_required": "Install and verify the exact v1.3.6 candidate on an approved DirectAdmin host, then repeat harmless pwd and id POSTs through the installed form and confirm correct body bytes and CSRF acceptance. Preserve safe update/rollback and redaction/SSH-key lifecycle evidence. A provider-console URL is not a blocker for Plugin Manager replacement; it is relevant only for privileged host/runtime operations if no supported route exists.",
+        "deployment_state": "PARENT_REPORTED: v1.3.5 from the recorded exact archive remains installed and was confirmed by Plugin Manager at 15:10 UTC. Three SSH fingerprints and 0700/0600 modes remain. Harmless pwd/id POSTs still fail with field_value_invalid and the reported body-size discrepancies. The v1.3.6 candidate was delivered to the user’s Library at 16:01 UTC but is not installed or live-verified. Not working or certified.",
         "blocker_age": {
           "specific_onset": "UNKNOWN",
           "last_observed_at": "2026-10-02T15:10:00Z",
-          "hours_since_last_observation": 0.42,
+          "hours_since_last_observation": 0.92,
           "live_1_3_3_post_observed_at": "2026-10-02T10:33:00Z",
           "hours_since_live_post_observation": 5.04,
-          "mission_open_hours": 104.97
+          "mission_open_hours": 105.48
+        },
+        "repair_candidate": {
+          "version": "1.3.6",
+          "source_head": "a106179627626d9f847d69ae0194f826f7053aa9",
+          "artifact_id": 11236803104,
+          "artifact_name": "developer-portal-v1.3.6-a106179627626d9f847d69ae0194f826f7053aa9",
+          "sha256": "0ce80c3cb224de1a00b2d3c93f3f66c54fc153b1518cc4555aa6237ef12ddaf8",
+          "outer_artifact_digest": "sha256:94d704516cf3b3deb91a02df18677e19944e620dd3652bd687d47413c7315fce",
+          "delivery": "PARENT_REPORTED: delivered to the user’s Library at 2026-10-02 16:01 UTC.",
+          "installed": false,
+          "live_verified": false
         }
       },
       {
@@ -130,12 +142,12 @@
         },
         "claim": {
           "branch": "agent/issue-812",
-          "remote_head": "1f5aee42281d0329fb360bf4714c371685c206b2",
+          "remote_head": "b2bde38aa4a54f85cb690f7cc3c643602c482a17",
           "same_as_main": false,
           "open_pr": {
             "number": 1251,
             "state": "OPEN_DRAFT",
-            "head_sha": "1f5aee42281d0329fb360bf4714c371685c206b2"
+            "head_sha": "b2bde38aa4a54f85cb690f7cc3c643602c482a17"
           },
           "latest_pr": {
             "number": 1245,
@@ -154,19 +166,19 @@
           "#811 persistent Workforce runtime",
           "#1049 shared DirectAdmin SDK/session bridge"
         ],
-        "next_action": "Host operator runs PR #1251’s read-only external and panel verifier using the exact authorized #811 private target; preserve production RAW 503 until sanitized reports and existing #811/#302/#1049 contract confirmations are independently reviewed.",
+        "next_action": "PR #1251 is OPEN_DRAFT at exact head b2bde38aa4a54f85cb690f7cc3c643602c482a17 with exact-head hosted checks green. Next executable step is for an authorized host operator to run its read-only external and panel verifier against the exact authorized #811 private target and attach sanitized reports; preserve production RAW 503 until those results and #811/#302/#1049 contract confirmations are independently reviewed.",
         "acceptance_evidence": [
           "PR #1245 merged as a partial Server Node/RAW relay slice; issue #812 remains open.",
           "Production RAW deliberately returns sanitized 503 before config/upstream; this is source/fixture evidence, not a commissioned live gateway.",
-          "Open draft PR #1251 adds a read-only host-boundary verifier; its PR body reports 12/12 verifier tests and 102/102 Server Node tests, but no live host or independent-network run was performed."
+          "Open draft PR #1251 is at exact head b2bde38aa4a54f85cb690f7cc3c643602c482a17; its PR body reports 12/12 verifier tests and 102/102 Server Node tests. Current GitHub exact-head checks are green, but no live-host or independent-network run was performed."
         ],
         "still_required": "Authorized direct-host and independent-network boundary evidence for PR #1251, followed by completion of the #812 mission: valid DirectAdmin install/update/uninstall lifecycle, persistent canonical Workforce supervision, governed and independently verified capability execution with evidence, restart/recovery and backup/restore, representative deployment, cross-company denial, and replacement-substrate proof.",
         "deployment_state": "No commissioned Server Node or live host acceptance is evidenced. Production RAW intentionally returns sanitized 503 before config/upstream; no credential or network change is authorized.",
         "blocker_age": {
           "specific_onset": "UNKNOWN",
           "last_observed_at": "2026-10-02T14:37:57Z",
-          "hours_since_last_observation": 0.95,
-          "mission_open_hours": 125.9
+          "hours_since_last_observation": 1.46,
+          "mission_open_hours": 126.41
         }
       },
       {
@@ -205,19 +217,19 @@
           "#812 Server Node RAW relay",
           "#1157/#1248 CI consuming the merged #1249 fixture; final human review pending"
         ],
-        "next_action": "PR #1249 is merged and #1248 now uses its native fixture with green exact-head checks; final human review of #1248 remains pending (parent-reported). Continue toward one positive company-scoped governed workflow with a durable, independently verified receipt after #811 controls/receipts, #1049 producer/host composition, and #640 review/remaining acceptance are resolved. Do not add plugin-local authority/evidence or duplicate CI.",
+        "next_action": "PARENT_REPORTED: the user approved PR #1248 for merge at 15:46 UTC, but it remains OPEN_DRAFT while explicit Ready state-change confirmation is pending; do not call it merged or change its draft state. Its exact head 920ff7c6e6ecb48fa7d819eb08b007c38f45832c has green GitHub checks. After Ready confirmation, the existing #1157/#1248 owner may transition it through normal review/merge protections. Continue toward one positive company-scoped governed workflow with a durable, independently verified receipt after #811 controls/receipts, #1049 producer/host composition, and #640 acceptance are resolved. Do not add plugin-local authority/evidence or duplicate CI.",
         "acceptance_evidence": [
           "PR #1249 merged at source head 1a5455f56064a268ca8c35612ab9044fd601bb35 into main as merge commit 15d8b1be1584ce07259762527f9abfe040c9d504 at 2026-10-02T15:04:59Z; issue #1050 remains OPEN. Explicit human approval at 15:05 is PARENT_REPORTED.",
           "Historical only: at prior head 054c3651, the #1249 owner reported 39/39 consumer/browser/hosted/package tests, 83/83 shared-bridge tests, 3/3 package tests, and 14 RAW requests/15 hosted routes. These totals are not attributed to merged head 1a5455f5.",
-          "PARENT_REPORTED: PR #1248 now consumes the native merged #1249 fixture and awaits final human review. Current PR #1248 head 920ff7c6e6ecb48fa7d819eb08b007c38f45832c has green checks, independently read from GitHub for this update."
+          "GitHub confirms PR #1248 remains OPEN_DRAFT at head 920ff7c6e6ecb48fa7d819eb08b007c38f45832c with workforce, DirectAdmin Workforce Consumer, validate, mobile and Mission Closure Evidence Gate checks green. PARENT_REPORTED: the user approved merge at 15:46 UTC; explicit Ready state-change confirmation is pending. It is not merged."
         ],
         "still_required": "One positive permitted host-owned control and durable receipt for the current company/session, independent outcome verification, idempotent recovery, and live-host commissioning. Current controls=[] and denial/no-write tests prove only fail-closed behavior.",
         "deployment_state": "Packaging candidate only, not live-install-ready; no commissioned host or positive workflow receipt. Hosted /ready intentionally remains 503.",
         "blocker_age": {
           "specific_onset": "UNKNOWN",
           "last_observed_at": "2026-10-02T15:35:08Z",
-          "hours_since_last_observation": 0,
-          "mission_open_hours": 104.85
+          "hours_since_last_observation": 0.5,
+          "mission_open_hours": 105.35
         }
       }
     ],
@@ -260,7 +272,7 @@
         },
         "active_branch": {
           "branch": "agent/issue-1049",
-          "head": "19893cac161e2cbdd3c839b0f051072cc97d1031"
+          "head": "2006836d0ced2226f0d34585e1e3ba7b7e0b4d73"
         },
         "owned_paths": [
           "packages/titan-platform/src/directadmin-{cockpit,gateway,plugin,session-bridge}.ts",
@@ -273,7 +285,7 @@
           "business-node",
           "workforce"
         ],
-        "note": "PR #1204/#1243 remain partial merged SDK/session-bridge source. PARENT_REPORTED: open PR #1252 at 19893cac adds POST /v1/directadmin/bootstrap and its PR body reports 92 focused tests; the trusted #302 assertion producer and host/page composition remain absent, and independent review is active. No host commissioning or deployment is evidenced.",
+        "note": "PR #1204/#1243 remain partial merged SDK/session-bridge source. GitHub confirms open draft PR #1252 at 2006836d0ced2226f0d34585e1e3ba7b7e0b4d73; its body reports 92 focused tests, and exact-head Mission Closure Evidence Gate, Titan Zero CI and Source Evidence Index checks pass. PARENT_REPORTED: independent route security review and Node 22 reviewer CI passed 92/92 at earlier head 19893cac161e2cbdd3c839b0f051072cc97d1031 with no blocking finding. That review/test evidence is for the earlier head; the GitHub review list is empty. The trusted #302 assertion producer and #811/#812 host/page composition remain absent; no host commissioning or deployment is evidenced.",
         "dependencies": [
           "#302 canonical current-session/company identity"
         ],
@@ -281,7 +293,7 @@
           "number": 1252,
           "state": "OPEN_DRAFT",
           "branch": "agent/issue-1049",
-          "head": "19893cac161e2cbdd3c839b0f051072cc97d1031"
+          "head": "2006836d0ced2226f0d34585e1e3ba7b7e0b4d73"
         }
       },
       {
@@ -303,7 +315,7 @@
         "used_by": [
           "workforce"
         ],
-        "note": "Parent reports runtime environment recovered and the owner is working the permitted-controls/durable-receipts dependency; bounded #640 claim is authorized."
+        "note": "PARENT_REPORTED: the #811 owner is working the permitted-controls/durable-receipts dependency; bounded #640 claim is authorized. Executor recovery was confirmed in this workspace by actual commands: `pwd` returned `/workspace/Titan-Zero-Field-Service-Workforce`, `id` returned `uid=1000(agent) gid=1000(agent) groups=1000(agent)`, and `git fetch origin main` succeeded at 15d8b1be1584ce07259762527f9abfe040c9d504. This proves executor shell access only, not production host recovery or a Workforce receipt."
       },
       {
         "id": "authority-effect-evidence",
@@ -323,18 +335,18 @@
           "packages/titan-platform/src/mission-authority-policy.ts",
           "packages/titan-platform/src/workforce-trust/**"
         ],
-        "next_action": "PR #1253 is a partial native human-reassignment slice. Its exact-head PR body reports six real disposable-SQLite tests; broader suites remain incomplete because of environment/build-path failures. PARENT_REPORTED: independent review is active. Keep #640 open and treat this as a bounded slice only.",
+        "next_action": "PR #1253 has advanced to exact head 4000f2c9128efc609fbc2f24dfa34c3139863cae. GitHub currently shows its workforce, cleaning-convergence, mobile, source-index, SQLite-compose/build and validate checks in progress, while Mission Closure Evidence Gate has failed. The PR body still reports six focused SQLite tests at the earlier cd2d8f2ffe069fe1f7ccf911776702f90cbc01ff head; the #640 owner must align evidence with the current head, resolve the gate failure, and wait for exact-head checks/review before merge. Keep #640 open and treat this as a bounded slice only.",
         "active_branch": {
           "branch": "agent/issue-640",
-          "head": "cd2d8f2ffe069fe1f7ccf911776702f90cbc01ff"
+          "head": "4000f2c9128efc609fbc2f24dfa34c3139863cae"
         },
         "active_pr": {
           "number": 1253,
           "state": "OPEN_DRAFT",
           "branch": "agent/issue-640",
-          "head": "cd2d8f2ffe069fe1f7ccf911776702f90cbc01ff"
+          "head": "4000f2c9128efc609fbc2f24dfa34c3139863cae"
         },
-        "note": "PR #1253 at cd2d8f2ffe069fe1f7ccf911776702f90cbc01ff reports six real SQLite tests. Its PR body reports broader suite failures caused by environment/build-path limitations; independent review is active (PARENT_REPORTED). No production credentials, grants, or host commissioning are evidenced."
+        "note": "GitHub confirms PR #1253 current head 4000f2c9128efc609fbc2f24dfa34c3139863cae with checks in progress and Mission Closure Evidence Gate failed. The PR body remains pinned to cd2d8f2ffe069fe1f7ccf911776702f90cbc01ff and reports six real SQLite tests plus broader suite failures caused by environment/build-path limitations; these counts are not current-head evidence. No GitHub review is posted. No production credentials, grants, or host commissioning are evidenced."
       },
       {
         "id": "hosted-ci",
@@ -358,7 +370,7 @@
           "state": "MERGED",
           "merge_sha": "15d8b1be1584ce07259762527f9abfe040c9d504"
         },
-        "note": "PARENT_REPORTED: PR #1248 at exact head 920ff7c6 uses the native fixture from merged PR #1249. GitHub checks on #1248 current head were read as green for this update; final human review remains pending."
+        "note": "GitHub confirms PR #1248 at exact head 920ff7c6e6ecb48fa7d819eb08b007c38f45832c uses merged #1249’s native fixture and all listed checks are green. PARENT_REPORTED: user approval at 15:46 UTC, but the PR remains OPEN_DRAFT pending explicit Ready state-change confirmation; no merge occurred."
       }
     ],
     "paused_workstreams": [
