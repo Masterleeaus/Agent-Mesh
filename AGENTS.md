@@ -125,7 +125,7 @@ Before final push or PR update:
 - Re-run verification invalidated by conflict resolution.
 - Keep commits reviewable and avoid unrelated formatting churn.
 
-If blocked, leave durable evidence on the issue/PR and keep the canonical branch. Use the bounded blocked-work handoff above to record ownership and preserve unmet scope only; keep the original issue open until fully complete. Do not create a replacement branch.
+If a parent scope is too broad to finish in one slice, create linked child implementation issues with distinct outcomes and acceptance. Keep the parent open and use it for subproduct completion. Preserve existing branch work; do not create a replacement branch.
 
 Lifecycle may be projected as:
 `AVAILABLE → CLAIMED → ACTIVE → VERIFYING → READY → PR_OPEN → MERGED → COMPLETED`
