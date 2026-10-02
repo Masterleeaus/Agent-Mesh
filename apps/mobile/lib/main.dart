@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:titan_zero_mobile/components/my_scroll_behaviour.dart';
+import 'package:titan_zero_mobile/legacy/components/my_scroll_behaviour.dart';
 import 'package:titan_zero_mobile/screens/splash_screen.dart';
 import 'package:titan_zero_mobile/utils/colors.dart';
 import 'package:titan_zero_mobile/utils/constant.dart';
