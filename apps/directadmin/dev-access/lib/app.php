@@ -273,10 +273,8 @@ function directadmin_git_read_pointer($file,$label,$base,$home,$expectDirectory)
  return directadmin_git_resolve_path($matches[1],$base,$home,$expectDirectory);
 }
 function directadmin_git_alternates_safe($objects,$home){
- if(!directadmin_git_metadata_path_safe($objects,$home,true)){
-  if(@lstat($objects)===false) return true;
-  return false;
- }
+ if(@lstat($objects)===false) return true;
+ if(!directadmin_git_metadata_path_safe($objects,$home,true)) return false;
  $objectsReal=realpath($objects);
  if($objectsReal===false) return false;
  $info=$objectsReal.'/info';
@@ -503,8 +501,8 @@ function codex_readiness($cwd,$keys,$diag,$includeSshState=false){
  $cwd=safe_cwd($cwd);
  $gitContext=directadmin_git_repository_context($cwd);
  $gitRepo=$gitContext!==null&&directadmin_git_probe($gitContext,['rev-parse','--is-inside-work-tree'])==='true';
- $branch=$gitRepo?directadmin_git_probe($gitContext,['branch','--show-current']):'';
- $head=$gitRepo?directadmin_git_probe($gitContext,['rev-parse','--short','HEAD']):'';
+ $branch=$gitRepo?redact_text(directadmin_git_probe($gitContext,['branch','--show-current'])):'';
+ $head=$gitRepo?redact_text(directadmin_git_probe($gitContext,['rev-parse','--short','HEAD'])):'';
  $dirty=$gitRepo?directadmin_git_probe($gitContext,['status','--porcelain']):'';
  $sshDir=key_dir(); $auth=key_file();
  return [
