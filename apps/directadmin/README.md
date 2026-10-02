@@ -19,7 +19,7 @@ Folder names below are source paths, not stable DirectAdmin machine IDs. Resolve
 
 | Plugin | Source path / inventory note | Mission | Current scope or state |
 |---|---|---:|---|
-| Titan Business Node Core | [`server-node/`](./server-node/) | #812 | Existing read-only implementation slice; portfolio and host certification remain open. Active relay work is in [PR #1211](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1211). |
+| Titan Business Node Core | [`server-node/`](./server-node/) | #812 | Bounded read-only health and the Server Node RAW relay/lifecycle slice from merged [PR #1211](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1211) are in main; full portfolio and supported-host certification remain open under #812. |
 | Cockpit SDK | [`cockpit-sdk/`](./cockpit-sdk/README.md) | #1049 | Inventory note at this path; shared SDK/session-bridge source is in [PR #1204](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1204), not a separately installed plugin. |
 | Titan Business Engine | [`business-engine/`](./business-engine/README.md) | #1051 | Portfolio inventory note; Frappe/ERPNext remains an optional provider beneath canonical Titan services. |
 | Titan Zero | [`zero/`](./zero/README.md) | #1046 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
@@ -40,16 +40,16 @@ Folder names below are source paths, not stable DirectAdmin machine IDs. Resolve
 | Titan Decision | [`decision/`](./decision/README.md) | #1062 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
 | Titan Analytics | [`analytics/`](./analytics/README.md) | — | Proposed optional cockpit; no mission has been assigned. |
 
-## Snapshot scope and active owner work
+## Snapshot scope and current owner status
 
-This inventory is audited against `main` at commit [`14163faa316ac6236e88167b7c8d8a5e95007c7e`](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/commit/14163faa316ac6236e88167b7c8d8a5e95007c7e). In that exact snapshot, the DirectAdmin source tree contains `server-node/` and `dev-access/`; the 18 portfolio paths introduced by #1187 were absent. This PR adds inventory documentation at those paths. That statement is limited to the audited base snapshot and #1187's documentation changes: it does not assert that implementation is absent from active branches, canonical packages, or installed hosts.
+This inventory is audited against `main` at commit [`14163faa316ac6236e88167b7c8d8a5e95007c7e`](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/commit/14163faa316ac6236e88167b7c8d8a5e95007c7e). In that exact snapshot, the DirectAdmin source tree contains `server-node/` and `dev-access/`; the 18 portfolio paths introduced by #1187 were absent. This PR adds inventory documentation at those paths. That statement is limited to the audited base snapshot and #1187's documentation changes: it does not assert that implementation is absent from subsequent `main`, active owner branches, canonical packages, or installed hosts. Main has since incorporated the partial Server Node relay/lifecycle source through [PR #1211](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1211); host commissioning remains open.
 
-Active owner work not represented by that base snapshot:
+Owner status beyond that base snapshot:
 
 - [PR #1143](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1143) contains the Workforce plugin routes, package tooling and the owner-authored `workforce/README.md`. It remains open and unmerged; host/session commissioning is incomplete. The #1187 inventory note uses a different filename so the owner README can land without an add/add conflict.
 - [PR #1204](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1204) contains the signed-session bridge and shared consumer source. These modules are not installed DirectAdmin packages; the issuer, gateway and live Evolution migration remain uncommissioned.
 - [PR #1209](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1209) carries the current Developer Portal source candidate. Its package and transport checks are evidence for that candidate, not proof of a live install or supported-host lifecycle.
-- [PR #1211](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1211) carries the Server Node RAW relay and browser helper work; live DirectAdmin commissioning remains open.
+- [PR #1211](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1211) is merged at `8199494eeacc3513b293311d88a469a654ee4dea`. It contributes the RAW relay, browser helper and guarded lifecycle slice; issue #812 remains open, and live DirectAdmin 1.711 commissioning and the broader Business Node acceptance are not certified.
 
 ## Developer Portal donor history and current candidate
 
@@ -57,7 +57,7 @@ The prior `dev-access/` donor/server-verification label is historical evidence, 
 
 ## Shared implementation boundary
 
-- `server-node/` contains a bounded read-only health implementation and package. Its integration, lifecycle and live-host certification remain with #812 and the linked owner work.
+- `server-node/` contains bounded read-only health and the merged RAW relay/lifecycle slice. Full Business Node integration and live-host certification remain open with #812.
 - The new folders are inventory notes, not proof of plugin completeness. Their source paths are not stable plugin IDs.
 - Keep business, Workforce identity/runtime, authority, evidence and reusable service logic in canonical `packages/` and `services/` owners. Plugins consume those through stable contracts.
 - `apps/web` remains the separate full base web application. The PWA and native mobile app each remain one app with Zero/Go/Hub modes; DirectAdmin folders do not replace or split those surfaces.
