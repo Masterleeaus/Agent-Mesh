@@ -391,7 +391,12 @@ function directadmin_git_read_pointer($file,$label,$base,$home,$expectDirectory)
  if($resolvedFile===false||!is_file($resolvedFile)||!path_within($resolvedFile,$home)) return null;
  $raw=@file_get_contents($resolvedFile,false,null,0,4097);
  if(!is_string($raw)||strlen($raw)>4096||strpos($raw,"\0")!==false) return null;
- $pattern='/\A'.preg_quote($label,'/').': ([^\r\n]+)(?:\r?\n)?\z/D';
+ if($label==='commondir'){
+  // Git stores a linked worktree's common-dir pointer as a bare relative path.
+  $pattern='/\\A([^\\r\\n]+)(?:\\r?\\n)?\\z/D';
+ }else{
+  $pattern='/\\A'.preg_quote($label,'/').': ([^\\r\\n]+)(?:\\r?\\n)?\\z/D';
+ }
  if(preg_match($pattern,$raw,$matches)!==1) return null;
  return directadmin_git_resolve_path($matches[1],$base,$home,$expectDirectory);
 }
