@@ -26,7 +26,7 @@ export default function CatalogueIndustryHome({ profile }) {
         <div className="absolute -top-48 left-1/2 -translate-x-1/2 w-[800px] h-[800px] hero-glow pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-[1.1fr_0.9fr] gap-12 xl:gap-20 items-center">
           <div>
-            <div className="text-xs font-bold tracking-[0.16em] uppercase text-nx-purple-light mb-5">{profile.group} · Titan Zero</div>
+            <div className="text-xs font-bold tracking-[0.16em] uppercase text-nx-purple-light mb-5">Cleaning SaaS · Titan Zero</div>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.02] tracking-tight mb-6">Titan Zero for {profile.name} teams.<br /><span className="text-nx-purple-light">Run the work with clearer next steps.</span></h1>
             <p className="text-lg text-nx-muted max-w-2xl mb-7 leading-relaxed">{profile.intro}</p>
             <div className="flex gap-3 flex-wrap mb-7"><Status offer={{ ...marketingState, context: 'Marketing' }} /><Status offer={{ ...getAvailability(profile.hostnameAvailabilityRef), context: 'Vertical host' }} /><Status offer={{ ...runtimeState, context: 'Runtime' }} /></div>
@@ -54,7 +54,7 @@ export default function CatalogueIndustryHome({ profile }) {
 
       <section id="workflows" className="py-20 px-6 border-y border-nx-border">
         <div className="max-w-7xl mx-auto">
-          <SectionLabel>{profile.name} workflow</SectionLabel>
+          <SectionLabel>Cleaning workflow</SectionLabel>
           <h2 className="text-4xl sm:text-5xl font-extrabold mb-4">From the first enquiry through work history.</h2>
           <p className="text-nx-muted max-w-3xl mb-9">A marketing description of the work journey. Production workflows depend on the shared application and an approved implementation.</p>
           <ol className="grid sm:grid-cols-2 xl:grid-cols-5 gap-4">{profile.workflow.map(([title, description], index) => <li key={title} className="bg-nx-surface border border-nx-border rounded-2xl p-6"><p className="text-xs font-bold text-nx-purple-light mb-3">{String(index + 1).padStart(2, '0')}</p><h3 className="font-bold mb-2">{title}</h3><p className="text-sm text-nx-muted leading-relaxed">{description}</p></li>)}</ol>
