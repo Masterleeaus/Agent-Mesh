@@ -30,13 +30,13 @@ test('retry is a fresh governed attempt and does not retry a terminal execution'
   let attempts = 0;
   const recovery = new GovernedExecutionRecovery({
     store: new InMemoryExecutionLifecycleStore(),
-    gateway: { execute: async (input) => ({ state: ++attempts === 1 ? 'FAILED' : 'VERIFIED', execution_id: input.execution_id, company_id: input.company_id }) },
+    gateway: { execute: async (input) => ({ state: ++attempts === 1 ? 'FAILED' : 'VERIFIED', non_execution_proven: true, execution_id: input.execution_id, company_id: input.company_id }) },
   });
 
   await recovery.start(request());
   assert.equal((await recovery.resume('execution-1', request())).state, 'FAILED');
-  assert.equal((await recovery.retry('execution-1', request({ idempotency_key: 'job-1-complete-retry' }))).state, 'VERIFIED');
-  await assert.rejects(() => recovery.retry('execution-1', request({ idempotency_key: 'job-1-complete-retry-2' })), /terminal-execution/);
+  assert.equal((await recovery.retry('execution-1', request())).state, 'VERIFIED');
+  await assert.rejects(() => recovery.retry('execution-1', request()), /terminal-execution/);
 });
 
 test('compensation is a new governed execution linked to the original', async () => {
@@ -58,12 +58,12 @@ test('compensation is a new governed execution linked to the original', async ()
 test('company scope and authority are revalidated on resume and recovery actions', async () => {
   const recovery = new GovernedExecutionRecovery({
     store: new InMemoryExecutionLifecycleStore(),
-    gateway: { execute: async (input) => { if (input.authority.status !== 'approved') throw new Error('authority-revoked'); return { state: 'VERIFIED', execution_id: input.execution_id, company_id: input.company_id }; } },
+    gateway: { execute: async (input) => { if (input.authority.status !== 'approved') return {state:'DENIED'}; return { state: 'VERIFIED', execution_id: input.execution_id, company_id: input.company_id }; } },
   });
 
   await recovery.start(request());
   await assert.rejects(() => recovery.resume('execution-1', request({ company_id: 'company-b' })), /company-context/);
-  await assert.rejects(() => recovery.resume('execution-1', request({ authority: { status: 'revoked' } })), /authority-revoked/);
-  assert.equal((await recovery.get('execution-1', 'company-a')).status, 'READY');
+  assert.equal((await recovery.resume('execution-1', request({ authority: { status: 'revoked' } }))).state, 'DENIED');
+  assert.equal((await recovery.get('execution-1', 'company-a')).status, 'DENIED');
 });
 

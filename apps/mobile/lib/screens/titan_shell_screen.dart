@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../titan/services/titan_gateway.dart';
 import '../titan/models/generative_item.dart';
 import '../titan/widgets/generative_cards.dart';
-import '../titan/screens/titan_commercial_screen.dart';
 
 class TitanShellScreen extends StatefulWidget {
   final TitanGateway gateway;
@@ -39,15 +38,18 @@ class _TitanShellScreenState extends State<TitanShellScreen> {
 
   void _quickAsk(String text) {
     final lower = text.toLowerCase();
-    if (lower.contains('photo') || lower.contains('scan') || lower.contains('signature') || lower.contains('evidence')) {
+    if (lower.contains('photo') || lower.contains('scan') ||
+        lower.contains('signature') || lower.contains('evidence')) {
       _showUnavailable('Evidence capture needs a server-scoped job before it can open.');
       return;
     }
-    if (lower.contains('schedule') || lower.contains('dispatch') || lower.contains('calendar') || lower.contains('reschedule')) {
+    if (lower.contains('schedule') || lower.contains('dispatch') ||
+        lower.contains('calendar') || lower.contains('reschedule')) {
       _showUnavailable('Schedule and dispatch are unavailable until the hosted projection is loaded.');
       return;
     }
-    if (lower.contains('map') || lower.contains('where are') || lower.contains('route') || lower.contains('navigate')) {
+    if (lower.contains('map') || lower.contains('where are') ||
+        lower.contains('route') || lower.contains('navigate')) {
       _showUnavailable('The jobs map needs a hosted, audience-scoped job projection.');
       return;
     }
@@ -56,57 +58,44 @@ class _TitanShellScreenState extends State<TitanShellScreen> {
   }
 
   void _handleGeneratedAction(String action, TitanGenerativeItem item) {
-    final a = action.toLowerCase();
+    final lower = action.toLowerCase();
     final jobId = item.context['job_id']?.toString();
-    if (a.contains('customer')) {
+    if (lower.contains('customer')) {
       _showUnavailable('Customer details require a hosted relationship-checked projection.');
       return;
     }
-    if (a.contains('quote') || a.contains('invoice') || a.contains('payment') || a.contains('paid')) {
-      if (jobId == null || jobId.isEmpty) {
-        _showUnavailable('Commercial actions require a hosted, audience-scoped job reference.');
-        return;
-      }
-      Navigator.of(context).push(MaterialPageRoute(builder:(_)=>TitanCommercialScreen(gateway:_gateway,jobId:jobId,customer:item.title)));
+    if ((lower.contains('quote') || lower.contains('invoice') ||
+        lower.contains('payment') || lower.contains('paid')) &&
+        (jobId == null || jobId.isEmpty)) {
+      _showUnavailable('Commercial actions require a hosted, audience-scoped job reference.');
       return;
     }
-    if (a.contains('open') || a.contains('detail') || a.contains('start job') || a.contains('view job')) {
-      _openJob(jobId, item.title, item.subtitle ?? 'Customer');
-      return;
-    }
-    if (a.contains('evidence')) {
+    if (lower.contains('evidence')) {
       _showUnavailable('Evidence capture needs a hosted, audience-scoped job projection.');
       return;
     }
-    if (a.contains('schedule') || a.contains('reschedule') || a.contains('dispatch')) { _openSchedule(); return; }
-    if (a.contains('map') || a.contains('navigate')) { _openJobsMap(); return; }
-    _quickAsk('$action ${item.title}');
+    if (lower.contains('schedule') || lower.contains('reschedule') ||
+        lower.contains('dispatch')) {
+      _showUnavailable('Schedule and dispatch are unavailable until the hosted projection is loaded.');
+      return;
+    }
+    if (lower.contains('map') || lower.contains('navigate')) {
+      _showUnavailable('The jobs map needs a hosted, audience-scoped job projection.');
+      return;
+    }
+    _quickAsk(action + ' ' + item.title);
   }
-
 
   void _showUnavailable(String message) {
     setState(() => _sendError = message);
   }
 
-  void _openJob(String? jobId, String title, String customer) {
-    _showUnavailable('Job details require a hosted, audience-scoped projection.');
-  }
-
-  void _openSchedule() {
-    _showUnavailable('Schedule and dispatch are unavailable until the hosted projection is loaded.');
-  }
-
-  void _openJobsMap() {
-    _showUnavailable('The jobs map needs a hosted, audience-scoped job projection.');
-  }
-
   @override Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Titan Zero'), actions: [
-      IconButton(onPressed: () => _showUnavailable('Notifications require a hosted attention projection.'), icon: const Icon(Icons.notifications_none)),
-      IconButton(onPressed: () => _showUnavailable('Profile and company context require authenticated hosted session state.'), icon: const Icon(Icons.person_outline)),
-    ]),
+    appBar: AppBar(title: const Text('Titan Zero'), actions: [IconButton(onPressed: () => _showUnavailable('Notifications require a hosted attention projection.'), icon: const Icon(Icons.notifications_none)), IconButton(onPressed: () => _showUnavailable('Profile and company context require authenticated hosted session state.'), icon: const Icon(Icons.person_outline))]),
     body: SafeArea(child: Column(children: [
-      _ContextCards(onTap: _quickAsk), const Divider(height: 1),
+      if (MediaQuery.viewInsetsOf(context).bottom == 0)
+        _ContextCards(onTap: _quickAsk),
+      const Divider(height: 1),
       Expanded(child: _turns.isEmpty ? const _EmptySurface() : ListView.builder(
         padding: const EdgeInsets.all(12), itemCount: _turns.length,
         itemBuilder: (context, i) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -119,12 +108,7 @@ class _TitanShellScreenState extends State<TitanShellScreen> {
         child: Text(_sendError!, key: const Key('conversation-send-error'),
             style: TextStyle(color: Theme.of(context).colorScheme.error)),
       ),
-      _Composer(
-        controller: _composer,
-        onSend: _send,
-        onUnavailable: () => _showUnavailable('Attachments and voice input require a hosted capability and permission state.'),
-        sending: _sending,
-      ),
+      _Composer(controller: _composer, onSend: _send, onUnavailable: () => _showUnavailable('Attachments and voice input require a hosted capability and permission state.'), sending: _sending),
     ])),
   );
 }
@@ -133,7 +117,7 @@ class _Turn { final String text; final List<TitanGenerativeItem> items; const _T
 
 class _ContextCards extends StatelessWidget {
   final ValueChanged<String> onTap; const _ContextCards({required this.onTap});
-  @override Widget build(BuildContext context) => SizedBox(height: 104, child: ListView(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), scrollDirection: Axis.horizontal, children: [
+  @override Widget build(BuildContext context) => SizedBox(height: 104, child: ListView(padding: const EdgeInsets.all(10), scrollDirection: Axis.horizontal, children: [
     _ContextCard(icon: Icons.today_outlined, title: 'Today', value: 'Show today’s jobs', onTap: () => onTap('Show today jobs')),
     _ContextCard(icon: Icons.warning_amber_rounded, title: 'Attention', value: 'What needs attention?', onTap: () => onTap('What needs attention?')),
     _ContextCard(icon: Icons.calendar_month_outlined, title: 'Schedule', value: 'Dispatch today', onTap: () => onTap('Open schedule and dispatch')),
@@ -156,37 +140,49 @@ class _ContextCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 160,
-      child: Card(
-        child: InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              children: [
-                Icon(icon),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 3),
-                      Text(value, maxLines: 1, overflow: TextOverflow.ellipsis),
-                    ],
+  Widget build(BuildContext context) => SizedBox(
+        width: 160,
+        child: Card(
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                children: [
+                  Icon(icon, size: 20),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          value,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }
+
 class _EmptySurface extends StatelessWidget { const _EmptySurface(); @override Widget build(BuildContext context) => Center(child: Padding(padding: const EdgeInsets.all(28), child: Column(mainAxisSize: MainAxisSize.min, children:[Icon(Icons.auto_awesome,size:42,color:Theme.of(context).colorScheme.primary),const SizedBox(height:14),Text('What do you need?',style:Theme.of(context).textTheme.headlineSmall),const SizedBox(height:8),const Text('Ask naturally. Titan returns the job, customer, schedule, invoice or action you need — not another screen.',textAlign:TextAlign.center)]))); }
 class _Composer extends StatelessWidget { final TextEditingController controller; final VoidCallback onSend; final VoidCallback onUnavailable; final bool sending; const _Composer({required this.controller,required this.onSend,required this.onUnavailable,this.sending=false}); @override Widget build(BuildContext context)=>Padding(padding:const EdgeInsets.fromLTRB(12,8,12,12),child:Row(children:[IconButton(onPressed:onUnavailable,icon:const Icon(Icons.add_circle_outline)),Expanded(child:TextField(controller:controller,minLines:1,maxLines:5,textInputAction:TextInputAction.send,onSubmitted:(_)=>onSend(),decoration:const InputDecoration(hintText:'Ask Titan…',border:OutlineInputBorder()))),IconButton(onPressed:onUnavailable,icon:const Icon(Icons.mic_none)),IconButton(onPressed:sending?null:onSend,icon:sending?const SizedBox(width:20,height:20,child:CircularProgressIndicator(strokeWidth:2)):const Icon(Icons.arrow_upward))])); }

@@ -11,6 +11,8 @@ class _SurfaceTransport implements TitanSurfaceTransport {
     'surface': surface,
     'schema_version': '1.0',
     'actor_id': 'actor-1',
+    'worker_id': 'actor-1',
+    'assignment_revision': 'assignment-1',
     'revision': 'rev-12',
     'issued_at': '2026-10-01T00:00:00Z',
     'expires_at': expiry,
@@ -32,27 +34,24 @@ class _ConversationTransport implements TitanConversationTransport {
   Future<Map<String, dynamic>> send(Map<String, dynamic> request, {Duration timeout = const Duration(seconds: 30)}) async {
     requests.add(Map<String, dynamic>.from(request));
     if (responses.isEmpty) throw StateError('offline');
-    final response = responses.removeAt(0);
-    if (response['echo_request'] == true) {
-      return {
-        ...response,
-        'accepted': true,
-        'authority_neutral': true,
-        'company_id': request['company_id'],
-        'surface': request['surface'],
-        'actor_id': request['actor_id'],
-        'conversation_id': request['conversation_id'],
-        'request_id': request['request_id'],
-        'context_revision': 'rev-13',
-        'items': [{'type': 'notice', 'title': 'Connected'}],
-      };
-    }
-    return response;
+    return responses.removeAt(0);
   }
 }
 
 void main() {
   final session = TitanSession(companyId: 'company-1', actorId: 'actor-1', deviceId: 'device-1', surface: 'go');
+  Map<String, dynamic> accepted(Map<String, dynamic> request) => {
+    'accepted': true,
+    'authority_neutral': true,
+    'company_id': request['company_id'],
+    'surface': request['surface'],
+    'actor_id': request['actor_id'],
+    'conversation_id': request['conversation_id'],
+    'request_id': request['request_id'],
+    'context_revision': 'rev-13',
+    'items': [{'type': 'notice', 'title': 'Connected'}],
+  };
+
   test('production conversation carries canonical scope and reuses IDs on retry', () async {
     final transport = _ConversationTransport();
     var id = 0;
@@ -60,7 +59,7 @@ void main() {
       conversationTransport: transport, idFactory: () => 'id-${++id}');
 
     await expectLater(gateway.converse('Check my next job'), throwsStateError);
-    transport.responses.add({'echo_request': true});
+    transport.responses.add(accepted(transport.requests.single));
     final response = await gateway.converse('Check my next job');
 
     expect(response.single.title, 'Connected');
@@ -75,9 +74,14 @@ void main() {
     expect(transport.requests[0]['conversation_id'], transport.requests[1]['conversation_id']);
     expect(transport.requests[0]['context_revision'], 'rev-12');
 
-    transport.responses.add({'echo_request': true});
+    transport.responses.add(accepted({
+      ...transport.requests[1],
+      'conversation_id': 'id-4',
+      'request_id': 'id-3',
+    }));
     await gateway.converse('Check my next job');
-    expect(transport.requests[2]['conversation_id'], isNot(transport.requests[0]['conversation_id']));
+    expect(transport.requests[2]['conversation_id'], 'id-4');
+    expect(transport.requests[2]['request_id'], 'id-3');
     expect(transport.requests[2]['request_id'], isNot(transport.requests[0]['request_id']));
   });
 

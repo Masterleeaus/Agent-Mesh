@@ -10,32 +10,7 @@ import { createFieldServiceRuntime } from '../services/workforce/src/field-servi
 
 import { SqliteAuthorityStore, SqliteWorkerAccessStore } from '../packages/runtime/authority/index.mjs';
 
-const capability='crm.work_order.complete';
-async function fixture() {
- const dir=mkdtempSync(join(tmpdir(),'titan-job-')); const file=join(dir,'test.db');
- const db=new Database(file);
- for(const f of readdirSync(new URL('../db/sqlite', import.meta.url)).filter(f=>f.endsWith('.sql')).sort()) db.exec(readFileSync(new URL('../db/sqlite/'+f, import.meta.url),'utf8'));
- db.exec("INSERT INTO companies(id,name) VALUES('a','A'),('b','B'); INSERT INTO users(id,company_id,email,full_name,password_hash,role) VALUES('lead','a','lead@example.invalid','Lead','fixture','tech'); INSERT INTO clients(id,company_id,name) VALUES('client','a','Client'); INSERT INTO jobs(id,company_id,client_id,title,created_by) VALUES('job','a','client','Job','lead'); INSERT INTO work_orders(id,company_id,job_id,client_id,title,status,assigned_user_id,created_by) VALUES('wo','a','job','client','Work','in_progress','lead','lead'); INSERT INTO visits(id,company_id,job_id,work_order_id,assigned_user_id,status,scheduled_start,scheduled_end,completed_at) VALUES('visit','a','job','wo','lead','completed','2026-09-28','2026-09-28','2026-09-28'); INSERT INTO work_order_tasks(id,company_id,work_order_id,label,completed,status) VALUES('task','a','wo','Completion evidence',1,'done'); INSERT INTO evidence(id,company_id,subject_type,subject_id,evidence_type) VALUES('field-proof','a','work_order','wo','field_completion');");
- const envelope={actor_id:'lead',work_order_id:'wo',permissions:[capability],policy_allows:true,governance_allows:true,assurance_allows:true,risk:'low',evidence_refs:['field-proof'],approval:{status:'approved',approval_id:'approval',approver_id:'lead',approval_scope:'wo',granted_at:new Date().toISOString()},autonomy_snapshot:{company_id:'a',source:'titan-autonomy',status:'verified',decision_id:'external-autonomy',capability,effective_score:60,verified_at:new Date().toISOString()}};
- db.prepare("INSERT INTO authority_state(id,company_id,subject_type,subject_id,level,envelope) VALUES('grant','a','worker_capability',?,'scoped',?)").run('manager/'+capability,JSON.stringify(envelope));
- db.close();
- let storage=createSqliteStorage(file);
- await new SqliteWorkerAccessStore(storage).append({company_id:'a',assignment_id:'access',worker_id:'manager',permissions:[capability],status:'active',granted_at:new Date().toISOString()});
- const authorityStore=new SqliteAuthorityStore(storage);
- await authorityStore.appendAutonomySnapshot(envelope.autonomy_snapshot,{worker_id:'manager'});
- await authorityStore.appendApproval({company_id:'a',...envelope.approval});
- const workOrders={
-  async complete({company_id,actor_id,work_order_id}:any){return storage.transaction(tx=>completeAssignedWorkOrder(tx as any,work_order_id,company_id,actor_id));},
-  async read({company_id,actor_id,work_order_id}:any){return (await storage.query('SELECT id,status,completed_at,assigned_user_id FROM work_orders WHERE company_id=$1 AND id=$2 AND assigned_user_id=$3',[company_id,work_order_id,actor_id])).rows[0]??null;},
- };
- let runtime=await createFieldServiceRuntime({storage,workOrders});
- await runtime.workforce.registerWorker({company_id:'a',worker_id:'manager',kind:'digital',active:true,capabilities:['work.delegate',capability]});
- const input={company_id:'a',actor_id:'lead',conversation_id:'conversation',interaction_id:'interaction',client_message_id:'message',correlation_id:'correlation',text:'complete work order wo'};
- return {get storage(){return storage}, get runtime(){return runtime},input,envelope,workOrders,
- async peer(){const peerStorage=createSqliteStorage(file);return {storage:peerStorage,runtime:await createFieldServiceRuntime({storage:peerStorage,workOrders})};},
- async restart(){await storage.close();storage=createSqliteStorage(file);runtime=await createFieldServiceRuntime({storage,workOrders});},
- async close(){await storage.close();rmSync(dir,{recursive:true,force:true});}};
-}
+import { fixture, capability, nativeFixtureSql } from './fixtures/native-runtime-fixture.ts';
 
 test('governed assigned completion survives restart with durable verified provenance and one mutation',async()=>{
  const f=await fixture();try {
@@ -46,6 +21,12 @@ test('governed assigned completion survives restart with durable verified proven
   await f.restart();await f.runtime.dispatch(f.input);
   const after=await f.runtime.project({company_id:'a',actor_id:'lead',work_id:'zero:conversation:message'});
   assert.equal(after.run.run_id,before.run.run_id);assert.equal(after.outcome,'verified');
+  assert.equal(before.accepted_evidence.length,6);
+  assert.deepEqual(after.accepted_projections,before.accepted_projections);
+  assert.deepEqual(after.accepted_evidence,before.accepted_evidence);
+  assert.equal(after.accepted_projections[0].provenance.source_of_truth,'accepted-evidence');
+  assert.equal(after.accepted_projections[0].status,'VERIFIED');
+  assert.ok(after.evidence.every((e:any)=>e.accepted_evidence.schema==='titan.business.accepted-evidence/v1' && e.provenance.actor_id==='lead' && e.provenance.conversation_id==='conversation'));
   await f.runtime.dispatch({...f.input,client_message_id:'second-message'});
   const second=await f.runtime.project({company_id:'a',actor_id:'lead',work_id:'zero:conversation:second-message'});
   assert.equal(second.outcome,'verified');
@@ -109,7 +90,7 @@ test('concurrent actors cannot receive each others runtime events',async()=>{
 for(const state of ['CREATED','READY','CLAIMED','IN_PROGRESS'])test(`interrupted ${state} bootstrap recovers one persisted run`,async()=>{
  const f=await fixture();try{
   const now=new Date().toISOString();
-  await f.runtime.workforceStore.create({company_id:'a',work_id:'zero:conversation:message',state,objective:f.input.text,creator:'lead',origin:{actor_id:'lead',conversation_id:'conversation',surface:'zero'},assignee:state==='CLAIMED'||state==='IN_PROGRESS'?'manager':undefined,priority:50,dependencies:[],required_capabilities:[],context_refs:[],evidence_refs:[],created_at:now,updated_at:now});
+  await f.runtime.workforceStore.create({company_id:'a',work_id:'zero:conversation:message',state,objective:f.input.text,creator:'lead',origin:{actor_id:'lead',conversation_id:'conversation',surface:'zero',correlation_id:f.input.correlation_id},assignee:state==='CLAIMED'||state==='IN_PROGRESS'?'manager':undefined,priority:50,dependencies:[],required_capabilities:[],context_refs:[],evidence_refs:[],created_at:now,updated_at:now});
   await f.restart();
   await Promise.allSettled([f.runtime.dispatch(f.input),f.runtime.dispatch(f.input)]);
   const view=await f.runtime.project({company_id:'a',actor_id:'lead',work_id:'zero:conversation:message'});
@@ -146,7 +127,9 @@ test('separate SQLite connections cannot execute one continuation twice',async()
 
 test('persisted queued start is recoverable; unknown in-flight execution is not replayed',async()=>{
  const f=await fixture();try{
-  await f.runtime.dispatch({...f.input,text:'ask for more information'});
+  await new SqliteAuthorityStore(f.storage).appendApproval({company_id:'a',...f.envelope.approval,approval_id:'zz-pending',status:'pending'});
+  await f.runtime.dispatch(f.input);
+  await new SqliteAuthorityStore(f.storage).appendApproval({company_id:'a',...f.envelope.approval,approval_id:'zzz-approved',status:'approved'});
   let run=await f.runtime.runStore.findByWork('a','zero:conversation:message');
   run={...run,state:'QUEUED',messages:[{role:'user',content:f.input.text}],turn:0,wait:null};
   await f.runtime.runStore.save(run);
@@ -155,4 +138,96 @@ test('persisted queued start is recoverable; unknown in-flight execution is not 
   await f.runtime.runStore.save({...run,state:'WAITING_TOOL'});
   await assert.rejects(()=>f.runtime.runtime.resume({company_id:'a',run_id:run.run_id,input:{role:'user',content:'retry'}}),/busy-or-recovery-required/);
  }finally{await f.close();}
+});
+
+for (const revokeAt of [1, 2, 3]) test(`current identity rejection at check ${revokeAt} prevents native mutation`, async () => {
+ let calls=0;
+ const f=await fixture({revalidateIdentity:async (identity:any)=>{
+  assert.equal(identity.company_id,'a');assert.equal(identity.actor_id,'lead');
+  assert.ok(identity.run_id);assert.equal(identity.work_id,'zero:conversation:message');
+  if (++calls===revokeAt) throw new Error('current-session-revoked');
+ }});
+ try {
+  await f.runtime.dispatch(f.input);
+  const view=await f.runtime.project({company_id:'a',actor_id:'lead',work_id:'zero:conversation:message'});
+  assert.equal(view.business.status,'in_progress');assert.notEqual(view.outcome,'verified');
+  assert.equal(calls,revokeAt);
+  assert.ok(view.accepted_evidence.every((e:any)=>e.final_outcome!=='verified'));
+ }finally{await f.close();}
+});
+
+test('legacy gateway evidence remains readable through canonical accepted-evidence projection',async()=>{
+ const f=await fixture();try{
+  await f.runtime.dispatch(f.input);
+  await f.storage.query("UPDATE evidence SET payload=json_remove(payload,'$.accepted_evidence') WHERE company_id='a' AND evidence_type='gateway_execution'");
+  await f.restart();
+  const view=await f.runtime.project({company_id:'a',actor_id:'lead',work_id:'zero:conversation:message'});
+  assert.equal(view.outcome,'verified');assert.equal(view.accepted_evidence.length,6);
+  assert.equal(view.accepted_projections[0].provenance.source_of_truth,'accepted-evidence');
+ }finally{await f.close();}
+});
+
+
+test('native provider mutates only the mapped physical company database and persists accepted evidence in control storage',async()=>{
+ const f=await fixture();const stores:any[]=[];
+ try{
+  const files={a:join(f.dir,'company-a.db'),b:join(f.dir,'company-b.db')};
+  const source=new Database(f.file);
+  try{await source.backup(files.a);}finally{source.close();}
+  const b=new Database(files.b);
+  try{
+   for(const f of readdirSync(new URL('../db/sqlite', import.meta.url)).filter(f=>f.endsWith('.sql')).sort()) b.exec(readFileSync(new URL('../db/sqlite/'+f, import.meta.url),'utf8'));
+   b.exec(nativeFixtureSql.replaceAll(",'a',", ",'b',"));
+  }finally{b.close();}
+  const aStore=createSqliteStorage(files.a), bStore=createSqliteStorage(files.b);stores.push(aStore,bStore);
+  const mapped=(company_id:string)=>{if(company_id==='a')return aStore;if(company_id==='b')return bStore;throw new Error('company-storage-unmapped');};
+  const runtime=await createFieldServiceRuntime({storage:f.storage,workOrders:{
+   complete:({company_id,actor_id,work_order_id}:any)=>mapped(company_id).transaction(tx=>completeAssignedWorkOrder(tx as any,work_order_id,company_id,actor_id)),
+   read:async({company_id,actor_id,work_order_id}:any)=>(await mapped(company_id).query('SELECT id,status,completed_at FROM work_orders WHERE company_id=$1 AND id=$2 AND assigned_user_id=$3',[company_id,work_order_id,actor_id])).rows[0]??null,
+  }});
+  await runtime.dispatch(f.input);
+  const view=await runtime.project({company_id:'a',actor_id:'lead',work_id:'zero:conversation:message'});
+  assert.equal(view.outcome,'verified');assert.equal(view.accepted_projections[0].status,'VERIFIED');
+  assert.equal((await aStore.query("SELECT status FROM work_orders WHERE company_id='a' AND id='wo'")).rows[0].status,'completed');
+  assert.equal((await bStore.query("SELECT status FROM work_orders WHERE company_id='b' AND id='wo'")).rows[0].status,'in_progress');
+  assert.equal((await f.storage.query("SELECT status FROM work_orders WHERE company_id='a' AND id='wo'")).rows[0].status,'in_progress');
+  assert.equal(await runtime.project({company_id:'b',actor_id:'lead',work_id:'zero:conversation:message'}),null);
+  assert.equal((await f.storage.query("SELECT id FROM evidence WHERE company_id='a' AND evidence_type='gateway_execution'")).rowCount,6);
+ }finally{for(const store of stores)await store.close();await f.close();}
+});
+
+
+test('fresh control store composes without business tables or provisioned authority',async()=>{
+ const storage=createSqliteStorage(':memory:');
+ try{
+  const runtime=await createFieldServiceRuntime({storage,workOrders:{async read(){return null;},async complete(){throw new Error('must-not-execute');}}});
+  assert.ok(runtime.zeroDispatcher);
+  const tables=(await storage.query("SELECT name FROM sqlite_master WHERE type='table'")).rows.map((r:any)=>r.name);
+  assert.ok(tables.includes('evidence'));assert.ok(tables.includes('authority_state'));
+  for(const name of ['authority_autonomy_snapshots','authority_decisions','authority_approvals','worker_access_assignments']) assert.ok(tables.includes(name));
+  assert.equal(tables.includes('work_orders'),false);assert.equal(tables.includes('companies'),false);
+  assert.equal((await storage.query('SELECT id FROM authority_state')).rowCount,0);
+  await assert.rejects(()=>runtime.dispatch({company_id:'unprovisioned',actor_id:'actor',conversation_id:'conv',interaction_id:'int',client_message_id:'msg',correlation_id:'corr',text:'complete work order wo'}));
+ }finally{await storage.close();}
+});
+
+
+test('cancellation committed during provider identity revalidation prevents the native effect',async()=>{
+ let enter:(identity:any)=>void=()=>{};let release:()=>void=()=>{};let checks=0;
+ const entered=new Promise<any>(resolve=>{enter=resolve;});
+ const barrier=new Promise<void>(resolve=>{release=resolve;});
+ const f=await fixture({revalidateIdentity:async(identity:any)=>{if(++checks===3){enter(identity);await barrier;}}});
+ let pending:Promise<any>|undefined;
+ try{
+  pending=f.runtime.dispatch(f.input);
+  const identity=await entered;
+  await f.runtime.runtime.cancel({company_id:identity.company_id,run_id:identity.run_id,reason:'cancel-during-provider-identity-check'});
+  release();await pending;
+  const run=await f.runtime.runStore.get('a',identity.run_id);
+  assert.equal(run.state,'CANCELLED');
+  assert.equal((await f.storage.query("SELECT status FROM work_orders WHERE company_id='a' AND id='wo'")).rows[0].status,'in_progress');
+  assert.equal((await f.storage.query("SELECT id FROM evidence WHERE company_id='a' AND evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount,0);
+  const view=await f.runtime.project({company_id:'a',actor_id:'lead',work_id:'zero:conversation:message'});
+  assert.notEqual(view.outcome,'verified');
+ }finally{release();await pending?.catch(()=>{});await f.close();}
 });

@@ -3,6 +3,8 @@ import '../models/generative_item.dart';
 import '../models/titan_command.dart';
 import '../generative/demo_engine.dart';
 import 'offline_command_queue.dart';
+import 'hosted_conversation_transport.dart';
+import '../core/mobile_audience_guard.dart';
 
 /// Authority-neutral mobile boundary mirroring the canonical TypeScript
 /// Surface SDK. Production transports obtain projections and receipts from
@@ -35,6 +37,7 @@ class SurfaceSdkTitanGateway implements TitanGateway {
   final TitanSession session;
   final TitanSurfaceTransport transport;
   final TitanConversationTransport? conversationTransport;
+  final HostedConversationTransport? hostedConversationTransport;
   final String Function()? idFactory;
   final Map<String, String> _messageRequestIds = {};
   final Map<String, String> _conversationIdsByMessage = {};
@@ -43,7 +46,7 @@ class SurfaceSdkTitanGateway implements TitanGateway {
   Map<String, dynamic>? _projection;
 
   SurfaceSdkTitanGateway(this.session, this.transport,
-      {this.conversationTransport, this.idFactory});
+      {this.conversationTransport, this.hostedConversationTransport, this.idFactory});
 
   Future<Map<String, dynamic>> refreshProjection() async {
     final projection = await transport.getProjection(
@@ -62,6 +65,8 @@ class SurfaceSdkTitanGateway implements TitanGateway {
     if (projection['actor_id'] != session.actorId) {
       throw StateError('surface-projection-actor-mismatch');
     }
+    const MobileAudienceGuard().validate(
+      surface: session.surface, actorId: session.actorId, projection: projection);
     if ((projection['revision']?.toString().trim().isEmpty ?? true)) {
       throw StateError('surface-projection-revision-required');
     }
@@ -108,9 +113,12 @@ class SurfaceSdkTitanGateway implements TitanGateway {
 
   @override
   Future<List<TitanGenerativeItem>> converse(String message) async {
+    if (hostedConversationTransport != null) return hostedConversationTransport!.send(message);
     final text = message.trim();
     if (text.isEmpty) throw ArgumentError.value(message, 'message', 'message-required');
-    if (text.length > 20000) throw ArgumentError.value(message, 'message', 'message-too-large');
+    if (text.length.compareTo(20000) == 1) {
+      throw ArgumentError.value(message, 'message', 'message-too-large');
+    }
     final conversation = conversationTransport;
     if (conversation == null) throw StateError('production-conversation-transport-required');
 
