@@ -6,7 +6,7 @@ import type { DirectAdminRole } from './directadmin-plugin.js';
  * It adds DirectAdmin browser protections around that authenticated boundary. */
 export type DirectAdminBridgeConfig = Readonly<{
   origin: string; audience: string; node_id: string;
-  sessions: Pick<ReturnType<typeof createSessionCredentialService>, 'authenticate' | 'switchCompany' | 'revoke' | 'exchangeWorkforceZero'>;
+  sessions: Pick<ReturnType<typeof createSessionCredentialService>, 'issue' | 'authenticate' | 'switchCompany' | 'revoke' | 'exchangeWorkforceZero'>;
 }>;
 type WorkforceZeroIssuance = Awaited<ReturnType<DirectAdminBridgeConfig['sessions']['exchangeWorkforceZero']>>;
 type CompanySessionIssuance = Awaited<ReturnType<DirectAdminBridgeConfig['sessions']['switchCompany']>>;
@@ -71,6 +71,28 @@ const id = (v: unknown): v is string => typeof v === 'string' && v.length > 0 &&
 function encode(value: Uint8Array): string {
   return btoa(String.fromCharCode(...value)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
+async function csrfDigest(value: string): Promise<string> {
+  return encode(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))));
+}
+type DirectAdminBootstrapInput = Readonly<{
+  login_assertion: string; company_id: string; device_id: string; csrf_token: string;
+}>;
+function validBootstrapInput(value: unknown): value is DirectAdminBootstrapInput {
+  try {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+    const keys = Reflect.ownKeys(value);
+    if (keys.length !== 4 || keys.some(key => typeof key !== 'string' ||
+        !['login_assertion', 'company_id', 'device_id', 'csrf_token'].includes(key))) return false;
+    const fields = Object.getOwnPropertyDescriptors(value);
+    const values = Object.fromEntries(keys.map(key => {
+      const descriptor = fields[key as string];
+      return [key as string, descriptor && 'value' in descriptor ? descriptor.value : undefined];
+    }));
+    return typeof values.login_assertion === 'string' && values.login_assertion.length > 0 &&
+      values.login_assertion.length <= 16384 && id(values.company_id) && id(values.device_id) &&
+      typeof values.csrf_token === 'string' && /^[A-Za-z0-9_-]{43,128}$/.test(values.csrf_token);
+  } catch { return false; }
+}
 /** Short, versioned transport assertion for the canonical revision. #302's
  * revision is an opaque JSON snapshot string; the DirectAdmin relay accepts
  * bounded URL-safe identifiers only. This digest carries no authority and is
@@ -103,13 +125,70 @@ export class DirectAdminSessionBridge {
   constructor(config: DirectAdminBridgeConfig) {
     const origin = new URL(config.origin);
     if (origin.protocol !== 'https:' || origin.origin !== config.origin || !id(config.audience) || !id(config.node_id) ||
-        !['authenticate', 'switchCompany', 'revoke', 'exchangeWorkforceZero'].every(method => typeof config.sessions?.[method as keyof typeof config.sessions] === 'function')) fail();
+        !['issue', 'authenticate', 'switchCompany', 'revoke', 'exchangeWorkforceZero'].every(method => typeof config.sessions?.[method as keyof typeof config.sessions] === 'function')) fail();
     // This is only the expected namespace check; #302 remains the sole
     // credential authenticator. Keep the browser-shared SDK free of the
     // server-only security-boundary barrel and its storage/Node dependencies.
     const provider = `directadmin:${origin.origin}`;
     this.#provider = provider;
     this.#config = Object.freeze({ ...config });
+  }
+  /**
+   * Exchange a trusted DirectAdmin login assertion for the initial browser
+   * session cookie. This is a server-side host-composition API: the assertion,
+   * selected company/device expectations and CSRF nonce must come from the
+   * authenticated DirectAdmin adapter, never from caller identity headers or
+   * a browser-supplied role/session ID. #302 verifies the assertion and resolves
+   * the existing actor, company membership, device and current revisions.
+   *
+   * The returned credential is only in the Secure HttpOnly cookie. The caller
+   * must render the same CSRF nonce through its trusted HTML bootstrap; this
+   * method does not create an HTTP route or a second login/provisioning store.
+   */
+  async bootstrapBrowserSession(request: Request, input: unknown): Promise<Readonly<{ set_cookie: string }>> {
+    let url: URL;
+    try { url = new URL(request.url); } catch { return rejectRequest(); }
+    if (request.method !== 'POST' || url.origin !== this.#config.origin || url.search || url.hash ||
+        request.headers.get('origin') !== this.#config.origin || request.headers.get('sec-fetch-site') !== 'same-origin' ||
+        !validBootstrapInput(input)) return rejectRequest();
+
+    // These expectations must be obtained by the trusted DirectAdmin adapter;
+    // #302 additionally matches them to signed assertion claims and registry truth.
+    const expected = Object.freeze({ company_id: input.company_id, device_id: input.device_id });
+    let csrfHash: string;
+    try { csrfHash = await csrfDigest(input.csrf_token); }
+    catch { return unavailable(); }
+    let issued: Awaited<ReturnType<DirectAdminBridgeConfig['sessions']['issue']>>;
+    try { issued = await this.#config.sessions.issue(input.login_assertion, expected); }
+    catch (error) { return normalizeAuthenticationFailure(error); }
+
+    // Read the freshly issued credential back through #302 before setting a
+    // browser cookie. This proves issuer, audience, node, nonce and current state.
+    let authenticated: AuthenticatedSessionCredential;
+    try { authenticated = await this.#config.sessions.authenticate(issued.credential, expected); }
+    catch (error) { return normalizeAuthenticationFailure(error); }
+    const context = authenticated.context;
+    const issuedContext = issued.context;
+    const binding = authenticated.directadmin;
+    if (authenticated.provider !== this.#provider || context.audience !== this.#config.audience ||
+        context.company_id !== input.company_id || context.device_id !== input.device_id ||
+        !binding || binding.node_id !== this.#config.node_id || binding.csrf_sha256 !== csrfHash ||
+        !['admin', 'reseller', 'user'].includes(binding.da_role) ||
+        context.session_id !== issuedContext.session_id || context.actor_id !== issuedContext.actor_id ||
+        context.company_id !== issuedContext.company_id || context.device_id !== issuedContext.device_id ||
+        context.session_revision !== issuedContext.session_revision || context.context_revision !== issuedContext.context_revision) {
+      try { await this.#config.sessions.revoke(issued.credential, expected); }
+      catch { return unavailable(); }
+      return fail();
+    }
+    const expiresAt = Math.min(Date.parse(context.expires_at), Date.parse(authenticated.credential_expires_at));
+    const seconds = Math.min(300, Math.floor((expiresAt - Date.now()) / 1000));
+    if (!Number.isFinite(seconds) || seconds <= 0 || /[;\r\n]/.test(issued.credential)) {
+      try { await this.#config.sessions.revoke(issued.credential, expected); }
+      catch { return unavailable(); }
+      return fail();
+    }
+    return Object.freeze({ set_cookie: `${COOKIE}=${issued.credential}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=${seconds}` });
   }
   async authenticate(request: Request): Promise<{
     context: DirectAdminBridgeContext;
@@ -131,7 +210,7 @@ export class DirectAdminSessionBridge {
       const credential = cookie(request);
       const csrf = request.headers.get('x-titan-csrf') ?? '';
       if (!/^[A-Za-z0-9_-]{43,128}$/.test(csrf)) return rejectRequest();
-      const csrfHash = encode(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(csrf))));
+      const csrfHash = await csrfDigest(csrf);
       const check = (authenticated: AuthenticatedSessionCredential): AuthenticatedSessionCredential => {
         // Also reject a miswired canonical service for a different host/audience.
         if (authenticated.provider !== this.#provider || authenticated.context.audience !== this.#config.audience ||

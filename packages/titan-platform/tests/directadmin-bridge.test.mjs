@@ -6,7 +6,7 @@ import { tsImport } from 'tsx/esm/api';
 const sdk = await tsImport('../src/directadmin-plugin.ts', { parentURL: import.meta.url, tsconfig: false });
 const security = await tsImport('../src/security-boundary.ts', { parentURL: import.meta.url, tsconfig: false });
 const { DirectAdminSessionBridge, createDirectAdminGateway, DirectAdminCockpitSession,
-  redactDirectAdminDiagnostics } = sdk;
+  directAdminBridgeFailureKind, redactDirectAdminDiagnostics } = sdk;
 const { createSessionCredentialService, createSessionCredentialVerifier, directAdminIssuer } = security;
 const { mountZeroCore } = await tsImport('../../../apps/directadmin/zero-core/cockpit.mjs', { parentURL: import.meta.url, tsconfig: false });
 const { mountOperationsHub } = await tsImport('../../../apps/directadmin/operations-hub/cockpit.mjs', { parentURL: import.meta.url, tsconfig: false });
@@ -108,6 +108,58 @@ for (const [label, revoke] of [
 const intentBody = f => ({ company_id: 'company-a', actor_id: 'actor-1', context_revision: f.claims.context_revision,
   capability_id: 'ops.inspect', operation_id: 'operation-1', correlation_id: 'correlation-1', input: {} });
 const post = body => ({ method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+
+test('trusted bootstrap exchanges a signed DirectAdmin assertion for only a selected-company HttpOnly session cookie', async t => {
+  const f = await fixture(t);
+  const login_assertion = await f.loginFor(external.provider, 'browser-bootstrap-once');
+  const bootstrap = await f.bridge.bootstrapBrowserSession(
+    f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: { cookie: null } }),
+    { login_assertion, company_id: 'company-a', device_id: 'device-1', csrf_token: csrf });
+  assert.match(bootstrap.set_cookie, /^__Host-titan-da-session=[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+; Path=\/; Secure; HttpOnly; SameSite=Strict; Max-Age=[1-9]\d*$/);
+  assert.equal(bootstrap.set_cookie.includes(csrf), false);
+  const cookie = bootstrap.set_cookie.split(';', 1)[0];
+  const authenticated = await f.bridge.authenticate(f.request('/v1/directadmin/context', { headers: { cookie } }));
+  assert.equal(authenticated.context.actor_id, 'actor-1');
+  assert.equal(authenticated.context.company_id, 'company-a');
+  assert.deepEqual(authenticated.context.company_ids, ['company-a']);
+  assert.equal(authenticated.context.authority, 'not-carried');
+});
+
+test('bootstrap rejects cross-origin and extra caller identity before consuming the assertion', async t => {
+  const f = await fixture(t);
+  const input = { login_assertion: await f.loginFor(external.provider, 'bootstrap-origin-once'),
+    company_id: 'company-a', device_id: 'device-1', csrf_token: csrf };
+  const crossOrigin = f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: { origin: 'https://attacker.test', cookie: null } });
+  await assert.rejects(f.bridge.bootstrapBrowserSession(crossOrigin, input), error => directAdminBridgeFailureKind(error) === 'request-rejected');
+  await assert.rejects(f.bridge.bootstrapBrowserSession(
+    f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: { cookie: null } }), { ...input, caller_id: 'root' }),
+  error => directAdminBridgeFailureKind(error) === 'request-rejected');
+  const issued = await f.bridge.bootstrapBrowserSession(
+    f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: { cookie: null } }), input);
+  assert.match(issued.set_cookie, /^__Host-titan-da-session=/);
+});
+
+test('bootstrap company expectation must match the signed upstream selected company', async t => {
+  const f = await fixture(t);
+  await assert.rejects(f.bridge.bootstrapBrowserSession(
+    f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: { cookie: null } }),
+    { login_assertion: await f.loginFor(external.provider, 'bootstrap-company-mismatch'),
+      company_id: 'company-b', device_id: 'device-1', csrf_token: csrf }), /directadmin-session-rejected/);
+  assert.equal((await f.storage.query('SELECT * FROM titan_security_sessions')).rows.length, 1);
+});
+
+test('bootstrap revokes an issued session if the trusted HTML CSRF nonce differs from its signed binding', async t => {
+  const f = await fixture(t);
+  const jti = 'bootstrap-csrf-mismatch';
+  const assertion = await f.loginFor(external.provider, jti, { csrf_sha256: 'A'.repeat(43) });
+  await assert.rejects(f.bridge.bootstrapBrowserSession(
+    f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: { cookie: null } }),
+    { login_assertion: assertion, company_id: 'company-a', device_id: 'device-1', csrf_token: csrf }), /directadmin-session-rejected/);
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify([external.provider, jti]))));
+  const session_id = `auth-${[...digest].map(byte => byte.toString(16).padStart(2, '0')).join('')}`;
+  const row = (await f.storage.query('SELECT revoked FROM titan_security_sessions WHERE session_id=$1', [session_id])).rows[0];
+  assert.equal(row?.revoked, 1);
+});
 
 test('gateway preserves canonical intent correlation and only reports REQUESTED', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);

@@ -57,8 +57,8 @@ export async function fixture(t, { origin = ORIGIN, provider = external.provider
   const upstreamToken = `${loginPayload}.${b64(await crypto.subtle.sign('Ed25519', upstreamKeys.privateKey, Buffer.from(loginPayload)))}`;
   const issued = await sessions.issue(upstreamToken, { company_id: 'company-a', device_id: 'device-1' });
   const token = issued.credential;
-  const loginFor = async (provider, jti) => {
-    const payload = `${encode({ alg: 'EdDSA', typ: 'titan-login+jwt', kid: 'upstream-1' })}.${encode({ ...loginClaims, iss: provider, jti })}`;
+  const loginFor = async (provider, jti, changes = {}) => {
+    const payload = `${encode({ alg: 'EdDSA', typ: 'titan-login+jwt', kid: 'upstream-1' })}.${encode({ ...loginClaims, ...changes, iss: provider, jti })}`;
     return `${payload}.${b64(await crypto.subtle.sign('Ed25519', upstreamKeys.privateKey, Buffer.from(payload)))}`;
   };
   // Fixture-only inspection of a credential just issued through the canonical service.
@@ -93,6 +93,6 @@ export async function fixture(t, { origin = ORIGIN, provider = external.provider
       const latest = await revalidate(); effects.push({ intent, context: latest }); return { receipt_id: 'receipt-1' };
     },
   };
-  return { registry, sessions, bridgeSessions, workforceVerifier, workforceKeys, policy, upstreamToken, upstreamKeys,
+  return { storage, registry, sessions, bridgeSessions, workforceVerifier, workforceKeys, policy, upstreamToken, upstreamKeys,
     loginFor, bridge, request, token, claims, sign, owners, effects, now, setClock: value => { clock = value; } };
 }
