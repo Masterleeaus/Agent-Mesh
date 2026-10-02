@@ -14,12 +14,18 @@ test('verified installs identify governed runtime as install authority',()=>{
   assert.equal(x.lifecycle,'installed_verified'); assert.equal(x.source_of_install_authority,'titan_modules_governed_runtime');
 });
 test('governed install requires explicit approval',async()=>{
+  const calls=[];
   const api=createMarketplaceCommercialLifecycle({
     moduleManager:{listStates:async()=>({})},
-    marketplaceRuntime:{install:async()=>({ok:true})},
+    marketplaceRuntime:{install:async(...args)=>{calls.push(args);return {ok:true};}},
     readLegacyState:async()=>({}),readEvidence:async()=>({})
   });
-  await assert.rejects(()=>api.governedInstall('company-1','reviews'),/approved=true/);
+  await assert.rejects(()=>api.governedInstall('company-1','reviews'),/Compatibility approval marker required/);
+  for(const approved of [false, 'true', 1]) await assert.rejects(()=>api.governedInstall('company-1','reviews',{approved}),/Compatibility approval marker required/);
+  assert.equal(calls.length,0);
   const y=await api.governedInstall('company-1','reviews',{approved:true});
   assert.equal(y.company_id,'company-1');
+  assert.equal(calls.length,1);
+  assert.equal(y.authority_source,'compatibility_marker_only_not_canonical_execution_authority');
+  assert.deepEqual(calls[0],['reviews',{approved:true}]);
 });

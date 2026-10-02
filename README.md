@@ -1,3 +1,5 @@
+![Titan Zero Field Service Workforce — FIELD + HOME SERVICES · CANONICAL PRODUCT](docs/images/portfolio-banner.svg)
+
 <p align="center">
   <img src="docs/images/CB4FE4C8-1FF9-4228-8DAC-98FED23D43A3.png" alt="Titan Zero Field Service Workforce" width="520" />
 </p>

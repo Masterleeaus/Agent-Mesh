@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import {
   getTitanBusinessOpsAgentCommand,
   assessTitanBusinessOpsAgentCommand,
-} from "../.test-dist/src/business-ops.js";
+} from "../.test-dist/business-ops.js";
 
 test("Commerce and financial context reuse canonical invoice, expense and material seams", () => {
   assert.equal(getTitanBusinessOpsAgentCommand("invoices.list")?.path, "/api/v1/invoices");

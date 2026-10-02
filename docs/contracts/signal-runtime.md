@@ -1,0 +1,3 @@
+# Canonical Signal runtime donor disposition
+
+Issue #1206 adapts the Library Signal Engine into a native observation/delivery runtime. Envelope validation, company isolation, idempotent ingestion, subscriptions, leases, retry/quarantine/redrive, correlation, projection hooks, redaction and evidence-protected pruning are adapted. Durable persistence remains an #811 adapter; #313 owns telemetry export; #14/#7 remain execution/capability authorities. The legacy signal module is compatibility-only and new production imports must use this runtime. Command receipts remain observations, never a second command bus. Focused tests document reused/adapted/deferred behavior and the explicit non-goals.

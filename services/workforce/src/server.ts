@@ -10,10 +10,14 @@ import {
   type ConversationHostRuntime,
 } from "./conversation-api.js";
 
-const port = Number(process.env.WORKFORCE_PORT ?? "3010");
 const conversationPath = "/v1/workforce/conversations";
+const configuredStoragePath = () =>
+  process.env.WORKFORCE_SQLITE_PATH ?? process.env.SQLITE_PATH ?? "/app/runtime/workforce.db";
 
-export interface WorkforceServer { server: Server; close(): Promise<void>; }
+export interface WorkforceServer {
+  server: Server;
+  close(): Promise<void>;
+}
 
 export type WorkforceServerOptions = {
   storagePath?: string;
@@ -23,8 +27,12 @@ export type WorkforceServerOptions = {
   };
 };
 
-function json(response: ServerResponse, status: number, body: Record<string, unknown>): void {
-  response.writeHead(status, { "content-type": "application/json", "cache-control": "no-store" });
+function json(response: ServerResponse, status: number, body: Record<string, unknown>, headers: Record<string, string> = {}): void {
+  response.writeHead(status, {
+    "content-type": "application/json",
+    "cache-control": "no-store",
+    ...headers,
+  });
   response.end(JSON.stringify(body));
 }
 
@@ -33,7 +41,10 @@ async function handleConversation(
   response: ServerResponse,
   options: WorkforceServerOptions,
 ): Promise<void> {
-  if (!options.conversation) { json(response, 503, { error: "conversation-host-not-configured" }); return; }
+  if (!options.conversation) {
+    json(response, 503, { error: "conversation-host-not-configured" });
+    return;
+  }
   try {
     const body = await readConversationBody(request);
     const value = await handleConversationRequest(
@@ -43,7 +54,12 @@ async function handleConversation(
       typeof request.headers.authorization === "string" ? request.headers.authorization : undefined,
     );
     const stream = request.headers.accept?.includes("text/event-stream") === true;
-    writeConversationResponse(response, value, stream, typeof request.headers["last-event-id"] === "string" ? request.headers["last-event-id"] : undefined);
+    writeConversationResponse(
+      response,
+      value,
+      stream,
+      typeof request.headers["last-event-id"] === "string" ? request.headers["last-event-id"] : undefined,
+    );
   } catch (error) {
     const code = error instanceof Error ? error.message : "conversation-failed";
     json(response, conversationHttpStatus(code), { error: code });
@@ -51,40 +67,91 @@ async function handleConversation(
 }
 
 export async function createWorkforceServer(options: WorkforceServerOptions = {}): Promise<WorkforceServer> {
-  const storagePath = options.storagePath ?? process.env.WORKFORCE_SQLITE_PATH ?? process.env.SQLITE_PATH ?? "/app/runtime/workforce.db";
-  const storage = createSqliteStorage(storagePath);
+  const storage = createSqliteStorage(options.storagePath ?? configuredStoragePath());
   const store = new SqliteWorkforceStore(storage);
-  await store.migrate();
+
+  try {
+    await store.migrate();
+  } catch (error) {
+    await storage.close();
+    throw error;
+  }
+
   let ready = true;
-  const server = createServer((request, response) => {
-    const method = request.method ?? "GET";
-    const url = new URL(request.url ?? "/", "http://workforce.local");
-    if (url.pathname === conversationPath && method === "POST") {
-      void handleConversation(request, response, options);
+  let closing: Promise<void> | undefined;
+  const server = createServer(async (request, response) => {
+    let pathname: string;
+    try {
+      pathname = new URL(request.url ?? "/", "http://workforce.internal").pathname;
+    } catch {
+      json(response, 400, { error: "invalid_request_target" });
       return;
     }
-    if (url.pathname !== "/health" && url.pathname !== "/ready") {
+
+    if (pathname === conversationPath) {
+      if (request.method !== "POST") {
+        json(response, 405, { error: "method_not_allowed" }, { allow: "POST" });
+        return;
+      }
+      await handleConversation(request, response, options);
+      return;
+    }
+
+    if (pathname !== "/health" && pathname !== "/ready") {
       json(response, 404, { error: "not_found" });
       return;
     }
-    json(response, ready ? 200 : 503, {
-      status: ready ? "ok" : "degraded",
+    if (request.method !== "GET") {
+      json(response, 405, { error: "method_not_allowed" }, { allow: "GET" });
+      return;
+    }
+
+    if (pathname === "/health") {
+      const healthy = ready;
+      json(response, healthy ? 200 : 503, {
+        status: healthy ? "ok" : "degraded",
+        service: "workforce",
+        checks: { process: healthy ? "ok" : "stopping" },
+      });
+      return;
+    }
+
+    let storageReady = false;
+    if (ready) {
+      try {
+        await storage.query("SELECT COUNT(*) AS row_count FROM workforce_work_items");
+        storageReady = true;
+      } catch {
+        // Do not expose storage errors or configuration details through a public probe.
+      }
+    }
+    json(response, storageReady ? 200 : 503, {
+      status: storageReady ? "ok" : "degraded",
       service: "workforce",
-      checks: { storage: ready ? "ok" : "fail" },
-      ts: new Date().toISOString(),
+      checks: { storage: storageReady ? "ok" : "fail" },
     });
   });
+
   return {
     server,
-    async close() {
+    close() {
+      if (closing) return closing;
       ready = false;
-      await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
-      await storage.close();
+      closing = (async () => {
+        if (server.listening) {
+          await new Promise<void>((resolve, reject) => {
+            server.close((error) => error ? reject(error) : resolve());
+          });
+        }
+        await storage.close();
+      })();
+      return closing;
     },
   };
 }
 
 if (process.argv[1]?.endsWith("server.ts")) {
+  const port = Number(process.env.WORKFORCE_PORT ?? "3010");
   const workforce = await createWorkforceServer();
   workforce.server.listen(port, "0.0.0.0", () => console.log(`[workforce] listening on ${port}`));
   const shutdown = () => { void workforce.close().finally(() => process.exit(0)); };
