@@ -91,6 +91,11 @@ export function createSqliteStorage(filename = process.env.SQLITE_PATH ?? ".tita
         } finally {
           if (deadline !== undefined) db.pragma(`busy_timeout = ${previousBusyTimeout}`);
         }
+        if (deadline !== undefined && performance.now() >= deadline) {
+          db.exec("ROLLBACK");
+          began = false;
+          throw new Error("storage-transaction-acquire-timeout");
+        }
       let active = true;
       const tx: StorageClient = {
         dialect: "sqlite",
