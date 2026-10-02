@@ -87,7 +87,7 @@ test("current authority decision is persisted as a superseding decision before e
     authority_decision_id:value.authority_decision_id,
     supersedes_authority_decision_id:value.supersedes_authority_decision_id,
     evaluated_at:value.now,
-  })},
+  });}},
   authorityStore:{async appendDecision(value){appended.push(value);}},
   executionGateway:{async execute(){return {state:"VERIFIED"};}},
  });
