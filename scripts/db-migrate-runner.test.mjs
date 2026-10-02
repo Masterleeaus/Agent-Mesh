@@ -26,8 +26,38 @@ if args: args = args[1:]  # DATABASE_URL
 def save():
     with open(state_path, 'w') as f: json.dump(state, f)
 if '-f' in args:
-    filename = os.path.basename(args[args.index('-f') + 1])
+    transaction = open(args[args.index('-f') + 1]).read()
+    if '-- mode: seed-legacy-history' in transaction:
+        if not transaction.startswith('-- mode: seed-legacy-history') or not transaction.rstrip().endswith('COMMIT;'):
+            raise SystemExit('legacy seed is not wrapped in one transaction')
+        inserts = []
+        for line in transaction.splitlines():
+            if line.startswith('INSERT INTO schema_migrations'):
+                values = re.findall("'([^']+)'", line)
+                if len(values) == 1 and 'NULL' in line: inserts.append(values[0])
+        if not inserts: raise SystemExit('legacy seed contains no history entries')
+        if os.environ.get('FAKE_PSQL_FAIL_FILENAME') in inserts:
+            sys.exit(7)
+        for filename in inserts: state['applied'].setdefault(filename, None)
+        save()
+        sys.exit(0)
+    marker = re.search(r'^-- migration: ([^ ]+) sha256: ([a-f0-9]{64})$', transaction, re.M)
+    if not marker: raise SystemExit('missing migration transaction marker')
+    filename, checksum = marker.groups()
+    if not transaction.startswith('-- migration: ') or not transaction.rstrip().endswith('COMMIT;'):
+        raise SystemExit('migration SQL and ledger are not wrapped in one transaction')
+    if os.environ.get('FAKE_PSQL_FAIL_FILENAME') == filename:
+        sys.exit(7)
+    insert_line = next((line for line in transaction.splitlines() if line.startswith('INSERT INTO schema_migrations')), '')
+    inserted_values = re.findall("'([^']+)'", insert_line)
+    if inserted_values != [filename, checksum]:
+        raise SystemExit('transaction does not record its own migration checksum')
+    if filename == '088_condition_tier.sql':
+        boundaries = re.findall(r'^(BEGIN|COMMIT);$', transaction, re.M)
+        if boundaries != ['BEGIN', 'COMMIT']:
+            raise SystemExit('migration 088 internal boundaries were not normalized')
     state['appliedOrder'].append(filename)
+    state['applied'][filename] = checksum
     save()
     sys.exit(0)
 query = ''
@@ -58,7 +88,7 @@ sys.exit(0)
   return {
     root,
     statePath,
-    run() {
+    run({ failFilename = null } = {}) {
       return spawnSync("bash", [runner], {
         cwd: repoRoot,
         encoding: "utf8",
@@ -67,6 +97,7 @@ sys.exit(0)
           PATH: `${bin}:${process.env.PATH}`,
           DATABASE_URL: "postgresql://fixture.invalid/titan",
           FAKE_PSQL_STATE: statePath,
+          ...(failFilename ? { FAKE_PSQL_FAIL_FILENAME: failFilename } : {}),
         },
       });
     },
@@ -124,5 +155,36 @@ test("existing schema without history remains explicitly filename-only", () => {
     assert.deepEqual(h.state().appliedOrder, []);
     assert.equal(Object.keys(h.state().applied).length, manifest.entries.length);
     assert.ok(Object.values(h.state().applied).every((checksum) => checksum === null));
+  } finally { h.cleanup(); }
+});
+
+test("interrupted legacy seed leaves the ledger empty and can resume as one batch", () => {
+  const entry = manifest.entries[Math.floor(manifest.entries.length / 2)];
+  const h = harness({ legacySchema: true });
+  try {
+    const interrupted = h.run({ failFilename: entry.filename });
+    assert.notEqual(interrupted.status, 0);
+    assert.deepEqual(h.state().applied, {});
+
+    const resumed = h.run();
+    assert.equal(resumed.status, 0, resumed.stderr);
+    assert.equal(Object.keys(h.state().applied).length, manifest.entries.length);
+    assert.ok(Object.values(h.state().applied).every((checksum) => checksum === null));
+  } finally { h.cleanup(); }
+});
+
+test("failed migration transaction leaves no ledger row and can resume", () => {
+  const entry = manifest.entries[0];
+  const h = harness();
+  try {
+    const interrupted = h.run({ failFilename: entry.filename });
+    assert.notEqual(interrupted.status, 0);
+    assert.deepEqual(h.state().appliedOrder, []);
+    assert.equal(h.state().applied[entry.filename], undefined);
+
+    const resumed = h.run();
+    assert.equal(resumed.status, 0, resumed.stderr);
+    assert.deepEqual(h.state().appliedOrder, manifest.entries.map((item) => item.filename));
+    for (const item of manifest.entries) assert.equal(h.state().applied[item.filename], item.sha256);
   } finally { h.cleanup(); }
 });
