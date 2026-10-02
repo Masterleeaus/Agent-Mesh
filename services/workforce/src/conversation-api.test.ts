@@ -54,13 +54,28 @@ test("mismatched company, actor, device, surface, session, and stale revision fa
 
 test("cancel is a separate lifecycle action and never dispatches a user command", async () => {
   let dispatched = false;
+  let forwarded: Parameters<NonNullable<ConversationHostRuntime["cancel"]>>[0] | undefined;
   const cancelRuntime: ConversationHostRuntime = {
     async dispatch() { dispatched = true; throw new Error("must-not-dispatch"); },
-    async cancel(input) { assert.equal(input.continuation_token, "continuation-1"); return { accepted: true, events: [] }; },
+    async cancel(input) { forwarded = input; assert.equal(input.continuation_token, "continuation-1"); return { accepted: true, events: [] }; },
   };
-  const result = await handleConversationRequest(request({ action: "cancel", continuation_token: "continuation-1", text: undefined }), auth, cancelRuntime, undefined);
+  const result = await handleConversationRequest(request({
+    action: "cancel", continuation_token: "continuation-1", text: undefined,
+    request_id: "cancel-request", operation_id: "cancel-operation", trace_id: "cancel-trace",
+    correlation_id: "cancel-correlation", idempotency_key: "cancel-idempotency",
+    interaction_id: "cancel-interaction", client_message_id: "cancel-message",
+  }), auth, cancelRuntime, undefined);
   assert.equal(result.accepted, true);
   assert.equal(dispatched, false);
+  assert.equal(forwarded?.actor_id, context.actor_id);
+  assert.equal(forwarded?.session_id, context.session_id);
+  assert.equal(forwarded?.interaction_id, "cancel-interaction");
+  assert.equal(forwarded?.client_message_id, "cancel-message");
+  assert.equal(forwarded?.request_id, "cancel-request");
+  assert.equal(forwarded?.operation_id, "cancel-operation");
+  assert.equal(forwarded?.trace_id, "cancel-trace");
+  assert.equal(forwarded?.correlation_id, "cancel-correlation");
+  assert.equal(forwarded?.idempotency_key, "cancel-idempotency");
 });
 
 test("SSE resume emits ordered events after Last-Event-ID and does not duplicate prior events", async () => {

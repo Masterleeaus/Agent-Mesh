@@ -1,5 +1,5 @@
 import type { ServerResponse } from "node:http";
-import type { ZeroWorkforceDispatchInput, ZeroWorkforceDispatchResult, AuthenticatedDispatchIdentity } from "./zero-runtime-dispatcher.js";
+import type { ZeroWorkforceDispatchInput, ZeroWorkforceDispatchResult, AuthenticatedDispatchIdentity, ZeroRuntimeCancellationInput } from "./zero-runtime-dispatcher.js";
 
 export type ConversationSurface = "zero" | "go" | "hub";
 export type AuthenticatedConversationContext = {
@@ -55,16 +55,7 @@ export interface ConversationHostRuntime {
   dispatch(input: ZeroWorkforceDispatchInput): Promise<ZeroWorkforceDispatchResult>;
   /** Explicit authenticated recovery observes uncertain execution; never retries its effect. */
   recover?(input: ZeroWorkforceDispatchInput): Promise<ZeroWorkforceDispatchResult>;
-  cancel?(input: {
-    company_id: string;
-    actor_id: string;
-    conversation_id: string;
-    continuation_token: string;
-    reason: string;
-    session_id?: string;
-    context_revision?: string;
-    authenticated_identity?: AuthenticatedDispatchIdentity;
-  }): Promise<ZeroWorkforceDispatchResult>;
+  cancel?(input: ZeroRuntimeCancellationInput): Promise<ZeroWorkforceDispatchResult>;
 }
 
 export interface ConversationAuth {
@@ -159,7 +150,7 @@ function publicEvent(event: ZeroWorkforceDispatchResult["events"][number]): Zero
     id: event.id, kind: kinds.has(event.kind) ? event.kind : "run.state", company_id: event.company_id,
     conversation_id: event.conversation_id, surface: event.surface,
   };
-  for (const key of ["work_id", "run_id", "agent_id", "actor_id", "interaction_id", "request_id", "operation_id", "trace_id", "correlation_id", "idempotency_key", "capability", "tool_call_id", "decision_id", "evidence_ref"] as const) {
+  for (const key of ["work_id", "run_id", "agent_id", "actor_id", "interaction_id", "client_message_id", "request_id", "operation_id", "trace_id", "correlation_id", "idempotency_key", "capability", "tool_call_id", "decision_id", "evidence_ref"] as const) {
     if (typeof event[key] === "string" && event[key].length <= 1024 && !/[\u0000-\u001f\u007f]/.test(event[key])) result[key] = event[key];
   }
   if (typeof event.state === "string" && /^(CREATED|READY|CLAIMED|IN_PROGRESS|QUEUED|RUNNING|WAITING|WAITING_TOOL|WAITING_AGENT|WAITING_USER|WAITING_APPROVAL|WAITING_USER_AUTH|WAITING_MFA|WAITING_EXTERNAL|SUSPENDED|COMPLETED|FAILED|CANCELLED)$/.test(event.state)) result.state = event.state;
@@ -183,6 +174,13 @@ export async function handleConversationRequest(
         company_id: context.company_id,
         actor_id: context.actor_id,
         conversation_id: request.conversation_id,
+        interaction_id: request.interaction_id,
+        client_message_id: request.client_message_id,
+        request_id: request.request_id,
+        operation_id: request.operation_id,
+        trace_id: request.trace_id,
+        correlation_id: request.correlation_id,
+        idempotency_key: request.idempotency_key,
         continuation_token: required(request.continuation_token, "conversation-continuation-required"),
         reason: "cancelled-by-client", session_id: context.session_id, context_revision: context.context_revision,
         authenticated_identity: context.authenticated_identity,

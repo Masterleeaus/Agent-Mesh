@@ -401,8 +401,46 @@ test("authenticated cancellation is durable and continuation replay cannot execu
   const f = await fixture(); try {
     await f.authority.appendApproval({ company_id: "a", ...f.envelope.approval, approval_id: "zz-pending", status: "pending" });
     const waiting = await f.post(); assert.ok(waiting.body.continuation_token);
-    const cancelled = await f.post({ action: "cancel", continuation_token: waiting.body.continuation_token, text: undefined }); assert.equal(cancelled.status, 200, JSON.stringify(cancelled.body));
+    const cancellationRequest = {
+      action: "cancel", continuation_token: waiting.body.continuation_token, text: undefined,
+      interaction_id: "cancel-interaction", client_message_id: "cancel-message",
+      request_id: "cancel-request", operation_id: "cancel-operation", trace_id: "cancel-trace",
+      correlation_id: "cancel-correlation", idempotency_key: "cancel-idempotency",
+    };
+    const cancelled = await f.post(cancellationRequest); assert.equal(cancelled.status, 200, JSON.stringify(cancelled.body));
+    const cancellationEvent = cancelled.body.events.find((event: { kind?: string }) => event.kind === "run.cancelled");
+    assert.ok(cancellationEvent, "the cancellation transition emits its own lifecycle event");
+    for (const field of ["interaction_id", "client_message_id", "request_id", "operation_id", "trace_id", "correlation_id", "idempotency_key"] as const) {
+      assert.equal(cancellationEvent[field], cancellationRequest[field], field);
+    }
+
     await f.restart(); await f.authority.appendApproval({ company_id: "a", ...f.envelope.approval, approval_id: "zzz-approved", status: "approved" });
+    const durable = (await f.run())[0];
+    assert.equal(durable.state, "CANCELLED");
+    assert.deepEqual({
+      actor_id: durable.cancellation.actor_id,
+      interaction_id: durable.cancellation.interaction_id,
+      client_message_id: durable.cancellation.client_message_id,
+      request_id: durable.cancellation.request_id,
+      operation_id: durable.cancellation.operation_id,
+      trace_id: durable.cancellation.trace_id,
+      correlation_id: durable.cancellation.correlation_id,
+      idempotency_key: durable.cancellation.idempotency_key,
+      session_id: durable.cancellation.session_id,
+      context_revision: durable.cancellation.context_revision,
+    }, {
+      actor_id: "lead", interaction_id: cancellationRequest.interaction_id,
+      client_message_id: cancellationRequest.client_message_id, request_id: cancellationRequest.request_id,
+      operation_id: cancellationRequest.operation_id, trace_id: cancellationRequest.trace_id,
+      correlation_id: cancellationRequest.correlation_id, idempotency_key: cancellationRequest.idempotency_key,
+      session_id: f.input.session_id, context_revision: f.input.context_revision,
+    });
+    assert.equal(durable.cancellation.reason, "cancelled-by-client");
+    assert.ok(Number.isFinite(Date.parse(durable.cancellation.requested_at)));
+
+    const replay = await f.post(cancellationRequest);
+    assert.equal(replay.status, 200, JSON.stringify(replay.body));
+    assert.deepEqual((await f.run())[0].cancellation, durable.cancellation, "replaying a terminal cancel does not replace the durable receipt");
     await f.post({ action: "continue", continuation_token: waiting.body.continuation_token, text: "continue" });
     assert.equal(await f.status(), "in_progress"); assert.equal((await f.run())[0].state, "CANCELLED");
   } finally { await f.close(); }

@@ -59,7 +59,12 @@ export interface ZeroPersistentRuntimePort {
   }): Promise<ZeroRuntimeRun>;
   isWorkActive?(input: { company_id: CompanyId; work_id: WorkId }): boolean;
   recoverInterrupted?(input: { company_id: CompanyId; run_id: string }): Promise<ZeroRuntimeRun>;
-  cancel?(input: { company_id: CompanyId; run_id: string; reason?: string }): Promise<ZeroRuntimeRun>;
+  cancel?(input: {
+    company_id: CompanyId;
+    run_id: string;
+    reason?: string;
+    cancellation?: ZeroRuntimeCancellationMetadata;
+  }): Promise<ZeroRuntimeRun>;
 }
 
 export type ZeroRuntimeRun = {
@@ -72,6 +77,7 @@ export type ZeroRuntimeRun = {
   result?: unknown;
   messages?: Array<{ evidence_ref?: string | null }>;
   error?: unknown;
+  cancellation?: ZeroRuntimeCancellationMetadata & { requested_at: string; reason: string };
 };
 
 export type ZeroWorkforceDispatchInput = WorkCorrelation & {
@@ -84,6 +90,27 @@ export type ZeroWorkforceDispatchInput = WorkCorrelation & {
   correlation_id: string;
   requested_agent_id?: WorkerId;
   continuation_token?: string;
+};
+
+export type ZeroRuntimeCancellationMetadata = {
+  actor_id?: string;
+  interaction_id?: string;
+  client_message_id?: string;
+  request_id?: string;
+  operation_id?: string;
+  trace_id?: string;
+  correlation_id?: string;
+  idempotency_key?: string;
+  session_id?: string;
+  context_revision?: string | number;
+};
+
+export type ZeroRuntimeCancellationInput = WorkCorrelation & ZeroRuntimeCancellationMetadata & {
+  company_id: CompanyId;
+  actor_id: string;
+  conversation_id: string;
+  continuation_token: string;
+  reason?: string;
 };
 
 export type ZeroWorkforceDispatchEvent = {
@@ -341,7 +368,7 @@ export class ZeroWorkforceRuntimeDispatcher {
     } finally { unsubscribe(); }
   }
 
-  async cancel(input: WorkCorrelation & { company_id: CompanyId; actor_id: string; conversation_id: string; continuation_token: string; reason?: string }): Promise<ZeroWorkforceDispatchResult> {
+  async cancel(input: ZeroRuntimeCancellationInput): Promise<ZeroWorkforceDispatchResult> {
     const normalized = { ...input, company_id: required(input.company_id, "zero-company-id-required"), actor_id: required(input.actor_id, "zero-actor-id-required"), conversation_id: required(input.conversation_id, "zero-conversation-id-required") };
     const continuation = decodeContinuation(required(input.continuation_token, "zero-continuation-required"));
     const work = await this.store.get(normalized.company_id, continuation.work_id);
@@ -355,7 +382,23 @@ export class ZeroWorkforceRuntimeDispatcher {
     const events: ZeroRuntimeEvent[] = [];
     const unsubscribe = this.runtime.events.subscribe(event => { if (event.company_id === normalized.company_id && event.run_id === continuation.run_id) events.push(structuredClone(event)); });
     try {
-      const run = await this.runtime.cancel({ company_id: normalized.company_id, run_id: continuation.run_id, reason: input.reason ?? "cancelled-by-client" });
+      const run = await this.runtime.cancel({
+        company_id: normalized.company_id,
+        run_id: continuation.run_id,
+        reason: input.reason ?? "cancelled-by-client",
+        cancellation: {
+          actor_id: normalized.actor_id,
+          interaction_id: normalized.interaction_id,
+          client_message_id: normalized.client_message_id,
+          request_id: normalized.request_id,
+          operation_id: normalized.operation_id,
+          trace_id: normalized.trace_id,
+          correlation_id: normalized.correlation_id,
+          idempotency_key: normalized.idempotency_key,
+          session_id: normalized.session_id,
+          context_revision: normalized.context_revision,
+        },
+      });
       this.assertRun(run, normalized.company_id, work.work_id, normalized.conversation_id, work.assignee!);
       await this.syncWorkFromRun(run, events);
       return this.result(normalized as ZeroWorkforceDispatchInput, (await this.store.get(normalized.company_id, work.work_id))!, events, run);
