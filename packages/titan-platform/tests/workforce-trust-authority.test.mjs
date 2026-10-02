@@ -27,3 +27,12 @@ test("unlock eligibility counts only evidence-backed successful trust cycles and
  assert.equal(eligible.authority_granted,false);
  assert.equal(eligible.execution_permitted,false);
 });
+
+
+test("trust evidence from one workflow path cannot unlock another",()=>{
+ const cycles=Array.from({length:5},(_,i)=>evaluateTrustCycle({...base,workflow:"booking.standard",context_ref:"region:melbourne",outcome_verified:true,evidence_refs:[`evidence:path:${i}`]}));
+ const same=evaluateUnlockEligibility({company_id:"co-1",agent_id:"agent-1",capability:"booking.create",workflow:"booking.standard",context_ref:"region:melbourne",cycles,user_approved:true,worker_accepted:true},"proactive_specialist");
+ assert.equal(same.eligible_for_authority_evaluation,true);
+ const other=evaluateUnlockEligibility({company_id:"co-1",agent_id:"agent-1",capability:"booking.create",workflow:"booking.emergency",context_ref:"region:melbourne",cycles,user_approved:true,worker_accepted:true},"proactive_specialist");
+ assert.equal(other.eligible_for_authority_evaluation,false);
+});
