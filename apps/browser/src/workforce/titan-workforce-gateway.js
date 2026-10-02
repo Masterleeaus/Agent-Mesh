@@ -36,8 +36,8 @@ function createRequest(input={}){
  const request_id=clean(input.request_id,160)||uid('wfreq');
  const trace_id=clean(input.trace_id,160)||uid('trace');
  return Object.freeze({
-  schema:'titan.workforce.gateway.request.v1',request_id,company_id,actor_id,source_surface:'titan_code',target_domain:'deployment_workforce',operation,mode:isRead?'read':'propose',payload,
-  idempotency_key:clean(input.idempotency_key,200)||`titan-code:${company_id}:${operation}:${request_id}`,
+  schema:'titan.workforce.gateway.request.v1',request_id,company_id,actor_id,source_surface:'titan_browser_node',target_domain:'hosted_workforce',operation,mode:isRead?'read':'propose',payload,
+  idempotency_key:clean(input.idempotency_key,200)||`titan-browser:${company_id}:${operation}:${request_id}`,
   trace_id,correlation_id:input.correlation_id?clean(input.correlation_id,160):null,causation_id:input.causation_id?clean(input.causation_id,160):null,
   deployment_mission_id:input.deployment_mission_id?clean(input.deployment_mission_id,160):null,client_workforce_handover_id:input.client_workforce_handover_id?clean(input.client_workforce_handover_id,160):null,
   requested_at:new Date().toISOString(),grants_authority:false
@@ -47,17 +47,21 @@ function normalizeConfig(input={}){const endpoint=String(input.endpoint||'').tri
 function publicConfig(input={}){const c=normalizeConfig(input);return Object.freeze({...c,token:c.token?'configured':''});}
 function assertConfig(config){if(!config.enabled)throw new Error('workforce-gateway-disabled');if(!config.endpoint)throw new Error('workforce-gateway-endpoint-required');if(!COMPANY.test(config.company_id))throw new Error('company_id-required');if(!ACTOR.test(config.actor_id))throw new Error('actor_id-required');}
 function validateReceipt(receipt,request){if(!receipt||typeof receipt!=='object')throw new Error('invalid-workforce-gateway-receipt');if(receipt.schema!=='titan.workforce.gateway.receipt.v1')throw new Error('invalid-workforce-gateway-receipt-schema');if(receipt.company_id!==request.company_id)throw new Error('cross-company-workforce-receipt-rejected');if(receipt.request_id!==request.request_id)throw new Error('workforce-receipt-request-mismatch');if(receipt.grants_authority!==false)throw new Error('workforce-receipt-authority-violation');return receipt;}
-function validateProjection(projection,request){if(projection==null)return null;if(!projection||typeof projection!=='object')throw new Error('invalid-workforce-gateway-projection');if(projection.schema!=='titan.workforce.gateway.projection.v1')throw new Error('invalid-workforce-gateway-projection-schema');if(projection.company_id!==request.company_id)throw new Error('cross-company-workforce-projection-rejected');if(projection.grants_authority!==false)throw new Error('workforce-projection-authority-violation');if(projection.target_surface!=='titan_code')throw new Error('workforce-projection-surface-mismatch');return projection;}
+function validateProjection(projection,request){if(projection==null)return null;if(!projection||typeof projection!=='object')throw new Error('invalid-workforce-gateway-projection');if(projection.schema!=='titan.workforce.gateway.projection.v1')throw new Error('invalid-workforce-gateway-projection-schema');if(projection.company_id!==request.company_id)throw new Error('cross-company-workforce-projection-rejected');if(projection.grants_authority!==false)throw new Error('workforce-projection-authority-violation');if(projection.target_surface!=='titan_browser_node')throw new Error('workforce-projection-surface-mismatch');return projection;}
 async function send(configInput,requestInput){
  const config=normalizeConfig(configInput);assertConfig(config);const request=requestInput?.schema==='titan.workforce.gateway.request.v1'?requestInput:createRequest({...requestInput,company_id:config.company_id,actor_id:config.actor_id});
- if(!global.CodeeApprovedNetworkTransport?.postJson)throw new Error('approved-network-transport-unavailable');
+ const network=global.TitanZeroApprovedNetworkTransport||global.CodeeApprovedNetworkTransport;
+ if(!network?.postJson)throw new Error('approved-network-transport-unavailable');
  const headers={'Content-Type':'application/json','X-Request-Id':request.request_id};if(config.token)headers.Authorization=`Bearer ${config.token}`;
- const response=await global.CodeeApprovedNetworkTransport.postJson(config.endpoint,request,{headers});
+ const response=await network.postJson(config.endpoint,request,{headers});
  if(!response.ok||response.json?.ok===false)throw new Error(String(response.json?.error||response.json?.reason||`workforce-gateway-http-${response.status}`).slice(0,1000));
  const receipt=response.json?.receipt||response.json;
  return {request,receipt:validateReceipt(receipt,request),projection:validateProjection(response.json?.projection||null,request),data:response.json?.data||null};
 }
 async function call(configInput,operation,options={}){const config=normalizeConfig(configInput);const request=createRequest({...options,company_id:config.company_id,actor_id:config.actor_id,operation,payload:options.payload||{}});return send(config,request);}
-async function probe(config){return call(config,'deployment.gateway.status',{payload:{client:'titan-code',contract:'v1'}});}
-global.CodeeTitanWorkforceGateway=Object.freeze({READ_OPERATIONS:Object.freeze([...READ_OPERATIONS]),PROPOSE_OPERATIONS:Object.freeze([...PROPOSE_OPERATIONS]),normalizeConfig,publicConfig,createRequest,validateReceipt,validateProjection,send,call,probe,sanitizePayload});
+async function probe(config){return call(config,'deployment.gateway.status',{payload:{client:'titan-browser-node',contract:'v1'}});}
+const workforceGateway=Object.freeze({READ_OPERATIONS:Object.freeze([...READ_OPERATIONS]),PROPOSE_OPERATIONS:Object.freeze([...PROPOSE_OPERATIONS]),normalizeConfig,publicConfig,createRequest,validateReceipt,validateProjection,send,call,probe,sanitizePayload});
+global.TitanBrowserNodeWorkforceGateway=workforceGateway;
+// Compatibility export retained until the production worker migration is complete.
+global.CodeeTitanWorkforceGateway=workforceGateway;
 })(typeof globalThis!=='undefined'?globalThis:this);
