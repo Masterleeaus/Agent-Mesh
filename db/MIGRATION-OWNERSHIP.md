@@ -73,3 +73,29 @@ New files under `db/migrations/` require an explicit current storage owner in th
 New native FSM schema changes are allowed when they extend a Titan-owned mature capability and declare their storage/domain owner. Frappe is not the default owner simply because a similar ERPNext DocType exists.
 
 `company_id` is Titan's canonical logical company identity. Existing `account_id` columns remain compatibility schema until migrated and do not redefine canonical tenancy.
+
+## Immutable legacy PostgreSQL sequence
+
+`db/migrations/MANIFEST.json` is the reviewed inventory for the legacy
+PostgreSQL compatibility stream. Each entry binds an exact filename to its
+numeric-prefix sort position and SHA-256. The runner validates the manifest
+before database access, then executes that explicit sequence. Migration
+identity remains the filename because deployed `schema_migrations` tables use
+`filename` as their primary key; filenames and SQL are not renamed to repair
+duplicate numbers.
+
+The 16 duplicate-prefix groups are explicitly resolved for deterministic
+ordering by exact filename. Their actual applied status is recorded as
+**unverified** because no deployed `schema_migrations` snapshots are available
+in this repository. Existing filename-only rows remain checksum-unverified;
+the runner does not invent a checksum for them. Newly applied rows record the
+manifest checksum, and a later checksum mismatch fails before applying further
+migrations. Before certifying a supported historical deployment, collect a
+sanitized per-company filename inventory and schema fingerprint, then classify
+each pair as applied/not applied for that installation. Do not infer live
+history from the repository manifest.
+
+The manifest covers only `db/migrations/`, the legacy PostgreSQL compatibility
+stream. It does not certify the mixed `db/sqlite/` stream or supply the
+owner-classified `COMPANY_NATIVE_FSM` manifest required for per-company
+provisioning; those paths must not be conflated.
