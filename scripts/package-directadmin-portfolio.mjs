@@ -11,7 +11,7 @@ export const ENABLED_PLUGINS = [
   { id: "titan_dev_access", source: "apps/directadmin/dev-access", files: ["plugin.conf", "README.md", "AGENTS.md", "admin", "reseller", "user", "hooks", "lib", "scripts"] },
 ];
 
-const executable = new Set(["admin/index.html", "reseller/index.html", "user/index.html", "install.sh", "update.sh", "uninstall.sh", "health.sh", "scripts/install.sh", "scripts/uninstall.sh"]);
+const executable = new Set(["admin/index.html", "reseller/index.html", "user/index.html", "install.sh", "update.sh", "uninstall.sh", "health.sh", "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh"]);
 
 function copyValidated(source, staging, relative) {
   const absolute = path.join(source, relative);
