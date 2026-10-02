@@ -74,6 +74,8 @@ $spaceCorruptedEd25519='ssh-ed25519 '.str_replace('+',' ',$edParts[1]).' synthet
 expect_true(!valid_pubkey($spaceCorruptedEd25519),'form-decoded plus inside the public blob must not accept a shortened base64 prefix');
 $splitEd25519='ssh-ed25519'."\n".$edParts[1].' synthetic+fixture';
 expect_true(!valid_pubkey($splitEd25519),'line breaks between the key algorithm and blob must be rejected');
+$multilineOptions=$syntheticEd25519."\n".'command="synthetic-option-fixture" '.$syntheticEd25519;
+expect_true(!valid_pubkey($multilineOptions),'a second options-bearing authorized_keys record must be rejected');
 $wrongEmbeddedType='ssh-ed25519 '.$rsaParts[1].' synthetic+fixture';
 expect_true(!valid_pubkey($wrongEmbeddedType),'declared algorithm must match the SSH blob algorithm');
 expect_true(add_key($splitEd25519)==='Invalid public key format.','malformed key must be rejected before key-directory setup');
@@ -144,7 +146,7 @@ expect_true(strpos($redacted,'example.invalid/repo.git')!==false,'URL redaction 
 $gitRepo=$home.'/git-repo';
 expect_true(mkdir($gitRepo,0700,true),'isolated Git repository fixture must be created');
 $gitDescriptors=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
-$gitInit=@proc_open(['git','init','--quiet',$gitRepo],$gitDescriptors,$gitPipes,$home,[
+$gitInit=@proc_open(['git','-c','init.defaultBranch=main','init','--quiet',$gitRepo],$gitDescriptors,$gitPipes,$home,[
  'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
  'HOME'=>$home,
  'GIT_CONFIG_NOSYSTEM'=>'1',
@@ -163,7 +165,7 @@ expect_true($gitStatusExit===0&&$gitStatusClass==='READ','allowlisted status mus
 
 $outsideRepo=$root.'/outside-git';
 expect_true(mkdir($outsideRepo,0700,true),'external Git fixture must be created');
-$outsideInit=@proc_open(['git','init','--quiet',$outsideRepo],$gitDescriptors,$outsidePipes,$root,[
+$outsideInit=@proc_open(['git','-c','init.defaultBranch=main','init','--quiet',$outsideRepo],$gitDescriptors,$outsidePipes,$root,[
  'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
  'HOME'=>$root,
  'GIT_CONFIG_NOSYSTEM'=>'1',
